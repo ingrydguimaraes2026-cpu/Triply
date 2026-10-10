@@ -68,7 +68,7 @@ Regra principal: **`src/pages/` só mostra as telas; as regras ficam em `src/fea
 
 ## Configuração
 
-Copie `.env.example` para `.env.local` e preencha os valores. O `.env.local` nunca vai para o GitHub.
+As chaves do Supabase ficam no arquivo `.env.local`, que nunca vai para o GitHub. Peça os valores pro Victor.
 
 ## Etapas
 
