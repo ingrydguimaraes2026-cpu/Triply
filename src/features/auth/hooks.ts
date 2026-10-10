@@ -23,10 +23,15 @@ export function useSessao() {
 
 const voltarPara = (caminho: string) => `${window.location.origin}${caminho}`
 
+// Pra onde ir depois do login: o endereço guardado (ex.: convite) ou criar viagem
+export function destinoDepoisDoLogin() {
+  return sessionStorage.getItem('voltarPara') ?? '/nova-viagem'
+}
+
 export function entrarComGoogle() {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: voltarPara('/nova-viagem') },
+    options: { redirectTo: voltarPara(destinoDepoisDoLogin()) },
   })
 }
 
@@ -39,7 +44,7 @@ export function criarConta(nome: string, email: string, senha: string) {
   return supabase.auth.signUp({
     email,
     password: senha,
-    options: { data: { full_name: nome }, emailRedirectTo: voltarPara('/nova-viagem') },
+    options: { data: { full_name: nome }, emailRedirectTo: voltarPara(destinoDepoisDoLogin()) },
   })
 }
 

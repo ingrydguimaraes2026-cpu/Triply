@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router'
 import {
   criarConta,
+  destinoDepoisDoLogin,
   enviarLinkNovaSenha,
   entrarComGoogle,
   entrarComSenha,
@@ -44,7 +45,11 @@ export default function Login() {
   const [aviso, setAviso] = useState<string | null>(null)
 
   if (carregando) return null
-  if (sessao) return <Navigate to="/nova-viagem" replace />
+  if (sessao) {
+    const destino = destinoDepoisDoLogin()
+    sessionStorage.removeItem('voltarPara')
+    return <Navigate to={destino} replace />
+  }
 
   const texto = textos[modo]
 

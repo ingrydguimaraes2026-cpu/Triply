@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router'
 import RotaProtegida from './features/auth/RotaProtegida'
+import Convite from './pages/Convite'
 import Login from './pages/Login'
 import NovaSenha from './pages/NovaSenha'
 import NovaViagem from './pages/NovaViagem'
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/nova-viagem', element: <NovaViagem /> },
       { path: '/nova-senha', element: <NovaSenha /> },
+      { path: '/convite/:codigo', element: <Convite /> },
       {
         path: '/viagem/:id',
         element: <ViagemLayout />,
