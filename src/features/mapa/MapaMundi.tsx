@@ -85,7 +85,8 @@ export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO,
 
   const desenhos = useMemo(() => {
     const caminho = geoPath(projecao)
-    return paises.map((p) => ({ id: String(p.id), d: caminho(p) ?? '', pais: p }))
+    // Alguns países do arquivo vêm sem código ou repetidos: a chave usa a posição na lista
+    return paises.map((p, i) => ({ id: `${p.id ?? 'sem-id'}-${i}`, d: caminho(p) ?? '', pais: p }))
   }, [paises, projecao])
 
   // Países que têm algum destino ficam acesos

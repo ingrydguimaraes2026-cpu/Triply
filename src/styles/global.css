@@ -63,6 +63,7 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-height: 48px;
   padding: 0 20px;
   border: 0;
@@ -87,42 +88,6 @@ a {
   border: 1px solid #e0c99d;
   border-radius: 12px;
   font: inherit;
-}
-
-/* Abas da viagem: barra embaixo no celular, em cima no computador */
-.abas {
-  position: fixed;
-  inset: auto 0 0 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  background: var(--cor-cartao);
-  border-top: 1px solid var(--cor-borda);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.abas a {
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  color: var(--cor-texto-suave);
-  text-decoration: none;
-}
-
-.abas a.active {
-  color: var(--cor-comboio);
-  font-weight: 800;
-}
-
-@media (min-width: 768px) {
-  .abas {
-    position: sticky;
-    inset: 0 0 auto 0;
-    border-top: 0;
-    border-bottom: 1px solid var(--cor-borda);
-    z-index: 1;
-  }
 }
 
 .botao:disabled {

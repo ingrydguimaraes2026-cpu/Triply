@@ -23,9 +23,10 @@ export function useSessao() {
 
 const voltarPara = (caminho: string) => `${window.location.origin}${caminho}`
 
-// Pra onde ir depois do login: o endereço guardado (ex.: convite) ou criar viagem
+// Pra onde ir depois do login: o endereço guardado (ex.: convite) ou o início
+// (que abre a última viagem, ou o onboarding se não tiver nenhuma)
 export function destinoDepoisDoLogin() {
-  return sessionStorage.getItem('voltarPara') ?? '/nova-viagem'
+  return sessionStorage.getItem('voltarPara') ?? '/'
 }
 
 export function entrarComGoogle() {
