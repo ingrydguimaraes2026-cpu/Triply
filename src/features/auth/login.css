@@ -130,10 +130,6 @@
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.login-campo input::placeholder {
-  color: #b59c7a;
-}
-
 .login-campo input:focus {
   outline: none;
   border-color: var(--caramelo);
@@ -222,14 +218,9 @@
   color: var(--cor-texto-suave);
 }
 
-.login-credito {
-  margin: auto 0 0;
-  font-size: 12px;
-  color: #a08460;
-}
-
-.login-credito a {
-  color: inherit;
+.login-dica {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
 }
 
 /* No celular o logo fica em cima da foto */
@@ -239,7 +230,7 @@
 
 .login-logo-foto {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 14px;
   left: 14px;
   padding: 4px 14px 6px;
@@ -263,13 +254,80 @@
   background: var(--caramelo);
 }
 
-.login-foto img {
+.carrossel {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+}
+
+.carrossel-trilho {
+  display: flex;
+  height: 100%;
+  transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.carrossel-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Zoom bem lento na foto que está aparecendo */
+.carrossel-foto {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 60%;
+  transform: scale(1.08);
+  transition: transform 7s ease-out;
+  user-select: none;
+}
+
+.carrossel-foto.ativa {
+  transform: scale(1);
+}
+
+.carrossel-pontos {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  gap: 2px;
+}
+
+.carrossel-pontos button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.carrossel-pontos button::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.55);
+  box-shadow: 0 1px 4px rgb(42 26 12 / 0.35);
+  transition: width 0.3s, background 0.3s;
+}
+
+.carrossel-pontos button.ativo::before {
+  width: 20px;
+  background: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrossel-trilho,
+  .carrossel-foto {
+    transition: none;
+  }
 }
 
 /* Escurece a parte de baixo pra o texto branco aparecer bem */
@@ -277,12 +335,15 @@
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background: linear-gradient(to top, rgb(42 26 12 / 0.78) 0%, rgb(42 26 12 / 0.2) 45%, transparent 70%);
 }
 
 .login-foto-texto {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
   left: 20px;
   right: 20px;
   bottom: 20px;
@@ -328,11 +389,6 @@
 
   .login-titulo {
     font-size: 44px;
-  }
-
-  .login-credito {
-    margin: 0;
-    align-self: flex-start;
   }
 
   .login-foto {

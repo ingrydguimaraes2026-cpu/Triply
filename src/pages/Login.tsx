@@ -8,6 +8,7 @@ import {
   mensagemDeErro,
   useSessao,
 } from '../features/auth/hooks'
+import CarrosselFotos from '../features/auth/CarrosselFotos'
 import '../features/auth/login.css'
 
 type Modo = 'entrar' | 'criar' | 'recuperar'
@@ -29,9 +30,6 @@ const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
     botao: 'Enviar link',
   },
 }
-
-// Foto: orla de Cannes, por Lens by Benji (Unsplash, licença gratuita)
-const FOTO = 'https://images.unsplash.com/photo-1779173851395-95b1c8df80db?auto=format&fit=crop&w=1400&q=80'
 
 // Tela de login: Google em primeiro (mais rápido) e e-mail/senha como alternativa.
 export default function Login() {
@@ -120,7 +118,6 @@ export default function Login() {
                   id="nome"
                   required
                   autoComplete="name"
-                  placeholder="Como o comboio te chama"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                 />
@@ -134,7 +131,6 @@ export default function Login() {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="voce@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -157,8 +153,8 @@ export default function Login() {
                     required
                     minLength={modo === 'criar' ? 8 : undefined}
                     autoComplete={modo === 'criar' ? 'new-password' : 'current-password'}
-                    placeholder={modo === 'criar' ? 'Mínimo de 8 caracteres' : '••••••••'}
                     value={senha}
+                    aria-describedby={modo === 'criar' ? 'dica-senha' : undefined}
                     onChange={(e) => setSenha(e.target.value)}
                   />
                   <button
@@ -175,6 +171,11 @@ export default function Login() {
                     </svg>
                   </button>
                 </div>
+                {modo === 'criar' && (
+                  <small id="dica-senha" className="login-dica">
+                    Mínimo de 8 caracteres.
+                  </small>
+                )}
               </div>
             )}
 
@@ -218,17 +219,10 @@ export default function Login() {
           </p>
         </div>
 
-        <p className="login-credito">
-          Foto: Cannes, por{' '}
-          <a href="https://unsplash.com/photos/IrdbuHJuKnM" target="_blank" rel="noreferrer">
-            Lens by Benji
-          </a>{' '}
-          no Unsplash
-        </p>
       </main>
 
       <aside className="login-foto">
-        <img src={FOTO} alt="Orla de Cannes com palmeiras ao pôr do sol" />
+        <CarrosselFotos />
         <p className="login-logo login-logo-foto" aria-hidden="true">
           together
         </p>
