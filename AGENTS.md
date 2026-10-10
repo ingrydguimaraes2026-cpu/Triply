@@ -1,41 +1,28 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+Website-first PWA built with React + Vite + TypeScript. Mobile-first: every screen must work at phone width (360px) and on desktop.
 
-## Expo has changed — do not trust your training data
-
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
-
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+The project owner (Ingryd) is learning to code: keep code simple, comments and docs in Portuguese, and explain changes in plain language.
 
 ## Commands
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
-
 ```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
+npm run dev       # dev server (http://localhost:5173)
+npm run build     # typecheck (tsc -b) + production build
+npm run lint      # oxlint
+npm run preview   # serve the build (service worker / PWA only works here)
 ```
 
-Run lint and typecheck before declaring any task done.
+Run `npm run build` and `npm run lint` before declaring any task done.
 
-## Navigation & Routing
+## Structure
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
-
-## Building with EAS
-
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
+- Routes are declared in `src/router.tsx` (React Router, `createBrowserRouter`). Screens live in `src/pages/`.
+- Screens only render. Data access and business rules go in `src/features/<module>/` (`api.ts`, `hooks.ts`, `components/`).
+- Shared clients/utilities in `src/lib/`; data types in `src/types/`; global CSS tokens in `src/styles/global.css`.
+- PWA config (manifest, icons) is in `vite.config.ts` via `vite-plugin-pwa`.
 
 ## Rules
 
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+- Env vars exposed to the browser must start with `VITE_`; never put secrets there.
+- Supabase: all tables shared across a "comboio" (trip group) need RLS policies. Photos are compressed client-side before upload.
+- Requirements: `docs/conversa-2026-10-10-requisitos.md`. Competitors: `docs/benchmark.md`.
+- The name "Triply" is provisional.

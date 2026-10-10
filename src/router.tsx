@@ -1,0 +1,27 @@
+import { createBrowserRouter, Navigate } from 'react-router'
+import Login from './pages/Login'
+import NovaViagem from './pages/NovaViagem'
+import ViagemLayout from './pages/viagem/ViagemLayout'
+import Overview from './pages/viagem/Overview'
+import Transportes from './pages/viagem/Transportes'
+import Financeiro from './pages/viagem/Financeiro'
+import Fotos from './pages/viagem/Fotos'
+import Comboio from './pages/viagem/Comboio'
+
+// Cada endereço do site aponta pra uma tela em src/pages/
+export const router = createBrowserRouter([
+  { path: '/', element: <Navigate to="/login" replace /> },
+  { path: '/login', element: <Login /> },
+  { path: '/nova-viagem', element: <NovaViagem /> },
+  {
+    path: '/viagem/:id',
+    element: <ViagemLayout />,
+    children: [
+      { index: true, element: <Overview /> },
+      { path: 'transportes', element: <Transportes /> },
+      { path: 'financeiro', element: <Financeiro /> },
+      { path: 'fotos', element: <Fotos /> },
+      { path: 'comboio', element: <Comboio /> },
+    ],
+  },
+])

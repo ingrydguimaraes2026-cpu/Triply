@@ -1,0 +1,108 @@
+/* Cores e medidas do site. Mude aqui e muda em tudo. */
+:root {
+  --cor-fundo: #f4f6f8;
+  --cor-cartao: #ffffff;
+  --cor-texto: #142132;
+  --cor-texto-suave: #3a4756;
+  --cor-borda: #dde3e9;
+  --cor-comboio: #0e6b6a; /* verde: compartilhado com o comboio */
+  --cor-comboio-fundo: #e3f1f0;
+  --cor-pessoal: #b4410c; /* laranja: só você vê */
+  --raio: 14px;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--cor-comboio);
+}
+
+.pagina {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cartao {
+  background: var(--cor-cartao);
+  border-radius: var(--raio);
+  padding: 16px;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--cor-texto);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #c9d1da;
+  border-radius: 12px;
+  font: inherit;
+}
+
+/* Abas da viagem: barra embaixo no celular, em cima no computador */
+.abas {
+  position: fixed;
+  inset: auto 0 0 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--cor-cartao);
+  border-top: 1px solid var(--cor-borda);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.abas a {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  text-decoration: none;
+}
+
+.abas a.active {
+  color: var(--cor-comboio);
+  font-weight: 800;
+}
+
+@media (min-width: 768px) {
+  .abas {
+    position: sticky;
+    inset: 0 0 auto 0;
+    border-top: 0;
+    border-bottom: 1px solid var(--cor-borda);
+    z-index: 1;
+  }
+}
