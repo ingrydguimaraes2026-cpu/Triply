@@ -1,0 +1,109 @@
+/* Cores e medidas do site. Mude aqui e muda em tudo.
+   Paleta "Couro e laranja" do Color Hunt: 7B542F · B6771D · FF9D00 · FFCF71
+   https://colorhunt.co/palette/7b542fb6771dff9d00ffcf71
+   Dourado e laranja NÃO servem pra texto (pouco contraste): só fundos, barras e selos. */
+:root {
+  --couro: #7b542f;
+  --caramelo: #b6771d;
+  --laranja: #ff9d00;
+  --dourado-claro: #ffcf71;
+
+  --cor-fundo: #fff6e5;
+  --cor-cartao: #ffffff;
+  --cor-texto: #3b2715;
+  --cor-texto-suave: #7b542f;
+  --cor-borda: #f0dfc0;
+  --cor-comboio: var(--couro); /* compartilhado com o comboio */
+  --cor-comboio-fundo: #ffe7b8;
+  --cor-pessoal: #9a5b00; /* só você vê (laranja escurecido pra dar pra ler) */
+  --cor-pessoal-fundo: var(--laranja);
+  --raio: 14px;
+  --fonte-titulo: 'Fraunces Variable', Georgia, serif;
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--cor-comboio);
+}
+
+.pagina {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cartao {
+  background: var(--cor-cartao);
+  border-radius: var(--raio);
+  padding: 16px;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--couro);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #e0c99d;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.botao:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Botão que parece link (ex.: "Esqueci a senha") */
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--couro);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

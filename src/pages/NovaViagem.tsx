@@ -1,0 +1,349 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
+import MapaMundi from '../features/mapa/MapaMundi'
+import { buscarCidades, moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
+import { criarViagem } from '../features/viagens/api'
+import { criarConvite } from '../features/comboio/api'
+import './nova-viagem.css'
+
+type Passo = 'destinos' | 'datas' | 'nome' | 'comboio'
+const PASSOS: Passo[] = ['destinos', 'datas', 'nome', 'comboio']
+
+const MOEDAS = [
+  ['EUR', 'Euro (€)'],
+  ['USD', 'Dólar americano (US$)'],
+  ['GBP', 'Libra (£)'],
+  ['CHF', 'Franco suíço (CHF)'],
+  ['BRL', 'Real (R$)'],
+  ['ARS', 'Peso argentino'],
+  ['JPY', 'Iene (¥)'],
+] as const
+
+function nomeSugerido(destinos: Cidade[]) {
+  const nomes = destinos.map((d) => d.nome)
+  if (nomes.length === 0) return ''
+  if (nomes.length === 1) return `Viagem pra ${nomes[0]}`
+  if (nomes.length <= 3) return `${nomes.slice(0, -1).join(', ')} e ${nomes.at(-1)}`
+  return `${nomes[0]}, ${nomes[1]} e mais ${nomes.length - 2}`
+}
+
+function diasEntre(inicio: string, fim: string) {
+  const dias = Math.round((new Date(fim).getTime() - new Date(inicio).getTime()) / 86_400_000) + 1
+  return dias > 0 ? dias : null
+}
+
+// Telinha usada pra saber se é celular (o painel muda de lugar)
+function useEhCelular() {
+  const consulta = '(max-width: 899px)'
+  const [celular, setCelular] = useState(() => window.matchMedia(consulta).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(consulta)
+    const mudou = () => setCelular(mq.matches)
+    mq.addEventListener('change', mudou)
+    return () => mq.removeEventListener('change', mudou)
+  }, [])
+  return celular
+}
+
+// Onboarding: cria a primeira viagem em 4 passos, com o mapa ao fundo.
+export default function NovaViagem() {
+  const navegar = useNavigate()
+  const celular = useEhCelular()
+  const [passo, setPasso] = useState<Passo>('destinos')
+
+  const [destinos, setDestinos] = useState<Cidade[]>([])
+  const [busca, setBusca] = useState('')
+  const [resultados, setResultados] = useState<Cidade[]>([])
+  const [buscando, setBuscando] = useState(false)
+
+  const [ida, setIda] = useState('')
+  const [volta, setVolta] = useState('')
+  // Nome e moeda vêm sugeridos pelos destinos até a pessoa mexer (null = usar sugestão)
+  const [nomeDigitado, setNomeDigitado] = useState<string | null>(null)
+  const [moedaEscolhida, setMoedaEscolhida] = useState<string | null>(null)
+  const nome = nomeDigitado ?? nomeSugerido(destinos)
+  const moeda = moedaEscolhida ?? (destinos[0] ? moedaDoPais(destinos[0].codigoPais) : 'EUR')
+
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
+  const [viagemId, setViagemId] = useState<string | null>(null)
+  const [link, setLink] = useState<string | null>(null)
+  const [copiado, setCopiado] = useState(false)
+
+  // Busca enquanto a pessoa digita (espera ela parar um pouquinho)
+  const buscaValida = busca.trim().length >= 2
+  useEffect(() => {
+    if (!buscaValida) return
+    const controle = new AbortController()
+    const timer = setTimeout(() => {
+      setBuscando(true)
+      buscarCidades(busca, controle.signal)
+        .then(setResultados)
+        .catch(() => {})
+        .finally(() => setBuscando(false))
+    }, 250)
+    return () => {
+      clearTimeout(timer)
+      controle.abort()
+    }
+  }, [busca, buscaValida])
+  const sugestoes = buscaValida ? resultados : []
+
+  const pontos = useMemo(
+    () => destinos.map((d) => ({ nome: d.nome, latitude: d.latitude, longitude: d.longitude })),
+    [destinos],
+  )
+
+  const areaLivre = useMemo(
+    () =>
+      celular
+        ? { esquerda: 0, topo: 60, direita: 0, baixo: window.innerHeight * 0.55 }
+        : { esquerda: 520, topo: 40, direita: 40, baixo: 40 },
+    [celular],
+  )
+
+  function adicionar(cidade: Cidade) {
+    if (!destinos.some((d) => d.id === cidade.id)) setDestinos([...destinos, cidade])
+    setBusca('')
+  }
+
+  function remover(id: string) {
+    setDestinos(destinos.filter((d) => d.id !== id))
+  }
+
+  function mover(indice: number, direcao: -1 | 1) {
+    const nova = [...destinos]
+    const alvo = indice + direcao
+    ;[nova[indice], nova[alvo]] = [nova[alvo], nova[indice]]
+    setDestinos(nova)
+  }
+
+  async function criar() {
+    setSalvando(true)
+    setErro(null)
+    try {
+      const id = await criarViagem({
+        nome: nome.trim() || nomeSugerido(destinos),
+        dataInicio: ida || null,
+        dataFim: volta || null,
+        moeda,
+        destinos,
+      })
+      setViagemId(id)
+      setLink(await criarConvite(id))
+      setPasso('comboio')
+    } catch {
+      setErro('Não deu pra criar a viagem. Tente de novo.')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function compartilhar() {
+    if (!link) return
+    if (navigator.share) {
+      await navigator.share({ title: nome, text: `Bora planejar "${nome}" juntos?`, url: link }).catch(() => {})
+      return
+    }
+    await navigator.clipboard.writeText(link)
+    setCopiado(true)
+  }
+
+  const indice = PASSOS.indexOf(passo)
+  const dias = ida && volta ? diasEntre(ida, volta) : null
+
+  return (
+    <div className="onb">
+      <MapaMundi pontos={pontos} areaLivre={areaLivre} />
+
+      <p className="onb-logo">together</p>
+
+      <main className="onb-painel">
+        <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${PASSOS.length}`}>
+          {PASSOS.map((p, i) => (
+            <span key={p} className={i <= indice ? 'feito' : undefined} />
+          ))}
+        </div>
+
+        {passo === 'destinos' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Pra onde vocês vão?</h1>
+              <p className="onb-sub">Adicione as cidades na ordem da viagem. Dá pra mudar depois.</p>
+            </div>
+
+            <div className="onb-busca">
+              <label htmlFor="busca" className="onb-rotulo">
+                Buscar cidade
+              </label>
+              <input
+                id="busca"
+                type="search"
+                autoComplete="off"
+                autoFocus
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && sugestoes[0]) {
+                    e.preventDefault()
+                    adicionar(sugestoes[0])
+                  }
+                }}
+                aria-controls="sugestoes"
+              />
+              {buscaValida && (sugestoes.length > 0 || buscando) && (
+                <ul id="sugestoes" className="onb-sugestoes">
+                  {buscando && sugestoes.length === 0 && <li className="onb-sugestao-vazia">Buscando…</li>}
+                  {sugestoes.map((c) => (
+                    <li key={c.id}>
+                      <button type="button" onClick={() => adicionar(c)}>
+                        <span className="onb-codigo">{c.codigoPais}</span>
+                        <span>
+                          <strong>{c.nome}</strong>
+                          <small>{[c.tipo, [c.regiao, c.pais].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}</small>
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {destinos.length > 0 && (
+              <ol className="onb-destinos">
+                {destinos.map((d, i) => (
+                  <li key={d.id}>
+                    <span className="onb-numero">{i + 1}</span>
+                    <span className="onb-destino-nome">
+                      <strong>{d.nome}</strong>
+                      <small>{[d.tipo, d.pais].filter(Boolean).join(' · ')}</small>
+                    </span>
+                    <span className="onb-acoes">
+                      <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => mover(i, 1)}
+                        disabled={i === destinos.length - 1}
+                        aria-label={`Descer ${d.nome}`}
+                      >
+                        ↓
+                      </button>
+                      <button type="button" onClick={() => remover(d.id)} aria-label={`Remover ${d.nome}`}>
+                        ×
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            )}
+
+            <button type="button" className="onb-botao" disabled={destinos.length === 0} onClick={() => setPasso('datas')}>
+              Continuar
+            </button>
+          </section>
+        )}
+
+        {passo === 'datas' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Quando?</h1>
+              <p className="onb-sub">Se ainda não tiver certeza, pode pular.</p>
+            </div>
+            <div className="onb-datas">
+              <div className="onb-campo">
+                <label htmlFor="ida" className="onb-rotulo">
+                  Ida
+                </label>
+                <input id="ida" type="date" value={ida} onChange={(e) => setIda(e.target.value)} />
+              </div>
+              <div className="onb-campo">
+                <label htmlFor="volta" className="onb-rotulo">
+                  Volta
+                </label>
+                <input id="volta" type="date" min={ida || undefined} value={volta} onChange={(e) => setVolta(e.target.value)} />
+              </div>
+            </div>
+            {dias && <p className="onb-destaque">{dias} dias de viagem</p>}
+            <div className="onb-rodape">
+              <button type="button" className="onb-voltar" onClick={() => setPasso('destinos')}>
+                Voltar
+              </button>
+              <button type="button" className="onb-botao" onClick={() => setPasso('nome')}>
+                {ida || volta ? 'Continuar' : 'Ainda não sei'}
+              </button>
+            </div>
+          </section>
+        )}
+
+        {passo === 'nome' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Últimos detalhes</h1>
+              <p className="onb-sub">Já deixamos sugerido. Mude se quiser.</p>
+            </div>
+            <div className="onb-campo">
+              <label htmlFor="nome" className="onb-rotulo">
+                Nome da viagem
+              </label>
+              <input
+                id="nome"
+                value={nome}
+                onChange={(e) => setNomeDigitado(e.target.value)}
+              />
+            </div>
+            <div className="onb-campo">
+              <label htmlFor="moeda" className="onb-rotulo">
+                Moeda principal dos gastos
+              </label>
+              <select id="moeda" value={moeda} onChange={(e) => setMoedaEscolhida(e.target.value)}>
+                {MOEDAS.map(([codigo, rotulo]) => (
+                  <option key={codigo} value={codigo}>
+                    {rotulo}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {erro && (
+              <p role="alert" className="onb-erro">
+                {erro}
+              </p>
+            )}
+            <div className="onb-rodape">
+              <button type="button" className="onb-voltar" onClick={() => setPasso('datas')}>
+                Voltar
+              </button>
+              <button type="button" className="onb-botao" onClick={criar} disabled={salvando}>
+                {salvando ? 'Criando…' : 'Criar viagem'}
+              </button>
+            </div>
+          </section>
+        )}
+
+        {passo === 'comboio' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Agora, chama o comboio</h1>
+              <p className="onb-sub">
+                Mande o link pra quem vai com você. Quem entrar vê o roteiro, divide os gastos e posta fotos. O link vale 7
+                dias.
+              </p>
+            </div>
+            {link && (
+              <div className="onb-link">
+                <span>{link.replace(/^https?:\/\//, '')}</span>
+              </div>
+            )}
+            <button type="button" className="onb-botao" onClick={compartilhar}>
+              {copiado ? 'Link copiado!' : 'Compartilhar link'}
+            </button>
+            <button type="button" className="onb-voltar onb-pular" onClick={() => navegar(`/viagem/${viagemId}`)}>
+              Ir pra viagem
+            </button>
+          </section>
+        )}
+      </main>
+    </div>
+  )
+}

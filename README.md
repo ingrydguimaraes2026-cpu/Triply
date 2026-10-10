@@ -1,88 +1,88 @@
-# Triply ✈️
+# Together ✈️ *(nome provisório)*
 
-Aplicativo de planejamento e gestão de viagens, feito com React Native e Expo.
+Site de planejamento de viagens em grupo. Funciona no navegador e pode ser **instalado no celular como app** (PWA).
 
-Com o Triply você vai poder:
+O que ele vai fazer:
 
-- criar várias viagens e organizar destinos e trajetos
-- acompanhar o roteiro dia a dia
-- controlar orçamento e gastos em diferentes moedas, e registrar compras de câmbio
-- montar checklists e salvar lugares favoritos
-- ver o calendário e o clima dos destinos
-- ter um dashboard que se adapta ao momento da viagem
-- guardar fotos e memórias
+- criar a viagem e escolher os destinos, que aparecem no mapa
+- **Overview**: resumo de tudo
+- **Transportes**: trajetos, horários e bate-e-volta
+- **Financeiro**: orçamento, quem pagou o quê e câmbio (cotação média)
+- **Fotos**: feed com as melhores fotos de cada lugar
+- **Comboio**: o grupo que viaja junto
+
+**Ingryd, comece por aqui:** [`docs/COMO-TRABALHAR.md`](docs/COMO-TRABALHAR.md) (como pedir coisas pro Claude) e [`docs/glossario.md`](docs/glossario.md) (palavras técnicas explicadas).
+
+Requisitos completos em [`docs/conversa-2026-10-10-requisitos.md`](docs/conversa-2026-10-10-requisitos.md). Concorrentes em [`docs/benchmark.md`](docs/benchmark.md).
 
 ## Tecnologias
 
 | Peça | Ferramenta |
 |---|---|
-| App | [Expo](https://expo.dev) (React Native) |
+| Site | [React](https://react.dev) + [Vite](https://vite.dev) |
 | Linguagem | TypeScript |
-| Navegação | [Expo Router](https://docs.expo.dev/router/introduction/) (cada arquivo em `src/app/` é uma tela) |
-| Banco de dados, login e fotos | [Supabase](https://supabase.com) *(etapa 2)* |
-| Clima | [Open-Meteo](https://open-meteo.com) |
+| Navegação | [React Router](https://reactrouter.com) |
+| Instalar no celular | [vite-plugin-pwa](https://vite-pwa-org.netlify.app) |
+| Banco de dados, login e fotos | [Supabase](https://supabase.com) *(próxima etapa)* |
 | Câmbio | [Frankfurter](https://frankfurter.dev) |
 
 ## Como rodar
 
-Pré-requisitos: [Node.js](https://nodejs.org) (versão LTS) e o app **Expo Go** no celular ([iPhone](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)).
+Pré-requisito: [Node.js](https://nodejs.org) (versão LTS).
 
-1. Instale as dependências (só na primeira vez):
+```bash
+npm install     # só na primeira vez
+npm run dev     # abre em http://localhost:5173
+```
 
-   ```bash
-   npm install
-   ```
+Ao salvar um arquivo, o site atualiza sozinho no navegador.
 
-2. Inicie o servidor de desenvolvimento:
-
-   ```bash
-   npx expo start
-   ```
-
-3. Leia o QR code que aparece no terminal com a câmera do iPhone (ou pelo app Expo Go no Android). O celular e o computador precisam estar na mesma rede Wi-Fi.
-
-Ao salvar um arquivo, o app atualiza sozinho no celular.
+Pra ver no celular: rode `npm run dev -- --host` e abra no celular o endereço "Network" que aparece no terminal. O celular e o computador precisam estar na mesma rede Wi-Fi.
 
 ### Comandos úteis
 
 | Comando | O que faz |
 |---|---|
-| `npx expo start` | Inicia o app |
-| `npm run typecheck` | Procura erros de TypeScript |
-| `npm run lint` | Procura problemas de estilo e erros comuns no código |
+| `npm run dev` | Inicia o site |
+| `npm run build` | Confere erros de TypeScript e gera a versão final |
+| `npm run lint` | Procura problemas comuns no código |
+| `npm run preview` | Abre a versão final (é onde o PWA funciona de verdade) |
 
 ## Estrutura de pastas
 
 ```
 src/
-├── app/                  ← TELAS (arquivo = tela)
-│   ├── (tabs)/               abas: Início, Viagens, Favoritos, Perfil
-│   ├── (auth)/login.tsx      login
-│   └── viagem/[id]/          telas de uma viagem (roteiro, orçamento...)
-├── features/             ← LÓGICA de cada módulo (viagens, orçamento, clima...)
-├── components/ui/        ← peças visuais reutilizáveis
-├── lib/                  ← conexões (Supabase, APIs) e utilidades
-├── theme/                ← cores, fontes e espaçamentos
-├── hooks/                ← hooks gerais (tema claro/escuro)
-└── types/                ← formato dos dados
-supabase/migrations/      ← tabelas do banco de dados
-assets/                   ← ícone, tela de abertura e imagens
+├── pages/            ← TELAS (uma por arquivo)
+│   ├── Login.tsx
+│   ├── NovaViagem.tsx
+│   └── viagem/           abas: Overview, Transportes, Financeiro, Fotos, Comboio
+├── router.tsx        ← qual endereço abre qual tela
+├── features/         ← LÓGICA de cada módulo (viagens, financeiro, câmbio...)
+├── components/ui/    ← peças visuais reutilizáveis (Cartao, EstadoVazio, Avatar...)
+├── lib/              ← conexões (Supabase, APIs) e utilidades
+├── types/            ← formato dos dados
+└── styles/           ← cores e estilos gerais
+supabase/migrations/  ← tabelas do banco de dados
+public/               ← ícones do app
+docs/                 ← requisitos, benchmark, decisões
 ```
 
-Regra principal: **`src/app/` só mostra as telas; as regras ficam em `src/features/`.**
+Regra principal: **`src/pages/` só mostra as telas; as regras ficam em `src/features/`.**
+
+Pra começar uma funcionalidade, procure o comentário `TODO (Ingryd)` no topo de cada aba em `src/pages/viagem/`: ele diz o que construir e quais tabelas usar.
 
 ## Configuração
 
-Copie `.env.example` para `.env.local` e preencha os valores. O `.env.local` nunca vai para o GitHub.
+As chaves do Supabase ficam no arquivo `.env.local`, que nunca vai para o GitHub. Peça os valores pro Victor.
 
 ## Etapas
 
-- [x] 1. Estrutura inicial
-- [ ] 2. Supabase e login
-- [ ] 3. Viagens
-- [ ] 4. Destinos e roteiro
-- [ ] 5. Orçamento, gastos e câmbio
-- [ ] 6. Checklists e favoritos
-- [ ] 7. Calendário e clima
-- [ ] 8. Dashboard inteligente
-- [ ] 9. Memórias (fotos)
+- [x] 1. Estrutura inicial (site + PWA)
+- [ ] 2. Supabase: banco, login e comboio (quem vê o quê)
+- [ ] 3. Viagens e destinos (com mapa)
+- [ ] 4. Transportes
+- [ ] 5. Financeiro e câmbio
+- [ ] 6. Fotos
+- [ ] 7. Overview juntando tudo
+
+Ideias pra depois: checklists, favoritos, calendário, clima.

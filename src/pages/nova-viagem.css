@@ -1,0 +1,354 @@
+/* Onboarding: mapa em tela cheia + painel com um passo por vez */
+
+.onb {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #1a1009;
+}
+
+.onb-logo {
+  position: absolute;
+  z-index: 2;
+  top: 20px;
+  left: 20px;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  color: var(--dourado-claro);
+}
+
+/* No celular o painel sobe de baixo, como uma gaveta */
+.onb-painel {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 72dvh;
+  overflow-y: auto;
+  padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+  border-radius: 28px 28px 0 0;
+  background: var(--cor-fundo);
+  box-shadow: 0 -12px 40px rgb(0 0 0 / 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.onb-progresso {
+  display: flex;
+  gap: 6px;
+}
+
+.onb-progresso span {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: #ead7b4;
+  transition: background 0.4s;
+}
+
+.onb-progresso span.feito {
+  background: var(--laranja);
+}
+
+.onb-passo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: onb-entra 0.35s ease-out;
+}
+
+@keyframes onb-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.onb-passo h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.onb-sub {
+  margin: 8px 0 0;
+  color: var(--cor-texto-suave);
+  line-height: 1.5;
+}
+
+.onb-rotulo {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.onb-campo,
+.onb-busca {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onb-campo input,
+.onb-campo select,
+.onb-busca input {
+  min-height: 54px;
+  width: 100%;
+  padding: 0 16px;
+  border: 1px solid #ead7b4;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--cor-texto);
+  font: inherit;
+}
+
+.onb-campo input:focus,
+.onb-campo select:focus,
+.onb-busca input:focus {
+  outline: none;
+  border-color: var(--caramelo);
+  box-shadow: 0 0 0 4px rgb(255 157 0 / 0.22);
+}
+
+/* Sugestões da busca */
+.onb-sugestoes {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid #ead7b4;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgb(42 26 12 / 0.18);
+}
+
+.onb-sugestoes button {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.onb-sugestoes button:hover,
+.onb-sugestoes button:focus-visible {
+  background: var(--cor-fundo);
+  outline: none;
+}
+
+.onb-sugestoes small,
+.onb-destino-nome small {
+  display: block;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.onb-sugestao-vazia {
+  padding: 12px;
+  color: var(--cor-texto-suave);
+}
+
+/* Selo com a sigla do país, tipo "FR" */
+.onb-codigo {
+  flex: none;
+  width: 36px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--couro);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* Lista de destinos escolhidos */
+.onb-destinos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onb-destinos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px 10px 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  animation: onb-entra 0.3s ease-out;
+}
+
+.onb-numero {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--laranja);
+  color: var(--cor-texto);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.onb-destino-nome {
+  flex: 1;
+  min-width: 0;
+}
+
+.onb-acoes {
+  display: flex;
+}
+
+.onb-acoes button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto-suave);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.onb-acoes button:hover:not(:disabled) {
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+.onb-acoes button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.onb-datas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.onb-destaque {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  color: var(--couro);
+}
+
+.onb-rodape {
+  display: flex;
+  gap: 12px;
+}
+
+.onb-rodape .onb-botao {
+  flex: 1;
+}
+
+.onb-botao {
+  min-height: 54px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--couro);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgb(123 84 47 / 0.28);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.onb-botao:hover:not(:disabled) {
+  background: #664423;
+  transform: translateY(-1px);
+}
+
+.onb-botao:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.onb-voltar {
+  min-height: 54px;
+  padding: 0 20px;
+  border: 1px solid #ead7b4;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.onb-voltar:hover {
+  background: #ffffff;
+}
+
+.onb-link {
+  padding: 16px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 16px;
+  background: #ffffff;
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.onb-erro {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #fde6dc;
+  color: #8a2c0d;
+}
+
+/* ---------- Computador: painel flutuando à esquerda ---------- */
+@media (min-width: 900px) {
+  .onb-logo {
+    top: 32px;
+    left: 40px;
+    font-size: 26px;
+  }
+
+  .onb-painel {
+    top: 88px;
+    left: 40px;
+    right: auto;
+    bottom: auto;
+    width: 440px;
+    max-height: calc(100dvh - 128px);
+    padding: 28px;
+    border-radius: 28px;
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+  }
+
+  .onb-passo h1 {
+    font-size: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-passo,
+  .onb-destinos li {
+    animation: none;
+  }
+}

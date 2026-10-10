@@ -1,44 +1,22 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# dependências
 node_modules/
 
-# Expo
-.expo/
+# build
 dist/
-web-build/
-expo-env.d.ts
+dev-dist/
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# logs
+*.log
 
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
+# variáveis locais (nunca vão pro GitHub)
 .env
 .env*.local
 
-# typescript
+# sistema / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
 *.tsbuildinfo
 
-
-
-# generated native folders
-/ios
-/android
+# configurações pessoais do Claude (os comandos em .claude/commands vão pro GitHub)
+.claude/settings.local.json

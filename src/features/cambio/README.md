@@ -1,3 +1,3 @@
 # Câmbio
 
-Registro das compras de moeda estrangeira: quanto foi comprado, quanto custou e a taxa. Também busca as cotações do dia (API Frankfurter).
+Compras de moeda (ex.: euro) com a cotação paga. Calcula a cotação média e compara com a de hoje (API Frankfurter).

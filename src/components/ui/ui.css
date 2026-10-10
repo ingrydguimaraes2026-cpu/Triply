@@ -1,0 +1,139 @@
+/* Estilos das peças de components/ui */
+
+.cartao-ui {
+  background: #ffffff;
+  border: 1px solid #f0e2c8;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgb(59 39 21 / 0.04), 0 8px 24px rgb(59 39 21 / 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.cartao-ui-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cartao-ui-topo h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--cor-texto);
+}
+
+.cartao-ui-topo h2 svg {
+  color: var(--caramelo);
+}
+
+.cartao-ui-topo a {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--couro);
+  text-decoration: none;
+}
+
+.cartao-ui-topo a:hover {
+  text-decoration: underline;
+}
+
+/* Cabeçalho das abas */
+.cabecalho-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cabecalho-pagina h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.cabecalho-pagina p {
+  margin: 6px 0 0;
+  color: var(--cor-texto-suave);
+}
+
+/* Estado vazio */
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 48px 24px;
+  border: 1.5px dashed #ead7b4;
+  border-radius: 24px;
+  background: rgb(255 255 255 / 0.5);
+}
+
+.vazio.compacto {
+  padding: 20px 16px;
+  border-radius: 18px;
+}
+
+.vazio-icone {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 18px;
+  background: #ffe7b8;
+  color: var(--couro);
+}
+
+.vazio.compacto .vazio-icone {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.vazio-titulo {
+  margin: 0;
+  font-weight: 700;
+}
+
+.vazio-texto {
+  margin: 0 0 8px;
+  max-width: 360px;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Avatar */
+.avatar {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: var(--caramelo);
+  color: #ffffff;
+  font-weight: 800;
+  object-fit: cover;
+}
+
+/* Botão secundário (contorno) */
+.botao.secundario {
+  background: transparent;
+  color: var(--cor-texto);
+  border: 1px solid #ead7b4;
+}
+
+.botao.secundario:hover {
+  background: #ffffff;
+}

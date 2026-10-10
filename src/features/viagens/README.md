@@ -1,3 +1,3 @@
 # Viagens
 
-Criar, editar, listar e excluir viagens. Uma viagem tem nome, datas, moeda principal e capa.
+Criar, editar e listar viagens. Uma viagem tem nome, datas e moeda principal.

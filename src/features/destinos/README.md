@@ -1,3 +1,3 @@
-# Destinos e trajetos
+# Destinos
 
-Cidades que fazem parte de uma viagem e como ir de uma à outra (voo, trem, carro...).
+Lugares da viagem, na ordem. Viram as bandeirinhas do mapa no Overview.

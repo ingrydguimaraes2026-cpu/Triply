@@ -1,0 +1,81 @@
+/* Mapa escuro em tons de couro */
+.mapa {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 60% 40%, #2c1d10 0%, #1a1009 70%);
+}
+
+.mapa svg {
+  display: block;
+}
+
+.mapa-pais {
+  fill: #3a2716;
+  stroke: #573b22;
+  stroke-width: 0.6;
+  transition: fill 0.6s;
+}
+
+.mapa-pais.aceso {
+  fill: #7b542f;
+  stroke: #b6771d;
+}
+
+.mapa-rota {
+  fill: none;
+  stroke: #ffcf71;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 9;
+  animation: mapa-rota-anda 1.2s linear infinite;
+}
+
+@keyframes mapa-rota-anda {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.mapa-pino-centro {
+  fill: #ff9d00;
+  stroke: #1a1009;
+  stroke-width: 3;
+}
+
+.mapa-pino-onda {
+  fill: #ff9d00;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mapa-pino-pulsa 2.4s ease-out infinite;
+}
+
+@keyframes mapa-pino-pulsa {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.mapa-pino-nome {
+  fill: #fff6e5;
+  font-size: 14px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #1a1009;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-rota,
+  .mapa-pino-onda {
+    animation: none;
+  }
+}

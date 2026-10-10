@@ -1,46 +1,37 @@
 {
-  "name": "triply",
-  "main": "expo-router/entry",
-  "version": "1.0.0",
+  "name": "together",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@expo/ui": "~57.0.22",
-    "eslint-config-expo": "~57.0.2",
-    "expo": "~57.0.27",
-    "expo-constants": "~57.0.21",
-    "expo-device": "~57.0.2",
-    "expo-font": "~57.0.4",
-    "expo-glass-effect": "~57.0.4",
-    "expo-image": "~57.0.5",
-    "expo-linking": "~57.0.12",
-    "expo-router": "~57.0.25",
-    "expo-splash-screen": "~57.0.9",
-    "expo-status-bar": "~57.0.1",
-    "expo-symbols": "~57.0.3",
-    "expo-system-ui": "~57.0.4",
-    "expo-web-browser": "~57.0.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-native": "0.86.3",
-    "react-native-gesture-handler": "~2.32.0",
-    "react-native-reanimated": "4.5.1",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0",
-    "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.10.1"
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@supabase/supabase-js": "^2.117.3",
+    "d3-geo": "^3.1.1",
+    "lucide-react": "^1.55.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.4.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
-    "eslint": "^9.39.5",
-    "eslint-config-expo": "~57.0.2",
-    "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
-  },
-  "private": true
+    "@types/d3-geo": "^3.1.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vite-plugin-pwa": "^2.0.0"
+  }
 }
