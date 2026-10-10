@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router'
+import RotaProtegida from './features/auth/RotaProtegida'
 import Login from './pages/Login'
 import NovaViagem from './pages/NovaViagem'
 import ViagemLayout from './pages/viagem/ViagemLayout'
@@ -12,16 +13,22 @@ import Comboio from './pages/viagem/Comboio'
 export const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/login" replace /> },
   { path: '/login', element: <Login /> },
-  { path: '/nova-viagem', element: <NovaViagem /> },
   {
-    path: '/viagem/:id',
-    element: <ViagemLayout />,
+    // Daqui pra baixo só entra quem fez login
+    element: <RotaProtegida />,
     children: [
-      { index: true, element: <Overview /> },
-      { path: 'transportes', element: <Transportes /> },
-      { path: 'financeiro', element: <Financeiro /> },
-      { path: 'fotos', element: <Fotos /> },
-      { path: 'comboio', element: <Comboio /> },
+      { path: '/nova-viagem', element: <NovaViagem /> },
+      {
+        path: '/viagem/:id',
+        element: <ViagemLayout />,
+        children: [
+          { index: true, element: <Overview /> },
+          { path: 'transportes', element: <Transportes /> },
+          { path: 'financeiro', element: <Financeiro /> },
+          { path: 'fotos', element: <Fotos /> },
+          { path: 'comboio', element: <Comboio /> },
+        ],
+      },
     ],
   },
 ])
