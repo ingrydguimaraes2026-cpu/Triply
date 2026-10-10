@@ -107,7 +107,7 @@ export default function NovaViagem() {
     setBusca('')
   }
 
-  function remover(id: number) {
+  function remover(id: string) {
     setDestinos(destinos.filter((d) => d.id !== id))
   }
 
@@ -200,7 +200,7 @@ export default function NovaViagem() {
                         <span className="onb-codigo">{c.codigoPais}</span>
                         <span>
                           <strong>{c.nome}</strong>
-                          <small>{[c.regiao, c.pais].filter(Boolean).join(', ')}</small>
+                          <small>{[c.tipo, [c.regiao, c.pais].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}</small>
                         </span>
                       </button>
                     </li>
@@ -216,7 +216,7 @@ export default function NovaViagem() {
                     <span className="onb-numero">{i + 1}</span>
                     <span className="onb-destino-nome">
                       <strong>{d.nome}</strong>
-                      <small>{d.pais}</small>
+                      <small>{[d.tipo, d.pais].filter(Boolean).join(' · ')}</small>
                     </span>
                     <span className="onb-acoes">
                       <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
