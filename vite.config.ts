@@ -14,8 +14,8 @@ export default defineConfig({
         short_name: 'Triply',
         description: 'Planeje a viagem com seu comboio, num lugar só.',
         lang: 'pt-BR',
-        theme_color: '#142132',
-        background_color: '#F4F6F8',
+        theme_color: '#7B542F',
+        background_color: '#FFF6E5',
         display: 'standalone',
         start_url: '/',
         icons: [

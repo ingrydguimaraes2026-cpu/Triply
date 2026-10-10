@@ -1,13 +1,22 @@
-/* Cores e medidas do site. Mude aqui e muda em tudo. */
+/* Cores e medidas do site. Mude aqui e muda em tudo.
+   Paleta "Couro e laranja" do Color Hunt: 7B542F · B6771D · FF9D00 · FFCF71
+   https://colorhunt.co/palette/7b542fb6771dff9d00ffcf71
+   Dourado e laranja NÃO servem pra texto (pouco contraste): só fundos, barras e selos. */
 :root {
-  --cor-fundo: #f4f6f8;
+  --couro: #7b542f;
+  --caramelo: #b6771d;
+  --laranja: #ff9d00;
+  --dourado-claro: #ffcf71;
+
+  --cor-fundo: #fff6e5;
   --cor-cartao: #ffffff;
-  --cor-texto: #142132;
-  --cor-texto-suave: #3a4756;
-  --cor-borda: #dde3e9;
-  --cor-comboio: #0e6b6a; /* verde: compartilhado com o comboio */
-  --cor-comboio-fundo: #e3f1f0;
-  --cor-pessoal: #b4410c; /* laranja: só você vê */
+  --cor-texto: #3b2715;
+  --cor-texto-suave: #7b542f;
+  --cor-borda: #f0dfc0;
+  --cor-comboio: var(--couro); /* compartilhado com o comboio */
+  --cor-comboio-fundo: #ffe7b8;
+  --cor-pessoal: #9a5b00; /* só você vê (laranja escurecido pra dar pra ler) */
+  --cor-pessoal-fundo: var(--laranja);
   --raio: 14px;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: var(--cor-texto);
@@ -49,7 +58,7 @@ a {
   padding: 0 20px;
   border: 0;
   border-radius: 12px;
-  background: var(--cor-texto);
+  background: var(--couro);
   color: #ffffff;
   font: inherit;
   font-weight: 700;
@@ -66,7 +75,7 @@ a {
 .campo input {
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid #c9d1da;
+  border: 1px solid #e0c99d;
   border-radius: 12px;
   font: inherit;
 }
