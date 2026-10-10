@@ -17,3 +17,6 @@ dev-dist/
 .vscode/*
 !.vscode/extensions.json
 *.tsbuildinfo
+
+# configurações pessoais do Claude (os comandos em .claude/commands vão pro GitHub)
+.claude/settings.local.json

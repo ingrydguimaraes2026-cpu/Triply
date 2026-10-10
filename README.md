@@ -11,6 +11,8 @@ O que ele vai fazer:
 - **Fotos**: feed com as melhores fotos de cada lugar
 - **Comboio**: o grupo que viaja junto
 
+**Ingryd, comece por aqui:** [`docs/COMO-TRABALHAR.md`](docs/COMO-TRABALHAR.md) (como pedir coisas pro Claude) e [`docs/glossario.md`](docs/glossario.md) (palavras técnicas explicadas).
+
 Requisitos completos em [`docs/conversa-2026-10-10-requisitos.md`](docs/conversa-2026-10-10-requisitos.md). Concorrentes em [`docs/benchmark.md`](docs/benchmark.md).
 
 ## Tecnologias
