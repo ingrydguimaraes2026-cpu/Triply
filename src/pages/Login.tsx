@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router'
-import IlustracaoViagem from '../features/auth/IlustracaoViagem'
 import {
   criarConta,
   enviarLinkNovaSenha,
@@ -9,14 +8,30 @@ import {
   mensagemDeErro,
   useSessao,
 } from '../features/auth/hooks'
+import '../features/auth/login.css'
 
 type Modo = 'entrar' | 'criar' | 'recuperar'
 
-const titulos: Record<Modo, string> = {
-  entrar: 'Bem-vindo de volta',
-  criar: 'Crie sua conta',
-  recuperar: 'Recuperar senha',
+const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
+  entrar: {
+    titulo: 'Bem-vindo de volta',
+    sub: 'Entre pra continuar planejando a próxima viagem.',
+    botao: 'Entrar',
+  },
+  criar: {
+    titulo: 'Crie sua conta',
+    sub: 'Leva menos de um minuto. Depois é só chamar o comboio.',
+    botao: 'Criar conta',
+  },
+  recuperar: {
+    titulo: 'Esqueceu a senha?',
+    sub: 'Digite seu e-mail e mandamos um link pra criar uma senha nova.',
+    botao: 'Enviar link',
+  },
 }
+
+// Foto: orla de Cannes, por Lens by Benji (Unsplash, licença gratuita)
+const FOTO = 'https://images.unsplash.com/photo-1779173851395-95b1c8df80db?auto=format&fit=crop&w=1400&q=80'
 
 // Tela de login: Google em primeiro (mais rápido) e e-mail/senha como alternativa.
 export default function Login() {
@@ -32,6 +47,8 @@ export default function Login() {
 
   if (carregando) return null
   if (sessao) return <Navigate to="/nova-viagem" replace />
+
+  const texto = textos[modo]
 
   function trocarModo(novo: Modo) {
     setModo(novo)
@@ -69,22 +86,18 @@ export default function Login() {
 
   return (
     <div className="login">
-      <aside className="login-arte">
-        <p className="login-marca">Together</p>
-        <IlustracaoViagem />
-        <div>
-          <h2 className="login-frase">Viajem juntos.</h2>
-          <p className="login-subfrase">Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
-        </div>
-      </aside>
+      <main className="login-lado">
+        <p className="login-logo">together</p>
 
-      <main className="login-lado-form">
         <div className="login-form">
-          <h1 style={{ margin: 0 }}>{titulos[modo]}</h1>
+          <div>
+            <h1 className="login-titulo">{texto.titulo}</h1>
+            <p className="login-sub">{texto.sub}</p>
+          </div>
 
           {modo !== 'recuperar' && (
             <>
-              <button type="button" className="botao botao-google" onClick={google}>
+              <button type="button" className="login-google" onClick={google}>
                 <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
                   <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
                   <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
@@ -94,92 +107,99 @@ export default function Login() {
                 Continuar com Google
               </button>
               <div className="login-divisor">
-                <span>ou com e-mail</span>
+                <span>ou</span>
               </div>
             </>
           )}
 
-          <form onSubmit={enviar} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <form onSubmit={enviar} className="login-campos">
             {modo === 'criar' && (
-              <div className="campo">
+              <div className="login-campo">
                 <label htmlFor="nome">Seu nome</label>
-                <input id="nome" required autoComplete="name" value={nome} onChange={(e) => setNome(e.target.value)} />
+                <input
+                  id="nome"
+                  required
+                  autoComplete="name"
+                  placeholder="Como o comboio te chama"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                />
               </div>
             )}
 
-            <div className="campo">
+            <div className="login-campo">
               <label htmlFor="email">E-mail</label>
               <input
                 id="email"
                 type="email"
                 required
                 autoComplete="email"
+                placeholder="voce@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             {modo !== 'recuperar' && (
-              <div className="campo">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <div className="login-campo">
+                <div className="login-campo-topo">
                   <label htmlFor="senha">Senha</label>
                   {modo === 'entrar' && (
-                    <button type="button" className="link" onClick={() => trocarModo('recuperar')}>
+                    <button type="button" className="link login-esqueci" onClick={() => trocarModo('recuperar')}>
                       Esqueci a senha
                     </button>
                   )}
                 </div>
-                <div className="campo-senha">
+                <div className="login-senha">
                   <input
                     id="senha"
                     type={mostrarSenha ? 'text' : 'password'}
                     required
                     minLength={modo === 'criar' ? 8 : undefined}
                     autoComplete={modo === 'criar' ? 'new-password' : 'current-password'}
-                    aria-describedby={modo === 'criar' ? 'dica-senha' : undefined}
+                    placeholder={modo === 'criar' ? 'Mínimo de 8 caracteres' : '••••••••'}
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                   />
                   <button
                     type="button"
-                    className="link"
+                    className="login-olho"
                     onClick={() => setMostrarSenha(!mostrarSenha)}
                     aria-label={mostrarSenha ? 'Esconder senha' : 'Mostrar senha'}
+                    aria-pressed={mostrarSenha}
                   >
-                    {mostrarSenha ? 'Esconder' : 'Mostrar'}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                      <circle cx="12" cy="12" r="3" />
+                      {mostrarSenha && <path d="M4 4l16 16" />}
+                    </svg>
                   </button>
                 </div>
-                {modo === 'criar' && (
-                  <small id="dica-senha" style={{ color: 'var(--cor-texto-suave)' }}>
-                    Pelo menos 8 caracteres.
-                  </small>
-                )}
               </div>
             )}
 
             {erro && (
-              <p role="alert" className="login-mensagem login-erro">
+              <p role="alert" className="login-msg login-msg-erro">
                 {erro}
               </p>
             )}
             {aviso && (
-              <p role="status" className="login-mensagem login-aviso">
+              <p role="status" className="login-msg login-msg-aviso">
                 {aviso}
               </p>
             )}
 
-            <button type="submit" className="botao" disabled={enviando}>
-              {enviando
-                ? 'Aguarde...'
-                : modo === 'entrar'
-                  ? 'Entrar'
-                  : modo === 'criar'
-                    ? 'Criar conta'
-                    : 'Enviar link'}
+            <button type="submit" className="login-enviar" disabled={enviando}>
+              {enviando ? 'Aguarde…' : texto.botao}
+              {!enviando && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              )}
             </button>
           </form>
 
-          <p style={{ margin: 0, textAlign: 'center', color: 'var(--cor-texto-suave)' }}>
+          <p className="login-trocar">
             {modo === 'entrar' ? (
               <>
                 Ainda não tem conta?{' '}
@@ -189,7 +209,7 @@ export default function Login() {
               </>
             ) : (
               <>
-                {modo === 'criar' ? 'Já tem conta? ' : 'Lembrou? '}
+                {modo === 'criar' ? 'Já tem conta? ' : 'Lembrou a senha? '}
                 <button type="button" className="link" onClick={() => trocarModo('entrar')}>
                   Entrar
                 </button>
@@ -197,7 +217,46 @@ export default function Login() {
             )}
           </p>
         </div>
+
+        <p className="login-credito">
+          Foto: Cannes, por{' '}
+          <a href="https://unsplash.com/photos/IrdbuHJuKnM" target="_blank" rel="noreferrer">
+            Lens by Benji
+          </a>{' '}
+          no Unsplash
+        </p>
       </main>
+
+      <aside className="login-foto">
+        <img src={FOTO} alt="Orla de Cannes com palmeiras ao pôr do sol" />
+        <p className="login-logo login-logo-foto" aria-hidden="true">
+          together
+        </p>
+
+        <div className="login-rota" aria-hidden="true">
+          <span>Nice</span>
+          <i />
+          <span>Mônaco</span>
+          <i />
+          <span>Milão</span>
+        </div>
+
+        <div className="login-foto-texto">
+          <h2>Viajem juntos.</h2>
+          <p>Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
+        </div>
+
+        <div className="login-cartao" aria-hidden="true">
+          <div className="login-avatares">
+            <span>I</span>
+            <span>V</span>
+          </div>
+          <div>
+            <strong>Café em Nice</strong>
+            <small>dividido entre 2 · comboio</small>
+          </div>
+        </div>
+      </aside>
     </div>
   )
 }
