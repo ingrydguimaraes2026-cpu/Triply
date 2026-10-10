@@ -233,29 +233,11 @@ export default function Login() {
           together
         </p>
 
-        <div className="login-rota" aria-hidden="true">
-          <span>Nice</span>
-          <i />
-          <span>Mônaco</span>
-          <i />
-          <span>Milão</span>
-        </div>
-
         <div className="login-foto-texto">
           <h2>Viajem juntos.</h2>
           <p>Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
         </div>
 
-        <div className="login-cartao" aria-hidden="true">
-          <div className="login-avatares">
-            <span>I</span>
-            <span>V</span>
-          </div>
-          <div>
-            <strong>Café em Nice</strong>
-            <small>dividido entre 2 · comboio</small>
-          </div>
-        </div>
       </aside>
     </div>
   )
