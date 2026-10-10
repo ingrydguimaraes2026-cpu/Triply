@@ -17,6 +17,10 @@ type Props = {
   // Espaço da tela que fica livre (sem o painel por cima), em pixels.
   // O mapa centraliza os destinos nessa área.
   areaLivre?: { esquerda: number; topo: number; direita: number; baixo: number }
+  // Limite de zoom ao enquadrar os pontos (padrão: bem perto)
+  zoomMaximo?: number
+  // Mostra "1.", "2."... antes do nome de cada ponto
+  numerar?: boolean
 }
 
 type Visao = { k: number; x: number; y: number }
@@ -41,7 +45,7 @@ function carregarPaises() {
 
 const suave = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-export default function MapaMundi({ pontos, areaLivre }: Props) {
+export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO, numerar = true }: Props) {
   const caixaRef = useRef<HTMLDivElement>(null)
   const [tamanho, setTamanho] = useState({ w: 0, h: 0 })
   const [paises, setPaises] = useState<Pais[]>([])
@@ -114,7 +118,7 @@ export default function MapaMundi({ pontos, areaLivre }: Props) {
       const ys = projetados.map((p) => p[1])
       const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)]
       const k = Math.min(
-        ZOOM_MAXIMO,
+        zoomMaximo,
         Math.max(1, Math.min((larguraLivre * 0.6) / Math.max(x1 - x0, 1), (alturaLivre * 0.6) / Math.max(y1 - y0, 1))),
       )
       alvo = { k, x: centroLivre[0] - k * ((x0 + x1) / 2), y: centroLivre[1] - k * ((y0 + y1) / 2) }
@@ -137,7 +141,7 @@ export default function MapaMundi({ pontos, areaLivre }: Props) {
     }
     quadro = requestAnimationFrame(passo)
     return () => cancelAnimationFrame(quadro)
-  }, [projetados, tamanho, areaLivre])
+  }, [projetados, tamanho, areaLivre, zoomMaximo])
 
   // Posição de cada destino na tela
   const naTela = projetados.map(([x, y]) => [visao.k * x + visao.x, visao.k * y + visao.y] as const)
@@ -173,7 +177,7 @@ export default function MapaMundi({ pontos, areaLivre }: Props) {
             <circle r="7" className="mapa-pino-centro" />
             {/* Nomes alternam em cima/embaixo pra cidades perto não se sobreporem */}
             <text x="14" y={i % 2 === 0 ? -12 : 24} className="mapa-pino-nome">
-              {i + 1}. {pontos[i].nome}
+              {numerar ? `${i + 1}. ${pontos[i].nome}` : pontos[i].nome}
             </text>
           </g>
         ))}
