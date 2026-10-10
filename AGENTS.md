@@ -25,4 +25,4 @@ Run `npm run build` and `npm run lint` before declaring any task done.
 - Env vars exposed to the browser must start with `VITE_`; never put secrets there.
 - Supabase: all tables shared across a "comboio" (trip group) need RLS policies. Photos are compressed client-side before upload.
 - Requirements: `docs/conversa-2026-10-10-requisitos.md`. Competitors: `docs/benchmark.md`.
-- The name "Triply" is provisional.
+- The name "Together" is provisional (was "Triply", which already exists). The GitHub repo is still called Triply.

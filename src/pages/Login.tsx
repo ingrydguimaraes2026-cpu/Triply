@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 export default function Login() {
   return (
     <main className="pagina" style={{ maxWidth: 420, paddingTop: 96 }}>
-      <h1 style={{ fontSize: 44, margin: 0 }}>Triply</h1>
+      <h1 style={{ fontSize: 44, margin: 0 }}>Together</h1>
       <p style={{ color: 'var(--cor-texto-suave)', marginTop: 0 }}>
         Planeje a viagem com seu comboio, num lugar só.
       </p>

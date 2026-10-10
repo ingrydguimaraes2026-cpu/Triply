@@ -25,7 +25,7 @@ Ninguém junta, de forma simples, estas três coisas:
 
 ## Nome: "Triply" já existe
 
-Pelo menos 4 produtos de viagem usam esse nome (iOS, AI planner, PWA no Product Hunt, projeto GitHub). **Trocar.**
+Pelo menos 4 produtos de viagem usam esse nome (iOS, AI planner, PWA no Product Hunt, projeto GitHub). **Trocado por "Together" (provisório).**
 
 ## Próximos passos
 

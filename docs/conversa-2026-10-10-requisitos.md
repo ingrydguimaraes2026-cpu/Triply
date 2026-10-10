@@ -2,7 +2,7 @@
 
 Resumo do áudio (15min). Só o que importa pro app; papo aleatório removido.
 
-> **Atualização:** vai ser **website primeiro, com PWA** (instala no celular pelo navegador), não app de loja. O nome **Triply vai mudar** porque já existe. Ver `benchmark.md`.
+> **Atualização:** vai ser **website primeiro, com PWA** (instala no celular pelo navegador), não app de loja. O nome **Triply mudou pra "Together"** (provisório), porque Triply já existe. Ver `benchmark.md`.
 
 ## Fluxo inicial
 

@@ -10,8 +10,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Triply',
-        short_name: 'Triply',
+        name: 'Together',
+        short_name: 'Together',
         description: 'Planeje a viagem com seu comboio, num lugar só.',
         lang: 'pt-BR',
         theme_color: '#7B542F',
