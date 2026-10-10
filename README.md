@@ -56,6 +56,7 @@ src/
 │   └── viagem/           abas: Overview, Transportes, Financeiro, Fotos, Comboio
 ├── router.tsx        ← qual endereço abre qual tela
 ├── features/         ← LÓGICA de cada módulo (viagens, financeiro, câmbio...)
+├── components/ui/    ← peças visuais reutilizáveis (Cartao, EstadoVazio, Avatar...)
 ├── lib/              ← conexões (Supabase, APIs) e utilidades
 ├── types/            ← formato dos dados
 └── styles/           ← cores e estilos gerais
@@ -65,6 +66,8 @@ docs/                 ← requisitos, benchmark, decisões
 ```
 
 Regra principal: **`src/pages/` só mostra as telas; as regras ficam em `src/features/`.**
+
+Pra começar uma funcionalidade, procure o comentário `TODO (Ingryd)` no topo de cada aba em `src/pages/viagem/`: ele diz o que construir e quais tabelas usar.
 
 ## Configuração
 
