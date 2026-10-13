@@ -6,7 +6,8 @@ import EstadoVazio from '../../components/ui/EstadoVazio'
 import './abas.css'
 
 /*
-  TODO (Ingryd): Financeiro
+  TODO (Ingryd): Financeiro. Specs completas: docs/specs/002-financeiro-gastos-e-divisao.md
+  e docs/specs/003-financeiro-orcamento-e-cambio.md
   - Orçamento: tabela "orcamentos" (uma linha por categoria, com valor_meta). Só ADM edita.
   - Gastos: tabela "gastos". Quem lançou, quem pagou (pago_por), valor, moeda, categoria.
     "pessoal = true" → só quem lançou vê (comprinhas). O banco já garante isso.

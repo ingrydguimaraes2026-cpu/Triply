@@ -6,7 +6,7 @@ import EstadoVazio from '../../components/ui/EstadoVazio'
 import './abas.css'
 
 /*
-  TODO (Ingryd): Transportes
+  TODO (Ingryd): Transportes. Spec completa: docs/specs/004-transportes.md
   - Buscar os trajetos da tabela "trajetos" (viagem_id = viagem.id), na ordem de "partida".
   - Formulário pra adicionar trajeto: origem e destino (da lista de destinos), meio
     ("trem", "onibus", "aviao", "carro", "barco", "a_pe", "outro"), partida, chegada,

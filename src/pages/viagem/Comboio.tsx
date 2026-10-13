@@ -8,7 +8,7 @@ import Cartao from '../../components/ui/Cartao'
 import './abas.css'
 
 /*
-  TODO (Ingryd): Comboio
+  TODO (Ingryd): Comboio. Spec completa: docs/specs/007-gestao-do-comboio.md
   - ADM poder remover alguém ou passar alguém pra ADM (tabela "comboio_membros", campo "papel").
   - Membro poder sair da viagem.
 */

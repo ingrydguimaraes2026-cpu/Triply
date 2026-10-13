@@ -6,7 +6,7 @@ import EstadoVazio from '../../components/ui/EstadoVazio'
 import './abas.css'
 
 /*
-  TODO (Ingryd): Fotos
+  TODO (Ingryd): Fotos. Spec completa: docs/specs/005-fotos.md
   - Só fotos (jpeg/webp), até 1 MB: comprimir no navegador antes de enviar
     (ex.: biblioteca "browser-image-compression").
   - Enviar pro Storage, bucket "fotos", no caminho `${viagem.id}/<nome-unico>.webp`.
