@@ -1,0 +1,280 @@
+/* Editor do roteiro (Overview > Roteiro > Editar).
+   Usa só as cores do global.css (paleta Couro e laranja). */
+
+.editor-roteiro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Texto só pra leitor de tela (avisos como "Milão agora está na posição 2") */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.editor-dica,
+.editor-nota {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.editor-nota {
+  font-weight: 400;
+}
+
+.editor-vazio {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed var(--caramelo);
+  border-radius: var(--raio);
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Cada destino: linha com número, nome e botões; a confirmação aparece embaixo */
+.editor-lista li {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.editor-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.editor-linha .roteiro-nome {
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-selo {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.editor-acoes {
+  flex: none;
+  display: flex;
+  gap: 4px;
+}
+
+/* Botões de 40px: bons pro dedo no celular */
+.editor-acoes button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--couro);
+  cursor: pointer;
+}
+
+.editor-acoes button:hover:not(:disabled) {
+  background: var(--cor-fundo);
+  border-color: var(--caramelo);
+}
+
+.editor-acoes button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.editor-acoes button:focus-visible,
+.editor-adicionar:focus-visible,
+.editor-sugestoes button:focus-visible {
+  outline: 3px solid rgb(255 157 0 / 0.45);
+  outline-offset: 2px;
+}
+
+/* Caixa "Remover Milão do roteiro?" */
+.editor-confirmacao {
+  margin: 10px 0 0 40px;
+  padding: 12px 14px;
+  border: 1px solid #ead7b4;
+  border-radius: var(--raio);
+  background: var(--cor-fundo);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.editor-confirmacao p {
+  margin: 0 0 6px;
+}
+
+.editor-confirmacao-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.editor-aviso {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 14px;
+}
+
+/* "+ Adicionar lugar" */
+.editor-adicionar {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px dashed var(--caramelo);
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--couro);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editor-adicionar:hover:not(:disabled) {
+  background: var(--cor-fundo);
+}
+
+/* Busca */
+.editor-busca {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-rotulo {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.editor-busca input {
+  min-height: 50px;
+  width: 100%;
+  padding: 0 16px;
+  border: 1px solid #ead7b4;
+  border-radius: var(--raio);
+  background: #ffffff;
+  color: var(--cor-texto);
+  font: inherit;
+}
+
+.editor-busca input::placeholder {
+  color: var(--cor-texto-suave);
+  opacity: 0.7;
+}
+
+.editor-busca input:focus {
+  outline: none;
+  border-color: var(--caramelo);
+  box-shadow: 0 0 0 4px rgb(255 157 0 / 0.22);
+}
+
+.editor-sugestoes {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid #ead7b4;
+  border-radius: var(--raio);
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgb(42 26 12 / 0.12);
+}
+
+.editor-sugestoes button {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-sugestoes button:hover {
+  background: var(--cor-fundo);
+}
+
+.editor-sugestoes small {
+  display: block;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.editor-sugestao-info {
+  padding: 8px 12px;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+/* Sigla do país, tipo "IT" */
+.editor-codigo {
+  flex: none;
+  width: 34px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--couro);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.editor-rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .editor-confirmacao {
+    margin-left: 0;
+  }
+
+  .editor-rodape .botao {
+    flex: 1;
+  }
+}
+
+/* Erro ao salvar (com botão opcional, ex.: "Recarregar roteiro") */
+.editor-erro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.editor-erro p {
+  margin: 0;
+  line-height: 1.5;
+}

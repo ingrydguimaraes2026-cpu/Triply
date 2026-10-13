@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router'
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
@@ -15,6 +15,8 @@ export type DadosDaViagem = {
   destinos: Tables<'destinos'>[]
   membros: Membro[]
   euSouAdm: boolean
+  // Troca a lista de destinos de todas as abas de uma vez (ex.: depois de salvar o roteiro)
+  atualizarDestinos: (destinos: Tables<'destinos'>[]) => void
 }
 
 type Estado =
@@ -26,6 +28,11 @@ type Estado =
 // Se a pessoa não estiver no comboio, as regras do banco escondem a viagem → "nao-encontrada".
 export function useViagem(id: string | undefined) {
   const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
+
+  // Fonte única: Overview, mapa, Transportes, Fotos... leem os destinos daqui
+  const atualizarDestinos = useCallback((destinos: Tables<'destinos'>[]) => {
+    setEstado((atual) => (atual.status === 'pronta' ? { status: 'pronta', dados: { ...atual.dados, destinos } } : atual))
+  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -57,6 +64,7 @@ export function useViagem(id: string | undefined) {
           destinos: destinos ?? [],
           membros: lista,
           euSouAdm: lista.some((m) => m.id === meuId && m.papel === 'adm'),
+          atualizarDestinos,
         },
       })
     }
@@ -65,7 +73,7 @@ export function useViagem(id: string | undefined) {
     return () => {
       cancelado = true
     }
-  }, [id])
+  }, [id, atualizarDestinos])
 
   return estado
 }

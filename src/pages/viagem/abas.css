@@ -320,3 +320,36 @@
   background: #fde6dc;
   color: #8a2c0d;
 }
+
+/* ---------- Overview: editar roteiro ---------- */
+.roteiro-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--couro);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.roteiro-editar:hover {
+  background: var(--cor-fundo);
+}
+
+.roteiro-adicionar {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.roteiro-legenda {
+  margin: 12px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  line-height: 1.4;
+}
