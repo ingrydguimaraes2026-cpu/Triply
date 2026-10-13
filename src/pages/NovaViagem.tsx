@@ -70,17 +70,17 @@ export default function NovaViagem() {
   const [link, setLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
 
-  // Busca enquanto a pessoa digita (espera ela parar um pouquinho)
+  // Busca enquanto a pessoa digita (espera ela parar um pouquinho).
+  // A lista anterior continua na tela até chegarem os resultados novos.
   const buscaValida = busca.trim().length >= 2
   useEffect(() => {
     if (!buscaValida) return
     const controle = new AbortController()
     const timer = setTimeout(() => {
       setBuscando(true)
-      buscarCidades(busca, controle.signal)
-        .then(setResultados)
-        .catch(() => {})
-        .finally(() => setBuscando(false))
+      buscarCidades(busca, setResultados, controle.signal).finally(() => {
+        if (!controle.signal.aborted) setBuscando(false)
+      })
     }, 250)
     return () => {
       clearTimeout(timer)
@@ -168,19 +168,23 @@ export default function NovaViagem() {
         {passo === 'destinos' && (
           <section className="onb-passo">
             <div>
-              <h1>Pra onde vocês vão?</h1>
-              <p className="onb-sub">Adicione as cidades na ordem da viagem. Dá pra mudar depois.</p>
+              <h1>Vamos montar seu roteiro?</h1>
+              <p className="onb-sub">
+                Adicione todas as cidades e países que deseja visitar, na ordem que preferir. Você poderá reorganizar tudo
+                depois.
+              </p>
             </div>
 
             <div className="onb-busca">
               <label htmlFor="busca" className="onb-rotulo">
-                Buscar cidade
+                Buscar cidade ou país
               </label>
               <input
                 id="busca"
                 type="search"
                 autoComplete="off"
                 autoFocus
+                placeholder="Ex.: Milão, Portugal, Lago de Como"
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 onKeyDown={(e) => {
@@ -205,9 +209,16 @@ export default function NovaViagem() {
                       </button>
                     </li>
                   ))}
+                  {buscando && sugestoes.length > 0 && (
+                    <li className="onb-sugestao-vazia onb-carregando" aria-live="polite">
+                      Buscando mais lugares…
+                    </li>
+                  )}
                 </ul>
               )}
             </div>
+
+            {destinos.length >= 2 && <p className="onb-dica">Seu roteiro · Use ↑ e ↓ para mudar a ordem</p>}
 
             {destinos.length > 0 && (
               <ol className="onb-destinos">
@@ -324,20 +335,27 @@ export default function NovaViagem() {
         {passo === 'comboio' && (
           <section className="onb-passo">
             <div>
-              <h1>Agora, chama o comboio</h1>
+              <h1>Essa viagem é de vocês.</h1>
+              <p className="onb-sub">Convide quem vai viajar com você para participar da mesma viagem no Together.</p>
               <p className="onb-sub">
-                Mande o link pra quem vai com você. Quem entrar vê o roteiro, divide os gastos e posta fotos. O link vale 7
-                dias.
+                Compartilhem o roteiro, organizem os planos, acompanhem os gastos e guardem as memórias juntos. Cada pessoa
+                poderá acessar a viagem pelo convite.
               </p>
             </div>
             {link && (
-              <div className="onb-link">
-                <span>{link.replace(/^https?:\/\//, '')}</span>
+              <div>
+                <div className="onb-link">
+                  <span>{link.replace(/^https?:\/\//, '')}</span>
+                </div>
+                <p className="onb-nota">Este link de convite vale por 7 dias.</p>
               </div>
             )}
             <button type="button" className="onb-botao" onClick={compartilhar}>
-              {copiado ? 'Link copiado!' : 'Compartilhar link'}
+              {copiado ? 'Link copiado!' : 'Compartilhar convite'}
             </button>
+            <p className="onb-nota onb-nota-centro">
+              Prefere fazer isso depois? Você pode convidar pessoas a qualquer momento.
+            </p>
             <button type="button" className="onb-voltar onb-pular" onClick={() => navegar(`/viagem/${viagemId}`)}>
               Ir pra viagem
             </button>
