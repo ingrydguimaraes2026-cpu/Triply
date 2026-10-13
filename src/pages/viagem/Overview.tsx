@@ -1,7 +1,17 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router'
-import { Camera, MapPin, TrainFront, Users, Wallet } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useBlocker } from 'react-router'
+import { Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
+import EditorRoteiro from '../../features/destinos/EditorRoteiro'
+import {
+  buscarDestinos,
+  idsRemovidos,
+  mensagemDeErroAoSalvar,
+  paraItem,
+  RoteiroDesatualizado,
+  salvarRoteiro,
+  type ItemRoteiro,
+} from '../../features/destinos/api'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -22,15 +32,98 @@ function contagem(inicio: string | null, fim: string | null) {
 
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
 export default function Overview() {
-  const { viagem, destinos, membros } = useViagemAtual()
+  const { viagem, destinos, membros, euSouAdm, atualizarDestinos } = useViagemAtual()
+
+  // Modo de edição do roteiro: enquanto edita, a lista E o mapa mostram o rascunho.
+  // null = não está editando (mostra o que está salvo).
+  const [rascunho, setRascunho] = useState<ItemRoteiro[] | null>(null)
+  const [abrirBusca, setAbrirBusca] = useState(false)
+  const [salvando, setSalvando] = useState(false)
+  const [erroAoSalvar, setErroAoSalvar] = useState<string | null>(null)
+  const [conflito, setConflito] = useState(false)
+
+  // Fonte única pra lista e mapa
+  const roteiro = useMemo(() => rascunho ?? destinos.map(paraItem), [rascunho, destinos])
 
   const pontos = useMemo(
     () =>
-      destinos
+      roteiro
         .filter((d) => d.latitude !== null && d.longitude !== null)
         .map((d) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude! })),
-    [destinos],
+    [roteiro],
   )
+
+  // Tem mudança no rascunho que ainda não foi salva?
+  const alterado =
+    rascunho !== null && rascunho.map((item) => item.chave).join() !== destinos.map((d) => d.id).join()
+
+  // Avisa antes de perder alterações: trocando de aba dentro do site...
+  const bloqueio = useBlocker(
+    ({ currentLocation, nextLocation }) => alterado && currentLocation.pathname !== nextLocation.pathname,
+  )
+  useEffect(() => {
+    if (bloqueio.state !== 'blocked') return
+    if (window.confirm('Você tem alterações no roteiro que não foram salvas. Sair mesmo assim?')) bloqueio.proceed()
+    else bloqueio.reset()
+  }, [bloqueio])
+
+  // ...e fechando ou recarregando a página
+  useEffect(() => {
+    if (!alterado) return
+    const avisar = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', avisar)
+    return () => window.removeEventListener('beforeunload', avisar)
+  }, [alterado])
+
+  function editar(comBusca: boolean) {
+    setRascunho(destinos.map(paraItem))
+    setAbrirBusca(comBusca)
+    setErroAoSalvar(null)
+    setConflito(false)
+  }
+
+  // Cancelar = jogar o rascunho fora; nada foi pro banco
+  function cancelar() {
+    setRascunho(null)
+    setErroAoSalvar(null)
+    setConflito(false)
+  }
+
+  // Depois de um conflito: busca o roteiro atual do banco e sai da edição
+  async function recarregarRoteiro() {
+    try {
+      atualizarDestinos(await buscarDestinos(viagem.id))
+      cancelar()
+    } catch {
+      setErroAoSalvar('Não deu pra recarregar o roteiro. Atualize a página.')
+    }
+  }
+
+  async function salvar() {
+    if (!rascunho || rascunho.length === 0) return
+    setSalvando(true)
+    setErroAoSalvar(null)
+    setConflito(false)
+    try {
+      // "Tudo ou nada": ou o roteiro inteiro é salvo, ou nada muda no banco.
+      // Só são apagados os destinos que a pessoa removeu de propósito.
+      const salvos = await salvarRoteiro(viagem.id, rascunho, idsRemovidos(destinos, rascunho))
+      atualizarDestinos(salvos) // todas as abas recebem a lista nova
+      setRascunho(null)
+    } catch (erro) {
+      if (erro instanceof RoteiroDesatualizado) {
+        setConflito(true)
+        setErroAoSalvar(
+          'O roteiro foi alterado em outro lugar (outra aba, outro aparelho ou outra pessoa) desde que você começou a editar. Nada foi salvo. Recarregue o roteiro para ver a versão atual e refaça suas mudanças.',
+        )
+      } else {
+        console.error('Erro ao salvar o roteiro:', erro)
+        setErroAoSalvar(mensagemDeErroAoSalvar(erro))
+      }
+    } finally {
+      setSalvando(false)
+    }
+  }
   const areaLivre = useMemo(() => ({ esquerda: 24, topo: 120, direita: 24, baixo: 24 }), [])
   const falta = contagem(viagem.data_inicio, viagem.data_fim)
 
@@ -46,21 +139,56 @@ export default function Overview() {
         </div>
       </section>
 
-      {/* Roteiro: destinos na ordem */}
-      <Cartao titulo="Roteiro" icone={MapPin} className="overview-roteiro">
-        <ol className="roteiro-lista">
-          {destinos.map((d, i) => (
-            <li key={d.id}>
-              <span className="roteiro-numero">{i + 1}</span>
-              <span className="roteiro-nome">
-                <strong>{d.nome}</strong>
-                <small>
-                  {d.chegada ? `${formatarData(d.chegada)}${d.saida ? ` – ${formatarData(d.saida)}` : ''}` : d.pais}
-                </small>
-              </span>
-            </li>
-          ))}
-        </ol>
+      {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
+      <Cartao
+        titulo={rascunho ? 'Editando roteiro' : 'Roteiro'}
+        icone={MapPin}
+        className="overview-roteiro"
+        acao={
+          euSouAdm &&
+          !rascunho && (
+            <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
+              <Pencil size={14} aria-hidden="true" /> Editar
+            </button>
+          )
+        }
+      >
+        {rascunho ? (
+          <EditorRoteiro
+            itens={rascunho}
+            aoMudar={setRascunho}
+            aoSalvar={salvar}
+            aoCancelar={cancelar}
+            salvando={salvando}
+            erro={erroAoSalvar}
+            acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
+            abrirBusca={abrirBusca}
+          />
+        ) : (
+          <>
+            <ol className="roteiro-lista">
+              {roteiro.map((d, i) => (
+                <li key={d.chave}>
+                  <span className="roteiro-numero">{i + 1}</span>
+                  <span className="roteiro-nome">
+                    <strong>{d.nome}</strong>
+                    <small>
+                      {d.chegada ? `${formatarData(d.chegada)}${d.saida ? ` – ${formatarData(d.saida)}` : ''}` : d.pais}
+                    </small>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {euSouAdm && (
+              <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
+                <Plus size={16} aria-hidden="true" /> Adicionar lugar
+              </button>
+            )}
+          </>
+        )}
+        {roteiro.length > 1 && (
+          <p className="roteiro-legenda">No mapa, as linhas mostram só a ordem do roteiro, não o caminho real.</p>
+        )}
       </Cartao>
 
       {/* TODO (Ingryd): quando o Financeiro existir, mostrar aqui o total gasto × orçamento */}

@@ -493,6 +493,26 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      salvar_roteiro: {
+        Args: { p_destinos: Json; p_removidos?: string[]; p_viagem: string }
+        Returns: {
+          chegada: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nome: string
+          ordem: number
+          pais: string | null
+          saida: string | null
+          viagem_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "destinos"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       [_ in never]: never
