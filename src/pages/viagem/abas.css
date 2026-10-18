@@ -12,11 +12,40 @@
   letter-spacing: 0.06em;
 }
 
-/* ---------- Overview: grade de cartões ---------- */
+/* ---------- Overview ----------
+   Celular e tablet: uma coluna, na ordem mapa → documentos → roteiro → resumos → fotos.
+   Computador largo: coluna larga (mapa, roteiro, fotos) + coluna estreita (documentos, resumos).
+   Cada cartão tem a altura do próprio conteúdo (nada de cartão esticado e vazio). */
 .overview {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+}
+
+.overview-principal,
+.overview-lateral {
+  display: contents;
+}
+
+.overview-mapa { order: 1; }
+.overview-documentos { order: 2; }
+.overview-roteiro { order: 3; }
+.overview-orcamento { order: 4; }
+.overview-trajeto { order: 5; }
+.overview-comboio-cartao { order: 6; }
+.overview-fotos { order: 7; }
+
+/* Resumo sem dados: uma linha com o próximo passo */
+.resumo-vazio {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.resumo-vazio a {
+  color: var(--couro);
+  font-weight: 700;
 }
 
 .overview-mapa {
@@ -123,29 +152,56 @@
   gap: 12px;
 }
 
+/* Tablet pra cima: roteiro vira uma linha do tempo na horizontal */
 @media (min-width: 760px) {
-  .overview {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .overview-roteiro:not(.editando) .roteiro-lista {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
   }
 
-  .overview-mapa,
-  .overview-fotos {
-    grid-column: 1 / -1;
+  .overview-roteiro:not(.editando) .roteiro-lista li {
+    flex: 1 0 120px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0 12px 0 0;
+    scroll-snap-align: start;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li + li::before {
+    display: none;
+  }
+
+  /* Linha tracejada ligando um número ao próximo */
+  .overview-roteiro:not(.editando) .roteiro-lista li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 36px;
+    right: 8px;
+    border-top: 2px dashed #ead7b4;
   }
 }
 
 @media (min-width: 1200px) {
   .overview {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    align-items: start;
+  }
+
+  .overview-principal,
+  .overview-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
   }
 
   .overview-mapa {
-    grid-column: span 2;
     min-height: 420px;
-  }
-
-  .overview-roteiro {
-    grid-column: span 1;
   }
 
   .overview-mapa-texto {

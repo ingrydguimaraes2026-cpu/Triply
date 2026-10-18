@@ -26,7 +26,6 @@ import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
-import EstadoVazio from '../../components/ui/EstadoVazio'
 import './abas.css'
 
 // Frase da contagem regressiva no topo do mapa
@@ -50,7 +49,7 @@ function quando(horario: string) {
 
 // "12 – 15 nov · 3 noites", ou o país quando não tem data
 function datasDoDestino(d: ItemRoteiro) {
-  if (!d.chegada) return d.pais
+  if (!d.chegada) return d.pais && d.pais !== d.nome ? d.pais : null
   if (!d.saida) return `Chega ${formatarData(d.chegada)}`
   const noites = contarNoites(d.chegada, d.saida)
   const periodo = d.chegada === d.saida ? formatarData(d.chegada) : `${formatarData(d.chegada)} – ${formatarData(d.saida)}`
@@ -191,160 +190,167 @@ export default function Overview() {
 
   return (
     <div className="overview">
-      {/* Mapa grande com o nome da viagem */}
-      <section className="overview-mapa">
-        <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
-        <div className="overview-mapa-texto">
-          {falta && <span className="overview-contagem">{falta}</span>}
-          <h1>{viagem.nome}</h1>
-          <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
-        </div>
-      </section>
+      {/* Coluna larga: mapa, roteiro e fotos */}
+      <div className="overview-principal">
+        <section className="overview-mapa">
+          <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
+          <div className="overview-mapa-texto">
+            {falta && <span className="overview-contagem">{falta}</span>}
+            <h1>{viagem.nome}</h1>
+            <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
+          </div>
+        </section>
 
-      {/* Spec 010: checklist de documentos, ao lado do mapa */}
-      <ChecklistDocumentos docs={docs} membros={membros} className="ao-lado-do-mapa" />
-
-      {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
-      <Cartao
-        titulo={rascunho ? 'Editando roteiro' : 'Roteiro'}
-        icone={MapPin}
-        className="overview-roteiro"
-        acao={
-          euSouAdm &&
-          !rascunho && (
-            <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
-              <Pencil size={14} aria-hidden="true" /> Editar
-            </button>
-          )
-        }
-      >
-        {rascunho ? (
-          <EditorRoteiro
-            itens={rascunho}
-            aoMudar={setRascunho}
-            aoSalvar={salvar}
-            aoCancelar={cancelar}
-            salvando={salvando}
-            erro={erroAoSalvar}
-            acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
-            abrirBusca={abrirBusca}
-            periodo={{ inicio: viagem.data_inicio, fim: viagem.data_fim }}
-          />
-        ) : (
-          <>
-            <ol className="roteiro-lista">
-              {roteiro.map((d, i) => (
-                <li key={d.chave} className={i === indiceDeHoje ? 'hoje' : undefined}>
-                  <span className="roteiro-numero">{i + 1}</span>
-                  <span className="roteiro-nome">
-                    <strong>
-                      {d.nome}
-                      {i === indiceDeHoje && <span className="selo-completar">hoje</span>}
-                    </strong>
-                    <small>{datasDoDestino(d)}</small>
+        {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
+        <Cartao
+          titulo={rascunho ? 'Editando roteiro' : 'Roteiro'}
+          icone={MapPin}
+          className={rascunho ? 'overview-roteiro editando' : 'overview-roteiro'}
+          acao={
+            euSouAdm &&
+            !rascunho && (
+              <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
+                <Pencil size={14} aria-hidden="true" /> Editar
+              </button>
+            )
+          }
+        >
+          {rascunho ? (
+            <EditorRoteiro
+              itens={rascunho}
+              aoMudar={setRascunho}
+              aoSalvar={salvar}
+              aoCancelar={cancelar}
+              salvando={salvando}
+              erro={erroAoSalvar}
+              acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
+              abrirBusca={abrirBusca}
+              periodo={{ inicio: viagem.data_inicio, fim: viagem.data_fim }}
+            />
+          ) : (
+            <>
+              <ol className="roteiro-lista">
+                {roteiro.map((d, i) => {
+                  const detalhe = datasDoDestino(d)
+                  return (
+                    <li key={d.chave} className={i === indiceDeHoje ? 'hoje' : undefined}>
+                      <span className="roteiro-numero">{i + 1}</span>
+                      <span className="roteiro-nome">
+                        <strong>
+                          {d.nome}
+                          {i === indiceDeHoje && <span className="selo-completar">hoje</span>}
+                        </strong>
+                        {detalhe && <small>{detalhe}</small>}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ol>
+              {sugerirPeriodo && (
+                <div className="editor-aviso roteiro-periodo">
+                  <span>
+                    As datas dos destinos vão de {formatarPeriodo(periodo.inicio, periodo.fim)}
+                    {viagem.data_inicio ? ', fora do período da viagem.' : '.'}
                   </span>
+                  <button type="button" className="botao secundario pequeno" onClick={ajustarPeriodo} disabled={ajustando}>
+                    {ajustando ? 'Ajustando…' : 'Usar como período da viagem'}
+                  </button>
+                </div>
+              )}
+              {euSouAdm && (
+                <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
+                  <Plus size={16} aria-hidden="true" /> Adicionar lugar
+                </button>
+              )}
+            </>
+          )}
+        </Cartao>
+
+        {/* Spec 006: as fotos mais recentes */}
+        <Cartao titulo="Fotos" icone={Camera} acao={<Link to="fotos">Abrir</Link>} className="overview-fotos">
+          {ultimasFotos.length > 0 ? (
+            <ul className="resumo-fotos">
+              {ultimasFotos.map((f) => (
+                <li key={f.id}>
+                  <Link to="fotos" aria-label={f.legenda ?? 'Ver fotos'}>
+                    {f.url && <img src={f.url} alt="" loading="lazy" />}
+                  </Link>
                 </li>
               ))}
-            </ol>
-            {sugerirPeriodo && (
-              <div className="editor-aviso roteiro-periodo">
-                <span>
-                  As datas dos destinos vão de {formatarPeriodo(periodo.inicio, periodo.fim)}
-                  {viagem.data_inicio ? ', fora do período da viagem.' : '.'}
-                </span>
-                <button type="button" className="botao secundario pequeno" onClick={ajustarPeriodo} disabled={ajustando}>
-                  {ajustando ? 'Ajustando…' : 'Usar como período da viagem'}
-                </button>
-              </div>
-            )}
-            {euSouAdm && (
-              <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
-                <Plus size={16} aria-hidden="true" /> Adicionar lugar
-              </button>
-            )}
-          </>
-        )}
-        {roteiro.length > 1 && (
-          <p className="roteiro-legenda">No mapa, as linhas mostram só a ordem do roteiro, não o caminho real.</p>
-        )}
-      </Cartao>
+            </ul>
+          ) : (
+            <p className="resumo-vazio">
+              As 5 melhores fotos de cada lugar aparecem aqui. <Link to="fotos">Enviar foto</Link>
+            </p>
+          )}
+        </Cartao>
+      </div>
 
-      {/* Spec 006: gasto até agora × orçamento */}
-      <Cartao titulo="Orçamento" icone={Wallet} acao={<Link to="financeiro">Abrir</Link>}>
-        {resumo === null ? (
-          <p className="carregando-texto">Carregando…</p>
-        ) : resumo === 'erro' ? (
-          <p className="carregando-texto">Não deu pra carregar agora.</p>
-        ) : resumo.gasto === 0 && resumo.meta === 0 ? (
-          <EstadoVazio compacto icone={Wallet} titulo="Sem gastos ainda" texto="Lance os gastos e defina quanto querem gastar por categoria." />
-        ) : (
-          <Link to="financeiro" className="resumo-orcamento">
-            <span className="numero">{formatarDinheiro(resumo.gasto, viagem.moeda_principal)}</span>
-            {resumo.meta > 0 ? (
-              <>
-                <span className="numero-legenda">
-                  de {formatarDinheiro(resumo.meta, viagem.moeda_principal)} · {Math.round((resumo.gasto / resumo.meta) * 100)}%
-                </span>
-                <span className={resumo.gasto > resumo.meta ? 'categoria-barra estourou' : 'categoria-barra'}>
-                  <span style={{ width: `${Math.min(100, (resumo.gasto / resumo.meta) * 100)}%` }} />
-                </span>
-              </>
-            ) : (
-              <span className="numero-legenda">gasto pelo comboio até agora</span>
-            )}
-          </Link>
-        )}
-      </Cartao>
+      {/* Coluna estreita: documentos e resumos */}
+      <div className="overview-lateral">
+        {/* Spec 010: checklist de documentos */}
+        <ChecklistDocumentos docs={docs} membros={membros} className="overview-documentos" />
 
-      {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}
-      <Cartao titulo="Próximo trajeto" icone={TrainFront} acao={<Link to="transportes">Abrir</Link>}>
-        {proximo ? (
-          <Link to="transportes" className="resumo-trajeto">
-            <strong>
-              {nomeDoDestino(proximo.origem_id)} → {nomeDoDestino(proximo.destino_id)}
-            </strong>
-            <span>
-              {meio(proximo.meio).nome} · {quando(proximo.partida!)}
-            </span>
-          </Link>
-        ) : (
-          <EstadoVazio
-            compacto
-            icone={TrainFront}
-            titulo={trajetos.estado.status === 'pronto' && trajetos.estado.trajetos.length > 0 ? 'Nenhum trajeto pela frente' : 'Nenhum trajeto'}
-            texto="Adicione como vocês vão de um destino pro outro."
-          />
-        )}
-      </Cartao>
+        {/* Spec 006: gasto até agora × orçamento */}
+        <Cartao titulo="Orçamento" icone={Wallet} acao={<Link to="financeiro">Abrir</Link>} className="overview-orcamento">
+          {resumo === null ? (
+            <p className="carregando-texto">Carregando…</p>
+          ) : resumo === 'erro' ? (
+            <p className="carregando-texto">Não deu pra carregar agora.</p>
+          ) : resumo.gasto === 0 && resumo.meta === 0 ? (
+            <p className="resumo-vazio">
+              Nenhum gasto ainda. <Link to="financeiro">Lançar gasto</Link>
+            </p>
+          ) : (
+            <Link to="financeiro" className="resumo-orcamento">
+              <span className="numero">{formatarDinheiro(resumo.gasto, viagem.moeda_principal)}</span>
+              {resumo.meta > 0 ? (
+                <>
+                  <span className="numero-legenda">
+                    de {formatarDinheiro(resumo.meta, viagem.moeda_principal)} · {Math.round((resumo.gasto / resumo.meta) * 100)}%
+                  </span>
+                  <span className={resumo.gasto > resumo.meta ? 'categoria-barra estourou' : 'categoria-barra'}>
+                    <span style={{ width: `${Math.min(100, (resumo.gasto / resumo.meta) * 100)}%` }} />
+                  </span>
+                </>
+              ) : (
+                <span className="numero-legenda">gasto pelo comboio até agora</span>
+              )}
+            </Link>
+          )}
+        </Cartao>
 
-      <Cartao titulo="Comboio" icone={Users} acao={<Link to="comboio">Abrir</Link>}>
-        <ul className="overview-comboio">
-          {membros.map((m) => (
-            <li key={m.id}>
-              <Avatar nome={m.nome} url={m.avatarUrl} tamanho={36} />
-              <span>{m.nome}</span>
-              {m.papel === 'adm' && <span className="selo">ADM</span>}
-            </li>
-          ))}
-        </ul>
-      </Cartao>
+        {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}
+        <Cartao titulo="Próximo trajeto" icone={TrainFront} acao={<Link to="transportes">Abrir</Link>} className="overview-trajeto">
+          {proximo ? (
+            <Link to="transportes" className="resumo-trajeto">
+              <strong>
+                {nomeDoDestino(proximo.origem_id)} → {nomeDoDestino(proximo.destino_id)}
+              </strong>
+              <span>
+                {meio(proximo.meio).nome} · {quando(proximo.partida!)}
+              </span>
+            </Link>
+          ) : (
+            <p className="resumo-vazio">
+              {trajetos.estado.status === 'pronto' && trajetos.estado.trajetos.length > 0 ? 'Nenhum trajeto pela frente.' : 'Nenhum trajeto ainda.'}{' '}
+              {euSouAdm && <Link to="transportes">Adicionar trajeto</Link>}
+            </p>
+          )}
+        </Cartao>
 
-      {/* Spec 006: as fotos mais recentes */}
-      <Cartao titulo="Fotos" icone={Camera} acao={<Link to="fotos">Abrir</Link>} className="overview-fotos">
-        {ultimasFotos.length > 0 ? (
-          <ul className="resumo-fotos">
-            {ultimasFotos.map((f) => (
-              <li key={f.id}>
-                <Link to="fotos" aria-label={f.legenda ?? 'Ver fotos'}>
-                  {f.url && <img src={f.url} alt="" loading="lazy" />}
-                </Link>
+        <Cartao titulo="Comboio" icone={Users} acao={<Link to="comboio">Abrir</Link>} className="overview-comboio-cartao">
+          <ul className="overview-comboio">
+            {membros.map((m) => (
+              <li key={m.id}>
+                <Avatar nome={m.nome} url={m.avatarUrl} tamanho={32} />
+                <span>{m.nome}</span>
+                {m.papel === 'adm' && <span className="selo">ADM</span>}
               </li>
             ))}
           </ul>
-        ) : (
-          <EstadoVazio compacto icone={Camera} titulo="Nenhuma foto ainda" texto="As melhores fotos de cada lugar aparecem aqui." />
-        )}
-      </Cartao>
+        </Cartao>
+      </div>
     </div>
   )
 }

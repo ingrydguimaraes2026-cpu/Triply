@@ -39,8 +39,8 @@ export default function ChecklistDocumentos({ docs, membros, className }: Props)
 
   if (checklist.paises.length === 0) {
     return (
-      <section className={`checklist-docs ${className ?? ''}`} aria-label="Documentos">
-        <header className="checklist-docs-topo">
+      <section className={`cartao-ui checklist-docs ${className ?? ''}`} aria-label="Documentos">
+        <header className="cartao-ui-topo checklist-docs-topo">
           <h2>
             <FileCheck size={18} aria-hidden="true" /> Documentos
           </h2>
@@ -110,8 +110,8 @@ export default function ChecklistDocumentos({ docs, membros, className }: Props)
   }
 
   return (
-    <section className={`checklist-docs ${className ?? ''}`} aria-label="Documentos">
-      <header className="checklist-docs-topo">
+    <section className={`cartao-ui checklist-docs ${className ?? ''}`} aria-label="Documentos">
+      <header className="cartao-ui-topo checklist-docs-topo">
         <h2>
           <FileCheck size={18} aria-hidden="true" /> Documentos
         </h2>

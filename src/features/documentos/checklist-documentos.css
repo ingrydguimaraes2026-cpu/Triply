@@ -1,34 +1,8 @@
 /* Checklist de documentos (spec 010), na Overview ao lado do mapa */
 
+/* O cartão em si usa .cartao-ui (mesmo visual dos outros cartões) */
 .checklist-docs {
-  display: flex;
-  flex-direction: column;
   gap: 10px;
-  min-width: 0;
-  padding: 18px;
-  border-radius: 28px;
-  background: var(--cor-cartao);
-  border: 1px solid var(--cor-borda);
-}
-
-.checklist-docs-topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.checklist-docs-topo h2 {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--fonte-titulo);
-  font-size: 20px;
-}
-
-.checklist-docs-topo h2 svg {
-  color: var(--caramelo);
 }
 
 .checklist-docs-conta {
@@ -239,12 +213,4 @@
   margin: 0;
   color: var(--cor-texto-suave);
   font-size: 12px;
-}
-
-/* Computador largo: mesma altura do mapa, com rolagem própria */
-@media (min-width: 1200px) {
-  .checklist-docs.ao-lado-do-mapa {
-    max-height: 420px;
-    overflow-y: auto;
-  }
 }
