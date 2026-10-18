@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import MapaMundi from '../features/mapa/MapaMundi'
-import { buscarCidades, moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
+import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
+import { useBuscaDeLugares } from '../features/destinos/useBuscaDeLugares'
+import { mover } from '../features/destinos/ordem'
 import { criarViagem } from '../features/viagens/api'
 import { criarConvite } from '../features/comboio/api'
 import './nova-viagem.css'
@@ -53,8 +55,6 @@ export default function NovaViagem() {
 
   const [destinos, setDestinos] = useState<Cidade[]>([])
   const [busca, setBusca] = useState('')
-  const [resultados, setResultados] = useState<Cidade[]>([])
-  const [buscando, setBuscando] = useState(false)
 
   const [ida, setIda] = useState('')
   const [volta, setVolta] = useState('')
@@ -70,24 +70,8 @@ export default function NovaViagem() {
   const [link, setLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
 
-  // Busca enquanto a pessoa digita (espera ela parar um pouquinho).
-  // A lista anterior continua na tela até chegarem os resultados novos.
-  const buscaValida = busca.trim().length >= 2
-  useEffect(() => {
-    if (!buscaValida) return
-    const controle = new AbortController()
-    const timer = setTimeout(() => {
-      setBuscando(true)
-      buscarCidades(busca, setResultados, controle.signal).finally(() => {
-        if (!controle.signal.aborted) setBuscando(false)
-      })
-    }, 250)
-    return () => {
-      clearTimeout(timer)
-      controle.abort()
-    }
-  }, [busca, buscaValida])
-  const sugestoes = buscaValida ? resultados : []
+  // Busca enquanto a pessoa digita (a lista anterior fica na tela até chegar a nova)
+  const { sugestoes, buscando, valida: buscaValida, escolherComEnter } = useBuscaDeLugares(busca, (c) => adicionar(c))
 
   const pontos = useMemo(
     () => destinos.map((d) => ({ nome: d.nome, latitude: d.latitude, longitude: d.longitude })),
@@ -103,7 +87,7 @@ export default function NovaViagem() {
   )
 
   function adicionar(cidade: Cidade) {
-    if (!destinos.some((d) => d.id === cidade.id)) setDestinos([...destinos, cidade])
+    setDestinos((atuais) => (atuais.some((d) => d.id === cidade.id) ? atuais : [...atuais, cidade]))
     setBusca('')
   }
 
@@ -111,11 +95,8 @@ export default function NovaViagem() {
     setDestinos(destinos.filter((d) => d.id !== id))
   }
 
-  function mover(indice: number, direcao: -1 | 1) {
-    const nova = [...destinos]
-    const alvo = indice + direcao
-    ;[nova[indice], nova[alvo]] = [nova[alvo], nova[indice]]
-    setDestinos(nova)
+  function moverDestino(indice: number, direcao: -1 | 1) {
+    setDestinos(mover(destinos, indice, direcao))
   }
 
   async function criar() {
@@ -188,9 +169,9 @@ export default function NovaViagem() {
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && sugestoes[0]) {
+                  if (e.key === 'Enter') {
                     e.preventDefault()
-                    adicionar(sugestoes[0])
+                    escolherComEnter()
                   }
                 }}
                 aria-controls="sugestoes"
@@ -230,12 +211,12 @@ export default function NovaViagem() {
                       <small>{[d.tipo, d.pais].filter(Boolean).join(' · ')}</small>
                     </span>
                     <span className="onb-acoes">
-                      <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
+                      <button type="button" onClick={() => moverDestino(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
                         ↑
                       </button>
                       <button
                         type="button"
-                        onClick={() => mover(i, 1)}
+                        onClick={() => moverDestino(i, 1)}
                         disabled={i === destinos.length - 1}
                         aria-label={`Descer ${d.nome}`}
                       >

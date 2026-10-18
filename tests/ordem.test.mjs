@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { join } from 'node:path'
-const { mover, aplicarOrdem, datasForaDeOrdem } = await import(join(import.meta.dirname, '../src/features/destinos/ordem.ts'))
+const { mover, aplicarOrdem, datasForaDeOrdem } = await import(new URL('../src/features/destinos/ordem.ts', import.meta.url))
 const L = [{ chave: 'a' }, { chave: 'b' }, { chave: 'c' }]
 const ch = (l) => l.map((x) => x.chave).join('')
 test('mover para cima e para baixo', () => {

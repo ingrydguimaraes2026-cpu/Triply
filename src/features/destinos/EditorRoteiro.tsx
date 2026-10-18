@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Plus, X } from 'lucide-react'
 import { buscarCidades, type Cidade } from './buscarCidades'
+import { useBuscaDeLugares } from './useBuscaDeLugares'
 import { contarVinculos, type ItemRoteiro, type Vinculos } from './api'
 import { datasForaDeOrdem, mover } from './ordem'
 import './editor-roteiro.css'
@@ -49,8 +50,6 @@ export default function EditorRoteiro({
 }: Props) {
   const [buscaAberta, setBuscaAberta] = useState(abrirBusca)
   const [busca, setBusca] = useState('')
-  const [resultados, setResultados] = useState<Cidade[]>([])
-  const [buscando, setBuscando] = useState(false)
   const [confirmacao, setConfirmacao] = useState<Confirmacao | null>(null)
   const [aviso, setAviso] = useState('') // lido pelo leitor de tela
   const campoRef = useRef<HTMLInputElement>(null)
@@ -59,23 +58,13 @@ export default function EditorRoteiro({
     if (buscaAberta) campoRef.current?.focus()
   }, [buscaAberta])
 
-  // Mesma busca da criação da viagem: espera parar de digitar e mantém a lista anterior enquanto carrega
-  const buscaValida = busca.trim().length >= 2
-  useEffect(() => {
-    if (!buscaValida) return
-    const controle = new AbortController()
-    const timer = setTimeout(() => {
-      setBuscando(true)
-      buscar(busca, setResultados, controle.signal).finally(() => {
-        if (!controle.signal.aborted) setBuscando(false)
-      })
-    }, 250)
-    return () => {
-      clearTimeout(timer)
-      controle.abort()
-    }
-  }, [busca, buscaValida, buscar])
-  const sugestoes = buscaValida ? resultados : []
+  // Mesma busca da criação da viagem
+  const {
+    sugestoes,
+    buscando,
+    valida: buscaValida,
+    escolherComEnter,
+  } = useBuscaDeLugares(busca, (cidade) => adicionar(cidade), buscar)
 
   function adicionar(cidade: Cidade) {
     const chave = `novo-${cidade.id}`
@@ -246,9 +235,9 @@ export default function EditorRoteiro({
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && sugestoes[0]) {
+              if (e.key === 'Enter') {
                 e.preventDefault()
-                adicionar(sugestoes[0])
+                escolherComEnter()
               }
               if (e.key === 'Escape') setBuscaAberta(false)
             }}
