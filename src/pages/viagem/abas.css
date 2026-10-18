@@ -425,3 +425,71 @@
   align-items: center;
   gap: 6px;
 }
+/* ---------- Gestão do comboio (spec 007) ---------- */
+.membros li.membro {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.membro-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.membro-linha .membro-nome {
+  flex: 1;
+}
+
+.membro-linha .selo {
+  margin-left: 0;
+}
+
+.membro-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 56px;
+}
+
+.convites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.convites li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.convite-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.convite-texto code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.convite-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.comboio-sair {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}

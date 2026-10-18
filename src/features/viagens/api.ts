@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { Cidade } from '../destinos/buscarCidades'
+import { apagarArquivosDaViagem } from '../fotos/api'
 
 type NovaViagem = {
   nome: string
@@ -47,4 +48,11 @@ export async function editarViagem(
   const { data, error } = await supabase.from('viagens').update(campos).eq('id', id).select('*').single()
   if (error) throw error
   return data
+}
+// Apaga a viagem inteira (só o ADM). Primeiro os arquivos das fotos, que o banco não apaga sozinho.
+export async function apagarViagem(id: string) {
+  await apagarArquivosDaViagem(id)
+  const { error, count } = await supabase.from('viagens').delete({ count: 'exact' }).eq('id', id)
+  if (error) throw error
+  if (count === 0) throw new Error('Sem permissão pra apagar a viagem')
 }

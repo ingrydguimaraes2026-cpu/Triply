@@ -1,28 +1,62 @@
-import { useState } from 'react'
-import { Check, Link2, Users } from 'lucide-react'
-import { criarConvite } from '../../features/comboio/api'
-import { useViagemAtual } from '../../features/viagens/hooks'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { Check, Copy, Link2, LogOut, MoreHorizontal, Ticket, Users } from 'lucide-react'
+import {
+  buscarConvites,
+  cancelarConvite,
+  criarConvite,
+  mudarPapel,
+  removerDoComboio,
+  UltimoAdm,
+  type Convite,
+} from '../../features/comboio/api'
+import { useViagemAtual, type Membro } from '../../features/viagens/hooks'
+import ApagarViagem from '../../features/viagens/ApagarViagem'
+import { formatarData } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
+import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
 
-/*
-  TODO (Ingryd): Comboio. Spec completa: docs/specs/007-gestao-do-comboio.md
-  - ADM poder remover alguém ou passar alguém pra ADM (tabela "comboio_membros", campo "papel").
-  - Membro poder sair da viagem.
-*/
+// Comboio (spec 007): quem vai, convites e sair da viagem. O ADM organiza as pessoas.
 export default function Comboio() {
-  const { viagem, membros, euSouAdm } = useViagemAtual()
+  const { viagem, membros, meuId, euSouAdm, recarregar } = useViagemAtual()
+  const navegar = useNavigate()
   const [link, setLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
-  const [erro, setErro] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
+  const [menuAberto, setMenuAberto] = useState<string | null>(null)
+  const [removendo, setRemovendo] = useState<Membro | null>(null)
+  const [saindo, setSaindo] = useState(false)
+  const [ocupado, setOcupado] = useState(false)
+  const [convites, setConvites] = useState<Convite[]>([])
+
+  const adms = membros.filter((m) => m.papel === 'adm')
+  const souUltimoAdm = euSouAdm && adms.length === 1
+  const sozinho = membros.length === 1
+
+  const carregarConvites = useCallback(async () => {
+    if (!euSouAdm) return []
+    return buscarConvites(viagem.id).catch(() => [])
+  }, [viagem.id, euSouAdm])
+
+  useEffect(() => {
+    let ativo = true
+    carregarConvites().then((lista) => {
+      if (ativo) setConvites(lista)
+    })
+    return () => {
+      ativo = false
+    }
+  }, [carregarConvites])
 
   async function convidar() {
-    setErro(false)
+    setErro(null)
     try {
       const novo = link ?? (await criarConvite(viagem.id))
       setLink(novo)
+      setConvites(await carregarConvites())
       if (navigator.share) {
         await navigator.share({ title: viagem.nome, text: `Bora planejar "${viagem.nome}" juntos?`, url: novo }).catch(() => {})
       } else {
@@ -30,7 +64,46 @@ export default function Comboio() {
         setCopiado(true)
       }
     } catch {
-      setErro(true)
+      setErro('Não deu pra gerar o convite. Tente de novo.')
+    }
+  }
+
+  async function acao(fazer: () => Promise<void>, mensagem: string) {
+    setOcupado(true)
+    setErro(null)
+    try {
+      await fazer()
+      await recarregar()
+      setMenuAberto(null)
+      setRemovendo(null)
+    } catch (e) {
+      console.error(mensagem, e)
+      setErro(e instanceof UltimoAdm ? 'A viagem precisa de pelo menos um ADM. Passe o ADM pra alguém antes.' : mensagem)
+    } finally {
+      setOcupado(false)
+    }
+  }
+
+  async function sair() {
+    setOcupado(true)
+    setErro(null)
+    try {
+      await removerDoComboio(viagem.id, meuId)
+      navegar('/viagens', { replace: true })
+    } catch (e) {
+      console.error('Erro ao sair da viagem:', e)
+      setErro(e instanceof UltimoAdm ? 'Passe o ADM pra alguém antes de sair.' : 'Não deu pra sair da viagem.')
+      setOcupado(false)
+    }
+  }
+
+  async function cancelar(codigo: string) {
+    try {
+      await cancelarConvite(codigo)
+      if (link?.endsWith(codigo)) setLink(null)
+      setConvites(await carregarConvites())
+    } catch {
+      setErro('Não deu pra cancelar o convite.')
     }
   }
 
@@ -51,25 +124,159 @@ export default function Comboio() {
 
       {erro && (
         <p role="alert" className="aviso-erro">
-          Não deu pra gerar o convite. Tente de novo.
+          {erro}
         </p>
       )}
       {link && <p className="link-convite">{link.replace(/^https?:\/\//, '')}</p>}
 
       <Cartao titulo="Quem vai" icone={Users}>
         <ul className="membros">
-          {membros.map((m) => (
-            <li key={m.id}>
-              <Avatar nome={m.nome} url={m.avatarUrl} tamanho={44} />
-              <span className="membro-nome">
-                <strong>{m.nome}</strong>
-                <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
-              </span>
-              {m.papel === 'adm' && <span className="selo">ADM</span>}
-            </li>
-          ))}
+          {membros.map((m) => {
+            const souEu = m.id === meuId
+            return (
+              <li key={m.id} className="membro">
+                <div className="membro-linha">
+                  <Avatar nome={m.nome} url={m.avatarUrl} tamanho={44} />
+                  <span className="membro-nome">
+                    <strong>
+                      {m.nome}
+                      {souEu && ' (você)'}
+                    </strong>
+                    <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
+                  </span>
+                  {m.papel === 'adm' && <span className="selo">ADM</span>}
+                  {euSouAdm && !sozinho && (
+                    <button
+                      type="button"
+                      className="botao-texto"
+                      aria-expanded={menuAberto === m.id}
+                      aria-label={`Opções de ${m.nome}`}
+                      onClick={() => setMenuAberto(menuAberto === m.id ? null : m.id)}
+                    >
+                      <MoreHorizontal size={20} aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+
+                {menuAberto === m.id && (
+                  <div className="membro-menu">
+                    {m.papel === 'membro' ? (
+                      <button type="button" className="botao secundario pequeno" disabled={ocupado} onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'adm'), 'Não deu pra mudar o papel.')}>
+                        Tornar ADM
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="botao secundario pequeno"
+                        disabled={ocupado || adms.length === 1}
+                        title={adms.length === 1 ? 'A viagem precisa de pelo menos um ADM' : undefined}
+                        onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'membro'), 'Não deu pra mudar o papel.')}
+                      >
+                        Tornar membro
+                      </button>
+                    )}
+                    {!souEu && (
+                      <button type="button" className="botao secundario pequeno" disabled={ocupado} onClick={() => setRemovendo(m)}>
+                        Remover
+                      </button>
+                    )}
+                    {adms.length === 1 && m.papel === 'adm' && <p className="form-dica">Único ADM: torne outra pessoa ADM antes.</p>}
+                  </div>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </Cartao>
+
+      {euSouAdm && (
+        <Cartao titulo="Convites ativos" icone={Ticket}>
+          {convites.length === 0 ? (
+            <p className="form-dica">Nenhum convite ativo. Toque em "Convidar" pra gerar um link.</p>
+          ) : (
+            <ul className="convites">
+              {convites.map((c) => (
+                <li key={c.codigo}>
+                  <span className="convite-texto">
+                    <code>{c.link.replace(/^https?:\/\//, '')}</code>
+                    <small>Vale até {formatarData(c.expiraEm.slice(0, 10))}</small>
+                  </span>
+                  <button type="button" className="botao-texto" aria-label="Copiar link" onClick={() => navigator.clipboard.writeText(c.link)}>
+                    <Copy size={16} aria-hidden="true" />
+                  </button>
+                  <button type="button" className="botao secundario pequeno" onClick={() => cancelar(c.codigo)}>
+                    Cancelar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Cartao>
+      )}
+
+      <div className="comboio-sair">
+        <button type="button" className="botao secundario" onClick={() => setSaindo(true)}>
+          <LogOut size={18} aria-hidden="true" /> {sozinho ? 'Apagar a viagem' : 'Sair da viagem'}
+        </button>
+      </div>
+
+      {removendo && (
+        <Gaveta titulo={`Remover ${removendo.nome.split(' ')[0]}?`} aoFechar={() => setRemovendo(null)}>
+          <div className="form">
+            <p className="form-dica">
+              {removendo.nome} perde o acesso à viagem na hora. Os gastos e fotos que essa pessoa lançou continuam aqui.
+            </p>
+            <div className="form-rodape">
+              <button type="button" className="botao secundario" onClick={() => setRemovendo(null)}>
+                Manter
+              </button>
+              <button
+                type="button"
+                className="botao perigo"
+                disabled={ocupado}
+                onClick={() => acao(() => removerDoComboio(viagem.id, removendo.id), 'Não deu pra remover essa pessoa.')}
+              >
+                Remover do comboio
+              </button>
+            </div>
+          </div>
+        </Gaveta>
+      )}
+
+      {saindo && (
+        <Gaveta titulo={sozinho ? 'Apagar a viagem?' : 'Sair da viagem?'} aoFechar={() => setSaindo(false)}>
+          {sozinho ? (
+            <>
+              <p className="form-dica">Você é a única pessoa nessa viagem, então sair é o mesmo que apagar.</p>
+              <ApagarViagem id={viagem.id} nome={viagem.nome} />
+            </>
+          ) : souUltimoAdm ? (
+            <div className="form">
+              <p className="form-aviso">Você é o único ADM. Passe o ADM pra alguém antes de sair (menu "⋯" ao lado da pessoa).</p>
+              <div className="form-rodape">
+                <button type="button" className="botao" onClick={() => setSaindo(false)}>
+                  Entendi
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="form">
+              <p className="form-dica">
+                Você deixa de ver “{viagem.nome}”. Seus gastos e fotos continuam pro comboio. Pra voltar, precisa de um convite novo.
+              </p>
+              {erro && <p className="form-erro">{erro}</p>}
+              <div className="form-rodape">
+                <button type="button" className="botao secundario" onClick={() => setSaindo(false)}>
+                  Ficar
+                </button>
+                <button type="button" className="botao perigo" onClick={sair} disabled={ocupado}>
+                  Sair da viagem
+                </button>
+              </div>
+            </div>
+          )}
+        </Gaveta>
+      )}
     </>
   )
 }
