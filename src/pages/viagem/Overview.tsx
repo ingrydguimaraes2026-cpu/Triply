@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -21,6 +21,7 @@ import { diaLocal, hora, proximoTrajeto } from '../../features/transportes/aviso
 import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
+import { useHospedagem } from '../../features/hospedagem/hooks'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -91,6 +92,9 @@ export default function Overview() {
   const ultimasFotos = fotos.estado.status === 'pronto' ? fotos.estado.fotos : []
   const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? 'Sem destino'
   const docs = useDocumentos(viagem, destinos, meuId)
+  const hospedagem = useHospedagem(viagem.id, destinos, meuId, membros.length)
+  const hospResumo = hospedagem.resumo
+  const proximaSemHospedagem = hospedagem.itens.find((i) => i.situacao === 'precisa' || i.situacao === 'sem-datas')
 
   // Tem mudança no rascunho que ainda não foi salva?
   const assinatura = (lista: ItemRoteiro[]) => lista.map((i) => `${i.chave}|${i.chegada ?? ''}|${i.saida ?? ''}`).join()
@@ -290,6 +294,31 @@ export default function Overview() {
       <div className="overview-lateral">
         {/* Spec 010: checklist de documentos */}
         <ChecklistDocumentos docs={docs} membros={membros} className="overview-documentos" />
+
+        {/* Spec 011: quantos destinos já têm onde ficar */}
+        <Cartao titulo="Hospedagem" icone={BedDouble} acao={<Link to="hospedagem">Abrir</Link>} className="overview-hospedagem">
+          {hospedagem.estado === 'carregando' ? (
+            <p className="carregando-texto">Carregando…</p>
+          ) : hospedagem.estado === 'erro' ? (
+            <p className="carregando-texto">Não deu pra carregar agora.</p>
+          ) : hospResumo.total === 0 ? (
+            <p className="resumo-vazio">Nenhum destino com pernoite ainda.</p>
+          ) : (
+            <Link to="hospedagem" className="resumo-orcamento">
+              <span className="numero">
+                {hospResumo.resolvidos} de {hospResumo.total}
+              </span>
+              <span className="numero-legenda">
+                {hospResumo.resolvidos === hospResumo.total
+                  ? 'destinos com hospedagem: tudo fechado'
+                  : `destinos com hospedagem${proximaSemHospedagem ? ` · falta ${proximaSemHospedagem.destino.nome}` : ''}`}
+              </span>
+              <span className="categoria-barra">
+                <span style={{ width: `${(hospResumo.resolvidos / hospResumo.total) * 100}%` }} />
+              </span>
+            </Link>
+          )}
+        </Cartao>
 
         {/* Spec 006: gasto até agora × orçamento */}
         <Cartao titulo="Orçamento" icone={Wallet} acao={<Link to="financeiro">Abrir</Link>} className="overview-orcamento">

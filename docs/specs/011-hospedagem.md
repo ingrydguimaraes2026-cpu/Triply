@@ -1,6 +1,6 @@
 # 011. Hospedagem
 
-**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Em andamento
+**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Pronto pra testar
 
 ## Objetivo
 Para cada destino do roteiro, o comboio busca onde ficar (Airbnb, Booking, Google Maps já preenchidos com cidade, datas e número de pessoas), junta as opções que cada um achou, vota, e o ADM fecha a escolhida. O app mostra quanto sai por pessoa e por noite e lança o valor como gasto.

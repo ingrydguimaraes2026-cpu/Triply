@@ -100,6 +100,7 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 | Transportes, Fotos, Comboio (papéis, convites, sair) | Pronto pra testar |
 | Minhas viagens (`/viagens`), Perfil (`/perfil`), Configurações da viagem | Pronto pra testar |
 | Documentos de entrada: checklist por país na Overview, ao lado do mapa, com prazo e fonte oficial | Pronto pra testar |
+| Hospedagem: busca pronta (Airbnb, Booking, Maps), opções do comboio, votos, escolhida pelo ADM, lançar como gasto | Pronto pra testar |
 | Página 404 e de erro | Pronto |
 
 ## 7. Banco de dados (Supabase)

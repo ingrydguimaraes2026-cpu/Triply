@@ -30,6 +30,7 @@
 .overview-mapa { order: 1; }
 .overview-documentos { order: 2; }
 .overview-roteiro { order: 3; }
+.overview-hospedagem { order: 4; }
 .overview-orcamento { order: 4; }
 .overview-trajeto { order: 5; }
 .overview-comboio-cartao { order: 6; }

@@ -13,6 +13,7 @@ Arquivos SQL que criam e alteram as tabelas do banco no Supabase, em ordem (o no
 - `20261018120400_comboio_sempre_com_adm.sql` (spec 007): a viagem nunca fica sem ADM; quem saiu continua com o nome visível nos gastos e fotos.
 - `20261018120500_avatares.sql` (spec 008): bucket público `avatares` (cada um só mexe na própria pasta).
 - `20261018130000_documentos_status.sql` (spec 010): tabela `documentos_status` (cada um marca o próprio checklist; o comboio vê).
+- `20261018140000_hospedagens.sql` (spec 011): tabelas `hospedagens` e `hospedagem_votos`, função `escolher_hospedagem` (só o ADM marca a escolhida; uma por destino).
 
 As 6 de 18/10 são testadas em `tests/banco-specs.test.mjs`.
 
