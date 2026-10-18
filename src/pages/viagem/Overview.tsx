@@ -12,7 +12,9 @@ import {
   salvarRoteiro,
   type ItemRoteiro,
 } from '../../features/destinos/api'
+import { contarNoites, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useViagemAtual } from '../../features/viagens/hooks'
+import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -30,9 +32,18 @@ function contagem(inicio: string | null, fim: string | null) {
   return 'Viagem concluída'
 }
 
+// "12 – 15 nov · 3 noites", ou o país quando não tem data
+function datasDoDestino(d: ItemRoteiro) {
+  if (!d.chegada) return d.pais
+  if (!d.saida) return `Chega ${formatarData(d.chegada)}`
+  const noites = contarNoites(d.chegada, d.saida)
+  const periodo = d.chegada === d.saida ? formatarData(d.chegada) : `${formatarData(d.chegada)} – ${formatarData(d.saida)}`
+  return noites === null ? periodo : `${periodo} · ${textoNoites(noites)}`
+}
+
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
 export default function Overview() {
-  const { viagem, destinos, membros, euSouAdm, atualizarDestinos } = useViagemAtual()
+  const { viagem, destinos, membros, euSouAdm, atualizarDestinos, atualizarViagem } = useViagemAtual()
 
   // Modo de edição do roteiro: enquanto edita, a lista E o mapa mostram o rascunho.
   // null = não está editando (mostra o que está salvo).
@@ -54,8 +65,30 @@ export default function Overview() {
   )
 
   // Tem mudança no rascunho que ainda não foi salva?
-  const alterado =
-    rascunho !== null && rascunho.map((item) => item.chave).join() !== destinos.map((d) => d.id).join()
+  const assinatura = (lista: ItemRoteiro[]) => lista.map((i) => `${i.chave}|${i.chegada ?? ''}|${i.saida ?? ''}`).join()
+  const alterado = rascunho !== null && assinatura(rascunho) !== assinatura(destinos.map(paraItem))
+
+  // Spec 001: sugerir o período da viagem a partir das datas dos destinos
+  const periodo = periodoDosDestinos(destinos)
+  const sugerirPeriodo =
+    euSouAdm &&
+    !rascunho &&
+    periodo &&
+    (periodo.inicio !== viagem.data_inicio || periodo.fim !== viagem.data_fim) &&
+    (!viagem.data_inicio || !viagem.data_fim || periodo.inicio < viagem.data_inicio || periodo.fim > viagem.data_fim)
+  const [ajustando, setAjustando] = useState(false)
+
+  async function ajustarPeriodo() {
+    if (!periodo) return
+    setAjustando(true)
+    try {
+      atualizarViagem(await editarViagem(viagem.id, { data_inicio: periodo.inicio, data_fim: periodo.fim }))
+    } catch (erro) {
+      console.error('Erro ao ajustar o período:', erro)
+    } finally {
+      setAjustando(false)
+    }
+  }
 
   // Avisa antes de perder alterações: trocando de aba dentro do site...
   const bloqueio = useBlocker(
@@ -163,6 +196,7 @@ export default function Overview() {
             erro={erroAoSalvar}
             acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
             abrirBusca={abrirBusca}
+            periodo={{ inicio: viagem.data_inicio, fim: viagem.data_fim }}
           />
         ) : (
           <>
@@ -172,13 +206,22 @@ export default function Overview() {
                   <span className="roteiro-numero">{i + 1}</span>
                   <span className="roteiro-nome">
                     <strong>{d.nome}</strong>
-                    <small>
-                      {d.chegada ? `${formatarData(d.chegada)}${d.saida ? ` – ${formatarData(d.saida)}` : ''}` : d.pais}
-                    </small>
+                    <small>{datasDoDestino(d)}</small>
                   </span>
                 </li>
               ))}
             </ol>
+            {sugerirPeriodo && (
+              <div className="editor-aviso roteiro-periodo">
+                <span>
+                  As datas dos destinos vão de {formatarPeriodo(periodo.inicio, periodo.fim)}
+                  {viagem.data_inicio ? ', fora do período da viagem.' : '.'}
+                </span>
+                <button type="button" className="botao secundario pequeno" onClick={ajustarPeriodo} disabled={ajustando}>
+                  {ajustando ? 'Ajustando…' : 'Usar como período da viagem'}
+                </button>
+              </div>
+            )}
             {euSouAdm && (
               <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
                 <Plus size={16} aria-hidden="true" /> Adicionar lugar

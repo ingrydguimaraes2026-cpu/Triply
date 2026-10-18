@@ -278,3 +278,45 @@
   margin: 0;
   line-height: 1.5;
 }
+
+/* Datas de cada destino (spec 001) */
+.editor-datas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding-left: 40px;
+}
+
+.editor-datas label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cor-texto-suave);
+}
+
+.editor-datas input {
+  min-height: 38px;
+  padding: 0 8px;
+  border: 1px solid #e0c99d;
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+}
+
+.editor-noites {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #ffe7b8;
+  color: var(--couro);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.editor-aviso-data {
+  font-size: 14px;
+}

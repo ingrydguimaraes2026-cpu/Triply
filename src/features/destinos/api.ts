@@ -68,6 +68,7 @@ export function mensagemDeErroAoSalvar(erro: unknown): string {
     typeof erro === 'object' && erro !== null && nome in erro ? String((erro as Record<string, unknown>)[nome] ?? '') : ''
   const codigo = campo('code')
   if (codigo === 'PGRST202') return 'O salvamento do roteiro ainda não está disponível. Nada foi alterado.'
+  if (codigo === 'TR422') return `${campo('message')}. Nada foi alterado.`
   if (codigo === '42501') return 'Só quem organiza a viagem (ADM) pode editar o roteiro. Nada foi alterado.'
   if (/failed to fetch|network|load failed/i.test(campo('message'))) {
     return 'Não deu pra falar com o servidor. Confira a internet e tente de novo. Nada foi alterado.'
@@ -87,7 +88,7 @@ export function idsRemovidos(salvos: Destino[], rascunho: ItemRoteiro[]): string
  * - apaga SÓ os destinos em `removidos` (nunca "tudo que não está na lista")
  * - insere os novos e grava a nova ordem de todos
  * - se o roteiro mudou em outro lugar desde que a edição começou, desfaz tudo (RoteiroDesatualizado)
- * Datas e outros dados dos destinos não são tocados.
+ * Grava também as datas de chegada e saída de cada destino (spec 001).
  */
 export async function salvarRoteiro(viagemId: string, itens: ItemRoteiro[], removidos: string[]): Promise<Destino[]> {
   if (itens.length === 0) throw new Error('O roteiro precisa ter pelo menos um destino')
@@ -99,6 +100,8 @@ export async function salvarRoteiro(viagemId: string, itens: ItemRoteiro[], remo
       pais: item.pais,
       latitude: item.latitude,
       longitude: item.longitude,
+      chegada: item.chegada || null,
+      saida: item.saida || null,
     })),
     p_removidos: removidos,
   })

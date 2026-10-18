@@ -75,3 +75,8 @@ export function periodoDosDestinos(itens: ComDatas[]): { inicio: string; fim: st
 export function destinoDeHoje(itens: ComDatas[], hoje: string): number {
   return itens.findIndex((i) => i.chegada && i.chegada <= hoje && (i.saida ? hoje <= i.saida : hoje === i.chegada))
 }
+
+// 3 → "3 noites"; 0 → "bate-e-volta"
+export function textoNoites(noites: number) {
+  return noites === 0 ? 'bate-e-volta' : `${noites} ${noites === 1 ? 'noite' : 'noites'}`
+}

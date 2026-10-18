@@ -4,6 +4,7 @@ import { buscarCidades, type Cidade } from './buscarCidades'
 import { useBuscaDeLugares } from './useBuscaDeLugares'
 import { contarVinculos, type ItemRoteiro, type Vinculos } from './api'
 import { datasForaDeOrdem, mover } from './ordem'
+import { avisosDasDatas, contarNoites, textoNoites } from './datas'
 import './editor-roteiro.css'
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
   erro: string | null
   acaoDoErro?: { rotulo: string; aoClicar: () => void } // ex.: "Recarregar roteiro" depois de um conflito
   abrirBusca?: boolean // já abre com o campo de busca aberto ("+ Adicionar lugar")
+  periodo?: { inicio: string | null; fim: string | null } // datas da viagem, pros avisos
   // Dá pra trocar nos testes; no site usa as funções de verdade
   buscar?: typeof buscarCidades
   contar?: (destinoId: string) => Promise<Vinculos>
@@ -45,6 +47,7 @@ export default function EditorRoteiro({
   erro,
   acaoDoErro,
   abrirBusca = false,
+  periodo,
   buscar = buscarCidades,
   contar = contarVinculos,
 }: Props) {
@@ -112,8 +115,14 @@ export default function EditorRoteiro({
     setAviso(`${item.nome} removido do roteiro`)
   }
 
+  function mudarData(indice: number, campo: 'chegada' | 'saida', valor: string) {
+    aoMudar(itens.map((item, i) => (i === indice ? { ...item, [campo]: valor || null } : item)))
+  }
+
   const vazio = itens.length === 0
   const avisoDatas = datasForaDeOrdem(itens)
+  const avisosDeData = avisosDasDatas(itens, periodo?.inicio ?? null, periodo?.fim ?? null)
+  const bloqueado = avisosDeData.some((a) => a.tipo === 'bloqueia')
 
   return (
     <div className="editor-roteiro">
@@ -168,6 +177,34 @@ export default function EditorRoteiro({
                   </span>
                 </div>
 
+                <div className="editor-datas">
+                  <label>
+                    <span>Chegada</span>
+                    <input
+                      type="date"
+                      value={item.chegada ?? ''}
+                      max={item.saida ?? undefined}
+                      onChange={(e) => mudarData(i, 'chegada', e.target.value)}
+                      disabled={salvando}
+                      aria-label={`Chegada em ${item.nome}`}
+                    />
+                  </label>
+                  <label>
+                    <span>Saída</span>
+                    <input
+                      type="date"
+                      value={item.saida ?? ''}
+                      min={item.chegada ?? undefined}
+                      onChange={(e) => mudarData(i, 'saida', e.target.value)}
+                      disabled={salvando}
+                      aria-label={`Saída de ${item.nome}`}
+                    />
+                  </label>
+                  {contarNoites(item.chegada, item.saida) !== null && (
+                    <span className="editor-noites">{textoNoites(contarNoites(item.chegada, item.saida)!)}</span>
+                  )}
+                </div>
+
                 {confirmando && (
                   <div className="editor-confirmacao" role="alertdialog" aria-label={`Remover ${item.nome}?`}>
                     {confirmando.status === 'verificando' && <p>Verificando o que está ligado a {item.nome}…</p>}
@@ -219,6 +256,12 @@ export default function EditorRoteiro({
           Atenção: a nova ordem não bate com as datas de chegada dos destinos. As datas não serão mudadas.
         </p>
       )}
+      {avisosDeData.map((a) => (
+        <p key={a.texto} className={a.tipo === 'bloqueia' ? 'aviso-erro editor-aviso-data' : 'editor-aviso'}>
+          {a.texto}
+          {a.tipo === 'bloqueia' && ' Corrija pra salvar.'}
+        </p>
+      ))}
 
       {/* Buscar e adicionar */}
       {buscaAberta ? (
@@ -283,7 +326,7 @@ export default function EditorRoteiro({
         <button type="button" className="botao secundario" onClick={aoCancelar} disabled={salvando}>
           Cancelar
         </button>
-        <button type="button" className="botao" onClick={aoSalvar} disabled={vazio || salvando}>
+        <button type="button" className="botao" onClick={aoSalvar} disabled={vazio || salvando || bloqueado}>
           {salvando ? 'Salvando…' : 'Salvar alterações'}
         </button>
       </div>

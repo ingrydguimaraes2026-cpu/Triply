@@ -37,3 +37,14 @@ export async function criarViagem(dados: NovaViagem) {
 
   return viagem.id
 }
+
+
+// Muda nome, datas ou moeda da viagem (só o ADM consegue: regra do banco)
+export async function editarViagem(
+  id: string,
+  campos: { nome?: string; data_inicio?: string | null; data_fim?: string | null; moeda_principal?: string },
+) {
+  const { data, error } = await supabase.from('viagens').update(campos).eq('id', id).select('*').single()
+  if (error) throw error
+  return data
+}
