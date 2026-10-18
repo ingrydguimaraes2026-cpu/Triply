@@ -285,6 +285,7 @@ export type Database = {
           moeda: string
           pago_por: string
           pessoal: boolean
+          rascunho: boolean
           valor: number
           viagem_id: string
         }
@@ -298,6 +299,7 @@ export type Database = {
           moeda?: string
           pago_por: string
           pessoal?: boolean
+          rascunho?: boolean
           valor: number
           viagem_id: string
         }
@@ -311,6 +313,7 @@ export type Database = {
           moeda?: string
           pago_por?: string
           pessoal?: boolean
+          rascunho?: boolean
           valor?: number
           viagem_id?: string
         }
@@ -397,6 +400,7 @@ export type Database = {
           chegada: string | null
           destino_id: string | null
           id: string
+          link_reserva: string | null
           meio: string
           observacao: string | null
           origem_id: string | null
@@ -408,6 +412,7 @@ export type Database = {
           chegada?: string | null
           destino_id?: string | null
           id?: string
+          link_reserva?: string | null
           meio?: string
           observacao?: string | null
           origem_id?: string | null
@@ -419,6 +424,7 @@ export type Database = {
           chegada?: string | null
           destino_id?: string | null
           id?: string
+          link_reserva?: string | null
           meio?: string
           observacao?: string | null
           origem_id?: string | null
@@ -493,6 +499,10 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      salvar_gasto: {
+        Args: { p_divisoes?: Json; p_gasto: Json; p_viagem: string }
+        Returns: string
+      }
       salvar_roteiro: {
         Args: { p_destinos: Json; p_removidos?: string[]; p_viagem: string }
         Returns: {
