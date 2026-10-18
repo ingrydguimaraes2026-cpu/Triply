@@ -1,0 +1,251 @@
+/* Financeiro (specs 002 e 003) */
+
+.categorias li.alerta .categoria-barra span {
+  background: var(--caramelo);
+}
+
+.categorias li.estourou .categoria-barra span {
+  background: var(--laranja);
+}
+
+.categoria-valor {
+  text-align: right;
+}
+
+.categoria-valor small {
+  display: block;
+  font-size: 12px;
+}
+
+.categoria-estourou {
+  color: #a3330f;
+  font-weight: 800;
+}
+
+.categoria-alerta {
+  color: #8a5a00;
+  font-weight: 700;
+}
+
+.financeiro-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 1000px) {
+  .financeiro-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.acertos,
+.carteiras,
+.compras,
+.divisao-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acertos li {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cor-fundo);
+  line-height: 1.5;
+}
+
+.acerto-valor {
+  color: var(--couro);
+}
+
+.carteiras li,
+.divisao-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.carteiras small {
+  color: var(--cor-texto-suave);
+}
+
+.divisao-lista {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #f0e2c8;
+}
+
+.divisao-lista input {
+  width: 110px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid #e0c99d;
+  border-radius: 10px;
+  font: inherit;
+  text-align: right;
+}
+
+.compras {
+  padding-top: 12px;
+  border-top: 1px solid #f0e2c8;
+}
+
+.compras button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.compras button:hover:not(:disabled) {
+  background: var(--cor-fundo);
+}
+
+.compras button:disabled {
+  cursor: default;
+}
+
+.compras button span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.compras small {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.rendendo-bem {
+  color: #2f6b1f;
+  font-weight: 700;
+}
+
+.rendendo-mal {
+  color: #a3330f;
+  font-weight: 700;
+}
+
+/* Lista de gastos */
+.gastos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gastos-dia h3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+
+.gastos-dia h3 span {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.gastos-dia ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid #f0e2c8;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.gastos-dia li + li {
+  border-top: 1px solid #f5ead6;
+}
+
+.gasto {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gasto:hover {
+  background: #fffaf0;
+}
+
+.gasto-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gasto-texto strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gasto-texto small {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.gasto-texto .avatar {
+  border-width: 1px;
+}
+
+.gasto-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.form-apagar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alinhar-inicio {
+  align-self: flex-start;
+}
+
+.valor-grande.pequeno input {
+  font-size: 26px;
+}
+
+.orcamento-campo label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

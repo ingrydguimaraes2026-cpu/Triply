@@ -1,7 +1,6 @@
 // Testes das regras de ordem do roteiro (src/features/destinos/ordem.ts). Rodar: npm test
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { join } from 'node:path'
 const { mover, aplicarOrdem, datasForaDeOrdem } = await import(new URL('../src/features/destinos/ordem.ts', import.meta.url))
 const L = [{ chave: 'a' }, { chave: 'b' }, { chave: 'c' }]
 const ch = (l) => l.map((x) => x.chave).join('')
