@@ -10,20 +10,33 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 
 | # | Spec | Fase | Tamanho | Depende de | Status |
 |---|---|---|---|---|---|
-| — | Editar o roteiro (PR #3) | 1 | M | — | Em revisão |
-| 001 | [Datas de cada destino](001-datas-dos-destinos.md) | 1 | P | PR #3 | A fazer |
-| 002 | [Financeiro: gastos e divisão](002-financeiro-gastos-e-divisao.md) | 1 | G | — | A fazer |
-| 003 | [Financeiro: orçamento e câmbio](003-financeiro-orcamento-e-cambio.md) | 1 | M | 002 | A fazer |
-| 004 | [Transportes](004-transportes.md) | 1 | G | 001 | A fazer |
-| 005 | [Fotos](005-fotos.md) | 1 | M | — | A fazer |
-| 006 | [Overview com dados reais](006-overview-com-dados-reais.md) | 2 | P | 002, 003, 004, 005 | A fazer |
-| 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | A fazer |
-| 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | A fazer |
-| 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | A fazer |
+| — | Editar o roteiro (era o PR #3) | 1 | M | — | Pronto pra testar |
+| 001 | [Datas de cada destino](001-datas-dos-destinos.md) | 1 | P | PR #3 | Pronto pra testar |
+| 002 | [Financeiro: gastos e divisão](002-financeiro-gastos-e-divisao.md) | 1 | G | — | Pronto pra testar |
+| 003 | [Financeiro: orçamento e câmbio](003-financeiro-orcamento-e-cambio.md) | 1 | M | 002 | Pronto pra testar |
+| 004 | [Transportes](004-transportes.md) | 1 | G | 001 | Pronto pra testar |
+| 005 | [Fotos](005-fotos.md) | 1 | M | — | Pronto pra testar |
+| 006 | [Overview com dados reais](006-overview-com-dados-reais.md) | 2 | P | 002, 003, 004, 005 | Pronto pra testar |
+| 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | Pronto pra testar |
+| 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar |
+| 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
 A ordem da Fase 1 é uma sugestão. 002 e 005 não dependem de nada e podem começar a qualquer momento.
+
+## Decisões tomadas nas perguntas em aberto (out/2026)
+
+Na implementação, valeram as sugestões que as próprias specs davam:
+
+- **001:** saída antes da chegada bloqueia o salvar; data fora do período só avisa, com o botão "Usar como período da viagem".
+- **002:** a sobra dos centavos fica com quem pagou; gasto pessoal entra só no total de quem lançou; ainda sem "marcar como acertado".
+- **003:** orçamento do comboio inteiro (a tela mostra por pessoa); comprinhas pessoais não contam; conversão pela cotação média do comboio e, sem compra registrada, pela cotação de hoje (Frankfurter).
+- **004:** bate-e-volta vira 2 trajetos (a volta é criada junto); membro ainda não sugere trajeto.
+- **005:** 5 fotos por destino, somando o comboio inteiro; ao chegar no limite, bloqueia (apaga uma pra pôr outra). Regra garantida no banco.
+- **007:** fotos e gastos de quem sai ficam na viagem, com o nome da pessoa.
+- **008:** o app abre na viagem que está acontecendo agora; senão, na mais recente. Mudar a moeda só muda a exibição (os gastos não são convertidos).
+- **009:** moeda padrão = a última usada; o botão "+" aparece só no celular.
 
 ## Fase 3: ideias guardadas (ainda sem spec)
 
