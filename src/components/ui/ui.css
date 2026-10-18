@@ -554,3 +554,6 @@
   white-space: nowrap;
   border: 0;
 }
+.alinhar-inicio {
+  align-self: flex-start;
+}

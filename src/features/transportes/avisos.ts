@@ -90,3 +90,8 @@ export function paraCampoHorario(horario: string | null): string {
 export function deCampoHorario(valor: string): string | null {
   return valor ? new Date(valor).toISOString() : null
 }
+
+// "09:10" (no fuso do celular)
+export function hora(horario: string) {
+  return new Date(horario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
