@@ -31,12 +31,7 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-/* Celular: rótulo curto nas abas de nome comprido */
-.viagem-abas .rotulo-longo {
-  display: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .viagem-abas a {
@@ -125,14 +120,6 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-  }
-
-  .viagem-abas .rotulo-longo {
-    display: inline;
-  }
-
-  .viagem-abas .rotulo-curto {
-    display: none;
   }
 
   .viagem-abas a {

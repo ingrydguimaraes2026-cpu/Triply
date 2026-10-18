@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { Camera, FileCheck, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -20,9 +20,7 @@ import { meio } from '../../features/transportes/api'
 import { diaLocal, hora, proximoTrajeto } from '../../features/transportes/avisos'
 import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
-import { progresso } from '../../features/documentos/checklist'
-import { nomeDoPais } from '../../features/documentos/paises'
-import './documentos.css'
+import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -94,7 +92,6 @@ export default function Overview() {
   const ultimasFotos = fotos.estado.status === 'pronto' ? fotos.estado.fotos : []
   const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? 'Sem destino'
   const docs = useDocumentos(viagem, destinos, meuId)
-  const progressoDocs = progresso(docs.checklist.itens, docs.meus)
 
   // Tem mudança no rascunho que ainda não foi salva?
   const assinatura = (lista: ItemRoteiro[]) => lista.map((i) => `${i.chave}|${i.chegada ?? ''}|${i.saida ?? ''}`).join()
@@ -203,6 +200,9 @@ export default function Overview() {
           <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
         </div>
       </section>
+
+      {/* Spec 010: checklist de documentos, ao lado do mapa */}
+      <ChecklistDocumentos docs={docs} membros={membros} className="ao-lado-do-mapa" />
 
       {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
       <Cartao
@@ -316,18 +316,6 @@ export default function Overview() {
           />
         )}
       </Cartao>
-
-      {/* Spec 010: quanto do checklist de documentos eu já resolvi */}
-      {docs.checklist.itens.length > 0 && (
-        <Cartao titulo="Documentos" icone={FileCheck} acao={<Link to="documentos">Abrir</Link>}>
-          <Link to="documentos" className="resumo-documentos">
-            <strong>
-              {progressoDocs.feitas} de {progressoDocs.total} resolvidos
-            </strong>
-            <span>Pra entrar em {docs.checklist.paises.map(nomeDoPais).join(', ')}</span>
-          </Link>
-        </Cartao>
-      )}
 
       <Cartao titulo="Comboio" icone={Users} acao={<Link to="comboio">Abrir</Link>}>
         <ul className="overview-comboio">

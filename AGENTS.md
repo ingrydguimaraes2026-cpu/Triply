@@ -99,7 +99,7 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 | Financeiro: gastos, divisão, acertos, orçamento, câmbio, lançamento rápido (botão "+") | Pronto pra testar |
 | Transportes, Fotos, Comboio (papéis, convites, sair) | Pronto pra testar |
 | Minhas viagens (`/viagens`), Perfil (`/perfil`), Configurações da viagem | Pronto pra testar |
-| Documentos de entrada: checklist por país do roteiro, com prazo e fonte oficial | Pronto pra testar |
+| Documentos de entrada: checklist por país na Overview, ao lado do mapa, com prazo e fonte oficial | Pronto pra testar |
 | Página 404 e de erro | Pronto |
 
 ## 7. Banco de dados (Supabase)

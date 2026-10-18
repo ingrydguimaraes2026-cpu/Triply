@@ -34,13 +34,16 @@ Ideia do Victor (18/10/2026): "o primeiro ponto é decidir pra onde vamos; o pr�
 - Regras de conexão/trânsito (só um aviso genérico).
 
 ## Telas
-- **Nova aba "Documentos"** no menu da viagem.
-- Topo: países que a viagem cobre e o progresso "você resolveu X de Y".
-- Lista de itens, ordenada pelo prazo: título, explicação curta, prazo, link "Fonte oficial", selo "a confirmar" quando for o caso, e os botões **Resolvido** / **Não preciso**.
-- Embaixo de cada item: fotos de quem já resolveu.
-- **Estado vazio:** viagem só no Brasil: "Viagem nacional: leve RG ou CNH com foto".
+- **Na Overview, ao lado do mapa** (decidido em 18/10/2026, no lugar de uma aba separada: os documentos são o passo seguinte a escolher os destinos).
+  - Computador largo: o mapa ocupa 2 colunas e o checklist a terceira, com a mesma altura e rolagem própria.
+  - Tablet: o mapa em cima, e embaixo o checklist ao lado do roteiro.
+  - Celular: o checklist vem logo depois do mapa.
+- Topo: "Documentos", o contador "3/8", os países e uma barra de progresso.
+- Cada linha é um item do checklist: quadradinho pra marcar como resolvido, título, prazo ("Resolver até 02/04/2027"), selo "a confirmar" e as fotos de quem já resolveu.
+- Tocando no título, a linha abre: explicação, link da fonte oficial e o botão "Não preciso".
+- "Bom saber" (avisos que não são tarefa) fica fechado embaixo, abre num toque.
+- **Estado vazio:** viagem só no Brasil: "basta um documento com foto (RG, CIN ou CNH)".
 - **Sem datas na viagem:** o prazo aparece como "60 dias antes da viagem".
-- **Overview:** cartão "Documentos: X de Y resolvidos", que leva pra aba.
 
 ## Dados
 - **Regras:** no código, não no banco.
@@ -74,4 +77,4 @@ Ideia do Victor (18/10/2026): "o primeiro ponto é decidir pra onde vamos; o pr�
 ## Dicas pra implementar
 - Lógica pura e testável: `src/features/documentos/checklist.ts` (monta os itens a partir dos destinos e das datas) e `paises.ts` (nome → código).
 - Para o nome → código: `Intl.DisplayNames` em pt-BR, pt-PT, en, es, it e fr, ignorando acentos.
-- Ícones: `FileCheck`, `ShieldCheck`, `Plane`, `Syringe`, `Baby`.
+- A peça visual é `src/features/documentos/ChecklistDocumentos.tsx`, usada na Overview.
