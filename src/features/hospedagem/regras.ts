@@ -239,3 +239,24 @@ export function resumoDaHospedagem(itens: DestinoDaHospedagem[], pessoas: number
   const opcoes = itens.reduce((n, i) => n + i.opcoes.length, 0)
   return { total: contam.length, resolvidos: resolvidos.length, totais, porPessoa, opcoes }
 }
+
+// ---------------- Mapa (Google Maps embutido, sem chave de API) ----------------
+
+export const TIPOS_NO_MAPA = [
+  { chave: 'hotel', nome: 'Hotéis', busca: 'hotéis' },
+  { chave: 'hostel', nome: 'Hostels', busca: 'hostels' },
+  { chave: 'apartamento', nome: 'Apartamentos', busca: 'apartamentos para alugar' },
+  { chave: 'pousada', nome: 'Pousadas', busca: 'pousadas e B&B' },
+] as const
+
+export type TipoNoMapa = (typeof TIPOS_NO_MAPA)[number]['chave']
+
+// Mapa do Google com a busca "hotéis em Nice, França": `embed` vai no iframe, `abrir` abre o Google Maps completo
+export function linkDoMapa(destino: Pick<DestinoBase, 'nome' | 'pais'>, tipo: TipoNoMapa = 'hotel') {
+  const busca = TIPOS_NO_MAPA.find((t) => t.chave === tipo)!.busca
+  const q = `${busca} em ${localDaBusca(destino)}`
+  return {
+    embed: `https://maps.google.com/maps?${new URLSearchParams({ q, z: '13', hl: 'pt-BR', output: 'embed' })}`,
+    abrir: `https://www.google.com/maps/search/?${new URLSearchParams({ api: '1', query: q })}`,
+  }
+}

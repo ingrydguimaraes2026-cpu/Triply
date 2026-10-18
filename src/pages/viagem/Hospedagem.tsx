@@ -1,25 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import {
-  AlertTriangle,
-  BedDouble,
-  CalendarDays,
-  Check,
-  Crown,
-  ExternalLink,
-  Heart,
-  Home,
-  MapPin,
-  Pencil,
-  Plus,
-  Repeat,
-  Search,
-  Wallet,
-} from 'lucide-react'
+import { AlertTriangle, CalendarDays, Check, Crown, ExternalLink, Heart, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
 import type { Tables } from '../../types/database'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
-import { contasDaOpcao, detectarSite, linksDeBusca, noitesDaOpcao, type DestinoDaHospedagem, type Opcao } from '../../features/hospedagem/regras'
+import {
+  contasDaOpcao,
+  detectarSite,
+  linkDoMapa,
+  linksDeBusca,
+  noitesDaOpcao,
+  TIPOS_NO_MAPA,
+  type DestinoDaHospedagem,
+  type Opcao,
+  type TipoNoMapa,
+} from '../../features/hospedagem/regras'
 import FormOpcao from '../../features/hospedagem/FormOpcao'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
@@ -32,9 +27,10 @@ import './abas.css'
 import './hospedagem.css'
 
 type Destino = Tables<'destinos'>
+type Item = DestinoDaHospedagem<Destino>
 type Janela = { tipo: 'opcao'; destinoId: string; opcao?: Opcao } | { tipo: 'gasto'; opcao: Opcao } | null
 
-const SELO: Record<DestinoDaHospedagem['situacao'], string> = {
+const SELO: Record<Item['situacao'], string> = {
   resolvido: 'Escolhida',
   precisa: 'Falta escolher',
   'sem-datas': 'Sem datas',
@@ -42,17 +38,19 @@ const SELO: Record<DestinoDaHospedagem['situacao'], string> = {
   casa: 'Partida',
 }
 
-// Hospedagem (spec 011): buscar onde ficar em cada destino, juntar as opções do comboio, votar e fechar a escolhida.
+// Hospedagem (spec 011): escolhe o destino em cima, vê os lugares no Google Maps
+// e, ao lado, junta as opções do comboio, vota e fecha a escolhida.
 export default function Hospedagem() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const pessoas = membros.length
   const h = useHospedagem(viagem.id, destinos, meuId, pessoas)
+  const [selecionado, setSelecionado] = useState<string | null>(null)
+  const [tipo, setTipo] = useState<TipoNoMapa>('hotel')
   const [janela, setJanela] = useState<Janela>(null)
   const [erro, setErro] = useState<string | null>(null)
   const fechar = () => setJanela(null)
 
   const moeda = viagem.moeda_principal
-  const dinheiro = (centavos: number, m: string) => formatarDinheiro(centavos, m)
   const pessoaDe = (id: string) => membros.find((m) => m.id === id)
 
   async function tentar(acao: () => Promise<void>, padrao: string) {
@@ -64,9 +62,17 @@ export default function Hospedagem() {
     }
   }
 
+  // Destinos que aparecem no seletor: todos menos o ponto de partida/volta no Brasil
+  const escolhiveis = h.itens.filter((i) => i.situacao !== 'casa')
+  // Sem escolha ainda: o primeiro que falta resolver
+  const item =
+    escolhiveis.find((i) => i.destino.id === selecionado) ??
+    escolhiveis.find((i) => i.situacao === 'precisa' || i.situacao === 'sem-datas') ??
+    escolhiveis[0] ??
+    null
+
   const { resumo } = h
   const porcentagem = resumo.total ? Math.round((resumo.resolvidos / resumo.total) * 100) : 0
-  const totais = Object.entries(resumo.totais)
 
   // `destino` é null nas opções cujo destino saiu do roteiro
   const cartaoDaOpcao = (opcao: Opcao, destino: Destino | null, destaque = false) => {
@@ -113,19 +119,15 @@ export default function Hospedagem() {
 
         {opcao.precoTotal !== null ? (
           <div className="hosp-precos">
-            <strong>{dinheiro(opcao.precoTotal, opcao.moeda)}</strong>
+            <strong>{formatarDinheiro(opcao.precoTotal, opcao.moeda)}</strong>
             <span>
               {porPessoa !== null && pessoas > 1 && (
                 <>
-                  <b>{dinheiro(porPessoa, opcao.moeda)}</b> por pessoa
+                  <b>{formatarDinheiro(porPessoa, opcao.moeda)}</b> por pessoa
                 </>
               )}
               {porPessoa !== null && pessoas > 1 && porNoite !== null && ' · '}
-              {porNoite !== null && (
-                <>
-                  {dinheiro(porNoite, opcao.moeda)} por noite
-                </>
-              )}
+              {porNoite !== null && <>{formatarDinheiro(porNoite, opcao.moeda)} por noite</>}
             </span>
           </div>
         ) : (
@@ -185,54 +187,39 @@ export default function Hospedagem() {
     )
   }
 
-  const secao = (item: DestinoDaHospedagem<Destino>) => {
-    const { destino, situacao, noites, escolhida } = item
-    const outras = item.opcoes.filter((o) => !o.escolhida)
-    const numero = item.indice + 1
-
-    // Partida/volta no Brasil e bate-e-volta: uma linha só, sem busca
-    if (situacao === 'casa' || (situacao === 'bate-e-volta' && item.opcoes.length === 0)) {
-      return (
-        <li key={destino.id} id={`hosp-${destino.id}`} className="hosp-destino recolhido">
-          <span className="hosp-numero">{numero}</span>
-          <span className="hosp-destino-nome">
-            <strong>{destino.nome}</strong>
-            <small>
-              {situacao === 'casa' ? (
-                <>
-                  <Home size={12} aria-hidden="true" /> Ponto de partida/volta: sem hospedagem
-                </>
-              ) : (
-                <>
-                  <Repeat size={12} aria-hidden="true" /> Bate-e-volta: sem pernoite
-                </>
-              )}
-            </small>
-          </span>
-        </li>
-      )
-    }
-
-    const busca = linksDeBusca(destino, pessoas)
+  const painel = (i: Item) => {
+    const { destino, situacao, noites, escolhida } = i
+    const outras = i.opcoes.filter((o) => !o.escolhida)
+    const sites = linksDeBusca(destino, pessoas).filter((b) => b.site !== 'maps')
     return (
-      <li key={destino.id} id={`hosp-${destino.id}`} className={`hosp-destino situacao-${situacao}`}>
-        <header className="hosp-destino-topo">
-          <span className="hosp-numero">{numero}</span>
-          <span className="hosp-destino-nome">
-            <h3>{destino.nome}</h3>
-            <small>
+      <section className={`hosp-painel situacao-${situacao}`} aria-label={`Hospedagem em ${destino.nome}`}>
+        <header className="hosp-painel-topo">
+          <div>
+            <h2>{destino.nome}</h2>
+            <p>
               {destino.chegada || destino.saida ? formatarPeriodo(destino.chegada, destino.saida) : 'Datas a definir'}
               {noites ? ` · ${noites} ${noites === 1 ? 'noite' : 'noites'}` : ''}
-              {destino.pais && destino.pais !== destino.nome ? ` · ${destino.pais}` : ''}
-            </small>
-          </span>
+              {pessoas > 1 ? ` · ${pessoas} pessoas` : ''}
+            </p>
+          </div>
           <span className={`hosp-selo selo-${situacao}`}>
             {situacao === 'resolvido' && <Check size={12} aria-hidden="true" />}
             {SELO[situacao]}
           </span>
         </header>
 
-        {item.avisos.map((a) => (
+        {situacao === 'bate-e-volta' && (
+          <p className="hosp-dica">
+            <Repeat size={13} aria-hidden="true" /> Chegada e saída no mesmo dia: não precisa dormir aqui.
+          </p>
+        )}
+        {situacao === 'sem-datas' && (
+          <p className="hosp-dica">
+            <CalendarDays size={13} aria-hidden="true" /> Com as datas no roteiro, a busca já sai com check-in e check-out.{' '}
+            {euSouAdm && <Link to="..">Definir datas</Link>}
+          </p>
+        )}
+        {i.avisos.map((a) => (
           <p key={a} className="hosp-aviso">
             <AlertTriangle size={15} aria-hidden="true" /> {a}
           </p>
@@ -240,48 +227,64 @@ export default function Hospedagem() {
 
         {escolhida && <ul className="hosp-opcoes">{cartaoDaOpcao(escolhida, destino, true)}</ul>}
 
-        <div className="hosp-busca">
-          <span className="hosp-busca-rotulo">
-            <Search size={14} aria-hidden="true" /> Buscar {pessoas > 1 ? `pra ${pessoas} pessoas` : ''}
-          </span>
-          <div className="hosp-busca-botoes">
-            {busca.map((b) => (
-              <a key={b.site} href={b.url} target="_blank" rel="noreferrer noopener" className={`hosp-buscar site-${b.site}`}>
-                {b.site === 'maps' && <MapPin size={14} aria-hidden="true" />}
-                {b.nome}
-                <ExternalLink size={12} aria-hidden="true" />
-              </a>
-            ))}
-          </div>
-          {situacao === 'sem-datas' && (
-            <p className="hosp-dica">
-              <CalendarDays size={13} aria-hidden="true" /> Sem datas, a busca abre só com a cidade.{' '}
-              {euSouAdm && <Link to="..">Definir no roteiro</Link>}
-            </p>
-          )}
+        <div className="hosp-busca-botoes">
+          {sites.map((b) => (
+            <a key={b.site} href={b.url} target="_blank" rel="noreferrer noopener" className={`hosp-buscar site-${b.site}`}>
+              Buscar no {b.nome}
+              <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          ))}
         </div>
 
         {outras.length > 0 ? (
           <>
-            {escolhida && <h4 className="hosp-subtitulo">Outras opções ({outras.length})</h4>}
+            <h3 className="hosp-subtitulo">
+              {escolhida ? 'Outras opções' : 'Opções do comboio'} ({outras.length})
+            </h3>
             <ul className="hosp-opcoes">{outras.map((o) => cartaoDaOpcao(o, destino))}</ul>
           </>
         ) : (
-          !escolhida && <p className="hosp-vazio">Nenhuma opção ainda. Busque nos sites acima e cole aqui o link do que gostar.</p>
+          !escolhida && (
+            <p className="hosp-vazio">
+              Achou algo no mapa, no Airbnb ou no Booking? Cole o link aqui pro comboio ver e votar.
+            </p>
+          )
         )}
 
         <button type="button" className="hosp-adicionar" onClick={() => setJanela({ tipo: 'opcao', destinoId: destino.id })}>
           <Plus size={16} aria-hidden="true" /> Adicionar opção
         </button>
-      </li>
+      </section>
     )
   }
 
+  const mapa = item ? linkDoMapa(item.destino, tipo) : null
   const opcaoAberta = janela?.tipo === 'opcao' ? janela.opcao : undefined
 
   return (
     <>
-      <CabecalhoPagina titulo="Hospedagem" subtitulo="Onde o comboio vai dormir em cada destino. Busque, cole o link, votem e fechem." />
+      <CabecalhoPagina
+        titulo="Hospedagem"
+        subtitulo="Ache no mapa, cole o link, votem e fechem onde o comboio vai dormir."
+        acao={
+          resumo.total > 0 && (
+            <div className="hosp-resumo" aria-label="Resumo da hospedagem">
+              <span>
+                <strong>{resumo.resolvidos}</strong>/{resumo.total} {resumo.total === 1 ? 'destino fechado' : 'destinos fechados'}
+              </span>
+              <span className="hosp-barra" aria-hidden="true">
+                <span style={{ width: `${porcentagem}%` }} />
+              </span>
+              {Object.entries(resumo.totais).map(([m, total]) => (
+                <small key={m}>
+                  {formatarDinheiro(total, m)}
+                  {pessoas > 1 && ` · ${formatarDinheiro(resumo.porPessoa[m], m)}/pessoa`}
+                </small>
+              ))}
+            </div>
+          )
+        }
+      />
 
       {h.estado === 'erro' && (
         <div className="aviso-erro">
@@ -297,61 +300,56 @@ export default function Hospedagem() {
         </p>
       )}
 
-      {destinos.length === 0 ? null : (
-        <section className="hosp-resumo" aria-label="Resumo da hospedagem">
-          <div className="hosp-resumo-principal">
-            <span className="hosp-resumo-icone">
-              <BedDouble size={26} aria-hidden="true" />
-            </span>
-            <div>
-              <p className="hosp-resumo-conta">
-                <strong>{resumo.resolvidos}</strong> de {resumo.total} {resumo.total === 1 ? 'destino' : 'destinos'} com hospedagem
-              </p>
-              <div className="hosp-barra" aria-hidden="true">
-                <span style={{ width: `${porcentagem}%` }} />
+      {!item ? (
+        <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra começar a buscar hospedagem.</p>
+      ) : (
+        <>
+          <nav className="hosp-seletor" aria-label="Escolha o destino">
+            {escolhiveis.map((i) => (
+              <button
+                key={i.destino.id}
+                type="button"
+                aria-pressed={i.destino.id === item.destino.id}
+                className={`seletor-${i.situacao}`}
+                onClick={() => setSelecionado(i.destino.id)}
+              >
+                <span className="hosp-seletor-marca" aria-hidden="true">
+                  {i.situacao === 'resolvido' ? <Check size={12} /> : i.indice + 1}
+                </span>
+                {i.destino.nome}
+                {i.opcoes.length > 0 && <small>{i.opcoes.length}</small>}
+              </button>
+            ))}
+          </nav>
+
+          <div className="hosp-palco">
+            <section className="hosp-mapa" aria-label={`Mapa de ${item.destino.nome}`}>
+              <iframe
+                key={mapa!.embed}
+                src={mapa!.embed}
+                title={`Google Maps: ${TIPOS_NO_MAPA.find((t) => t.chave === tipo)!.nome.toLowerCase()} em ${item.destino.nome}`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+              <div className="hosp-mapa-filtros" role="group" aria-label="O que mostrar no mapa">
+                {TIPOS_NO_MAPA.map((t) => (
+                  <button key={t.chave} type="button" aria-pressed={tipo === t.chave} onClick={() => setTipo(t.chave)}>
+                    {t.nome}
+                  </button>
+                ))}
               </div>
-              <p className="hosp-resumo-sub">
-                {resumo.total === 0
-                  ? 'Nenhum destino com pernoite por enquanto.'
-                  : resumo.resolvidos === resumo.total
-                    ? 'Tudo fechado. Agora é só aproveitar.'
-                    : `${resumo.opcoes} ${resumo.opcoes === 1 ? 'opção salva' : 'opções salvas'} pelo comboio`}
-              </p>
-            </div>
+              <a className="hosp-mapa-abrir" href={mapa!.abrir} target="_blank" rel="noreferrer noopener">
+                <Maximize2 size={14} aria-hidden="true" /> Abrir no Google Maps
+              </a>
+            </section>
+
+            {painel(item)}
           </div>
-          {totais.length > 0 && (
-            <div className="hosp-resumo-totais">
-              {totais.map(([m, total]) => (
-                <p key={m}>
-                  <span>Total escolhido</span>
-                  <strong>{dinheiro(total, m)}</strong>
-                  {pessoas > 1 && <small>{dinheiro(resumo.porPessoa[m], m)} por pessoa</small>}
-                </p>
-              ))}
-            </div>
-          )}
-          <ol className="hosp-trilha" aria-label="Destinos">
-            {h.itens
-              .filter((i) => i.situacao !== 'casa')
-              .map((i) => (
-                <li key={i.destino.id}>
-                  <a href={`#hosp-${i.destino.id}`} className={`trilha-${i.situacao}`}>
-                    {i.situacao === 'resolvido' ? <Check size={12} aria-hidden="true" /> : <span aria-hidden="true">{i.indice + 1}</span>}
-                    {i.destino.nome}
-                  </a>
-                </li>
-              ))}
-          </ol>
-        </section>
+        </>
       )}
 
       {h.estado === 'carregando' && <p className="carregando-texto">Carregando as opções…</p>}
-
-      {destinos.length === 0 ? (
-        <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra começar a buscar hospedagem.</p>
-      ) : (
-        <ol className="hosp-destinos">{h.itens.map(secao)}</ol>
-      )}
 
       {h.soltas.length > 0 && (
         <section className="cartao-ui">
@@ -359,9 +357,7 @@ export default function Hospedagem() {
             <h2>Sem destino</h2>
           </header>
           <p className="form-dica">Opções de um destino que saiu do roteiro. Edite pra mudar o destino, ou apague.</p>
-          <ul className="hosp-opcoes">
-            {h.soltas.map((o) => cartaoDaOpcao(o, null))}
-          </ul>
+          <ul className="hosp-opcoes">{h.soltas.map((o) => cartaoDaOpcao(o, null))}</ul>
         </section>
       )}
 

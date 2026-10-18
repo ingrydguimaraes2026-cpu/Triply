@@ -116,3 +116,12 @@ test('escolhida resolve o destino, soma no resumo e avisa datas diferentes', () 
   assert.deepEqual(r.porPessoa, { EUR: 12000 })
   assert.equal(r.resolvidos, 1)
 })
+
+test('mapa do Google busca o tipo de lugar na cidade', async () => {
+  const { linkDoMapa } = await import(new URL('../src/features/hospedagem/regras.ts', import.meta.url))
+  const m = linkDoMapa(NICE, 'hostel')
+  assert.equal(new URL(m.embed).searchParams.get('q'), 'hostels em Nice, França')
+  assert.equal(new URL(m.embed).searchParams.get('output'), 'embed')
+  assert.equal(new URL(m.abrir).searchParams.get('query'), 'hostels em Nice, França')
+  assert.equal(new URL(linkDoMapa(NICE).embed).searchParams.get('q'), 'hotéis em Nice, França')
+})
