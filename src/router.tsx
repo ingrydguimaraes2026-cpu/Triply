@@ -11,6 +11,7 @@ import Overview from './pages/viagem/Overview'
 import Transportes from './pages/viagem/Transportes'
 import Financeiro from './pages/viagem/Financeiro'
 import Fotos from './pages/viagem/Fotos'
+import Documentos from './pages/viagem/Documentos'
 import Comboio from './pages/viagem/Comboio'
 import Configuracoes from './pages/viagem/Configuracoes'
 import MinhasViagens from './pages/MinhasViagens'
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
               { index: true, element: <Overview /> },
               { path: 'transportes', element: <Transportes /> },
               { path: 'financeiro', element: <Financeiro /> },
+              { path: 'documentos', element: <Documentos /> },
               { path: 'fotos', element: <Fotos /> },
               { path: 'comboio', element: <Comboio /> },
               { path: 'configuracoes', element: <Configuracoes /> },

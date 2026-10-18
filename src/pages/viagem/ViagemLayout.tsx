@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useParams, useSearchParams } from 'react-router'
-import { Camera, ChevronRight, Compass, LogOut, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
+import { Camera, ChevronRight, Compass, FileCheck, LogOut, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair } from '../../features/auth/hooks'
 import { useViagem } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
@@ -15,10 +15,11 @@ import '../../components/ui/ui.css'
 import './viagem.css'
 
 // Abas da viagem. Pra criar uma aba nova: adicione aqui e no src/router.tsx
-const ABAS = [
+const ABAS: { para: string; rotulo: string; curto?: string; icone: typeof Compass }[] = [
   { para: '', rotulo: 'Overview', icone: Compass },
-  { para: 'transportes', rotulo: 'Transportes', icone: TrainFront },
+  { para: 'transportes', rotulo: 'Transportes', curto: 'Transp.', icone: TrainFront },
   { para: 'financeiro', rotulo: 'Financeiro', icone: Wallet },
+  { para: 'documentos', rotulo: 'Documentos', curto: 'Docs', icone: FileCheck },
   { para: 'fotos', rotulo: 'Fotos', icone: Camera },
   { para: 'comboio', rotulo: 'Comboio', icone: Users },
 ]
@@ -100,10 +101,17 @@ export default function ViagemLayout() {
         </Link>
 
         <nav className="viagem-abas" aria-label="Abas da viagem">
-          {ABAS.map(({ para, rotulo, icone: Icone }) => (
-            <NavLink key={rotulo} to={para} end={para === ''}>
+          {ABAS.map(({ para, rotulo, curto, icone: Icone }) => (
+            <NavLink key={rotulo} to={para} end={para === ''} aria-label={curto ? rotulo : undefined}>
               <Icone size={20} aria-hidden="true" />
-              <span>{rotulo}</span>
+              {curto ? (
+                <>
+                  <span className="rotulo-longo">{rotulo}</span>
+                  <span className="rotulo-curto">{curto}</span>
+                </>
+              ) : (
+                <span>{rotulo}</span>
+              )}
             </NavLink>
           ))}
           {euSouAdm && (

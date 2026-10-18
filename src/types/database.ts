@@ -189,6 +189,45 @@ export type Database = {
           },
         ]
       }
+      documentos_status: {
+        Row: {
+          atualizado_em: string
+          item: string
+          status: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          item: string
+          status?: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          item?: string
+          status?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentos_status_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documentos_status_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fotos: {
         Row: {
           caminho: string

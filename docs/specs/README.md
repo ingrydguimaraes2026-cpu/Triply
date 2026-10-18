@@ -20,6 +20,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | Pronto pra testar |
 | 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar |
 | 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
+| 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

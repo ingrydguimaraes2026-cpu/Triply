@@ -244,3 +244,41 @@ test('008: cada um envia avatar só na própria pasta', async () => {
     como(db, ADM, `insert into storage.objects (bucket_id, name, owner_id) values ('avatares', $1, $2)`, [`${MEMBRO}/foto.webp`, ADM]),
   )
 })
+
+// ---------------- 010: documentos_status ----------------
+const marcar = (db, quem, usuario, status = 'resolvido') =>
+  como(
+    db,
+    quem,
+    `insert into public.documentos_status (viagem_id, usuario_id, item, status) values ($1, $2, 'passaporte', $3)
+     on conflict (viagem_id, usuario_id, item) do update set status = excluded.status, atualizado_em = now()`,
+    [V, usuario, status],
+  )
+
+test('010: cada um marca o próprio status e o comboio vê', async () => {
+  const db = await novoBanco()
+  await marcar(db, MEMBRO, MEMBRO)
+  await marcar(db, MEMBRO, MEMBRO, 'pendente') // desmarcar = voltar pra pendente
+  const vistos = await como(db, ADM, 'select usuario_id, status from public.documentos_status')
+  assert.deepEqual(vistos, [{ usuario_id: MEMBRO, status: 'pendente' }])
+})
+
+test('010: ninguém marca o status de outra pessoa', async () => {
+  const db = await novoBanco()
+  await assert.rejects(marcar(db, ADM, MEMBRO), /row-level security/)
+  await marcar(db, MEMBRO, MEMBRO)
+  const mudou = await como(db, ADM, `update public.documentos_status set status = 'nao_preciso' returning *`)
+  assert.equal(mudou.length, 0)
+})
+
+test('010: quem está fora do comboio não vê nem marca', async () => {
+  const db = await novoBanco()
+  await marcar(db, MEMBRO, MEMBRO)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.documentos_status')).length, 0)
+  await assert.rejects(marcar(db, ESTRANHO, ESTRANHO), /row-level security/)
+})
+
+test('010: status inválido é recusado', async () => {
+  const db = await novoBanco()
+  await assert.rejects(marcar(db, MEMBRO, MEMBRO, 'talvez'), /check/)
+})
