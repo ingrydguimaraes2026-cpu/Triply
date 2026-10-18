@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router'
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
+import { hojeTexto } from '../destinos/datas'
 
 export type Membro = {
   id: string
@@ -98,13 +99,12 @@ export function useViagemAtual() {
   return useOutletContext<DadosDaViagem>()
 }
 
-// Id da viagem mais recente da pessoa (pra abrir direto depois do login)
+// Viagem pra abrir direto depois do login (spec 008):
+// a que está acontecendo agora; se nenhuma, a mais recente.
 export async function buscarUltimaViagem() {
-  const { data } = await supabase
-    .from('viagens')
-    .select('id')
-    .order('criado_em', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-  return data?.id ?? null
+  const { data } = await supabase.from('viagens').select('id, data_inicio, data_fim').order('criado_em', { ascending: false })
+  if (!data || data.length === 0) return null
+  const hoje = hojeTexto()
+  const agora = data.find((v) => v.data_inicio && v.data_inicio <= hoje && (!v.data_fim || v.data_fim >= hoje))
+  return (agora ?? data[0]).id
 }

@@ -18,6 +18,16 @@ export default defineConfig({
         background_color: '#FFF6E5',
         display: 'standalone',
         start_url: '/',
+        // Segurar o ícone do app instalado mostra estes atalhos (spec 009)
+        shortcuts: [
+          {
+            name: 'Lançar gasto',
+            short_name: 'Gasto',
+            description: 'Lançar um gasto rápido na viagem atual',
+            url: '/?lancar=1',
+            icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }],
+          },
+        ],
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },

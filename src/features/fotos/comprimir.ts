@@ -10,7 +10,11 @@ function paraBlob(canvas: HTMLCanvasElement, tipo: string, qualidade: number): P
   return new Promise((resolver) => canvas.toBlob(resolver, tipo, qualidade))
 }
 
-export async function comprimirFoto(arquivo: File): Promise<Blob> {
+// Padrão: foto do mural. Pra foto de perfil: { ladoMaximo: 400, tamanhoMaximo: 500 * 1024 }
+export async function comprimirFoto(
+  arquivo: File,
+  { ladoMaximo = LADO_MAXIMO, tamanhoMaximo = TAMANHO_MAXIMO } = {},
+): Promise<Blob> {
   if (!arquivo.type.startsWith('image/')) throw new ArquivoInvalido('Esse arquivo não é uma foto.')
 
   let imagem: ImageBitmap
@@ -20,7 +24,7 @@ export async function comprimirFoto(arquivo: File): Promise<Blob> {
     throw new ArquivoInvalido('Não consegui abrir essa foto. Tente outra (JPG, PNG ou WebP).')
   }
 
-  let escala = Math.min(1, LADO_MAXIMO / Math.max(imagem.width, imagem.height))
+  let escala = Math.min(1, ladoMaximo / Math.max(imagem.width, imagem.height))
   let qualidade = 0.82
   let tipo = 'image/webp'
 
@@ -35,7 +39,7 @@ export async function comprimirFoto(arquivo: File): Promise<Blob> {
       tipo = 'image/jpeg'
       continue
     }
-    if (blob.size <= TAMANHO_MAXIMO) {
+    if (blob.size <= tamanhoMaximo) {
       imagem.close()
       return blob
     }

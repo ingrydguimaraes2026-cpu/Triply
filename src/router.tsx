@@ -12,6 +12,9 @@ import Transportes from './pages/viagem/Transportes'
 import Financeiro from './pages/viagem/Financeiro'
 import Fotos from './pages/viagem/Fotos'
 import Comboio from './pages/viagem/Comboio'
+import Configuracoes from './pages/viagem/Configuracoes'
+import MinhasViagens from './pages/MinhasViagens'
+import Perfil from './pages/Perfil'
 
 // Cada endereço do site aponta pra uma tela em src/pages/
 export const router = createBrowserRouter([
@@ -25,6 +28,8 @@ export const router = createBrowserRouter([
         element: <RotaProtegida />,
         children: [
           { path: '/', element: <Inicio /> },
+          { path: '/viagens', element: <MinhasViagens /> },
+          { path: '/perfil', element: <Perfil /> },
           { path: '/nova-viagem', element: <NovaViagem /> },
           { path: '/nova-senha', element: <NovaSenha /> },
           { path: '/convite/:codigo', element: <Convite /> },
@@ -37,6 +42,7 @@ export const router = createBrowserRouter([
               { path: 'financeiro', element: <Financeiro /> },
               { path: 'fotos', element: <Fotos /> },
               { path: 'comboio', element: <Comboio /> },
+              { path: 'configuracoes', element: <Configuracoes /> },
             ],
           },
         ],
