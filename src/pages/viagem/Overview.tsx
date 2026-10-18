@@ -12,7 +12,13 @@ import {
   salvarRoteiro,
   type ItemRoteiro,
 } from '../../features/destinos/api'
-import { contarNoites, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
+import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
+import { useResumoFinanceiro } from '../../features/financeiro/hooks'
+import { formatarDinheiro } from '../../features/financeiro/dinheiro'
+import { useTrajetos } from '../../features/transportes/hooks'
+import { meio } from '../../features/transportes/api'
+import { diaLocal, hora, proximoTrajeto } from '../../features/transportes/avisos'
+import { useFotos } from '../../features/fotos/hooks'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -30,6 +36,14 @@ function contagem(inicio: string | null, fim: string | null) {
   if (faltam === 0) return 'É hoje!'
   if (fim && diasAte(fim) >= 0) return `Dia ${-faltam + 1} da viagem`
   return 'Viagem concluída'
+}
+
+// "hoje 09:10", "amanhã 09:10" ou "14 nov 09:10"
+function quando(horario: string) {
+  const dia = diaLocal(horario)
+  const faltam = diasAte(dia)
+  const prefixo = faltam === 0 ? 'hoje' : faltam === 1 ? 'amanhã' : formatarData(dia)
+  return `${prefixo} ${hora(horario)}`
 }
 
 // "12 – 15 nov · 3 noites", ou o país quando não tem data
@@ -56,13 +70,25 @@ export default function Overview() {
   // Fonte única pra lista e mapa
   const roteiro = useMemo(() => rascunho ?? destinos.map(paraItem), [rascunho, destinos])
 
+  // Spec 006: durante a viagem, o destino de hoje fica destacado na lista e no mapa
+  const indiceDeHoje = rascunho ? -1 : destinoDeHoje(roteiro, hojeTexto())
+
   const pontos = useMemo(
     () =>
       roteiro
-        .filter((d) => d.latitude !== null && d.longitude !== null)
-        .map((d) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude! })),
-    [roteiro],
+        .map((d, i) => ({ d, hoje: i === indiceDeHoje }))
+        .filter(({ d }) => d.latitude !== null && d.longitude !== null)
+        .map(({ d, hoje }) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude!, destaque: hoje })),
+    [roteiro, indiceDeHoje],
   )
+
+  // Spec 006: resumos das outras abas (as três buscas rodam em paralelo)
+  const resumo = useResumoFinanceiro(viagem.id, viagem.moeda_principal)
+  const trajetos = useTrajetos(viagem.id)
+  const fotos = useFotos(viagem.id, 6)
+  const proximo = trajetos.estado.status === 'pronto' ? proximoTrajeto(trajetos.estado.trajetos) : null
+  const ultimasFotos = fotos.estado.status === 'pronto' ? fotos.estado.fotos : []
+  const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? 'Sem destino'
 
   // Tem mudança no rascunho que ainda não foi salva?
   const assinatura = (lista: ItemRoteiro[]) => lista.map((i) => `${i.chave}|${i.chegada ?? ''}|${i.saida ?? ''}`).join()
@@ -202,10 +228,13 @@ export default function Overview() {
           <>
             <ol className="roteiro-lista">
               {roteiro.map((d, i) => (
-                <li key={d.chave}>
+                <li key={d.chave} className={i === indiceDeHoje ? 'hoje' : undefined}>
                   <span className="roteiro-numero">{i + 1}</span>
                   <span className="roteiro-nome">
-                    <strong>{d.nome}</strong>
+                    <strong>
+                      {d.nome}
+                      {i === indiceDeHoje && <span className="selo-completar">hoje</span>}
+                    </strong>
                     <small>{datasDoDestino(d)}</small>
                   </span>
                 </li>
@@ -234,24 +263,52 @@ export default function Overview() {
         )}
       </Cartao>
 
-      {/* TODO (Ingryd): quando o Financeiro existir, mostrar aqui o total gasto × orçamento */}
+      {/* Spec 006: gasto até agora × orçamento */}
       <Cartao titulo="Orçamento" icone={Wallet} acao={<Link to="financeiro">Abrir</Link>}>
-        <EstadoVazio
-          compacto
-          icone={Wallet}
-          titulo="Sem orçamento ainda"
-          texto="Defina quanto querem gastar por categoria."
-        />
+        {resumo === null ? (
+          <p className="carregando-texto">Carregando…</p>
+        ) : resumo === 'erro' ? (
+          <p className="carregando-texto">Não deu pra carregar agora.</p>
+        ) : resumo.gasto === 0 && resumo.meta === 0 ? (
+          <EstadoVazio compacto icone={Wallet} titulo="Sem gastos ainda" texto="Lance os gastos e defina quanto querem gastar por categoria." />
+        ) : (
+          <Link to="financeiro" className="resumo-orcamento">
+            <span className="numero">{formatarDinheiro(resumo.gasto, viagem.moeda_principal)}</span>
+            {resumo.meta > 0 ? (
+              <>
+                <span className="numero-legenda">
+                  de {formatarDinheiro(resumo.meta, viagem.moeda_principal)} · {Math.round((resumo.gasto / resumo.meta) * 100)}%
+                </span>
+                <span className={resumo.gasto > resumo.meta ? 'categoria-barra estourou' : 'categoria-barra'}>
+                  <span style={{ width: `${Math.min(100, (resumo.gasto / resumo.meta) * 100)}%` }} />
+                </span>
+              </>
+            ) : (
+              <span className="numero-legenda">gasto pelo comboio até agora</span>
+            )}
+          </Link>
+        )}
       </Cartao>
 
-      {/* TODO (Ingryd): mostrar aqui o próximo trajeto (o mais perto de hoje) */}
+      {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}
       <Cartao titulo="Próximo trajeto" icone={TrainFront} acao={<Link to="transportes">Abrir</Link>}>
-        <EstadoVazio
-          compacto
-          icone={TrainFront}
-          titulo="Nenhum trajeto"
-          texto="Adicione como vocês vão de um destino pro outro."
-        />
+        {proximo ? (
+          <Link to="transportes" className="resumo-trajeto">
+            <strong>
+              {nomeDoDestino(proximo.origem_id)} → {nomeDoDestino(proximo.destino_id)}
+            </strong>
+            <span>
+              {meio(proximo.meio).nome} · {quando(proximo.partida!)}
+            </span>
+          </Link>
+        ) : (
+          <EstadoVazio
+            compacto
+            icone={TrainFront}
+            titulo={trajetos.estado.status === 'pronto' && trajetos.estado.trajetos.length > 0 ? 'Nenhum trajeto pela frente' : 'Nenhum trajeto'}
+            texto="Adicione como vocês vão de um destino pro outro."
+          />
+        )}
       </Cartao>
 
       <Cartao titulo="Comboio" icone={Users} acao={<Link to="comboio">Abrir</Link>}>
@@ -266,14 +323,21 @@ export default function Overview() {
         </ul>
       </Cartao>
 
-      {/* TODO (Ingryd): mostrar aqui as últimas fotos postadas */}
+      {/* Spec 006: as fotos mais recentes */}
       <Cartao titulo="Fotos" icone={Camera} acao={<Link to="fotos">Abrir</Link>} className="overview-fotos">
-        <EstadoVazio
-          compacto
-          icone={Camera}
-          titulo="Nenhuma foto ainda"
-          texto="As melhores fotos de cada lugar aparecem aqui."
-        />
+        {ultimasFotos.length > 0 ? (
+          <ul className="resumo-fotos">
+            {ultimasFotos.map((f) => (
+              <li key={f.id}>
+                <Link to="fotos" aria-label={f.legenda ?? 'Ver fotos'}>
+                  {f.url && <img src={f.url} alt="" loading="lazy" />}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EstadoVazio compacto icone={Camera} titulo="Nenhuma foto ainda" texto="As melhores fotos de cada lugar aparecem aqui." />
+        )}
       </Cartao>
     </div>
   )

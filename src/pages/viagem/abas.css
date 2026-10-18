@@ -361,3 +361,67 @@
   gap: 8px;
   margin-top: 8px;
 }
+/* ---------- Overview com dados reais (spec 006) ---------- */
+.resumo-orcamento,
+.resumo-trajeto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.resumo-orcamento .numero-legenda {
+  margin: 0;
+}
+
+.resumo-trajeto strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.resumo-trajeto span {
+  color: var(--cor-texto-suave);
+}
+
+.resumo-fotos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 760px) {
+  .resumo-fotos {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.resumo-fotos a {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ead7b4;
+}
+
+.resumo-fotos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.roteiro-lista li.hoje .roteiro-numero {
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #ffe7b8;
+}
+
+.roteiro-nome strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

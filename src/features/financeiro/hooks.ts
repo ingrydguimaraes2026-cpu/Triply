@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { buscarCompras, type CompraDeMoeda } from '../cambio/api'
+import { supabase } from '../../lib/supabase'
+import { buscarCompras, cotacoesDeHoje, type CompraDeMoeda } from '../cambio/api'
+import { converter, montarTaxas } from '../cambio/cotacao'
+import { deBanco } from './dinheiro'
 import { buscarGastos, buscarOrcamentos, buscarPerfis, EVENTO_GASTOS, type Gasto, type Orcamento, type Perfil } from './api'
 import type { Membro } from '../viagens/hooks'
 
@@ -65,4 +68,61 @@ export function nomeDaPessoa(id: string, membros: Membro[], exMembros: Perfil[],
   if (m) return m.nome.split(' ')[0]
   const ex = exMembros.find((x) => x.id === id)
   return ex ? `${ex.nome.split(' ')[0]} (ex-membro)` : 'Ex-membro'
+}
+
+export type ResumoFinanceiro = { gasto: number; meta: number; pessoal: number; semCotacao: boolean }
+
+// Cartão "Orçamento" da Overview (spec 006): só os números, sem trazer a lista inteira de gastos
+export function useResumoFinanceiro(viagemId: string, moeda: string) {
+  const [resumo, setResumo] = useState<ResumoFinanceiro | null | 'erro'>(null)
+
+  const buscar = useCallback(async (): Promise<ResumoFinanceiro | 'erro'> => {
+    const [gastos, orcamentos, compras] = await Promise.all([
+      supabase.from('gastos').select('valor, moeda, pessoal').eq('viagem_id', viagemId),
+      supabase.from('orcamentos').select('valor_meta').eq('viagem_id', viagemId),
+      supabase.from('compras_cambio').select('moeda_origem, moeda_destino, valor_origem, valor_destino').eq('viagem_id', viagemId),
+    ])
+    if (gastos.error || orcamentos.error || compras.error) return 'erro'
+    const outras = [...new Set(gastos.data.map((g) => g.moeda).filter((m) => m !== moeda))]
+    const hoje = outras.length ? ((await cotacoesDeHoje(moeda, outras)) ?? {}) : {}
+    const taxas = montarTaxas(
+      compras.data.map((c) => ({
+        moedaOrigem: c.moeda_origem,
+        moedaDestino: c.moeda_destino,
+        valorOrigem: deBanco(c.valor_origem),
+        valorDestino: deBanco(c.valor_destino),
+      })),
+      moeda,
+      hoje,
+    )
+    let semCotacao = false
+    const somar = (lista: typeof gastos.data) =>
+      lista.reduce((s, g) => {
+        const v = converter(deBanco(g.valor), g.moeda, moeda, taxas)
+        if (v === null) semCotacao = true
+        return s + (v ?? 0)
+      }, 0)
+    return {
+      gasto: somar(gastos.data.filter((g) => !g.pessoal)),
+      pessoal: somar(gastos.data.filter((g) => g.pessoal)),
+      meta: orcamentos.data.reduce((s, o) => s + deBanco(o.valor_meta), 0),
+      semCotacao,
+    }
+  }, [viagemId, moeda])
+
+  useEffect(() => {
+    let ativo = true
+    const atualizar = () =>
+      buscar().then((novo) => {
+        if (ativo) setResumo(novo)
+      })
+    atualizar()
+    window.addEventListener(EVENTO_GASTOS, atualizar)
+    return () => {
+      ativo = false
+      window.removeEventListener(EVENTO_GASTOS, atualizar)
+    }
+  }, [buscar])
+
+  return resumo
 }
