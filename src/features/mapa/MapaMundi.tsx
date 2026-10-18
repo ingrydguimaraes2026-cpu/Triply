@@ -10,6 +10,7 @@ export type PontoNoMapa = {
   nome: string
   latitude: number
   longitude: number
+  destaque?: boolean // ex.: o destino de hoje
 }
 
 type Props = {
@@ -173,12 +174,12 @@ export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO,
         ))}
 
         {naTela.map(([x, y], i) => (
-          <g key={`${pontos[i].nome}-${i}`} transform={`translate(${x},${y})`} className="mapa-pino">
+          <g key={`${pontos[i].nome}-${i}`} transform={`translate(${x},${y})`} className={pontos[i].destaque ? 'mapa-pino hoje' : 'mapa-pino'}>
             <circle r="18" className="mapa-pino-onda" />
             <circle r="7" className="mapa-pino-centro" />
             {/* Nomes alternam em cima/embaixo pra cidades perto não se sobreporem */}
             <text x="14" y={i % 2 === 0 ? -12 : 24} className="mapa-pino-nome">
-              {numerar ? `${i + 1}. ${pontos[i].nome}` : pontos[i].nome}
+              {pontos[i].destaque && 'Hoje · '}{numerar ? `${i + 1}. ${pontos[i].nome}` : pontos[i].nome}
             </text>
           </g>
         ))}

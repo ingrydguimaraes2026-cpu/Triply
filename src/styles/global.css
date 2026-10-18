@@ -107,3 +107,25 @@ a {
   text-underline-offset: 3px;
   cursor: pointer;
 }
+
+/* Logo do Together (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18em;
+  line-height: 1;
+}
+
+.logo-simbolo {
+  flex: none;
+  width: 1.9em;
+  height: 1.9em;
+  margin: -0.25em 0;
+}
+
+.logo-nome {
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}

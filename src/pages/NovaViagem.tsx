@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import MapaMundi from '../features/mapa/MapaMundi'
-import { buscarCidades, moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
+import Logo from '../components/ui/Logo'
+import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
+import { useBuscaDeLugares } from '../features/destinos/useBuscaDeLugares'
+import { mover } from '../features/destinos/ordem'
 import { criarViagem } from '../features/viagens/api'
 import { criarConvite } from '../features/comboio/api'
 import './nova-viagem.css'
@@ -53,8 +56,6 @@ export default function NovaViagem() {
 
   const [destinos, setDestinos] = useState<Cidade[]>([])
   const [busca, setBusca] = useState('')
-  const [resultados, setResultados] = useState<Cidade[]>([])
-  const [buscando, setBuscando] = useState(false)
 
   const [ida, setIda] = useState('')
   const [volta, setVolta] = useState('')
@@ -70,24 +71,8 @@ export default function NovaViagem() {
   const [link, setLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
 
-  // Busca enquanto a pessoa digita (espera ela parar um pouquinho)
-  const buscaValida = busca.trim().length >= 2
-  useEffect(() => {
-    if (!buscaValida) return
-    const controle = new AbortController()
-    const timer = setTimeout(() => {
-      setBuscando(true)
-      buscarCidades(busca, controle.signal)
-        .then(setResultados)
-        .catch(() => {})
-        .finally(() => setBuscando(false))
-    }, 250)
-    return () => {
-      clearTimeout(timer)
-      controle.abort()
-    }
-  }, [busca, buscaValida])
-  const sugestoes = buscaValida ? resultados : []
+  // Busca enquanto a pessoa digita (a lista anterior fica na tela até chegar a nova)
+  const { sugestoes, buscando, valida: buscaValida, escolherComEnter } = useBuscaDeLugares(busca, (c) => adicionar(c))
 
   const pontos = useMemo(
     () => destinos.map((d) => ({ nome: d.nome, latitude: d.latitude, longitude: d.longitude })),
@@ -103,7 +88,7 @@ export default function NovaViagem() {
   )
 
   function adicionar(cidade: Cidade) {
-    if (!destinos.some((d) => d.id === cidade.id)) setDestinos([...destinos, cidade])
+    setDestinos((atuais) => (atuais.some((d) => d.id === cidade.id) ? atuais : [...atuais, cidade]))
     setBusca('')
   }
 
@@ -111,11 +96,8 @@ export default function NovaViagem() {
     setDestinos(destinos.filter((d) => d.id !== id))
   }
 
-  function mover(indice: number, direcao: -1 | 1) {
-    const nova = [...destinos]
-    const alvo = indice + direcao
-    ;[nova[indice], nova[alvo]] = [nova[alvo], nova[indice]]
-    setDestinos(nova)
+  function moverDestino(indice: number, direcao: -1 | 1) {
+    setDestinos(mover(destinos, indice, direcao))
   }
 
   async function criar() {
@@ -156,7 +138,9 @@ export default function NovaViagem() {
     <div className="onb">
       <MapaMundi pontos={pontos} areaLivre={areaLivre} />
 
-      <p className="onb-logo">together</p>
+      <p className="onb-logo">
+        <Logo />
+      </p>
 
       <main className="onb-painel">
         <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${PASSOS.length}`}>
@@ -168,25 +152,29 @@ export default function NovaViagem() {
         {passo === 'destinos' && (
           <section className="onb-passo">
             <div>
-              <h1>Pra onde vocês vão?</h1>
-              <p className="onb-sub">Adicione as cidades na ordem da viagem. Dá pra mudar depois.</p>
+              <h1>Vamos montar seu roteiro?</h1>
+              <p className="onb-sub">
+                Adicione todas as cidades e países que deseja visitar, na ordem que preferir. Você poderá reorganizar tudo
+                depois.
+              </p>
             </div>
 
             <div className="onb-busca">
               <label htmlFor="busca" className="onb-rotulo">
-                Buscar cidade
+                Buscar cidade ou país
               </label>
               <input
                 id="busca"
                 type="search"
                 autoComplete="off"
                 autoFocus
+                placeholder="Ex.: Milão, Portugal, Lago de Como"
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && sugestoes[0]) {
+                  if (e.key === 'Enter') {
                     e.preventDefault()
-                    adicionar(sugestoes[0])
+                    escolherComEnter()
                   }
                 }}
                 aria-controls="sugestoes"
@@ -205,9 +193,16 @@ export default function NovaViagem() {
                       </button>
                     </li>
                   ))}
+                  {buscando && sugestoes.length > 0 && (
+                    <li className="onb-sugestao-vazia onb-carregando" aria-live="polite">
+                      Buscando mais lugares…
+                    </li>
+                  )}
                 </ul>
               )}
             </div>
+
+            {destinos.length >= 2 && <p className="onb-dica">Seu roteiro · Use ↑ e ↓ para mudar a ordem</p>}
 
             {destinos.length > 0 && (
               <ol className="onb-destinos">
@@ -219,12 +214,12 @@ export default function NovaViagem() {
                       <small>{[d.tipo, d.pais].filter(Boolean).join(' · ')}</small>
                     </span>
                     <span className="onb-acoes">
-                      <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
+                      <button type="button" onClick={() => moverDestino(i, -1)} disabled={i === 0} aria-label={`Subir ${d.nome}`}>
                         ↑
                       </button>
                       <button
                         type="button"
-                        onClick={() => mover(i, 1)}
+                        onClick={() => moverDestino(i, 1)}
                         disabled={i === destinos.length - 1}
                         aria-label={`Descer ${d.nome}`}
                       >
@@ -324,20 +319,27 @@ export default function NovaViagem() {
         {passo === 'comboio' && (
           <section className="onb-passo">
             <div>
-              <h1>Agora, chama o comboio</h1>
+              <h1>Essa viagem é de vocês.</h1>
+              <p className="onb-sub">Convide quem vai viajar com você para participar da mesma viagem no Together.</p>
               <p className="onb-sub">
-                Mande o link pra quem vai com você. Quem entrar vê o roteiro, divide os gastos e posta fotos. O link vale 7
-                dias.
+                Compartilhem o roteiro, organizem os planos, acompanhem os gastos e guardem as memórias juntos. Cada pessoa
+                poderá acessar a viagem pelo convite.
               </p>
             </div>
             {link && (
-              <div className="onb-link">
-                <span>{link.replace(/^https?:\/\//, '')}</span>
+              <div>
+                <div className="onb-link">
+                  <span>{link.replace(/^https?:\/\//, '')}</span>
+                </div>
+                <p className="onb-nota">Este link de convite vale por 7 dias.</p>
               </div>
             )}
             <button type="button" className="onb-botao" onClick={compartilhar}>
-              {copiado ? 'Link copiado!' : 'Compartilhar link'}
+              {copiado ? 'Link copiado!' : 'Compartilhar convite'}
             </button>
+            <p className="onb-nota onb-nota-centro">
+              Prefere fazer isso depois? Você pode convidar pessoas a qualquer momento.
+            </p>
             <button type="button" className="onb-voltar onb-pular" onClick={() => navegar(`/viagem/${viagemId}`)}>
               Ir pra viagem
             </button>

@@ -79,3 +79,10 @@
     animation: none;
   }
 }
+
+/* Destino de hoje (spec 006) */
+.mapa-pino.hoje .mapa-pino-centro {
+  fill: #ffffff;
+  stroke: var(--laranja);
+  stroke-width: 4px;
+}

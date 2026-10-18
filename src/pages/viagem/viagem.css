@@ -31,7 +31,12 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+/* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
+.viagem-abas a:has(.aba-curto) .aba-nome {
+  display: none;
 }
 
 .viagem-abas a {
@@ -52,7 +57,7 @@
 }
 
 .viagem-conteudo {
-  padding: 24px 16px 104px;
+  padding: 20px 16px 160px;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -86,7 +91,7 @@
     font-weight: 700;
     font-style: italic;
     letter-spacing: -0.03em;
-    color: var(--dourado-claro);
+    color: var(--cor-fundo);
     text-decoration: none;
   }
 
@@ -131,6 +136,14 @@
     border-radius: 14px;
     font-size: 15px;
     transition: background 0.15s, color 0.15s;
+  }
+
+  .viagem-abas a:has(.aba-curto) .aba-nome {
+    display: inline;
+  }
+
+  .viagem-abas .aba-curto {
+    display: none;
   }
 
   .viagem-abas a:hover {
@@ -189,5 +202,124 @@
     width: 100%;
     padding: 40px 40px 64px;
     gap: 24px;
+  }
+}
+
+/* ---------- Celular: barra de cima (spec 008) ---------- */
+.viagem-topo-celular {
+  position: sticky;
+  z-index: 9;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background: #2a1a0c;
+}
+
+.viagem-topo-nome {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #fff6e5;
+  text-decoration: none;
+}
+
+.viagem-topo-nome strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--fonte-titulo);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.viagem-topo-nome svg,
+.viagem-topo-icone {
+  flex: none;
+  color: #c9b08a;
+}
+
+.viagem-topo-icone {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+
+.viagem-topo-celular .avatar {
+  border-color: #2a1a0c;
+}
+
+.viagem-abas .so-computador {
+  display: none;
+}
+
+.viagem-atual {
+  text-decoration: none;
+}
+
+/* ---------- Lançamento rápido (spec 009) ---------- */
+.botao-flutuante {
+  position: fixed;
+  z-index: 11;
+  right: 16px;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 20px;
+  background: var(--laranja);
+  color: #2a1a0c;
+  box-shadow: 0 6px 20px rgb(42 26 12 / 0.35);
+  cursor: pointer;
+}
+
+.botao-flutuante:active {
+  transform: scale(0.96);
+}
+
+.recado {
+  position: fixed;
+  z-index: 60;
+  left: 16px;
+  right: 16px;
+  bottom: calc(150px + env(safe-area-inset-bottom));
+  margin: 0 auto;
+  max-width: 440px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #2a1a0c;
+  color: #fff6e5;
+  font-size: 14px;
+  box-shadow: 0 8px 24px rgb(42 26 12 / 0.3);
+}
+
+@media (min-width: 1024px) {
+  .viagem-topo-celular,
+  .botao-flutuante {
+    display: none;
+  }
+
+  .viagem-abas .so-computador {
+    display: flex;
+  }
+
+  .viagem-atual-rotulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .viagem-atual:hover {
+    background: rgb(255 207 113 / 0.14);
+  }
+
+  .recado {
+    bottom: 32px;
   }
 }

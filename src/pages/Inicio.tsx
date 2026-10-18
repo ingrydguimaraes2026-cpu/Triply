@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router'
+import { Navigate, useLocation } from 'react-router'
 import { buscarUltimaViagem } from '../features/viagens/hooks'
 
-// Endereço "/": abre a viagem mais recente, ou o onboarding se ainda não tiver nenhuma.
+// Endereço "/": abre a viagem que está acontecendo agora (ou a mais recente),
+// ou o onboarding se ainda não tiver nenhuma.
+// "/?lancar=1" (atalho do app instalado) abre a viagem já no lançamento rápido de gasto.
 export default function Inicio() {
+  const { search } = useLocation()
   const [destino, setDestino] = useState<string | null>(null)
 
   useEffect(() => {
-    buscarUltimaViagem().then((id) => setDestino(id ? `/viagem/${id}` : '/nova-viagem'))
-  }, [])
+    const lancar = new URLSearchParams(search).has('lancar') ? '?lancar=1' : ''
+    buscarUltimaViagem().then((id) => setDestino(id ? `/viagem/${id}${lancar}` : '/nova-viagem'))
+  }, [search])
 
   if (!destino) return null
   return <Navigate to={destino} replace />

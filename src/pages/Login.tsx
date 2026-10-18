@@ -10,6 +10,7 @@ import {
   useSessao,
 } from '../features/auth/hooks'
 import CarrosselFotos from '../features/auth/CarrosselFotos'
+import Logo from '../components/ui/Logo'
 import '../features/auth/login.css'
 
 type Modo = 'entrar' | 'criar' | 'recuperar'
@@ -90,7 +91,9 @@ export default function Login() {
   return (
     <div className="login">
       <main className="login-lado">
-        <p className="login-logo">together</p>
+        <p className="login-logo">
+          <Logo />
+        </p>
 
         <div className="login-form">
           <div>
@@ -229,7 +232,7 @@ export default function Login() {
       <aside className="login-foto">
         <CarrosselFotos />
         <p className="login-logo login-logo-foto" aria-hidden="true">
-          together
+          <Logo />
         </p>
 
         <div className="login-foto-texto">

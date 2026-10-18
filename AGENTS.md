@@ -82,7 +82,8 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 - Regras e acesso ao banco em `src/features/<módulo>/` (`api.ts`, `hooks.ts`).
 - Peças visuais prontas em `src/components/ui/` (veja o README de lá). Reaproveite antes de criar outra.
 - Dados da viagem dentro das abas: `const { viagem, destinos, membros, euSouAdm } = useViagemAtual()`.
-- Cada aba em `src/pages/viagem/` tem um comentário **`TODO (Ingryd)`** no topo dizendo o que construir e quais tabelas usar. Comece por ele.
+- **Antes de construir uma funcionalidade, leia a spec dela em `docs/specs/`** (o README de lá tem o roteiro em ordem). A spec diz o que entra, o que não entra, quem pode o quê e os critérios de aceite. Se o pedido da pessoa sair da spec, avise e sugira atualizar a spec primeiro.
+- Ao terminar, use os **critérios de aceite** da spec como roteiro de teste e atualize o status no `docs/specs/README.md`.
 - Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: `lucide-react`.
 - Variáveis de ambiente do navegador começam com `VITE_`. Nunca colocar segredos nelas.
 - Antes de dizer que terminou: `npm run build` e `npm run lint` sem erros. Se der erro, explique e conserte.
@@ -94,8 +95,12 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 | Login (Google, e-mail e senha, criar conta, esqueci a senha) | Pronto |
 | Onboarding com mapa: destinos, datas, nome/moeda, convite do comboio | Pronto |
 | Link de convite `/convite/<código>` | Pronto |
-| Dashboard: menu, Overview (mapa, roteiro, comboio), aba Comboio | Pronto |
-| Transportes, Financeiro, Fotos | Só o visual. Funcionalidade = trabalho da Ingryd (ver `TODO (Ingryd)`) |
+| Dashboard: menu, Overview com resumo de tudo, editar roteiro com datas | Pronto pra testar |
+| Financeiro: gastos, divisão, acertos, orçamento, câmbio, lançamento rápido (botão "+") | Pronto pra testar |
+| Transportes, Fotos, Comboio (papéis, convites, sair) | Pronto pra testar |
+| Minhas viagens (`/viagens`), Perfil (`/perfil`), Configurações da viagem | Pronto pra testar |
+| Documentos de entrada: checklist por país na Overview, ao lado do mapa, com prazo e fonte oficial | Pronto pra testar |
+| Hospedagem: busca pronta (Airbnb, Booking, Maps), opções do comboio, votos, escolhida pelo ADM, lançar como gasto | Pronto pra testar |
 | Página 404 e de erro | Pronto |
 
 ## 7. Banco de dados (Supabase)
@@ -107,6 +112,7 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 
 ## 8. Referências
 
+- Roteiro e specs das próximas funcionalidades: `docs/specs/README.md`
 - Requisitos combinados: `docs/conversa-2026-10-10-requisitos.md`
 - Concorrentes: `docs/benchmark.md`
 - Glossário pra Ingryd: `docs/glossario.md`
