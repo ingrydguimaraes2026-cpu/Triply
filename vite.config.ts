@@ -15,7 +15,8 @@ export default defineConfig({
         description: 'Planeje a viagem com seu comboio, num lugar só.',
         lang: 'pt-BR',
         theme_color: '#7B542F',
-        background_color: '#FFF6E5',
+        // Fundo da tela de abertura do app instalado (igual à do artefato da logo)
+        background_color: '#1F140A',
         display: 'standalone',
         start_url: '/',
         // Segurar o ícone do app instalado mostra estes atalhos (spec 009)
@@ -31,7 +32,8 @@ export default defineConfig({
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          // Android corta o ícone no formato do celular: este tem margem extra pra nada sumir
+          { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),

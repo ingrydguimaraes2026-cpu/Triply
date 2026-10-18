@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import MapaMundi from '../features/mapa/MapaMundi'
+import Logo from '../components/ui/Logo'
 import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
 import { useBuscaDeLugares } from '../features/destinos/useBuscaDeLugares'
 import { mover } from '../features/destinos/ordem'
@@ -137,7 +138,9 @@ export default function NovaViagem() {
     <div className="onb">
       <MapaMundi pontos={pontos} areaLivre={areaLivre} />
 
-      <p className="onb-logo">together</p>
+      <p className="onb-logo">
+        <Logo />
+      </p>
 
       <main className="onb-painel">
         <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${PASSOS.length}`}>

@@ -19,7 +19,7 @@
   font-weight: 700;
   font-style: italic;
   letter-spacing: -0.03em;
-  color: var(--dourado-claro);
+  color: var(--cor-fundo);
 }
 
 /* No celular o painel sobe de baixo, como uma gaveta */

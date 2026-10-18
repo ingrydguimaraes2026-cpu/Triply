@@ -9,6 +9,7 @@ import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
+import Logo from '../../components/ui/Logo'
 import Gaveta from '../../components/ui/Gaveta'
 import Perdido from '../Perdido'
 import '../../components/ui/ui.css'
@@ -87,8 +88,8 @@ export default function ViagemLayout() {
       </header>
 
       <aside className="viagem-menu">
-        <Link to="/viagens" className="viagem-logo">
-          together
+        <Link to="/viagens" className="viagem-logo" aria-label="Together: ver todas as viagens">
+          <Logo />
         </Link>
 
         <Link to="/viagens" className="viagem-atual" aria-label={`${viagem.nome}: ver todas as viagens`}>
