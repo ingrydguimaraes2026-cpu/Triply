@@ -228,6 +228,109 @@ export type Database = {
           },
         ]
       }
+      hospedagem_votos: {
+        Row: {
+          criado_em: string
+          hospedagem_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          hospedagem_id: string
+          usuario_id: string
+        }
+        Update: {
+          criado_em?: string
+          hospedagem_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospedagem_votos_hospedagem_id_fkey"
+            columns: ["hospedagem_id"]
+            isOneToOne: false
+            referencedRelation: "hospedagens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagem_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospedagens: {
+        Row: {
+          checkin: string | null
+          checkout: string | null
+          criado_em: string
+          criado_por: string
+          destino_id: string | null
+          escolhida: boolean
+          id: string
+          link: string | null
+          moeda: string
+          nome: string
+          observacao: string | null
+          preco_total: number | null
+          viagem_id: string
+        }
+        Insert: {
+          checkin?: string | null
+          checkout?: string | null
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          escolhida?: boolean
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome: string
+          observacao?: string | null
+          preco_total?: number | null
+          viagem_id: string
+        }
+        Update: {
+          checkin?: string | null
+          checkout?: string | null
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          escolhida?: boolean
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome?: string
+          observacao?: string | null
+          preco_total?: number | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospedagens_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagens_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagens_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fotos: {
         Row: {
           caminho: string
@@ -538,6 +641,10 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      escolher_hospedagem: {
+        Args: { p_escolher?: boolean; p_hospedagem: string }
+        Returns: undefined
+      }
       salvar_gasto: {
         Args: { p_divisoes?: Json; p_gasto: Json; p_viagem: string }
         Returns: string

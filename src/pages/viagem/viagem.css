@@ -31,7 +31,12 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+/* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
+.viagem-abas a:has(.aba-curto) .aba-nome {
+  display: none;
 }
 
 .viagem-abas a {
@@ -131,6 +136,14 @@
     border-radius: 14px;
     font-size: 15px;
     transition: background 0.15s, color 0.15s;
+  }
+
+  .viagem-abas a:has(.aba-curto) .aba-nome {
+    display: inline;
+  }
+
+  .viagem-abas .aba-curto {
+    display: none;
   }
 
   .viagem-abas a:hover {

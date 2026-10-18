@@ -282,3 +282,83 @@ test('010: status inválido é recusado', async () => {
   const db = await novoBanco()
   await assert.rejects(marcar(db, MEMBRO, MEMBRO, 'talvez'), /check/)
 })
+
+// ---------------- 011: hospedagens ----------------
+const novaOpcao = (db, quem, extra = {}) =>
+  como(
+    db,
+    quem,
+    `insert into public.hospedagens (viagem_id, destino_id, nome, link, preco_total, moeda)
+     values ($1, $2, $3, $4, $5, 'EUR') returning id`,
+    [V, extra.destino ?? NICE, extra.nome ?? 'Apê no Vieux Nice', extra.link ?? 'https://www.airbnb.com.br/rooms/1', '480.00'],
+  ).then((r) => r[0].id)
+
+const escolher = (db, quem, id, sim = true) => como(db, quem, 'select public.escolher_hospedagem($1, $2)', [id, sim])
+
+test('011: membro adiciona opção e o comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  await novaOpcao(db, MEMBRO)
+  assert.equal((await como(db, ADM, 'select nome, criado_por from public.hospedagens'))[0].criado_por, MEMBRO)
+  assert.equal((await como(db, ESTRANHO, 'select id from public.hospedagens')).length, 0)
+  await assert.rejects(novaOpcao(db, ESTRANHO), /row-level security|não é desta viagem/) // o gatilho barra antes: ele nem vê o destino
+})
+
+test('011: membro não apaga nem edita opção de outra pessoa; ADM pode', async () => {
+  const db = await novoBanco()
+  const id = await novaOpcao(db, ADM)
+  await como(db, MEMBRO, 'delete from public.hospedagens where id = $1', [id])
+  await como(db, MEMBRO, `update public.hospedagens set nome = 'Hackeado' where id = $1`, [id])
+  assert.equal((await db.query('select nome from public.hospedagens where id = $1', [id])).rows[0].nome, 'Apê no Vieux Nice')
+  const doMembro = await novaOpcao(db, MEMBRO, { nome: 'Hotel' })
+  await como(db, ADM, 'delete from public.hospedagens where id = $1', [doMembro])
+  assert.equal((await db.query('select count(*)::int as n from public.hospedagens')).rows[0].n, 1)
+})
+
+test('011: só o ADM escolhe, e escolher outra desmarca a primeira', async () => {
+  const db = await novoBanco()
+  const a = await novaOpcao(db, MEMBRO)
+  const b = await novaOpcao(db, MEMBRO, { nome: 'Hotel Negresco' })
+  await assert.rejects(escolher(db, MEMBRO, a), /Só o ADM/)
+  await assert.rejects(como(db, MEMBRO, 'update public.hospedagens set escolhida = true where id = $1', [a]), /Só o ADM/)
+  await escolher(db, ADM, a)
+  await escolher(db, ADM, b)
+  const r = (await db.query('select nome from public.hospedagens where escolhida')).rows
+  assert.deepEqual(r.map((x) => x.nome), ['Hotel Negresco'])
+  await escolher(db, ADM, b, false)
+  assert.equal((await db.query('select count(*)::int as n from public.hospedagens where escolhida')).rows[0].n, 0)
+})
+
+test('011: destino de outra viagem e link sem https são recusados', async () => {
+  const db = await novoBanco()
+  await db.exec(`
+    insert into public.viagens (id, nome, criado_por) values ('22222222-2222-2222-2222-222222222222', 'Outra', '${MEMBRO}');
+    insert into public.destinos (id, viagem_id, nome, ordem) values ('bbbbbbbb-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'Paris', 0);
+  `)
+  await assert.rejects(novaOpcao(db, MEMBRO, { destino: 'bbbbbbbb-0000-0000-0000-000000000001' }), /não é desta viagem/)
+  await assert.rejects(novaOpcao(db, MEMBRO, { link: 'javascript:alert(1)' }), /check/)
+})
+
+test('011: cada um dá e tira só o próprio voto', async () => {
+  const db = await novoBanco()
+  const id = await novaOpcao(db, ADM)
+  await como(db, MEMBRO, 'insert into public.hospedagem_votos (hospedagem_id, usuario_id) values ($1, $2)', [id, MEMBRO])
+  await assert.rejects(
+    como(db, MEMBRO, 'insert into public.hospedagem_votos (hospedagem_id, usuario_id) values ($1, $2)', [id, ADM]),
+    /row-level security/,
+  )
+  await assert.rejects(
+    como(db, ESTRANHO, 'insert into public.hospedagem_votos (hospedagem_id, usuario_id) values ($1, $2)', [id, ESTRANHO]),
+    /row-level security/,
+  )
+  await como(db, ADM, 'delete from public.hospedagem_votos where usuario_id = $1', [MEMBRO])
+  assert.equal((await como(db, ADM, 'select count(*)::int as n from public.hospedagem_votos'))[0].n, 1)
+  await como(db, MEMBRO, 'delete from public.hospedagem_votos where usuario_id = $1', [MEMBRO])
+  assert.equal((await db.query('select count(*)::int as n from public.hospedagem_votos')).rows[0].n, 0)
+})
+
+test('011: tirar o destino do roteiro não apaga as opções', async () => {
+  const db = await novoBanco()
+  await novaOpcao(db, MEMBRO, { destino: MONACO })
+  await db.exec(`delete from public.destinos where id = '${MONACO}'`)
+  assert.equal((await db.query('select destino_id from public.hospedagens')).rows[0].destino_id, null)
+})

@@ -1,0 +1,112 @@
+/* Hospedagem (spec 011) */
+.hosp-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: var(--raio);
+  background: var(--cor-texto);
+  color: var(--cor-fundo);
+}
+.hosp-resumo-principal { display: flex; gap: 14px; align-items: center; }
+.hosp-resumo-principal > div { flex: 1; min-width: 0; }
+.hosp-resumo-icone {
+  flex: none; width: 52px; height: 52px; display: grid; place-items: center;
+  border-radius: 16px; background: var(--laranja); color: var(--cor-texto);
+}
+.hosp-resumo-conta { margin: 0 0 8px; font-size: 16px; }
+.hosp-resumo-conta strong { font-family: var(--fonte-titulo); font-size: 26px; color: var(--laranja); }
+.hosp-resumo-sub { margin: 6px 0 0; font-size: 13px; opacity: 0.75; }
+.hosp-barra { height: 6px; border-radius: 999px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
+.hosp-barra span { display: block; height: 100%; background: var(--laranja); transition: width 0.2s; }
+.hosp-resumo-totais { display: flex; flex-wrap: wrap; gap: 10px; }
+.hosp-resumo-totais p {
+  margin: 0; flex: 1 1 140px; display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px; border-radius: 12px; background: rgb(255 255 255 / 0.07);
+}
+.hosp-resumo-totais span, .hosp-resumo-totais small { font-size: 12px; opacity: 0.75; }
+.hosp-resumo-totais strong { font-size: 18px; }
+.hosp-trilha { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.hosp-trilha a {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid rgb(255 255 255 / 0.2); color: inherit;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.hosp-trilha a.trilha-resolvido { background: var(--laranja); border-color: var(--laranja); color: var(--cor-texto); }
+.hosp-trilha a.trilha-bate-e-volta { opacity: 0.6; }
+
+.hosp-destinos { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.hosp-destino {
+  display: flex; flex-direction: column; gap: 12px; padding: 16px;
+  border-radius: var(--raio); background: var(--cor-cartao); border: 1px solid var(--cor-borda);
+  scroll-margin-top: 80px;
+}
+.hosp-destino.situacao-precisa { border-left: 4px solid var(--laranja); }
+.hosp-destino.situacao-resolvido { border-left: 4px solid var(--couro); }
+.hosp-destino.recolhido { flex-direction: row; align-items: center; padding: 10px 16px; background: transparent; border-style: dashed; }
+.hosp-destino-topo { display: flex; align-items: center; gap: 12px; }
+.hosp-numero {
+  flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--cor-comboio-fundo); color: var(--couro); font-weight: 800; font-size: 14px;
+}
+.hosp-destino-nome { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.hosp-destino-nome h3 { margin: 0; font-family: var(--fonte-titulo); font-size: 20px; }
+.hosp-destino-nome small { display: inline-flex; align-items: center; gap: 4px; color: var(--cor-texto-suave); font-size: 13px; }
+.hosp-selo { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--cor-comboio-fundo); color: var(--couro); }
+.hosp-selo.selo-precisa { background: var(--laranja); color: var(--cor-texto); }
+.hosp-selo.selo-resolvido { background: var(--couro); color: #fff; }
+
+.hosp-aviso, .hosp-dica { margin: 0; display: flex; gap: 6px; align-items: flex-start; font-size: 13px; line-height: 1.4; }
+.hosp-aviso { padding: 10px 12px; border-radius: 10px; background: var(--cor-comboio-fundo); color: var(--cor-pessoal); font-weight: 600; }
+.hosp-dica { color: var(--cor-texto-suave); }
+.hosp-dica a { color: var(--caramelo); font-weight: 700; }
+
+.hosp-busca { display: flex; flex-direction: column; gap: 8px; }
+.hosp-busca-rotulo { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--cor-texto-suave); }
+.hosp-busca-botoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.hosp-buscar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 8px;
+  border-radius: 12px; color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center;
+}
+.hosp-buscar.site-airbnb { background: #e0565b; }
+.hosp-buscar.site-booking { background: #1e3f8a; }
+.hosp-buscar.site-maps { background: #2f7d4f; }
+
+.hosp-subtitulo { margin: 4px 0 0; font-size: 14px; color: var(--cor-texto-suave); }
+.hosp-opcoes { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+@media (min-width: 760px) { .hosp-opcoes { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+.hosp-opcao { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; border: 1px solid var(--cor-borda); background: var(--cor-fundo); }
+.hosp-opcao.escolhida { grid-column: 1 / -1; border: 2px solid var(--laranja); background: #fff; box-shadow: 0 6px 20px rgb(123 84 47 / 0.12); }
+.hosp-opcao-faixa { margin: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--caramelo); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+.hosp-opcao-topo { display: flex; align-items: center; gap: 8px; }
+.hosp-site { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; background: var(--cor-borda); color: var(--cor-texto); }
+.hosp-site.site-airbnb { background: #e0565b; color: #fff; }
+.hosp-site.site-booking { background: #1e3f8a; color: #fff; }
+.hosp-site.site-google { background: #2f7d4f; color: #fff; }
+.hosp-opcao-autor { flex: 1; color: var(--cor-texto-suave); font-size: 12px; }
+.hosp-editar { margin-left: auto; }
+.hosp-opcao-nome { margin: 0; font-size: 16px; line-height: 1.3; }
+.hosp-opcao-nome a { color: inherit; text-decoration: none; display: inline-flex; gap: 4px; align-items: baseline; }
+.hosp-opcao-nome a:hover { color: var(--caramelo); }
+.hosp-precos { display: flex; flex-direction: column; gap: 2px; }
+.hosp-precos strong { font-family: var(--fonte-titulo); font-size: 22px; }
+.hosp-precos span { font-size: 13px; color: var(--cor-texto-suave); }
+.hosp-precos b { color: var(--cor-texto); }
+.hosp-sem-preco, .hosp-opcao-datas, .hosp-opcao-obs { margin: 0; font-size: 13px; color: var(--cor-texto-suave); line-height: 1.4; }
+.hosp-opcao-datas { display: inline-flex; align-items: center; gap: 4px; }
+.hosp-opcao-rodape { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+.hosp-voto {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--cor-borda); background: #fff; color: var(--cor-texto); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.hosp-voto.votei { border-color: #e0565b; color: #e0565b; background: #fdecec; }
+.hosp-quem { display: flex; }
+.hosp-quem > * + * { margin-left: -6px; }
+.hosp-opcao-acoes { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hosp-vazio { margin: 0; padding: 14px; border-radius: 12px; background: var(--cor-fundo); color: var(--cor-texto-suave); font-size: 14px; text-align: center; }
+.hosp-adicionar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px;
+  border-radius: 12px; border: 2px dashed var(--cor-borda); background: transparent; color: var(--couro);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.hosp-adicionar:hover { border-color: var(--caramelo); }
