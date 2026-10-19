@@ -78,3 +78,46 @@ export async function cotacoesDeHoje(base: string, moedas: string[]): Promise<Re
     return null
   }
 }
+
+// ---------- Termômetro do câmbio (Financeiro) ----------
+// Histórico: Frankfurter (Banco Central Europeu, 1 valor por dia útil). Agora: AwesomeAPI (comercial, atualiza durante o dia).
+// As duas são grátis, sem chave e funcionam direto do navegador.
+const SEIS_HORAS = 6 * 60 * 60 * 1000
+const CINCO_MINUTOS = 5 * 60 * 1000
+const historicos = new Map<string, { quando: number; serie: { data: string; valor: number }[] }>()
+const agoras = new Map<string, { quando: number; valor: number; hora: string }>()
+
+// 1 ano de cotação: quantos reais vale 1 da moeda, dia a dia
+export async function buscarHistorico(moeda: string): Promise<{ data: string; valor: number }[]> {
+  const guardado = historicos.get(moeda)
+  if (guardado && Date.now() - guardado.quando < SEIS_HORAS) return guardado.serie
+  const inicio = new Date(Date.now() - 366 * 86_400_000).toISOString().slice(0, 10)
+  const resposta = await fetch(`https://api.frankfurter.dev/v1/${inicio}..?base=${moeda}&symbols=BRL`)
+  if (!resposta.ok) throw new Error(`Frankfurter respondeu ${resposta.status}`)
+  const dados: { rates?: Record<string, { BRL?: number }> } = await resposta.json()
+  const serie = Object.entries(dados.rates ?? {})
+    .filter(([, r]) => typeof r.BRL === 'number')
+    .map(([data, r]) => ({ data, valor: r.BRL! }))
+    .sort((a, b) => a.data.localeCompare(b.data))
+  historicos.set(moeda, { quando: Date.now(), serie })
+  return serie
+}
+
+// Cotação comercial de agora (compra). Sem resposta → null (a tela usa o último valor do histórico).
+export async function buscarAgora(moeda: string): Promise<{ valor: number; hora: string } | null> {
+  const guardado = agoras.get(moeda)
+  if (guardado && Date.now() - guardado.quando < CINCO_MINUTOS) return guardado
+  try {
+    const resposta = await fetch(`https://economia.awesomeapi.com.br/json/last/${moeda}-BRL`)
+    if (!resposta.ok) return null
+    const dados: Record<string, { bid?: string; create_date?: string }> = await resposta.json()
+    const item = dados[`${moeda}BRL`]
+    const valor = Number(item?.bid)
+    if (!valor) return null
+    const novo = { quando: Date.now(), valor, hora: item?.create_date ?? '' }
+    agoras.set(moeda, novo)
+    return novo
+  } catch {
+    return null
+  }
+}

@@ -9,6 +9,7 @@ import type { Gasto } from '../../features/financeiro/api'
 import FormGasto from '../../features/financeiro/FormGasto'
 import FormOrcamento from '../../features/financeiro/FormOrcamento'
 import FormCambio from '../../features/cambio/FormCambio'
+import TermometroCambio from '../../features/cambio/TermometroCambio'
 import { cotacoesDeHoje, type CompraDeMoeda } from '../../features/cambio/api'
 import { comparacaoComHoje, converter, mediasPorPar, montarTaxas } from '../../features/cambio/cotacao'
 import { formatarData } from '../../lib/datas'
@@ -203,6 +204,19 @@ export default function Financeiro() {
               )}
             </Cartao>
           </div>
+
+          {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? */}
+          {moeda !== 'BRL' && (
+            <TermometroCambio
+              viagemId={viagem.id}
+              moeda={moeda}
+              minhaMedia={(() => {
+                const minhas = dados.compras.filter((c) => c.usuario_id === meuId && c.moeda_origem === 'BRL' && c.moeda_destino === moeda)
+                const destino = minhas.reduce((s, c) => s + c.valorDestino, 0)
+                return destino ? minhas.reduce((s, c) => s + c.valorOrigem, 0) / destino : null
+              })()}
+            />
+          )}
 
           {/* Orçamento por categoria */}
           <Cartao titulo="Por categoria">

@@ -22,6 +22,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
 | 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar |
 | 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar |
+| 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
