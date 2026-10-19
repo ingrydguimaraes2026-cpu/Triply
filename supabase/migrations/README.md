@@ -9,11 +9,14 @@ Arquivos SQL que criam e alteram as tabelas do banco no Supabase, em ordem (o no
 - `20261018120000_salvar_gasto.sql` (specs 002/009): coluna `gastos.rascunho` e função `salvar_gasto` (gasto + divisões, tudo ou nada; o id pode vir do celular pra não duplicar).
 - `20261018120100_datas_no_roteiro.sql` (spec 001): `salvar_roteiro` passa a gravar `chegada` e `saida`; saída antes da chegada é recusada.
 - `20261018120200_link_reserva.sql` (spec 004): coluna `trajetos.link_reserva`.
-- `20261018120300_limite_fotos.sql` (spec 005): no máximo 5 fotos por destino.
+- `20261018120300_limite_fotos.sql` (spec 005): no máximo 5 fotos por destino (a 014 tira esse limite).
 - `20261018120400_comboio_sempre_com_adm.sql` (spec 007): a viagem nunca fica sem ADM; quem saiu continua com o nome visível nos gastos e fotos.
 - `20261018120500_avatares.sql` (spec 008): bucket público `avatares` (cada um só mexe na própria pasta).
 - `20261018130000_documentos_status.sql` (spec 010): tabela `documentos_status` (cada um marca o próprio checklist; o comboio vê).
 - `20261018140000_hospedagens.sql` (spec 011): tabelas `hospedagens` e `hospedagem_votos`, função `escolher_hospedagem` (só o ADM marca a escolhida; uma por destino).
+- `20261018150000_avisos_cambio.sql` (spec 013): tabelas `metas_cambio` e `push_inscricoes`, função `registrar_push` (aparelhos que recebem notificação).
+- `20261018160000_boletim_cambio.sql` (spec 013): boletim do câmbio às 12h e 20h; a meta vira opcional, entram `ultimo_valor` e `boletim_em`.
+- `20261018170000_feed_de_fotos.sql` (spec 014): tabelas `posts`, `curtidas` e `comentarios`; `fotos` ganha `post_id` e `ordem`; sai o limite de 5 por lugar, entra o de 10 fotos por post.
 
 As 6 de 18/10 são testadas em `tests/banco-specs.test.mjs`.
 

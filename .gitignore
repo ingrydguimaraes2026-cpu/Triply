@@ -24,3 +24,5 @@ dev-dist/
 # sobras da primeira versão (Expo) — caches locais, podem ter caminhos do computador
 .expo/
 expo-env.d.ts
+.vercel
+.env*

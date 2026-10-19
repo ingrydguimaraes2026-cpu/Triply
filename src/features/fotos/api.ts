@@ -1,9 +1,9 @@
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
 
+// Fotos soltas, mais novas primeiro (cartão da Overview). O feed com posts fica em src/features/feed (spec 014).
 export type Foto = Tables<'fotos'> & { url: string | null }
 
-export const LIMITE_POR_DESTINO = 5
 const BUCKET = 'fotos'
 
 // Fotos da viagem (mais novas primeiro) com um link temporário de 1 hora pra cada (bucket privado)
@@ -22,38 +22,21 @@ export async function buscarFotos(viagemId: string, limite?: number): Promise<Fo
   return data.map((f) => ({ ...f, url: porCaminho.get(f.caminho) ?? null }))
 }
 
-export class LimiteDeFotos extends Error {}
-
-// Envia o arquivo pro Storage e depois grava o registro. Se o registro falhar, apaga o arquivo (não sobra lixo).
-export async function enviarFoto(viagemId: string, destinoId: string, legenda: string, arquivo: Blob) {
-  const extensao = arquivo.type === 'image/webp' ? 'webp' : 'jpg'
-  const caminho = `${viagemId}/${crypto.randomUUID()}.${extensao}`
-  const { error: erroEnvio } = await supabase.storage.from(BUCKET).upload(caminho, arquivo, { contentType: arquivo.type })
-  if (erroEnvio) throw erroEnvio
-
-  const { error } = await supabase.from('fotos').insert({ viagem_id: viagemId, destino_id: destinoId, caminho, legenda: legenda.trim() || null })
-  if (error) {
-    await supabase.storage.from(BUCKET).remove([caminho])
-    if (error.hint === 'TR_LIMITE_FOTOS') throw new LimiteDeFotos(error.message)
-    throw error
-  }
-}
-
-// Primeiro o arquivo, depois o registro (spec 005)
-export async function apagarFoto(foto: Tables<'fotos'>) {
-  const { error: erroArquivo } = await supabase.storage.from(BUCKET).remove([foto.caminho])
-  if (erroArquivo) throw erroArquivo
-  const { error } = await supabase.from('fotos').delete().eq('id', foto.id)
-  if (error) throw new Error('O arquivo foi apagado, mas o registro da foto não. Atualize a página e tente de novo.')
-}
-
-// Apaga todos os arquivos de fotos de uma viagem (antes de apagar a viagem, spec 008)
+// Apaga todos os arquivos de fotos de uma viagem (antes de apagar a viagem, spec 008).
+// Os posts guardam as fotos em subpastas (<viagem>/<post>/<arquivo>, spec 014): entra em cada uma.
 export async function apagarArquivosDaViagem(viagemId: string) {
-  for (;;) {
-    const { data, error } = await supabase.storage.from(BUCKET).list(viagemId, { limit: 100 })
-    if (error) throw error
-    if (data.length === 0) return
-    const { error: erroRemover } = await supabase.storage.from(BUCKET).remove(data.map((f) => `${viagemId}/${f.name}`))
-    if (erroRemover) throw erroRemover
+  const pastas = [viagemId]
+  while (pastas.length > 0) {
+    const pasta = pastas.pop()!
+    for (;;) {
+      const { data, error } = await supabase.storage.from(BUCKET).list(pasta, { limit: 100 })
+      if (error) throw error
+      const arquivos = data.filter((item) => item.id !== null).map((item) => `${pasta}/${item.name}`)
+      const subpastas = data.filter((item) => item.id === null).map((item) => `${pasta}/${item.name}`)
+      for (const p of subpastas) if (!pastas.includes(p)) pastas.push(p)
+      if (arquivos.length === 0) break
+      const { error: erroRemover } = await supabase.storage.from(BUCKET).remove(arquivos)
+      if (erroRemover) throw erroRemover
+    }
   }
 }

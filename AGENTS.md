@@ -97,7 +97,9 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 | Link de convite `/convite/<código>` | Pronto |
 | Dashboard: menu, Overview com resumo de tudo, editar roteiro com datas | Pronto pra testar |
 | Financeiro: gastos, divisão, acertos, orçamento, câmbio, lançamento rápido (botão "+") | Pronto pra testar |
-| Transportes, Fotos, Comboio (papéis, convites, sair) | Pronto pra testar |
+| Transportes, Comboio (papéis, convites, sair) | Pronto pra testar |
+| Fotos: feed do comboio estilo Instagram (posts com até 10 fotos, curtidas, comentários, grade, aviso no celular) | Pronto pra testar |
+| Financeiro: termômetro do câmbio e boletim no celular às 12h e 20h | Pronto pra testar |
 | Minhas viagens (`/viagens`), Perfil (`/perfil`), Configurações da viagem | Pronto pra testar |
 | Documentos de entrada: checklist por país na Overview, ao lado do mapa, com prazo e fonte oficial | Pronto pra testar |
 | Hospedagem: busca pronta (Airbnb, Booking, Maps), opções do comboio, votos, escolhida pelo ADM, lançar como gasto | Pronto pra testar |

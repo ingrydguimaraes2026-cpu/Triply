@@ -4,7 +4,7 @@ import { hojeTexto } from '../destinos/datas'
 import { formatarDinheiro, lerValor } from '../financeiro/dinheiro'
 import { formatarData } from '../../lib/datas'
 import { buscarAgora, buscarHistorico } from './api'
-import AvisoDeMeta from './AvisoDeMeta'
+import BoletimCambio from './BoletimCambio'
 import { analisar, comIOF, custoEmReais, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
 import './termometro.css'
 
@@ -203,14 +203,7 @@ export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }:
         </div>
       </div>
 
-      <AvisoDeMeta
-        viagemId={viagemId}
-        meuId={meuId}
-        moeda={moeda}
-        comercial={agora}
-        comImposto={comImposto}
-        sugestao={analise.min90 * (1 + IOF_GASTOS)}
-      />
+      <BoletimCambio viagemId={viagemId} meuId={meuId} moeda={moeda} />
 
       <p className="termometro-fonte">
         Comparação com o passado, não previsão. Fontes: AwesomeAPI (agora) e Banco Central Europeu (histórico).

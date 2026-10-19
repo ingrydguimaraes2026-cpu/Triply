@@ -16,6 +16,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      comentarios: {
+        Row: { autor: string; criado_em: string; id: string; post_id: string; texto: string }
+        Insert: { autor?: string; criado_em?: string; id?: string; post_id: string; texto: string }
+        Update: { autor?: string; criado_em?: string; id?: string; post_id?: string; texto?: string }
+        Relationships: [
+          {
+            foreignKeyName: "comentarios_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      curtidas: {
+        Row: { criado_em: string; post_id: string; usuario_id: string }
+        Insert: { criado_em?: string; post_id: string; usuario_id?: string }
+        Update: { criado_em?: string; post_id?: string; usuario_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "curtidas_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curtidas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comboio_membros: {
         Row: {
           entrou_em: string
@@ -339,6 +381,8 @@ export type Database = {
           enviada_por: string
           id: string
           legenda: string | null
+          ordem: number
+          post_id: string
           viagem_id: string
         }
         Insert: {
@@ -348,6 +392,8 @@ export type Database = {
           enviada_por?: string
           id?: string
           legenda?: string | null
+          ordem?: number
+          post_id: string
           viagem_id: string
         }
         Update: {
@@ -357,9 +403,18 @@ export type Database = {
           enviada_por?: string
           id?: string
           legenda?: string | null
+          ordem?: number
+          post_id?: string
           viagem_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fotos_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fotos_destino_id_fkey"
             columns: ["destino_id"]
@@ -516,9 +571,9 @@ export type Database = {
         ]
       }
       metas_cambio: {
-        Row: { atualizado_em: string; avisado_em: string | null; avisar: boolean; abaixo: boolean; meta: number; moeda: string; usuario_id: string; viagem_id: string }
-        Insert: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; meta: number; moeda: string; usuario_id?: string; viagem_id: string }
-        Update: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; meta?: number; moeda?: string; usuario_id?: string; viagem_id?: string }
+        Row: { atualizado_em: string; avisado_em: string | null; avisar: boolean; abaixo: boolean; boletim_em: string | null; meta: number | null; moeda: string; ultimo_valor: number | null; usuario_id: string; viagem_id: string }
+        Insert: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id: string }
+        Update: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda?: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id?: string }
         Relationships: [
           {
             foreignKeyName: "metas_cambio_usuario_id_fkey"
@@ -556,6 +611,34 @@ export type Database = {
           nome?: string | null
         }
         Relationships: []
+      }
+      posts: {
+        Row: { autor: string; criado_em: string; destino_id: string | null; id: string; legenda: string | null; viagem_id: string }
+        Insert: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id: string }
+        Update: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "posts_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_inscricoes: {
         Row: { auth: string; criado_em: string; endpoint: string; id: string; p256dh: string; usuario_id: string }

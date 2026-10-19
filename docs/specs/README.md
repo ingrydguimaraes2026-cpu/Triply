@@ -23,7 +23,8 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar |
 | 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar |
 | 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
-| 013 | [Aviso de câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Código pronto, falta publicar |
+| 013 | [Boletim do câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Pronto pra testar |
+| 014 | [Feed de fotos do comboio](014-feed-de-fotos.md) | 2 | G | 005, 013 | Pronto pra testar |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
@@ -37,7 +38,7 @@ Na implementação, valeram as sugestões que as próprias specs davam:
 - **002:** a sobra dos centavos fica com quem pagou; gasto pessoal entra só no total de quem lançou; ainda sem "marcar como acertado".
 - **003:** orçamento do comboio inteiro (a tela mostra por pessoa); comprinhas pessoais não contam; conversão pela cotação média do comboio e, sem compra registrada, pela cotação de hoje (Frankfurter).
 - **004:** bate-e-volta vira 2 trajetos (a volta é criada junto); membro ainda não sugere trajeto.
-- **005:** 5 fotos por destino, somando o comboio inteiro; ao chegar no limite, bloqueia (apaga uma pra pôr outra). Regra garantida no banco.
+- **005:** 5 fotos por destino, somando o comboio inteiro; ao chegar no limite, bloqueia (apaga uma pra pôr outra). Regra garantida no banco. *Substituída pela 014: virou feed, sem limite por lugar.*
 - **007:** fotos e gastos de quem sai ficam na viagem, com o nome da pessoa.
 - **008:** o app abre na viagem que está acontecendo agora; senão, na mais recente. Mudar a moeda só muda a exibição (os gastos não são convertidos).
 - **009:** moeda padrão = a última usada; o botão "+" aparece só no celular.

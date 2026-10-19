@@ -1,4 +1,4 @@
-// Testes das migrations das specs 001, 002, 004, 005, 007 e 008 num PostgreSQL descartável (PGlite).
+// Testes das migrations das specs 001, 002, 004, 007, 008 e 011 a 014 num PostgreSQL descartável (PGlite).
 // Nada toca o Supabase real. Rodar: npm test
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -182,18 +182,53 @@ test('004: link da reserva aceita só http(s)', async () => {
   )
 })
 
-// ---------------- 005: limite de 5 fotos por destino ----------------
-test('005: a sexta foto do mesmo destino é recusada', async () => {
+// ---------------- 014: feed de fotos (posts, curtidas, comentários) ----------------
+const novoPost = async (db, quem, destino = NICE) =>
+  (await como(db, quem, 'insert into public.posts (viagem_id, destino_id) values ($1, $2) returning id', [V, destino]))[0].id
+const fotoNoPost = (db, quem, post, i) =>
+  como(db, quem, 'insert into public.fotos (viagem_id, destino_id, post_id, caminho, ordem) values ($1, $2, $3, $4, $5)', [V, NICE, post, `${V}/${post}/${i}.webp`, i])
+
+test('014: sem limite por lugar; no máximo 10 fotos por post', async () => {
   const db = await novoBanco()
-  for (let i = 0; i < 5; i++) {
-    await como(db, MEMBRO, `insert into public.fotos (viagem_id, destino_id, caminho) values ($1, $2, $3)`, [V, NICE, `${V}/${i}.webp`])
-  }
-  await assert.rejects(
-    como(db, ADM, `insert into public.fotos (viagem_id, destino_id, caminho) values ($1, $2, $3)`, [V, NICE, `${V}/6.webp`]),
-    /5 fotos/,
-  )
-  // Outro destino continua livre
-  await como(db, ADM, `insert into public.fotos (viagem_id, destino_id, caminho) values ($1, $2, $3)`, [V, MONACO, `${V}/m.webp`])
+  for (let n = 0; n < 6; n++) await fotoNoPost(db, MEMBRO, await novoPost(db, MEMBRO), 0) // 6 posts em Nice: pode
+  const post = await novoPost(db, ADM)
+  for (let i = 0; i < 10; i++) await fotoNoPost(db, ADM, post, i)
+  await assert.rejects(fotoNoPost(db, ADM, post, 9), /10 fotos/)
+})
+
+test('014: foto só entra no post de quem está postando; lugar tem que ser da viagem', async () => {
+  const db = await novoBanco()
+  const doMembro = await novoPost(db, MEMBRO)
+  await assert.rejects(fotoNoPost(db, ADM, doMembro, 0), /row-level security/)
+  // De fora: o gatilho nem enxerga o lugar (RLS), então pode cair em qualquer uma das duas mensagens
+  await assert.rejects(novoPost(db, ESTRANHO), /row-level security|não é desta viagem/)
+  await db.exec(`insert into public.viagens (id, nome, criado_por) values ('22222222-2222-2222-2222-222222222222', 'Outra', '${ADM}');
+    insert into public.destinos (id, viagem_id, nome, ordem, latitude, longitude) values ('bbbbbbbb-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'Roma', 0, 41.9, 12.5)`)
+  await assert.rejects(novoPost(db, ADM, 'bbbbbbbb-0000-0000-0000-000000000001'), /lugar não é desta viagem/)
+})
+
+test('014: curtidas e comentários só do comboio; quem apaga o quê', async () => {
+  const db = await novoBanco()
+  const post = await novoPost(db, ADM)
+  await como(db, MEMBRO, 'insert into public.curtidas (post_id) values ($1)', [post])
+  await assert.rejects(como(db, MEMBRO, 'insert into public.curtidas (post_id) values ($1)', [post]), /duplicate|unique/) // 1 por pessoa
+  await assert.rejects(como(db, ESTRANHO, 'insert into public.curtidas (post_id) values ($1)', [post]), /row-level security/)
+  assert.equal((await como(db, ADM, 'select * from public.curtidas')).length, 1)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.posts')).length, 0)
+
+  const [{ id: comentario }] = await como(db, MEMBRO, "insert into public.comentarios (post_id, texto) values ($1, 'Que lindo!') returning id", [post])
+  await assert.rejects(como(db, MEMBRO, "insert into public.comentarios (post_id, texto) values ($1, '   ')", [post]), /check/)
+  await assert.rejects(como(db, ESTRANHO, "insert into public.comentarios (post_id, texto) values ($1, 'oi')", [post]), /row-level security/)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.comentarios')).length, 0)
+  // O dono do post (ADM) apaga o comentário do membro
+  assert.equal((await como(db, ADM, 'delete from public.comentarios where id = $1 returning id', [comentario])).length, 1)
+
+  // Membro não apaga post do ADM; ADM apaga post do membro; apagar o post leva curtidas junto
+  assert.equal((await como(db, MEMBRO, 'delete from public.posts where id = $1 returning id', [post])).length, 0)
+  const doMembro = await novoPost(db, MEMBRO)
+  await como(db, MEMBRO, 'insert into public.curtidas (post_id) values ($1)', [doMembro])
+  assert.equal((await como(db, ADM, 'delete from public.posts where id = $1 returning id', [doMembro])).length, 1)
+  assert.equal((await db.query('select * from public.curtidas where post_id = $1', [doMembro])).rows.length, 0)
 })
 
 // ---------------- 007: sempre um ADM ----------------
@@ -387,4 +422,14 @@ test('013: registrar_push grava pra quem está logado e passa o aparelho de cont
     como(db, MEMBRO, `insert into public.push_inscricoes (endpoint, p256dh, auth) values ('https://x/z', 'a', 'b')`),
     /row-level security/,
   )
+})
+
+test('013 (boletim): dá pra pedir o boletim sem meta; a meta continua opcional', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.metas_cambio (viagem_id, moeda) values ($1, 'EUR')`, [V])
+  const [linha] = await como(db, MEMBRO, 'select meta, avisar, ultimo_valor from public.metas_cambio')
+  assert.equal(linha.meta, null)
+  assert.equal(linha.avisar, true)
+  assert.equal(linha.ultimo_valor, null)
+  await assert.rejects(como(db, MEMBRO, `update public.metas_cambio set meta = 0`), /check/)
 })

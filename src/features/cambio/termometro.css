@@ -95,10 +95,10 @@
 
 .termometro-fonte { margin: 0; color: var(--cor-texto-suave); font-size: 11px; }
 
-/* Meta + aviso no celular (spec 013) */
+/* Boletim do câmbio no celular (spec 013) */
 .termometro-meta-linha { display: flex; gap: 8px; }
 .termometro-meta-linha input { flex: 1; min-width: 0; }
-.termometro-aviso { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px dashed var(--cor-borda); }
+.termometro-aviso { display: flex; flex-direction: column; gap: 8px; }
 .termometro-aviso p { display: flex; align-items: flex-start; gap: 6px; }
 .termometro-aviso p svg { flex: none; margin-top: 2px; color: #2f7d4f; }
 .termometro-aviso-botoes { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }

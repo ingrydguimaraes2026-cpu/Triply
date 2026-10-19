@@ -1,28 +1,25 @@
-// Avisos no celular quando o câmbio bate a meta (spec 013): meta no banco + inscrição do aparelho no Web Push.
+// Boletim do câmbio no celular, 12h e 20h (spec 013): pedido no banco + inscrição do aparelho no Web Push.
 import { supabase } from '../../lib/supabase'
 
 // Chave pública do Web Push (a privada fica só no servidor, como segredo da função avisos-cambio)
 export const VAPID_PUBLICA = 'BMT3M0-HThNnW4fGo8UHb2WQkWYQIx6kYd1rSlUQzJt9yyGBDprocMC0zQc5kbUXcKWvqvXoW_6Fnsvr1D_olUI'
 
-// ---------- Meta ----------
+// ---------- Boletim ----------
+// Uma linha em metas_cambio = "quero o boletim desta moeda nesta viagem" (12h e 20h).
 
-export async function buscarMeta(viagemId: string, moeda: string): Promise<number | null> {
-  const { data, error } = await supabase.from('metas_cambio').select('meta').eq('viagem_id', viagemId).eq('moeda', moeda).maybeSingle()
+export type Boletim = { avisar: boolean; meta: number | null }
+
+export async function buscarBoletim(viagemId: string, moeda: string): Promise<Boletim | null> {
+  const { data, error } = await supabase.from('metas_cambio').select('meta, avisar').eq('viagem_id', viagemId).eq('moeda', moeda).maybeSingle()
   if (error) throw error
-  return data ? Number(data.meta) : null
+  return data ? { avisar: data.avisar, meta: data.meta === null ? null : Number(data.meta) } : null
 }
 
-// Salvar a meta "rearma" o aviso: se já estiver abaixo, a próxima checagem avisa. null = apagar.
-export async function salvarMeta(viagemId: string, meuId: string, moeda: string, meta: number | null) {
-  if (meta === null) {
-    const { error } = await supabase.from('metas_cambio').delete().eq('viagem_id', viagemId).eq('moeda', moeda).eq('usuario_id', meuId)
-    if (error) throw error
-    return
-  }
-  const { error } = await supabase.from('metas_cambio').upsert(
-    { usuario_id: meuId, viagem_id: viagemId, moeda, meta, abaixo: false, avisar: true, atualizado_em: new Date().toISOString() },
-    { onConflict: 'usuario_id,viagem_id,moeda' },
-  )
+// Liga ou desliga o boletim
+export async function marcarBoletim(viagemId: string, meuId: string, moeda: string, avisar: boolean) {
+  const { error } = await supabase
+    .from('metas_cambio')
+    .upsert({ usuario_id: meuId, viagem_id: viagemId, moeda, avisar, atualizado_em: new Date().toISOString() }, { onConflict: 'usuario_id,viagem_id,moeda' })
   if (error) throw error
 }
 
@@ -89,7 +86,7 @@ export async function desligarAvisos() {
   await inscricao.unsubscribe()
 }
 
-// Manda uma notificação de teste pros meus aparelhos
+// Manda o boletim de agora pros meus aparelhos (sem contar como boletim de verdade)
 export async function testarAviso() {
   const { data, error } = await supabase.functions.invoke('avisos-cambio', { body: { teste: true } })
   if (error) throw error
