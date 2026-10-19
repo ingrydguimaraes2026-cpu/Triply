@@ -197,3 +197,6 @@
 }
 
 .rota-agenda summary { min-height: 40px; display: flex; align-items: center; color: var(--couro); font-weight: 700; cursor: pointer; }
+
+/* Modo avião: o mapa-múndi (escuro) ocupa a caixa do mapa */
+.mapa-voo .mapa { border-radius: inherit; }

@@ -63,3 +63,21 @@ test('bate-e-volta vira passeio com ida e volta', () => {
     ['volta-outro-dia', null],
   ])
 })
+
+test('avião: trecho longo, parte por terra e link de voos', async () => {
+  const { distanciaKm, trechoLongo, parteTerrestre } = await import(new URL('../src/features/transportes/rota.ts', import.meta.url))
+  const GIG = { id: 'g', nome: 'Galeão', pais: 'Brasil', latitude: -22.81, longitude: -43.25 }
+  const PAR = { id: 'p', nome: 'Paris', pais: 'França', latitude: 48.86, longitude: 2.35 }
+  const NCE = { id: 'n', nome: 'Nice', pais: 'França', latitude: 43.7, longitude: 7.26 }
+  const ROM = { id: 'r', nome: 'Roma', pais: 'Itália', latitude: 41.9, longitude: 12.5 }
+  assert.ok(Math.abs(distanciaKm(GIG, PAR) - 9170) < 150)
+  assert.equal(trechoLongo(GIG, PAR), true)
+  assert.equal(trechoLongo(NCE, ROM), false) // ~ 520 km
+  assert.equal(distanciaKm({ latitude: null }, PAR), null)
+  assert.deepEqual(parteTerrestre([GIG, PAR, NCE, ROM, GIG]).map((d) => d.id), ['p', 'n', 'r'])
+  const [voos] = linksDoTrecho(GIG, PAR, '2027-06-01')
+  assert.equal(voos.chave, 'voos')
+  assert.equal(new URL(voos.url).searchParams.get('q'), 'voos de Galeão, Brasil para Paris, França em 2027-06-01')
+  assert.equal(linksDoTrecho(NCE, ROM)[0].chave, 'rome2rio')
+  assert.equal(modoDoMeio('aviao'), 'aviao')
+})

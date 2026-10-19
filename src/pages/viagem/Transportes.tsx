@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plus, Route } from 'lucide-react'
+import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route } from 'lucide-react'
 import type { Tables } from '../../types/database'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -7,14 +7,18 @@ import { meio, type Trajeto } from '../../features/transportes/api'
 import { avisosDoTrajeto, diaLocal, hora, proximoTrajeto } from '../../features/transportes/avisos'
 import {
   agruparPasseios,
+  linkDeVoo,
   linkDoMapaRota,
   linksDoTrecho,
   modoDoMeio,
   MODOS_NO_MAPA,
+  parteTerrestre,
+  trechoLongo,
   trechosDaRota,
   type ModoNoMapa,
   type Passeio,
 } from '../../features/transportes/rota'
+import MapaMundi from '../../features/mapa/MapaMundi'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
@@ -34,7 +38,10 @@ export default function Transportes() {
   const { estado, recarregar } = useTrajetos(viagem.id)
   const [janela, setJanela] = useState<Janela>(null)
   const [selecao, setSelecao] = useState<Selecao>({ tipo: 'tudo' })
-  const [modo, setModo] = useState<ModoNoMapa>('transporte')
+  // Viagem com voo (ex.: Galeão → Paris) abre no modo avião, que mostra a rota inteira no mapa-múndi
+  const [modo, setModo] = useState<ModoNoMapa>(() =>
+    trechosDaRota(destinos).some(({ de, para }) => trechoLongo(de, para)) ? 'aviao' : 'transporte',
+  )
 
   const trajetos = estado.status === 'pronto' ? estado.trajetos : []
   const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
@@ -61,9 +68,12 @@ export default function Transportes() {
   const passeioSel = selecao.tipo === 'passeio' ? passeios.find((p) => p.ida.id === selecao.id) : undefined
   const atual: Selecao = (selecao.tipo === 'trecho' && !trechoSel) || (selecao.tipo === 'passeio' && !passeioSel) ? { tipo: 'tudo' } : selecao
 
-  function selecionar(nova: Selecao, meioPadrao?: string) {
+  // Modo do mapa ao trocar de seleção: o meio do trajeto cadastrado; sem trajeto, avião se for longe
+  function selecionar(nova: Selecao, meioPadrao?: string, lugares?: Destino[]) {
     setSelecao(nova)
-    setModo(meioPadrao ? modoDoMeio(meioPadrao) : 'transporte')
+    if (meioPadrao) return setModo(modoDoMeio(meioPadrao))
+    const pares = trechosDaRota(lugares ?? destinos)
+    setModo(pares.some(({ de, para }) => trechoLongo(de, para)) ? 'aviao' : 'transporte')
   }
 
   const lugaresNoMapa: Destino[] =
@@ -72,7 +82,13 @@ export default function Transportes() {
       : atual.tipo === 'passeio' && passeioSel
         ? [destinoDe(passeioSel.ida.origem_id), destinoDe(passeioSel.ida.destino_id)].filter((d): d is Destino => d !== null)
         : destinos
-  const mapa = linkDoMapaRota(lugaresNoMapa, modo)
+  // Por terra, o Google não atravessa o oceano: na viagem inteira, mostra só a parte da Europa (sem os voos das pontas)
+  const lugaresPorTerra = atual.tipo === 'tudo' ? parteTerrestre(lugaresNoMapa) : lugaresNoMapa
+  const mapa = modo === 'aviao' ? null : linkDoMapaRota(lugaresPorTerra, modo)
+  const pontosDoVoo = lugaresNoMapa
+    .filter((d) => d.latitude !== null && d.longitude !== null)
+    .map((d) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude! }))
+  const linkVooAtual = lugaresNoMapa.length === 2 && atual.tipo !== 'tudo' ? linkDeVoo(lugaresNoMapa[0], lugaresNoMapa[1], lugaresNoMapa[0].saida) : null
 
   const fechar = () => setJanela(null)
 
@@ -112,7 +128,7 @@ export default function Transportes() {
 
   const comparar = (de: Destino, para: Destino) => (
     <div className="rota-comparar">
-      {linksDoTrecho(de, para).map((l) => (
+      {linksDoTrecho(de, para, de.saida).map((l) => (
         <a key={l.chave} href={l.url} target="_blank" rel="noreferrer noopener" className={`rota-link link-${l.chave}`}>
           {l.nome} <ExternalLink size={12} aria-hidden="true" />
         </a>
@@ -140,10 +156,11 @@ export default function Transportes() {
             const lista = doTrecho(de, para)
             const passeio = passeioDoTrecho(de, para)
             const primeiro = lista[0] ?? passeio?.ida
-            const Icone = primeiro ? meio(primeiro.meio).icone : Route
+            const longo = trechoLongo(de, para)
+            const Icone = primeiro ? meio(primeiro.meio).icone : longo ? Plane : Route
             return (
               <li key={`${de.id}-${para.id}`}>
-                <button type="button" onClick={() => selecionar({ tipo: 'trecho', indice }, primeiro?.meio)}>
+                <button type="button" onClick={() => selecionar({ tipo: 'trecho', indice }, primeiro?.meio, [de, para])}>
                   <span className={primeiro ? 'rota-icone feito' : 'rota-icone'}>
                     <Icone size={16} aria-hidden="true" />
                   </span>
@@ -156,7 +173,9 @@ export default function Transportes() {
                         ? `${meio(lista[0].meio).nome}${lista[0].partida ? ` · ${formatarData(diaLocal(lista[0].partida))} ${hora(lista[0].partida)}` : ''}${lista.length > 1 ? ` + ${lista.length - 1}` : ''}`
                         : passeio
                           ? 'Feito como passeio (bate-e-volta)'
-                          : 'Como vocês vão? Ainda sem trajeto'}
+                          : longo
+                            ? 'Provavelmente voo · ainda sem trajeto'
+                            : 'Como vocês vão? Ainda sem trajeto'}
                     </small>
                   </span>
                   <ArrowRight size={16} aria-hidden="true" className="rota-seta" />
@@ -313,7 +332,7 @@ export default function Transportes() {
                   type="button"
                   aria-pressed={atual.tipo === 'trecho' && atual.indice === indice}
                   className={feito ? 'seletor-resolvido' : 'seletor-precisa'}
-                  onClick={() => selecionar({ tipo: 'trecho', indice }, doTrecho(de, para)[0]?.meio)}
+                  onClick={() => selecionar({ tipo: 'trecho', indice }, doTrecho(de, para)[0]?.meio, [de, para])}
                 >
                   <span className="hosp-seletor-marca" aria-hidden="true">
                     {feito ? <Check size={12} /> : indice + 1}
@@ -339,9 +358,13 @@ export default function Transportes() {
           </nav>
 
           <div className="hosp-palco">
-            {mapa && (
-              <section className="hosp-mapa" aria-label="Mapa do caminho">
-                <iframe key={mapa.embed} src={mapa.embed} title="Google Maps: caminho da viagem" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            {(mapa || modo === 'aviao') && (
+              <section className={modo === 'aviao' ? 'hosp-mapa mapa-voo' : 'hosp-mapa'} aria-label="Mapa do caminho">
+                {modo === 'aviao' ? (
+                  <MapaMundi pontos={pontosDoVoo} zoomMaximo={6} />
+                ) : (
+                  mapa && <iframe key={mapa.embed} src={mapa.embed} title="Google Maps: caminho da viagem" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+                )}
                 {lugaresNoMapa.length > 1 && (
                   <div className="hosp-mapa-filtros" role="group" aria-label="Como ir">
                     {MODOS_NO_MAPA.map((m) => (
@@ -351,9 +374,19 @@ export default function Transportes() {
                     ))}
                   </div>
                 )}
-                <a className="hosp-mapa-abrir" href={mapa.abrir} target="_blank" rel="noreferrer noopener">
-                  <Maximize2 size={14} aria-hidden="true" /> Abrir no Google Maps
-                </a>
+                {modo === 'aviao' ? (
+                  linkVooAtual && (
+                    <a className="hosp-mapa-abrir" href={linkVooAtual} target="_blank" rel="noreferrer noopener">
+                      <Plane size={14} aria-hidden="true" /> Ver voos no Google
+                    </a>
+                  )
+                ) : (
+                  mapa && (
+                    <a className="hosp-mapa-abrir" href={mapa.abrir} target="_blank" rel="noreferrer noopener">
+                      <Maximize2 size={14} aria-hidden="true" /> Abrir no Google Maps
+                    </a>
+                  )
+                )}
               </section>
             )}
             {painel}
