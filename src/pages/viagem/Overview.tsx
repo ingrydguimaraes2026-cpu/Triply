@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
 import { BedDouble, Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
@@ -22,7 +22,7 @@ import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useHospedagem } from '../../features/hospedagem/hooks'
-import { useViagemAtual } from '../../features/viagens/hooks'
+import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -94,6 +94,23 @@ export default function Overview() {
   const docs = useDocumentos(viagem, destinos, meuId)
   const hospedagem = useHospedagem(viagem.id, destinos, meuId, membros.length)
   const hospResumo = hospedagem.resumo
+
+  // A Overview fica guardada ao trocar de aba: ao voltar, atualiza o que pode ter mudado nas outras abas
+  const ativa = useAbaAtiva()
+  const primeiraVez = useRef(true)
+  const { recarregar: recarregarTrajetos } = trajetos
+  const { recarregar: recarregarFotos } = fotos
+  const { recarregar: recarregarHospedagem } = hospedagem
+  useEffect(() => {
+    if (primeiraVez.current) {
+      primeiraVez.current = false
+      return
+    }
+    if (!ativa) return
+    recarregarTrajetos()
+    recarregarFotos()
+    recarregarHospedagem()
+  }, [ativa, recarregarTrajetos, recarregarFotos, recarregarHospedagem])
   const proximaSemHospedagem = hospedagem.itens.find((i) => i.situacao === 'precisa' || i.situacao === 'sem-datas')
 
   // Tem mudança no rascunho que ainda não foi salva?
@@ -124,7 +141,7 @@ export default function Overview() {
 
   // Avisa antes de perder alterações: trocando de aba dentro do site...
   const bloqueio = useBlocker(
-    ({ currentLocation, nextLocation }) => alterado && currentLocation.pathname !== nextLocation.pathname,
+    ({ currentLocation, nextLocation }) => ativa && alterado && currentLocation.pathname !== nextLocation.pathname,
   )
   useEffect(() => {
     if (bloqueio.state !== 'blocked') return

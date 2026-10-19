@@ -19,6 +19,7 @@ import {
   type Passeio,
 } from '../../features/transportes/rota'
 import MapaMundi from '../../features/mapa/MapaMundi'
+import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
@@ -84,7 +85,8 @@ export default function Transportes() {
         : destinos
   // Por terra, o Google não atravessa o oceano: na viagem inteira, mostra só a parte da Europa (sem os voos das pontas)
   const lugaresPorTerra = atual.tipo === 'tudo' ? parteTerrestre(lugaresNoMapa) : lugaresNoMapa
-  const mapa = modo === 'aviao' ? null : linkDoMapaRota(lugaresPorTerra, modo)
+  // O mapa do Google fica montado mesmo no modo avião (escondido), pra alternar sem recarregar
+  const mapa = linkDoMapaRota(lugaresPorTerra, modo === 'aviao' ? 'transporte' : modo)
   const pontosDoVoo = lugaresNoMapa
     .filter((d) => d.latitude !== null && d.longitude !== null)
     .map((d) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude! }))
@@ -360,11 +362,12 @@ export default function Transportes() {
           <div className="hosp-palco">
             {(mapa || modo === 'aviao') && (
               <section className={modo === 'aviao' ? 'hosp-mapa mapa-voo' : 'hosp-mapa'} aria-label="Mapa do caminho">
-                {modo === 'aviao' ? (
-                  <MapaMundi pontos={pontosDoVoo} zoomMaximo={6} />
-                ) : (
-                  mapa && <iframe key={mapa.embed} src={mapa.embed} title="Google Maps: caminho da viagem" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+                {mapa && (
+                  <div className="mapa-camada" hidden={modo === 'aviao'}>
+                    <MapaGoogle url={mapa.embed} titulo="Google Maps: caminho da viagem" />
+                  </div>
                 )}
+                {modo === 'aviao' && <MapaMundi pontos={pontosDoVoo} zoomMaximo={6} />}
                 {lugaresNoMapa.length > 1 && (
                   <div className="hosp-mapa-filtros" role="group" aria-label="Como ir">
                     {MODOS_NO_MAPA.map((m) => (

@@ -200,3 +200,7 @@
 
 /* Modo avião: o mapa-múndi (escuro) ocupa a caixa do mapa */
 .mapa-voo .mapa { border-radius: inherit; }
+
+/* Camada do Google Maps: escondida (não destruída) no modo avião */
+.mapa-camada { position: absolute; inset: 0; }
+.mapa-camada[hidden] { display: none; }

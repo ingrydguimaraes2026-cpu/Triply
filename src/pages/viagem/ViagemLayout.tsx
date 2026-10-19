@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useParams, useSearchParams } from 'react-router'
+import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
 import { BedDouble, Camera, ChevronRight, Compass, LogOut, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair } from '../../features/auth/hooks'
-import { useViagem } from '../../features/viagens/hooks'
+import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
 import { enviarFila } from '../../features/financeiro/fila'
 import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
@@ -12,6 +12,9 @@ import Avatar from '../../components/ui/Avatar'
 import Logo from '../../components/ui/Logo'
 import Gaveta from '../../components/ui/Gaveta'
 import Perdido from '../Perdido'
+import Overview from './Overview'
+import Hospedagem from './Hospedagem'
+import Transportes from './Transportes'
 import '../../components/ui/ui.css'
 import './viagem.css'
 
@@ -26,6 +29,14 @@ const ABAS = [
   { para: 'comboio', rotulo: 'Comboio', icone: Users },
 ]
 
+// Abas com mapa ficam guardadas depois da primeira visita (escondidas, não destruídas):
+// voltar nelas é instantâneo e o mapa não carrega de novo.
+const ABAS_GUARDADAS = [
+  { para: '', Tela: Overview },
+  { para: 'hospedagem', Tela: Hospedagem },
+  { para: 'transportes', Tela: Transportes },
+]
+
 type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<DadosDoGasto> } | null
 
 // Moldura de todas as telas de uma viagem: menu + a aba escolhida.
@@ -36,6 +47,14 @@ export default function ViagemLayout() {
   const [busca, setBusca] = useSearchParams()
   const [lancamento, setLancamento] = useState<Lancamento>(() => (busca.get('lancar') ? { modo: 'rapido' } : null))
   const [recado, setRecado] = useState<string | null>(null)
+
+  // Qual aba está aberta ('' = Overview) e quais abas guardadas já foram visitadas nesta viagem
+  const { pathname } = useLocation()
+  const aba = pathname.split('/').slice(3).filter(Boolean).join('/') // /viagem/<id>/hospedagem → 'hospedagem'
+  const abaGuardada = ABAS_GUARDADAS.some((a) => a.para === aba)
+  const [visitadas, setVisitadas] = useState<string[]>([])
+  const chaveDaAba = `${id}:${aba}`
+  if (abaGuardada && !visitadas.includes(chaveDaAba)) setVisitadas([...visitadas, chaveDaAba])
 
   // Atalho do app instalado ("Lançar gasto"): abre o lançamento rápido e limpa o endereço
   useEffect(() => {
@@ -137,7 +156,16 @@ export default function ViagemLayout() {
       </aside>
 
       <div className="viagem-conteudo">
-        <Outlet context={estado.dados} />
+        <ViagemContexto.Provider value={estado.dados}>
+          {ABAS_GUARDADAS.filter((a) => visitadas.includes(`${viagem.id}:${a.para}`)).map(({ para, Tela }) => (
+            <AbaAtivaContexto.Provider key={`${viagem.id}:${para}`} value={aba === para}>
+              <div className="aba-guardada" hidden={aba !== para}>
+                <Tela />
+              </div>
+            </AbaAtivaContexto.Provider>
+          ))}
+        </ViagemContexto.Provider>
+        {!abaGuardada && <Outlet context={estado.dados} />}
       </div>
 
       {/* Spec 009: botão "+" pra lançar gasto rápido (celular) */}

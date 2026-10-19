@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router'
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
@@ -93,10 +93,22 @@ export function useViagem(id: string | undefined) {
   }
 }
 
+// Abas que ficam guardadas (Overview, Hospedagem, Transportes) não passam pelo <Outlet>:
+// recebem os dados da viagem por este contexto.
+export const ViagemContexto = createContext<DadosDaViagem | null>(null)
+
+// A aba guardada está na tela agora? (false = escondida, esperando a pessoa voltar)
+export const AbaAtivaContexto = createContext(true)
+export function useAbaAtiva() {
+  return useContext(AbaAtivaContexto)
+}
+
 // Nas telas de dentro da viagem (Overview, Financeiro...), pega os dados já carregados pela moldura.
 // Exemplo: const { viagem, destinos } = useViagemAtual()
 export function useViagemAtual() {
-  return useOutletContext<DadosDaViagem>()
+  const guardada = useContext(ViagemContexto)
+  const doOutlet = useOutletContext<DadosDaViagem>()
+  return guardada ?? doOutlet
 }
 
 // Viagem pra abrir direto depois do login (spec 008):

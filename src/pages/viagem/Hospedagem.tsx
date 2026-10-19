@@ -16,6 +16,7 @@ import {
   type TipoNoMapa,
 } from '../../features/hospedagem/regras'
 import FormOpcao from '../../features/hospedagem/FormOpcao'
+import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
 import { formatarDinheiro } from '../../features/financeiro/dinheiro'
@@ -216,7 +217,7 @@ export default function Hospedagem() {
         {situacao === 'sem-datas' && (
           <p className="hosp-dica">
             <CalendarDays size={13} aria-hidden="true" /> Com as datas no roteiro, a busca já sai com check-in e check-out.{' '}
-            {euSouAdm && <Link to="..">Definir datas</Link>}
+            {euSouAdm && <Link to={`/viagem/${viagem.id}`}>Definir datas</Link>}
           </p>
         )}
         {i.avisos.map((a) => (
@@ -324,14 +325,7 @@ export default function Hospedagem() {
 
           <div className="hosp-palco">
             <section className="hosp-mapa" aria-label={`Mapa de ${item.destino.nome}`}>
-              <iframe
-                key={mapa!.embed}
-                src={mapa!.embed}
-                title={`Google Maps: ${TIPOS_NO_MAPA.find((t) => t.chave === tipo)!.nome.toLowerCase()} em ${item.destino.nome}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
+              <MapaGoogle url={mapa!.embed} titulo={`Google Maps: ${TIPOS_NO_MAPA.find((t) => t.chave === tipo)!.nome.toLowerCase()} em ${item.destino.nome}`} />
               <div className="hosp-mapa-filtros" role="group" aria-label="O que mostrar no mapa">
                 {TIPOS_NO_MAPA.map((t) => (
                   <button key={t.chave} type="button" aria-pressed={tipo === t.chave} onClick={() => setTipo(t.chave)}>

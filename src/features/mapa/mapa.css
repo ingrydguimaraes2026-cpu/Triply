@@ -86,3 +86,59 @@
   stroke: var(--laranja);
   stroke-width: 4px;
 }
+/* Google Maps embutido (MapaGoogle): os mapas guardados ficam um em cima do outro, só o atual aparece */
+.mapa-google {
+  position: absolute;
+  inset: 0;
+  background: var(--cor-comboio-fundo);
+}
+
+.mapa-google iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  visibility: hidden;
+}
+
+.mapa-google iframe.ativo {
+  visibility: visible;
+}
+
+.mapa-google-carregando {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 700;
+  animation: mapa-google-aparece 0.2s ease-out;
+}
+
+.mapa-google-pino {
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--laranja);
+  transform: rotate(-45deg);
+  animation: mapa-google-pula 0.9s ease-in-out infinite;
+}
+
+@keyframes mapa-google-pula {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+@keyframes mapa-google-aparece {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-google-pino { animation: none; }
+}

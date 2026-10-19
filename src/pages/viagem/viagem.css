@@ -56,6 +56,17 @@
   color: var(--laranja);
 }
 
+/* Aba guardada (Overview, Hospedagem, Transportes): mesmo espaçamento do conteúdo */
+.aba-guardada {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aba-guardada[hidden] {
+  display: none;
+}
+
 .viagem-conteudo {
   padding: 20px 16px 160px;
   max-width: 1200px;
