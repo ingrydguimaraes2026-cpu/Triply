@@ -63,3 +63,11 @@ O ADM registra como o comboio vai de um destino pro outro: meio de transporte, h
 - As regras de aviso dão boas funções puras pra testar (`src/features/transportes/avisos.ts`).
 - Ícones: `TrainFront`, `Bus`, `Plane`, `Car`, `Ship`, `Footprints` do lucide-react.
 - Datas com hora (`timestamptz`) voltam do banco em UTC. Mostre no fuso do destino ou, pra simplificar, no fuso do celular, e deixe isso escrito na tela.
+
+## Atualização (18/10/2026): layout com mapa
+Pedido do Victor: organizar por passeio e ter um mapa, como na Hospedagem.
+- **Seletor em cima:** "Viagem inteira", os trechos da rota (Paris → Nice…) e os **passeios** (bate-e-volta: a ida e a volta viram um cartão só, `agruparPasseios` em `src/features/transportes/rota.ts`).
+- **Mapa do Google embutido** (sem chave de API) com o caminho da rota inteira ou do trecho, e filtro Trem e ônibus / Carro / A pé.
+- **Painel:** trajetos cadastrados, "Comparar no Rome2Rio" (trem, ônibus e avião com preço) e "Rota no Google Maps". A linha do tempo virou "Agenda por dia" dentro da viagem inteira.
+- Sem mudança no banco.
+- **Depois:** passeios pra lugares fora do roteiro (ex.: Louvre, Eze) precisam de uma tabela nova de "lugares/passeios".
