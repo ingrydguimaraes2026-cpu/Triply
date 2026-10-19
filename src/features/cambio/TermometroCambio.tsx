@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BellRing, ExternalLink, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
+import { ExternalLink, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
 import { hojeTexto } from '../destinos/datas'
 import { formatarDinheiro, lerValor } from '../financeiro/dinheiro'
 import { formatarData } from '../../lib/datas'
 import { buscarAgora, buscarHistorico } from './api'
-import { analisar, bateuMeta, comIOF, custoEmReais, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
+import AvisoDeMeta from './AvisoDeMeta'
+import { analisar, comIOF, custoEmReais, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
 import './termometro.css'
 
 type Props = {
   viagemId: string
+  meuId: string
   moeda: string // moeda da viagem (ex.: EUR)
   minhaMedia?: number | null // cotação média das minhas compras, se tiver
 }
@@ -24,27 +26,12 @@ const NIVEL: Record<Nivel, { titulo: string; texto: string }> = {
 const reais = (valor: number) => `R$ ${valor.toFixed(2).replace('.', ',')}`
 const pct = (v: number) => `${v > 0 ? '+' : ''}${v.toFixed(1).replace('.', ',')}%`
 
-// Meta de compra ("me avise abaixo de R$ X"): guardada só neste aparelho
-const chaveMeta = (viagemId: string, moeda: string) => `meta-cambio:${viagemId}:${moeda}`
-function lerMeta(chave: string): number | null {
-  try {
-    const v = Number(localStorage.getItem(chave))
-    return v > 0 ? v : null
-  } catch {
-    return null
-  }
-}
-
 // Termômetro do câmbio: a moeda da viagem está barata ou cara, quanto sai com IOF na Wise/Nomad e a meta de compra.
-export default function TermometroCambio({ viagemId, moeda, minhaMedia }: Props) {
+export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }: Props) {
   const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
   const [tentativa, setTentativa] = useState(0)
   const [vista, setVista] = useState('')
   const [quanto, setQuanto] = useState('1000')
-  const [metaTexto, setMetaTexto] = useState(() => {
-    const m = lerMeta(chaveMeta(viagemId, moeda))
-    return m ? m.toFixed(2).replace('.', ',') : ''
-  })
   const hoje = hojeTexto()
 
   useEffect(() => {
@@ -69,17 +56,6 @@ export default function TermometroCambio({ viagemId, moeda, minhaMedia }: Props)
   const analise = useMemo(() => (pronto ? analisar(pronto.serie, pronto.agora, hoje) : null), [pronto, hoje])
   const seisMeses = useMemo(() => (pronto ? ultimosDias(pronto.serie, 182, hoje) : []), [pronto, hoje])
 
-  function salvarMeta(texto: string) {
-    setMetaTexto(texto)
-    const centavos = lerValor(texto)
-    try {
-      if (centavos) localStorage.setItem(chaveMeta(viagemId, moeda), String(centavos / 100))
-      else localStorage.removeItem(chaveMeta(viagemId, moeda))
-    } catch {
-      // sem armazenamento (aba anônima): a meta vale só enquanto a página estiver aberta
-    }
-  }
-
   if (estado.status === 'carregando') {
     return (
       <section className="cartao-ui termometro" aria-busy="true">
@@ -103,8 +79,6 @@ export default function TermometroCambio({ viagemId, moeda, minhaMedia }: Props)
   const vistaValor = lerValor(vista)
   const taxa = vistaValor ? taxaDoApp(vistaValor / 100, agora) : null
   const quantoCentavos = lerValor(quanto)
-  const meta = lerValor(metaTexto)
-  const bateu = bateuMeta(meta ? meta / 100 : null, agora)
   const nivel = NIVEL[analise.nivel]
 
   // Gráfico: 6 meses, com a média dos 90 dias tracejada
@@ -229,21 +203,14 @@ export default function TermometroCambio({ viagemId, moeda, minhaMedia }: Props)
         </div>
       </div>
 
-      <div className={bateu ? 'termometro-meta form-campo bateu' : 'termometro-meta form-campo'}>
-        <label className="form-rotulo" htmlFor="termo-meta">
-          <BellRing size={14} aria-hidden="true" /> Minha meta: comprar com 1 {moeda} até (já com IOF)
-        </label>
-        <input id="termo-meta" inputMode="decimal" placeholder={`ex.: ${(analise.min90 * (1 + IOF_GASTOS)).toFixed(2).replace('.', ',')}`} value={metaTexto} onChange={(e) => salvarMeta(e.target.value)} />
-        {meta ? (
-          <p role="status">
-            {bateu
-              ? `Bateu a meta: hoje sai ${reais(comImposto)} com IOF. Bom momento pra comprar!`
-              : `Ainda não: hoje sai ${reais(comImposto)} com IOF. Faltam ${reais(comImposto - meta / 100)}.`}
-          </p>
-        ) : (
-          <p>O app mostra aqui quando chegar lá (por enquanto, só quando você abrir esta tela).</p>
-        )}
-      </div>
+      <AvisoDeMeta
+        viagemId={viagemId}
+        meuId={meuId}
+        moeda={moeda}
+        comercial={agora}
+        comImposto={comImposto}
+        sugestao={analise.min90 * (1 + IOF_GASTOS)}
+      />
 
       <p className="termometro-fonte">
         Comparação com o passado, não previsão. Fontes: AwesomeAPI (agora) e Banco Central Europeu (histórico).

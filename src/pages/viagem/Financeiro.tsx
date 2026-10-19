@@ -209,6 +209,7 @@ export default function Financeiro() {
           {moeda !== 'BRL' && (
             <TermometroCambio
               viagemId={viagem.id}
+              meuId={meuId}
               moeda={moeda}
               minhaMedia={(() => {
                 const minhas = dados.compras.filter((c) => c.usuario_id === meuId && c.moeda_origem === 'BRL' && c.moeda_destino === moeda)

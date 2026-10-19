@@ -9,6 +9,8 @@ export default defineConfig({
     // PWA: deixa "instalar" o site no celular, como se fosse um app
     VitePWA({
       registerType: 'autoUpdate',
+      // Notificações (spec 013): o service worker gerado também carrega o tratamento de "push"
+      workbox: { importScripts: ['sw-push.js'] },
       manifest: {
         name: 'Together',
         short_name: 'Together',

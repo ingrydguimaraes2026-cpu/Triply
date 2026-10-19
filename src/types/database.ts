@@ -515,6 +515,27 @@ export type Database = {
           },
         ]
       }
+      metas_cambio: {
+        Row: { atualizado_em: string; avisado_em: string | null; avisar: boolean; abaixo: boolean; meta: number; moeda: string; usuario_id: string; viagem_id: string }
+        Insert: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; meta: number; moeda: string; usuario_id?: string; viagem_id: string }
+        Update: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; meta?: number; moeda?: string; usuario_id?: string; viagem_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "metas_cambio_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "metas_cambio_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfis: {
         Row: {
           avatar_url: string | null
@@ -535,6 +556,20 @@ export type Database = {
           nome?: string | null
         }
         Relationships: []
+      }
+      push_inscricoes: {
+        Row: { auth: string; criado_em: string; endpoint: string; id: string; p256dh: string; usuario_id: string }
+        Insert: { auth: string; criado_em?: string; endpoint: string; id?: string; p256dh: string; usuario_id?: string }
+        Update: { auth?: string; criado_em?: string; endpoint?: string; id?: string; p256dh?: string; usuario_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "push_inscricoes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trajetos: {
         Row: {
@@ -641,6 +676,10 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      registrar_push: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
       escolher_hospedagem: {
         Args: { p_escolher?: boolean; p_hospedagem: string }
         Returns: undefined

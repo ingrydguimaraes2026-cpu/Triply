@@ -362,3 +362,29 @@ test('011: tirar o destino do roteiro não apaga as opções', async () => {
   await db.exec(`delete from public.destinos where id = '${MONACO}'`)
   assert.equal((await db.query('select destino_id from public.hospedagens')).rows[0].destino_id, null)
 })
+
+// ---------------- 013: metas de câmbio e inscrições de push ----------------
+test('013: cada um tem a própria meta; quem está fora da viagem não cria', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.metas_cambio (viagem_id, moeda, meta) values ($1, 'EUR', 5.85)`, [V])
+  assert.equal((await como(db, MEMBRO, 'select meta from public.metas_cambio')).length, 1)
+  assert.equal((await como(db, ADM, 'select meta from public.metas_cambio')).length, 0) // ADM não vê a meta dos outros
+  await assert.rejects(como(db, ESTRANHO, `insert into public.metas_cambio (viagem_id, moeda, meta) values ($1, 'EUR', 5)`, [V]), /row-level security/)
+  await assert.rejects(como(db, MEMBRO, `insert into public.metas_cambio (viagem_id, moeda, meta) values ($1, 'BRL', 1)`, [V]), /check/)
+})
+
+test('013: registrar_push grava pra quem está logado e passa o aparelho de conta', async () => {
+  const db = await novoBanco()
+  const reg = (quem) => como(db, quem, `select public.registrar_push('https://push.exemplo/abc', 'chave', 'segredo')`)
+  await reg(MEMBRO)
+  assert.equal((await como(db, MEMBRO, 'select endpoint from public.push_inscricoes')).length, 1)
+  assert.equal((await como(db, ADM, 'select endpoint from public.push_inscricoes')).length, 0)
+  await reg(ADM) // mesmo navegador, outra conta
+  assert.equal((await como(db, ADM, 'select endpoint from public.push_inscricoes')).length, 1)
+  assert.equal((await como(db, MEMBRO, 'select endpoint from public.push_inscricoes')).length, 0)
+  await assert.rejects(como(db, null, `select public.registrar_push('https://x/y', 'a', 'b')`), /permission denied|login/)
+  await assert.rejects(
+    como(db, MEMBRO, `insert into public.push_inscricoes (endpoint, p256dh, auth) values ('https://x/z', 'a', 'b')`),
+    /row-level security/,
+  )
+})
