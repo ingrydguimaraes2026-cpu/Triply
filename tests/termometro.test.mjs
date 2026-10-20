@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const { analisar, percentil, ultimosDias, comIOF, taxaDoApp, custoEmReais, bateuMeta, pontosDoGrafico } = await import(
+const { analisar, percentil, ultimosDias, comIOF, taxaDoApp, custoEmReais, custoDaCompra, bateuMeta, pontosDoGrafico } = await import(
   new URL('../src/features/cambio/termometro.ts', import.meta.url)
 )
 
@@ -49,4 +49,38 @@ test('pontos do gráfico ocupam a caixa toda', () => {
   assert.equal(p[0].y, 100) // menor valor embaixo
   assert.equal(p[99].y, 0) // maior em cima
   assert.deepEqual(pontosDoGrafico([], 10, 10), [])
+})
+
+// Números lidos nos apps durante a reunião de 19/10/2026 (comercial R$ 5,65; € 25)
+test('custo da compra: Nomad (comercial + IOF 3,5% + taxa do app ≈ 2% = R$ 149,24)', () => {
+  const c = custoDaCompra(2500, 5.65, 149.24 / 25)
+  assert.equal(c.comercial, 14125) // R$ 141,25
+  assert.equal(c.iof, 494) // R$ 4,94
+  assert.equal(c.final, 14924) // R$ 149,24, o total que o app mostrou
+  assert.equal(c.taxaApp, 305) // o resto: R$ 3,05
+  assert.equal(c.comercial + c.iof + c.taxaApp, c.final)
+  // A Nomad mostrou "taxa de conversão de 2%": a conta reconstrói isso a partir do total
+  assert.ok(Math.abs(c.taxaAppPct - 2) < 0.15, `taxa do app ≈ 2% (deu ${c.taxaAppPct})`)
+})
+
+test('custo da compra: Wise sai mais barata com o mesmo comercial (R$ 147,19)', () => {
+  const wise = custoDaCompra(2500, 5.65, 147.19 / 25)
+  const nomad = custoDaCompra(2500, 5.65, 149.24 / 25)
+  assert.equal(wise.final, 14719)
+  assert.ok(wise.taxaApp < nomad.taxaApp)
+  assert.ok(Math.abs(wise.taxaAppPct - 0.6) < 0.1, `taxa da Wise ≈ 0,6% (deu ${wise.taxaAppPct})`)
+})
+
+test('custo da compra sem a cotação do app: mostra o piso (comercial + IOF) e não inventa taxa', () => {
+  const c = custoDaCompra(200000, 5.65, null) // € 2.000
+  assert.equal(c.taxaApp, null)
+  assert.equal(c.taxaAppPct, null)
+  assert.equal(c.final, c.comercial + c.iof)
+  assert.equal(c.comercial, 1130000) // R$ 11.300,00
+})
+
+test('custo da compra: cotação abaixo do piso dá taxa negativa (o app provavelmente não somou o IOF)', () => {
+  const c = custoDaCompra(10000, 5.65, 5.7)
+  assert.ok(c.taxaApp < 0)
+  assert.equal(c.comercial + c.iof + c.taxaApp, c.final)
 })

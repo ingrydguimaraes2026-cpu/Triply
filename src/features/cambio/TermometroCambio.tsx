@@ -5,7 +5,7 @@ import { formatarDinheiro, lerValor } from '../financeiro/dinheiro'
 import { formatarData } from '../../lib/datas'
 import { buscarAgora, buscarHistorico } from './api'
 import BoletimCambio from './BoletimCambio'
-import { analisar, comIOF, custoEmReais, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
+import { analisar, comIOF, custoDaCompra, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
 import './termometro.css'
 
 type Props = {
@@ -26,7 +26,7 @@ const NIVEL: Record<Nivel, { titulo: string; texto: string }> = {
 const reais = (valor: number) => `R$ ${valor.toFixed(2).replace('.', ',')}`
 const pct = (v: number) => `${v > 0 ? '+' : ''}${v.toFixed(1).replace('.', ',')}%`
 
-// Termômetro do câmbio: a moeda da viagem está barata ou cara, quanto sai com IOF na Wise/Nomad e a meta de compra.
+// Termômetro do câmbio: a moeda da viagem está barata ou cara, quanto sai com IOF no app (Wise, Nomad, Revolut...) e a meta de compra.
 export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }: Props) {
   const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
   const [tentativa, setTentativa] = useState(0)
@@ -79,6 +79,7 @@ export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }:
   const vistaValor = lerValor(vista)
   const taxa = vistaValor ? taxaDoApp(vistaValor / 100, agora) : null
   const quantoCentavos = lerValor(quanto)
+  const conta = quantoCentavos ? custoDaCompra(quantoCentavos, agora, vistaValor ? vistaValor / 100 : null) : null
   const nivel = NIVEL[analise.nivel]
 
   // Gráfico: 6 meses, com a média dos 90 dias tracejada
@@ -107,6 +108,7 @@ export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }:
               ? `Mais caro que ${Math.round(analise.percentil * 100)}% dos últimos 90 dias`
               : `Mais barato que ${Math.round((1 - analise.percentil) * 100)}% dos últimos 90 dias`}
           </small>
+          <small>Comparação com a cotação dos últimos 90 dias, não com o que vocês já compraram.</small>
         </div>
       </header>
 
@@ -161,7 +163,7 @@ export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }:
       </dl>
 
       <div className="termometro-apps">
-        <h3>Na Wise ou na Nomad</h3>
+        <h3>No app de câmbio (Wise, Nomad, Revolut…)</h3>
         <p>
           Com o IOF de {(IOF_GASTOS * 100).toFixed(1).replace('.', ',')}%, o mínimo que 1 {moeda} sai é <strong>{reais(comImposto)}</strong>. Cada app soma a
           taxa dele em cima.
@@ -187,12 +189,38 @@ export default function TermometroCambio({ viagemId, meuId, moeda, minhaMedia }:
               : `O app está cobrando uns ${taxa.toFixed(1).replace('.', ',')}% além do IOF.`}
           </p>
         )}
-        {quantoCentavos ? (
-          <p className="termometro-resultado">
-            {formatarDinheiro(quantoCentavos, moeda)} sai por uns <strong>{formatarDinheiro(custoEmReais(quantoCentavos, vistaValor ? vistaValor / 100 : comImposto), 'BRL')}</strong>
-            {vistaValor ? ' na cotação que você viu' : ' no mínimo (comercial + IOF)'}.
-          </p>
+        {conta && quantoCentavos ? (
+          <dl className="termometro-conta" aria-label={`Quanto custam ${formatarDinheiro(quantoCentavos, moeda)}`}>
+            <div>
+              <dt>Cotação comercial ({reais(agora)})</dt>
+              <dd>{formatarDinheiro(conta.comercial, 'BRL')}</dd>
+            </div>
+            <div>
+              <dt>IOF ({(IOF_GASTOS * 100).toFixed(1).replace('.', ',')}%)</dt>
+              <dd>+ {formatarDinheiro(conta.iof, 'BRL')}</dd>
+            </div>
+            <div>
+              <dt>Taxa do app{conta.taxaAppPct !== null ? ` (${conta.taxaAppPct.toFixed(1).replace('.', ',')}%)` : ''}</dt>
+              <dd>
+                {conta.taxaApp === null
+                  ? 'informe a cotação do app'
+                  : `${conta.taxaApp < 0 ? '−' : '+'} ${formatarDinheiro(Math.abs(conta.taxaApp), 'BRL')}`}
+              </dd>
+            </div>
+            <div className="termometro-conta-total">
+              <dt>
+                {vistaValor ? 'Custo final' : 'Custo mínimo'} de {formatarDinheiro(quantoCentavos, moeda)}
+                <small>{reais(conta.final / (quantoCentavos))} por 1 {moeda}</small>
+              </dt>
+              <dd>{formatarDinheiro(conta.final, 'BRL')}</dd>
+            </div>
+          </dl>
         ) : null}
+        {conta && conta.taxaApp !== null && conta.taxaApp < 0 && (
+          <p className="termometro-resultado">
+            A cotação informada está abaixo do mínimo com IOF: confira se o app já somou o IOF no valor.
+          </p>
+        )}
         <div className="termometro-links">
           <a href={`https://wise.com/br/currency-converter/${moeda.toLowerCase()}-to-brl-rate`} target="_blank" rel="noreferrer noopener">
             Ver na Wise <ExternalLink size={12} aria-hidden="true" />
