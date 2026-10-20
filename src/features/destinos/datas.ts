@@ -46,9 +46,16 @@ export function avisosDasDatas(itens: ComDatas[], inicio: string | null, fim: st
   const comDatas = itens
     .filter((i): i is ComDatas & { chegada: string; saida: string } => Boolean(i.chegada && i.saida && i.saida >= i.chegada))
     .sort((a, b) => a.chegada.localeCompare(b.chegada))
-  for (let k = 1; k < comDatas.length; k++) {
-    const antes = comDatas[k - 1]
-    const depois = comDatas[k]
+  // Bate-e-volta (chega e sai no mesmo dia) dentro da estadia de outro destino é um passeio a partir da base
+  // (ex.: base em Nice, domingo em Mônaco): não é sobreposição e não abre "buraco" no roteiro.
+  const passeioDentroDeEstadia = (passeio: ComDatas & { chegada: string; saida: string }) =>
+    passeio.chegada === passeio.saida &&
+    comDatas.some((outro) => outro !== passeio && outro.chegada < outro.saida && outro.chegada <= passeio.chegada && passeio.chegada <= outro.saida)
+  const estadias = comDatas.filter((i) => !passeioDentroDeEstadia(i))
+
+  for (let k = 1; k < estadias.length; k++) {
+    const antes = estadias[k - 1]
+    const depois = estadias[k]
     // Sair e chegar no mesmo dia é o normal (dia de viagem); sobrepor é chegar antes de sair do anterior
     if (depois.chegada < antes.saida) {
       avisos.push({ tipo: 'aviso', texto: `${antes.nome} e ${depois.nome} se sobrepõem.` })
@@ -71,8 +78,11 @@ export function periodoDosDestinos(itens: ComDatas[]): { inicio: string; fim: st
   return { inicio: chegadas[0], fim: saidas.at(-1)! }
 }
 
-// Índice do destino em que o comboio está hoje (chegada ≤ hoje ≤ saída), ou -1
+// Índice do destino em que o comboio está hoje (chegada ≤ hoje ≤ saída), ou -1.
+// Se hoje é dia de bate-e-volta a partir de uma base (ex.: Mônaco saindo de Nice), o destaque é o passeio.
 export function destinoDeHoje(itens: ComDatas[], hoje: string): number {
+  const passeioDeHoje = itens.findIndex((i) => i.chegada === hoje && i.saida === hoje)
+  if (passeioDeHoje !== -1) return passeioDeHoje
   return itens.findIndex((i) => i.chegada && i.chegada <= hoje && (i.saida ? hoje <= i.saida : hoje === i.chegada))
 }
 

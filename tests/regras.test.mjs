@@ -7,7 +7,7 @@ const { lerValor, paraBanco, deBanco, formatarDinheiro } = await importar('finan
 const { dividirIgual, conferirDivisao, calcularAcertos, totalPorMoeda } = await importar('financeiro/acertos.ts')
 const { cotacaoMedia, comparacaoComHoje, converter, montarTaxas } = await importar('cambio/cotacao.ts')
 const { contarNoites, avisosDasDatas, periodoDosDestinos, destinoDeHoje } = await importar('destinos/datas.ts')
-const { avisosDoTrajeto, proximoTrajeto } = await importar('transportes/avisos.ts')
+const { avisosDoTrajeto, proximoTrajeto, proximoDeslocamento } = await importar('transportes/avisos.ts')
 
 // ---------- Dinheiro ----------
 test('lerValor entende o jeito brasileiro e o com ponto', () => {
@@ -162,6 +162,51 @@ test('período e destino de hoje', () => {
   assert.equal(destinoDeHoje(itens, '2026-12-01'), -1)
 })
 
+test('bate-e-volta dentro da estadia de uma base não é sobreposição (Nice → Mônaco → Nice)', () => {
+  const roteiro = [
+    { nome: 'Nice', chegada: '2027-06-04', saida: '2027-06-07' },
+    { nome: 'Mônaco', chegada: '2027-06-06', saida: '2027-06-06' },
+    { nome: 'Milão', chegada: '2027-06-07', saida: '2027-06-08' },
+  ]
+  assert.deepEqual(avisosDasDatas(roteiro, '2027-06-04', '2027-06-20'), [])
+  // No dia da corrida o destaque é Mônaco; nos outros dias, Nice
+  assert.equal(destinoDeHoje(roteiro, '2027-06-06'), 1)
+  assert.equal(destinoDeHoje(roteiro, '2027-06-05'), 0)
+})
+
+test('cidade repetida com o passeio entre as duas estadias continua sem aviso', () => {
+  const roteiro = [
+    { nome: 'Nice', chegada: '2027-06-04', saida: '2027-06-06' },
+    { nome: 'Mônaco', chegada: '2027-06-06', saida: '2027-06-06' },
+    { nome: 'Nice', chegada: '2027-06-06', saida: '2027-06-07' },
+  ]
+  assert.deepEqual(avisosDasDatas(roteiro, null, null), [])
+})
+
+test('passeio não esconde problemas de verdade: estadias sobrepostas e buracos continuam avisando', () => {
+  const sobrepostas = avisosDasDatas(
+    [
+      { nome: 'Nice', chegada: '2027-06-04', saida: '2027-06-07' },
+      { nome: 'Mônaco', chegada: '2027-06-05', saida: '2027-06-05' },
+      { nome: 'Milão', chegada: '2027-06-06', saida: '2027-06-08' },
+    ],
+    null,
+    null,
+  ).map((a) => a.texto)
+  assert.ok(sobrepostas.includes('Nice e Milão se sobrepõem.'))
+
+  // Dia de passagem fora de qualquer estadia continua contando pro "buraco"
+  const buraco = avisosDasDatas(
+    [
+      { nome: 'Nice', chegada: '2027-06-04', saida: '2027-06-05' },
+      { nome: 'Milão', chegada: '2027-06-07', saida: '2027-06-07' },
+    ],
+    null,
+    null,
+  ).map((a) => a.texto)
+  assert.ok(buraco.includes('1 dia sem destino entre Nice e Milão.'))
+})
+
 // ---------- Transportes (spec 004) ----------
 const destinos = [
   { id: 'nice', nome: 'Nice', chegada: '2026-11-12', saida: '2026-11-14' },
@@ -196,4 +241,31 @@ test('próximo trajeto é o de partida mais próxima no futuro', () => {
   ]
   assert.equal(proximoTrajeto(lista, agora).id, 'proximo')
   assert.equal(proximoTrajeto([], agora), null)
+})
+
+test('próximo deslocamento: sem nenhum horário, é o primeiro da ordem do roteiro (com Nice repetida)', () => {
+  // Paris → Nice → Mônaco → Nice → Milão: cada Nice tem um id próprio
+  const ordem = ['paris', 'nice1', 'monaco', 'nice2', 'milao']
+  const t = (id, origem_id, destino_id, partida = null) => ({ id, origem_id, destino_id, partida })
+  const lista = [t('nice2-milao', 'nice2', 'milao'), t('monaco-nice2', 'monaco', 'nice2'), t('nice1-monaco', 'nice1', 'monaco'), t('paris-nice1', 'paris', 'nice1')]
+  const agora = new Date('2026-10-20T12:00:00')
+  assert.equal(proximoDeslocamento(lista, ordem, agora).id, 'paris-nice1')
+  // A volta Mônaco → Nice (2ª Nice) vem antes de Nice → Milão
+  const semOsDoisPrimeiros = lista.filter((x) => !['paris-nice1', 'nice1-monaco'].includes(x.id))
+  assert.equal(proximoDeslocamento(semOsDoisPrimeiros, ordem, agora).id, 'monaco-nice2')
+})
+
+test('próximo deslocamento: com horário no futuro, ele vence; horário que já passou não conta', () => {
+  const ordem = ['a', 'b', 'c']
+  const agora = new Date('2027-06-05T12:00:00')
+  const lista = [
+    { id: 'passou', origem_id: 'a', destino_id: 'b', partida: '2027-06-04T09:00:00' },
+    { id: 'sem-hora', origem_id: 'a', destino_id: 'b', partida: null },
+    { id: 'marcado', origem_id: 'b', destino_id: 'c', partida: '2027-06-07T09:00:00' },
+  ]
+  assert.equal(proximoDeslocamento(lista, ordem, agora).id, 'marcado')
+  // Só o que já passou → nenhum
+  assert.equal(proximoDeslocamento([lista[0]], ordem, agora), null)
+  // Origem que não está no roteiro (destino apagado) vai pro fim, mas não some
+  assert.equal(proximoDeslocamento([{ id: 'orfao', origem_id: null, destino_id: 'c', partida: null }], ordem, agora).id, 'orfao')
 })
