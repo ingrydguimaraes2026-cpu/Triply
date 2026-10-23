@@ -148,3 +148,48 @@
 .perfil-foto-acoes label {
   cursor: pointer;
 }
+
+/* Ações do cartão: "Abrir" (o cartão todo é o link) e a lixeira do ADM, fora do link, no canto de baixo */
+.lista-viagens-item {
+  position: relative;
+}
+
+.cartao-viagem-abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Abre espaço pra lixeira não ficar por cima do "Abrir" */
+.cartao-viagem.com-apagar .cartao-viagem-comboio {
+  padding-right: 52px;
+}
+
+.cartao-viagem-apagar {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #f0e2c8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #a3330f;
+  cursor: pointer;
+}
+
+.cartao-viagem-apagar:hover {
+  background: #fde6dc;
+  border-color: #a3330f;
+}
+
+.cartao-viagem-apagar:focus-visible {
+  outline: 3px solid rgb(255 157 0 / 0.45);
+  outline-offset: 2px;
+}
