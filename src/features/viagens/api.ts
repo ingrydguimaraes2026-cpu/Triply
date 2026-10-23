@@ -62,24 +62,37 @@ export type ResumoDaViagem = {
   dataInicio: string | null
   dataFim: string | null
   destinos: string[]
-  membros: { id: string; nome: string; avatarUrl: string | null }[]
+  membros: { id: string; nome: string; avatarUrl: string | null; papel: 'adm' | 'membro' }[]
+  souAdm: boolean // quem está usando é ADM desta viagem (só o ADM pode apagar)
 }
 
 // Todas as viagens da pessoa (o RLS do banco já filtra: só as que ela está no comboio)
 export async function buscarMinhasViagens(): Promise<ResumoDaViagem[]> {
-  const { data, error } = await supabase
-    .from('viagens')
-    .select('id, nome, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(perfis(id, nome, avatar_url))')
-    .order('criado_em', { ascending: false })
+  const [{ data, error }, { data: sessao }] = await Promise.all([
+    supabase
+      .from('viagens')
+      .select('id, nome, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(papel, perfis(id, nome, avatar_url))')
+      .order('criado_em', { ascending: false }),
+    supabase.auth.getUser(),
+  ])
   if (error) throw error
-  return data.map((v) => ({
-    id: v.id,
-    nome: v.nome,
-    dataInicio: v.data_inicio,
-    dataFim: v.data_fim,
-    destinos: [...v.destinos].sort((a, b) => a.ordem - b.ordem).map((d) => d.nome),
-    membros: v.comboio_membros.flatMap((m) => (m.perfis ? [{ id: m.perfis.id, nome: m.perfis.nome ?? 'Sem nome', avatarUrl: m.perfis.avatar_url }] : [])),
-  }))
+  const meuId = sessao.user?.id
+  return data.map((v) => {
+    const membros = v.comboio_membros.flatMap((m) =>
+      m.perfis
+        ? [{ id: m.perfis.id, nome: m.perfis.nome ?? 'Sem nome', avatarUrl: m.perfis.avatar_url, papel: m.papel as 'adm' | 'membro' }]
+        : [],
+    )
+    return {
+      id: v.id,
+      nome: v.nome,
+      dataInicio: v.data_inicio,
+      dataFim: v.data_fim,
+      destinos: [...v.destinos].sort((a, b) => a.ordem - b.ordem).map((d) => d.nome),
+      membros,
+      souAdm: membros.some((m) => m.id === meuId && m.papel === 'adm'),
+    }
+  })
 }
 
 export type Situacao = 'agora' | 'proxima' | 'concluida' | 'sem-data'

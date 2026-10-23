@@ -16,6 +16,7 @@ Hoje o app abre direto na viagem mais recente e não tem como voltar pras outras
 - **Configurações da viagem** (só ADM):
   - editar nome, datas e moeda principal;
   - apagar a viagem, com uma confirmação bem forte.
+  - *(23/10/2026)* também direto em **Minhas viagens**: lixeira no cartão (só pra quem é ADM daquela viagem), com a mesma confirmação.
 - **Perfil:** editar o nome e trocar a foto (que hoje vem do Google).
 
 ## Não inclui
