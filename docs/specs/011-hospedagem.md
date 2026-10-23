@@ -81,3 +81,10 @@ Ideia do Victor (18/10/2026): depois de escolher pra onde vão, o passo seguinte
 - Lógica pura: `src/features/hospedagem/regras.ts` (links de busca, site do link, contas, avisos).
 - Formulário de gasto: reaproveitar `FormGasto` com `inicial`.
 - Ícones: `BedDouble`, `Heart`, `ExternalLink`, `Crown` (escolhida), `Search`.
+
+## Atualização de 23/10/2026: horário de check-in e check-out
+- **Por que:** na reunião de 22/10, o plano depende de horários: chegar em Tirano ~22h (o Airbnb precisa aceitar check-in tarde) e sair às 9h pro trem de Como (check-out cedo). Hoje só dá pra guardar o dia.
+- **Dados:** migration `20261023040133_horario_hospedagem.sql`: colunas opcionais `hora_checkin` e `hora_checkout` em `hospedagens`. As opções que já existem ficam sem horário.
+- **Tela (a fazer):** dois campos de horário no formulário da opção; na opção, "Check-in a partir das 15h · check-out até as 10h".
+- **Critério de aceite:** salvar "check-in 22:00, check-out 09:00", atualizar a página, e os horários continuam lá.
+- **Status:** banco aplicado (23/10/2026); tela a fazer.
