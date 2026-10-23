@@ -17,10 +17,12 @@ Arquivos SQL que criam e alteram as tabelas do banco no Supabase, em ordem (o no
 - `20261018150000_avisos_cambio.sql` (spec 013): tabelas `metas_cambio` e `push_inscricoes`, função `registrar_push` (aparelhos que recebem notificação).
 - `20261018160000_boletim_cambio.sql` (spec 013): boletim do câmbio às 12h e 20h; a meta vira opcional, entram `ultimo_valor` e `boletim_em`.
 - `20261018170000_feed_de_fotos.sql` (spec 014): tabelas `posts`, `curtidas` e `comentarios`; `fotos` ganha `post_id` e `ordem`; sai o limite de 5 por lugar, entra o de 10 fotos por post.
+- `20261023040125_lugares.sql` (spec 016): tabela `lugares` (passeios, comida e guarda-volumes de cada destino; o comboio adiciona, quem criou ou o ADM edita e apaga).
+- `20261023040133_horario_hospedagem.sql` (spec 011): `hospedagens` ganha `hora_checkin` e `hora_checkout` (opcionais).
 
-As 6 de 18/10 são testadas em `tests/banco-specs.test.mjs`.
+As 6 de 18/10 são testadas em `tests/banco-specs.test.mjs`; as de 23/10, em `tests/lugares.test.mjs`.
 
-Atenção: no Supabase, as duas primeiras aparecem registradas com outro número (`20261010152403` e `20261010152424`), porque o número é o momento em que foram aplicadas. A `salvar_roteiro` usa o mesmo número nos dois lugares.
+Atenção: no Supabase, as duas primeiras aparecem registradas com outro número (`20261010152403` e `20261010152424`), porque o número é o momento em que foram aplicadas. As outras usam o mesmo número nos dois lugares.
 
 Regra geral de acesso: quem está no comboio vê a viagem; o ADM edita destinos, trajetos, orçamento e convites; gasto "pessoal" só quem lançou vê.
 

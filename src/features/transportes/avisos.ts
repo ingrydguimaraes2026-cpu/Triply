@@ -79,6 +79,30 @@ export function proximoTrajeto<T extends { partida: string | null }>(trajetos: T
   return futuros[0] ?? null
 }
 
+/**
+ * Próximo deslocamento cadastrado (Overview e selo "próximo" em Transportes):
+ * 1. o de partida mais próxima no futuro (com horário);
+ * 2. se nenhum tiver horário pela frente, o primeiro ainda SEM horário, na ordem do roteiro
+ *    (pela posição da origem; destinos repetidos têm ids diferentes, então Nice → Mônaco → Nice funciona).
+ * Trajeto com horário que já passou não conta.
+ */
+export function proximoDeslocamento<T extends { partida: string | null; origem_id: string | null; destino_id: string | null }>(
+  trajetos: T[],
+  ordemDosDestinos: string[],
+  agora = new Date(),
+): T | null {
+  const comHorario = proximoTrajeto(trajetos, agora)
+  if (comHorario) return comHorario
+  const posicao = (id: string | null) => {
+    const i = id ? ordemDosDestinos.indexOf(id) : -1
+    return i === -1 ? Number.MAX_SAFE_INTEGER : i
+  }
+  const semHorario = trajetos
+    .filter((t) => !t.partida)
+    .sort((a, b) => posicao(a.origem_id) - posicao(b.origem_id) || posicao(a.destino_id) - posicao(b.destino_id))
+  return semHorario[0] ?? null
+}
+
 // "2026-11-14T09:10" (campo datetime-local, no fuso do celular) ↔ horário do banco
 export function paraCampoHorario(horario: string | null): string {
   if (!horario) return ''

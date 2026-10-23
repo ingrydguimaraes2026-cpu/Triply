@@ -70,6 +70,28 @@ export function custoEmReais(centavosMoeda: number, cotacao: number) {
   return Math.round(centavosMoeda * cotacao)
 }
 
+/**
+ * Separa o custo de comprar `centavosMoeda` num app (Wise, Nomad, Revolut...) em reais (centavos):
+ * comercial + IOF + taxa do app = custo final.
+ * - `vista` = cotação final que o app mostrou (já com tudo dentro). Sem ela, o final é o piso
+ *   (comercial + IOF) e a taxa do app fica null ("informe a cotação do app").
+ * - A taxa do app é o que sobra: final − comercial − IOF (assim as partes sempre somam o final).
+ *   Negativa = a cotação vista está abaixo do piso (provável que o app não tenha incluído o IOF).
+ */
+export function custoDaCompra(centavosMoeda: number, comercial: number, vista: number | null, iof = IOF_GASTOS) {
+  const parteComercial = custoEmReais(centavosMoeda, comercial)
+  const parteIOF = custoEmReais(centavosMoeda, comercial * iof)
+  // Sem a cotação do app, o final é exatamente comercial + IOF (sem diferença de arredondamento)
+  const final = vista === null ? parteComercial + parteIOF : custoEmReais(centavosMoeda, vista)
+  return {
+    comercial: parteComercial,
+    iof: parteIOF,
+    taxaApp: vista === null ? null : final - parteComercial - parteIOF,
+    taxaAppPct: vista === null ? null : taxaDoApp(vista, comercial, iof),
+    final,
+  }
+}
+
 // Meta: "quero comprar abaixo de R$ X". true quando a cotação com IOF chegou lá.
 export function bateuMeta(meta: number | null, comercial: number, iof = IOF_GASTOS) {
   return meta !== null && meta > 0 && comIOF(comercial, iof) <= meta
