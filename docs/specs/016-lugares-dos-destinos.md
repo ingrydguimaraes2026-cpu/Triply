@@ -1,6 +1,6 @@
 # 016. Lugares de cada destino
 
-**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Banco aplicado (23/10/2026); tela a fazer
+**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Pronto pra testar
 
 ## Objetivo
 Em cada destino do roteiro, o comboio guarda o que quer ver, comer e usar ali: passeios, lugares pra comer e **guarda-volumes**, cada um com link, horário, preço e observação. Assim o "destrinchar a cidade" fica dentro do app, não perdido no WhatsApp ou no TikTok.
@@ -50,8 +50,8 @@ Duas reuniões planejando a Eurotrip (19/10 e 22/10/2026):
 - [ ] Tirar Milão do roteiro não apaga os lugares de Milão.
 
 ## Perguntas em aberto
-- Onde mostrar: dentro da aba Hospedagem (perto do "onde dormir") ou numa aba nova "Lugares"? (Sugestão: aba nova, porque passeios e comida não são hospedagem.)
-- Lugares entram no Overview (ex.: "3 lugares anotados em Nice")?
+- ~~Onde mostrar?~~ **Decisão (23/10):** aba nova "Lugares", entre Hospedagem e Transportes. No menu do celular (agora com 7 abas), "Financeiro" aparece como "Finanças" pra caber em 360 px.
+- Lugares entram no Overview (ex.: "3 lugares anotados em Nice")? (Fica pra depois.)
 
 ## Dicas pra implementar
 - Seguir o padrão da Hospedagem: `src/features/lugares/api.ts`, `hooks.ts` e lógica pura em `regras.ts` (agrupar por tipo, destino de passagem).

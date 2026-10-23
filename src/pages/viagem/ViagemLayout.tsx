@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { BedDouble, Camera, ChevronRight, Compass, LogOut, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, Camera, ChevronRight, Compass, LogOut, MapPinned, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair } from '../../features/auth/hooks'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
@@ -19,12 +19,13 @@ import '../../components/ui/ui.css'
 import './viagem.css'
 
 // Abas da viagem. Pra criar uma aba nova: adicione aqui e no src/router.tsx
-// `curto`: nome menor pro menu de baixo do celular (6 abas em 360px)
+// `curto`: nome menor pro menu de baixo do celular (7 abas em 360px)
 const ABAS = [
   { para: '', rotulo: 'Overview', icone: Compass },
   { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
+  { para: 'lugares', rotulo: 'Lugares', icone: MapPinned },
   { para: 'transportes', rotulo: 'Transportes', curto: 'Transp.', icone: TrainFront },
-  { para: 'financeiro', rotulo: 'Financeiro', icone: Wallet },
+  { para: 'financeiro', rotulo: 'Financeiro', curto: 'Finanças', icone: Wallet },
   { para: 'fotos', rotulo: 'Fotos', icone: Camera },
   { para: 'comboio', rotulo: 'Comboio', icone: Users },
 ]
