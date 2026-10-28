@@ -1,0 +1,206 @@
+/* Transportes (spec 004) */
+
+.trajetos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trajeto {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--cor-fundo);
+}
+
+.trajeto.proximo {
+  outline: 2px solid var(--laranja);
+}
+
+.trajeto-icone {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #ffe7b8;
+  color: var(--couro);
+}
+
+.trajeto-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trajeto-texto strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.trajeto-texto strong svg {
+  color: var(--caramelo);
+}
+
+.trajeto-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.trajeto-obs {
+  font-style: italic;
+}
+
+.trajeto-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.selo-suave svg {
+  vertical-align: -1px;
+}
+
+.avisos-logistica {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avisos-logistica p {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #fff0d1;
+  border: 1px solid #ffd98a;
+  color: #5a3a00;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.avisos-logistica svg {
+  flex: none;
+  margin-top: 2px;
+  color: #b86a00;
+}
+
+.linha-do-tempo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.linha-do-tempo h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+/* Layout com mapa: o seletor, o mapa e o painel vêm do hospedagem.css (hosp-*) */
+.seletor-passeio .hosp-seletor-marca { background: var(--dourado-claro); color: var(--couro); }
+
+.rota-titulo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+
+.rota-lista { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.rota-lista li { position: relative; }
+.rota-lista li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 46px;
+  bottom: -6px;
+  border-left: 2px dashed var(--cor-borda);
+}
+.rota-lista button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.rota-lista button:hover { background: var(--cor-fundo); }
+.rota-icone {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px dashed var(--caramelo);
+  color: var(--caramelo);
+  background: var(--cor-cartao);
+  position: relative;
+  z-index: 1;
+}
+.rota-icone.feito { border: 0; background: var(--couro); color: #fff; }
+.rota-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rota-texto strong { display: inline-flex; align-items: center; gap: 4px; font-size: 15px; }
+.rota-texto small { color: var(--cor-texto-suave); font-size: 13px; }
+.rota-seta { flex: none; color: var(--caramelo); }
+
+.rota-comparar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rota-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.rota-link.link-rome2rio { background: var(--cor-texto); color: var(--cor-fundo); }
+.rota-link.link-maps { background: #2f7d4f; color: #fff; }
+
+.rota-aviso-passeio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rota-agenda summary { min-height: 40px; display: flex; align-items: center; color: var(--couro); font-weight: 700; cursor: pointer; }
+
+/* Modo avião: o mapa-múndi (escuro) ocupa a caixa do mapa */
+.mapa-voo .mapa { border-radius: inherit; }
+
+/* Camada do Google Maps: escondida (não destruída) no modo avião */
+.mapa-camada { position: absolute; inset: 0; }
+.mapa-camada[hidden] { display: none; }

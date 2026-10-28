@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useRouteError } from 'react-router'
 import MapaMundi from '../features/mapa/MapaMundi'
+import Logo from '../components/ui/Logo'
 import './perdido.css'
 
 // Ponto Nemo: o lugar do oceano mais longe de qualquer terra
@@ -30,7 +31,9 @@ export default function Perdido({ tipo = 'naoEncontrada' }: { tipo?: keyof typeo
   return (
     <div className="perdido">
       <MapaMundi pontos={PONTO_NEMO} areaLivre={areaLivre} zoomMaximo={2.5} numerar={false} />
-      <p className="perdido-logo">together</p>
+      <p className="perdido-logo">
+        <Logo />
+      </p>
 
       <main className="perdido-cartao">
         <p className="perdido-codigo">{t.codigo}</p>

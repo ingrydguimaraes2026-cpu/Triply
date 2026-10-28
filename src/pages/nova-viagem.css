@@ -19,7 +19,7 @@
   font-weight: 700;
   font-style: italic;
   letter-spacing: -0.03em;
-  color: var(--dourado-claro);
+  color: var(--cor-fundo);
 }
 
 /* No celular o painel sobe de baixo, como uma gaveta */
@@ -162,6 +162,26 @@
   color: var(--cor-texto-suave);
 }
 
+/* "Buscando mais lugares…" embaixo dos resultados que já chegaram */
+.onb-carregando {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-top: 1px solid #f3e6cc;
+}
+
+.onb-busca input::placeholder {
+  color: var(--cor-texto-suave);
+  opacity: 0.7;
+}
+
+/* "Seu roteiro · Use ↑ e ↓..." acima da lista de destinos */
+.onb-dica {
+  margin: 0 0 -8px;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 /* Selo com a sigla do país, tipo "FR" */
 .onb-codigo {
   flex: none;
@@ -301,6 +321,19 @@
 
 .onb-voltar:hover {
   background: #ffffff;
+}
+
+/* Textos pequenos do passo do convite ("vale por 7 dias", "Prefere fazer isso depois?") */
+.onb-nota {
+  margin: 8px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.onb-nota-centro {
+  margin: 0 0 -8px;
+  text-align: center;
 }
 
 .onb-link {

@@ -8,6 +8,7 @@ Blocos reutilizáveis pra montar as telas com a mesma cara. Os estilos ficam em 
 | `CabecalhoPagina` | Título grande no topo de cada aba | `<CabecalhoPagina titulo="Fotos" subtitulo="..." />` |
 | `EstadoVazio` | Tela/cartão sem dados ainda, explicando o próximo passo | `<EstadoVazio icone={Camera} titulo="..." texto="..." />` |
 | `Avatar` | Foto ou iniciais da pessoa | `<Avatar nome="Ingryd" url={...} />` |
+| `Logo` | Logo do Together (símbolo "Rota" + nome). Pega a cor e o tamanho do texto em volta | `<Logo />` ou `<Logo comNome={false} />` |
 
 Ícones: usamos [lucide-react](https://lucide.dev/icons). Procure o ícone no site e importe pelo nome:
 

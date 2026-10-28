@@ -16,6 +16,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      comentarios: {
+        Row: { autor: string; criado_em: string; id: string; post_id: string; texto: string }
+        Insert: { autor?: string; criado_em?: string; id?: string; post_id: string; texto: string }
+        Update: { autor?: string; criado_em?: string; id?: string; post_id?: string; texto?: string }
+        Relationships: [
+          {
+            foreignKeyName: "comentarios_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      curtidas: {
+        Row: { criado_em: string; post_id: string; usuario_id: string }
+        Insert: { criado_em?: string; post_id: string; usuario_id?: string }
+        Update: { criado_em?: string; post_id?: string; usuario_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "curtidas_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curtidas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comboio_membros: {
         Row: {
           entrou_em: string
@@ -189,6 +231,154 @@ export type Database = {
           },
         ]
       }
+      documentos_status: {
+        Row: {
+          atualizado_em: string
+          item: string
+          status: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          item: string
+          status?: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          item?: string
+          status?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentos_status_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documentos_status_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospedagem_votos: {
+        Row: {
+          criado_em: string
+          hospedagem_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          hospedagem_id: string
+          usuario_id: string
+        }
+        Update: {
+          criado_em?: string
+          hospedagem_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospedagem_votos_hospedagem_id_fkey"
+            columns: ["hospedagem_id"]
+            isOneToOne: false
+            referencedRelation: "hospedagens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagem_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospedagens: {
+        Row: {
+          checkin: string | null
+          checkout: string | null
+          criado_em: string
+          criado_por: string
+          destino_id: string | null
+          escolhida: boolean
+          hora_checkin: string | null
+          hora_checkout: string | null
+          id: string
+          link: string | null
+          moeda: string
+          nome: string
+          observacao: string | null
+          preco_total: number | null
+          viagem_id: string
+        }
+        Insert: {
+          checkin?: string | null
+          checkout?: string | null
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          escolhida?: boolean
+          hora_checkin?: string | null
+          hora_checkout?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome: string
+          observacao?: string | null
+          preco_total?: number | null
+          viagem_id: string
+        }
+        Update: {
+          checkin?: string | null
+          checkout?: string | null
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          escolhida?: boolean
+          hora_checkin?: string | null
+          hora_checkout?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome?: string
+          observacao?: string | null
+          preco_total?: number | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospedagens_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagens_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospedagens_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fotos: {
         Row: {
           caminho: string
@@ -197,6 +387,8 @@ export type Database = {
           enviada_por: string
           id: string
           legenda: string | null
+          ordem: number
+          post_id: string
           viagem_id: string
         }
         Insert: {
@@ -206,6 +398,8 @@ export type Database = {
           enviada_por?: string
           id?: string
           legenda?: string | null
+          ordem?: number
+          post_id: string
           viagem_id: string
         }
         Update: {
@@ -215,9 +409,18 @@ export type Database = {
           enviada_por?: string
           id?: string
           legenda?: string | null
+          ordem?: number
+          post_id?: string
           viagem_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fotos_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fotos_destino_id_fkey"
             columns: ["destino_id"]
@@ -285,6 +488,7 @@ export type Database = {
           moeda: string
           pago_por: string
           pessoal: boolean
+          rascunho: boolean
           valor: number
           viagem_id: string
         }
@@ -298,6 +502,7 @@ export type Database = {
           moeda?: string
           pago_por: string
           pessoal?: boolean
+          rascunho?: boolean
           valor: number
           viagem_id: string
         }
@@ -311,6 +516,7 @@ export type Database = {
           moeda?: string
           pago_por?: string
           pessoal?: boolean
+          rascunho?: boolean
           valor?: number
           viagem_id?: string
         }
@@ -370,6 +576,94 @@ export type Database = {
           },
         ]
       }
+      lugares: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          destino_id: string | null
+          horario: string | null
+          id: string
+          link: string | null
+          moeda: string
+          nome: string
+          observacao: string | null
+          preco: number | null
+          tipo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          horario?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome: string
+          observacao?: string | null
+          preco?: number | null
+          tipo?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          horario?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome?: string
+          observacao?: string | null
+          preco?: number | null
+          tipo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lugares_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugares_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugares_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      metas_cambio: {
+        Row: { atualizado_em: string; avisado_em: string | null; avisar: boolean; abaixo: boolean; boletim_em: string | null; meta: number | null; moeda: string; ultimo_valor: number | null; usuario_id: string; viagem_id: string }
+        Insert: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id: string }
+        Update: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda?: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "metas_cambio_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "metas_cambio_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfis: {
         Row: {
           avatar_url: string | null
@@ -391,12 +685,55 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: { autor: string; criado_em: string; destino_id: string | null; id: string; legenda: string | null; viagem_id: string }
+        Insert: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id: string }
+        Update: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "posts_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_inscricoes: {
+        Row: { auth: string; criado_em: string; endpoint: string; id: string; p256dh: string; usuario_id: string }
+        Insert: { auth: string; criado_em?: string; endpoint: string; id?: string; p256dh: string; usuario_id?: string }
+        Update: { auth?: string; criado_em?: string; endpoint?: string; id?: string; p256dh?: string; usuario_id?: string }
+        Relationships: [
+          {
+            foreignKeyName: "push_inscricoes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trajetos: {
         Row: {
           bate_e_volta: boolean
           chegada: string | null
           destino_id: string | null
           id: string
+          link_reserva: string | null
           meio: string
           observacao: string | null
           origem_id: string | null
@@ -408,6 +745,7 @@ export type Database = {
           chegada?: string | null
           destino_id?: string | null
           id?: string
+          link_reserva?: string | null
           meio?: string
           observacao?: string | null
           origem_id?: string | null
@@ -419,6 +757,7 @@ export type Database = {
           chegada?: string | null
           destino_id?: string | null
           id?: string
+          link_reserva?: string | null
           meio?: string
           observacao?: string | null
           origem_id?: string | null
@@ -493,6 +832,38 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      registrar_push: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      escolher_hospedagem: {
+        Args: { p_escolher?: boolean; p_hospedagem: string }
+        Returns: undefined
+      }
+      salvar_gasto: {
+        Args: { p_divisoes?: Json; p_gasto: Json; p_viagem: string }
+        Returns: string
+      }
+      salvar_roteiro: {
+        Args: { p_destinos: Json; p_removidos?: string[]; p_viagem: string }
+        Returns: {
+          chegada: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nome: string
+          ordem: number
+          pais: string | null
+          saida: string | null
+          viagem_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "destinos"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       [_ in never]: never

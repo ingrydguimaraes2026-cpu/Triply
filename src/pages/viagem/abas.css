@@ -12,11 +12,41 @@
   letter-spacing: 0.06em;
 }
 
-/* ---------- Overview: grade de cartões ---------- */
+/* ---------- Overview ----------
+   Celular e tablet: uma coluna, na ordem mapa → documentos → roteiro → resumos → fotos.
+   Computador largo: coluna larga (mapa, roteiro, fotos) + coluna estreita (documentos, resumos).
+   Cada cartão tem a altura do próprio conteúdo (nada de cartão esticado e vazio). */
 .overview {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+}
+
+.overview-principal,
+.overview-lateral {
+  display: contents;
+}
+
+.overview-mapa { order: 1; }
+.overview-documentos { order: 2; }
+.overview-roteiro { order: 3; }
+.overview-hospedagem { order: 4; }
+.overview-orcamento { order: 4; }
+.overview-trajeto { order: 5; }
+.overview-comboio-cartao { order: 6; }
+.overview-fotos { order: 7; }
+
+/* Resumo sem dados: uma linha com o próximo passo */
+.resumo-vazio {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.resumo-vazio a {
+  color: var(--couro);
+  font-weight: 700;
 }
 
 .overview-mapa {
@@ -123,29 +153,56 @@
   gap: 12px;
 }
 
+/* Tablet pra cima: roteiro vira uma linha do tempo na horizontal */
 @media (min-width: 760px) {
-  .overview {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .overview-roteiro:not(.editando) .roteiro-lista {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
   }
 
-  .overview-mapa,
-  .overview-fotos {
-    grid-column: 1 / -1;
+  .overview-roteiro:not(.editando) .roteiro-lista li {
+    flex: 1 0 120px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0 12px 0 0;
+    scroll-snap-align: start;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li + li::before {
+    display: none;
+  }
+
+  /* Linha tracejada ligando um número ao próximo */
+  .overview-roteiro:not(.editando) .roteiro-lista li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 36px;
+    right: 8px;
+    border-top: 2px dashed #ead7b4;
   }
 }
 
 @media (min-width: 1200px) {
   .overview {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    align-items: start;
+  }
+
+  .overview-principal,
+  .overview-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
   }
 
   .overview-mapa {
-    grid-column: span 2;
     min-height: 420px;
-  }
-
-  .overview-roteiro {
-    grid-column: span 1;
   }
 
   .overview-mapa-texto {
@@ -319,4 +376,177 @@
   border-radius: 14px;
   background: #fde6dc;
   color: #8a2c0d;
+}
+
+/* ---------- Overview: editar roteiro ---------- */
+.roteiro-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--couro);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.roteiro-editar:hover {
+  background: var(--cor-fundo);
+}
+
+.roteiro-adicionar {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.roteiro-legenda {
+  margin: 12px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.roteiro-periodo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+/* ---------- Overview com dados reais (spec 006) ---------- */
+.resumo-orcamento,
+.resumo-trajeto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.resumo-orcamento .numero-legenda {
+  margin: 0;
+}
+
+.resumo-trajeto strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.resumo-trajeto span {
+  color: var(--cor-texto-suave);
+}
+
+.resumo-fotos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 760px) {
+  .resumo-fotos {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.resumo-fotos a {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ead7b4;
+}
+
+.resumo-fotos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.roteiro-lista li.hoje .roteiro-numero {
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #ffe7b8;
+}
+
+.roteiro-nome strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* ---------- Gestão do comboio (spec 007) ---------- */
+.membros li.membro {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.membro-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.membro-linha .membro-nome {
+  flex: 1;
+}
+
+.membro-linha .selo {
+  margin-left: 0;
+}
+
+.membro-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 56px;
+}
+
+.convites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.convites li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.convite-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.convite-texto code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.convite-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.comboio-sair {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
 }

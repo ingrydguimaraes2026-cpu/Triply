@@ -46,6 +46,7 @@ Pra ver no celular: rode `npm run dev -- --host` e abra no celular o endereço "
 | `npm run dev` | Inicia o site |
 | `npm run build` | Confere erros de TypeScript e gera a versão final |
 | `npm run lint` | Procura problemas comuns no código |
+| `npm test` | Roda os testes automáticos (regras do roteiro e a função `salvar_roteiro` num banco descartável) |
 | `npm run preview` | Abre a versão final (é onde o PWA funciona de verdade) |
 
 ## Estrutura de pastas
@@ -86,3 +87,9 @@ As chaves do Supabase ficam no arquivo `.env.local`, que nunca vai para o GitHub
 - [ ] 7. Overview juntando tudo
 
 Ideias pra depois: checklists, favoritos, calendário, clima.
+
+Funcionalidades futuras (ainda **não** implementadas):
+
+- **Reorganizar destinos depois de criar a viagem.** *Em revisão:* a tela de edição (Overview > Roteiro > Editar) está pronta e a função `salvar_roteiro` foi aplicada no banco em 13/10/2026 (migration `20261013182836_salvar_roteiro.sql`). Teste manual feito (salvar e atualizar a página). Falta conferir depois de sair e entrar de novo na conta e a revisão do Victor no PR.
+- **Arrastar e soltar** pra mudar a ordem do roteiro (hoje: setas ↑ ↓).
+- **Sugestão de rota (opcional).** Sugerir uma sequência de cidades/países considerando distâncias e transportes. É só sugestão: a pessoa continua livre pra manter ou mudar a própria ordem.

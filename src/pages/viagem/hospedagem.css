@@ -1,0 +1,220 @@
+/* Hospedagem (spec 011): seletor de destinos, mapa do Google e painel de opções */
+
+/* Resumo no canto do cabeçalho */
+.hosp-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  font-size: 13px;
+}
+.hosp-resumo strong { font-family: var(--fonte-titulo); font-size: 20px; color: var(--couro); }
+.hosp-resumo small { color: var(--cor-texto-suave); font-weight: 600; }
+.hosp-barra { display: block; height: 6px; border-radius: 999px; background: var(--cor-comboio-fundo); overflow: hidden; }
+.hosp-barra span { display: block; height: 100%; background: var(--laranja); transition: width 0.2s; }
+
+/* Seletor de destinos: chips que rolam pro lado no celular */
+.hosp-seletor {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.hosp-seletor::-webkit-scrollbar { display: none; }
+.hosp-seletor button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.hosp-seletor button small {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 11px;
+}
+.hosp-seletor-marca {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 13px;
+  font-weight: 800;
+}
+.hosp-seletor .seletor-resolvido .hosp-seletor-marca { background: var(--couro); color: #fff; }
+.hosp-seletor .seletor-precisa .hosp-seletor-marca { background: var(--laranja); color: var(--cor-texto); }
+.hosp-seletor .seletor-bate-e-volta { opacity: 0.65; }
+.hosp-seletor button[aria-pressed='true'] {
+  background: var(--cor-texto);
+  border-color: var(--cor-texto);
+  color: var(--cor-fundo);
+  opacity: 1;
+}
+
+/* Palco: mapa + painel. Celular empilha; computador lado a lado */
+.hosp-palco {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .hosp-palco {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(340px, 1fr);
+    align-items: start;
+  }
+  .hosp-mapa {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+  }
+}
+
+.hosp-mapa {
+  position: relative;
+  height: 340px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--cor-comboio-fundo);
+  box-shadow: 0 10px 30px rgb(59 39 21 / 0.12);
+}
+@media (min-width: 1024px) {
+  .hosp-mapa { height: min(640px, calc(100vh - 160px)); }
+}
+.hosp-mapa iframe { display: block; width: 100%; height: 100%; border: 0; }
+.hosp-mapa-filtros {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  pointer-events: none;
+}
+.hosp-mapa-filtros::-webkit-scrollbar { display: none; }
+.hosp-mapa-filtros button {
+  pointer-events: auto;
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 0;
+  background: rgb(255 255 255 / 0.95);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+  cursor: pointer;
+}
+.hosp-mapa-filtros button[aria-pressed='true'] { background: var(--cor-texto); color: var(--laranja); }
+.hosp-mapa-abrir {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--cor-texto);
+  color: var(--cor-fundo);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+}
+
+/* Painel do destino */
+.hosp-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+}
+.hosp-painel-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.hosp-painel-topo h2 { margin: 0; font-family: var(--fonte-titulo); font-size: 26px; line-height: 1.1; }
+.hosp-painel-topo p { margin: 4px 0 0; color: var(--cor-texto-suave); font-size: 14px; }
+.hosp-selo { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--cor-comboio-fundo); color: var(--couro); }
+.hosp-selo.selo-precisa { background: var(--laranja); color: var(--cor-texto); }
+.hosp-selo.selo-resolvido { background: var(--couro); color: #fff; }
+
+.hosp-aviso, .hosp-dica { margin: 0; display: flex; gap: 6px; align-items: flex-start; font-size: 13px; line-height: 1.4; }
+.hosp-aviso { padding: 10px 12px; border-radius: 10px; background: var(--cor-comboio-fundo); color: var(--cor-pessoal); font-weight: 600; }
+.hosp-dica { color: var(--cor-texto-suave); }
+.hosp-dica svg { flex: none; margin-top: 2px; }
+.hosp-dica a { color: var(--caramelo); font-weight: 700; }
+
+.hosp-busca-botoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.hosp-buscar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 8px;
+  border-radius: 12px; color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center;
+}
+.hosp-buscar.site-airbnb { background: #e0565b; }
+.hosp-buscar.site-booking { background: #1e3f8a; }
+
+.hosp-subtitulo { margin: 4px 0 0; font-size: 14px; color: var(--cor-texto-suave); }
+.hosp-opcoes { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+
+/* Cartão de cada opção */
+.hosp-opcao { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-fundo); }
+.hosp-opcao.escolhida { border: 2px solid var(--laranja); background: #fff; box-shadow: 0 6px 20px rgb(123 84 47 / 0.12); }
+.hosp-opcao-faixa { margin: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--caramelo); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+.hosp-opcao-topo { display: flex; align-items: center; gap: 8px; }
+.hosp-site { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; background: var(--cor-borda); color: var(--cor-texto); }
+.hosp-site.site-airbnb { background: #e0565b; color: #fff; }
+.hosp-site.site-booking { background: #1e3f8a; color: #fff; }
+.hosp-site.site-google { background: #2f7d4f; color: #fff; }
+.hosp-opcao-autor { flex: 1; color: var(--cor-texto-suave); font-size: 12px; }
+.hosp-editar { margin-left: auto; }
+.hosp-opcao-nome { margin: 0; font-size: 16px; line-height: 1.3; }
+.hosp-opcao-nome a { color: inherit; text-decoration: none; display: inline-flex; gap: 4px; align-items: baseline; }
+.hosp-opcao-nome a:hover { color: var(--caramelo); }
+.hosp-precos { display: flex; flex-direction: column; gap: 2px; }
+.hosp-precos strong { font-family: var(--fonte-titulo); font-size: 22px; }
+.hosp-precos span { font-size: 13px; color: var(--cor-texto-suave); }
+.hosp-precos b { color: var(--cor-texto); }
+.hosp-sem-preco, .hosp-opcao-datas, .hosp-opcao-obs { margin: 0; font-size: 13px; color: var(--cor-texto-suave); line-height: 1.4; }
+.hosp-opcao-datas { display: inline-flex; align-items: center; gap: 4px; }
+.hosp-opcao-rodape { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+.hosp-voto {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--cor-borda); background: #fff; color: var(--cor-texto); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.hosp-voto.votei { border-color: #e0565b; color: #e0565b; background: #fdecec; }
+.hosp-quem { display: flex; }
+.hosp-quem > * + * { margin-left: -6px; }
+.hosp-opcao-acoes { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.hosp-vazio { margin: 0; padding: 14px; border-radius: 12px; background: var(--cor-fundo); color: var(--cor-texto-suave); font-size: 14px; line-height: 1.45; text-align: center; }
+.hosp-adicionar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px;
+  border-radius: 14px; border: 2px dashed var(--caramelo); background: transparent; color: var(--couro);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.hosp-adicionar:hover { background: var(--cor-comboio-fundo); }
