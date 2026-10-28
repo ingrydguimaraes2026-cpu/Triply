@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { LogOut, Plus, UserRound } from 'lucide-react'
+import { ArrowRight, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
 import { buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
 import { sair } from '../features/auth/hooks'
 import { formatarPeriodo } from '../lib/datas'
+import ApagarViagem from '../features/viagens/ApagarViagem'
 import Avatar from '../components/ui/Avatar'
+import Gaveta from '../components/ui/Gaveta'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -22,6 +24,14 @@ const PESO: Record<Situacao, number> = { agora: 0, proxima: 1, 'sem-data': 2, co
 // "/viagens" (spec 008): todas as viagens da pessoa
 export default function MinhasViagens() {
   const [viagens, setViagens] = useState<ResumoDaViagem[] | null | 'erro'>(null)
+  // Viagem que a pessoa pediu pra apagar (abre a confirmação)
+  const [paraApagar, setParaApagar] = useState<ResumoDaViagem | null>(null)
+
+  // Depois de apagar no banco: tira o cartão da lista, sem recarregar a página
+  function apagou(id: string) {
+    setViagens((atual) => (Array.isArray(atual) ? atual.filter((v) => v.id !== id) : atual))
+    setParaApagar(null)
+  }
 
   useEffect(() => {
     buscarMinhasViagens()
@@ -85,8 +95,8 @@ export default function MinhasViagens() {
         {ordenadas && ordenadas.length > 0 && (
           <ul className="lista-viagens">
             {ordenadas.map((v) => (
-              <li key={v.id}>
-                <Link to={`/viagem/${v.id}`} className={`cartao-viagem ${v.situacao}`}>
+              <li key={v.id} className="lista-viagens-item">
+                <Link to={`/viagem/${v.id}`} className={`cartao-viagem ${v.situacao}${v.souAdm ? ' com-apagar' : ''}`}>
                   {SELOS[v.situacao] && <span className="cartao-viagem-selo">{SELOS[v.situacao]}</span>}
                   <strong>{v.nome}</strong>
                   <span className="cartao-viagem-periodo">{formatarPeriodo(v.dataInicio, v.dataFim)}</span>
@@ -96,11 +106,32 @@ export default function MinhasViagens() {
                       <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} />
                     ))}
                     {v.membros.length > 5 && <small>+{v.membros.length - 5}</small>}
+                    <span className="cartao-viagem-abrir">
+                      Abrir <ArrowRight size={14} aria-hidden="true" />
+                    </span>
                   </span>
                 </Link>
+                {/* Fora do link de propósito: botão dentro de link não funciona direito. Só o ADM pode apagar. */}
+                {v.souAdm && (
+                  <button
+                    type="button"
+                    className="cartao-viagem-apagar"
+                    onClick={() => setParaApagar(v)}
+                    aria-label={`Apagar a viagem ${v.nome}`}
+                    title="Apagar viagem"
+                  >
+                    <Trash2 size={18} aria-hidden="true" />
+                  </button>
+                )}
               </li>
             ))}
           </ul>
+        )}
+
+        {paraApagar && (
+          <Gaveta titulo={`Apagar "${paraApagar.nome}"?`} aoFechar={() => setParaApagar(null)}>
+            <ApagarViagem id={paraApagar.id} nome={paraApagar.nome} aoApagar={() => apagou(paraApagar.id)} />
+          </Gaveta>
         )}
       </main>
     </div>

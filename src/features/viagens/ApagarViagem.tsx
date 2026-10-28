@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { apagarViagem } from './api'
 
-// Confirmação forte pra apagar a viagem: a pessoa digita o nome da viagem (specs 007 e 008)
-export default function ApagarViagem({ id, nome }: { id: string; nome: string }) {
+// Confirmação forte pra apagar a viagem: a pessoa digita o nome da viagem (specs 007 e 008).
+// Depois de apagar: chama `aoApagar` (ex.: Minhas viagens tira o cartão da lista) ou, sem ele, volta pra /viagens.
+export default function ApagarViagem({ id, nome, aoApagar }: { id: string; nome: string; aoApagar?: () => void }) {
   const navegar = useNavigate()
   const [digitado, setDigitado] = useState('')
   const [apagando, setApagando] = useState(false)
@@ -15,7 +16,8 @@ export default function ApagarViagem({ id, nome }: { id: string; nome: string })
     setErro(null)
     try {
       await apagarViagem(id)
-      navegar('/viagens', { replace: true })
+      if (aoApagar) aoApagar()
+      else navegar('/viagens', { replace: true })
     } catch (e) {
       console.error('Erro ao apagar viagem:', e)
       setErro('Não deu pra apagar a viagem. Tente de novo.')
