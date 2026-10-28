@@ -29,6 +29,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   // Opção nova já vem com as datas do destino
   const [checkin, setCheckin] = useState(opcao ? (opcao.checkin ?? '') : (destinoInicial?.chegada ?? ''))
   const [checkout, setCheckout] = useState(opcao ? (opcao.checkout ?? '') : (destinoInicial?.saida ?? ''))
+  const [horaCheckin, setHoraCheckin] = useState(opcao?.horaCheckin ?? '')
+  const [horaCheckout, setHoraCheckout] = useState(opcao?.horaCheckout ?? '')
   const [observacao, setObservacao] = useState(opcao?.observacao ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -66,6 +68,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         moeda,
         checkin: checkin || null,
         checkout: checkout || null,
+        horaCheckin: horaCheckin || null,
+        horaCheckout: horaCheckout || null,
         observacao: observacao.trim() || null,
       })
       aoTerminar()
@@ -147,6 +151,22 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
             Check-out
           </label>
           <input id="hosp-checkout" type="date" value={checkout} min={checkin || undefined} onChange={(e) => setCheckout(e.target.value)} />
+        </div>
+      </div>
+
+      {/* Horários (opcionais): planejar chegada tarde e saída cedo */}
+      <div className="form-linha">
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="hosp-hora-checkin">
+            Check-in a partir de
+          </label>
+          <input id="hosp-hora-checkin" type="time" value={horaCheckin} onChange={(e) => setHoraCheckin(e.target.value)} />
+        </div>
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="hosp-hora-checkout">
+            Check-out até
+          </label>
+          <input id="hosp-hora-checkout" type="time" value={horaCheckout} onChange={(e) => setHoraCheckout(e.target.value)} />
         </div>
       </div>
 

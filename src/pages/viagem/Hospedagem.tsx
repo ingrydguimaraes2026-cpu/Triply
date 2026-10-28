@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, CalendarDays, Check, Crown, ExternalLink, Heart, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
+import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
 import type { Tables } from '../../types/database'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
@@ -10,6 +10,7 @@ import {
   linkDoMapa,
   linksDeBusca,
   noitesDaOpcao,
+  textoDosHorarios,
   TIPOS_NO_MAPA,
   type DestinoDaHospedagem,
   type Opcao,
@@ -85,6 +86,7 @@ export default function Hospedagem() {
     const podeEditar = opcao.criadoPor === meuId || euSouAdm
     const autor = pessoaDe(opcao.criadoPor)
     const datasProprias = opcao.checkin && opcao.checkout && (opcao.checkin !== destino?.chegada || opcao.checkout !== destino?.saida)
+    const horarios = textoDosHorarios(opcao, destino)
 
     return (
       <li key={opcao.id} className={destaque ? 'hosp-opcao escolhida' : 'hosp-opcao'}>
@@ -138,6 +140,11 @@ export default function Hospedagem() {
         {datasProprias && (
           <p className="hosp-opcao-datas">
             <CalendarDays size={13} aria-hidden="true" /> {formatarData(opcao.checkin!)} → {formatarData(opcao.checkout!)}
+          </p>
+        )}
+        {horarios && (
+          <p className="hosp-opcao-datas">
+            <Clock size={13} aria-hidden="true" /> {horarios}
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}

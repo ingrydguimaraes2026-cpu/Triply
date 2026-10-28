@@ -9,6 +9,7 @@ import Perdido, { ErroNaTela } from './pages/Perdido'
 import ViagemLayout from './pages/viagem/ViagemLayout'
 import Overview from './pages/viagem/Overview'
 import Hospedagem from './pages/viagem/Hospedagem'
+import Lugares from './pages/viagem/Lugares'
 import Transportes from './pages/viagem/Transportes'
 import Financeiro from './pages/viagem/Financeiro'
 import Fotos from './pages/viagem/Fotos'
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <Overview /> },
               { path: 'hospedagem', element: <Hospedagem /> },
+              { path: 'lugares', element: <Lugares /> },
               { path: 'transportes', element: <Transportes /> },
               { path: 'financeiro', element: <Financeiro /> },
               { path: 'fotos', element: <Fotos /> },

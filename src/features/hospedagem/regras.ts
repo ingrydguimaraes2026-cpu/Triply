@@ -2,6 +2,7 @@
 // Dinheiro sempre em centavos (inteiro), igual ao Financeiro.
 import { contarNoites } from '../destinos/datas.ts'
 import { codigoDoPais } from '../documentos/paises.ts'
+import { formatarData } from '../../lib/datas.ts'
 
 type DestinoBase = { id: string; nome: string; pais: string | null; chegada: string | null; saida: string | null }
 
@@ -14,6 +15,8 @@ export type Opcao = {
   moeda: string
   checkin: string | null
   checkout: string | null
+  horaCheckin?: string | null // "15:00" (a partir de)
+  horaCheckout?: string | null // "10:00" (até)
   observacao: string | null
   escolhida: boolean
   criadoPor: string
@@ -128,6 +131,38 @@ export function sugerirNome(link: string): string | null {
 // Quantas noites a opção cobre: datas dela, ou as do destino
 export function noitesDaOpcao(opcao: Pick<Opcao, 'checkin' | 'checkout'>, destino?: Pick<DestinoBase, 'chegada' | 'saida'>) {
   return contarNoites(opcao.checkin ?? destino?.chegada, opcao.checkout ?? destino?.saida)
+}
+
+// "22:00:00" ou "22:00" → "22h"; "09:30" → "9h30"; "00:00" → "meia-noite". Vazio → null.
+export function textoDaHora(hora: string | null | undefined): string | null {
+  const [h, m] = (hora ?? '').split(':').map(Number)
+  if (!hora || Number.isNaN(h)) return null
+  if (h === 0 && !m) return 'meia-noite'
+  return `${h}h${m ? String(m).padStart(2, '0') : ''}`
+}
+
+// "das 22h", mas "da 1h", "da 1h30" e "da meia-noite" (singular)
+const singular = (hora: string) => hora === 'meia-noite' || /^1h/.test(hora)
+const aPartirDa = (hora: string) => (singular(hora) ? `a partir da ${hora}` : `a partir das ${hora}`)
+const ateA = (hora: string) => (singular(hora) ? `até a ${hora}` : `até as ${hora}`)
+
+/**
+ * "Check-in 7 jun, a partir das 22h · Check-out 9 jun, até as 9h".
+ * Data: a da opção, ou a do destino. Só aparece o que tiver horário; sem nenhum horário → null.
+ */
+export function textoDosHorarios(
+  opcao: Pick<Opcao, 'checkin' | 'checkout' | 'horaCheckin' | 'horaCheckout'>,
+  destino?: Pick<DestinoBase, 'chegada' | 'saida'> | null,
+): string | null {
+  const entrada = textoDaHora(opcao.horaCheckin)
+  const saida = textoDaHora(opcao.horaCheckout)
+  const diaEntrada = opcao.checkin ?? destino?.chegada
+  const diaSaida = opcao.checkout ?? destino?.saida
+  const partes = [
+    entrada && `Check-in ${diaEntrada ? `${formatarData(diaEntrada)}, ` : ''}${aPartirDa(entrada)}`,
+    saida && `Check-out ${diaSaida ? `${formatarData(diaSaida)}, ` : ''}${ateA(saida)}`,
+  ].filter(Boolean)
+  return partes.length ? partes.join(' · ') : null
 }
 
 // Total ÷ pessoas e ÷ noites, arredondado pro centavo

@@ -12,6 +12,8 @@ const {
   montarHospedagem,
   resumoDaHospedagem,
   ordenarOpcoes,
+  textoDaHora,
+  textoDosHorarios,
 } = await import(new URL('../src/features/hospedagem/regras.ts', import.meta.url))
 
 const NICE = { id: 'nice', nome: 'Nice', pais: 'França', chegada: '2027-06-01', saida: '2027-06-03' }
@@ -124,4 +126,35 @@ test('mapa do Google busca o tipo de lugar na cidade', async () => {
   assert.equal(new URL(m.embed).searchParams.get('output'), 'embed')
   assert.equal(new URL(m.abrir).searchParams.get('query'), 'hostels em Nice, França')
   assert.equal(new URL(linkDoMapa(NICE).embed).searchParams.get('q'), 'hotéis em Nice, França')
+})
+
+// ---------- Horário de check-in e check-out (atualização de 23/10/2026) ----------
+test('horário: formatos de hora', () => {
+  assert.equal(textoDaHora('22:00:00'), '22h') // como vem do banco
+  assert.equal(textoDaHora('09:30'), '9h30')
+  assert.equal(textoDaHora('15:00'), '15h')
+  assert.equal(textoDaHora('00:00'), 'meia-noite')
+  assert.equal(textoDaHora(null), null)
+  assert.equal(textoDaHora(''), null)
+})
+
+test('horário: Tirano, chegada tarde e saída cedo, com as datas do destino', () => {
+  const tirano = { chegada: '2027-06-07', saida: '2027-06-09' }
+  const o = { checkin: null, checkout: null, horaCheckin: '22:00', horaCheckout: '09:00' }
+  assert.equal(textoDosHorarios(o, tirano), 'Check-in 7 jun, a partir das 22h · Check-out 9 jun, até as 9h')
+})
+
+test('horário: datas próprias da opção valem mais que as do destino', () => {
+  const o = { checkin: '2027-06-06', checkout: '2027-06-08', horaCheckin: '15:00', horaCheckout: '10:00' }
+  assert.equal(textoDosHorarios(o, { chegada: '2027-06-07', saida: '2027-06-09' }), 'Check-in 6 jun, a partir das 15h · Check-out 8 jun, até as 10h')
+})
+
+test('horário: só um dos dois, sem datas, e "da 1h"/"da meia-noite"', () => {
+  assert.equal(textoDosHorarios({ checkin: null, checkout: null, horaCheckin: null, horaCheckout: '11:00' }), 'Check-out até as 11h')
+  assert.equal(textoDosHorarios({ checkin: null, checkout: null, horaCheckin: '01:30', horaCheckout: '00:00' }), 'Check-in a partir da 1h30 · Check-out até a meia-noite')
+  assert.equal(textoDosHorarios({ checkin: null, checkout: null, horaCheckin: '10:00' }), 'Check-in a partir das 10h')
+})
+
+test('horário: sem nenhum horário, não mostra nada (opções antigas)', () => {
+  assert.equal(textoDosHorarios({ checkin: '2027-06-07', checkout: '2027-06-09' }, null), null)
 })

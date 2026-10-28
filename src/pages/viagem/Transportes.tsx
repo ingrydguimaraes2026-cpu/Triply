@@ -4,7 +4,7 @@ import type { Tables } from '../../types/database'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio, type Trajeto } from '../../features/transportes/api'
-import { avisosDoTrajeto, diaLocal, hora, proximoTrajeto } from '../../features/transportes/avisos'
+import { avisosDoTrajeto, diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
 import {
   agruparPasseios,
   linkDeVoo,
@@ -59,7 +59,7 @@ export default function Transportes() {
 
   const todosAvisos = trajetos.flatMap((t) => avisosDoTrajeto(t, destinos, trajetos).map((texto) => ({ texto, trajeto: t })))
   const avisos = todosAvisos.filter((a, i) => todosAvisos.findIndex((b) => b.texto === a.texto) === i)
-  const proximo = proximoTrajeto(trajetos)
+  const proximo = proximoDeslocamento(trajetos, destinos.map((d) => d.id))
 
   const porDia = new Map<string, Trajeto[]>()
   for (const t of trajetos) if (t.partida) porDia.set(diaLocal(t.partida), [...(porDia.get(diaLocal(t.partida)) ?? []), t])
@@ -376,6 +376,13 @@ export default function Transportes() {
                       </button>
                     ))}
                   </div>
+                )}
+                {lugaresNoMapa.length > 1 && (
+                  <p className="mapa-legenda mapa-legenda-topo">
+                    {modo === 'aviao'
+                      ? 'Linha reta só pra mostrar o trecho: não é a rota do voo.'
+                      : 'Caminho sugerido pelo Google: não é a passagem nem o horário reservado.'}
+                  </p>
                 )}
                 {modo === 'aviao' ? (
                   linkVooAtual && (

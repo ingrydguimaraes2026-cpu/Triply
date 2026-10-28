@@ -31,7 +31,7 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 /* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
@@ -333,4 +333,30 @@
   .recado {
     bottom: 32px;
   }
+}
+
+/* Legenda sobre os mapas: deixa claro que linha/caminho no mapa é estimativa, não trajeto confirmado */
+.mapa-legenda {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgb(26 16 9 / 0.72);
+  color: #fff6e5;
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+/* No mapa de Transportes, embaixo dos botões "Como ir" (o canto de baixo é do "Abrir no Google Maps") */
+.mapa-legenda-topo {
+  top: 56px;
+  bottom: auto;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--cor-texto);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
 }

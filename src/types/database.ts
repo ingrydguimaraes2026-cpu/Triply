@@ -311,6 +311,8 @@ export type Database = {
           criado_por: string
           destino_id: string | null
           escolhida: boolean
+          hora_checkin: string | null
+          hora_checkout: string | null
           id: string
           link: string | null
           moeda: string
@@ -326,6 +328,8 @@ export type Database = {
           criado_por?: string
           destino_id?: string | null
           escolhida?: boolean
+          hora_checkin?: string | null
+          hora_checkout?: string | null
           id?: string
           link?: string | null
           moeda?: string
@@ -341,6 +345,8 @@ export type Database = {
           criado_por?: string
           destino_id?: string | null
           escolhida?: boolean
+          hora_checkin?: string | null
+          hora_checkout?: string | null
           id?: string
           link?: string | null
           moeda?: string
@@ -563,6 +569,73 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "orcamentos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lugares: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          destino_id: string | null
+          horario: string | null
+          id: string
+          link: string | null
+          moeda: string
+          nome: string
+          observacao: string | null
+          preco: number | null
+          tipo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          horario?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome: string
+          observacao?: string | null
+          preco?: number | null
+          tipo?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          destino_id?: string | null
+          horario?: string | null
+          id?: string
+          link?: string | null
+          moeda?: string
+          nome?: string
+          observacao?: string | null
+          preco?: number | null
+          tipo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lugares_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugares_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugares_viagem_id_fkey"
             columns: ["viagem_id"]
             isOneToOne: false
             referencedRelation: "viagens"

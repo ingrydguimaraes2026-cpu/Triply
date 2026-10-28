@@ -11,6 +11,8 @@ export type DadosDaOpcao = {
   moeda: string
   checkin: string | null
   checkout: string | null
+  horaCheckin: string | null // "22:00"
+  horaCheckout: string | null
   observacao: string | null
 }
 
@@ -31,6 +33,9 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
     moeda: h.moeda,
     checkin: h.checkin,
     checkout: h.checkout,
+    // O banco devolve "22:00:00": a tela usa "22:00"
+    horaCheckin: h.hora_checkin?.slice(0, 5) ?? null,
+    horaCheckout: h.hora_checkout?.slice(0, 5) ?? null,
     observacao: h.observacao,
     escolhida: h.escolhida,
     criadoPor: h.criado_por,
@@ -47,6 +52,8 @@ function paraLinha(d: DadosDaOpcao) {
     moeda: d.moeda,
     checkin: d.checkin || null,
     checkout: d.checkout || null,
+    hora_checkin: d.horaCheckin || null,
+    hora_checkout: d.horaCheckout || null,
     observacao: d.observacao?.trim() || null,
   }
 }

@@ -17,7 +17,7 @@ import { useResumoFinanceiro } from '../../features/financeiro/hooks'
 import { formatarDinheiro } from '../../features/financeiro/dinheiro'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
-import { diaLocal, hora, proximoTrajeto } from '../../features/transportes/avisos'
+import { diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
 import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
@@ -88,7 +88,8 @@ export default function Overview() {
   const resumo = useResumoFinanceiro(viagem.id, viagem.moeda_principal)
   const trajetos = useTrajetos(viagem.id)
   const fotos = useFotos(viagem.id, 6)
-  const proximo = trajetos.estado.status === 'pronto' ? proximoTrajeto(trajetos.estado.trajetos) : null
+  const proximo =
+    trajetos.estado.status === 'pronto' ? proximoDeslocamento(trajetos.estado.trajetos, destinos.map((d) => d.id)) : null
   const ultimasFotos = fotos.estado.status === 'pronto' ? fotos.estado.fotos : []
   const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? 'Sem destino'
   const docs = useDocumentos(viagem, destinos, meuId)
@@ -215,6 +216,7 @@ export default function Overview() {
       <div className="overview-principal">
         <section className="overview-mapa">
           <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
+          {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
           <div className="overview-mapa-texto">
             {falta && <span className="overview-contagem">{falta}</span>}
             <h1>{viagem.nome}</h1>
@@ -374,7 +376,7 @@ export default function Overview() {
                 {nomeDoDestino(proximo.origem_id)} → {nomeDoDestino(proximo.destino_id)}
               </strong>
               <span>
-                {meio(proximo.meio).nome} · {quando(proximo.partida!)}
+                {meio(proximo.meio).nome} · {proximo.partida ? quando(proximo.partida) : 'horário a definir'}
               </span>
             </Link>
           ) : (
