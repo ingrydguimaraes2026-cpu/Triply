@@ -826,9 +826,155 @@ export type Database = {
           },
         ]
       }
+      carteiras: {
+        Row: {
+          ajuste: number
+          criado_em: string
+          id: string
+          moeda: string
+          saldo_inicial: number
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          ajuste?: number
+          criado_em?: string
+          id?: string
+          moeda?: string
+          saldo_inicial?: number
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          ajuste?: number
+          criado_em?: string
+          id?: string
+          moeda?: string
+          saldo_inicial?: number
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carteiras_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carteiras_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      movimentos_carteira: {
+        Row: {
+          carteira_id: string
+          criado_em: string
+          data: string
+          descricao: string | null
+          gmail_message_id: string
+          id: string
+          moeda: string
+          provedor: string
+          tipo: string
+          valor: number
+        }
+        Insert: {
+          carteira_id: string
+          criado_em?: string
+          data?: string
+          descricao?: string | null
+          gmail_message_id: string
+          id?: string
+          moeda: string
+          provedor: string
+          tipo: string
+          valor: number
+        }
+        Update: {
+          carteira_id?: string
+          criado_em?: string
+          data?: string
+          descricao?: string | null
+          gmail_message_id?: string
+          id?: string
+          moeda?: string
+          provedor?: string
+          tipo?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
+            columns: ["carteira_id"]
+            isOneToOne: false
+            referencedRelation: "carteiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
+            columns: ["carteira_id"]
+            isOneToOne: false
+            referencedRelation: "carteiras_com_saldo"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      carteiras_com_saldo: {
+        Row: {
+          ajuste: number | null
+          criado_em: string | null
+          id: string | null
+          moeda: string | null
+          saldo_atual: number | null
+          saldo_inicial: number | null
+          usuario_id: string | null
+          viagem_id: string | null
+        }
+        Insert: {
+          ajuste?: number | null
+          criado_em?: string | null
+          id?: string | null
+          moeda?: string | null
+          saldo_atual?: never
+          saldo_inicial?: number | null
+          usuario_id?: string | null
+          viagem_id?: string | null
+        }
+        Update: {
+          ajuste?: number | null
+          criado_em?: string | null
+          id?: string | null
+          moeda?: string | null
+          saldo_atual?: never
+          saldo_inicial?: number | null
+          usuario_id?: string | null
+          viagem_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carteiras_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carteiras_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string }; Returns: string }
@@ -864,6 +1010,16 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      minha_conexao_gmail: {
+        Args: never
+        Returns: {
+          email: string
+          expira_em: string
+          status: string
+          ultimo_sync: string
+        }[]
+      }
+      saldo_euro_do_comboio: { Args: { p_viagem_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never

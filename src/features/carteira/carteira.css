@@ -1,0 +1,204 @@
+/* Carteira de euro por e-mail (spec 015) */
+
+.carteira-comboio {
+  margin: 0 0 0.75rem;
+  color: var(--cor-texto-suave);
+  font-size: 0.9rem;
+}
+
+/* Convite pra conectar (estado inicial) */
+.carteira-convite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 0.5rem 0.5rem 0.25rem;
+}
+.carteira-convite-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  color: var(--laranja);
+  background: var(--cor-pessoal-fundo);
+}
+.carteira-convite p {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--cor-texto);
+}
+.carteira-convite small {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+}
+
+/* Saldo */
+.carteira-saldo {
+  margin: 0.25rem 0 0;
+  font-family: var(--fonte-titulo);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--cor-texto);
+}
+.carteira-saldo-sub {
+  margin: 0.1rem 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 0.85rem;
+}
+
+/* Status do Gmail */
+.carteira-gmail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  margin: 0.9rem 0;
+  padding: 0.6rem 0.75rem;
+  background: var(--cor-fundo);
+  border-radius: var(--raio);
+}
+.carteira-conectado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+  word-break: break-all;
+}
+.carteira-ponto {
+  margin: 0 0.1rem;
+}
+.carteira-acoes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.carteira-acoes .botao-texto {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.carteira-reconectar {
+  font-size: 0.9rem;
+  color: var(--laranja);
+}
+
+/* Movimentos */
+.carteira-movimentos {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.carteira-movimentos li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--cor-borda);
+}
+.carteira-movimentos .mov-entrada,
+.carteira-movimentos .mov-gasto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.carteira-movimentos .mov-entrada {
+  color: var(--cor-comboio);
+  background: var(--cor-comboio-fundo);
+}
+.carteira-movimentos .mov-gasto {
+  color: var(--cor-pessoal);
+  background: var(--cor-pessoal-fundo);
+}
+.carteira-movimentos .mov-texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.carteira-movimentos .mov-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+}
+.carteira-movimentos .mov-valor {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.carteira-movimentos .mov-mais {
+  color: var(--cor-comboio);
+}
+
+/* Rodapé (ajuste manual) */
+.carteira-rodape {
+  margin: 0.9rem 0 0;
+  font-size: 0.82rem;
+  color: var(--cor-texto-suave);
+}
+
+/* Animação do botão sincronizar */
+.girando {
+  animation: carteira-girar 0.9s linear infinite;
+}
+@keyframes carteira-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Diagnóstico de e-mails */
+.diag-lista {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.diag-lista li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+}
+.diag-lista li.tem {
+  border-color: var(--cor-comboio);
+  background: var(--cor-comboio-fundo);
+}
+.diag-topo {
+  font-size: 0.78rem;
+  color: var(--cor-texto-suave);
+  text-transform: capitalize;
+}
+.diag-assunto {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.diag-trecho {
+  color: var(--cor-texto-suave);
+  font-size: 0.78rem;
+}
+
+/* Página de retorno do Google */
+.tela-centro {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 1rem;
+}

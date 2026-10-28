@@ -17,6 +17,7 @@ import Comboio from './pages/viagem/Comboio'
 import Configuracoes from './pages/viagem/Configuracoes'
 import MinhasViagens from './pages/MinhasViagens'
 import Perfil from './pages/Perfil'
+import CarteiraConectado from './pages/CarteiraConectado'
 
 // Cada endereço do site aponta pra uma tela em src/pages/
 export const router = createBrowserRouter([
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
           { path: '/nova-viagem', element: <NovaViagem /> },
           { path: '/nova-senha', element: <NovaSenha /> },
           { path: '/convite/:codigo', element: <Convite /> },
+          { path: '/carteira/conectado', element: <CarteiraConectado /> },
           {
             path: '/viagem/:id',
             element: <ViagemLayout />,

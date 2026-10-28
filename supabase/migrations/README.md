@@ -17,6 +17,8 @@ Arquivos SQL que criam e alteram as tabelas do banco no Supabase, em ordem (o no
 - `20261018150000_avisos_cambio.sql` (spec 013): tabelas `metas_cambio` e `push_inscricoes`, função `registrar_push` (aparelhos que recebem notificação).
 - `20261018160000_boletim_cambio.sql` (spec 013): boletim do câmbio às 12h e 20h; a meta vira opcional, entram `ultimo_valor` e `boletim_em`.
 - `20261018170000_feed_de_fotos.sql` (spec 014): tabelas `posts`, `curtidas` e `comentarios`; `fotos` ganha `post_id` e `ordem`; sai o limite de 5 por lugar, entra o de 10 fotos por post.
+- `20261019120000_saldo_por_email.sql` (spec 015): carteira de euro por pessoa a partir de e-mails do Wise/Nomad. Cria `public.carteiras` e `public.movimentos_carteira`; funções `minha_conexao_gmail`, `saldo_euro_do_comboio` e a view `carteiras_com_saldo`. Quem escreve movimento é a Edge Function (service role); cada um só lê a própria carteira.
+- `20261019130000_gmail_refresh_token.sql` e `20261019140000_gmail_contas_public.sql` (spec 015, ajustes): a conexão do Gmail (`gmail_contas`) acabou no schema `public` com RLS **sem política** pro cliente (o navegador não toca na tabela; só a Edge Function, que ignora RLS). Guarda o refresh token direto na coluna (o schema `public` com RLS fechada já protege; dá pra endurecer com Vault depois). Funções Edge: `conectar-gmail`, `ler-carteiras` (cron) e `desconectar-gmail`.
 - `20261023040125_lugares.sql` (spec 016): tabela `lugares` (passeios, comida e guarda-volumes de cada destino; o comboio adiciona, quem criou ou o ADM edita e apaga).
 - `20261023040133_horario_hospedagem.sql` (spec 011): `hospedagens` ganha `hora_checkin` e `hora_checkout` (opcionais).
 

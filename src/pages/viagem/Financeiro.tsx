@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Coins, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, Coins, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
 import { useViagemAtual } from '../../features/viagens/hooks'
+import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
 import { calcularAcertos, totalPorMoeda } from '../../features/financeiro/acertos'
 import { CATEGORIAS, categoria } from '../../features/financeiro/categorias'
@@ -10,6 +11,7 @@ import FormGasto from '../../features/financeiro/FormGasto'
 import FormOrcamento from '../../features/financeiro/FormOrcamento'
 import FormCambio from '../../features/cambio/FormCambio'
 import TermometroCambio from '../../features/cambio/TermometroCambio'
+import Carteira from '../../features/carteira/Carteira'
 import { cotacoesDeHoje, type CompraDeMoeda } from '../../features/cambio/api'
 import { comparacaoComHoje, converter, mediasPorPar, montarTaxas } from '../../features/cambio/cotacao'
 import { formatarData } from '../../lib/datas'
@@ -40,6 +42,9 @@ export default function Financeiro() {
   const { viagem, membros, meuId, euSouAdm } = useViagemAtual()
   const moeda = viagem.moeda_principal
   const { estado, recarregar } = useFinanceiro(viagem.id, membros)
+  // Carteira de euro (spec 015): só busca quando a viagem é em euro. O saldo vai no card do topo.
+  const { estado: carteira, recarregar: recarregarCarteira } = useCarteira(viagem.id, meuId, moeda === 'EUR')
+  const meuEuro = carteira.status === 'pronto' && carteira.carteira ? carteira.carteira.saldo_atual : null
   const [janela, setJanela] = useState<Janela>(null)
   const [filtro, setFiltro] = useState<string | null>(null) // categoria
   const [soPessoais, setSoPessoais] = useState(false)
@@ -176,33 +181,43 @@ export default function Financeiro() {
                 <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
               )}
             </Cartao>
-            <Cartao
-              titulo="Cotação média"
-              icone={Coins}
-              acao={
-                <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
-                  <Plus size={16} aria-hidden="true" /> Compra
-                </button>
-              }
-            >
-              {contas.parPrincipal ? (
-                <>
-                  <p className="numero">
-                    {contas.parPrincipal.origem} {cotacaoTexto(contas.parPrincipal.media)}
-                  </p>
-                  <p className="numero-legenda">
-                    Quanto vocês pagaram, em média, por 1 {moeda}
-                    <br />
-                    <Comparacao media={contas.parPrincipal.media} hoje={hoje} origem={contas.parPrincipal.origem} />
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="numero">—</p>
-                  <p className="numero-legenda">Registre uma compra de moeda pra ver a média</p>
-                </>
-              )}
-            </Cartao>
+            {moeda === 'EUR' ? (
+              // Quanto de euro eu tenho (saldo da carteira, puxado dos e-mails do Wise/Nomad)
+              <Cartao titulo="Meu euro" icone={Euro}>
+                <p className="numero">{meuEuro != null ? formatarDinheiro(Math.round(meuEuro * 100), 'EUR') : '—'}</p>
+                <p className="numero-legenda">
+                  {meuEuro != null ? 'na sua conta Wise/Nomad · puxado do e-mail' : 'Conecte o Gmail no card abaixo pra puxar sozinho'}
+                </p>
+              </Cartao>
+            ) : (
+              <Cartao
+                titulo="Cotação média"
+                icone={Coins}
+                acao={
+                  <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
+                    <Plus size={16} aria-hidden="true" /> Compra
+                  </button>
+                }
+              >
+                {contas.parPrincipal ? (
+                  <>
+                    <p className="numero">
+                      {contas.parPrincipal.origem} {cotacaoTexto(contas.parPrincipal.media)}
+                    </p>
+                    <p className="numero-legenda">
+                      Quanto vocês pagaram, em média, por 1 {moeda}
+                      <br />
+                      <Comparacao media={contas.parPrincipal.media} hoje={hoje} origem={contas.parPrincipal.origem} />
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="numero">—</p>
+                    <p className="numero-legenda">Registre uma compra de moeda pra ver a média</p>
+                  </>
+                )}
+              </Cartao>
+            )}
           </div>
 
           {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? */}
@@ -218,6 +233,9 @@ export default function Financeiro() {
               })()}
             />
           )}
+
+          {/* Carteira de euro por e-mail (Wise/Nomad) */}
+          {moeda === 'EUR' && <Carteira viagemId={viagem.id} meuId={meuId} estado={carteira} recarregar={recarregarCarteira} />}
 
           {/* Orçamento por categoria */}
           <Cartao titulo="Por categoria">
