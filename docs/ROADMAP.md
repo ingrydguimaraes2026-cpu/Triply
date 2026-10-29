@@ -35,7 +35,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 13 | Bilhete no trajeto | Anexar o PDF/QR do trem ou voo no próprio trajeto | P | Ingryd | — | A fazer |
 | 14 | Endereço e guia da casa | Endereço, Wi-Fi, código da porta e regras da hospedagem escolhida | P | Ingryd | [026](specs/026-guia-da-casa.md) | Pronto pra testar (web) |
 | 15 | Offline de leitura | Roteiro, documentos e gastos abrem sem internet | G | Victor | — | A fazer |
-| 16 | Comentários em qualquer item | Conversar no gasto, no lugar ou na opção, em vez de um chat | M | Victor | — | A fazer |
+| 16 | Comentários em qualquer item | Conversar no gasto, no lugar ou na opção, em vez de um chat | M | Victor | [027](specs/027-comentarios-em-itens.md) | Pronto pra testar (web) |
 | 17 | Marcar acerto como pago | Quem recebeu confirma; o saldo fecha | P | Ingryd | — | A fazer |
 | 18 | Fechamento da viagem | Resumo final de quem pagou o quê, pra todo mundo ver | P | Ingryd | — | A fazer |
 | 19 | Tarefas com responsável | "Quem compra o seguro?", com dono e prazo | P | Ingryd | [020](specs/020-tarefas-com-responsavel.md) | Em andamento |

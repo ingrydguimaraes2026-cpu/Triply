@@ -779,3 +779,61 @@ test('026: campo maior que o limite é recusado', async () => {
   await assert.rejects(guia(db, MEMBRO, id, { codigoPorta: 'x'.repeat(51) }), /check constraint/)
   await assert.rejects(guia(db, MEMBRO, id, { regras: 'x'.repeat(1001) }), /check constraint/)
 })
+
+// ---------------- 027: comentários em itens ----------------
+const comentarItem = (db, quem, alvo, texto = 'Topo!') =>
+  como(db, quem, `insert into public.comentarios_item (${alvo.coluna}, texto) values ($1, $2) returning id, viagem_id`, [alvo.id, texto]).then(
+    (r) => r[0],
+  )
+
+test('027: comboio comenta e vê comentários de lugar e hospedagem; estranho não', async () => {
+  const db = await novoBanco()
+  const lugar = await novoLugar(db, MEMBRO)
+  const hosp = await novaOpcao(db, ADM)
+  const c = await comentarItem(db, MEMBRO, { coluna: 'lugar_id', id: lugar })
+  assert.equal(c.viagem_id, V) // a viagem vem do item
+  await comentarItem(db, ADM, { coluna: 'hospedagem_id', id: hosp }, 'Tem café da manhã?')
+  assert.equal((await como(db, ADM, 'select id from public.comentarios_item')).length, 2)
+  assert.equal((await como(db, ESTRANHO, 'select id from public.comentarios_item')).length, 0)
+  await assert.rejects(comentarItem(db, ESTRANHO, { coluna: 'lugar_id', id: lugar }), /não existe ou você não tem acesso/)
+})
+
+test('027: comentário de gasto pessoal só quem lançou vê e comenta', async () => {
+  const db = await novoBanco()
+  const pessoal = await salvarGasto(db, MEMBRO, { ...cafe, pessoal: true })
+  const doComboio = await salvarGasto(db, ADM, cafe, metade)
+  await comentarItem(db, MEMBRO, { coluna: 'gasto_id', id: pessoal }, 'lembrete')
+  await comentarItem(db, MEMBRO, { coluna: 'gasto_id', id: doComboio }, 'paguei em dinheiro')
+  assert.equal((await como(db, MEMBRO, 'select id from public.comentarios_item')).length, 2)
+  // O ADM não vê o gasto pessoal, nem o comentário dele, nem consegue comentar nele
+  assert.equal((await como(db, ADM, 'select id from public.comentarios_item')).length, 1)
+  await assert.rejects(comentarItem(db, ADM, { coluna: 'gasto_id', id: pessoal }), /não existe ou você não tem acesso/)
+})
+
+test('027: autor ou ADM apaga; outro membro não; apagar o item leva os comentários', async () => {
+  const db = await novoBanco()
+  const lugar = await novoLugar(db, MEMBRO)
+  const doAdm = await comentarItem(db, ADM, { coluna: 'lugar_id', id: lugar })
+  const doMembro = await comentarItem(db, MEMBRO, { coluna: 'lugar_id', id: lugar })
+  await como(db, MEMBRO, 'delete from public.comentarios_item where id = $1', [doAdm.id])
+  assert.equal((await db.query('select count(*)::int as n from public.comentarios_item')).rows[0].n, 2)
+  await como(db, ADM, 'delete from public.comentarios_item where id = $1', [doMembro.id])
+  assert.equal((await db.query('select count(*)::int as n from public.comentarios_item')).rows[0].n, 1)
+  await como(db, MEMBRO, 'delete from public.lugares where id = $1', [lugar])
+  assert.equal((await db.query('select count(*)::int as n from public.comentarios_item')).rows[0].n, 0)
+})
+
+test('027: sem alvo, com dois alvos ou texto em branco é recusado; sem editar', async () => {
+  const db = await novoBanco()
+  const lugar = await novoLugar(db, MEMBRO)
+  const hosp = await novaOpcao(db, MEMBRO)
+  await assert.rejects(como(db, MEMBRO, `insert into public.comentarios_item (texto) values ('oi')`), /não existe|check constraint/)
+  await assert.rejects(
+    como(db, MEMBRO, 'insert into public.comentarios_item (lugar_id, hospedagem_id, texto) values ($1, $2, $3)', [lugar, hosp, 'oi']),
+    /check constraint/,
+  )
+  await assert.rejects(comentarItem(db, MEMBRO, { coluna: 'lugar_id', id: lugar }, '   '), /check constraint/)
+  const c = await comentarItem(db, MEMBRO, { coluna: 'lugar_id', id: lugar })
+  await como(db, MEMBRO, `update public.comentarios_item set texto = 'editado' where id = $1`, [c.id])
+  assert.equal((await db.query('select texto from public.comentarios_item where id = $1', [c.id])).rows[0].texto, 'Topo!')
+})

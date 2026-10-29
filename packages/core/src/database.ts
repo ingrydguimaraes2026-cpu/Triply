@@ -94,6 +94,75 @@ export type Database = {
           },
         ]
       }
+      comentarios_item: {
+        Row: {
+          autor: string
+          criado_em: string
+          gasto_id: string | null
+          hospedagem_id: string | null
+          id: string
+          lugar_id: string | null
+          texto: string
+          viagem_id: string
+        }
+        Insert: {
+          autor?: string
+          criado_em?: string
+          gasto_id?: string | null
+          hospedagem_id?: string | null
+          id?: string
+          lugar_id?: string | null
+          texto: string
+          viagem_id: string
+        }
+        Update: {
+          autor?: string
+          criado_em?: string
+          gasto_id?: string | null
+          hospedagem_id?: string | null
+          id?: string
+          lugar_id?: string | null
+          texto?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comentarios_item_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_item_gasto_id_fkey"
+            columns: ["gasto_id"]
+            isOneToOne: false
+            referencedRelation: "gastos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_item_hospedagem_id_fkey"
+            columns: ["hospedagem_id"]
+            isOneToOne: false
+            referencedRelation: "hospedagens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_item_lugar_id_fkey"
+            columns: ["lugar_id"]
+            isOneToOne: false
+            referencedRelation: "lugares"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_item_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compras_cambio: {
         Row: {
           cotacao: number | null

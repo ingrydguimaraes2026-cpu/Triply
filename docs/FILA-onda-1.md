@@ -17,7 +17,7 @@ Ordenei por **valor ÷ risco ÷ dependência**: primeiro o que entrega rápido, 
 |---|---|---|---|---|---|
 | 1 | #5 Compartilhar no WhatsApp | P | não | baixo | a detalhar → spec 025 |
 | 2 | #14 Endereço e guia da casa | P | sim (aditivo) | baixo | ✅ spec 026, web, banco aplicado |
-| 3 | #16 Comentários em qualquer item | M | sim | médio | a detalhar → spec 027 |
+| 3 | #16 Comentários em qualquer item | M | sim | médio | ✅ spec 027, web, banco aplicado |
 | 4 | #13 Bilhete no trajeto | P | sim + storage | médio | a detalhar → spec 028 |
 | 5 | #6 Agenda do dia | G | sim | médio | a detalhar → spec 029 |
 | 6 | #2 Pessoa sem app | P | sim | **alto** (modelo de membros) | a detalhar → spec 030 |

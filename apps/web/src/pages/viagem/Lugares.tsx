@@ -10,6 +10,8 @@ import { formatarDinheiro } from '@together/core'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import { useFocoDeItem } from '../../lib/foco'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
+import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
+import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -23,6 +25,7 @@ type Janela = { destinoId: string | null; tipo?: TipoDeLugar; lugar?: Lugar } | 
 export default function Lugares() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   useFocoDeItem() // destaca o lugar quando se chega por um link de compartilhar
+  const comentarios = useContagemDeComentarios(viagem.id)
   const l = useLugares(viagem.id, destinos, meuId)
   const [selecionado, setSelecionado] = useState<string | null>(null)
   const [filtro, setFiltro] = useState<TipoDeLugar | null>(null)
@@ -79,6 +82,12 @@ export default function Lugares() {
               <Heart size={13} aria-hidden="true" fill={euVotei ? 'currentColor' : 'none'} />
               {lugar.votos.length > 0 && <span>{lugar.votos.length}</span>}
             </button>
+            <ComentariosDoItem
+              alvo={{ tipo: 'lugar', id: lugar.id }}
+              titulo={lugar.nome}
+              quantidade={comentarios.contagem[lugar.id]}
+              aoMudar={comentarios.recarregar}
+            />
             <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'lugar', id: lugar.id, titulo: lugar.nome }} nomeDaViagem={viagem.nome} />
             {autor && <small>por {autor.id === meuId ? 'você' : autor.nome.split(' ')[0]}</small>}
           </div>

@@ -1,0 +1,105 @@
+/* Comentários em itens (spec 027) */
+.comentarios-item-ancora {
+  display: inline-flex;
+}
+
+.botao-comentarios {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 5px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--cor-texto-suave);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.botao-comentarios:hover {
+  color: var(--couro);
+  background: var(--cor-borda);
+}
+
+.comentarios-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comentarios-item ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comentarios-item li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.comentarios-item li p {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.comentarios-item li strong {
+  margin-right: 4px;
+}
+
+.comentarios-item time {
+  display: block;
+  margin-top: 2px;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.comentarios-item-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.comentarios-item-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-cartao);
+  font: inherit;
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.comentarios-item-form button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--couro);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.comentarios-item-form button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

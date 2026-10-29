@@ -25,6 +25,8 @@ import { formatarDinheiro } from '@together/core'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
+import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
 import './hospedagem.css'
@@ -47,6 +49,7 @@ export default function Hospedagem() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const pessoas = membros.length
   const h = useHospedagem(viagem.id, destinos, meuId, pessoas)
+  const comentarios = useContagemDeComentarios(viagem.id)
   const [selecionado, setSelecionado] = useState<string | null>(null)
   const [tipo, setTipo] = useState<TipoNoMapa>('hotel')
   const [janela, setJanela] = useState<Janela>(null)
@@ -162,6 +165,12 @@ export default function Hospedagem() {
             <Heart size={16} aria-hidden="true" fill={votei ? 'currentColor' : 'none'} />
             {opcao.votos.length > 0 ? opcao.votos.length : 'Curti'}
           </button>
+          <ComentariosDoItem
+            alvo={{ tipo: 'hospedagem', id: opcao.id }}
+            titulo={opcao.nome}
+            quantidade={comentarios.contagem[opcao.id]}
+            aoMudar={comentarios.recarregar}
+          />
           {quemVotou.length > 0 && (
             <span className="hosp-quem" aria-label={`Votaram: ${quemVotou.map((m) => m.nome).join(', ')}`}>
               {quemVotou.slice(0, 4).map((m) => (

@@ -18,6 +18,8 @@ import { formatarData } from '../../lib/datas'
 import { useFocoDeItem } from '../../lib/foco'
 import Avatar from '../../components/ui/Avatar'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
+import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
+import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import EstadoVazio from '../../components/ui/EstadoVazio'
@@ -43,6 +45,7 @@ function totaisSeparados(totais: Record<string, number>, moedaPrincipal: string)
 export default function Financeiro() {
   const { viagem, membros, meuId, euSouAdm } = useViagemAtual()
   useFocoDeItem() // destaca o gasto quando se chega por um link de compartilhar
+  const comentarios = useContagemDeComentarios(viagem.id)
   const moeda = viagem.moeda_principal
   const { estado, recarregar } = useFinanceiro(viagem.id, membros)
   // Carteira de euro (spec 015): só busca quando a viagem é em euro. O saldo vai no card do topo.
@@ -405,6 +408,12 @@ export default function Financeiro() {
                             </span>
                             <span className="gasto-valor">{formatarDinheiro(g.valor, g.moeda)}</span>
                           </button>
+                          <ComentariosDoItem
+                            alvo={{ tipo: 'gasto', id: g.id }}
+                            titulo={g.descricao}
+                            quantidade={comentarios.contagem[g.id]}
+                            aoMudar={comentarios.recarregar}
+                          />
                           {/* Gasto pessoal só você vê: não faz sentido compartilhar */}
                           {!g.pessoal && (
                             <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'gasto', id: g.id, titulo: g.descricao }} nomeDaViagem={viagem.nome} />

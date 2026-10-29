@@ -40,6 +40,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 024 | [Ponto de encontro](024-ponto-de-encontro.md) (onde e que horas se encontrar, com mapa) | 2 | P | 007 | Em andamento |
 | 025 | [Compartilhar no WhatsApp](025-compartilhar-no-whatsapp.md) (link que abre direto no item) | 2 | P | — | Em andamento |
 | 026 | [Endereço e guia da casa](026-guia-da-casa.md) (Wi-Fi, código da porta, regras) | 2 | P | 011 | Pronto pra testar (web) |
+| 027 | [Comentários em qualquer item](027-comentarios-em-itens.md) (gasto, lugar e hospedagem) | 2 | M | 002, 011, 016 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

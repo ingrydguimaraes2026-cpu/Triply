@@ -550,3 +550,61 @@ export function linkDoMapa(ponto: { local: string; latitude: number | null; long
   }
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ponto.local)}`
 }
+
+// ---------- Comentários em itens (spec 027 / roadmap #16) ----------
+
+export type AlvoDoComentario = { tipo: 'gasto' | 'lugar' | 'hospedagem'; id: string }
+export type ComentarioDeItem = Tables<'comentarios_item'>
+
+const COLUNA_DO_ALVO = { gasto: 'gasto_id', lugar: 'lugar_id', hospedagem: 'hospedagem_id' } as const
+
+// Comentários de um item, do mais antigo pro mais novo (como uma conversa).
+export async function buscarComentariosDoItem(cli: ClienteTogether, alvo: AlvoDoComentario): Promise<ComentarioDeItem[]> {
+  const { data, error } = await cli
+    .from('comentarios_item')
+    .select('*')
+    .eq(COLUNA_DO_ALVO[alvo.tipo], alvo.id)
+    .order('criado_em', { ascending: true })
+  if (error) throw error
+  return data ?? []
+}
+
+// Quantos comentários cada item da viagem tem (pra mostrar o número no botão). Chave = id do item.
+export async function contarComentariosDaViagem(cli: ClienteTogether, viagemId: string): Promise<Record<string, number>> {
+  const { data, error } = await cli.from('comentarios_item').select('gasto_id, lugar_id, hospedagem_id').eq('viagem_id', viagemId)
+  if (error) throw error
+  const contagem: Record<string, number> = {}
+  for (const c of data ?? []) {
+    const id = c.gasto_id ?? c.lugar_id ?? c.hospedagem_id
+    if (id) contagem[id] = (contagem[id] ?? 0) + 1
+  }
+  return contagem
+}
+
+// Comenta num item. Devolve o criado. (O banco confere que o item é mesmo desta viagem.)
+export async function comentarNoItem(
+  cli: ClienteTogether,
+  viagemId: string,
+  alvo: AlvoDoComentario,
+  texto: string,
+): Promise<ComentarioDeItem> {
+  const { data, error } = await cli
+    .from('comentarios_item')
+    .insert({
+      viagem_id: viagemId,
+      gasto_id: alvo.tipo === 'gasto' ? alvo.id : null,
+      lugar_id: alvo.tipo === 'lugar' ? alvo.id : null,
+      hospedagem_id: alvo.tipo === 'hospedagem' ? alvo.id : null,
+      texto: texto.trim(),
+    })
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
+// Apaga um comentário (quem escreveu ou o ADM).
+export async function apagarComentarioDoItem(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('comentarios_item').delete().eq('id', id)
+  if (error) throw error
+}

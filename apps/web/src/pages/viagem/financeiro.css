@@ -190,7 +190,8 @@
   min-width: 0;
 }
 
-.gasto-linha .botao-compartilhar {
+/* Botões no fim da linha (comentários e compartilhar): o último encosta com folga na borda */
+.gasto-linha > :last-child:not(.gasto) {
   margin-right: 10px;
 }
 
