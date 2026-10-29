@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { hojeTexto } from '../destinos/datas'
 import type { Membro } from '../viagens/hooks'
-import { dividirIgual } from './acertos'
+import { dividirIgual } from '@together/core'
 import { avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
 import { lerValor } from '@together/core'

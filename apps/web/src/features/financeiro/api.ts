@@ -1,7 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '@together/core'
 import { deBanco, paraBanco } from '@together/core'
-import type { Divisao } from './acertos'
+import type { Divisao } from '@together/core'
 
 // Gasto com valores já em centavos
 export type Gasto = Omit<Tables<'gastos'>, 'valor'> & { valor: number; divisoes: Divisao[] }

@@ -1,143 +1,170 @@
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
+import { useState } from 'react'
+import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Camera, Bed, MapPin, Plus, Route } from 'lucide-react-native'
-import { formatarDinheiro } from '@together/core'
-import { Ganso } from '../../src/comboio/Ganso'
-import { useResumoViagem } from '../../src/dados/useResumoViagem'
+import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from 'lucide-react-native'
+import type { ViagemComDetalhes } from '@together/core'
+import { proximaViagem, useViagemAtual, viagensPassadas } from '../../src/dados/viagemAtual'
+import { diasAte, mesEAno, periodo, primeiroNome } from '../../src/lib/formato'
+import { supabase } from '../../src/lib/supabase'
+import { capaDaViagem } from '../../src/ui/fotos'
+import { Malinha } from '../../src/ui/Malinha'
+import { Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../../src/ui/pecas'
+import { cor, sombra } from '../../theme'
 
-const euros = (valorEmEuros: number) => formatarDinheiro(Math.round(valorEmEuros * 100), 'EUR')
-
-const ATALHOS = [
-  { t: 'Roteiro', Icone: Route },
-  { t: 'Hospedagem', Icone: Bed },
-  { t: 'Lugares', Icone: MapPin },
-  { t: 'Fotos', Icone: Camera },
-]
-
-export default function Home() {
-  const estado = useResumoViagem()
+// Home · Minhas viagens (telas "1e" e "1f" do design)
+export default function MinhasViagens() {
+  const { status, viagens, meuId, escolher, recarregar } = useViagemAtual()
+  const router = useRouter()
   const insets = useSafeAreaInsets()
 
-  if (estado.status === 'carregando') {
-    return (
-      <View className="flex-1 items-center justify-center bg-fundo">
-        <ActivityIndicator color="#7b542f" />
-      </View>
-    )
-  }
-  if (estado.status === 'erro') {
-    return (
-      <View className="flex-1 items-center justify-center bg-fundo px-8">
-        <Text className="text-center font-body text-base text-suave">Não deu pra carregar sua viagem. Tente de novo em instantes.</Text>
-      </View>
-    )
-  }
-  if (estado.status === 'vazio') {
-    return (
-      <View className="flex-1 items-center justify-center bg-fundo px-8">
-        <Ganso fala="Você ainda não tem viagem. Crie uma no site e ela aparece aqui." />
-      </View>
-    )
+  if (status === 'carregando') return <Carregando texto="Arrumando a mala…" />
+  if (status === 'erro') return <ErroNaTela aoTentar={recarregar} />
+
+  const eu = viagens.flatMap((v) => v.membros).find((m) => m.id === meuId)
+  const ola = eu ? `Olá, ${primeiroNome(eu.nome)}` : 'Olá'
+  const destaque = proximaViagem(viagens)
+  const passadas = viagensPassadas(viagens).filter((v) => v.id !== destaque?.id)
+  const outras = viagens.filter((v) => v.id !== destaque?.id && !passadas.includes(v))
+
+  const abrir = (v: ViagemComDetalhes) => {
+    escolher(v.id)
+    router.push(`/viagem/${v.id}`)
   }
 
-  const { viagem, membros, meuEuro, euroComboio } = estado.dados
-  const ehEuro = viagem.moeda === 'EUR'
+  if (!destaque) return <Vazio ola={ola} aoCriar={() => router.push('/nova-viagem')} aoEntrar={recarregar} />
 
   return (
     <View className="flex-1 bg-fundo">
-      <StatusBar style="light" />
-      <ScrollView contentContainerStyle={{ paddingBottom: 110 }} showsVerticalScrollIndicator={false}>
-        {/* Hero quente */}
-        <LinearGradient
-          colors={['#8a5a28', '#b6771d', '#ff9d00']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1.1 }}
-          style={{ paddingTop: insets.top + 22, borderBottomLeftRadius: 34, borderBottomRightRadius: 34 }}
-        >
-          <View className="px-6 pb-9">
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className="font-body text-[13px] text-dourado">sua viagem</Text>
-                <Text className="font-display-bold text-[28px] text-white">{viagem.nome}</Text>
-              </View>
-              <Avatares n={membros} />
-            </View>
-
-            {ehEuro ? (
-              <View className="mt-8">
-                <Text className="font-body-medium text-[12px] uppercase tracking-widest text-dourado">Meu euro</Text>
-                <Text className="mt-1 font-display-bold text-[52px] leading-none text-white">{euros(meuEuro)}</Text>
-                <Text className="mt-2 font-body text-[13px] text-white/80">na sua conta Wise/Nomad</Text>
-              </View>
-            ) : (
-              <Text className="mt-8 font-body text-base text-white">Carteira em euro aparece em viagens com moeda euro ({viagem.moeda}).</Text>
-            )}
+      <StatusBar style="dark" />
+      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 40 }}>
+        <View className="mb-5 flex-row items-end justify-between gap-2">
+          <View className="min-w-0 flex-1">
+            <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
+            <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>Minhas viagens</Text>
           </View>
-        </LinearGradient>
-
-        <View className="gap-4 px-5 pt-5">
-          {ehEuro && (
-            <View className="flex-row items-center justify-between rounded-[26px] bg-comboio-fundo px-6 py-5">
-              <View>
-                <Text className="font-body-medium text-[13px] text-couro">Euro do comboio</Text>
-                <Text className="font-body text-[12px] text-couro/70">somando todo mundo</Text>
-              </View>
-              <Text className="font-display-bold text-[24px] text-couro">{euros(euroComboio)}</Text>
-            </View>
-          )}
-
-          <Text className="mt-2 font-display-bold text-[19px] text-texto">A viagem</Text>
-          <View className="flex-row flex-wrap gap-3">
-            {ATALHOS.map(({ t, Icone }) => (
-              <View key={t} className="min-w-[47%] flex-1 flex-row items-center gap-3 rounded-[22px] border border-borda bg-cartao px-5 py-5">
-                <View className="h-9 w-9 items-center justify-center rounded-full bg-comboio-fundo">
-                  <Icone size={18} color="#7b542f" />
-                </View>
-                <Text className="font-body-semibold text-[15px] text-texto">{t}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Momento humano: o comboio fala */}
-          <View className="mt-3 items-center rounded-[26px] bg-comboio-fundo px-5 py-6">
-            <Ganso fala="No fim da viagem eu fecho a conta: quem deve pra quem, sem briga." />
-          </View>
+          <Botao compacto titulo="Nova viagem" icone={<Plus size={18} color="#fff" />} aoTocar={() => router.push('/nova-viagem')} />
         </View>
-      </ScrollView>
 
-      <Pressable
-        className="absolute bottom-7 right-6 h-16 w-16 items-center justify-center rounded-full bg-laranja"
-        style={{ boxShadow: '0 10px 24px rgba(255,157,0,0.45)' } as object}
-        accessibilityLabel="Lançar gasto"
-      >
-        <Plus size={28} color="#3b2715" strokeWidth={2.5} />
-      </Pressable>
+        <CartaoDestaque viagem={destaque} aoAbrir={() => abrir(destaque)} />
+
+        {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
+        {passadas.length ? <Lista titulo="Viagens passadas" viagens={passadas} aoAbrir={abrir} /> : null}
+      </ScrollView>
     </View>
   )
 }
 
-// Bolinhas com iniciais fake do comboio (até ligarmos os membros de verdade).
-function Avatares({ n }: { n: number }) {
-  const cores = ['#ff9d00', '#b6771d', '#9a5b00', '#7b542f']
-  const qtos = Math.min(n, 3)
+function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbrir: () => void }) {
+  const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
+  const etiqueta =
+    faltam == null ? 'Sem data ainda' : faltam > 1 ? `Faltam ${faltam} dias` : faltam === 1 ? 'É amanhã!' : (viagem.dataFim && diasAte(viagem.dataFim) >= 0) ? 'Acontecendo agora' : 'Já foi'
+  const linhaDeCima = [viagem.destinos.length > 1 ? `${viagem.destinos.length} destinos` : viagem.destinos[0], periodo(viagem.dataInicio, viagem.dataFim)]
+    .filter(Boolean)
+    .join(' · ')
+
   return (
-    <View className="flex-row">
-      {Array.from({ length: qtos }).map((_, i) => (
-        <View
-          key={i}
-          className="h-9 w-9 items-center justify-center rounded-full border-2 border-white"
-          style={{ backgroundColor: cores[i % cores.length], marginLeft: i === 0 ? 0 : -10 }}
-        >
-          <Text className="font-body-bold text-[12px] text-white">{String.fromCharCode(65 + i)}</Text>
+    <Pressable onPress={aoAbrir} className="h-[470px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
+      <ImageBackground source={{ uri: capaDaViagem(viagem.id) }} resizeMode="cover" style={StyleSheet.absoluteFill}>
+        <LinearGradient
+          colors={['rgba(185,122,34,0)', 'rgba(185,122,34,0.55)', '#4A2E14']}
+          locations={[0.38, 0.62, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+      </ImageBackground>
+      <View className="absolute left-4 top-4 flex-row items-center gap-1.5 rounded-full bg-fundo px-3 py-2">
+        <Clock size={16} color={cor.caramelo} />
+        <Text className="font-body-bold text-[13px] text-texto">{etiqueta}</Text>
+      </View>
+      <View className="absolute bottom-6 left-6 right-6">
+        <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">{linhaDeCima}</Text>
+        <Text className="mb-[18px] mt-2 font-display text-[40px] leading-[42px] text-white">{viagem.nome}</Text>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-2.5">
+            <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} borda="#5A3818" />
+            <Text className="font-body-semibold text-[13px] text-creme">
+              {viagem.membros.length} {viagem.membros.length === 1 ? 'viajante' : 'viajantes'}
+            </Text>
+          </View>
+          <View className="h-11 w-11 items-center justify-center rounded-full bg-fundo">
+            <ArrowRight size={20} color={cor.escuro} />
+          </View>
         </View>
-      ))}
-      {n > 3 && (
-        <View className="h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-couro" style={{ marginLeft: -10 }}>
-          <Text className="font-body-bold text-[11px] text-white">+{n - 3}</Text>
+      </View>
+    </Pressable>
+  )
+}
+
+function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemComDetalhes[]; aoAbrir: (v: ViagemComDetalhes) => void }) {
+  return (
+    <>
+      <Text className="mb-3 mt-8 font-display text-[22px] text-texto">{titulo}</Text>
+      <View className="gap-2.5">
+        {viagens.map((v) => (
+          <Pressable key={v.id} onPress={() => aoAbrir(v)} className="flex-row items-center gap-3.5 rounded-2xl bg-cartao p-3 active:opacity-90" style={sombra.cartao}>
+            <Image source={{ uri: capaDaViagem(v.id, 200) }} className="h-16 w-16 rounded-xl bg-tracejado" />
+            <View className="min-w-0 flex-1">
+              <Text className="font-display text-[18px] text-texto" numberOfLines={1}>
+                {v.nome}
+              </Text>
+              <Text className="mt-0.5 font-body text-[13px] text-suave">
+                {mesEAno(v.dataInicio) || 'Sem data'} · {v.membros.length} {v.membros.length === 1 ? 'pessoa' : 'pessoas'}
+              </Text>
+            </View>
+            <ChevronRight size={20} color={cor.suave} />
+          </Pressable>
+        ))}
+      </View>
+    </>
+  )
+}
+
+// Estado vazio: Malinha dormindo esperando a primeira viagem
+function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; aoEntrar: () => void }) {
+  const insets = useSafeAreaInsets()
+  const [comCodigo, setComCodigo] = useState(false)
+  const [codigo, setCodigo] = useState('')
+  const [erro, setErro] = useState<string | null>(null)
+  const [entrando, setEntrando] = useState(false)
+
+  async function entrarComCodigo() {
+    // Aceita o código puro ou o link inteiro (…/convite/<código>)
+    const limpo = codigo.trim().split('/').filter(Boolean).pop() ?? ''
+    if (!limpo) return
+    setErro(null)
+    setEntrando(true)
+    const { error } = await supabase.rpc('aceitar_convite', { p_codigo: limpo })
+    setEntrando(false)
+    if (error) setErro('Esse convite não vale mais ou está errado. Peça um novo link.')
+    else aoEntrar()
+  }
+
+  return (
+    <View className="flex-1 bg-fundo px-5" style={{ paddingTop: insets.top + 12, paddingBottom: 24 }}>
+      <StatusBar style="dark" />
+      <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
+      <Text className="font-display text-[32px] leading-[36px] text-texto">Minhas viagens</Text>
+      <View className="mt-6 flex-1 items-center justify-center gap-3 rounded-3xl border-[1.5px] border-dashed border-tracejado px-7 py-8">
+        <Malinha humor="dormindo" tamanho={140} />
+        <Text className="text-center font-display text-[28px] leading-[31px] text-texto">A primeira viagem do grupo começa aqui</Text>
+        <Text className="text-center font-body text-[15px] leading-6 text-corpo">Crie a viagem, convide a turma e montem o roteiro juntos.</Text>
+        <View className="mt-3 self-stretch">
+          <Botao titulo="Nova viagem" icone={<Plus size={20} color="#fff" />} aoTocar={aoCriar} />
         </View>
-      )}
+        {comCodigo ? (
+          <View className="gap-2 self-stretch">
+            <Campo icone={<Ticket size={20} color={cor.suave} />} placeholder="Código ou link do convite" value={codigo} onChangeText={setCodigo} autoCapitalize="none" onSubmitEditing={entrarComCodigo} />
+            {erro ? <Text className="font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
+            <Botao titulo="Entrar na viagem" tipo="secundario" aoTocar={entrarComCodigo} carregando={entrando} />
+          </View>
+        ) : (
+          <Pressable onPress={() => setComCodigo(true)} className="h-11 justify-center">
+            <Text className="font-body-semibold text-[14px] text-couro">Entrar com código de convite</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   )
 }

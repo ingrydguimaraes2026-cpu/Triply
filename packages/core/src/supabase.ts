@@ -20,9 +20,11 @@ export type OpcoesCliente = {
   guarda?: GuardaSessao
   // No navegador, precisa ler a sessão que volta na URL do login do Google. No celular, não.
   detectarSessaoNaUrl?: boolean
+  // 'pkce' = o login com Google volta com um código que o app troca pela sessão (necessário no celular)
+  fluxo?: 'implicit' | 'pkce'
 }
 
-export function criarClienteSupabase({ url, chave, guarda, detectarSessaoNaUrl = true }: OpcoesCliente): ClienteTogether {
+export function criarClienteSupabase({ url, chave, guarda, detectarSessaoNaUrl = true, fluxo }: OpcoesCliente): ClienteTogether {
   if (!url || !chave) {
     throw new Error('Supabase: faltam a URL e a chave pública (confira o .env).')
   }
@@ -31,6 +33,7 @@ export function criarClienteSupabase({ url, chave, guarda, detectarSessaoNaUrl =
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: detectarSessaoNaUrl,
+      ...(fluxo ? { flowType: fluxo } : {}),
       ...(guarda ? { storage: guarda } : {}),
     },
   })

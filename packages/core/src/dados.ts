@@ -1,4 +1,7 @@
 import type { ClienteTogether } from './supabase'
+import type { Tables } from './database'
+import type { Divisao } from './acertos'
+import { deBanco, paraBanco } from './dinheiro'
 
 // Consultas ao banco compartilhadas. Recebem o client (cada plataforma passa o seu),
 // então web e mobile leem os mesmos dados do mesmo jeito. O RLS do banco já filtra:
@@ -55,4 +58,186 @@ export async function saldoEuroDoComboio(cli: ClienteTogether, viagemId: string)
   const { data, error } = await cli.rpc('saldo_euro_do_comboio', { p_viagem_id: viagemId })
   if (error) throw error
   return Number(data ?? 0)
+}
+
+// ---------- Telas do app mobile (redesign "Malinha") ----------
+// Mesmas consultas que a web faz em src/features, agora no core pra servir os dois.
+
+export type Pessoa = { id: string; nome: string; avatarUrl: string | null; papel: string }
+
+export type ViagemComDetalhes = ViagemResumo & {
+  destinos: string[] // nomes, na ordem do roteiro
+  membros: Pessoa[]
+}
+
+const CAMPOS_DETALHE =
+  'id, nome, moeda_principal, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(papel, perfis(id, nome, avatar_url))'
+
+type LinhaDetalhe = {
+  id: string
+  nome: string
+  moeda_principal: string
+  data_inicio: string | null
+  data_fim: string | null
+  destinos: { nome: string; ordem: number }[]
+  comboio_membros: { papel: string; perfis: { id: string; nome: string | null; avatar_url: string | null } | null }[]
+}
+
+function montarDetalhe(v: LinhaDetalhe): ViagemComDetalhes {
+  return {
+    id: v.id,
+    nome: v.nome,
+    moeda: v.moeda_principal,
+    dataInicio: v.data_inicio,
+    dataFim: v.data_fim,
+    destinos: [...v.destinos].sort((a, b) => a.ordem - b.ordem).map((d) => d.nome),
+    membros: v.comboio_membros.flatMap((m) =>
+      m.perfis ? [{ id: m.perfis.id, nome: m.perfis.nome ?? 'Sem nome', avatarUrl: m.perfis.avatar_url, papel: m.papel }] : [],
+    ),
+  }
+}
+
+// Minhas viagens com os destinos e o comboio de cada uma (cartões da home).
+export async function listarViagensComDetalhes(cli: ClienteTogether): Promise<ViagemComDetalhes[]> {
+  const { data, error } = await cli.from('viagens').select(CAMPOS_DETALHE).order('criado_em', { ascending: false })
+  if (error) throw error
+  return (data ?? []).map(montarDetalhe)
+}
+
+// Uma viagem com o que as abas precisam no topo (nome, datas, comboio).
+export async function buscarViagemComDetalhes(cli: ClienteTogether, viagemId: string): Promise<ViagemComDetalhes | null> {
+  const { data, error } = await cli.from('viagens').select(CAMPOS_DETALHE).eq('id', viagemId).maybeSingle()
+  if (error) throw error
+  return data ? montarDetalhe(data) : null
+}
+
+export type Destino = Tables<'destinos'>
+export type Lugar = Tables<'lugares'>
+export type Trajeto = Tables<'trajetos'>
+
+export async function buscarDestinos(cli: ClienteTogether, viagemId: string): Promise<Destino[]> {
+  const { data, error } = await cli.from('destinos').select('*').eq('viagem_id', viagemId).order('ordem')
+  if (error) throw error
+  return data ?? []
+}
+
+// Lugares do roteiro (passeios, restaurantes...) em ordem de horário.
+export async function buscarLugares(cli: ClienteTogether, viagemId: string): Promise<Lugar[]> {
+  const { data, error } = await cli
+    .from('lugares')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('horario', { ascending: true, nullsFirst: false })
+  if (error) throw error
+  return data ?? []
+}
+
+// Trajetos em ordem de partida (os sem horário no fim).
+export async function buscarTrajetos(cli: ClienteTogether, viagemId: string): Promise<Trajeto[]> {
+  const { data, error } = await cli
+    .from('trajetos')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('partida', { ascending: true, nullsFirst: false })
+  if (error) throw error
+  return data ?? []
+}
+
+// Gasto com valores em centavos (igual a web).
+export type GastoDaViagem = Omit<Tables<'gastos'>, 'valor'> & { valor: number; divisoes: Divisao[] }
+
+export async function buscarGastos(cli: ClienteTogether, viagemId: string): Promise<GastoDaViagem[]> {
+  const { data, error } = await cli
+    .from('gastos')
+    .select('*, gasto_divisoes(usuario_id, valor)')
+    .eq('viagem_id', viagemId)
+    .order('data', { ascending: false })
+    .order('criado_em', { ascending: false })
+  if (error) throw error
+  return (data ?? []).map(({ gasto_divisoes, ...g }) => ({
+    ...g,
+    valor: deBanco(g.valor),
+    divisoes: gasto_divisoes.map((d) => ({ usuarioId: d.usuario_id, valor: deBanco(d.valor) })),
+  }))
+}
+
+export type NovoGasto = {
+  id: string // gerado no aparelho (evita duplicar ao reenviar)
+  descricao: string
+  valor: number // centavos
+  moeda: string
+  categoria: string
+  data: string // AAAA-MM-DD
+  pagoPor: string
+  pessoal: boolean
+  divisoes: Divisao[]
+}
+
+// Cria o gasto com as divisões numa tacada só (função salvar_gasto do banco).
+export async function salvarGasto(cli: ClienteTogether, viagemId: string, gasto: NovoGasto): Promise<string> {
+  const { data, error } = await cli.rpc('salvar_gasto', {
+    p_viagem: viagemId,
+    p_gasto: {
+      id: gasto.id,
+      descricao: gasto.descricao,
+      valor: paraBanco(gasto.valor),
+      moeda: gasto.moeda,
+      categoria: gasto.categoria,
+      data: gasto.data,
+      pago_por: gasto.pagoPor,
+      pessoal: gasto.pessoal,
+      rascunho: false,
+    },
+    p_divisoes: gasto.pessoal ? [] : gasto.divisoes.map((d) => ({ usuario_id: d.usuarioId, valor: paraBanco(d.valor) })),
+  })
+  if (error) throw error
+  return data
+}
+
+export type FotoDaViagem = Tables<'fotos'> & { url: string | null }
+
+// Fotos da viagem (mais novas primeiro) com link temporário de 1 hora (bucket privado "fotos").
+export async function buscarFotos(cli: ClienteTogether, viagemId: string): Promise<FotoDaViagem[]> {
+  const { data, error } = await cli.from('fotos').select('*').eq('viagem_id', viagemId).order('criado_em', { ascending: false })
+  if (error) throw error
+  if (!data?.length) return []
+  const { data: links, error: erroLinks } = await cli.storage.from('fotos').createSignedUrls(
+    data.map((f) => f.caminho),
+    60 * 60,
+  )
+  if (erroLinks) throw erroLinks
+  const porCaminho = new Map(links.map((l) => [l.path, l.signedUrl]))
+  return data.map((f) => ({ ...f, url: porCaminho.get(f.caminho) ?? null }))
+}
+
+export type NovaViagem = {
+  nome: string
+  dataInicio: string | null // AAAA-MM-DD
+  dataFim: string | null
+  moeda: string
+  destinos: { nome: string; pais: string | null; latitude: number | null; longitude: number | null }[]
+}
+
+// Cria a viagem e os destinos (igual à web: quem cria vira ADM pelo banco). Devolve o id.
+export async function criarViagem(cli: ClienteTogether, dados: NovaViagem): Promise<string> {
+  const { data: viagem, error } = await cli
+    .from('viagens')
+    .insert({ nome: dados.nome, data_inicio: dados.dataInicio, data_fim: dados.dataFim, moeda_principal: dados.moeda })
+    .select('id')
+    .single()
+  if (error) throw error
+  if (dados.destinos.length) {
+    const { error: erroDestinos } = await cli
+      .from('destinos')
+      .insert(dados.destinos.map((d, ordem) => ({ viagem_id: viagem.id, ordem, ...d })))
+    if (erroDestinos) throw erroDestinos
+  }
+  return viagem.id
+}
+
+// Gera um código de convite (vale 7 dias). Cada plataforma monta o link com o próprio endereço.
+export async function criarCodigoDeConvite(cli: ClienteTogether, viagemId: string): Promise<string> {
+  const { data, error } = await cli.from('convites').insert({ viagem_id: viagemId }).select('codigo').single()
+  if (error) throw error
+  return data.codigo
 }

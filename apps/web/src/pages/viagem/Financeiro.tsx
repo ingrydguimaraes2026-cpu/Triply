@@ -3,7 +3,7 @@ import { ArrowRight, Coins, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } 
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
-import { calcularAcertos, totalPorMoeda } from '../../features/financeiro/acertos'
+import { calcularAcertos, totalPorMoeda } from '@together/core'
 import { CATEGORIAS, categoria } from '../../features/financeiro/categorias'
 import { formatarDinheiro } from '@together/core'
 import type { Gasto } from '../../features/financeiro/api'

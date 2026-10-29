@@ -17,5 +17,8 @@ export const supabase = criarClienteSupabase({
   url: process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
   chave: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '',
   guarda: Platform.OS === 'web' ? undefined : cofre,
-  detectarSessaoNaUrl: false, // no app não há redirect de OAuth na URL
+  // No navegador, a volta do Google traz a sessão na URL (igual a web). No celular, o login
+  // volta pelo link "together://" com um código, que entrarComGoogle troca pela sessão.
+  detectarSessaoNaUrl: Platform.OS === 'web',
+  fluxo: Platform.OS === 'web' ? undefined : 'pkce',
 })

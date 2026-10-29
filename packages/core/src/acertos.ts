@@ -1,4 +1,4 @@
-// Regras de divisão e acertos do Financeiro. Funções puras (sem banco), testadas em tests/financeiro.test.mjs.
+// Regras de divisão e acertos do Financeiro. Funções puras (sem banco), testadas em apps/web/tests/regras.test.mjs.
 // Todos os valores em centavos.
 
 export type Divisao = { usuarioId: string; valor: number }

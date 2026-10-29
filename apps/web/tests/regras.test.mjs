@@ -4,7 +4,7 @@ import { test } from 'node:test'
 
 const importar = (arq) => import(new URL(`../src/features/${arq}`, import.meta.url))
 const { lerValor, paraBanco, deBanco, formatarDinheiro } = await import(new URL('../../../packages/core/src/dinheiro.ts', import.meta.url))
-const { dividirIgual, conferirDivisao, calcularAcertos, totalPorMoeda } = await importar('financeiro/acertos.ts')
+const { dividirIgual, conferirDivisao, calcularAcertos, totalPorMoeda } = await import(new URL('../../../packages/core/src/acertos.ts', import.meta.url))
 const { cotacaoMedia, comparacaoComHoje, converter, montarTaxas } = await importar('cambio/cotacao.ts')
 const { contarNoites, avisosDasDatas, periodoDosDestinos, destinoDeHoje } = await importar('destinos/datas.ts')
 const { avisosDoTrajeto, proximoTrajeto, proximoDeslocamento } = await importar('transportes/avisos.ts')
