@@ -38,6 +38,7 @@
 .overview-enquetes { order: 3; }
 .overview-tarefas { order: 8; }
 .overview-clima { order: 2; }
+.overview-encontro { order: 5; }
 
 /* ---------- Avisos do ADM (spec 019): recados fixados no topo ---------- */
 .faixa-avisos {

@@ -478,3 +478,75 @@ export async function apagarEnquete(cli: ClienteTogether, id: string): Promise<v
   const { error } = await cli.from('enquetes').delete().eq('id', id)
   if (error) throw error
 }
+
+// ---------- Ponto de encontro (spec 024 / roadmap #7) ----------
+
+export type PontoDeEncontro = Tables<'pontos_de_encontro'>
+
+export type NovoPonto = {
+  local: string
+  quando?: string | null // ISO (data + hora), ou null
+  observacao?: string | null
+  latitude?: number | null
+  longitude?: number | null
+}
+
+// Pontos de encontro da viagem, por horário combinado (sem horário no fim), depois por criação.
+export async function buscarPontosDeEncontro(cli: ClienteTogether, viagemId: string): Promise<PontoDeEncontro[]> {
+  const { data, error } = await cli
+    .from('pontos_de_encontro')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('quando', { ascending: true, nullsFirst: false })
+    .order('criado_em', { ascending: true })
+  if (error) throw error
+  return data ?? []
+}
+
+// Cria um ponto de encontro (qualquer um do comboio). Devolve o criado.
+export async function criarPontoDeEncontro(cli: ClienteTogether, viagemId: string, dados: NovoPonto): Promise<PontoDeEncontro> {
+  const { data, error } = await cli
+    .from('pontos_de_encontro')
+    .insert({
+      viagem_id: viagemId,
+      local: dados.local.trim(),
+      quando: dados.quando || null,
+      observacao: dados.observacao?.trim() || null,
+      latitude: dados.latitude ?? null,
+      longitude: dados.longitude ?? null,
+    })
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
+// Edita um ponto de encontro (quem criou ou o ADM).
+export async function editarPontoDeEncontro(
+  cli: ClienteTogether,
+  id: string,
+  mudancas: Partial<NovoPonto>,
+): Promise<void> {
+  const patch: TablesUpdate<'pontos_de_encontro'> = {}
+  if (mudancas.local !== undefined) patch.local = mudancas.local.trim()
+  if (mudancas.quando !== undefined) patch.quando = mudancas.quando || null
+  if (mudancas.observacao !== undefined) patch.observacao = mudancas.observacao?.trim() || null
+  if (mudancas.latitude !== undefined) patch.latitude = mudancas.latitude ?? null
+  if (mudancas.longitude !== undefined) patch.longitude = mudancas.longitude ?? null
+  const { error } = await cli.from('pontos_de_encontro').update(patch).eq('id', id)
+  if (error) throw error
+}
+
+// Apaga um ponto de encontro (quem criou ou o ADM).
+export async function apagarPontoDeEncontro(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('pontos_de_encontro').delete().eq('id', id)
+  if (error) throw error
+}
+
+// Link pro mapa: usa as coordenadas quando houver, senão busca pelo nome do local.
+export function linkDoMapa(ponto: { local: string; latitude: number | null; longitude: number | null }): string {
+  if (ponto.latitude != null && ponto.longitude != null) {
+    return `https://www.google.com/maps/search/?api=1&query=${ponto.latitude},${ponto.longitude}`
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ponto.local)}`
+}

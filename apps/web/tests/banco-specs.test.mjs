@@ -697,3 +697,50 @@ test('022: apagar o lugar leva os votos junto', async () => {
   await como(db, MEMBRO, 'delete from public.lugares where id = $1', [id])
   assert.equal((await db.query('select count(*)::int as n from public.lugar_votos')).rows[0].n, 0)
 })
+
+// ---------------- 024: ponto de encontro ----------------
+const novoPonto = (db, quem, local = 'Portão 3 da estação') =>
+  como(db, quem, `insert into public.pontos_de_encontro (viagem_id, local) values ($1, $2) returning id`, [V, local]).then((r) => r[0].id)
+
+test('024: comboio cria e vê; estranho não cria nem vê', async () => {
+  const db = await novoBanco()
+  await novoPonto(db, MEMBRO)
+  assert.equal((await como(db, ADM, 'select id from public.pontos_de_encontro')).length, 1)
+  // Estranho (fora do comboio) não vê
+  assert.equal((await como(db, ESTRANHO, 'select id from public.pontos_de_encontro')).length, 0)
+  // Estranho não cria
+  await assert.rejects(
+    como(db, ESTRANHO, `insert into public.pontos_de_encontro (viagem_id, local) values ($1, 'x')`, [V]),
+    /row-level security/,
+  )
+})
+
+test('024: quem criou e o ADM editam/apagam; outro membro não', async () => {
+  const db = await novoBanco()
+  const id = await novoPonto(db, ADM) // criado pelo ADM
+  // MEMBRO não é autor nem ADM: a RLS não deixa editar (0 linhas, sem erro)
+  await como(db, MEMBRO, `update public.pontos_de_encontro set local = 'hack' where id = $1`, [id])
+  assert.equal((await db.query('select local from public.pontos_de_encontro where id = $1', [id])).rows[0].local, 'Portão 3 da estação')
+  // O ADM edita
+  await como(db, ADM, `update public.pontos_de_encontro set local = 'Novo local' where id = $1`, [id])
+  assert.equal((await db.query('select local from public.pontos_de_encontro where id = $1', [id])).rows[0].local, 'Novo local')
+  // MEMBRO não apaga; o ADM apaga
+  await como(db, MEMBRO, 'delete from public.pontos_de_encontro where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int as n from public.pontos_de_encontro')).rows[0].n, 1)
+  await como(db, ADM, 'delete from public.pontos_de_encontro where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int as n from public.pontos_de_encontro')).rows[0].n, 0)
+})
+
+test('024: não dá pra trocar a viagem nem o autor; atualizado_em sobe', async () => {
+  const db = await novoBanco()
+  const id = await novoPonto(db, MEMBRO)
+  const antes = (await db.query('select atualizado_em from public.pontos_de_encontro where id = $1', [id])).rows[0].atualizado_em
+  await assert.rejects(
+    como(db, MEMBRO, `update public.pontos_de_encontro set criado_por = $1 where id = $2`, [ADM, id]),
+    /mudar a viagem nem o autor/,
+  )
+  // Uma edição comum sobe o atualizado_em
+  await como(db, MEMBRO, `update public.pontos_de_encontro set observacao = 'levem água' where id = $1`, [id])
+  const depois = (await db.query('select atualizado_em from public.pontos_de_encontro where id = $1', [id])).rows[0].atualizado_em
+  assert.ok(new Date(depois) >= new Date(antes))
+})

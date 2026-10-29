@@ -16,6 +16,7 @@ import { capaDaViagem } from '../../src/ui/fotos'
 import { Avisos } from '../../src/ui/Avisos'
 import { Tarefas } from '../../src/ui/Tarefas'
 import { Enquetes } from '../../src/ui/Enquetes'
+import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -152,6 +153,9 @@ export default function DetalheDaViagem() {
 
           {/* Spec 021: enquetes rápidas */}
           <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+
+          {/* Roadmap #7: ponto de encontro */}
+          <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
         </View>
       </ScrollView>
       {/* Botões fixos: ficam no lugar enquanto a capa rola */}

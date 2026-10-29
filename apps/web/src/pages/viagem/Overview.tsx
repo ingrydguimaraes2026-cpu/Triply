@@ -26,6 +26,7 @@ import FaixaAvisos from '../../features/avisos/FaixaAvisos'
 import Checklist from '../../features/tarefas/Checklist'
 import Enquetes from '../../features/enquetes/Enquetes'
 import ClimaDaViagem from '../../features/clima/ClimaDaViagem'
+import PontoDeEncontro from '../../features/encontro/PontoDeEncontro'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -385,6 +386,11 @@ export default function Overview() {
         {/* Spec 020: tarefas com responsável */}
         <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
           <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
+
+        {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
+        <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
+          <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
         </Cartao>
 
         {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}

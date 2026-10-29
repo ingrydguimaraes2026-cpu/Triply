@@ -1,0 +1,118 @@
+/* Ponto de encontro (roadmap #7): lista de lugares/horários combinados, com link pro mapa. */
+.encontro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.encontro-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.encontro-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-fundo);
+}
+
+.encontro-corpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.encontro-local {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--couro);
+  text-decoration: none;
+}
+
+.encontro-local:hover {
+  text-decoration: underline;
+}
+
+.encontro-quando {
+  font-size: 0.78rem;
+  color: var(--cor-texto);
+  text-transform: capitalize;
+}
+
+.encontro-obs {
+  font-size: 0.78rem;
+  color: var(--cor-texto-suave);
+}
+
+.encontro-apagar {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 6px;
+  line-height: 0;
+}
+
+.encontro-apagar:hover {
+  color: #b23b3b;
+}
+
+.encontro-novo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.encontro-novo input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.85rem;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+}
+
+.encontro-novo-linha {
+  display: flex;
+  gap: 8px;
+}
+
+.encontro-novo-linha input {
+  flex: 1;
+  min-width: 0;
+}
+
+.encontro-novo-linha button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  border: none;
+  border-radius: 10px;
+  background: var(--couro);
+  color: #fff;
+  cursor: pointer;
+}
+
+.encontro-novo-linha button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

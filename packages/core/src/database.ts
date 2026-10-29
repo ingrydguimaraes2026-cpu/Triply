@@ -967,6 +967,60 @@ export type Database = {
           },
         ]
       }
+      pontos_de_encontro: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criado_por: string
+          id: string
+          latitude: number | null
+          local: string
+          longitude: number | null
+          observacao: string | null
+          quando: string | null
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          local: string
+          longitude?: number | null
+          observacao?: string | null
+          quando?: string | null
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          local?: string
+          longitude?: number | null
+          observacao?: string | null
+          quando?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pontos_de_encontro_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pontos_de_encontro_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tarefas: {
         Row: {
           criado_em: string
