@@ -29,7 +29,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 7 | Ponto de encontro | "Onde e que horas nos encontramos", com mapa | P | Ingryd | [024](specs/024-ponto-de-encontro.md) | Em andamento |
 | 8 | Clima por dia | Previsão do tempo em cada dia do roteiro | P | Ingryd | [023](specs/023-clima-por-dia.md) | Em andamento |
 | 9 | Avisos do ADM | Recado fixado no topo da viagem ("passaporte na mão amanhã!") | P | Ingryd | [019](specs/019-avisos-do-adm.md) | Em andamento |
-| 10 | Central de notificações | Um sino com tudo que mudou desde a última visita | M | Victor | — | A fazer |
+| 10 | Central de notificações | Um sino com tudo que mudou desde a última visita | M | Victor | [031](specs/031-central-de-notificacoes.md) | Pronto pra testar (web) |
 | 11 | Lembretes | Push antes de horários combinados (trem, check-out, encontro) | M | Victor | — | A fazer |
 | 12 | Cofre da viagem | Reservas, ingressos e PDFs da viagem num lugar só | M | Victor | [028](specs/028-cofre-e-bilhete.md) | Pronto pra testar (web) |
 | 13 | Bilhete no trajeto | Anexar o PDF/QR do trem ou voo no próprio trajeto | P | Ingryd | [028](specs/028-cofre-e-bilhete.md) | Pronto pra testar (web) |

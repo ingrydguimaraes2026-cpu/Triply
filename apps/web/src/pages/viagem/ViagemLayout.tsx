@@ -7,6 +7,8 @@ import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viag
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
 import { enviarFila } from '../../features/financeiro/fila'
 import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
+import { useNovidades } from '../../features/notificacoes/hooks'
+import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -51,6 +53,9 @@ export default function ViagemLayout() {
   const [busca, setBusca] = useSearchParams()
   const [lancamento, setLancamento] = useState<Lancamento>(() => (busca.get('lancar') ? { modo: 'rapido' } : null))
   const [recado, setRecado] = useState<string | null>(null)
+  // Spec 031: sino de novidades (no topo do celular e no menu do computador)
+  const [vendoNovidades, setVendoNovidades] = useState(false)
+  const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
 
   // Qual aba está aberta ('' = Overview) e quais abas guardadas já foram visitadas nesta viagem
   const { pathname } = useLocation()
@@ -102,6 +107,7 @@ export default function ViagemLayout() {
           <strong>{viagem.nome}</strong>
           <ChevronRight size={16} aria-hidden="true" />
         </Link>
+        <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} />
         {euSouAdm && (
           <Link to="configuracoes" className="viagem-topo-icone" aria-label="Configurações da viagem">
             <Settings size={20} aria-hidden="true" />
@@ -147,6 +153,7 @@ export default function ViagemLayout() {
               <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={30} />
             ))}
           </div>
+          <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />
           <Link to="/perfil" className="viagem-menu-acao">
             <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={22} /> Seu perfil
           </Link>
@@ -193,6 +200,20 @@ export default function ViagemLayout() {
         <p className="recado" role="status">
           {recado}
         </p>
+      )}
+
+      {vendoNovidades && (
+        <Gaveta titulo="Novidades" aoFechar={() => setVendoNovidades(false)}>
+          <Novidades
+            atividades={novidades.atividades}
+            vistoEm={novidades.vistoEm}
+            erro={novidades.erro}
+            meuId={meuId}
+            membros={membros}
+            aoVer={novidades.marcarComoVistas}
+            aoEscolher={() => setVendoNovidades(false)}
+          />
+        </Gaveta>
       )}
 
       {lancamento?.modo === 'rapido' && (

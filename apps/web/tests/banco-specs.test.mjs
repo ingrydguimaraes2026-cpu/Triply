@@ -933,3 +933,50 @@ test('029: autor e viagem não mudam; título vazio é recusado', async () => {
   await assert.rejects(como(db, ADM, `update public.eventos_agenda set criado_por = '${ADM}' where id = $1`, [id]), /autor/)
   await assert.rejects(novoEvento(db, MEMBRO, { titulo: '   ' }), /check/)
 })
+
+// ---------------- 031: central de notificações ----------------
+const atividades = (db, quem) => como(db, quem, 'select tipo, autor, titulo, alvo_id from public.atividades_viagem order by criado_em, tipo')
+
+test('031: gasto do comboio, lugar e evento entram no log com autor e título', async () => {
+  const db = await novoBanco()
+  await salvarGasto(db, MEMBRO, cafe, metade)
+  await como(db, ADM, `insert into public.lugares (viagem_id, destino_id, tipo, nome) values ($1, $2, 'passeio', 'Castelo')`, [V, NICE])
+  await como(db, MEMBRO, `insert into public.eventos_agenda (viagem_id, dia, titulo) values ($1, '2026-11-20', 'Jantar')`, [V])
+  const log = (await atividades(db, ADM)).filter((a) => a.tipo !== 'membro')
+  assert.deepEqual(
+    log.map((a) => [a.tipo, a.autor, a.titulo]),
+    [
+      ['gasto', MEMBRO, 'Café'],
+      ['lugar', ADM, 'Castelo'],
+      ['evento', MEMBRO, 'Jantar'],
+    ],
+  )
+})
+
+test('031: gasto pessoal e comentário nele não entram no log', async () => {
+  const db = await novoBanco()
+  await salvarGasto(db, MEMBRO, { ...cafe, pessoal: true })
+  const gasto = (await db.query('select id from public.gastos')).rows[0].id
+  await como(db, MEMBRO, 'insert into public.comentarios_item (gasto_id, texto) values ($1, $2)', [gasto, 'só meu'])
+  assert.equal((await atividades(db, MEMBRO)).filter((a) => a.tipo !== 'membro').length, 0)
+})
+
+test('031: estranho não vê o log; ninguém grava no log na mão', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.tarefas (viagem_id, titulo) values ($1, 'Seguro')`, [V])
+  assert.equal((await atividades(db, ESTRANHO)).length, 0)
+  assert.ok((await atividades(db, MEMBRO)).some((a) => a.tipo === 'tarefa'))
+  await assert.rejects(
+    como(db, MEMBRO, `insert into public.atividades_viagem (viagem_id, tipo) values ($1, 'aviso')`, [V]),
+    /row-level security|permission denied/,
+  )
+})
+
+test('031: "visto até" é de cada um', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, 'insert into public.atividades_vistas (viagem_id) values ($1)', [V])
+  assert.equal((await como(db, MEMBRO, 'select usuario_id from public.atividades_vistas'))[0].usuario_id, MEMBRO)
+  assert.equal((await como(db, ADM, 'select usuario_id from public.atividades_vistas')).length, 0)
+  // Estranho não marca visto numa viagem que não é dele
+  await assert.rejects(como(db, ESTRANHO, 'insert into public.atividades_vistas (viagem_id) values ($1)', [V]), /row-level security/)
+})

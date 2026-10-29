@@ -1224,6 +1224,84 @@ export type Database = {
           },
         ]
       }
+      atividades_viagem: {
+        Row: {
+          alvo_id: string | null
+          autor: string | null
+          criado_em: string
+          id: string
+          tipo: string
+          titulo: string | null
+          viagem_id: string
+        }
+        Insert: {
+          alvo_id?: string | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          tipo: string
+          titulo?: string | null
+          viagem_id: string
+        }
+        Update: {
+          alvo_id?: string | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          tipo?: string
+          titulo?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_viagem_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atividades_vistas: {
+        Row: {
+          usuario_id: string
+          viagem_id: string
+          visto_em: string
+        }
+        Insert: {
+          usuario_id?: string
+          viagem_id: string
+          visto_em?: string
+        }
+        Update: {
+          usuario_id?: string
+          viagem_id?: string
+          visto_em?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_vistas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_vistas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eventos_agenda: {
         Row: {
           criado_em: string

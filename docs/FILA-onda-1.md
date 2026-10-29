@@ -21,7 +21,7 @@ Ordenei por **valor ÷ risco ÷ dependência**: primeiro o que entrega rápido, 
 | 4 | #13 Bilhete no trajeto | P | sim + storage | médio | ✅ feito junto com #12 → spec 028 |
 | 5 | #6 Agenda do dia | G | sim | médio | ✅ spec 029, web, banco aplicado (mobile depois) |
 | 6 | #2 Pessoa sem app | P | sim | **alto** (modelo de membros) | a detalhar → spec 030 |
-| 7 | #10 Central de notificações | M | sim | médio | a detalhar → spec 031 |
+| 7 | #10 Central de notificações | M | sim | médio | ✅ spec 031, web, banco aplicado |
 | 8 | #11 Lembretes (push) | M | sim + cron | médio | a detalhar → spec 032 |
 | 9 | #12 Cofre da viagem | M | sim + storage | médio | ✅ feito junto com #13 → spec 028 |
 | 10 | #15 Offline de leitura | G | não (cache) | alto | a detalhar → spec 034 |

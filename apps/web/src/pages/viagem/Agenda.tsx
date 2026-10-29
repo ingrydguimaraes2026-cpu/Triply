@@ -24,7 +24,9 @@ export default function Agenda() {
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
   const [janela, setJanela] = useState<Janela>(null)
 
-  const periodo = periodoDosDestinos(destinos)
+  // Datas dos destinos; sem elas, as datas da viagem (nome, datas e moeda)
+  const periodo =
+    periodoDosDestinos(destinos) ?? (viagem.data_inicio ? { inicio: viagem.data_inicio, fim: viagem.data_fim ?? viagem.data_inicio } : null)
   const dias = useMemo(() => diasDoPeriodo(periodo?.inicio ?? null, periodo?.fim ?? null), [periodo?.inicio, periodo?.fim])
   const hoje = hojeTexto()
   const [escolhido, setEscolhido] = useState<string | null>(null)
@@ -53,7 +55,7 @@ export default function Agenda() {
         <EstadoVazio
           icone={CalendarDays}
           titulo="Sem datas no roteiro"
-          texto="Coloque as datas de chegada e saída dos destinos na Overview pra montar a agenda."
+          texto="Coloque as datas da viagem (ou de cada destino) na Overview pra montar a agenda."
         />
       </div>
     )

@@ -1,0 +1,85 @@
+/* Central de notificações (spec 031). Só cores do global.css. */
+.sino {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.sino-icone {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+
+.sino-numero {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--laranja);
+  color: var(--cor-texto);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 17px;
+  text-align: center;
+}
+
+.sino-menu {
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.novidades {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.novidades a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.novidades a:hover {
+  background: var(--cor-fundo);
+}
+
+.novidades li.nova a {
+  background: var(--cor-fundo);
+}
+
+.novidade-texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.novidade-texto time {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.novidade-ponto {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--laranja);
+}
