@@ -241,3 +241,65 @@ export async function criarCodigoDeConvite(cli: ClienteTogether, viagemId: strin
   if (error) throw error
   return data.codigo
 }
+
+// ---------- Convite (spec 018: convidado sem conta) ----------
+
+export type PreviaDoConvite = {
+  viagemId: string
+  nome: string
+  dataInicio: string | null
+  dataFim: string | null
+  destinos: string[]
+  membros: string[]
+  jaSouMembro: boolean
+}
+
+// Prévia da viagem pelo código do convite. Funciona até sem login.
+// Devolve null quando o convite não existe ou expirou.
+export async function verConvite(cli: ClienteTogether, codigo: string): Promise<PreviaDoConvite | null> {
+  const { data, error } = await cli.rpc('ver_convite', { p_codigo: codigo })
+  if (error) throw error
+  if (!data) return null
+  const d = data as {
+    viagem_id: string
+    nome: string
+    data_inicio: string | null
+    data_fim: string | null
+    destinos: string[]
+    membros: string[]
+    ja_sou_membro: boolean
+  }
+  return {
+    viagemId: d.viagem_id,
+    nome: d.nome,
+    dataInicio: d.data_inicio,
+    dataFim: d.data_fim,
+    destinos: d.destinos,
+    membros: d.membros,
+    jaSouMembro: d.ja_sou_membro,
+  }
+}
+
+// Entra no comboio pelo convite. Se a pessoa entrou como convidado, sem conta,
+// o nome é obrigatório: é ele que aparece pro comboio.
+export async function aceitarConvite(cli: ClienteTogether, codigo: string, nome?: string): Promise<string> {
+  const { data, error } = await cli.rpc('aceitar_convite', { p_codigo: codigo, p_nome: nome })
+  if (error) throw error
+  return data
+}
+
+// Entra como convidado (login anônimo do Supabase) e já aceita o convite.
+// Se já tiver alguém logado, só aceita o convite.
+export async function entrarComoConvidado(cli: ClienteTogether, codigo: string, nome: string): Promise<string> {
+  const { data: atual } = await cli.auth.getSession()
+  if (!atual.session) {
+    const { error } = await cli.auth.signInAnonymously({ options: { data: { full_name: nome } } })
+    if (error) throw error
+  }
+  return aceitarConvite(cli, codigo, nome)
+}
+
+// Convidado é quem entrou pelo link sem criar conta
+export function ehConvidado(usuario: { is_anonymous?: boolean } | null | undefined): boolean {
+  return !!usuario?.is_anonymous
+}

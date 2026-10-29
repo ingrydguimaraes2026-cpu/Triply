@@ -4,6 +4,8 @@ Cada arquivo aqui é um "envelope" de uma funcionalidade: o que é, por que exis
 
 **Antes de começar qualquer funcionalidade, leia a spec dela.** Se algo não estiver claro ou precisar mudar, combine com o Victor e atualize a spec primeiro.
 
+**O plano das próximas funcionalidades (em ondas) está no [`docs/ROADMAP.md`](../ROADMAP.md).** Cada item de lá vira uma spec aqui antes de codar.
+
 Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na internet, testes automáticos no GitHub, e-mail próprio) fica pra depois.
 
 ## Roteiro
@@ -29,6 +31,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 016 | [Lugares de cada destino](016-lugares-dos-destinos.md) (passeios, comida, guarda-volumes) | 2 | M | 001 | Pronto pra testar |
 | 011+ | [Hospedagem: horário de check-in/out](011-hospedagem.md#atualização-de-23102026-horário-de-check-in-e-check-out) | 2 | P | 011 | Pronto pra testar |
 | 017 | [Arquitetura: monorepo, core e app mobile](017-arquitetura-monorepo-e-mobile.md) | 3 | G | app atual | Em andamento |
+| 018 | [Convidado sem conta](018-convidado-sem-conta.md) (entra pelo link só com o nome) | 2 | M | 007 | Em andamento |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

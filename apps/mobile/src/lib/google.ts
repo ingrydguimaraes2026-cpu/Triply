@@ -39,3 +39,27 @@ export async function entrarComGoogle(): Promise<'ok' | 'cancelado'> {
   if (erroTroca) throw erroTroca
   return 'ok'
 }
+
+// Spec 018: o convidado liga o Google à conta que já tem (o id não muda, nada se perde).
+// Precisa de "Manual linking" ligado no Supabase.
+export async function ligarGoogle(): Promise<'ok' | 'cancelado'> {
+  if (Platform.OS === 'web') {
+    const { error } = await supabase.auth.linkIdentity({ provider: 'google', options: { redirectTo: window.location.href } })
+    if (error) throw error
+    return 'ok'
+  }
+
+  const volta = enderecoDeVolta()
+  const { data, error } = await supabase.auth.linkIdentity({
+    provider: 'google',
+    options: { redirectTo: volta, skipBrowserRedirect: true },
+  })
+  if (error || !data.url) throw error ?? new Error('Sem link do Google')
+  const resultado = await WebBrowser.openAuthSessionAsync(data.url, volta)
+  if (resultado.type !== 'success') return 'cancelado'
+  const codigo = new URL(resultado.url).searchParams.get('code')
+  if (!codigo) throw new Error('O Google não devolveu o código')
+  const { error: erroTroca } = await supabase.auth.exchangeCodeForSession(codigo)
+  if (erroTroca) throw erroTroca
+  return 'ok'
+}

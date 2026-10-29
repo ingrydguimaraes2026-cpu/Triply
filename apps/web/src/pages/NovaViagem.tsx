@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useSessao } from '../features/auth/hooks'
+import { CriarContaDoConvidado } from '../features/auth/FaixaConvidado'
 import MapaMundi from '../features/mapa/MapaMundi'
 import Logo from '../components/ui/Logo'
 import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
@@ -49,7 +51,25 @@ function useEhCelular() {
 }
 
 // Onboarding: cria a primeira viagem em 4 passos, com o mapa ao fundo.
+// Convidado (spec 018) cria conta antes de criar viagem: o banco também recusa
 export default function NovaViagem() {
+  const { ehConvidado, carregando } = useSessao()
+  if (carregando) return null
+  if (ehConvidado) {
+    return (
+      <main className="pagina" style={{ maxWidth: 440, paddingTop: 96 }}>
+        <h1 style={{ marginTop: 0 }}>Crie sua conta primeiro</h1>
+        <p style={{ color: 'var(--cor-texto-suave)' }}>Pra criar uma viagem sua, transforme o acesso de convidado numa conta. Nada do que você já fez se perde.</p>
+        <div className="cartao">
+          <CriarContaDoConvidado />
+        </div>
+      </main>
+    )
+  }
+  return <CriarViagem />
+}
+
+function CriarViagem() {
   const navegar = useNavigate()
   const celular = useEhCelular()
   const [passo, setPasso] = useState<Passo>('destinos')

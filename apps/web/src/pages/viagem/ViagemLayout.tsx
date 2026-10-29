@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
 import { BedDouble, Camera, ChevronRight, Compass, LogOut, MapPinned, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
-import { sair } from '../../features/auth/hooks'
+import { sair, useSessao } from '../../features/auth/hooks'
+import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
 import { enviarFila } from '../../features/financeiro/fila'
@@ -45,6 +46,7 @@ type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<Dado
 export default function ViagemLayout() {
   const { id } = useParams()
   const estado = useViagem(id)
+  const { ehConvidado } = useSessao()
   const [busca, setBusca] = useSearchParams()
   const [lancamento, setLancamento] = useState<Lancamento>(() => (busca.get('lancar') ? { modo: 'rapido' } : null))
   const [recado, setRecado] = useState<string | null>(null)
@@ -147,16 +149,28 @@ export default function ViagemLayout() {
           <Link to="/perfil" className="viagem-menu-acao">
             <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={22} /> Seu perfil
           </Link>
-          <Link to="/nova-viagem" className="viagem-menu-acao">
-            <Plus size={18} aria-hidden="true" /> Nova viagem
-          </Link>
-          <button type="button" className="viagem-menu-acao" onClick={() => sair()}>
+          {/* Convidado precisa criar conta antes de criar viagem (spec 018) */}
+          {!ehConvidado && (
+            <Link to="/nova-viagem" className="viagem-menu-acao">
+              <Plus size={18} aria-hidden="true" /> Nova viagem
+            </Link>
+          )}
+          <button
+            type="button"
+            className="viagem-menu-acao"
+            onClick={() => {
+              // Convidado sem conta que sai não consegue voltar: avisa antes
+              if (ehConvidado && !window.confirm('Você está como convidado. Se sair, perde o acesso a esta viagem. Sair mesmo assim?')) return
+              sair()
+            }}
+          >
             <LogOut size={18} aria-hidden="true" /> Sair
           </button>
         </div>
       </aside>
 
       <div className="viagem-conteudo">
+        <FaixaConvidado />
         <ViagemContexto.Provider value={estado.dados}>
           {ABAS_GUARDADAS.filter((a) => visitadas.includes(`${viagem.id}:${a.para}`)).map(({ para, Tela }) => (
             <AbaAtivaContexto.Provider key={`${viagem.id}:${para}`} value={aba === para}>

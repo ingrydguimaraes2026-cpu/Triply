@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { mensagemDeErro, trocarSenha } from '../features/auth/hooks'
 
-// Aberta pelo link do e-mail de "Esqueci a senha". O link já deixa a pessoa logada.
+// Aberta pelo link do e-mail de "Esqueci a senha" ou de "Criar conta" do convidado (spec 018).
+// O link já deixa a pessoa logada.
 export default function NovaSenha() {
   const navegar = useNavigate()
   const [senha, setSenha] = useState('')
@@ -15,7 +16,7 @@ export default function NovaSenha() {
     const { error } = await trocarSenha(senha)
     setEnviando(false)
     if (error) setErro(mensagemDeErro(error))
-    else navegar('/nova-viagem', { replace: true })
+    else navegar('/', { replace: true })
   }
 
   return (

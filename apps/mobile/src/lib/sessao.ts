@@ -17,5 +17,6 @@ export function useSessao() {
     return () => data.subscription.unsubscribe()
   }, [])
 
-  return { sessao, carregando }
+  // Spec 018: convidado = entrou pelo link só com o nome (login anônimo)
+  return { sessao, carregando, ehConvidado: !!sessao?.user.is_anonymous }
 }

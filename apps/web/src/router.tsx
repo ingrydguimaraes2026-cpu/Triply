@@ -26,6 +26,8 @@ export const router = createBrowserRouter([
     errorElement: <ErroNaTela />,
     children: [
       { path: '/login', element: <Login /> },
+      // Convite abre até sem login: dá pra entrar como convidado (spec 018)
+      { path: '/convite/:codigo', element: <Convite /> },
       {
         // Daqui pra baixo só entra quem fez login
         element: <RotaProtegida />,
@@ -35,7 +37,6 @@ export const router = createBrowserRouter([
           { path: '/perfil', element: <Perfil /> },
           { path: '/nova-viagem', element: <NovaViagem /> },
           { path: '/nova-senha', element: <NovaSenha /> },
-          { path: '/convite/:codigo', element: <Convite /> },
           { path: '/carteira/conectado', element: <CarteiraConectado /> },
           {
             path: '/viagem/:id',

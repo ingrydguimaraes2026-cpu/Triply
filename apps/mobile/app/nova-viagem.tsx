@@ -9,6 +9,7 @@ import { criarViagem } from '@together/core'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { compartilharLink, gerarLinkDeConvite } from '../src/lib/convite'
 import { nomeDoMes, paraIso } from '../src/lib/formato'
+import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { Malinha } from '../src/ui/Malinha'
 import { Botao, BotaoRedondo, Campo, RotuloDeSecao } from '../src/ui/pecas'
@@ -29,7 +30,36 @@ const MOEDAS = [
 ]
 const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
+// Convidado (spec 018) cria conta antes de criar viagem: o banco também recusa
 export default function NovaViagem() {
+  const { ehConvidado } = useSessao()
+  return ehConvidado ? <ConvidadoSemConta /> : <CriarViagem />
+}
+
+function ConvidadoSemConta() {
+  const router = useRouter()
+  const insets = useSafeAreaInsets()
+  return (
+    <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
+      <StatusBar style="dark" />
+      <View className="px-5">
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+          <X size={20} color={cor.texto} />
+        </BotaoRedondo>
+      </View>
+      <View className="flex-1 items-center justify-center gap-4 px-8">
+        <Malinha tamanho={120} humor="pensando" />
+        <Text className="text-center font-display text-[26px] text-texto">Crie sua conta primeiro</Text>
+        <Text className="text-center font-body text-[14px] leading-5 text-corpo">Pra criar uma viagem sua, transforme o acesso de convidado numa conta. Nada do que você já fez se perde.</Text>
+        <View className="self-stretch">
+          <Botao titulo="Criar conta" aoTocar={() => router.replace('/criar-conta')} />
+        </View>
+      </View>
+    </View>
+  )
+}
+
+function CriarViagem() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { recarregar, escolher } = useViagemAtual()

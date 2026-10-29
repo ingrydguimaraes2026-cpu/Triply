@@ -977,7 +977,9 @@ export type Database = {
       }
     }
     Functions: {
-      aceitar_convite: { Args: { p_codigo: string }; Returns: string }
+      aceitar_convite: { Args: { p_codigo: string; p_nome?: string }; Returns: string }
+      ver_convite: { Args: { p_codigo: string }; Returns: Json }
+      convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
       registrar_push: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
         Returns: undefined

@@ -11,20 +11,24 @@ export async function criarConvite(viagemId: string) {
   return `${window.location.origin}/convite/${data.codigo}`
 }
 
-// Entra no comboio usando o código do link. Devolve o id da viagem.
-export async function aceitarConvite(codigo: string) {
-  const { data, error } = await supabase.rpc('aceitar_convite', { p_codigo: codigo })
+// Quem do comboio entrou como convidado, sem conta (spec 018)
+export async function buscarConvidados(viagemId: string): Promise<string[]> {
+  const { data, error } = await supabase.rpc('convidados_da_viagem', { p_viagem: viagemId })
   if (error) throw error
-  return data
+  return data ?? []
 }
 
 // ---------- Gestão do comboio (spec 007) ----------
 
 // O banco recusa deixar a viagem sem ADM (erro com dica TR_ULTIMO_ADM)
 export class UltimoAdm extends Error {}
+// Convidado (spec 018) precisa criar conta antes de virar ADM (erro TR_CONVIDADO_ADM)
+export class ConvidadoNaoViraAdm extends Error {}
 
 function erroDoComboio(error: { hint?: string; message: string }) {
-  return error.hint === 'TR_ULTIMO_ADM' ? new UltimoAdm(error.message) : error
+  if (error.hint === 'TR_ULTIMO_ADM') return new UltimoAdm(error.message)
+  if (error.hint === 'TR_CONVIDADO_ADM') return new ConvidadoNaoViraAdm(error.message)
+  return error
 }
 
 export async function mudarPapel(viagemId: string, usuarioId: string, papel: 'adm' | 'membro') {

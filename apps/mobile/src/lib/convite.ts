@@ -26,3 +26,6 @@ export async function compartilharLink(link: string, nomeDaViagem: string): Prom
   await Share.share({ message: texto })
   return 'compartilhado'
 }
+
+// Convite aberto antes do login ("Já tenho conta"): o porteiro volta pra ele depois de entrar
+export const conviteDepoisDoLogin: { codigo: string | null } = { codigo: null }

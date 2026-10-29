@@ -114,7 +114,9 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 
 ## 8. Referências
 
-- Roteiro e specs das próximas funcionalidades: `docs/specs/README.md`
+- Plano das próximas funcionalidades (ondas): `docs/ROADMAP.md`
+- Specs de cada funcionalidade: `docs/specs/README.md`
+- Pesquisa de mercado e catálogo completo: `reports/`
 - Requisitos combinados: `docs/conversa-2026-10-10-requisitos.md`
 - Concorrentes: `docs/benchmark.md`
 - Glossário pra Ingryd: `docs/glossario.md`

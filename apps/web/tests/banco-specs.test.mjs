@@ -1,4 +1,4 @@
-// Testes das migrations das specs 001, 002, 004, 007, 008 e 011 a 014 num PostgreSQL descartável (PGlite).
+// Testes das migrations das specs 001, 002, 004, 007, 008 e 011 a 014 e 018 num PostgreSQL descartável (PGlite).
 // Nada toca o Supabase real. Rodar: npm test
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -432,4 +432,87 @@ test('013 (boletim): dá pra pedir o boletim sem meta; a meta continua opcional'
   assert.equal(linha.avisar, true)
   assert.equal(linha.ultimo_valor, null)
   await assert.rejects(como(db, MEMBRO, `update public.metas_cambio set meta = 0`), /check/)
+})
+
+// ---------------- 018: convidado sem conta ----------------
+const CONVIDADO = '00000000-0000-0000-0000-0000000000cc'
+const CODIGO = 'convite-teste'
+
+// Convidado = usuário anônimo; o banco cria o perfil sem nome (não tem e-mail)
+async function comConvite(db) {
+  await db.exec(`
+    insert into auth.users (id, is_anonymous) values ('${CONVIDADO}', true);
+    insert into public.convites (codigo, viagem_id, criado_por) values ('${CODIGO}', '${V}', '${ADM}');
+  `)
+}
+
+// Igual ao "como", mas com o token marcando que é convidado
+async function comoConvidado(db, sql, params = []) {
+  return db.transaction(async (tx) => {
+    await tx.exec('set local role authenticated')
+    await tx.query(`select set_config('request.jwt.claim.sub', $1, true)`, [CONVIDADO])
+    await tx.query(`select set_config('request.jwt.claim.is_anonymous', 'true', true)`)
+    return (await tx.query(sql, params)).rows
+  })
+}
+
+test('018: prévia do convite abre sem login e não vaza nada com código errado', async () => {
+  const db = await novoBanco()
+  await comConvite(db)
+  const [{ p }] = await como(db, null, 'select public.ver_convite($1) as p', [CODIGO])
+  assert.equal(p.nome, 'Riviera')
+  assert.deepEqual(p.destinos, ['Nice', 'Mônaco'])
+  assert.deepEqual(p.membros, ['Victor', 'Ingryd'])
+  assert.equal(p.ja_sou_membro, false)
+  const [{ p: nada }] = await como(db, null, 'select public.ver_convite($1) as p', ['nao-existe'])
+  assert.equal(nada, null)
+})
+
+test('018: convidado entra com o nome e lança gasto como membro', async () => {
+  const db = await novoBanco()
+  await comConvite(db)
+  const [{ v }] = await comoConvidado(db, 'select public.aceitar_convite($1, $2) as v', [CODIGO, '  Tia Rosa  '])
+  assert.equal(v, V)
+  const perfil = (await db.query('select nome from public.perfis where id = $1', [CONVIDADO])).rows[0]
+  assert.equal(perfil.nome, 'Tia Rosa')
+  const id = await comoConvidado(db, 'select public.salvar_gasto($1::uuid, $2::jsonb, $3::jsonb) as id', [
+    V,
+    JSON.stringify({ ...cafe, pago_por: CONVIDADO }),
+    JSON.stringify([
+      { usuario_id: CONVIDADO, valor: '6.00' },
+      { usuario_id: ADM, valor: '6.00' },
+    ]),
+  ]).then((r) => r[0].id)
+  assert.ok(id)
+  // O ADM vê o selo de convidado
+  const convidados = await como(db, ADM, 'select public.convidados_da_viagem($1) as id', [V])
+  assert.deepEqual(convidados.map((c) => c.id), [CONVIDADO])
+  // Quem não é do comboio não descobre quem é convidado
+  assert.deepEqual(await como(db, ESTRANHO, 'select public.convidados_da_viagem($1) as id', [V]), [])
+})
+
+test('018: nome do convite não sobrescreve o nome de quem já tem', async () => {
+  const db = await novoBanco()
+  await comConvite(db)
+  await como(db, ESTRANHO, 'select public.aceitar_convite($1, $2)', [CODIGO, 'Outro nome'])
+  assert.equal((await db.query('select nome from public.perfis where id = $1', [ESTRANHO])).rows[0].nome, 'Estranho')
+})
+
+test('018: convidado não vira ADM, nem chamando o banco direto', async () => {
+  const db = await novoBanco()
+  await comConvite(db)
+  await comoConvidado(db, 'select public.aceitar_convite($1, $2)', [CODIGO, 'Tia Rosa'])
+  await assert.rejects(
+    como(db, ADM, `update public.comboio_membros set papel = 'adm' where viagem_id = $1 and usuario_id = $2`, [V, CONVIDADO]),
+    /criar conta antes de virar ADM/,
+  )
+})
+
+test('018: convidado não cria viagem', async () => {
+  const db = await novoBanco()
+  await comConvite(db)
+  await assert.rejects(
+    comoConvidado(db, `insert into public.viagens (nome, criado_por) values ('Minha', $1)`, [CONVIDADO]),
+    /row-level security/,
+  )
 })

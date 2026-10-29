@@ -1,8 +1,8 @@
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { BriefcaseBusiness, ChevronRight, LogOut, Users } from 'lucide-react-native'
+import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from 'lucide-react-native'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
@@ -14,7 +14,7 @@ import { cor } from '../../theme'
 export default function Perfil() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { sessao } = useSessao()
+  const { sessao, ehConvidado } = useSessao()
   const { viagens, meuId } = useViagemAtual()
   const eu = viagens.flatMap((v) => v.membros).find((m) => m.id === meuId)
   const nome = eu?.nome ?? sessao?.user.email?.split('@')[0] ?? 'Viajante'
@@ -30,7 +30,7 @@ export default function Perfil() {
           <Avatar nome={nome} indice={5} tamanho={64} />
           <View className="flex-1">
             <Text className="font-display text-[24px] text-texto">{nome}</Text>
-            <Text className="font-body text-[13px] text-suave">{sessao?.user.email}</Text>
+            <Text className="font-body text-[13px] text-suave">{ehConvidado ? 'Convidado, ainda sem conta' : sessao?.user.email}</Text>
           </View>
         </Cartao>
 
@@ -44,10 +44,38 @@ export default function Perfil() {
           <Text className="text-center font-body text-[14px] text-corpo">A Malinha guarda tudo da viagem pra vocês.</Text>
         </View>
 
+        {ehConvidado ? (
+          <Pressable onPress={() => router.push('/criar-conta')} className="active:opacity-90">
+            <Cartao className="flex-row items-center gap-3 p-4">
+              <IconeQuadrado>
+                <UserPlus size={20} color={cor.couro} />
+              </IconeQuadrado>
+              <View className="flex-1">
+                <Text className="font-body-bold text-[15px] text-texto">Criar conta</Text>
+                <Text className="font-body text-[12px] text-suave">Pra não perder o acesso às viagens</Text>
+              </View>
+              <ChevronRight size={20} color={cor.suave} />
+            </Cartao>
+          </Pressable>
+        ) : null}
+
         <Pressable
-          onPress={async () => {
-            await supabase.auth.signOut()
-            router.replace('/boas-vindas')
+          onPress={() => {
+            const sairDeVez = async () => {
+              await supabase.auth.signOut()
+              router.replace('/boas-vindas')
+            }
+            if (!ehConvidado) return sairDeVez()
+            // Convidado sem conta que sai não consegue voltar: avisa antes
+            const aviso = 'Você está como convidado. Se sair, perde o acesso às viagens.'
+            if (Platform.OS === 'web') {
+              if (window.confirm(`${aviso} Sair mesmo assim?`)) sairDeVez()
+            } else {
+              Alert.alert('Sair sem conta?', aviso, [
+                { text: 'Cancelar', style: 'cancel' },
+                { text: 'Sair', style: 'destructive', onPress: sairDeVez },
+              ])
+            }
           }}
           className="active:opacity-90"
         >

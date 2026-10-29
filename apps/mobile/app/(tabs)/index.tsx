@@ -8,7 +8,9 @@ import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from 'lucide-react-nati
 import type { ViagemComDetalhes } from '@together/core'
 import { proximaViagem, useViagemAtual, viagensPassadas } from '../../src/dados/viagemAtual'
 import { diasAte, mesEAno, periodo, primeiroNome } from '../../src/lib/formato'
+import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
+import { FaixaConvidado } from '../../src/ui/FaixaConvidado'
 import { capaDaViagem } from '../../src/ui/fotos'
 import { Malinha } from '../../src/ui/Malinha'
 import { Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../../src/ui/pecas'
@@ -19,6 +21,7 @@ export default function MinhasViagens() {
   const { status, viagens, meuId, escolher, recarregar } = useViagemAtual()
   const router = useRouter()
   const insets = useSafeAreaInsets()
+  const { ehConvidado } = useSessao()
 
   if (status === 'carregando') return <Carregando texto="Arrumando a mala…" />
   if (status === 'erro') return <ErroNaTela aoTentar={recarregar} />
@@ -45,8 +48,11 @@ export default function MinhasViagens() {
             <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
             <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>Minhas viagens</Text>
           </View>
-          <Botao compacto titulo="Nova viagem" icone={<Plus size={18} color="#fff" />} aoTocar={() => router.push('/nova-viagem')} />
+          {/* Convidado cria conta antes de criar viagem (spec 018) */}
+          {!ehConvidado ? <Botao compacto titulo="Nova viagem" icone={<Plus size={18} color="#fff" />} aoTocar={() => router.push('/nova-viagem')} /> : null}
         </View>
+
+        <FaixaConvidado />
 
         <CartaoDestaque viagem={destaque} aoAbrir={() => abrir(destaque)} />
 

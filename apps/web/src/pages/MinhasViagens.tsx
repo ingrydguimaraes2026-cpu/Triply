@@ -3,7 +3,8 @@ import { Link } from 'react-router'
 import { ArrowRight, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
 import { buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
-import { sair } from '../features/auth/hooks'
+import { sair, useSessao } from '../features/auth/hooks'
+import FaixaConvidado from '../features/auth/FaixaConvidado'
 import { formatarPeriodo } from '../lib/datas'
 import ApagarViagem from '../features/viagens/ApagarViagem'
 import Avatar from '../components/ui/Avatar'
@@ -24,6 +25,7 @@ const PESO: Record<Situacao, number> = { agora: 0, proxima: 1, 'sem-data': 2, co
 // "/viagens" (spec 008): todas as viagens da pessoa
 export default function MinhasViagens() {
   const [viagens, setViagens] = useState<ResumoDaViagem[] | null | 'erro'>(null)
+  const { ehConvidado } = useSessao()
   // Viagem que a pessoa pediu pra apagar (abre a confirmação)
   const [paraApagar, setParaApagar] = useState<ResumoDaViagem | null>(null)
 
@@ -59,7 +61,14 @@ export default function MinhasViagens() {
           <Link to="/perfil" className="botao-texto">
             <UserRound size={18} aria-hidden="true" /> Perfil
           </Link>
-          <button type="button" className="botao-texto" onClick={() => sair()}>
+          <button
+            type="button"
+            className="botao-texto"
+            onClick={() => {
+              if (ehConvidado && !window.confirm('Você está como convidado. Se sair, perde o acesso às viagens. Sair mesmo assim?')) return
+              sair()
+            }}
+          >
             <LogOut size={18} aria-hidden="true" /> Sair
           </button>
         </nav>
@@ -75,10 +84,14 @@ export default function MinhasViagens() {
               </p>
             )}
           </div>
-          <Link to="/nova-viagem" className="botao">
-            <Plus size={18} aria-hidden="true" /> Nova viagem
-          </Link>
+          {!ehConvidado && (
+            <Link to="/nova-viagem" className="botao">
+              <Plus size={18} aria-hidden="true" /> Nova viagem
+            </Link>
+          )}
         </div>
+
+        <FaixaConvidado />
 
         {viagens === null && <p className="carregando-texto">Carregando…</p>}
         {viagens === 'erro' && <p className="aviso-erro">Não deu pra carregar as viagens. Atualize a página.</p>}

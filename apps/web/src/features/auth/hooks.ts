@@ -18,7 +18,8 @@ export function useSessao() {
     return () => data.subscription.unsubscribe()
   }, [])
 
-  return { sessao, carregando }
+  // Spec 018: convidado = entrou pelo link só com o nome (login anônimo)
+  return { sessao, carregando, ehConvidado: !!sessao?.user.is_anonymous }
 }
 
 const voltarPara = (caminho: string) => `${window.location.origin}${caminho}`
@@ -49,6 +50,22 @@ export function criarConta(nome: string, email: string, senha: string) {
   })
 }
 
+// ---------- Convidado vira conta (spec 018) ----------
+// O id continua o mesmo: gastos, votos e fotos ficam no nome da pessoa.
+
+// Liga o Google ao convidado (precisa de "Manual linking" ligado no Supabase)
+export function ligarGoogle() {
+  return supabase.auth.linkIdentity({
+    provider: 'google',
+    options: { redirectTo: window.location.href },
+  })
+}
+
+// Põe e-mail no convidado. Ao confirmar pelo link, ele cria a senha em /nova-senha
+export function ligarEmail(email: string) {
+  return supabase.auth.updateUser({ email }, { emailRedirectTo: voltarPara('/nova-senha') })
+}
+
 export function enviarLinkNovaSenha(email: string) {
   return supabase.auth.resetPasswordForEmail(email, { redirectTo: voltarPara('/nova-senha') })
 }
@@ -76,6 +93,10 @@ export function mensagemDeErro(erro: AuthError): string {
     case 'over_email_send_rate_limit':
     case 'over_request_rate_limit':
       return 'Muitas tentativas seguidas. Espere alguns minutos e tente de novo.'
+    case 'identity_already_exists':
+      return 'Esse Google já tem conta no Together. Entre com ele e abra o convite de novo.'
+    case 'manual_linking_disabled':
+      return 'Ainda não dá pra ligar o Google aqui. Use o e-mail por enquanto.'
     case 'same_password':
       return 'A nova senha precisa ser diferente da anterior.'
     default:

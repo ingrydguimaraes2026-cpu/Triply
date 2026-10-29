@@ -1,0 +1,118 @@
+/* Convite (spec 018): prévia da viagem + entrar só com o nome */
+.convite {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 16px;
+  background: var(--cor-fundo);
+}
+
+.convite-logo {
+  font-size: 22px;
+  color: var(--couro);
+}
+
+.convite-cartao {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.convite-cartao h1 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.convite-rotulo {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--caramelo);
+}
+
+.convite-detalhes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cor-texto-suave);
+}
+
+.convite-detalhes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.convite-detalhes svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.convite-suave {
+  margin: 0;
+  color: var(--cor-texto-suave);
+}
+
+.convite-erro {
+  margin: 0;
+  color: #a1442b;
+  font-weight: 600;
+}
+
+.convite-link {
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: var(--couro);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.convite-carregando {
+  color: var(--cor-texto-suave);
+}
+
+/* Faixa "Você está como convidado" dentro da viagem */
+.faixa-convidado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-texto);
+}
+
+.faixa-convidado p {
+  margin: 0;
+  flex: 1;
+  min-width: 180px;
+}
+
+.criar-conta {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.criar-conta-ou {
+  margin: 0;
+  text-align: center;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}

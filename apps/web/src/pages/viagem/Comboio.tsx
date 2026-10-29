@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Check, Copy, Link2, LogOut, MoreHorizontal, Ticket, Users } from 'lucide-react'
 import {
+  buscarConvidados,
   buscarConvites,
   cancelarConvite,
+  ConvidadoNaoViraAdm,
   criarConvite,
   mudarPapel,
   removerDoComboio,
@@ -31,6 +33,7 @@ export default function Comboio() {
   const [saindo, setSaindo] = useState(false)
   const [ocupado, setOcupado] = useState(false)
   const [convites, setConvites] = useState<Convite[]>([])
+  const [convidados, setConvidados] = useState<string[]>([])
 
   const adms = membros.filter((m) => m.papel === 'adm')
   const souUltimoAdm = euSouAdm && adms.length === 1
@@ -50,6 +53,17 @@ export default function Comboio() {
       ativo = false
     }
   }, [carregarConvites])
+
+  // Selo "convidado" pra quem entrou pelo link sem conta (spec 018)
+  useEffect(() => {
+    let ativo = true
+    buscarConvidados(viagem.id)
+      .then((lista) => ativo && setConvidados(lista))
+      .catch(() => {})
+    return () => {
+      ativo = false
+    }
+  }, [viagem.id, membros])
 
   async function convidar() {
     setErro(null)
@@ -78,7 +92,13 @@ export default function Comboio() {
       setRemovendo(null)
     } catch (e) {
       console.error(mensagem, e)
-      setErro(e instanceof UltimoAdm ? 'A viagem precisa de pelo menos um ADM. Passe o ADM pra alguém antes.' : mensagem)
+      setErro(
+        e instanceof UltimoAdm
+          ? 'A viagem precisa de pelo menos um ADM. Passe o ADM pra alguém antes.'
+          : e instanceof ConvidadoNaoViraAdm
+            ? 'Essa pessoa entrou como convidado. Ela precisa criar conta antes de virar ADM.'
+            : mensagem,
+      )
     } finally {
       setOcupado(false)
     }
@@ -145,6 +165,11 @@ export default function Comboio() {
                     <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
                   </span>
                   {m.papel === 'adm' && <span className="selo">ADM</span>}
+                  {convidados.includes(m.id) && (
+                    <span className="selo" title="Entrou pelo link sem criar conta">
+                      Convidado
+                    </span>
+                  )}
                   {euSouAdm && !sozinho && (
                     <button
                       type="button"
@@ -161,7 +186,12 @@ export default function Comboio() {
                 {menuAberto === m.id && (
                   <div className="membro-menu">
                     {m.papel === 'membro' ? (
-                      <button type="button" className="botao secundario pequeno" disabled={ocupado} onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'adm'), 'Não deu pra mudar o papel.')}>
+                      <button
+                        type="button"
+                        className="botao secundario pequeno"
+                        disabled={ocupado || convidados.includes(m.id)}
+                        title={convidados.includes(m.id) ? 'Convidado precisa criar conta antes de virar ADM' : undefined}
+                        onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'adm'), 'Não deu pra mudar o papel.')}>
                         Tornar ADM
                       </button>
                     ) : (
