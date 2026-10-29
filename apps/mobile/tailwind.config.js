@@ -2,6 +2,8 @@
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  // NativeWind no web: evita o erro "dark mode is type 'media'". Não usamos dark mode.
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
