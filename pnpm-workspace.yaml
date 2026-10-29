@@ -1,0 +1,5 @@
+# Monorepo Together: cada app (web, e depois mobile) e cada pacote compartilhado
+# vira um "workspace" que o pnpm instala junto.
+packages:
+  - apps/*
+  - packages/*

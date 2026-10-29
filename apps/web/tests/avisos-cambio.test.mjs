@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const { decidir, nivelDoCambio, boletim } = await import(new URL('../supabase/functions/avisos-cambio/regras.ts', import.meta.url))
+const { decidir, nivelDoCambio, boletim } = await import(new URL('../../../supabase/functions/avisos-cambio/regras.ts', import.meta.url))
 
 test('meta: avisa uma vez quando cruza pra baixo', () => {
   // 5,60 comercial → 5,796 com IOF

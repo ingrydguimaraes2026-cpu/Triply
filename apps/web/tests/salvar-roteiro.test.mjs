@@ -7,7 +7,7 @@ import { join } from 'node:path'
 import { PGlite } from '@electric-sql/pglite'
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto'
 
-const PROJETO = join(import.meta.dirname, '..')
+const PROJETO = join(import.meta.dirname, '../../..')
 const ler = (arq) => readFileSync(arq, 'utf8')
 const MIGRATIONS = [
   join(import.meta.dirname, 'supabase-falso.sql'),

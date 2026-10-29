@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 const { normalizarValor, moedaDeSimbolo, provedorDoRemetente, interpretarEmail } = await import(
-  new URL('../supabase/functions/ler-carteiras/parser.ts', import.meta.url)
+  new URL('../../../supabase/functions/ler-carteiras/parser.ts', import.meta.url)
 )
 
 test('normalizarValor: formato pt/eu (1.234,56)', () => {
