@@ -15,14 +15,16 @@ Implementadas **sem aplicar migration ainda** (o Victor roda os SQLs quando volt
 | 020 | Tarefas com responsável | web: `Checklist` no Overview · mobile: `Tarefas` em `viagem/[id]` |
 | 021 | Enquetes rápidas | web: `Enquetes` no Overview · mobile: `Enquetes` em `viagem/[id]` |
 | 022 | Votos em lugares | web: coração na aba Lugares (mobile: quando houver tela de Lugares) |
+| 023 | Clima por dia | **sem migration** · core `clima.ts` (Open-Meteo) · web: cartão Clima no Overview · mobile: chip no Roteiro |
+| 024 | Ponto de encontro | web: `PontoDeEncontro` no Overview · mobile: `PontoDeEncontro` em `viagem/[id]` |
 
 **Pra ativar quando voltar (ordem importa):**
-1. Aplicar as migrations novas em `supabase/migrations/` (as de `20261029130000` em diante) no projeto `ltygqabtdbphtjscvuit`. Elas são aditivas (só criam tabelas/funções novas).
+1. Aplicar as migrations novas em `supabase/migrations/` (as de `20261029130000` em diante, até `20261029170000`) no projeto `ltygqabtdbphtjscvuit`. Elas são aditivas (só criam tabelas/funções novas). **A 023 (clima) não tem migration** — é tudo API externa (Open-Meteo), nada no banco.
 2. Config do painel do Supabase que a spec 018 pede (anonymous sign-in, manual linking) — se ainda não foi feito.
 3. Depois de aplicar, **gerar de novo `packages/core/src/database.ts`** (os tipos dessas tabelas foram adicionados à mão; regenerar deixa 100% fiel).
 4. Rodar web + mobile e testar pelos critérios de aceite de cada spec.
 
-**Importante sobre os tipos:** como as migrations não foram aplicadas, os tipos das tabelas novas (`avisos`, `tarefas`, `enquetes`, `enquete_opcoes`, `enquete_votos`, `lugar_votos`) e das funções (`criar_enquete`, `votar_enquete`) foram escritos à mão em `packages/core/src/database.ts`, seguindo o formato do gerador. Regenerar depois de aplicar.
+**Importante sobre os tipos:** como as migrations não foram aplicadas, os tipos das tabelas novas (`avisos`, `tarefas`, `enquetes`, `enquete_opcoes`, `enquete_votos`, `lugar_votos`, `pontos_de_encontro`) e das funções (`criar_enquete`, `votar_enquete`) foram escritos à mão em `packages/core/src/database.ts`, seguindo o formato do gerador. Regenerar depois de aplicar. A 023 não mexe em tipos de banco.
 
 ---
 
