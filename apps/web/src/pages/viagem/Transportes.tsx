@@ -3,6 +3,8 @@ import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximiz
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
+import { useCofre } from '../../features/cofre/hooks'
+import BilheteDoTrajeto from '../../features/cofre/BilheteDoTrajeto'
 import { meio, type Trajeto } from '../../features/transportes/api'
 import { avisosDoTrajeto, diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
 import {
@@ -37,6 +39,7 @@ type Selecao = { tipo: 'tudo' } | { tipo: 'trecho'; indice: number } | { tipo: '
 export default function Transportes() {
   const { viagem, destinos, euSouAdm } = useViagemAtual()
   const { estado, recarregar } = useTrajetos(viagem.id)
+  const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
   const [janela, setJanela] = useState<Janela>(null)
   const [selecao, setSelecao] = useState<Selecao>({ tipo: 'tudo' })
   // Viagem com voo (ex.: Galeão → Paris) abre no modo avião, que mostra a rota inteira no mapa-múndi
@@ -118,6 +121,12 @@ export default function Transportes() {
               Reserva <ExternalLink size={12} aria-hidden="true" />
             </a>
           )}
+          <BilheteDoTrajeto
+            viagemId={viagem.id}
+            trajetoId={t.id}
+            bilhete={cofre.arquivos?.find((a) => a.trajeto_id === t.id)}
+            aoMudar={cofre.recarregar}
+          />
         </span>
         {euSouAdm && (
           <button type="button" className="botao-texto" onClick={() => setJanela({ trajeto: t })} aria-label="Editar trajeto">

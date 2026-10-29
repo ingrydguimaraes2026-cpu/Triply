@@ -1015,6 +1015,64 @@ export type Database = {
           },
         ]
       }
+      arquivos_viagem: {
+        Row: {
+          caminho: string
+          criado_em: string
+          enviado_por: string
+          id: string
+          nome: string
+          tamanho: number
+          tipo: string
+          trajeto_id: string | null
+          viagem_id: string
+        }
+        Insert: {
+          caminho: string
+          criado_em?: string
+          enviado_por?: string
+          id?: string
+          nome: string
+          tamanho: number
+          tipo: string
+          trajeto_id?: string | null
+          viagem_id: string
+        }
+        Update: {
+          caminho?: string
+          criado_em?: string
+          enviado_por?: string
+          id?: string
+          nome?: string
+          tamanho?: number
+          tipo?: string
+          trajeto_id?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "arquivos_viagem_enviado_por_fkey"
+            columns: ["enviado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arquivos_viagem_trajeto_id_fkey"
+            columns: ["trajeto_id"]
+            isOneToOne: false
+            referencedRelation: "trajetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arquivos_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       avisos: {
         Row: {
           atualizado_em: string

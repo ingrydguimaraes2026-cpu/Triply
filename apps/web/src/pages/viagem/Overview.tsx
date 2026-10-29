@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, Camera, ListChecks, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -27,6 +27,7 @@ import Checklist from '../../features/tarefas/Checklist'
 import Enquetes from '../../features/enquetes/Enquetes'
 import ClimaDaViagem from '../../features/clima/ClimaDaViagem'
 import PontoDeEncontro from '../../features/encontro/PontoDeEncontro'
+import Cofre from '../../features/cofre/Cofre'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { useFocoDeItem } from '../../lib/foco'
 import { editarViagem } from '../../features/viagens/api'
@@ -393,6 +394,11 @@ export default function Overview() {
         {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
         <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
           <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
+
+        {/* Spec 028: cofre (reservas, ingressos, PDFs) */}
+        <Cartao titulo="Cofre" icone={Lock} className="overview-cofre">
+          <Cofre />
         </Cartao>
 
         {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}

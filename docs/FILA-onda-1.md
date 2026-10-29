@@ -18,12 +18,12 @@ Ordenei por **valor ÷ risco ÷ dependência**: primeiro o que entrega rápido, 
 | 1 | #5 Compartilhar no WhatsApp | P | não | baixo | a detalhar → spec 025 |
 | 2 | #14 Endereço e guia da casa | P | sim (aditivo) | baixo | ✅ spec 026, web, banco aplicado |
 | 3 | #16 Comentários em qualquer item | M | sim | médio | ✅ spec 027, web, banco aplicado |
-| 4 | #13 Bilhete no trajeto | P | sim + storage | médio | a detalhar → spec 028 |
+| 4 | #13 Bilhete no trajeto | P | sim + storage | médio | ✅ feito junto com #12 → spec 028 |
 | 5 | #6 Agenda do dia | G | sim | médio | a detalhar → spec 029 |
 | 6 | #2 Pessoa sem app | P | sim | **alto** (modelo de membros) | a detalhar → spec 030 |
 | 7 | #10 Central de notificações | M | sim | médio | a detalhar → spec 031 |
 | 8 | #11 Lembretes (push) | M | sim + cron | médio | a detalhar → spec 032 |
-| 9 | #12 Cofre da viagem | M | sim + storage | médio | a detalhar → spec 033 |
+| 9 | #12 Cofre da viagem | M | sim + storage | médio | ✅ feito junto com #13 → spec 028 |
 | 10 | #15 Offline de leitura | G | não (cache) | alto | a detalhar → spec 034 |
 | — | #17 Marcar acerto como pago | P | sim | **trava: Victor** | adiado |
 | — | #18 Fechamento da viagem | P | sim | **trava: Victor** | adiado |

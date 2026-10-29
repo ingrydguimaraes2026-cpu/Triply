@@ -31,8 +31,8 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 9 | Avisos do ADM | Recado fixado no topo da viagem ("passaporte na mão amanhã!") | P | Ingryd | [019](specs/019-avisos-do-adm.md) | Em andamento |
 | 10 | Central de notificações | Um sino com tudo que mudou desde a última visita | M | Victor | — | A fazer |
 | 11 | Lembretes | Push antes de horários combinados (trem, check-out, encontro) | M | Victor | — | A fazer |
-| 12 | Cofre da viagem | Reservas, ingressos e PDFs da viagem num lugar só | M | Victor | — | A fazer |
-| 13 | Bilhete no trajeto | Anexar o PDF/QR do trem ou voo no próprio trajeto | P | Ingryd | — | A fazer |
+| 12 | Cofre da viagem | Reservas, ingressos e PDFs da viagem num lugar só | M | Victor | [028](specs/028-cofre-e-bilhete.md) | Pronto pra testar (web) |
+| 13 | Bilhete no trajeto | Anexar o PDF/QR do trem ou voo no próprio trajeto | P | Ingryd | [028](specs/028-cofre-e-bilhete.md) | Pronto pra testar (web) |
 | 14 | Endereço e guia da casa | Endereço, Wi-Fi, código da porta e regras da hospedagem escolhida | P | Ingryd | [026](specs/026-guia-da-casa.md) | Pronto pra testar (web) |
 | 15 | Offline de leitura | Roteiro, documentos e gastos abrem sem internet | G | Victor | — | A fazer |
 | 16 | Comentários em qualquer item | Conversar no gasto, no lugar ou na opção, em vez de um chat | M | Victor | [027](specs/027-comentarios-em-itens.md) | Pronto pra testar (web) |

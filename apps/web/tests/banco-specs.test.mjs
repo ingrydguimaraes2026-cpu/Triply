@@ -837,3 +837,63 @@ test('027: sem alvo, com dois alvos ou texto em branco é recusado; sem editar',
   await como(db, MEMBRO, `update public.comentarios_item set texto = 'editado' where id = $1`, [c.id])
   assert.equal((await db.query('select texto from public.comentarios_item where id = $1', [c.id])).rows[0].texto, 'Topo!')
 })
+
+// ---------------- 028: cofre da viagem + bilhete no trajeto ----------------
+const V2 = '22222222-2222-2222-2222-222222222222'
+const novoArquivo = (db, quem, extra = {}) =>
+  como(
+    db,
+    quem,
+    `insert into public.arquivos_viagem (viagem_id, trajeto_id, nome, caminho, tipo, tamanho)
+     values ($1, $2, $3, $4, 'application/pdf', 1000) returning id`,
+    [extra.viagem ?? V, extra.trajeto ?? null, extra.nome ?? 'Reserva do trem', extra.caminho ?? `${extra.viagem ?? V}/${crypto.randomUUID()}.pdf`],
+  ).then((r) => r[0].id)
+const novoTrajeto = (db, viagem = V) =>
+  db.query(`insert into public.trajetos (viagem_id, origem_id, destino_id) values ($1, $2, $3) returning id`, [viagem, viagem === V ? NICE : null, viagem === V ? MONACO : null]).then((r) => r.rows[0].id)
+
+test('028: comboio envia e vê arquivos; estranho não', async () => {
+  const db = await novoBanco()
+  await novoArquivo(db, MEMBRO)
+  assert.equal((await como(db, ADM, 'select nome from public.arquivos_viagem'))[0].nome, 'Reserva do trem')
+  assert.equal((await como(db, ESTRANHO, 'select id from public.arquivos_viagem')).length, 0)
+  await assert.rejects(novoArquivo(db, ESTRANHO), /row-level security/)
+})
+
+test('028: arquivo fora da pasta da viagem e trajeto de outra viagem são recusados', async () => {
+  const db = await novoBanco()
+  await assert.rejects(novoArquivo(db, MEMBRO, { caminho: `${V2}/x.pdf` }), /check constraint/)
+  await db.exec(`insert into public.viagens (id, nome, criado_por) values ('${V2}', 'Outra', '${ADM}')`)
+  const deOutra = await novoTrajeto(db, V2)
+  await assert.rejects(novoArquivo(db, MEMBRO, { trajeto: deOutra }), /não é desta viagem/)
+  const daqui = await novoTrajeto(db)
+  await novoArquivo(db, MEMBRO, { trajeto: daqui })
+})
+
+test('028: quem enviou ou o ADM renomeia/apaga; outro membro não; apagar o trajeto mantém o arquivo', async () => {
+  const db = await novoBanco()
+  const trajeto = await novoTrajeto(db)
+  const doAdm = await novoArquivo(db, ADM, { trajeto })
+  await como(db, MEMBRO, `update public.arquivos_viagem set nome = 'Hackeado' where id = $1`, [doAdm])
+  await como(db, MEMBRO, 'delete from public.arquivos_viagem where id = $1', [doAdm])
+  assert.equal((await db.query('select nome from public.arquivos_viagem where id = $1', [doAdm])).rows[0].nome, 'Reserva do trem')
+  const doMembro = await novoArquivo(db, MEMBRO)
+  await como(db, ADM, 'delete from public.arquivos_viagem where id = $1', [doMembro])
+  await assert.rejects(como(db, ADM, `update public.arquivos_viagem set enviado_por = $1 where id = $2`, [MEMBRO, doAdm]), /Não dá pra mudar/)
+  await db.query('delete from public.trajetos where id = $1', [trajeto])
+  const r = (await db.query('select trajeto_id from public.arquivos_viagem')).rows
+  assert.deepEqual(r, [{ trajeto_id: null }])
+})
+
+test('028: storage do cofre: só o comboio envia na pasta da viagem; apaga quem enviou ou o ADM', async () => {
+  const db = await novoBanco()
+  const enviar = (quem, pasta) =>
+    como(db, quem, `insert into storage.objects (bucket_id, name, owner_id) values ('cofre', $1, $2) returning id`, [`${pasta}/a.pdf`, quem])
+  await enviar(MEMBRO, V)
+  await assert.rejects(enviar(ESTRANHO, V), /row-level security/)
+  assert.equal((await como(db, ESTRANHO, `select id from storage.objects where bucket_id = 'cofre'`)).length, 0)
+  const outro = (await enviar(ADM, V))[0].id
+  await como(db, MEMBRO, 'delete from storage.objects where id = $1', [outro])
+  assert.equal((await db.query(`select count(*)::int as n from storage.objects where bucket_id = 'cofre'`)).rows[0].n, 2)
+  await como(db, ADM, `delete from storage.objects where bucket_id = 'cofre'`)
+  assert.equal((await db.query(`select count(*)::int as n from storage.objects where bucket_id = 'cofre'`)).rows[0].n, 0)
+})

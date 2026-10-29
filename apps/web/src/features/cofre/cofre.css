@@ -1,0 +1,80 @@
+/* Cofre da viagem e bilhete do trajeto (spec 028) */
+.cofre {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cofre-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cofre-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cofre-icone {
+  flex-shrink: 0;
+  color: var(--couro);
+}
+
+.cofre-texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cofre-texto a,
+.cofre-texto strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cofre-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.cofre-enviar {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px dashed var(--cor-borda);
+  border-radius: 12px;
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cofre-enviar:hover {
+  border-color: var(--couro);
+}
+
+.cofre-enviar.ocupado {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.bilhete-anexar {
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.bilhete-anexar:hover {
+  color: var(--couro);
+}
