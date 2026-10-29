@@ -22,7 +22,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 |---|---|---|---|---|---|---|
 | 1 | Convidado sem conta | Entra pelo link só com o nome; cria a conta depois sem perder nada | M | Victor | [018](specs/018-convidado-sem-conta.md) | Em andamento |
 | 2 | Pessoa sem app | A avó ou a criança entram na divisão e nos quartos; o ADM lança por elas | P | Victor | — | A fazer |
-| 3 | Enquete rápida | Pergunta com opções pra qualquer decisão (data, restaurante, passeio) | P | Ingryd | — | A fazer |
+| 3 | Enquete rápida | Pergunta com opções pra qualquer decisão (data, restaurante, passeio) | P | Ingryd | [021](specs/021-enquetes-rapidas.md) | Em andamento |
 | 4 | Votos em lugares | Votar nos lugares e passeios, igual já é na hospedagem | P | Ingryd | — | A fazer |
 | 5 | Compartilhar no WhatsApp | Botão que manda o link certo (gasto, enquete, dia) e abre direto no item | P | Ingryd | — | A fazer |
 | 6 | Agenda do dia | O que acontece em cada dia, com horário | G | Victor | — | A fazer |

@@ -15,6 +15,7 @@ import { supabase } from '../../src/lib/supabase'
 import { capaDaViagem } from '../../src/ui/fotos'
 import { Avisos } from '../../src/ui/Avisos'
 import { Tarefas } from '../../src/ui/Tarefas'
+import { Enquetes } from '../../src/ui/Enquetes'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -148,6 +149,9 @@ export default function DetalheDaViagem() {
 
           {/* Spec 020: tarefas com responsável */}
           <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
+
+          {/* Spec 021: enquetes rápidas */}
+          <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
         </View>
       </ScrollView>
       {/* Botões fixos: ficam no lugar enquanto a capa rola */}

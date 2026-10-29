@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BedDouble, Camera, ListChecks, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, Camera, ListChecks, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -24,6 +24,7 @@ import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useHospedagem } from '../../features/hospedagem/hooks'
 import FaixaAvisos from '../../features/avisos/FaixaAvisos'
 import Checklist from '../../features/tarefas/Checklist'
+import Enquetes from '../../features/enquetes/Enquetes'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -317,6 +318,11 @@ export default function Overview() {
       <div className="overview-lateral">
         {/* Spec 010: checklist de documentos */}
         <ChecklistDocumentos docs={docs} membros={membros} className="overview-documentos" />
+
+        {/* Spec 021: enquetes rápidas pra decidir junto */}
+        <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
+          <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
 
         {/* Spec 011: quantos destinos já têm onde ficar */}
         <Cartao titulo="Hospedagem" icone={BedDouble} acao={<Link to="hospedagem">Abrir</Link>} className="overview-hospedagem">

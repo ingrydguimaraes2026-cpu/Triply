@@ -406,3 +406,75 @@ export async function apagarTarefa(cli: ClienteTogether, id: string): Promise<vo
   const { error } = await cli.from('tarefas').delete().eq('id', id)
   if (error) throw error
 }
+
+// ---------- Enquetes rápidas (spec 021) ----------
+
+export type OpcaoDeEnquete = {
+  id: string
+  texto: string
+  ordem: number
+  votos: string[] // ids de quem votou nessa opção
+}
+
+export type Enquete = {
+  id: string
+  pergunta: string
+  multipla: boolean
+  fechada: boolean
+  criadoPor: string
+  criadoEm: string
+  opcoes: OpcaoDeEnquete[]
+}
+
+// Enquetes da viagem (mais novas primeiro), com as opções e quem votou em cada uma.
+export async function buscarEnquetes(cli: ClienteTogether, viagemId: string): Promise<Enquete[]> {
+  const { data, error } = await cli
+    .from('enquetes')
+    .select('id, pergunta, multipla, fechada, criado_por, criado_em, enquete_opcoes(id, texto, ordem, enquete_votos(usuario_id))')
+    .eq('viagem_id', viagemId)
+    .order('criado_em', { ascending: false })
+  if (error) throw error
+  return (data ?? []).map((e) => ({
+    id: e.id,
+    pergunta: e.pergunta,
+    multipla: e.multipla,
+    fechada: e.fechada,
+    criadoPor: e.criado_por,
+    criadoEm: e.criado_em,
+    opcoes: [...(e.enquete_opcoes ?? [])]
+      .sort((a, b) => a.ordem - b.ordem)
+      .map((o) => ({ id: o.id, texto: o.texto, ordem: o.ordem, votos: (o.enquete_votos ?? []).map((v) => v.usuario_id) })),
+  }))
+}
+
+export type NovaEnquete = { pergunta: string; multipla: boolean; opcoes: string[] }
+
+// Cria a enquete e as opções numa chamada só (função criar_enquete do banco). Devolve o id.
+export async function criarEnquete(cli: ClienteTogether, viagemId: string, dados: NovaEnquete): Promise<string> {
+  const { data, error } = await cli.rpc('criar_enquete', {
+    p_viagem: viagemId,
+    p_pergunta: dados.pergunta.trim(),
+    p_multipla: dados.multipla,
+    p_opcoes: dados.opcoes.map((o) => o.trim()).filter(Boolean),
+  })
+  if (error) throw error
+  return data
+}
+
+// Marca (ou tira) o meu voto numa opção. Escolha única troca o voto; múltipla soma.
+export async function votarEnquete(cli: ClienteTogether, opcaoId: string, marcar: boolean): Promise<void> {
+  const { error } = await cli.rpc('votar_enquete', { p_opcao: opcaoId, p_marcar: marcar })
+  if (error) throw error
+}
+
+// Fecha (ou reabre) a enquete: parar de receber votos (quem criou ou o ADM).
+export async function fecharEnquete(cli: ClienteTogether, id: string, fechar: boolean): Promise<void> {
+  const { error } = await cli.from('enquetes').update({ fechada: fechar }).eq('id', id)
+  if (error) throw error
+}
+
+// Apaga a enquete (quem criou ou o ADM). As opções e votos vão junto.
+export async function apagarEnquete(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('enquetes').delete().eq('id', id)
+  if (error) throw error
+}

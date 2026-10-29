@@ -1022,6 +1022,123 @@ export type Database = {
           },
         ]
       }
+      enquetes: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          fechada: boolean
+          id: string
+          multipla: boolean
+          pergunta: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          fechada?: boolean
+          id?: string
+          multipla?: boolean
+          pergunta: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          fechada?: boolean
+          id?: string
+          multipla?: boolean
+          pergunta?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquetes_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquetes_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enquete_opcoes: {
+        Row: {
+          enquete_id: string
+          id: string
+          ordem: number
+          texto: string
+        }
+        Insert: {
+          enquete_id: string
+          id?: string
+          ordem?: number
+          texto: string
+        }
+        Update: {
+          enquete_id?: string
+          id?: string
+          ordem?: number
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquete_opcoes_enquete_id_fkey"
+            columns: ["enquete_id"]
+            isOneToOne: false
+            referencedRelation: "enquetes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enquete_votos: {
+        Row: {
+          criado_em: string
+          enquete_id: string
+          opcao_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          enquete_id: string
+          opcao_id: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          enquete_id?: string
+          opcao_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquete_votos_enquete_id_fkey"
+            columns: ["enquete_id"]
+            isOneToOne: false
+            referencedRelation: "enquetes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquete_votos_opcao_id_fkey"
+            columns: ["opcao_id"]
+            isOneToOne: false
+            referencedRelation: "enquete_opcoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquete_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       carteiras_com_saldo: {
@@ -1119,6 +1236,11 @@ export type Database = {
         }[]
       }
       saldo_euro_do_comboio: { Args: { p_viagem_id: string }; Returns: number }
+      criar_enquete: {
+        Args: { p_viagem: string; p_pergunta: string; p_multipla: boolean; p_opcoes: Json }
+        Returns: string
+      }
+      votar_enquete: { Args: { p_opcao: string; p_marcar?: boolean }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

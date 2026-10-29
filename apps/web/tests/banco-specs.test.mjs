@@ -608,3 +608,55 @@ test('020: título em branco é recusado', async () => {
   const db = await novoBanco()
   await assert.rejects(novaTarefa(db, MEMBRO, { titulo: '  ' }), /check/)
 })
+
+// ---------------- 021: enquetes rápidas ----------------
+const criarEnquete = (db, quem, opcoes = ['Sexta', 'Sábado'], pergunta = 'Que dia a gente vai?', multipla = false) =>
+  como(db, quem, 'select public.criar_enquete($1::uuid, $2, $3, $4::jsonb) as id', [V, pergunta, multipla, JSON.stringify(opcoes)]).then(
+    (r) => r[0].id,
+  )
+const opcoesDe = (db, enquete) =>
+  db.query('select id, texto, ordem from public.enquete_opcoes where enquete_id = $1 order by ordem', [enquete]).then((r) => r.rows)
+const votar = (db, quem, opcao, marcar = true) => como(db, quem, 'select public.votar_enquete($1, $2)', [opcao, marcar])
+
+test('021: membro cria enquete; comboio vê; estranho não; min 2 opções', async () => {
+  const db = await novoBanco()
+  const id = await criarEnquete(db, MEMBRO)
+  assert.equal((await opcoesDe(db, id)).length, 2)
+  assert.equal((await como(db, ADM, 'select id from public.enquetes')).length, 1)
+  assert.equal((await como(db, ESTRANHO, 'select id from public.enquetes')).length, 0)
+  await assert.rejects(criarEnquete(db, ESTRANHO), /viagem/)
+  await assert.rejects(criarEnquete(db, MEMBRO, ['só uma']), /2 opções/)
+})
+
+test('021: escolha única troca o voto', async () => {
+  const db = await novoBanco()
+  const id = await criarEnquete(db, ADM)
+  const ops = await opcoesDe(db, id)
+  await votar(db, MEMBRO, ops[0].id)
+  await votar(db, MEMBRO, ops[1].id)
+  const meus = (await db.query('select opcao_id from public.enquete_votos where usuario_id = $1', [MEMBRO])).rows
+  assert.equal(meus.length, 1)
+  assert.equal(meus[0].opcao_id, ops[1].id)
+})
+
+test('021: múltipla soma votos; estranho não vota; fechada recusa', async () => {
+  const db = await novoBanco()
+  const id = await criarEnquete(db, ADM, ['A', 'B', 'C'], 'Quais passeios?', true)
+  const ops = await opcoesDe(db, id)
+  await votar(db, MEMBRO, ops[0].id)
+  await votar(db, MEMBRO, ops[1].id)
+  assert.equal((await db.query('select count(*)::int as n from public.enquete_votos where usuario_id = $1', [MEMBRO])).rows[0].n, 2)
+  await assert.rejects(votar(db, ESTRANHO, ops[0].id), /viagem/)
+  await como(db, ADM, 'update public.enquetes set fechada = true where id = $1', [id])
+  await assert.rejects(votar(db, MEMBRO, ops[2].id), /fechada/)
+})
+
+test('021: autor ou ADM apaga; outro membro não', async () => {
+  const db = await novoBanco()
+  const OUTRO = '00000000-0000-0000-0000-00000000000d'
+  await db.exec(`insert into auth.users (id, email) values ('${OUTRO}', 'outro@teste');
+    insert into public.comboio_membros (viagem_id, usuario_id, papel) values ('${V}', '${OUTRO}', 'membro');`)
+  const id = await criarEnquete(db, MEMBRO)
+  assert.equal((await como(db, OUTRO, 'delete from public.enquetes where id = $1 returning id', [id])).length, 0)
+  assert.equal((await como(db, ADM, 'delete from public.enquetes where id = $1 returning id', [id])).length, 1)
+})
