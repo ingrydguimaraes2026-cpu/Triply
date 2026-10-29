@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { comIOF, custoEmReais, formatarDinheiro, type Nivel } from '@together/core'
-import { cor } from './theme'
-import { Ganso } from './src/comboio/Ganso'
+import { cor } from '../../theme'
+import { Ganso } from '../../src/comboio/Ganso'
 
 // Home da viagem — redesign "dinheiro no centro" (spec 017).
 // Mobile-first: num segundo dá pra ver quanto o comboio gastou, quanto você deve e se o
@@ -23,7 +23,7 @@ const rotuloNivel: Record<Nivel, string> = {
   caro: 'Câmbio caro hoje',
 }
 
-export default function App() {
+export default function Home() {
   const devo = euVeuDevo < 0
   return (
     <View style={styles.tela}>
@@ -85,7 +85,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cor.fundo },
-  conteudo: { padding: 20, paddingTop: 64, paddingBottom: 120, gap: 16 },
+  conteudo: { padding: 20, paddingTop: 64, paddingBottom: 40, gap: 16 },
   topo: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   viagem: { fontSize: 22, fontWeight: '700', color: cor.texto },
   subViagem: { fontSize: 13, color: cor.textoSuave },
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 22,
-    bottom: 34,
+    bottom: 24,
     width: 60,
     height: 60,
     borderRadius: 30,
