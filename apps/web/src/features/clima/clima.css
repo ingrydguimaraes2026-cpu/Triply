@@ -1,0 +1,70 @@
+/* Clima dia a dia (roadmap #8): uma tira de dias por destino, com emoji e temperaturas. */
+.clima-destinos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.clima-destino h4 {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+}
+
+.clima-dias {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 2px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.clima-dias li {
+  flex: 0 0 auto;
+  min-width: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-fundo);
+  text-align: center;
+}
+
+/* Dias longe: estimativa pelo ano passado, mostrados mais apagados */
+.clima-dias li.estimativa {
+  opacity: 0.72;
+  border-style: dashed;
+}
+
+.clima-data {
+  font-size: 0.7rem;
+  color: var(--cor-texto-suave);
+  text-transform: capitalize;
+}
+
+.clima-emoji {
+  font-size: 1.35rem;
+  line-height: 1.3;
+}
+
+.clima-temp {
+  font-size: 0.72rem;
+  color: var(--cor-texto-suave);
+  white-space: nowrap;
+}
+
+.clima-temp strong {
+  color: var(--cor-texto);
+  font-weight: 700;
+}
+
+.clima-nota {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--cor-texto-suave);
+}

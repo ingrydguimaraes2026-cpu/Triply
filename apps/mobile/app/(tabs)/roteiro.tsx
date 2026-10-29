@@ -1,10 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, PanResponder, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
 import { Bed, Bus, Car, Footprints, MapPin, Mountain, Plane, Route, Ship, TrainFront, Utensils, type LucideIcon } from 'lucide-react-native'
-import { buscarDestinos, buscarLugares, buscarTrajetos, type Destino, type Lugar, type Trajeto, type ViagemComDetalhes } from '@together/core'
+import { buscarClima, buscarDestinos, buscarLugares, buscarTrajetos, interpretarTempo, type Destino, type Lugar, type PrevisaoDia, type Trajeto, type ViagemComDetalhes } from '@together/core'
 import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { diaCurto, diaLongo, diasDaViagem, hora, paraIso } from '../../src/lib/formato'
@@ -53,6 +53,24 @@ function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalh
   const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos), [dia, destinos, lugares, trajetos])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
   const onde = destinoDoDia(paraIso(dia), destinos)
+
+  // Clima do destino de hoje (roadmap #8): busca a previsão do destino inteiro e
+  // guarda por data; o chip mostra a do dia escolhido. Sem coordenadas/datas → sem chip.
+  const [clima, setClima] = useState<Record<string, PrevisaoDia>>({})
+  useEffect(() => {
+    if (!onde?.chegada || onde.latitude == null || onde.longitude == null) {
+      setClima({})
+      return
+    }
+    let vivo = true
+    buscarClima(onde.latitude, onde.longitude, onde.chegada, onde.saida ?? onde.chegada, paraIso(new Date()))
+      .then((dias) => vivo && setClima(Object.fromEntries(dias.map((p) => [p.data, p]))))
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [onde?.id, onde?.chegada, onde?.saida, onde?.latitude, onde?.longitude])
+  const previsaoDoDia = clima[paraIso(dia)]
 
   // Folha arrastável com 3 paradas: alta, média, baixa
   const paradas = [insets.top + 90, Math.round(height * 0.38), Math.round(height * 0.66)]
@@ -105,6 +123,17 @@ function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalh
           <Text className="font-display text-[22px] text-texto">{diaLongo(dia)}</Text>
           <Text className="font-body text-[13px] text-suave">{onde ? onde.nome : `${itens.length} paradas`}</Text>
         </View>
+        {previsaoDoDia ? (
+          <View className="flex-row items-center gap-1.5 px-5 pb-1">
+            <Text className="text-[16px]">{interpretarTempo(previsaoDoDia.codigo).emoji}</Text>
+            <Text className="font-body-medium text-[13px] text-corpo">
+              {interpretarTempo(previsaoDoDia.codigo).rotulo}
+              {previsaoDoDia.tempMax != null ? ` · ${Math.round(previsaoDoDia.tempMax)}°` : ''}
+              {previsaoDoDia.tempMin != null ? ` / ${Math.round(previsaoDoDia.tempMin)}°` : ''}
+              {previsaoDoDia.tipo === 'estimativa' ? ' · estimativa' : ''}
+            </Text>
+          </View>
+        ) : null}
         <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">

@@ -36,6 +36,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 020 | [Tarefas com responsável](020-tarefas-com-responsavel.md) (quem fica com o quê, com prazo) | 2 | P | 007 | Em andamento |
 | 021 | [Enquete rápida](021-enquetes-rapidas.md) (pergunta com opções pra decidir junto) | 2 | P | 007 | Em andamento |
 | 022 | [Votos em lugares](022-votos-em-lugares.md) (curtir passeios e comidas) | 2 | P | 016 | Em andamento |
+| 023 | [Clima por dia](023-clima-por-dia.md) (previsão do tempo em cada dia do roteiro) | 2 | P | 001 | Em andamento |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

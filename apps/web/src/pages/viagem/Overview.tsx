@@ -25,6 +25,7 @@ import { useHospedagem } from '../../features/hospedagem/hooks'
 import FaixaAvisos from '../../features/avisos/FaixaAvisos'
 import Checklist from '../../features/tarefas/Checklist'
 import Enquetes from '../../features/enquetes/Enquetes'
+import ClimaDaViagem from '../../features/clima/ClimaDaViagem'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -318,6 +319,9 @@ export default function Overview() {
       <div className="overview-lateral">
         {/* Spec 010: checklist de documentos */}
         <ChecklistDocumentos docs={docs} membros={membros} className="overview-documentos" />
+
+        {/* Roadmap #8: clima dia a dia de cada destino */}
+        <ClimaDaViagem destinos={destinos} />
 
         {/* Spec 021: enquetes rápidas pra decidir junto */}
         <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
