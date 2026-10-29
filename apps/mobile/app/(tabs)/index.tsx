@@ -1,37 +1,36 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { formatarDinheiro } from '@together/core'
-import { cor } from '../../theme'
 import { Ganso } from '../../src/comboio/Ganso'
 import { useResumoViagem } from '../../src/dados/useResumoViagem'
 
-// Home da viagem — "dinheiro no centro" (spec 017) com DADO REAL do Supabase (via @together/core).
-// Mostra a viagem mais recente, meu euro e o euro do comboio. Câmbio em real lado a lado
-// entra depois (precisa da cotação do dia).
+// Home da viagem — "dinheiro no centro" (spec 017), vibe viagem caloroso (Airbnb/Hopper):
+// hero quente com gradiente, cantos bem arredondados, respiro. Dado real via @together/core.
 const euros = (valorEmEuros: number) => formatarDinheiro(Math.round(valorEmEuros * 100), 'EUR')
 
 export default function Home() {
   const estado = useResumoViagem()
+  const insets = useSafeAreaInsets()
 
   if (estado.status === 'carregando') {
     return (
-      <View style={styles.centro}>
-        <ActivityIndicator color={cor.couro} />
+      <View className="flex-1 items-center justify-center bg-fundo">
+        <ActivityIndicator color="#7b542f" />
       </View>
     )
   }
-
   if (estado.status === 'erro') {
     return (
-      <View style={styles.centro}>
-        <Text style={styles.texto}>Não deu pra carregar sua viagem. Puxe pra atualizar ou tente mais tarde.</Text>
+      <View className="flex-1 items-center justify-center bg-fundo px-8">
+        <Text className="text-center text-base text-suave">Não deu pra carregar sua viagem. Tente de novo em instantes.</Text>
       </View>
     )
   }
-
   if (estado.status === 'vazio') {
     return (
-      <View style={styles.centro}>
+      <View className="flex-1 items-center justify-center bg-fundo px-8">
         <Ganso fala="Você ainda não tem viagem. Crie uma no site e ela aparece aqui." />
       </View>
     )
@@ -41,106 +40,77 @@ export default function Home() {
   const ehEuro = viagem.moeda === 'EUR'
 
   return (
-    <View style={styles.tela}>
-      <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={styles.conteudo} showsVerticalScrollIndicator={false}>
-        <View style={styles.topo}>
-          <Ganso tamanho="pequeno" />
-          <View>
-            <Text style={styles.viagem}>{viagem.nome}</Text>
-            <Text style={styles.subViagem}>
-              comboio de {membros} · {viagem.moeda}
-            </Text>
+    <View className="flex-1 bg-fundo">
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={{ paddingBottom: 110 }} showsVerticalScrollIndicator={false}>
+        {/* Hero quente: a viagem + meu euro */}
+        <LinearGradient
+          colors={['#8a5a28', '#b6771d', '#ff9d00']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ paddingTop: insets.top + 20, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+        >
+          <View className="px-6 pb-8">
+            <View className="flex-row items-center gap-3">
+              <Ganso tamanho="pequeno" />
+              <View>
+                <Text className="text-2xl font-extrabold text-white">{viagem.nome}</Text>
+                <Text className="text-[13px] text-dourado">comboio de {membros} · {viagem.moeda}</Text>
+              </View>
+            </View>
+
+            {ehEuro ? (
+              <View className="mt-7">
+                <Text className="text-[13px] font-medium uppercase tracking-wide text-dourado">Meu euro</Text>
+                <Text className="mt-1 text-5xl font-extrabold text-white">{euros(meuEuro)}</Text>
+                <Text className="mt-1 text-[13px] text-white/80">na sua conta Wise/Nomad</Text>
+              </View>
+            ) : (
+              <View className="mt-7">
+                <Text className="text-base text-white">Carteira em euro aparece em viagens com moeda euro ({viagem.moeda}).</Text>
+              </View>
+            )}
           </View>
-        </View>
+        </LinearGradient>
 
-        {ehEuro ? (
-          <>
-            <View style={styles.cartaoDestaque}>
-              <Text style={styles.rotulo}>Meu euro</Text>
-              <Text style={styles.euroGrande}>{euros(meuEuro)}</Text>
-              <Text style={styles.realAbaixo}>na sua conta Wise/Nomad</Text>
+        <View className="gap-4 px-5 pt-5">
+          {ehEuro && (
+            <View className="flex-row items-center justify-between rounded-3xl bg-comboio-fundo px-5 py-4">
+              <Text className="text-[15px] font-semibold text-texto">Euro do comboio</Text>
+              <Text className="text-xl font-extrabold text-couro">{euros(euroComboio)}</Text>
             </View>
+          )}
 
-            <View style={styles.cartaoComboio}>
-              <Text style={styles.rotulo}>Euro do comboio</Text>
-              <Text style={styles.euroMedio}>{euros(euroComboio)}</Text>
-            </View>
-          </>
-        ) : (
-          <View style={styles.cartaoDestaque}>
-            <Text style={styles.rotulo}>Carteira em euro</Text>
-            <Text style={styles.texto}>Aparece nas viagens com moeda euro. Esta é em {viagem.moeda}.</Text>
+          <Text className="mt-1 text-base font-bold text-texto">A viagem</Text>
+          <View className="flex-row flex-wrap gap-3">
+            {[
+              { t: 'Roteiro', e: '🗺️' },
+              { t: 'Hospedagem', e: '🏠' },
+              { t: 'Lugares', e: '📍' },
+              { t: 'Fotos', e: '📷' },
+            ].map(({ t, e }) => (
+              <View key={t} className="min-w-[47%] flex-1 flex-row items-center gap-3 rounded-3xl border border-borda bg-cartao px-5 py-5">
+                <Text className="text-2xl">{e}</Text>
+                <Text className="text-[15px] font-semibold text-texto">{t}</Text>
+              </View>
+            ))}
           </View>
-        )}
 
-        <Text style={styles.secao}>A viagem</Text>
-        <View style={styles.atalhos}>
-          {['Roteiro', 'Hospedagem', 'Lugares', 'Fotos'].map((t) => (
-            <View key={t} style={styles.atalho}>
-              <Text style={styles.atalhoTexto}>{t}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.acerto}>
-          <Ganso fala="No fim da viagem eu fecho a conta: quem deve pra quem, sem briga." />
+          {/* Momento humano: o comboio fala (acerto) */}
+          <View className="mt-3 items-center rounded-3xl bg-comboio-fundo px-5 py-6">
+            <Ganso fala="No fim da viagem eu fecho a conta: quem deve pra quem, sem briga." />
+          </View>
         </View>
       </ScrollView>
 
-      <Pressable style={styles.fab} accessibilityLabel="Lançar gasto">
-        <Text style={styles.fabMais}>+</Text>
+      {/* Lançar gasto: o gesto mais usado, sempre à mão */}
+      <Pressable
+        className="absolute bottom-7 right-6 h-16 w-16 items-center justify-center rounded-full bg-laranja"
+        style={{ elevation: 5, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }}
+        accessibilityLabel="Lançar gasto"
+      >
+        <Text className="text-[32px] font-bold text-texto">+</Text>
       </Pressable>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  tela: { flex: 1, backgroundColor: cor.fundo },
-  centro: { flex: 1, backgroundColor: cor.fundo, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 12 },
-  conteudo: { padding: 20, paddingTop: 64, paddingBottom: 40, gap: 16 },
-  topo: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  viagem: { fontSize: 22, fontWeight: '700', color: cor.texto },
-  subViagem: { fontSize: 13, color: cor.textoSuave },
-
-  cartaoDestaque: { backgroundColor: cor.cartao, borderRadius: 20, padding: 22, borderWidth: 1, borderColor: cor.borda },
-  rotulo: { fontSize: 14, color: cor.textoSuave },
-  euroGrande: { fontSize: 44, fontWeight: '800', color: cor.texto, marginTop: 4 },
-  euroMedio: { fontSize: 28, fontWeight: '700', color: cor.texto, marginTop: 4 },
-  realAbaixo: { fontSize: 15, color: cor.textoSuave, marginTop: 2 },
-  cartaoComboio: { backgroundColor: cor.comboioFundo, borderRadius: 18, padding: 18 },
-
-  secao: { fontSize: 15, fontWeight: '700', color: cor.texto, marginTop: 4 },
-  atalhos: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  atalho: {
-    backgroundColor: cor.cartao,
-    borderWidth: 1,
-    borderColor: cor.borda,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    minWidth: '47%',
-  },
-  atalhoTexto: { fontSize: 15, color: cor.texto, fontWeight: '600' },
-  texto: { fontSize: 15, color: cor.textoSuave, textAlign: 'center' },
-
-  acerto: { marginTop: 10, alignItems: 'center' },
-
-  fab: {
-    position: 'absolute',
-    right: 22,
-    bottom: 24,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: cor.laranja,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-  },
-  fabMais: { fontSize: 32, color: cor.texto, fontWeight: '700', marginTop: -2 },
-})

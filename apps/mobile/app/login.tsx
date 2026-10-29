@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
+import { LinearGradient } from 'expo-linear-gradient'
 import { supabase } from '../src/lib/supabase'
-import { cor } from '../theme'
 import { Ganso } from '../src/comboio/Ganso'
 
-// Login por e-mail e senha. Ao entrar, o onAuthStateChange no _layout leva pras abas.
-// (Login com Google no app entra depois — exige configurar o fluxo nativo de OAuth.)
+// Login por e-mail e senha. Ao entrar, o _layout leva pras abas quando a sessão muda.
 export default function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -21,21 +20,22 @@ export default function Login() {
       setErro(error.message === 'Invalid login credentials' ? 'E-mail ou senha incorretos.' : 'Não deu pra entrar. Tente de novo.')
       setEntrando(false)
     }
-    // Sucesso: a navegação acontece sozinha quando a sessão muda.
   }
 
   return (
-    <KeyboardAvoidingView style={styles.tela} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <StatusBar style="dark" />
-      <View style={styles.topo}>
-        <Ganso fala="Bora organizar a viagem do comboio?" />
-        <Text style={styles.titulo}>Together</Text>
-      </View>
+    <View className="flex-1 bg-fundo">
+      <StatusBar style="light" />
+      <LinearGradient colors={['#8a5a28', '#b6771d', '#ff9d00']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ height: 300 }}>
+        <View className="flex-1 items-center justify-center gap-3 px-6">
+          <Ganso fala="Bora organizar a viagem do comboio?" />
+          <Text className="text-4xl font-extrabold text-white">Together</Text>
+        </View>
+      </LinearGradient>
 
-      <View style={styles.form}>
-        <Text style={styles.rotulo}>E-mail</Text>
+      <KeyboardAvoidingView className="flex-1 px-6 pt-7" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <Text className="text-[13px] text-suave">E-mail</Text>
         <TextInput
-          style={styles.campo}
+          className="mt-1 rounded-2xl border border-borda bg-cartao px-4 py-3 text-base text-texto"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -44,9 +44,9 @@ export default function Login() {
           placeholder="voce@email.com"
           placeholderTextColor="#b9a68a"
         />
-        <Text style={styles.rotulo}>Senha</Text>
+        <Text className="mt-4 text-[13px] text-suave">Senha</Text>
         <TextInput
-          style={styles.campo}
+          className="mt-1 rounded-2xl border border-borda bg-cartao px-4 py-3 text-base text-texto"
           value={senha}
           onChangeText={setSenha}
           secureTextEntry
@@ -54,40 +54,16 @@ export default function Login() {
           placeholderTextColor="#b9a68a"
         />
 
-        {erro ? <Text style={styles.erro}>{erro}</Text> : null}
+        {erro ? <Text className="mt-3 text-[13px] text-pessoal">{erro}</Text> : null}
 
-        <Pressable style={[styles.botao, entrando && styles.botaoOff]} onPress={entrar} disabled={entrando}>
-          <Text style={styles.botaoTexto}>{entrando ? 'Entrando…' : 'Entrar'}</Text>
+        <Pressable
+          className={`mt-6 items-center rounded-2xl bg-laranja py-4 ${entrando ? 'opacity-60' : ''}`}
+          onPress={entrar}
+          disabled={entrando}
+        >
+          <Text className="text-base font-bold text-texto">{entrando ? 'Entrando…' : 'Entrar'}</Text>
         </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   )
 }
-
-const styles = StyleSheet.create({
-  tela: { flex: 1, backgroundColor: cor.fundo, padding: 24, justifyContent: 'center', gap: 28 },
-  topo: { alignItems: 'center', gap: 12 },
-  titulo: { fontSize: 30, fontWeight: '800', color: cor.texto },
-  form: { gap: 8 },
-  rotulo: { fontSize: 13, color: cor.textoSuave, marginTop: 8 },
-  campo: {
-    backgroundColor: cor.cartao,
-    borderWidth: 1,
-    borderColor: cor.borda,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: cor.texto,
-  },
-  erro: { color: cor.pessoal, fontSize: 13, marginTop: 6 },
-  botao: {
-    backgroundColor: cor.laranja,
-    borderRadius: 14,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginTop: 18,
-  },
-  botaoOff: { opacity: 0.6 },
-  botaoTexto: { fontSize: 16, fontWeight: '700', color: cor.texto },
-})
