@@ -1,19 +1,21 @@
 import 'react-native-url-polyfill/auto' // o React Native não tem URL nativo; o Supabase precisa
+import { Platform } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
-import { criarClienteSupabase } from '@together/core'
+import { criarClienteSupabase, type GuardaSessao } from '@together/core'
 
-// No celular não existe localStorage. Guardamos a sessão no cofre seguro do aparelho.
+// Onde guardar a sessão. No celular, cofre seguro do aparelho. No navegador (expo web),
+// o SecureStore não existe, então deixamos o Supabase usar o padrão (localStorage).
 // (Obs.: SecureStore tem limite ~2KB por chave; se a sessão crescer, trocar por um storage maior.)
-const cofre = {
-  getItem: (chave: string) => SecureStore.getItemAsync(chave),
-  setItem: (chave: string, valor: string) => SecureStore.setItemAsync(chave, valor),
-  removeItem: (chave: string) => SecureStore.deleteItemAsync(chave),
+const cofre: GuardaSessao = {
+  getItem: (chave) => SecureStore.getItemAsync(chave),
+  setItem: (chave, valor) => SecureStore.setItemAsync(chave, valor),
+  removeItem: (chave) => SecureStore.deleteItemAsync(chave),
 }
 
 // Valores vêm das variáveis EXPO_PUBLIC_* (equivalente mobile do VITE_* da web).
 export const supabase = criarClienteSupabase({
   url: process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
   chave: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '',
-  guarda: cofre,
+  guarda: Platform.OS === 'web' ? undefined : cofre,
   detectarSessaoNaUrl: false, // no app não há redirect de OAuth na URL
 })
