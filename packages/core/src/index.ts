@@ -2,4 +2,7 @@
 export * from './dinheiro'
 export * from './termometro'
 export * from './supabase'
+export * from './dados'
 export type * from './database'
+// Tipos de auth reexportados pra quem usa o core não precisar depender direto do supabase-js
+export type { Session, User } from '@supabase/supabase-js'

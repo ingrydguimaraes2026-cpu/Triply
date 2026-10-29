@@ -1,65 +1,79 @@
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { comIOF, custoEmReais, formatarDinheiro, type Nivel } from '@together/core'
+import { formatarDinheiro } from '@together/core'
 import { cor } from '../../theme'
 import { Ganso } from '../../src/comboio/Ganso'
+import { useResumoViagem } from '../../src/dados/useResumoViagem'
 
-// Home da viagem — redesign "dinheiro no centro" (spec 017).
-// Mobile-first: num segundo dá pra ver quanto o comboio gastou, quanto você deve e se o
-// câmbio está bom. Real e euro lado a lado. Dados abaixo são de exemplo (demo da identidade);
-// a fiação com o Supabase vem depois. O importante aqui: a conta vem do @together/core,
-// o mesmo que a web usa.
-const COMERCIAL = 6.12 // reais por 1 euro (exemplo)
-const euros = (centavos: number) => formatarDinheiro(centavos, 'EUR')
-const reais = (centavosEuro: number) => formatarDinheiro(custoEmReais(centavosEuro, comIOF(COMERCIAL)), 'BRL')
-
-const gastoComboio = 128000 // €1.280,00
-const euVeuDevo = -4200 // negativo = você deve
-const nivelHoje: Nivel = 'barato'
-
-const rotuloNivel: Record<Nivel, string> = {
-  barato: 'Câmbio barato hoje 🙂',
-  medio: 'Câmbio na média',
-  caro: 'Câmbio caro hoje',
-}
+// Home da viagem — "dinheiro no centro" (spec 017) com DADO REAL do Supabase (via @together/core).
+// Mostra a viagem mais recente, meu euro e o euro do comboio. Câmbio em real lado a lado
+// entra depois (precisa da cotação do dia).
+const euros = (valorEmEuros: number) => formatarDinheiro(Math.round(valorEmEuros * 100), 'EUR')
 
 export default function Home() {
-  const devo = euVeuDevo < 0
+  const estado = useResumoViagem()
+
+  if (estado.status === 'carregando') {
+    return (
+      <View style={styles.centro}>
+        <ActivityIndicator color={cor.couro} />
+      </View>
+    )
+  }
+
+  if (estado.status === 'erro') {
+    return (
+      <View style={styles.centro}>
+        <Text style={styles.texto}>Não deu pra carregar sua viagem. Puxe pra atualizar ou tente mais tarde.</Text>
+      </View>
+    )
+  }
+
+  if (estado.status === 'vazio') {
+    return (
+      <View style={styles.centro}>
+        <Ganso fala="Você ainda não tem viagem. Crie uma no site e ela aparece aqui." />
+      </View>
+    )
+  }
+
+  const { viagem, membros, meuEuro, euroComboio } = estado.dados
+  const ehEuro = viagem.moeda === 'EUR'
+
   return (
     <View style={styles.tela}>
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={styles.conteudo} showsVerticalScrollIndicator={false}>
-        {/* Topo: o comboio em pessoa, discreto */}
         <View style={styles.topo}>
           <Ganso tamanho="pequeno" />
           <View>
-            <Text style={styles.viagem}>Eurotrip</Text>
-            <Text style={styles.subViagem}>comboio de 4 · 12 dias</Text>
+            <Text style={styles.viagem}>{viagem.nome}</Text>
+            <Text style={styles.subViagem}>
+              comboio de {membros} · {viagem.moeda}
+            </Text>
           </View>
         </View>
 
-        {/* CENTRO: quanto o comboio gastou (euro grande, real embaixo) */}
-        <View style={styles.cartaoDestaque}>
-          <Text style={styles.rotulo}>O comboio já gastou</Text>
-          <Text style={styles.euroGrande}>{euros(gastoComboio)}</Text>
-          <Text style={styles.realAbaixo}>{reais(gastoComboio)} com IOF</Text>
-        </View>
+        {ehEuro ? (
+          <>
+            <View style={styles.cartaoDestaque}>
+              <Text style={styles.rotulo}>Meu euro</Text>
+              <Text style={styles.euroGrande}>{euros(meuEuro)}</Text>
+              <Text style={styles.realAbaixo}>na sua conta Wise/Nomad</Text>
+            </View>
 
-        {/* Você deve / te devem */}
-        <View style={styles.linhaDupla}>
-          <View style={[styles.mini, devo ? styles.miniDevo : styles.miniRecebe]}>
-            <Text style={styles.miniRotulo}>{devo ? 'Você deve' : 'Te devem'}</Text>
-            <Text style={styles.miniValor}>{euros(Math.abs(euVeuDevo))}</Text>
-            <Text style={styles.miniReal}>{reais(Math.abs(euVeuDevo))}</Text>
+            <View style={styles.cartaoComboio}>
+              <Text style={styles.rotulo}>Euro do comboio</Text>
+              <Text style={styles.euroMedio}>{euros(euroComboio)}</Text>
+            </View>
+          </>
+        ) : (
+          <View style={styles.cartaoDestaque}>
+            <Text style={styles.rotulo}>Carteira em euro</Text>
+            <Text style={styles.texto}>Aparece nas viagens com moeda euro. Esta é em {viagem.moeda}.</Text>
           </View>
-          <View style={[styles.mini, styles.miniCambio]}>
-            <Text style={styles.miniRotulo}>{rotuloNivel[nivelHoje]}</Text>
-            <Text style={styles.miniValor}>R$ {comIOF(COMERCIAL).toFixed(2).replace('.', ',')}</Text>
-            <Text style={styles.miniReal}>por € 1 (com IOF)</Text>
-          </View>
-        </View>
+        )}
 
-        {/* Um toque abaixo: o resto da viagem */}
         <Text style={styles.secao}>A viagem</Text>
         <View style={styles.atalhos}>
           {['Roteiro', 'Hospedagem', 'Lugares', 'Fotos'].map((t) => (
@@ -69,13 +83,11 @@ export default function Home() {
           ))}
         </View>
 
-        {/* Momento humano: o comboio fala (acerto) */}
         <View style={styles.acerto}>
           <Ganso fala="No fim da viagem eu fecho a conta: quem deve pra quem, sem briga." />
         </View>
       </ScrollView>
 
-      {/* Lançar gasto: o gesto mais usado, sempre à mão */}
       <Pressable style={styles.fab} accessibilityLabel="Lançar gasto">
         <Text style={styles.fabMais}>+</Text>
       </Pressable>
@@ -85,30 +97,18 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cor.fundo },
+  centro: { flex: 1, backgroundColor: cor.fundo, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 12 },
   conteudo: { padding: 20, paddingTop: 64, paddingBottom: 40, gap: 16 },
   topo: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   viagem: { fontSize: 22, fontWeight: '700', color: cor.texto },
   subViagem: { fontSize: 13, color: cor.textoSuave },
 
-  cartaoDestaque: {
-    backgroundColor: cor.cartao,
-    borderRadius: 20,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: cor.borda,
-  },
+  cartaoDestaque: { backgroundColor: cor.cartao, borderRadius: 20, padding: 22, borderWidth: 1, borderColor: cor.borda },
   rotulo: { fontSize: 14, color: cor.textoSuave },
   euroGrande: { fontSize: 44, fontWeight: '800', color: cor.texto, marginTop: 4 },
+  euroMedio: { fontSize: 28, fontWeight: '700', color: cor.texto, marginTop: 4 },
   realAbaixo: { fontSize: 15, color: cor.textoSuave, marginTop: 2 },
-
-  linhaDupla: { flexDirection: 'row', gap: 12 },
-  mini: { flex: 1, borderRadius: 16, padding: 16 },
-  miniDevo: { backgroundColor: cor.pessoal },
-  miniRecebe: { backgroundColor: cor.comboio },
-  miniCambio: { backgroundColor: cor.comboioFundo },
-  miniRotulo: { fontSize: 12, color: cor.texto, opacity: 0.9 },
-  miniValor: { fontSize: 22, fontWeight: '700', color: cor.texto, marginTop: 6 },
-  miniReal: { fontSize: 12, color: cor.texto, opacity: 0.8, marginTop: 2 },
+  cartaoComboio: { backgroundColor: cor.comboioFundo, borderRadius: 18, padding: 18 },
 
   secao: { fontSize: 15, fontWeight: '700', color: cor.texto, marginTop: 4 },
   atalhos: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     minWidth: '47%',
   },
   atalhoTexto: { fontSize: 15, color: cor.texto, fontWeight: '600' },
+  texto: { fontSize: 15, color: cor.textoSuave, textAlign: 'center' },
 
   acerto: { marginTop: 10, alignItems: 'center' },
 
