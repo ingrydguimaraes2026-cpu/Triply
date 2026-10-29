@@ -11,5 +11,8 @@
   },
   "scripts": {
     "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
   }
 }
