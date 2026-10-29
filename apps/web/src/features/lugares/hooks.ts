@@ -5,8 +5,9 @@ import { lugaresSoltos, montarLugares, type Lugar } from './regras'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; lugares: Lugar[] }
 
-// Lugares da viagem, já juntos com os destinos do roteiro (aba Lugares, spec 016)
-export function useLugares(viagemId: string, destinos: Tables<'destinos'>[]) {
+// Lugares da viagem, já juntos com os destinos do roteiro (aba Lugares, spec 016).
+// `meuId` é usado pra votar (spec 022).
+export function useLugares(viagemId: string, destinos: Tables<'destinos'>[], meuId = '') {
   const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
 
   const buscar = useCallback(async (): Promise<Estado> => {
@@ -42,12 +43,37 @@ export function useLugares(viagemId: string, destinos: Tables<'destinos'>[]) {
       await recarregar()
     }
 
+  // Voto muda na tela na hora; se o banco recusar, recarrega (igual à hospedagem)
+  const votar = useCallback(
+    async (id: string, sim: boolean) => {
+      setEstado((atual) =>
+        atual.status !== 'pronto'
+          ? atual
+          : {
+              status: 'pronto',
+              lugares: atual.lugares.map((l) =>
+                l.id !== id ? l : { ...l, votos: sim ? [...l.votos.filter((v) => v !== meuId), meuId] : l.votos.filter((v) => v !== meuId) },
+              ),
+            },
+      )
+      try {
+        await api.votarLugar(id, meuId, sim)
+      } catch (erro) {
+        console.error('Erro ao votar no lugar:', erro)
+        await recarregar()
+        throw erro
+      }
+    },
+    [meuId, recarregar],
+  )
+
   return {
     estado: estado.status,
     itens,
     soltos,
     total: lugares.length,
     recarregar,
+    votar,
     adicionar: comRecarga((dados: api.DadosDoLugar) => api.adicionarLugar(viagemId, dados)),
     editar: comRecarga(api.editarLugar),
     apagar: comRecarga(api.apagarLugar),

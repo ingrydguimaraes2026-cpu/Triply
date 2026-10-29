@@ -660,3 +660,40 @@ test('021: autor ou ADM apaga; outro membro não', async () => {
   assert.equal((await como(db, OUTRO, 'delete from public.enquetes where id = $1 returning id', [id])).length, 0)
   assert.equal((await como(db, ADM, 'delete from public.enquetes where id = $1 returning id', [id])).length, 1)
 })
+
+// ---------------- 022: votos em lugares ----------------
+const novoLugar = (db, quem, destino = NICE, nome = 'Promenade des Anglais') =>
+  como(db, quem, `insert into public.lugares (viagem_id, destino_id, tipo, nome) values ($1, $2, 'passeio', $3) returning id`, [V, destino, nome]).then(
+    (r) => r[0].id,
+  )
+
+test('022: cada um dá e tira só o próprio voto; estranho não vota', async () => {
+  const db = await novoBanco()
+  const id = await novoLugar(db, ADM)
+  await como(db, MEMBRO, 'insert into public.lugar_votos (lugar_id, usuario_id) values ($1, $2)', [id, MEMBRO])
+  // Não dá pra votar no nome de outra pessoa
+  await assert.rejects(
+    como(db, MEMBRO, 'insert into public.lugar_votos (lugar_id, usuario_id) values ($1, $2)', [id, ADM]),
+    /row-level security/,
+  )
+  // Estranho não vota
+  await assert.rejects(
+    como(db, ESTRANHO, 'insert into public.lugar_votos (lugar_id, usuario_id) values ($1, $2)', [id, ESTRANHO]),
+    /row-level security/,
+  )
+  // O comboio vê o voto; o ADM não tira o voto do membro
+  assert.equal((await como(db, ADM, 'select usuario_id from public.lugar_votos')).length, 1)
+  await como(db, ADM, 'delete from public.lugar_votos where usuario_id = $1', [MEMBRO])
+  assert.equal((await db.query('select count(*)::int as n from public.lugar_votos')).rows[0].n, 1)
+  // O próprio membro tira
+  await como(db, MEMBRO, 'delete from public.lugar_votos where usuario_id = $1', [MEMBRO])
+  assert.equal((await db.query('select count(*)::int as n from public.lugar_votos')).rows[0].n, 0)
+})
+
+test('022: apagar o lugar leva os votos junto', async () => {
+  const db = await novoBanco()
+  const id = await novoLugar(db, MEMBRO)
+  await como(db, MEMBRO, 'insert into public.lugar_votos (lugar_id, usuario_id) values ($1, $2)', [id, MEMBRO])
+  await como(db, MEMBRO, 'delete from public.lugares where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int as n from public.lugar_votos')).rows[0].n, 0)
+})

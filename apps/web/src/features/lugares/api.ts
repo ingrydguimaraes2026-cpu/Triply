@@ -15,8 +15,13 @@ export type DadosDoLugar = {
 }
 
 // Lugares da viagem (spec 016). O banco só devolve os das viagens em que a pessoa está no comboio.
+// Já traz os votos de cada lugar (spec 022).
 export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
-  const { data, error } = await supabase.from('lugares').select('*').eq('viagem_id', viagemId).order('criado_em')
+  const { data, error } = await supabase
+    .from('lugares')
+    .select('*, lugar_votos (usuario_id)')
+    .eq('viagem_id', viagemId)
+    .order('criado_em')
   if (error) throw error
   return (data ?? []).map((l) => ({
     id: l.id,
@@ -29,7 +34,16 @@ export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
     moeda: l.moeda,
     observacao: l.observacao,
     criadoPor: l.criado_por,
+    votos: (l.lugar_votos ?? []).map((v) => v.usuario_id),
   }))
+}
+
+// Curtir ou descurtir um lugar (spec 022). Voto repetido não é erro.
+export async function votarLugar(lugarId: string, meuId: string, sim: boolean) {
+  const { error } = sim
+    ? await supabase.from('lugar_votos').insert({ lugar_id: lugarId, usuario_id: meuId })
+    : await supabase.from('lugar_votos').delete().eq('lugar_id', lugarId).eq('usuario_id', meuId)
+  if (error && error.code !== '23505') throw error
 }
 
 function paraLinha(d: DadosDoLugar) {

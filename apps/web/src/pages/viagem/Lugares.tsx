@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
+import { ExternalLink, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
@@ -20,7 +20,7 @@ type Janela = { destinoId: string | null; tipo?: TipoDeLugar; lugar?: Lugar } | 
 // Lugares (spec 016): o que o comboio quer ver, comer e usar em cada destino, inclusive guarda-volumes nos dias de passagem.
 export default function Lugares() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
-  const l = useLugares(viagem.id, destinos)
+  const l = useLugares(viagem.id, destinos, meuId)
   const [selecionado, setSelecionado] = useState<string | null>(null)
   const [filtro, setFiltro] = useState<TipoDeLugar | null>(null)
   const [janela, setJanela] = useState<Janela>(null)
@@ -34,6 +34,7 @@ export default function Lugares() {
     const Icone = ICONE_DO_TIPO[tipo.chave]
     const podeEditar = lugar.criadoPor === meuId || euSouAdm
     const autor = pessoaDe(lugar.criadoPor)
+    const euVotei = lugar.votos.includes(meuId)
     const detalhes = [tipo.nome, lugar.horario, lugar.preco !== null ? formatarDinheiro(lugar.preco, lugar.moeda) : null].filter(Boolean)
     return (
       <li key={lugar.id} className={`lugar tipo-${tipo.chave}`}>
@@ -65,6 +66,16 @@ export default function Lugares() {
             <a href={linkNoMapa(lugar, destino)} target="_blank" rel="noreferrer noopener">
               Ver no mapa <MapaIcone size={13} aria-hidden="true" />
             </a>
+            <button
+              type="button"
+              className={euVotei ? 'lugar-voto votou' : 'lugar-voto'}
+              onClick={() => l.votar(lugar.id, !euVotei).catch(() => {})}
+              aria-pressed={euVotei}
+              aria-label={euVotei ? `Tirar curtida de ${lugar.nome}` : `Curtir ${lugar.nome}`}
+            >
+              <Heart size={13} aria-hidden="true" fill={euVotei ? 'currentColor' : 'none'} />
+              {lugar.votos.length > 0 && <span>{lugar.votos.length}</span>}
+            </button>
             {autor && <small>por {autor.id === meuId ? 'você' : autor.nome.split(' ')[0]}</small>}
           </div>
         </div>

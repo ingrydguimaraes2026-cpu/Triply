@@ -1139,6 +1139,39 @@ export type Database = {
           },
         ]
       }
+      lugar_votos: {
+        Row: {
+          criado_em: string
+          lugar_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          lugar_id: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          lugar_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lugar_votos_lugar_id_fkey"
+            columns: ["lugar_id"]
+            isOneToOne: false
+            referencedRelation: "lugares"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugar_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       carteiras_com_saldo: {

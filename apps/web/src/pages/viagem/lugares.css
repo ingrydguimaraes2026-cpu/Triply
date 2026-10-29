@@ -131,6 +131,33 @@
   font-size: 12px;
 }
 
+/* Spec 022: curtir um lugar */
+.lugar-voto {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lugar-voto:hover {
+  border-color: var(--caramelo);
+  color: var(--caramelo);
+}
+
+.lugar-voto.votou {
+  border-color: #a1442b;
+  color: #a1442b;
+  background: #f6e2da;
+}
+
 /* Formulário: os 4 tipos como botões grandes (fáceis de tocar no celular) */
 .lugar-tipos {
   margin: 0;

@@ -5,6 +5,27 @@
 
 ---
 
+## Novidades — sessão autônoma de 29/10 (Onda 1 do ROADMAP)
+
+Implementadas **sem aplicar migration ainda** (o Victor roda os SQLs quando voltar e a gente testa junto). Cada uma tem spec, migration, funções no `@together/core`, tela no web + mobile e **testes de banco no PGlite** (rodam a migration de verdade, sem tocar no Supabase). Tudo com build + lint + type-check + testes verdes. Commits locais na `monorepo-split`.
+
+| Spec | Feature | Onde |
+|---|---|---|
+| 019 | Avisos do ADM (recado fixado no topo) | web: `FaixaAvisos` no Overview · mobile: `Avisos` em `viagem/[id]` |
+| 020 | Tarefas com responsável | web: `Checklist` no Overview · mobile: `Tarefas` em `viagem/[id]` |
+| 021 | Enquetes rápidas | web: `Enquetes` no Overview · mobile: `Enquetes` em `viagem/[id]` |
+| 022 | Votos em lugares | web: coração na aba Lugares (mobile: quando houver tela de Lugares) |
+
+**Pra ativar quando voltar (ordem importa):**
+1. Aplicar as migrations novas em `supabase/migrations/` (as de `20261029130000` em diante) no projeto `ltygqabtdbphtjscvuit`. Elas são aditivas (só criam tabelas/funções novas).
+2. Config do painel do Supabase que a spec 018 pede (anonymous sign-in, manual linking) — se ainda não foi feito.
+3. Depois de aplicar, **gerar de novo `packages/core/src/database.ts`** (os tipos dessas tabelas foram adicionados à mão; regenerar deixa 100% fiel).
+4. Rodar web + mobile e testar pelos critérios de aceite de cada spec.
+
+**Importante sobre os tipos:** como as migrations não foram aplicadas, os tipos das tabelas novas (`avisos`, `tarefas`, `enquetes`, `enquete_opcoes`, `enquete_votos`, `lugar_votos`) e das funções (`criar_enquete`, `votar_enquete`) foram escritos à mão em `packages/core/src/database.ts`, seguindo o formato do gerador. Regenerar depois de aplicar.
+
+---
+
 ## 0. Regras que NÃO podem ser quebradas
 
 1. **NADA vai pro Ar.** Decisão explícita do Victor: nenhum push pro remote, nenhum deploy. Tudo fica local na branch `monorepo-split`. Só sobe quando ele mandar.
