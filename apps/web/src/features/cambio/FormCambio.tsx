@@ -3,7 +3,7 @@ import { Trash2 } from 'lucide-react'
 import { hojeTexto } from '../destinos/datas'
 import { mensagemDeErro } from '../financeiro/api'
 import { moedasDaViagem } from '../financeiro/categorias'
-import { lerValor, paraCampo } from '../financeiro/dinheiro'
+import { lerValor, paraCampo } from '@together/core'
 import { apagarCompra, salvarCompra, type CompraDeMoeda } from './api'
 
 type Props = {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 const { analisar, percentil, ultimosDias, comIOF, taxaDoApp, custoEmReais, custoDaCompra, bateuMeta, pontosDoGrafico } = await import(
-  new URL('../src/features/cambio/termometro.ts', import.meta.url)
+  new URL('../../../packages/core/src/termometro.ts', import.meta.url)
 )
 
 // 100 dias, de 5,50 subindo 0,01 por dia (até 6,49)

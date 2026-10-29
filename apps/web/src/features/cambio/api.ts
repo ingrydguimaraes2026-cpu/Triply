@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
-import { deBanco, paraBanco } from '../financeiro/dinheiro'
+import { deBanco, paraBanco } from '@together/core'
 
 // Compra de moeda com valores em centavos
 export type CompraDeMoeda = Omit<Tables<'compras_cambio'>, 'valor_origem' | 'valor_destino' | 'cotacao'> & {

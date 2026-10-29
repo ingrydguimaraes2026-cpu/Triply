@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '../../types/database'
-import { deBanco, paraBanco } from './dinheiro'
+import { deBanco, paraBanco } from '@together/core'
 import type { Divisao } from './acertos'
 
 // Gasto com valores já em centavos

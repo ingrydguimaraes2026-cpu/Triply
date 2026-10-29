@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
 import { hojeTexto } from '../destinos/datas'
-import { formatarDinheiro, lerValor } from '../financeiro/dinheiro'
+import { formatarDinheiro, lerValor } from '@together/core'
 import { formatarData } from '../../lib/datas'
 import { buscarAgora, buscarHistorico } from './api'
 import BoletimCambio from './BoletimCambio'
-import { analisar, comIOF, custoDaCompra, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from './termometro'
+import { analisar, comIOF, custoDaCompra, IOF_GASTOS, pontosDoGrafico, taxaDoApp, ultimosDias, type Nivel, type Ponto } from '@together/core'
 import './termometro.css'
 
 type Props = {

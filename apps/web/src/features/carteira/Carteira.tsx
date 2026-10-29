@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { ArrowDownLeft, ArrowUpRight, FileSearch, Mail, RefreshCw, Wallet } from 'lucide-react'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
-import { formatarDinheiro, lerValor, paraCampo } from '../financeiro/dinheiro'
+import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
 import type { EstadoCarteira } from './hooks'
 import {
   ajustarSaldo,

@@ -4,7 +4,7 @@ import type { Membro } from '../viagens/hooks'
 import { dividirIgual } from './acertos'
 import { avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
-import { lerValor } from './dinheiro'
+import { lerValor } from '@together/core'
 import { ehErroDeRede, guardarNaFila } from './fila'
 import { lembrarMoeda, ultimaMoeda } from './preferencias'
 

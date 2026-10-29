@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { mensagemDeErro, salvarOrcamentos, type Orcamento } from './api'
 import { CATEGORIAS } from './categorias'
-import { formatarDinheiro, lerValor, paraCampo } from './dinheiro'
+import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
 
 type Props = {
   viagemId: string

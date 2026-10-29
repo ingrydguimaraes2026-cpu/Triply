@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { formatarDinheiro } from '../../features/financeiro/dinheiro'
+import { formatarDinheiro } from '@together/core'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
 import { diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'

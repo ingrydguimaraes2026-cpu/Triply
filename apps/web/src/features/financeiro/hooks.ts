@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { buscarCompras, cotacoesDeHoje, type CompraDeMoeda } from '../cambio/api'
 import { converter, montarTaxas } from '../cambio/cotacao'
-import { deBanco } from './dinheiro'
+import { deBanco } from '@together/core'
 import { buscarGastos, buscarOrcamentos, buscarPerfis, EVENTO_GASTOS, type Gasto, type Orcamento, type Perfil } from './api'
 import type { Membro } from '../viagens/hooks'
 

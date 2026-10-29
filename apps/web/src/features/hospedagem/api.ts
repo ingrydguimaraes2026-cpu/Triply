@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { deBanco, paraBanco } from '../financeiro/dinheiro'
+import { deBanco, paraBanco } from '@together/core'
 import type { Opcao } from './regras'
 
 // O que o formulário manda (preço em centavos)

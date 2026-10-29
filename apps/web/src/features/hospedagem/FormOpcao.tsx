@@ -3,7 +3,7 @@ import { Trash2 } from 'lucide-react'
 import type { Tables } from '../../types/database'
 import { mensagemDeErro } from '../financeiro/api'
 import { moedasDaViagem } from '../financeiro/categorias'
-import { lerValor, paraCampo } from '../financeiro/dinheiro'
+import { lerValor, paraCampo } from '@together/core'
 import type { DadosDaOpcao } from './api'
 import { detectarSite, linkValido, sugerirNome, type Opcao } from './regras'
 

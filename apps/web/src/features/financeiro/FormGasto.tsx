@@ -6,7 +6,7 @@ import type { Membro } from '../viagens/hooks'
 import { conferirDivisao, dividirIgual, type Divisao } from './acertos'
 import { apagarGasto, avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto, type Gasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
-import { formatarDinheiro, lerValor, paraCampo } from './dinheiro'
+import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
 import { lembrarMoeda, ultimaMoeda } from './preferencias'
 
 type Props = {
