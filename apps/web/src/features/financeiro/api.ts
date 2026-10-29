@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { deBanco, paraBanco } from '@together/core'
 import type { Divisao } from './acertos'
 

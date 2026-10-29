@@ -110,7 +110,7 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 - Tabelas e regras de acesso estão em `supabase/migrations/` (leia o README de lá).
 - Regra geral: quem está no comboio vê a viagem; o ADM edita destinos, trajetos, orçamento e convites; gasto "pessoal" só quem lançou vê. Isso é garantido pelo banco (RLS), não só pela tela.
 - Mudar o banco = criar um arquivo novo de migration (nunca editar um antigo), explicar pra ela o que muda em linguagem simples e **pedir confirmação** antes de aplicar. O Victor revisa no PR.
-- Depois de mudar o banco, gerar de novo os tipos em `src/types/database.ts`.
+- Depois de mudar o banco, gerar de novo os tipos em `packages/core/src/database.ts` (monorepo: os tipos agora ficam no `@together/core`, que web e mobile usam).
 
 ## 8. Referências
 

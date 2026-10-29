@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 
 export type Destino = Tables<'destinos'>
 

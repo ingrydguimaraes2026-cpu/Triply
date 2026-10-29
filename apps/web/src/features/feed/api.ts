@@ -1,6 +1,6 @@
 // Feed de fotos (spec 014): posts com 1 a 10 fotos, curtidas e comentários.
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 
 export const MAX_FOTOS_POR_POST = 10
 const BUCKET = 'fotos'

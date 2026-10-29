@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ImagePlus, X } from 'lucide-react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { ArquivoInvalido, comprimirFoto } from '../fotos/comprimir'
 import { criarPost, MAX_FOTOS_POR_POST } from './api'
 

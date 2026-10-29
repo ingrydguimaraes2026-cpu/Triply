@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ExternalLink, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
 import { contarPorTipo, linkNoMapa, TIPOS_DE_LUGAR, tipoDeLugar, type Lugar, type TipoDeLugar } from '../../features/lugares/regras'

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
 import {

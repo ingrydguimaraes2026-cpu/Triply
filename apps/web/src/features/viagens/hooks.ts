@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router'
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { hojeTexto } from '../destinos/datas'
 
 export type Membro = {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route } from 'lucide-react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio, type Trajeto } from '../../features/transportes/api'

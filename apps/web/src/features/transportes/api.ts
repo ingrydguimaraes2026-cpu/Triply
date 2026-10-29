@@ -1,6 +1,6 @@
 import { Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 
 export type Trajeto = Tables<'trajetos'>
 

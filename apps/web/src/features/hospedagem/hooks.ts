@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import * as api from './api'
 import { montarHospedagem, resumoDaHospedagem, type Opcao } from './regras'
 

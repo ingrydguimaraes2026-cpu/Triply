@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 
 // Fotos soltas, mais novas primeiro (cartão da Overview). O feed com posts fica em src/features/feed (spec 014).
 export type Foto = Tables<'fotos'> & { url: string | null }

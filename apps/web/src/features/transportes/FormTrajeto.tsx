@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
-import type { Tables } from '../../types/database'
+import type { Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
 import { apagarTrajeto, criarBateEVolta, MEIOS, salvarTrajeto, type Trajeto } from './api'
 import { deCampoHorario, paraCampoHorario } from './avisos'
