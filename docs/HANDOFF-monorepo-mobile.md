@@ -7,24 +7,26 @@
 
 ## Novidades — sessão autônoma de 29/10 (Onda 1 do ROADMAP)
 
-Implementadas **sem aplicar migration ainda** (o Victor roda os SQLs quando voltar e a gente testa junto). Cada uma tem spec, migration, funções no `@together/core`, tela no web + mobile e **testes de banco no PGlite** (rodam a migration de verdade, sem tocar no Supabase). Tudo com build + lint + type-check + testes verdes. Commits locais na `monorepo-split`.
+Implementadas e **APLICADAS no Supabase** (`ltygqabtdbphtjscvuit`) em 29/10 à noite, com o ok do Victor e o MCP reconectado. Cada uma tem spec, migration, funções no `@together/core`, tela no web + mobile e **testes de banco no PGlite**. Tudo com build + lint + type-check + testes verdes. Commits locais na `monorepo-split`.
 
-| Spec | Feature | Onde |
-|---|---|---|
-| 019 | Avisos do ADM (recado fixado no topo) | web: `FaixaAvisos` no Overview · mobile: `Avisos` em `viagem/[id]` |
-| 020 | Tarefas com responsável | web: `Checklist` no Overview · mobile: `Tarefas` em `viagem/[id]` |
-| 021 | Enquetes rápidas | web: `Enquetes` no Overview · mobile: `Enquetes` em `viagem/[id]` |
-| 022 | Votos em lugares | web: coração na aba Lugares (mobile: quando houver tela de Lugares) |
-| 023 | Clima por dia | **sem migration** · core `clima.ts` (Open-Meteo) · web: cartão Clima no Overview · mobile: chip no Roteiro |
-| 024 | Ponto de encontro | web: `PontoDeEncontro` no Overview · mobile: `PontoDeEncontro` em `viagem/[id]` |
+| Spec | Feature | Onde | Banco |
+|---|---|---|---|
+| 019 | Avisos do ADM (recado fixado no topo) | web: `FaixaAvisos` no Overview · mobile: `Avisos` em `viagem/[id]` | ✅ aplicada |
+| 020 | Tarefas com responsável | web: `Checklist` no Overview · mobile: `Tarefas` em `viagem/[id]` | ✅ aplicada |
+| 021 | Enquetes rápidas | web: `Enquetes` no Overview · mobile: `Enquetes` em `viagem/[id]` | ✅ aplicada |
+| 022 | Votos em lugares | web: coração na aba Lugares (mobile: quando houver tela de Lugares) | ✅ aplicada |
+| 023 | Clima por dia | **sem migration** · core `clima.ts` (Open-Meteo) · web: cartão Clima no Overview · mobile: chip no Roteiro | — (API externa) |
+| 024 | Ponto de encontro | web: `PontoDeEncontro` no Overview · mobile: `PontoDeEncontro` em `viagem/[id]` | ✅ aplicada |
 
-**Pra ativar quando voltar (ordem importa):**
-1. Aplicar as migrations novas em `supabase/migrations/` (as de `20261029130000` em diante, até `20261029170000`) no projeto `ltygqabtdbphtjscvuit`. Elas são aditivas (só criam tabelas/funções novas). **A 023 (clima) não tem migration** — é tudo API externa (Open-Meteo), nada no banco.
-2. Config do painel do Supabase que a spec 018 pede (anonymous sign-in, manual linking) — se ainda não foi feito.
-3. Depois de aplicar, **gerar de novo `packages/core/src/database.ts`** (os tipos dessas tabelas foram adicionados à mão; regenerar deixa 100% fiel).
-4. Rodar web + mobile e testar pelos critérios de aceite de cada spec.
+**Estado do banco (29/10, noite):**
+- **018 (convidado)** já estava aplicada manualmente numa sessão anterior (as 4 funções `ver_convite`, `aceitar_convite`, `convidados_da_viagem`, `conferir_convidado_nao_vira_adm` existiam no remoto, sem registro em `schema_migrations`). Não reaplicada.
+- **019–022 e 024** aplicadas agora via MCP (`apply_migration`). O advisor de segurança não achou nada novo (os WARN de "anonymous access" são por design do convidado anônimo, iguais às tabelas antigas).
+- **Tipos regenerados** do banco real e conferidos: `packages/core/src/database.ts` agora bate com o remoto (as tabelas 019–024 + as colunas de `hospedagens` do drift).
+- **Config do painel (spec 018 — anonymous sign-in / manual linking):** continua sendo tarefa manual do Victor no painel, se ainda não feita.
 
-**Importante sobre os tipos:** como as migrations não foram aplicadas, os tipos das tabelas novas (`avisos`, `tarefas`, `enquetes`, `enquete_opcoes`, `enquete_votos`, `lugar_votos`, `pontos_de_encontro`) e das funções (`criar_enquete`, `votar_enquete`) foram escritos à mão em `packages/core/src/database.ts`, seguindo o formato do gerador. Regenerar depois de aplicar. A 023 não mexe em tipos de banco.
+**Drift resolvido:** o remoto tinha `checkin_limite_hospedagem` (colunas `hora_checkin_limite`, `self_checkin` em `hospedagens`) aplicado direto no banco, mas **o arquivo não estava no repo**. Puxado do banco pra `supabase/migrations/20261028225938_checkin_limite_hospedagem.sql` e os tipos atualizados. Repo e remoto voltaram a bater.
+
+**Observação sobre versionamento:** o `apply_migration` do MCP grava a migration no remoto com **timestamp próprio** (nunca bate com o nome do arquivo do repo). Isso já era assim desde o começo do projeto. Os arquivos em `supabase/migrations/` são a fonte revisável + base dos testes PGlite; o ledger remoto (`schema_migrations`) é gerido pelos applies do MCP. Não usar `supabase db push` esperando que os timestamps batam.
 
 ---
 

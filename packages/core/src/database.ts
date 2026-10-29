@@ -312,6 +312,7 @@ export type Database = {
           destino_id: string | null
           escolhida: boolean
           hora_checkin: string | null
+          hora_checkin_limite: string | null
           hora_checkout: string | null
           id: string
           link: string | null
@@ -319,6 +320,7 @@ export type Database = {
           nome: string
           observacao: string | null
           preco_total: number | null
+          self_checkin: boolean
           viagem_id: string
         }
         Insert: {
@@ -329,6 +331,7 @@ export type Database = {
           destino_id?: string | null
           escolhida?: boolean
           hora_checkin?: string | null
+          hora_checkin_limite?: string | null
           hora_checkout?: string | null
           id?: string
           link?: string | null
@@ -336,6 +339,7 @@ export type Database = {
           nome: string
           observacao?: string | null
           preco_total?: number | null
+          self_checkin?: boolean
           viagem_id: string
         }
         Update: {
@@ -346,6 +350,7 @@ export type Database = {
           destino_id?: string | null
           escolhida?: boolean
           hora_checkin?: string | null
+          hora_checkin_limite?: string | null
           hora_checkout?: string | null
           id?: string
           link?: string | null
@@ -353,6 +358,7 @@ export type Database = {
           nome?: string
           observacao?: string | null
           preco_total?: number | null
+          self_checkin?: boolean
           viagem_id?: string
         }
         Relationships: [
