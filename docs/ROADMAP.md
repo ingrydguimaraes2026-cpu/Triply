@@ -25,7 +25,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 3 | Enquete rápida | Pergunta com opções pra qualquer decisão (data, restaurante, passeio) | P | Ingryd | [021](specs/021-enquetes-rapidas.md) | Em andamento |
 | 4 | Votos em lugares | Votar nos lugares e passeios, igual já é na hospedagem | P | Ingryd | [022](specs/022-votos-em-lugares.md) | Em andamento (web) |
 | 5 | Compartilhar no WhatsApp | Botão que manda o link certo (gasto, enquete, dia) e abre direto no item | P | Ingryd | [025](specs/025-compartilhar-no-whatsapp.md) | Em andamento |
-| 6 | Agenda do dia | O que acontece em cada dia, com horário | G | Victor | — | A fazer |
+| 6 | Agenda do dia | O que acontece em cada dia, com horário | G | Victor | [029](specs/029-agenda-do-dia.md) | Pronto pra testar (web) |
 | 7 | Ponto de encontro | "Onde e que horas nos encontramos", com mapa | P | Ingryd | [024](specs/024-ponto-de-encontro.md) | Em andamento |
 | 8 | Clima por dia | Previsão do tempo em cada dia do roteiro | P | Ingryd | [023](specs/023-clima-por-dia.md) | Em andamento |
 | 9 | Avisos do ADM | Recado fixado no topo da viagem ("passaporte na mão amanhã!") | P | Ingryd | [019](specs/019-avisos-do-adm.md) | Em andamento |

@@ -407,6 +407,65 @@ export async function apagarTarefa(cli: ClienteTogether, id: string): Promise<vo
   if (error) throw error
 }
 
+// ---------- Agenda do dia (spec 029) ----------
+
+export type DadosDoEvento = {
+  dia: string // AAAA-MM-DD
+  hora: string | null // HH:MM
+  titulo: string
+  local: string | null
+  observacao: string | null
+}
+
+// Eventos livres da viagem, por dia e hora (sem hora no fim do dia)
+export async function buscarEventosDaAgenda(cli: ClienteTogether, viagemId: string): Promise<Tables<'eventos_agenda'>[]> {
+  const { data, error } = await cli
+    .from('eventos_agenda')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('dia', { ascending: true })
+    .order('hora', { ascending: true, nullsFirst: false })
+  if (error) throw error
+  return data ?? []
+}
+
+// Cria um evento (qualquer um do comboio)
+export async function criarEventoDaAgenda(cli: ClienteTogether, viagemId: string, dados: DadosDoEvento): Promise<void> {
+  const { error } = await cli.from('eventos_agenda').insert({
+    viagem_id: viagemId,
+    dia: dados.dia,
+    hora: dados.hora || null,
+    titulo: dados.titulo.trim(),
+    local: dados.local?.trim() || null,
+    observacao: dados.observacao?.trim() || null,
+  })
+  if (error) throw error
+}
+
+// Edita (quem criou ou o ADM). Sem permissão, o banco não muda nada: aqui vira erro.
+export async function editarEventoDaAgenda(cli: ClienteTogether, id: string, dados: DadosDoEvento): Promise<void> {
+  const { data, error } = await cli
+    .from('eventos_agenda')
+    .update({
+      dia: dados.dia,
+      hora: dados.hora || null,
+      titulo: dados.titulo.trim(),
+      local: dados.local?.trim() || null,
+      observacao: dados.observacao?.trim() || null,
+    })
+    .eq('id', id)
+    .select('id')
+  if (error) throw error
+  if (!data?.length) throw new Error('Só quem criou ou o ADM pode editar este evento.')
+}
+
+// Apaga (quem criou ou o ADM)
+export async function apagarEventoDaAgenda(cli: ClienteTogether, id: string): Promise<void> {
+  const { data, error } = await cli.from('eventos_agenda').delete().eq('id', id).select('id')
+  if (error) throw error
+  if (!data?.length) throw new Error('Só quem criou ou o ADM pode apagar este evento.')
+}
+
 // ---------- Enquetes rápidas (spec 021) ----------
 
 export type OpcaoDeEnquete = {

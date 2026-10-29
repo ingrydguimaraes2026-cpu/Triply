@@ -897,3 +897,39 @@ test('028: storage do cofre: só o comboio envia na pasta da viagem; apaga quem 
   await como(db, ADM, `delete from storage.objects where bucket_id = 'cofre'`)
   assert.equal((await db.query(`select count(*)::int as n from storage.objects where bucket_id = 'cofre'`)).rows[0].n, 0)
 })
+
+// ---------------- 029: agenda do dia ----------------
+const novoEvento = (db, quem, extra = {}) =>
+  como(
+    db,
+    quem,
+    'insert into public.eventos_agenda (viagem_id, dia, hora, titulo) values ($1, $2, $3, $4) returning id',
+    [V, extra.dia ?? '2026-11-20', extra.hora ?? '20:00', extra.titulo ?? 'Jantar no porto'],
+  ).then((r) => r[0]?.id)
+
+test('029: membro cria evento e o comboio vê; estranho não vê nem cria', async () => {
+  const db = await novoBanco()
+  assert.ok(await novoEvento(db, MEMBRO))
+  assert.equal((await como(db, ADM, 'select titulo from public.eventos_agenda'))[0].titulo, 'Jantar no porto')
+  assert.equal((await como(db, ESTRANHO, 'select id from public.eventos_agenda')).length, 0)
+  await assert.rejects(novoEvento(db, ESTRANHO), /row-level security/)
+})
+
+test('029: autor ou ADM edita e apaga; outro membro não', async () => {
+  const db = await novoBanco()
+  const OUTRO = '00000000-0000-0000-0000-00000000000d'
+  await db.exec(`insert into auth.users (id, email) values ('${OUTRO}', 'outro@teste');
+    insert into public.comboio_membros (viagem_id, usuario_id, papel) values ('${V}', '${OUTRO}', 'membro');`)
+  const id = await novoEvento(db, MEMBRO)
+  assert.equal((await como(db, OUTRO, `update public.eventos_agenda set titulo = 'x' where id = $1 returning id`, [id])).length, 0)
+  assert.equal((await como(db, OUTRO, 'delete from public.eventos_agenda where id = $1 returning id', [id])).length, 0)
+  assert.equal((await como(db, MEMBRO, `update public.eventos_agenda set hora = '21:30' where id = $1 returning id`, [id])).length, 1)
+  assert.equal((await como(db, ADM, 'delete from public.eventos_agenda where id = $1 returning id', [id])).length, 1)
+})
+
+test('029: autor e viagem não mudam; título vazio é recusado', async () => {
+  const db = await novoBanco()
+  const id = await novoEvento(db, MEMBRO)
+  await assert.rejects(como(db, ADM, `update public.eventos_agenda set criado_por = '${ADM}' where id = $1`, [id]), /autor/)
+  await assert.rejects(novoEvento(db, MEMBRO, { titulo: '   ' }), /check/)
+})

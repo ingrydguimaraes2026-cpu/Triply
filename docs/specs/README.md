@@ -42,6 +42,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 026 | [Endereço e guia da casa](026-guia-da-casa.md) (Wi-Fi, código da porta, regras) | 2 | P | 011 | Pronto pra testar (web) |
 | 027 | [Comentários em qualquer item](027-comentarios-em-itens.md) (gasto, lugar e hospedagem) | 2 | M | 002, 011, 016 | Pronto pra testar (web) |
 | 028 | [Cofre da viagem + bilhete no trajeto](028-cofre-e-bilhete.md) (PDFs e fotos de reservas) | 2 | M | 004 | Pronto pra testar (web) |
+| 029 | [Agenda do dia](029-agenda-do-dia.md) (trajetos, chegadas e eventos por dia, com hora) | 2 | G | 003, 004 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

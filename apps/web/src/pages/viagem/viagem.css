@@ -31,7 +31,7 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 
 /* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
@@ -47,7 +47,7 @@
   justify-content: center;
   gap: 4px;
   color: #c9b08a;
-  font-size: 11px;
+  font-size: 10px; /* 8 abas em 360px: cada uma tem ~45px */
   font-weight: 600;
   text-decoration: none;
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { BedDouble, Camera, ChevronRight, Compass, LogOut, MapPinned, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LogOut, MapPinned, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair, useSessao } from '../../features/auth/hooks'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -20,9 +20,10 @@ import '../../components/ui/ui.css'
 import './viagem.css'
 
 // Abas da viagem. Pra criar uma aba nova: adicione aqui e no src/router.tsx
-// `curto`: nome menor pro menu de baixo do celular (7 abas em 360px)
+// `curto`: nome menor pro menu de baixo do celular (8 abas em 360px)
 const ABAS = [
-  { para: '', rotulo: 'Overview', icone: Compass },
+  { para: '', rotulo: 'Overview', curto: 'Início', icone: Compass },
+  { para: 'agenda', rotulo: 'Agenda', icone: CalendarDays },
   { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
   { para: 'lugares', rotulo: 'Lugares', icone: MapPinned },
   { para: 'transportes', rotulo: 'Transportes', curto: 'Transp.', icone: TrainFront },

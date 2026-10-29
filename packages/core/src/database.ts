@@ -1224,6 +1224,57 @@ export type Database = {
           },
         ]
       }
+      eventos_agenda: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          dia: string
+          hora: string | null
+          id: string
+          local: string | null
+          observacao: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          dia: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          observacao?: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          dia?: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          observacao?: string | null
+          titulo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_agenda_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_agenda_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       enquetes: {
         Row: {
           criado_em: string

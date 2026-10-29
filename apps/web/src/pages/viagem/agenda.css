@@ -1,0 +1,173 @@
+/* Agenda do dia (spec 029). Só cores do global.css. */
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Botões dos dias: rolam pro lado no celular */
+.agenda-dias {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.agenda-dias::-webkit-scrollbar {
+  display: none;
+}
+
+.agenda-dias button {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  min-height: 60px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  cursor: pointer;
+}
+
+.agenda-dias button span {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.agenda-dias button strong {
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.agenda-dias button.hoje {
+  border-color: var(--laranja);
+}
+
+.agenda-dias button[aria-pressed='true'] {
+  border-color: var(--couro);
+  background: var(--couro);
+  color: #fff;
+}
+
+.agenda-dias button[aria-pressed='true'] span {
+  color: var(--cor-comboio-fundo);
+}
+
+/* Bolinha: o dia tem algo marcado */
+.agenda-dias button i {
+  position: absolute;
+  bottom: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--laranja);
+}
+
+.agenda-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+}
+
+.agenda-dia header h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+}
+
+.agenda-dia header h2::first-letter {
+  text-transform: uppercase;
+}
+
+.agenda-dia header p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+}
+
+.agenda-linha {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.agenda-item:first-child {
+  border-top: 0;
+}
+
+.agenda-hora {
+  flex: none;
+  width: 44px;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda-icone {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+}
+
+.agenda-chegada .agenda-icone,
+.agenda-saida .agenda-icone {
+  background: var(--cor-fundo);
+}
+
+.agenda-texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.agenda-texto strong {
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.agenda-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.agenda-lugares {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 700;
+}
