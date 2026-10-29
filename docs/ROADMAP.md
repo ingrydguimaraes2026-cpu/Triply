@@ -28,7 +28,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 6 | Agenda do dia | O que acontece em cada dia, com horário | G | Victor | — | A fazer |
 | 7 | Ponto de encontro | "Onde e que horas nos encontramos", com mapa | P | Ingryd | — | A fazer |
 | 8 | Clima por dia | Previsão do tempo em cada dia do roteiro | P | Ingryd | — | A fazer |
-| 9 | Avisos do ADM | Recado fixado no topo da viagem ("passaporte na mão amanhã!") | P | Ingryd | — | A fazer |
+| 9 | Avisos do ADM | Recado fixado no topo da viagem ("passaporte na mão amanhã!") | P | Ingryd | [019](specs/019-avisos-do-adm.md) | Em andamento |
 | 10 | Central de notificações | Um sino com tudo que mudou desde a última visita | M | Victor | — | A fazer |
 | 11 | Lembretes | Push antes de horários combinados (trem, check-out, encontro) | M | Victor | — | A fazer |
 | 12 | Cofre da viagem | Reservas, ingressos e PDFs da viagem num lugar só | M | Victor | — | A fazer |

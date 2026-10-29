@@ -13,6 +13,7 @@ import { compartilharLink, gerarLinkDeConvite } from '../../src/lib/convite'
 import { periodo } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
 import { capaDaViagem } from '../../src/ui/fotos'
+import { Avisos } from '../../src/ui/Avisos'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -39,6 +40,7 @@ export default function DetalheDaViagem() {
   const { viagem, gastos, trajetos, fotos } = carga.dados
   const contas = resumoDasContas(gastos, viagem.moeda)
   const meuSaldo = contas.saldos.get(meuId) ?? 0
+  const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
 
   // Os atalhos abrem as abas já nesta viagem
   const ir = (rota: Href) => {
@@ -92,6 +94,9 @@ export default function DetalheDaViagem() {
             </Pressable>
           </View>
           {convite ? <Text className="font-body-medium text-[13px] text-verde">{convite}</Text> : null}
+
+          {/* Spec 019: recados do ADM fixados no topo da viagem */}
+          <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />
 
           <View className="flex-row flex-wrap gap-2.5">
             {atalhos.map(({ Icone, t, s, rota }) => (

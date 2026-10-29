@@ -925,6 +925,48 @@ export type Database = {
           },
         ]
       }
+      avisos: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criado_por: string
+          id: string
+          texto: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          texto: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          texto?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       carteiras_com_saldo: {

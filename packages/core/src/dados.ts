@@ -303,3 +303,41 @@ export async function entrarComoConvidado(cli: ClienteTogether, codigo: string, 
 export function ehConvidado(usuario: { is_anonymous?: boolean } | null | undefined): boolean {
   return !!usuario?.is_anonymous
 }
+
+// ---------- Avisos do ADM (spec 019) ----------
+
+export type Aviso = Tables<'avisos'>
+
+// Avisos da viagem, o mais novo primeiro (o topo da lista é o que fica fixado).
+export async function buscarAvisos(cli: ClienteTogether, viagemId: string): Promise<Aviso[]> {
+  const { data, error } = await cli
+    .from('avisos')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('criado_em', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
+
+// Cria um aviso. Só o ADM consegue (o banco confere); devolve o aviso criado.
+export async function criarAviso(cli: ClienteTogether, viagemId: string, texto: string): Promise<Aviso> {
+  const { data, error } = await cli
+    .from('avisos')
+    .insert({ viagem_id: viagemId, texto: texto.trim() })
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
+// Edita o texto de um aviso (só o ADM).
+export async function editarAviso(cli: ClienteTogether, id: string, texto: string): Promise<void> {
+  const { error } = await cli.from('avisos').update({ texto: texto.trim() }).eq('id', id)
+  if (error) throw error
+}
+
+// Apaga um aviso (só o ADM).
+export async function apagarAviso(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('avisos').delete().eq('id', id)
+  if (error) throw error
+}

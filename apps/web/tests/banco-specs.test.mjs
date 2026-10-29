@@ -516,3 +516,39 @@ test('018: convidado não cria viagem', async () => {
     /row-level security/,
   )
 })
+
+// ---------------- 019: avisos do ADM ----------------
+const novoAviso = (db, quem, texto = 'Passaporte na mão amanhã!') =>
+  como(db, quem, 'insert into public.avisos (viagem_id, texto) values ($1, $2) returning id', [V, texto]).then((r) => r[0]?.id)
+
+test('019: o ADM cria o aviso e o comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  const id = await novoAviso(db, ADM)
+  assert.ok(id)
+  assert.equal((await como(db, MEMBRO, 'select texto, criado_por from public.avisos'))[0].criado_por, ADM)
+  assert.equal((await como(db, ESTRANHO, 'select id from public.avisos')).length, 0)
+})
+
+test('019: membro e estranho não criam aviso', async () => {
+  const db = await novoBanco()
+  await assert.rejects(novoAviso(db, MEMBRO), /row-level security/)
+  await assert.rejects(novoAviso(db, ESTRANHO), /row-level security/)
+  assert.equal((await db.query('select count(*)::int as n from public.avisos')).rows[0].n, 0)
+})
+
+test('019: só o ADM edita e apaga; membro não', async () => {
+  const db = await novoBanco()
+  const id = await novoAviso(db, ADM)
+  await como(db, MEMBRO, `update public.avisos set texto = 'Hackeado' where id = $1`, [id])
+  await como(db, MEMBRO, 'delete from public.avisos where id = $1', [id])
+  assert.equal((await db.query('select texto from public.avisos where id = $1', [id])).rows[0].texto, 'Passaporte na mão amanhã!')
+  await como(db, ADM, `update public.avisos set texto = 'Novo recado' where id = $1`, [id])
+  assert.equal((await db.query('select texto from public.avisos where id = $1', [id])).rows[0].texto, 'Novo recado')
+  await como(db, ADM, 'delete from public.avisos where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int as n from public.avisos')).rows[0].n, 0)
+})
+
+test('019: texto em branco é recusado', async () => {
+  const db = await novoBanco()
+  await assert.rejects(novoAviso(db, ADM, '   '), /check/)
+})

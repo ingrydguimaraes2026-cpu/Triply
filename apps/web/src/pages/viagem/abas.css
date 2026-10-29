@@ -36,6 +36,107 @@
 .overview-comboio-cartao { order: 6; }
 .overview-fotos { order: 7; }
 
+/* ---------- Avisos do ADM (spec 019): recados fixados no topo ---------- */
+.faixa-avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 1200px) {
+  /* ocupa as duas colunas do grid do Overview */
+  .faixa-avisos {
+    grid-column: 1 / -1;
+  }
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--cor-borda);
+  background: #fff7e9;
+}
+
+.aviso > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--caramelo);
+}
+
+.aviso p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: var(--cor-texto);
+  font-size: 15px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.aviso-acoes {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.aviso-acoes button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.aviso-acoes button:hover:not(:disabled) {
+  background: rgba(123, 84, 47, 0.1);
+  color: var(--couro);
+}
+
+.aviso-acoes button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.aviso-form textarea {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  color: var(--cor-texto);
+  outline: none;
+}
+
+.aviso-novo {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--couro);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aviso-novo:hover {
+  background: #fff7e9;
+}
+
 /* Resumo sem dados: uma linha com o próximo passo */
 .resumo-vazio {
   margin: 0;

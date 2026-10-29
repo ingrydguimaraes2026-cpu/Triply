@@ -22,6 +22,7 @@ import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useHospedagem } from '../../features/hospedagem/hooks'
+import FaixaAvisos from '../../features/avisos/FaixaAvisos'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -212,6 +213,8 @@ export default function Overview() {
 
   return (
     <div className="overview">
+      {/* Spec 019: recados do ADM fixados no topo */}
+      <FaixaAvisos viagemId={viagem.id} euSouAdm={euSouAdm} />
       {/* Coluna larga: mapa, roteiro e fotos */}
       <div className="overview-principal">
         <section className="overview-mapa">
