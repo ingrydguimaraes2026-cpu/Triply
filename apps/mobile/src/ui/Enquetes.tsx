@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Switch, Text, TextInput, View } from 'react-native'
-import { BarChart3, Check, Lock, Plus, Trash2, Unlock, X } from 'lucide-react-native'
+import { BarChart3, Check, Lock, Plus, Share2, Trash2, Unlock, X } from 'lucide-react-native'
 import {
   apagarEnquete,
   buscarEnquetes,
@@ -10,6 +10,7 @@ import {
   type Enquete,
 } from '@together/core'
 import { supabase } from '../lib/supabase'
+import { compartilharItem } from '../lib/compartilhar'
 import { Cartao } from './pecas'
 import { cor } from '../../theme'
 
@@ -103,16 +104,25 @@ export function Enquetes({ viagemId, meuId, euSouAdm }: { viagemId: string; meuI
               <View key={e.id} style={{ opacity: e.fechada ? 0.75 : 1 }}>
                 <View className="mb-2 flex-row items-start justify-between gap-2">
                   <Text className="min-w-0 flex-1 font-body-semibold text-[15px] leading-5 text-texto">{e.pergunta}</Text>
-                  {souDono ? (
-                    <View className="flex-row gap-1">
-                      <Pressable onPress={() => fechar(e)} hitSlop={6} accessibilityLabel={e.fechada ? 'Reabrir' : 'Fechar'}>
-                        {e.fechada ? <Unlock size={16} color={cor.suave} /> : <Lock size={16} color={cor.suave} />}
-                      </Pressable>
-                      <Pressable onPress={() => remover(e)} hitSlop={6} accessibilityLabel="Apagar enquete">
-                        <Trash2 size={16} color={cor.suave} />
-                      </Pressable>
-                    </View>
-                  ) : null}
+                  <View className="flex-row gap-1">
+                    <Pressable
+                      onPress={() => compartilharItem(viagemId, { tipo: 'enquete', id: e.id, titulo: e.pergunta }).catch(() => {})}
+                      hitSlop={6}
+                      accessibilityLabel="Compartilhar enquete"
+                    >
+                      <Share2 size={16} color={cor.suave} />
+                    </Pressable>
+                    {souDono ? (
+                      <>
+                        <Pressable onPress={() => fechar(e)} hitSlop={6} accessibilityLabel={e.fechada ? 'Reabrir' : 'Fechar'}>
+                          {e.fechada ? <Unlock size={16} color={cor.suave} /> : <Lock size={16} color={cor.suave} />}
+                        </Pressable>
+                        <Pressable onPress={() => remover(e)} hitSlop={6} accessibilityLabel="Apagar enquete">
+                          <Trash2 size={16} color={cor.suave} />
+                        </Pressable>
+                      </>
+                    ) : null}
+                  </View>
                 </View>
                 <View className="gap-1.5">
                   {e.opcoes.map((o) => {
