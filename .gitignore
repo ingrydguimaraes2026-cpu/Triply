@@ -26,3 +26,5 @@ dev-dist/
 expo-env.d.ts
 .vercel
 .env*
+# exemplos de env (sem segredo) podem ir pro GitHub
+!**/.env.example
