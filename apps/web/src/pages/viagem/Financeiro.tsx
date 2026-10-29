@@ -15,7 +15,9 @@ import Carteira from '../../features/carteira/Carteira'
 import { cotacoesDeHoje, type CompraDeMoeda } from '../../features/cambio/api'
 import { comparacaoComHoje, converter, mediasPorPar, montarTaxas } from '../../features/cambio/cotacao'
 import { formatarData } from '../../lib/datas'
+import { useFocoDeItem } from '../../lib/foco'
 import Avatar from '../../components/ui/Avatar'
+import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import EstadoVazio from '../../components/ui/EstadoVazio'
@@ -40,6 +42,7 @@ function totaisSeparados(totais: Record<string, number>, moedaPrincipal: string)
 // Financeiro (specs 002 e 003): gastos, divisão, acertos, orçamento e câmbio.
 export default function Financeiro() {
   const { viagem, membros, meuId, euSouAdm } = useViagemAtual()
+  useFocoDeItem() // destaca o gasto quando se chega por um link de compartilhar
   const moeda = viagem.moeda_principal
   const { estado, recarregar } = useFinanceiro(viagem.id, membros)
   // Carteira de euro (spec 015): só busca quando a viagem é em euro. O saldo vai no card do topo.
@@ -382,7 +385,7 @@ export default function Financeiro() {
                       const { icone: Icone } = categoria(g.categoria)
                       const pagador = membros.find((m) => m.id === g.pago_por)
                       return (
-                        <li key={g.id}>
+                        <li key={g.id} data-foco={g.id} className="gasto-linha">
                           <button type="button" className="gasto" onClick={() => setJanela({ tipo: 'gasto', gasto: g })}>
                             <span className="categoria-icone">
                               <Icone size={18} aria-hidden="true" />
@@ -402,6 +405,10 @@ export default function Financeiro() {
                             </span>
                             <span className="gasto-valor">{formatarDinheiro(g.valor, g.moeda)}</span>
                           </button>
+                          {/* Gasto pessoal só você vê: não faz sentido compartilhar */}
+                          {!g.pessoal && (
+                            <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'gasto', id: g.id, titulo: g.descricao }} nomeDaViagem={viagem.nome} />
+                          )}
                         </li>
                       )
                     })}

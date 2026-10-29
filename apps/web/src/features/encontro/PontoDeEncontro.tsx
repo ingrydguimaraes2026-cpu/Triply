@@ -8,6 +8,7 @@ import {
   type PontoDeEncontro as Ponto,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
+import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import './encontro.css'
 
 // Quando (ISO) → "qua 12 nov, 14:30" (ou só a data se vier sem hora)
@@ -80,7 +81,7 @@ export default function PontoDeEncontro({ viagemId, meuId, euSouAdm }: { viagemI
       ) : (
         <ul className="encontro-lista">
           {pontos.map((p) => (
-            <li key={p.id} className="encontro-item">
+            <li key={p.id} data-foco={p.id} className="encontro-item">
               <div className="encontro-corpo">
                 <a className="encontro-local" href={linkDoMapa(p)} target="_blank" rel="noopener noreferrer">
                   <MapPin size={14} aria-hidden="true" /> {p.local}
@@ -88,6 +89,7 @@ export default function PontoDeEncontro({ viagemId, meuId, euSouAdm }: { viagemI
                 {p.quando && <span className="encontro-quando">{formatarQuando(p.quando)}</span>}
                 {p.observacao && <span className="encontro-obs">{p.observacao}</span>}
               </div>
+              <BotaoCompartilhar viagemId={viagemId} item={{ tipo: 'ponto', id: p.id, titulo: p.local }} />
               {podeApagar(p) && (
                 <button type="button" className="encontro-apagar" onClick={() => remover(p)} aria-label="Apagar ponto de encontro">
                   <Trash2 size={15} aria-hidden="true" />

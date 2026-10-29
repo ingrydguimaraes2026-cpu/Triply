@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, Text, TextInput, View } from 'react-native'
-import { MapPin, Plus, Trash2 } from 'lucide-react-native'
+import { MapPin, Plus, Share2, Trash2 } from 'lucide-react-native'
 import { apagarPontoDeEncontro, buscarPontosDeEncontro, criarPontoDeEncontro, linkDoMapa, type PontoDeEncontro as Ponto } from '@together/core'
 import { supabase } from '../lib/supabase'
+import { compartilharItem } from '../lib/compartilhar'
 import { diaCurto, hora } from '../lib/formato'
 import { Cartao } from './pecas'
 import { cor } from '../../theme'
@@ -77,6 +78,13 @@ export function PontoDeEncontro({ viagemId, meuId, euSouAdm }: { viagemId: strin
                 {p.quando ? <Text className="mt-0.5 font-body text-[12px] text-texto">{diaCurto(new Date(p.quando))} · {hora(p.quando)}</Text> : null}
                 {p.observacao ? <Text className="mt-0.5 font-body text-[12px] text-suave">{p.observacao}</Text> : null}
               </View>
+              <Pressable
+                onPress={() => compartilharItem(viagemId, { tipo: 'ponto', id: p.id, titulo: p.local }).catch(() => {})}
+                hitSlop={8}
+                accessibilityLabel="Compartilhar ponto de encontro"
+              >
+                <Share2 size={15} color={cor.suave} />
+              </Pressable>
               {podeApagar(p) ? (
                 <Pressable onPress={() => remover(p)} hitSlop={8} accessibilityLabel="Apagar ponto de encontro">
                   <Trash2 size={15} color={cor.suave} />

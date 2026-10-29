@@ -2,6 +2,7 @@
 export * from './dinheiro'
 export * from './termometro'
 export * from './clima'
+export * from './compartilhar'
 export * from './supabase'
 export * from './acertos'
 export * from './dados'

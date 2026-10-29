@@ -8,6 +8,8 @@ import { ICONE_DO_TIPO } from '../../features/lugares/icones'
 import FormLugar from '../../features/lugares/FormLugar'
 import { formatarDinheiro } from '@together/core'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
+import { useFocoDeItem } from '../../lib/foco'
+import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -20,6 +22,7 @@ type Janela = { destinoId: string | null; tipo?: TipoDeLugar; lugar?: Lugar } | 
 // Lugares (spec 016): o que o comboio quer ver, comer e usar em cada destino, inclusive guarda-volumes nos dias de passagem.
 export default function Lugares() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
+  useFocoDeItem() // destaca o lugar quando se chega por um link de compartilhar
   const l = useLugares(viagem.id, destinos, meuId)
   const [selecionado, setSelecionado] = useState<string | null>(null)
   const [filtro, setFiltro] = useState<TipoDeLugar | null>(null)
@@ -37,7 +40,7 @@ export default function Lugares() {
     const euVotei = lugar.votos.includes(meuId)
     const detalhes = [tipo.nome, lugar.horario, lugar.preco !== null ? formatarDinheiro(lugar.preco, lugar.moeda) : null].filter(Boolean)
     return (
-      <li key={lugar.id} className={`lugar tipo-${tipo.chave}`}>
+      <li key={lugar.id} data-foco={lugar.id} className={`lugar tipo-${tipo.chave}`}>
         <span className="lugar-icone" aria-hidden="true">
           <Icone size={18} />
         </span>
@@ -76,6 +79,7 @@ export default function Lugares() {
               <Heart size={13} aria-hidden="true" fill={euVotei ? 'currentColor' : 'none'} />
               {lugar.votos.length > 0 && <span>{lugar.votos.length}</span>}
             </button>
+            <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'lugar', id: lugar.id, titulo: lugar.nome }} nomeDaViagem={viagem.nome} />
             {autor && <small>por {autor.id === meuId ? 'você' : autor.nome.split(' ')[0]}</small>}
           </div>
         </div>

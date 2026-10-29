@@ -179,6 +179,21 @@
   border-top: 1px solid #f5ead6;
 }
 
+/* Linha do gasto: o botão do gasto + o compartilhar ao lado (spec 025) */
+.gasto-linha {
+  display: flex;
+  align-items: center;
+}
+
+.gasto-linha .gasto {
+  flex: 1;
+  min-width: 0;
+}
+
+.gasto-linha .botao-compartilhar {
+  margin-right: 10px;
+}
+
 .gasto {
   width: 100%;
   display: flex;

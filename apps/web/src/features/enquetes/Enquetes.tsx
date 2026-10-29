@@ -9,6 +9,7 @@ import {
   type Enquete,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
+import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 
 // Spec 021: enquetes rápidas pra decidir em grupo (data, restaurante, passeio).
 // Todo o comboio cria e vota; quem criou ou o ADM fecha e apaga.
@@ -95,19 +96,22 @@ export default function Enquetes({ viagemId, meuId, euSouAdm }: { viagemId: stri
           const souDono = e.criadoPor === meuId || euSouAdm
           const maxVotos = Math.max(1, ...e.opcoes.map((o) => o.votos.length))
           return (
-            <article key={e.id} className={e.fechada ? 'enquete fechada' : 'enquete'}>
+            <article key={e.id} data-foco={e.id} className={e.fechada ? 'enquete fechada' : 'enquete'}>
               <header className="enquete-topo">
                 <h3>{e.pergunta}</h3>
-                {souDono && (
-                  <div className="enquete-acoes">
-                    <button type="button" onClick={() => fechar(e)} aria-label={e.fechada ? 'Reabrir enquete' : 'Fechar enquete'}>
-                      {e.fechada ? <Unlock size={15} aria-hidden="true" /> : <Lock size={15} aria-hidden="true" />}
-                    </button>
-                    <button type="button" onClick={() => remover(e)} aria-label="Apagar enquete">
-                      <Trash2 size={15} aria-hidden="true" />
-                    </button>
-                  </div>
-                )}
+                <div className="enquete-acoes">
+                  <BotaoCompartilhar viagemId={viagemId} item={{ tipo: 'enquete', id: e.id, titulo: e.pergunta }} />
+                  {souDono && (
+                    <>
+                      <button type="button" onClick={() => fechar(e)} aria-label={e.fechada ? 'Reabrir enquete' : 'Fechar enquete'}>
+                        {e.fechada ? <Unlock size={15} aria-hidden="true" /> : <Lock size={15} aria-hidden="true" />}
+                      </button>
+                      <button type="button" onClick={() => remover(e)} aria-label="Apagar enquete">
+                        <Trash2 size={15} aria-hidden="true" />
+                      </button>
+                    </>
+                  )}
+                </div>
               </header>
               <ul className="enquete-opcoes">
                 {e.opcoes.map((o) => {

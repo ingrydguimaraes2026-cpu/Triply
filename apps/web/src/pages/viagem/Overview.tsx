@@ -28,6 +28,7 @@ import Enquetes from '../../features/enquetes/Enquetes'
 import ClimaDaViagem from '../../features/clima/ClimaDaViagem'
 import PontoDeEncontro from '../../features/encontro/PontoDeEncontro'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
+import { useFocoDeItem } from '../../lib/foco'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -65,6 +66,7 @@ function datasDoDestino(d: ItemRoteiro) {
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
 export default function Overview() {
   const { viagem, destinos, membros, meuId, euSouAdm, atualizarDestinos, atualizarViagem } = useViagemAtual()
+  useFocoDeItem() // destaca a enquete/ponto quando se chega por um link de compartilhar
 
   // Modo de edição do roteiro: enquanto edita, a lista E o mapa mostram o rascunho.
   // null = não está editando (mostra o que está salvo).
