@@ -552,3 +552,59 @@ test('019: texto em branco é recusado', async () => {
   const db = await novoBanco()
   await assert.rejects(novoAviso(db, ADM, '   '), /check/)
 })
+
+// ---------------- 020: tarefas com responsável ----------------
+const novaTarefa = (db, quem, extra = {}) =>
+  como(
+    db,
+    quem,
+    'insert into public.tarefas (viagem_id, titulo, responsavel_id, prazo) values ($1, $2, $3, $4) returning id',
+    [V, extra.titulo ?? 'Comprar o seguro', extra.responsavel ?? null, extra.prazo ?? null],
+  ).then((r) => r[0]?.id)
+
+test('020: membro cria tarefa e o comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  const id = await novaTarefa(db, MEMBRO, { responsavel: ADM })
+  assert.ok(id)
+  assert.equal((await como(db, ADM, 'select titulo, criado_por from public.tarefas'))[0].criado_por, MEMBRO)
+  assert.equal((await como(db, ESTRANHO, 'select id from public.tarefas')).length, 0)
+})
+
+test('020: o responsável tem que ser do comboio', async () => {
+  const db = await novoBanco()
+  await assert.rejects(novaTarefa(db, ADM, { responsavel: ESTRANHO }), /comboio/)
+})
+
+test('020: autor e responsável marcam feita; quem não é dono não edita', async () => {
+  const db = await novoBanco()
+  // Terceiro membro: nem autor, nem responsável, nem ADM
+  const OUTRO = '00000000-0000-0000-0000-00000000000d'
+  await db.exec(`insert into auth.users (id, email) values ('${OUTRO}', 'outro@teste');
+    insert into public.comboio_membros (viagem_id, usuario_id, papel) values ('${V}', '${OUTRO}', 'membro');`)
+  const id = await novaTarefa(db, MEMBRO, { responsavel: ADM })
+  // O responsável (ADM) marca feita
+  await como(db, ADM, 'update public.tarefas set feita = true where id = $1', [id])
+  assert.equal((await db.query('select feita from public.tarefas where id = $1', [id])).rows[0].feita, true)
+  // O autor (MEMBRO) edita o título
+  await como(db, MEMBRO, `update public.tarefas set titulo = 'Comprar seguro já' where id = $1`, [id])
+  assert.equal((await db.query('select titulo from public.tarefas where id = $1', [id])).rows[0].titulo, 'Comprar seguro já')
+  // OUTRO não é dono: o UPDATE não casa nenhuma linha (RLS) e nada muda
+  assert.equal((await como(db, OUTRO, `update public.tarefas set titulo = 'hack' where id = $1 returning id`, [id])).length, 0)
+  assert.equal((await db.query('select titulo from public.tarefas where id = $1', [id])).rows[0].titulo, 'Comprar seguro já')
+})
+
+test('020: quem criou ou o ADM apaga; outro membro não', async () => {
+  const db = await novoBanco()
+  const id = await novaTarefa(db, MEMBRO)
+  // ADM apaga a tarefa do membro
+  assert.equal((await como(db, ADM, 'delete from public.tarefas where id = $1 returning id', [id])).length, 1)
+  const id2 = await novaTarefa(db, MEMBRO)
+  // Estranho não vê, então não apaga
+  assert.equal((await como(db, ESTRANHO, 'delete from public.tarefas where id = $1 returning id', [id2])).length, 0)
+  assert.equal((await db.query('select count(*)::int as n from public.tarefas')).rows[0].n, 1)
+})
+
+test('020: título em branco é recusado', async () => {
+  const db = await novoBanco()
+  await assert.rejects(novaTarefa(db, MEMBRO, { titulo: '  ' }), /check/)
+})

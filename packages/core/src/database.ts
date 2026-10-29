@@ -967,6 +967,61 @@ export type Database = {
           },
         ]
       }
+      tarefas: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          feita: boolean
+          id: string
+          prazo: string | null
+          responsavel_id: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          feita?: boolean
+          id?: string
+          prazo?: string | null
+          responsavel_id?: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          feita?: boolean
+          id?: string
+          prazo?: string | null
+          responsavel_id?: string | null
+          titulo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tarefas_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       carteiras_com_saldo: {

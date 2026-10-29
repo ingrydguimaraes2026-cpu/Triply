@@ -38,7 +38,7 @@ Tamanho: **P** = poucos dias · **M** = cerca de uma semana · **G** = mais de u
 | 16 | Comentários em qualquer item | Conversar no gasto, no lugar ou na opção, em vez de um chat | M | Victor | — | A fazer |
 | 17 | Marcar acerto como pago | Quem recebeu confirma; o saldo fecha | P | Ingryd | — | A fazer |
 | 18 | Fechamento da viagem | Resumo final de quem pagou o quê, pra todo mundo ver | P | Ingryd | — | A fazer |
-| 19 | Tarefas com responsável | "Quem compra o seguro?", com dono e prazo | P | Ingryd | — | A fazer |
+| 19 | Tarefas com responsável | "Quem compra o seguro?", com dono e prazo | P | Ingryd | [020](specs/020-tarefas-com-responsavel.md) | Em andamento |
 
 **Se sobrar fôlego (todos P):** situação e preço do trajeto · exportar pro calendário · botão de emergência (números do país) · aviso de validade do passaporte · item "seguro viagem" no checklist.
 

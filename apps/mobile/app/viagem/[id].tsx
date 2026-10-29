@@ -14,6 +14,7 @@ import { periodo } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
 import { capaDaViagem } from '../../src/ui/fotos'
 import { Avisos } from '../../src/ui/Avisos'
+import { Tarefas } from '../../src/ui/Tarefas'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -144,6 +145,9 @@ export default function DetalheDaViagem() {
               )}
             </Cartao>
           </Pressable>
+
+          {/* Spec 020: tarefas com responsável */}
+          <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
         </View>
       </ScrollView>
       {/* Botões fixos: ficam no lugar enquanto a capa rola */}

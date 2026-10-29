@@ -1,5 +1,5 @@
 import type { ClienteTogether } from './supabase'
-import type { Tables } from './database'
+import type { Tables, TablesUpdate } from './database'
 import type { Divisao } from './acertos'
 import { deBanco, paraBanco } from './dinheiro'
 
@@ -339,5 +339,70 @@ export async function editarAviso(cli: ClienteTogether, id: string, texto: strin
 // Apaga um aviso (só o ADM).
 export async function apagarAviso(cli: ClienteTogether, id: string): Promise<void> {
   const { error } = await cli.from('avisos').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ---------- Tarefas com responsável (spec 020) ----------
+
+export type Tarefa = Tables<'tarefas'>
+
+export type NovaTarefa = {
+  titulo: string
+  responsavelId?: string | null
+  prazo?: string | null // AAAA-MM-DD
+}
+
+// Tarefas da viagem: as pendentes primeiro, depois por prazo (sem prazo no fim) e por criação.
+export async function buscarTarefas(cli: ClienteTogether, viagemId: string): Promise<Tarefa[]> {
+  const { data, error } = await cli
+    .from('tarefas')
+    .select('*')
+    .eq('viagem_id', viagemId)
+    .order('feita', { ascending: true })
+    .order('prazo', { ascending: true, nullsFirst: false })
+    .order('criado_em', { ascending: true })
+  if (error) throw error
+  return data ?? []
+}
+
+// Cria uma tarefa (qualquer um do comboio). Devolve a tarefa criada.
+export async function criarTarefa(cli: ClienteTogether, viagemId: string, dados: NovaTarefa): Promise<Tarefa> {
+  const { data, error } = await cli
+    .from('tarefas')
+    .insert({
+      viagem_id: viagemId,
+      titulo: dados.titulo.trim(),
+      responsavel_id: dados.responsavelId ?? null,
+      prazo: dados.prazo || null,
+    })
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
+// Edita título, responsável e/ou prazo (quem criou, o responsável ou o ADM).
+export async function editarTarefa(
+  cli: ClienteTogether,
+  id: string,
+  mudancas: Partial<{ titulo: string; responsavelId: string | null; prazo: string | null }>,
+): Promise<void> {
+  const patch: TablesUpdate<'tarefas'> = {}
+  if (mudancas.titulo !== undefined) patch.titulo = mudancas.titulo.trim()
+  if (mudancas.responsavelId !== undefined) patch.responsavel_id = mudancas.responsavelId
+  if (mudancas.prazo !== undefined) patch.prazo = mudancas.prazo || null
+  const { error } = await cli.from('tarefas').update(patch).eq('id', id)
+  if (error) throw error
+}
+
+// Marca/desmarca a tarefa como feita.
+export async function alternarTarefa(cli: ClienteTogether, id: string, feita: boolean): Promise<void> {
+  const { error } = await cli.from('tarefas').update({ feita }).eq('id', id)
+  if (error) throw error
+}
+
+// Apaga a tarefa (quem criou ou o ADM).
+export async function apagarTarefa(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('tarefas').delete().eq('id', id)
   if (error) throw error
 }

@@ -35,6 +35,7 @@
 .overview-trajeto { order: 5; }
 .overview-comboio-cartao { order: 6; }
 .overview-fotos { order: 7; }
+.overview-tarefas { order: 8; }
 
 /* ---------- Avisos do ADM (spec 019): recados fixados no topo ---------- */
 .faixa-avisos {
@@ -135,6 +136,178 @@
 
 .aviso-novo:hover {
   background: #fff7e9;
+}
+
+/* ---------- Tarefas (spec 020): checklist com responsável e prazo ---------- */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checklist-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tarefa {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 4px;
+  border-radius: 10px;
+}
+
+.tarefa:hover {
+  background: rgba(123, 84, 47, 0.04);
+}
+
+.tarefa-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--tracejado, #d9c3a2);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tarefa-check:disabled {
+  cursor: default;
+}
+
+.tarefa.feita .tarefa-check {
+  background: var(--couro);
+  border-color: var(--couro);
+}
+
+.tarefa-corpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tarefa-titulo {
+  color: var(--cor-texto);
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.tarefa.feita .tarefa-titulo {
+  text-decoration: line-through;
+  color: var(--cor-texto-suave);
+}
+
+.tarefa-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.tarefa-meta select {
+  border: none;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+  max-width: 130px;
+}
+
+.tarefa-prazo.atrasada {
+  color: #a1442b;
+  font-weight: 600;
+}
+
+.tarefa-apagar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.tarefa:hover .tarefa-apagar {
+  opacity: 1;
+}
+
+.tarefa-apagar:hover {
+  background: rgba(123, 84, 47, 0.1);
+  color: var(--couro);
+}
+
+.checklist-nova {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.checklist-nova input[type='text'],
+.checklist-nova input[type='date'],
+.checklist-nova select {
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--cor-texto);
+  background: var(--cor-fundo, #fff);
+}
+
+.checklist-nova-linha {
+  display: flex;
+  gap: 6px;
+}
+
+.checklist-nova-linha select {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist-nova-linha input[type='date'] {
+  flex-shrink: 0;
+}
+
+.checklist-nova-linha button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  border: none;
+  border-radius: 10px;
+  background: var(--couro);
+  color: #fff;
+  cursor: pointer;
+}
+
+.checklist-nova-linha button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* Resumo sem dados: uma linha com o próximo passo */

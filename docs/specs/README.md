@@ -33,6 +33,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 017 | [Arquitetura: monorepo, core e app mobile](017-arquitetura-monorepo-e-mobile.md) | 3 | G | app atual | Em andamento |
 | 018 | [Convidado sem conta](018-convidado-sem-conta.md) (entra pelo link só com o nome) | 2 | M | 007 | Em andamento |
 | 019 | [Avisos do ADM](019-avisos-do-adm.md) (recado fixado no topo da viagem) | 2 | P | 007 | Em andamento |
+| 020 | [Tarefas com responsável](020-tarefas-com-responsavel.md) (quem fica com o quê, com prazo) | 2 | P | 007 | Em andamento |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

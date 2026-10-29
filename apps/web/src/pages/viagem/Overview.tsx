@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BedDouble, Camera, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, Camera, ListChecks, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -23,6 +23,7 @@ import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useHospedagem } from '../../features/hospedagem/hooks'
 import FaixaAvisos from '../../features/avisos/FaixaAvisos'
+import Checklist from '../../features/tarefas/Checklist'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
@@ -369,6 +370,11 @@ export default function Overview() {
               )}
             </Link>
           )}
+        </Cartao>
+
+        {/* Spec 020: tarefas com responsável */}
+        <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
+          <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
         </Cartao>
 
         {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}
