@@ -79,5 +79,6 @@ export function useHospedagem(viagemId: string, destinos: Tables<'destinos'>[], 
     editar: comRecarga(api.editarOpcao),
     apagar: comRecarga(api.apagarOpcao),
     escolher: comRecarga(api.escolherOpcao),
+    salvarGuia: comRecarga(api.salvarGuiaDaCasa),
   }
 }

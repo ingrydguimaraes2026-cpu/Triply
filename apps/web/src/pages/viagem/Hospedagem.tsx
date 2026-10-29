@@ -17,6 +17,7 @@ import {
   type TipoNoMapa,
 } from '../../features/hospedagem/regras'
 import FormOpcao from '../../features/hospedagem/FormOpcao'
+import GuiaDaCasa, { FormGuia } from '../../features/hospedagem/GuiaDaCasa'
 import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
@@ -30,7 +31,7 @@ import './hospedagem.css'
 
 type Destino = Tables<'destinos'>
 type Item = DestinoDaHospedagem<Destino>
-type Janela = { tipo: 'opcao'; destinoId: string; opcao?: Opcao } | { tipo: 'gasto'; opcao: Opcao } | null
+type Janela = { tipo: 'opcao'; destinoId: string; opcao?: Opcao } | { tipo: 'gasto'; opcao: Opcao } | { tipo: 'guia'; opcao: Opcao } | null
 
 const SELO: Record<Item['situacao'], string> = {
   resolvido: 'Escolhida',
@@ -148,6 +149,7 @@ export default function Hospedagem() {
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}
+        {destaque && <GuiaDaCasa guia={opcao.guia} podeEditar={podeEditar} aoEditar={() => setJanela({ tipo: 'guia', opcao })} />}
 
         <div className="hosp-opcao-rodape">
           <button
@@ -374,6 +376,12 @@ export default function Hospedagem() {
             apagar={opcaoAberta ? () => h.apagar(opcaoAberta.id) : undefined}
             aoTerminar={fechar}
           />
+        </Gaveta>
+      )}
+
+      {janela?.tipo === 'guia' && (
+        <Gaveta titulo="Guia da casa" aoFechar={fechar}>
+          <FormGuia guia={janela.opcao.guia} salvar={(guia) => h.salvarGuia(janela.opcao.id, guia)} aoTerminar={fechar} />
         </Gaveta>
       )}
 

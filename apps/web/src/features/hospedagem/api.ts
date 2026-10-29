@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import { deBanco, paraBanco } from '@together/core'
-import type { Opcao } from './regras'
+import type { GuiaDaCasa, Opcao } from './regras'
 
 // O que o formulário manda (preço em centavos)
 export type DadosDaOpcao = {
@@ -40,6 +40,13 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
     escolhida: h.escolhida,
     criadoPor: h.criado_por,
     votos: (h.hospedagem_votos ?? []).map((v) => v.usuario_id),
+    guia: {
+      endereco: h.endereco,
+      wifiRede: h.wifi_rede,
+      wifiSenha: h.wifi_senha,
+      codigoPorta: h.codigo_porta,
+      regras: h.regras_casa,
+    },
   }))
 }
 
@@ -79,6 +86,26 @@ export async function votar(hospedagemId: string, meuId: string, sim: boolean) {
     : await supabase.from('hospedagem_votos').delete().eq('hospedagem_id', hospedagemId).eq('usuario_id', meuId)
   // Voto repetido (clicou duas vezes) não é erro
   if (error && error.code !== '23505') throw error
+}
+
+// Guia da casa (spec 026). Quem criou a opção ou o ADM (o banco confere).
+// Separado do editarOpcao: um não apaga o que o outro salvou.
+export async function salvarGuiaDaCasa(id: string, guia: GuiaDaCasa) {
+  const limpo = (v: string | null) => v?.trim() || null
+  const { data, error } = await supabase
+    .from('hospedagens')
+    .update({
+      endereco: limpo(guia.endereco),
+      wifi_rede: limpo(guia.wifiRede),
+      wifi_senha: limpo(guia.wifiSenha),
+      codigo_porta: limpo(guia.codigoPorta),
+      regras_casa: limpo(guia.regras),
+    })
+    .eq('id', id)
+    .select('id')
+  if (error) throw error
+  // A RLS não dá erro quando barra o update: só não muda nada
+  if (!data?.length) throw new Error('Só quem adicionou a opção ou o ADM pode editar o guia.')
 }
 
 // Só o ADM (o banco confere)

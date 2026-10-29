@@ -307,9 +307,11 @@ export type Database = {
         Row: {
           checkin: string | null
           checkout: string | null
+          codigo_porta: string | null
           criado_em: string
           criado_por: string
           destino_id: string | null
+          endereco: string | null
           escolhida: boolean
           hora_checkin: string | null
           hora_checkin_limite: string | null
@@ -320,15 +322,20 @@ export type Database = {
           nome: string
           observacao: string | null
           preco_total: number | null
+          regras_casa: string | null
           self_checkin: boolean
           viagem_id: string
+          wifi_rede: string | null
+          wifi_senha: string | null
         }
         Insert: {
           checkin?: string | null
           checkout?: string | null
+          codigo_porta?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
+          endereco?: string | null
           escolhida?: boolean
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
@@ -339,15 +346,20 @@ export type Database = {
           nome: string
           observacao?: string | null
           preco_total?: number | null
+          regras_casa?: string | null
           self_checkin?: boolean
           viagem_id: string
+          wifi_rede?: string | null
+          wifi_senha?: string | null
         }
         Update: {
           checkin?: string | null
           checkout?: string | null
+          codigo_porta?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
+          endereco?: string | null
           escolhida?: boolean
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
@@ -358,8 +370,11 @@ export type Database = {
           nome?: string
           observacao?: string | null
           preco_total?: number | null
+          regras_casa?: string | null
           self_checkin?: boolean
           viagem_id?: string
+          wifi_rede?: string | null
+          wifi_senha?: string | null
         }
         Relationships: [
           {

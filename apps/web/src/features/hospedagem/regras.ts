@@ -21,6 +21,20 @@ export type Opcao = {
   escolhida: boolean
   criadoPor: string
   votos: string[] // ids de quem votou
+  guia?: GuiaDaCasa // spec 026: só faz sentido na escolhida
+}
+
+// Guia da casa (spec 026): o que o comboio precisa saber ao chegar
+export type GuiaDaCasa = {
+  endereco: string | null
+  wifiRede: string | null
+  wifiSenha: string | null
+  codigoPorta: string | null
+  regras: string | null
+}
+
+export function guiaVazio(guia: GuiaDaCasa | undefined): boolean {
+  return !guia || Object.values(guia).every((v) => !v)
 }
 
 // ---------------- Links de busca ----------------

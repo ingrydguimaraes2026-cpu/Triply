@@ -218,3 +218,23 @@
   font: inherit; font-weight: 700; cursor: pointer;
 }
 .hosp-adicionar:hover { background: var(--cor-comboio-fundo); }
+
+/* Guia da casa (spec 026) */
+.guia-casa {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 4px; padding: 12px 14px;
+  border: 1px dashed var(--cor-borda); border-radius: 12px; background: var(--cor-fundo);
+}
+.guia-casa.vazio { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.guia-casa.vazio p { margin: 0; font-size: 13px; color: var(--cor-texto-suave); }
+.guia-casa-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.guia-casa-topo h4 { margin: 0; font-size: 14px; }
+.guia-casa dl { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+.guia-casa dt { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--cor-texto-suave); }
+.guia-casa dd { margin: 2px 0 0; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.guia-casa dd a { font-size: 13px; font-weight: 700; color: var(--couro); }
+.guia-casa code { padding: 1px 6px; border-radius: 6px; background: var(--cor-cartao); border: 1px solid var(--cor-borda); font-size: 14px; }
+.guia-regras { white-space: pre-line; }
+.guia-copiar {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 10px; border-radius: 999px;
+  border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--couro); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+}

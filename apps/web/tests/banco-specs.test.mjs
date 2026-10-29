@@ -744,3 +744,38 @@ test('024: não dá pra trocar a viagem nem o autor; atualizado_em sobe', async 
   const depois = (await db.query('select atualizado_em from public.pontos_de_encontro where id = $1', [id])).rows[0].atualizado_em
   assert.ok(new Date(depois) >= new Date(antes))
 })
+
+// ---------------- 026: guia da casa ----------------
+const guia = (db, quem, id, campos) =>
+  como(
+    db,
+    quem,
+    `update public.hospedagens set endereco = $2, wifi_rede = $3, wifi_senha = $4, codigo_porta = $5, regras_casa = $6
+     where id = $1 returning id`,
+    [id, campos.endereco ?? null, campos.wifiRede ?? null, campos.wifiSenha ?? null, campos.codigoPorta ?? null, campos.regras ?? null],
+  )
+
+test('026: quem adicionou ou o ADM preenchem o guia; o comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  const id = await novaOpcao(db, MEMBRO)
+  await guia(db, MEMBRO, id, { endereco: 'Rue Droite 12, Nice', wifiRede: 'Casa', wifiSenha: 'soleil2027', codigoPorta: '4821' })
+  const visto = (await como(db, ADM, 'select endereco, wifi_senha, codigo_porta from public.hospedagens where id = $1', [id]))[0]
+  assert.deepEqual(visto, { endereco: 'Rue Droite 12, Nice', wifi_senha: 'soleil2027', codigo_porta: '4821' })
+  await guia(db, ADM, id, { endereco: 'Rue Droite 12, Nice', regras: 'Silêncio depois das 22h' })
+  assert.equal((await db.query('select regras_casa from public.hospedagens where id = $1', [id])).rows[0].regras_casa, 'Silêncio depois das 22h')
+  assert.equal((await como(db, ESTRANHO, 'select wifi_senha from public.hospedagens')).length, 0)
+})
+
+test('026: outro membro não edita o guia de uma opção que não é dele', async () => {
+  const db = await novoBanco()
+  const id = await novaOpcao(db, ADM)
+  assert.equal((await guia(db, MEMBRO, id, { wifiSenha: 'hackeado' })).length, 0)
+  assert.equal((await db.query('select wifi_senha from public.hospedagens where id = $1', [id])).rows[0].wifi_senha, null)
+})
+
+test('026: campo maior que o limite é recusado', async () => {
+  const db = await novoBanco()
+  const id = await novaOpcao(db, MEMBRO)
+  await assert.rejects(guia(db, MEMBRO, id, { codigoPorta: 'x'.repeat(51) }), /check constraint/)
+  await assert.rejects(guia(db, MEMBRO, id, { regras: 'x'.repeat(1001) }), /check constraint/)
+})

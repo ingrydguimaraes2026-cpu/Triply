@@ -16,7 +16,7 @@ Ordenei por **valor ÷ risco ÷ dependência**: primeiro o que entrega rápido, 
 | Nº | Task | Tam. | Banco? | Risco | Estado |
 |---|---|---|---|---|---|
 | 1 | #5 Compartilhar no WhatsApp | P | não | baixo | a detalhar → spec 025 |
-| 2 | #14 Endereço e guia da casa | P | sim (aditivo) | baixo | a detalhar → spec 026 |
+| 2 | #14 Endereço e guia da casa | P | sim (aditivo) | baixo | ✅ spec 026, web, banco aplicado |
 | 3 | #16 Comentários em qualquer item | M | sim | médio | a detalhar → spec 027 |
 | 4 | #13 Bilhete no trajeto | P | sim + storage | médio | a detalhar → spec 028 |
 | 5 | #6 Agenda do dia | G | sim | médio | a detalhar → spec 029 |
