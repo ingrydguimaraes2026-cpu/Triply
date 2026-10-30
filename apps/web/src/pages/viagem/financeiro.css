@@ -314,3 +314,48 @@
 .menu-exportar > div button:hover {
   background: var(--cor-comboio-fundo);
 }
+
+/* Meu orçamento pessoal (spec 056) */
+.meu-orcamento .numero small {
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.meu-orcamento .barra-orcamento {
+  height: 8px;
+  margin: 6px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--cor-borda);
+}
+
+.meu-orcamento .barra-orcamento span {
+  display: block;
+  height: 100%;
+  background: var(--caramelo);
+}
+
+.meu-orcamento.nivel-atencao .barra-orcamento span {
+  background: var(--laranja);
+}
+
+.meu-orcamento.nivel-estourou .barra-orcamento span {
+  background: var(--cor-pessoal);
+}
+
+.meu-orcamento-form {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.meu-orcamento-form > div {
+  display: flex;
+  gap: 6px;
+}
+
+.meu-orcamento-form input {
+  flex: 1;
+  min-width: 0;
+}

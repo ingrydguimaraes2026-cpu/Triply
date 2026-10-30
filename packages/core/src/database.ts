@@ -910,6 +910,27 @@ export type Database = {
           },
         ]
       }
+      orcamentos_pessoais: {
+        Row: {
+          atualizado_em: string
+          meta: number
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          meta: number
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          meta?: number
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           avatar_url: string | null

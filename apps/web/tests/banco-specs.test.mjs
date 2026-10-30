@@ -1233,3 +1233,13 @@ test('055: ADM da viagem nova traz o comboio da antiga; quem não é ADM ou não
   await db.exec(`insert into public.viagens (id, nome, criado_por) values ('${ALHEIA}', 'Alheia', '${ESTRANHO}')`)
   await assert.rejects(como(db, ADM, `select public.trazer_comboio('${NOVA}', '${ALHEIA}')`), /comboio/)
 })
+
+// ---------------- 056: orçamento pessoal ----------------
+test('056: cada um vê e muda só o próprio orçamento; precisa ser do comboio', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.orcamentos_pessoais (viagem_id, meta) values ('${V}', 8000)`)
+  assert.equal((await como(db, ADM, 'select * from public.orcamentos_pessoais')).length, 0)
+  assert.equal(Number((await como(db, MEMBRO, 'select meta from public.orcamentos_pessoais'))[0].meta), 8000)
+  await assert.rejects(como(db, ESTRANHO, `insert into public.orcamentos_pessoais (viagem_id, meta) values ('${V}', 1)`), /row-level security/)
+  await assert.rejects(como(db, MEMBRO, `update public.orcamentos_pessoais set meta = 0`), /check/)
+})

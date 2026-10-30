@@ -75,7 +75,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 29 | F5 | Ficha da pessoa (alergias, restrições, aniversário) ◐ | P | ✅ feito (web) · spec 050 · banco a aplicar |
 | 30 | F9 | "Cheguei bem" | P | ✅ feito (web) · spec 051 · banco a aplicar |
 | 31 | H13 | Gastos planejados e recorrentes | P | a fazer |
-| 32 | H14 | Meu orçamento pessoal ◐ | P | a fazer |
+| 32 | H14 | Meu orçamento pessoal ◐ | P | ✅ feito (web) · spec 056 · banco a aplicar |
 | 33 | H16 | Exportar gastos (CSV, PDF, Splitwise) | P | ✅ feito (web) · spec 052 |
 | 34 | M9 | Busca na viagem (um campo acha tudo) | P | ✅ feito (web) · spec 053 |
 | 35 | M12 | Modo escuro | P | adiado pro fim: 309 cores fixas no CSS, precisa revisão visual |

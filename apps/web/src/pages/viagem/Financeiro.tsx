@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Coins, Download, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
 import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
+import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
@@ -100,6 +101,11 @@ export default function Financeiro() {
     }
     const gastoComboio = doComboio.reduce((s, g) => s + emMoedaDaViagem(g), 0)
     const gastoPessoal = pessoais.reduce((s, g) => s + emMoedaDaViagem(g), 0)
+    // Spec 056: minha parte nos gastos do comboio (convertida pra moeda da viagem)
+    const minhaParte = doComboio.reduce((s, g) => {
+      const parte = g.divisoes.find((d) => d.usuarioId === meuId)?.valor ?? 0
+      return s + (parte ? (converter(parte, g.moeda, moeda, taxas) ?? 0) : 0)
+    }, 0)
     const porCategoria: Record<string, number> = {}
     for (const g of doComboio) porCategoria[g.categoria] = (porCategoria[g.categoria] ?? 0) + emMoedaDaViagem(g)
 
@@ -109,6 +115,7 @@ export default function Financeiro() {
     return {
       gastoComboio,
       gastoPessoal,
+      meuGasto: minhaParte + gastoPessoal,
       porCategoria,
       semCotacao: [...semCotacao],
       parPrincipal,
@@ -118,7 +125,7 @@ export default function Financeiro() {
       ),
       totaisComboio: totalPorMoeda(doComboio),
     }
-  }, [dados, moeda, hoje])
+  }, [dados, moeda, hoje, meuId])
 
   const nome = (id: string) => nomeDaPessoa(id, membros, dados?.exMembros ?? [], meuId)
   const fechar = () => setJanela(null)
@@ -221,6 +228,16 @@ export default function Financeiro() {
               {contas.semCotacao.length > 0 && (
                 <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
               )}
+            </Cartao>
+            <Cartao titulo="Meu orçamento" icone={UserRound}>
+              <MeuOrcamento
+                viagemId={viagem.id}
+                meuId={meuId}
+                moeda={moeda}
+                gasto={contas.meuGasto}
+                inicio={viagem.data_inicio}
+                fim={viagem.data_fim}
+              />
             </Cartao>
             {moeda === 'EUR' ? (
               // Quanto de euro eu tenho (saldo da carteira, puxado dos e-mails do Wise/Nomad)
