@@ -25,3 +25,17 @@ test('sem og: usa o <title>; imagem relativa vira absoluta; http é descartado',
   assert.equal(r.imagem, 'https://hotel.fr/foto.jpg')
   assert.equal(lerPrevia('<meta property="og:image" content="http://x.com/a.jpg">', 'https://x.com').imagem, null)
 })
+
+test('097: rede do link e lugar do post', async () => {
+  const { redeDoLink, lugarDoPost } = await import(new URL('../../../packages/core/src/previa.ts', import.meta.url))
+  assert.equal(redeDoLink('https://www.instagram.com/reel/abc/'), 'instagram')
+  assert.equal(redeDoLink('https://vm.tiktok.com/xyz'), 'tiktok')
+  assert.equal(redeDoLink('https://youtu.be/123'), 'youtube')
+  assert.equal(redeDoLink('https://booking.com/x'), null)
+  const post = lugarDoPost(
+    { titulo: 'Ana Viaja (@anaviaja) on Instagram: "melhor croissant"', descricao: 'Melhor croissant da vida 🥐\n📍 Café de Flore, Paris.\n#paris #cafe' },
+    'instagram',
+  )
+  assert.deepEqual(post, { nome: 'Café de Flore, Paris', observacao: 'Visto no Instagram de @anaviaja' })
+  assert.deepEqual(lugarDoPost({ titulo: null, descricao: 'sem pino' }, 'tiktok'), { nome: null, observacao: 'Visto no TikTok' })
+})

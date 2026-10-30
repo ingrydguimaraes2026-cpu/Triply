@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { consultaDeEstabelecimentos, estabelecimentosDaResposta, type Estabelecimento } from '@together/core'
+import { consultaDeEstabelecimentos, estabelecimentosDaResposta, lugarDoPost, redeDoLink, type Estabelecimento } from '@together/core'
+import { supabase } from '../../lib/supabase'
 import { Trash2 } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
@@ -35,6 +36,7 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmando, setConfirmando] = useState(false)
+  const [lendoPost, setLendoPost] = useState(false) // spec 097
   // Spec 064: sugestões enquanto digita o nome (Photon, perto do destino)
   const [ponto, setPonto] = useState<{ latitude: number; longitude: number; endereco: string } | null>(
     lugar?.latitude != null && lugar?.longitude != null ? { latitude: lugar.latitude, longitude: lugar.longitude, endereco: lugar.endereco ?? '' } : null,
@@ -66,6 +68,23 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
     if (!lugar && e.tipo !== 'outro') setTipo(e.tipo)
     setSugestoes([])
     setDigitando(false)
+  }
+
+  // Spec 097: colou link de Instagram/TikTok/YouTube? Lê o post e tenta achar o "📍 lugar"
+  function trocarLink(valor: string) {
+    setLink(valor)
+    const rede = redeDoLink(valor)
+    if (!rede || lugar || !linkValido(valor.trim())) return
+    setLendoPost(true)
+    supabase.functions
+      .invoke('previa-link', { body: { url: valor.trim() } })
+      .then(({ data }) => {
+        const post = lugarDoPost((data ?? {}) as { titulo: string | null; descricao: string | null }, rede)
+        if (post.nome) setNome((atual) => atual || post.nome!)
+        setObservacao((atual) => atual || post.observacao)
+      })
+      .catch(() => {})
+      .finally(() => setLendoPost(false))
   }
 
   async function enviar(e: FormEvent) {
@@ -166,7 +185,8 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
         <label className="form-rotulo" htmlFor="lugar-link">
           Link (site, Instagram, TikTok…)
         </label>
-        <input id="lugar-link" type="url" inputMode="url" placeholder="https://…" value={link} onChange={(e) => setLink(e.target.value)} />
+        <input id="lugar-link" type="url" inputMode="url" placeholder="https://…" value={link} onChange={(e) => trocarLink(e.target.value)} />
+        {lendoPost && <p className="form-dica">Lendo o post…</p>}
       </div>
 
       <div className="form-campo">

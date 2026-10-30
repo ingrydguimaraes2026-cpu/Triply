@@ -46,3 +46,29 @@ export function lerPrevia(html: string, url: string): Previa {
     site: meta(html, ['og:site_name']),
   }
 }
+
+// ---------- Link de rede social → lugar (spec 097, C6) ----------
+// Instagram, TikTok e YouTube: o texto do post costuma ter "📍 Nome do lugar".
+
+export type Rede = 'instagram' | 'tiktok' | 'youtube'
+
+export function redeDoLink(link: string): Rede | null {
+  const host = /^https?:\/\/([^/?#]+)/i.exec(link.trim())?.[1]?.toLowerCase().replace(/^www\.|^m\./, '') ?? ''
+  if (host === 'instagram.com' || host === 'instagr.am') return 'instagram'
+  if (host === 'tiktok.com' || host.endsWith('.tiktok.com')) return 'tiktok'
+  if (host === 'youtube.com' || host === 'youtu.be') return 'youtube'
+  return null
+}
+
+const NOMES_DAS_REDES: Record<Rede, string> = { instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube' }
+
+// O que dá pra tirar da prévia do post: o nome do lugar (se tiver 📍) e de quem é o post
+export function lugarDoPost(previa: Pick<Previa, 'titulo' | 'descricao'>, rede: Rede): { nome: string | null; observacao: string } {
+  const texto = `${previa.descricao ?? ''}\n${previa.titulo ?? ''}`
+  // "📍 Café de Flore, Paris" → "Café de Flore, Paris"
+  const pino = /📍\s*([^\n#@|•·]{2,80})/u.exec(texto)?.[1]
+  const nome = pino ? pino.replace(/[\s.,;:!-]+$/u, '').trim().slice(0, 120) : null
+  // "Fulano (@fulano) on Instagram" / "@fulano on TikTok"
+  const perfil = /@([a-z0-9._]{2,30})/i.exec(previa.titulo ?? '')?.[1]
+  return { nome: nome || null, observacao: `Visto no ${NOMES_DAS_REDES[rede]}${perfil ? ` de @${perfil}` : ''}` }
+}
