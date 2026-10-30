@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { buscarTrajetos, type Trajeto } from './api'
+import { useAoMudar } from '../tempo-real/avisos'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; trajetos: Trajeto[] }
 
@@ -27,5 +28,6 @@ export function useTrajetos(viagemId: string) {
   }, [buscar])
 
   const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  useAoMudar(['trajetos'], recarregar) // spec 085: outra pessoa mudou → recarrega
   return { estado, recarregar }
 }

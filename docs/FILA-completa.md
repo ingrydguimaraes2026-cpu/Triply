@@ -137,7 +137,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 ## Fase 7 · Plataforma
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
-| 78 | M5 | Tempo real (Supabase Realtime) | M | a fazer |
+| 78 | M5 | Tempo real (Supabase Realtime) | M | Pronto pra testar (web) · spec 085 |
 | 79 | M4 | Gravar offline (fila com regra de conflito) ◐ | G | a fazer |
 | 80 | M8 | Histórico e lixeira de 30 dias | M | a fazer |
 | 81 | M7 | Exportar a viagem em PDF | M | a fazer |

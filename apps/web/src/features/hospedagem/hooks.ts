@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Tables } from '@together/core'
 import * as api from './api'
 import { montarHospedagem, resumoDaHospedagem, type Opcao } from './regras'
+import { useAoMudar } from '../tempo-real/avisos'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; opcoes: Opcao[] }
 
@@ -29,6 +30,7 @@ export function useHospedagem(viagemId: string, destinos: Tables<'destinos'>[], 
   }, [buscar])
 
   const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  useAoMudar(['hospedagens'], recarregar) // spec 085: outra pessoa mudou → recarrega
 
   const opcoes = useMemo(() => (estado.status === 'pronto' ? estado.opcoes : []), [estado])
   const itens = useMemo(() => montarHospedagem(destinos, opcoes), [destinos, opcoes])

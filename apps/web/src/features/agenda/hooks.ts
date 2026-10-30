@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { buscarEventosDaAgenda, type EventoDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
+import { useAoMudar } from '../tempo-real/avisos'
 
 // Eventos livres da agenda (spec 029). Trajetos e destinos vêm de useTrajetos / useViagemAtual.
 export function useEventosDaAgenda(viagemId: string) {
@@ -16,6 +17,7 @@ export function useEventosDaAgenda(viagemId: string) {
       setErro(true)
     }
   }, [viagemId])
+  useAoMudar(['eventos_agenda'], recarregar) // spec 085: outra pessoa mudou → recarrega
 
   useEffect(() => {
     let ativo = true

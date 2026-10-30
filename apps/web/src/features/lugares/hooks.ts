@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Tables } from '@together/core'
 import * as api from './api'
 import { lugaresSoltos, montarLugares, type Lugar } from './regras'
+import { useAoMudar } from '../tempo-real/avisos'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; lugares: Lugar[] }
 
@@ -30,6 +31,7 @@ export function useLugares(viagemId: string, destinos: Tables<'destinos'>[], meu
   }, [buscar])
 
   const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  useAoMudar(['lugares'], recarregar) // spec 085: outra pessoa mudou → recarrega
 
   const lugares = useMemo(() => (estado.status === 'pronto' ? estado.lugares : []), [estado])
   const itens = useMemo(() => montarLugares(destinos, lugares), [destinos, lugares])

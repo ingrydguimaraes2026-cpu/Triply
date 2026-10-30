@@ -13,6 +13,7 @@ import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import Emergencia from '../../features/emergencia/Emergencia'
 import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
+import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -51,6 +52,9 @@ type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<Dado
 
 // Moldura de todas as telas de uma viagem: menu + a aba escolhida.
 // Carrega os dados da viagem uma vez e passa pras abas (veja useViagemAtual).
+// Função vazia fixa (não muda a cada render), pra quando a viagem ainda não carregou
+const semNada = async () => {}
+
 export default function ViagemLayout() {
   const { id } = useParams()
   const estado = useViagem(id)
@@ -63,6 +67,8 @@ export default function ViagemLayout() {
   const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
   const [buscando, setBuscando] = useState(false) // spec 053
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
+  // Spec 085: mudança de outra pessoa aparece na hora (só escuta depois que a viagem carregou)
+  useTempoReal(estado.status === 'pronta' ? id : undefined, estado.status === 'pronta' ? estado.dados.recarregar : semNada)
 
   // Qual aba está aberta ('' = Overview) e quais abas guardadas já foram visitadas nesta viagem
   const { pathname } = useLocation()
