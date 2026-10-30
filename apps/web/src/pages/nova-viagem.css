@@ -385,3 +385,16 @@
     animation: none;
   }
 }
+
+/* Modo sonhando (spec 046): começar sem destino */
+.onb-sonhando {
+  margin-top: 10px;
+  padding: 8px;
+  border: 0;
+  background: none;
+  color: var(--caramelo);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}

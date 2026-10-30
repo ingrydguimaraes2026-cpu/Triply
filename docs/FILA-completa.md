@@ -65,7 +65,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 19 | G7 | Menções `@nome` em comentário e tarefa | P | ✅ feito (web) · spec 043 |
 | 20 | A7 | Decisões registradas (enquete encerrada vira decisão) | P | ✅ feito (web) · spec 044 · banco a aplicar |
 | 21 | A3 | Orçamento combinado (faixa secreta de cada um) | P | ✅ feito (web) · spec 045 · banco a aplicar |
-| 22 | A8 | Modo rascunho ("sonhando"), viagem sem destino fechado ◐ | P | a fazer |
+| 22 | A8 | Modo rascunho ("sonhando"), viagem sem destino fechado ◐ | P | ✅ feito (web) · spec 046 |
 | 23 | I9 | Ficha do país (tomada, gorjeta, fuso, emergência, internet) | P | a fazer |
 | 24 | I12 | Internet no destino: lembrete do eSIM antes de embarcar (ideia: Holafly) | P | a fazer |
 | 25 | I8 | Itens do grupo ("quem leva o adaptador") | P | a fazer |

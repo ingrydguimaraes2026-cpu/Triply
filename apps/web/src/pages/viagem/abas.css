@@ -1130,3 +1130,31 @@
   color: var(--cor-texto-suave);
   font-size: 13px;
 }
+
+/* Modo sonhando (spec 046) */
+.faixa-sonhando {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--caramelo);
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+}
+
+.faixa-sonhando svg {
+  flex: none;
+  color: var(--caramelo);
+}
+
+.faixa-sonhando ol {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+@media (min-width: 1200px) {
+  .faixa-sonhando {
+    grid-column: 1 / -1;
+  }
+}

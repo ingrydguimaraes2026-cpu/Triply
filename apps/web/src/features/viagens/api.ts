@@ -25,6 +25,9 @@ export async function criarViagem(dados: NovaViagem) {
     .single()
   if (error) throw error
 
+  // Spec 046: viagem "sonhando" nasce sem destino
+  if (dados.destinos.length === 0) return viagem.id
+
   const { error: erroDestinos } = await supabase.from('destinos').insert(
     dados.destinos.map((d, ordem) => ({
       viagem_id: viagem.id,

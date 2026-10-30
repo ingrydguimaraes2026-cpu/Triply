@@ -26,7 +26,7 @@ const MOEDAS = [
 
 function nomeSugerido(destinos: Cidade[]) {
   const nomes = destinos.map((d) => d.nome)
-  if (nomes.length === 0) return ''
+  if (nomes.length === 0) return 'Próxima viagem' // spec 046: modo sonhando, ainda sem destino
   if (nomes.length === 1) return `Viagem pra ${nomes[0]}`
   if (nomes.length <= 3) return `${nomes.slice(0, -1).join(', ')} e ${nomes.at(-1)}`
   return `${nomes[0]}, ${nomes[1]} e mais ${nomes.length - 2}`
@@ -257,6 +257,11 @@ function CriarViagem() {
             <button type="button" className="onb-botao" disabled={destinos.length === 0} onClick={() => setPasso('datas')}>
               Continuar
             </button>
+            {destinos.length === 0 && (
+              <button type="button" className="onb-sonhando" onClick={() => setPasso('datas')}>
+                Ainda não sei pra onde: começar sonhando
+              </button>
+            )}
           </section>
         )}
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Pencil, PiggyBank, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Pencil, PiggyBank, Plus, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -223,6 +223,20 @@ export default function Overview() {
     <div className="overview">
       {/* Spec 019: recados do ADM fixados no topo */}
       <FaixaAvisos viagemId={viagem.id} euSouAdm={euSouAdm} />
+      {/* Spec 046: viagem ainda sem destino ("sonhando") */}
+      {destinos.length === 0 && (
+        <section className="faixa-sonhando" aria-label="Modo sonhando">
+          <Sparkles size={20} aria-hidden="true" />
+          <div>
+            <strong>Modo sonhando: a viagem ainda não tem destino.</strong>
+            <ol>
+              <li>Crie uma enquete "Pra onde vamos?" com as ideias do comboio.</li>
+              <li>Cada um põe, em segredo, quanto topa gastar (Orçamento combinado).</li>
+              <li>Decidiram? {euSouAdm ? 'Adicione os destinos no Roteiro, aqui embaixo.' : 'O ADM adiciona os destinos no Roteiro.'}</li>
+            </ol>
+          </div>
+        </section>
+      )}
       {/* Coluna larga: mapa, roteiro e fotos */}
       <div className="overview-principal">
         <section className="overview-mapa">
