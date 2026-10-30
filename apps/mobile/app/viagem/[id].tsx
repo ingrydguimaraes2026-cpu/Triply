@@ -9,7 +9,7 @@ import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
-import { compartilharLink, gerarLinkDeConvite } from '../../src/lib/convite'
+import { convidarProComboio } from '../../src/lib/convite'
 import { periodo } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
 import { capaDaViagem } from '../../src/ui/fotos'
@@ -68,13 +68,7 @@ export default function DetalheDaViagem() {
   ]
 
   async function convidar() {
-    try {
-      const link = await gerarLinkDeConvite(viagem!.id)
-      const r = await compartilharLink(link, viagem!.nome)
-      setConvite(r === 'copiado' ? 'Link copiado! Mande pra turma.' : null)
-    } catch {
-      setConvite('Só o ADM da viagem pode gerar convite.')
-    }
+    setConvite((await convidarProComboio(viagem!.id, viagem!.nome))?.texto ?? null)
   }
 
   return (
@@ -117,7 +111,7 @@ export default function DetalheDaViagem() {
               <Text className="font-body-semibold text-[14px] text-couro">Convidar</Text>
             </Pressable>
           </View>
-          {convite ? <Text className="font-body-medium text-[13px] text-verde">{convite}</Text> : null}
+          {convite ? <Text selectable className="font-body-medium text-[13px] text-verde">{convite}</Text> : null}
 
           {/* Spec 019: recados do ADM fixados no topo da viagem */}
           <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />

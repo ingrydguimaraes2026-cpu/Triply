@@ -17,7 +17,7 @@ import {
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
-import { compartilharLink, gerarLinkDeConvite, linkDoConvite } from '../src/lib/convite'
+import { convidarProComboio, linkDoConvite } from '../src/lib/convite'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Avatar, Botao, BotaoRedondo, Cartao, Carregando, ErroNaTela, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
@@ -98,13 +98,8 @@ export default function Comboio() {
   }
 
   async function convidar() {
-    try {
-      const r = await compartilharLink(await gerarLinkDeConvite(viagem!.id), viagem!.nome)
-      if (r === 'copiado') setAviso({ erro: false, texto: 'Link copiado! Mande pra turma.' })
-      carga.recarregar()
-    } catch {
-      setAviso({ erro: true, texto: 'Só o ADM da viagem pode gerar convite.' })
-    }
+    setAviso(await convidarProComboio(viagem!.id, viagem!.nome))
+    carga.recarregar() // o convite novo entra em "Convites ativos"
   }
 
   return (
@@ -123,7 +118,11 @@ export default function Comboio() {
           </View>
           {euSouAdm ? <Botao compacto titulo="Convidar" icone={<Share2 size={17} color="#fff" />} aoTocar={convidar} /> : null}
         </View>
-        {aviso ? <Text className={`font-body-medium text-[13px] ${aviso.erro ? 'text-vermelho' : 'text-verde'}`}>{aviso.texto}</Text> : null}
+        {aviso ? (
+          <Text selectable className={`font-body-medium text-[13px] ${aviso.erro ? 'text-vermelho' : 'text-verde'}`}>
+            {aviso.texto}
+          </Text>
+        ) : null}
 
         <RotuloDeSecao>Quem vai</RotuloDeSecao>
         <Cartao className="px-4">

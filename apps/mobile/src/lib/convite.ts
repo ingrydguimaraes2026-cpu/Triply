@@ -28,5 +28,21 @@ export async function compartilharLink(link: string, nomeDaViagem: string): Prom
   return 'compartilhado'
 }
 
+// Gera o convite e abre o compartilhar. São dois passos: se só o compartilhar falhar
+// (ex.: o navegador não deixou copiar), o convite já existe e a tela mostra o link pra copiar à mão.
+export async function convidarProComboio(viagemId: string, nomeDaViagem: string): Promise<{ texto: string; erro: boolean } | null> {
+  let link: string
+  try {
+    link = await gerarLinkDeConvite(viagemId)
+  } catch {
+    return { texto: 'Só o ADM da viagem pode gerar convite.', erro: true }
+  }
+  try {
+    return (await compartilharLink(link, nomeDaViagem)) === 'copiado' ? { texto: 'Link copiado! Mande pra turma.', erro: false } : null
+  } catch {
+    return { texto: `Convite criado. Copie e mande: ${link}`, erro: false }
+  }
+}
+
 // Convite aberto antes do login ("Já tenho conta"): o porteiro volta pra ele depois de entrar
 export const conviteDepoisDoLogin: { codigo: string | null } = { codigo: null }
