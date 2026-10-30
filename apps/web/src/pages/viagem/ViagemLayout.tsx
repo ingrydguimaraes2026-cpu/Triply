@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, LogOut, MapPinned, Plus, Search, Settings, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, LogOut, MapPinned, Plus, Search, Settings, Sun, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair, useSessao } from '../../features/auth/hooks'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -29,6 +29,7 @@ import './viagem.css'
 // `curto`: nome menor pro menu de baixo do celular (8 abas em 360px)
 const ABAS = [
   { para: '', rotulo: 'Overview', curto: 'Início', icone: Compass },
+  { para: 'hoje', rotulo: 'Hoje', icone: Sun },
   { para: 'agenda', rotulo: 'Agenda', icone: CalendarDays },
   { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
   { para: 'lugares', rotulo: 'Lugares', icone: MapPinned },

@@ -16,6 +16,7 @@ import Financeiro from './pages/viagem/Financeiro'
 import Fotos from './pages/viagem/Fotos'
 import Comboio from './pages/viagem/Comboio'
 import Configuracoes from './pages/viagem/Configuracoes'
+import Hoje from './pages/viagem/Hoje'
 import MinhasViagens from './pages/MinhasViagens'
 import Perfil from './pages/Perfil'
 import CarteiraConectado from './pages/CarteiraConectado'
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
             element: <ViagemLayout />,
             children: [
               { index: true, element: <Overview /> },
+              { path: 'hoje', element: <Hoje /> },
               { path: 'hospedagem', element: <Hospedagem /> },
               { path: 'agenda', element: <Agenda /> },
               { path: 'lugares', element: <Lugares /> },

@@ -86,15 +86,15 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 ## Fase 4 · Modo Hoje e "durante a viagem"
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
-| 39 | J1 | Tela Hoje (agora, próximo item, onde dormimos, encontro, clima) ◐ | M | a fazer |
-| 40 | J2 | Conversor de moeda na mão ◐ | P | a fazer |
-| 41 | J4 | Mostrar pro motorista (endereço no idioma local, tela cheia) | P | a fazer |
-| 42 | J6 | Gorjeta e divisão de conta pelo costume do país | P | a fazer |
+| 39 | J1 | Tela Hoje (agora, próximo item, onde dormimos, encontro, clima) ◐ | M | ✅ feito (web) · spec 058 |
+| 40 | J2 | Conversor de moeda na mão ◐ | P | ✅ feito (web) · spec 059 |
+| 41 | J4 | Mostrar pro motorista (endereço no idioma local, tela cheia) | P | ✅ feito (web) · spec 059 |
+| 42 | J6 | Gorjeta e divisão de conta pelo costume do país | P | ✅ feito (web) · spec 059 |
 | 43 | E8 | Malas antes do check-in (guarda-volumes na hospedagem) ◐ | P | a fazer |
-| 44 | E12 | Busca pronta de guarda-volumes perto (ideia: Nannybag) | P | a fazer |
+| 44 | E12 | Busca pronta de guarda-volumes perto (ideia: Nannybag) | P | ✅ feito (web) · spec 059 |
 | 45 | J5 | Dia de passagem (guarda-volumes + horário-limite + último trem) ◐ | P | a fazer |
-| 46 | C11 | Banheiro grátis perto, dados do OpenStreetMap (ideia: Flush) | P | a fazer |
-| 47 | C12 | Achar e reservar restaurante (TheFork / Maps) no destino (ideia: TheFork) | P | a fazer |
+| 46 | C11 | Banheiro grátis perto, dados do OpenStreetMap (ideia: Flush) | P | ✅ feito (web) · spec 059 |
+| 47 | C12 | Achar e reservar restaurante (TheFork / Maps) no destino (ideia: TheFork) | P | ✅ feito (web) · spec 059 |
 | 48 | C8 | Perto de mim (lugares salvos mais próximos) | P | a fazer |
 | 49 | C10 | "Já fomos" (marcar lugar como visitado) | P | a fazer |
 | 50 | D12 | Transfer de chegada (aeroporto/estação → hospedagem) | P | a fazer |

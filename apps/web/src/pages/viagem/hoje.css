@@ -1,0 +1,74 @@
+/* Tela Hoje (spec 058). Só cores do global.css. */
+.hoje {
+  display: grid;
+  gap: 16px;
+}
+
+.hoje-fora {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.hoje-agora {
+  display: grid;
+  gap: 10px;
+}
+
+.hoje-item {
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+}
+
+.hoje-item.agora {
+  border-color: var(--laranja);
+  background: var(--dourado-claro);
+}
+
+.hoje-item strong {
+  font-size: 18px;
+}
+
+.hoje-item small {
+  color: var(--cor-texto-suave);
+}
+
+.hoje-rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--caramelo);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hoje-dormimos {
+  display: grid;
+  gap: 4px;
+}
+
+.hoje-dormimos small {
+  color: var(--cor-texto-suave);
+}
+
+.hoje-dormimos .botao-ir {
+  justify-self: start;
+}
+
+.hoje-encontro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}

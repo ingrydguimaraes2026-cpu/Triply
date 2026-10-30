@@ -1,0 +1,126 @@
+/* Ferramentas do dia (spec 059). Só cores do global.css. */
+.ferramentas {
+  display: grid;
+  gap: 16px;
+}
+
+.ferramenta-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ferramenta-campo {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+}
+
+.ferramenta-campo.pequeno {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.ferramenta-campo.pequeno input {
+  width: 48px;
+}
+
+.ferramenta-campo span {
+  color: var(--cor-texto-suave);
+  font-weight: 700;
+}
+
+.ferramenta-campo input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  font-size: 18px;
+}
+
+.ferramenta-resultado {
+  display: grid;
+  margin: 8px 0 0;
+}
+
+.ferramenta-resultado strong {
+  font-size: 22px;
+}
+
+.ferramenta-resultado small {
+  color: var(--cor-texto-suave);
+}
+
+.ferramenta-links {
+  display: grid;
+  gap: 6px;
+}
+
+.ferramenta-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--couro);
+  font-weight: 700;
+}
+
+.ferramenta-banheiros {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ferramenta-banheiros a {
+  display: grid;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.ferramenta-banheiros small {
+  color: var(--cor-texto-suave);
+}
+
+.ferramenta-motorista {
+  justify-self: start;
+}
+
+.tela-motorista {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--cor-cartao);
+}
+
+.tela-motorista p {
+  margin: 0;
+  color: var(--cor-texto);
+  font-size: clamp(28px, 8vw, 56px);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.tela-motorista-fechar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+}
