@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeftRight, Bed, Car, Plus, Receipt, ShoppingBag, Ticket, Utensils, Wallet } from 'lucide-react-native'
-import { buscarGastos, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type GastoDaViagem, type ViagemComDetalhes } from '@together/core'
+import { ArrowLeftRight, Bed, Car, MessageCircle, Plus, Receipt, ShoppingBag, Ticket, Utensils, Wallet } from 'lucide-react-native'
+import { buscarGastos, contarComentariosDaViagem, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type GastoDaViagem, type ViagemComDetalhes } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
@@ -13,6 +13,7 @@ import { supabase } from '../../src/lib/supabase'
 import { Malinha } from '../../src/ui/Malinha'
 import { Avatar, Botao, Cartao, Carregando, ErroNaTela, IconeQuadrado, RotuloDeSecao, TituloDaTela } from '../../src/ui/pecas'
 import { SemViagem } from '../../src/ui/SemViagem'
+import { ComentariosDoItem } from '../../src/ui/ComentariosDoItem'
 import { cor, sombra } from '../../theme'
 
 // Contas do grupo (telas "1j" e "1k" do design): meu saldo, saldo de cada um, gastos por dia.
@@ -35,6 +36,17 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const [verAcertos, setVerAcertos] = useState(false)
+  const [aberto, setAberto] = useState<string | null>(null) // gasto com os comentários abertos (spec 025)
+  const [comentarios, setComentarios] = useState<Record<string, number>>({})
+  useEffect(() => {
+    let vivo = true
+    contarComentariosDaViagem(supabase, viagem.id)
+      .then((c) => vivo && setComentarios(c))
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [viagem.id])
   const euro = viagem.moeda === 'EUR'
 
   const carga = useCarregar(async () => {
@@ -181,7 +193,8 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                 const Icone = ICONE_DA_CATEGORIA[e.categoria] ?? Receipt
                 const pessoas = e.divisoes.length
                 return (
-                  <View key={e.id} className={`flex-row items-center gap-3 py-3 ${i < g.itens.length - 1 ? 'border-b border-linha' : ''}`}>
+                  <View key={e.id} className={i < g.itens.length - 1 ? 'border-b border-linha' : ''}>
+                  <Pressable onPress={() => setAberto(aberto === e.id ? null : e.id)} className="flex-row items-center gap-3 py-3 active:opacity-80" accessibilityLabel={`Comentários de ${e.descricao}`}>
                     <View>
                       <IconeQuadrado>
                         <Icone size={20} color={cor.couro} />
@@ -199,7 +212,27 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                         {e.pessoal ? ' · só seu' : pessoas ? ` · dividido por ${pessoas}` : ''}
                       </Text>
                     </View>
-                    <Text className="font-body-bold text-[14px] text-texto">{formatarDinheiro(e.valor, e.moeda)}</Text>
+                    <View className="items-end">
+                      <Text className="font-body-bold text-[14px] text-texto">{formatarDinheiro(e.valor, e.moeda)}</Text>
+                      {comentarios[e.id] ? (
+                        <View className="mt-0.5 flex-row items-center gap-1">
+                          <MessageCircle size={12} color={cor.suave} />
+                          <Text className="font-body text-[12px] text-suave">{comentarios[e.id]}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  </Pressable>
+                  {/* Spec 025: comentários do gasto */}
+                  {aberto === e.id ? (
+                    <ComentariosDoItem
+                      viagemId={viagem.id}
+                      alvo={{ tipo: 'gasto', id: e.id }}
+                      membros={viagem.membros}
+                      meuId={meuId}
+                      euSouAdm={viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')}
+                      aoMudar={(total) => setComentarios((atual) => ({ ...atual, [e.id]: total }))}
+                    />
+                  ) : null}
                   </View>
                 )
               })}
