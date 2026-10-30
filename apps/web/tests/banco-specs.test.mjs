@@ -1110,3 +1110,13 @@ test('041: lembra 2 dias antes do cancelamento grátis, só da hospedagem escolh
   assert.equal((await db.query("select * from public.lembretes_a_enviar() where tipo = 'cancelamento'")).rows.length, 0)
   await assert.rejects(db.query("update public.hospedagens set cancelamento_gratis_ate = '1990-01-01'"), /check/)
 })
+
+// ---------------- 042: resumo da noite ----------------
+test('042: um resumo por viagem por dia; o app não chama nem lê', async () => {
+  const db = await novoBanco()
+  const marcar = () => db.query(`select public.marcar_resumo('${V}', '2026-11-11') as ok`).then((r) => r.rows[0].ok)
+  assert.equal(await marcar(), true)
+  assert.equal(await marcar(), false)
+  await assert.rejects(como(db, ADM, `select public.marcar_resumo('${V}', '2026-11-12')`), /permission denied/)
+  assert.equal((await como(db, ADM, 'select * from public.resumos_enviados')).length, 0)
+})
