@@ -115,7 +115,7 @@
   justify-content: center;
   gap: 12px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 14px;
   font-weight: 700;
   animation: mapa-google-aparece 0.2s ease-out;

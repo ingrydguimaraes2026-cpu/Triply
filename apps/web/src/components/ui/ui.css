@@ -1,7 +1,7 @@
 /* Estilos das peças de components/ui */
 
 .cartao-ui {
-  background: #ffffff;
+  background: var(--cor-cartao);
   border: 1px solid #f0e2c8;
   border-radius: 24px;
   padding: 20px;
@@ -38,7 +38,7 @@
 .cartao-ui-topo a {
   font-size: 14px;
   font-weight: 700;
-  color: var(--couro);
+  color: var(--cor-comboio);
   text-decoration: none;
 }
 
@@ -74,9 +74,9 @@
   text-align: center;
   gap: 8px;
   padding: 48px 24px;
-  border: 1.5px dashed #ead7b4;
+  border: 1.5px dashed var(--cor-borda-forte);
   border-radius: 24px;
-  background: rgb(255 255 255 / 0.5);
+  background: var(--cor-fundo-suave);
 }
 
 .vazio.compacto {
@@ -91,8 +91,8 @@
   place-items: center;
   margin-bottom: 4px;
   border-radius: 18px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
 }
 
 .vazio.compacto .vazio-icone {
@@ -131,11 +131,11 @@
 .botao.secundario {
   background: transparent;
   color: var(--cor-texto);
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
 }
 
 .botao.secundario:hover {
-  background: #ffffff;
+  background: var(--cor-cartao);
 }
 
 /* ---------- Gaveta (formulários) ---------- */
@@ -261,9 +261,9 @@
   width: 100%;
   min-height: 46px;
   padding: 0 14px;
-  border: 1px solid #e0c99d;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
 }
@@ -298,8 +298,8 @@
   margin: 0;
   padding: 10px 14px;
   border-radius: 12px;
-  background: #fde6dc;
-  color: #8a2c0d;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
   font-size: 14px;
 }
 
@@ -307,7 +307,7 @@
   margin: 0;
   padding: 10px 14px;
   border-radius: 12px;
-  background: #fff0d1;
+  background: var(--cor-comboio-fundo);
   color: #6b4500;
   font-size: 14px;
   line-height: 1.4;
@@ -340,9 +340,9 @@
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  border: 1px solid #e0c99d;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--cor-cartao);
 }
 
 .valor-grande:focus-within {
@@ -365,8 +365,8 @@
   border: 0;
   border-radius: 10px;
   padding: 6px 8px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
   font: inherit;
   font-weight: 800;
 }
@@ -386,9 +386,9 @@
   justify-content: center;
   gap: 4px;
   padding: 6px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-size: 12px;
@@ -415,9 +415,9 @@
   gap: 8px;
   min-height: 44px;
   padding: 4px 14px 4px 4px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 999px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-size: 14px;
@@ -427,7 +427,7 @@
 
 .pessoas button[aria-pressed='true'] {
   border-color: var(--couro);
-  background: #ffe7b8;
+  background: var(--cor-comboio-fundo);
 }
 
 /* Interruptor sim/não */
@@ -437,9 +437,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   cursor: pointer;
 }
 
@@ -458,7 +458,7 @@
   height: 28px;
   margin: 0;
   border-radius: 999px;
-  background: #e8d6b6;
+  background: var(--cor-borda-forte);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -471,7 +471,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--cor-cartao);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
   transition: transform 0.15s;
 }
@@ -502,7 +502,7 @@
 }
 
 .selo-pessoal {
-  background: #ffe1b0;
+  background: var(--cor-comboio-fundo);
   color: var(--cor-pessoal);
 }
 
@@ -512,7 +512,7 @@
 }
 
 .selo-suave {
-  background: #f3e6cf;
+  background: var(--cor-fundo-suave);
   color: var(--cor-texto-suave);
 }
 
@@ -526,7 +526,7 @@
   border: 0;
   border-radius: 10px;
   background: transparent;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -566,7 +566,7 @@
   border: 1px solid var(--cor-borda);
   border-radius: 999px;
   background: var(--cor-cartao);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;

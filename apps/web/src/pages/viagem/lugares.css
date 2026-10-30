@@ -15,7 +15,7 @@
   padding: 12px 14px;
   border-radius: 14px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .lugares-dica p {
@@ -58,7 +58,7 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--caramelo);
 }
 
@@ -154,8 +154,8 @@
 
 .lugar-voto.votou {
   border-color: #a1442b;
-  color: #a1442b;
-  background: #f6e2da;
+  color: var(--cor-erro);
+  background: var(--cor-erro-fundo);
 }
 
 /* Formulário: os 4 tipos como botões grandes (fáceis de tocar no celular) */
@@ -190,7 +190,7 @@
   padding: 8px;
   border: 1px solid var(--cor-borda);
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font-size: 13px;
   font-weight: 700;
@@ -242,7 +242,7 @@
 .lugar-fomos.foi {
   border-color: var(--couro);
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .perto-de-mim {
@@ -299,7 +299,7 @@
 
 /* "Não abro mão" (spec 066) */
 .lugar-prioridades {
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-weight: 700;
 }
 .importar-passos { margin: 0; padding-left: 18px; }

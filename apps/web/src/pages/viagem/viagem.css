@@ -110,7 +110,7 @@
     font-weight: 700;
     font-style: italic;
     letter-spacing: -0.03em;
-    color: var(--cor-fundo);
+    color: var(--creme);
     text-decoration: none;
   }
 
@@ -364,7 +364,7 @@
 .mapa-legenda-topo {
   top: 56px;
   bottom: auto;
-  background: rgb(255 255 255 / 0.92);
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
 }

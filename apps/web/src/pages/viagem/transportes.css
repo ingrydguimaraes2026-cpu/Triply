@@ -29,8 +29,8 @@
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
 }
 
 .trajeto-texto {
@@ -86,9 +86,9 @@
   margin: 0;
   padding: 12px 16px;
   border-radius: 16px;
-  background: #fff0d1;
+  background: var(--cor-comboio-fundo);
   border: 1px solid #ffd98a;
-  color: #5a3a00;
+  color: var(--cor-texto);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -114,7 +114,7 @@
   color: var(--cor-texto-suave);
 }
 /* Layout com mapa: o seletor, o mapa e o painel vêm do hospedagem.css (hosp-*) */
-.seletor-passeio .hosp-seletor-marca { background: var(--dourado-claro); color: var(--couro); }
+.seletor-passeio .hosp-seletor-marca { background: var(--dourado-claro); color: var(--cor-comboio); }
 
 .rota-titulo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 
@@ -177,7 +177,7 @@
   text-align: center;
   text-decoration: none;
 }
-.rota-link.link-rome2rio { background: var(--cor-texto); color: var(--cor-fundo); }
+.rota-link.link-rome2rio { background: var(--cor-texto); color: var(--creme); }
 .rota-link.link-maps { background: #2f7d4f; color: #fff; }
 
 .rota-aviso-passeio {
@@ -188,7 +188,7 @@
   border: 0;
   border-radius: 10px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -196,7 +196,7 @@
   cursor: pointer;
 }
 
-.rota-agenda summary { min-height: 40px; display: flex; align-items: center; color: var(--couro); font-weight: 700; cursor: pointer; }
+.rota-agenda summary { min-height: 40px; display: flex; align-items: center; color: var(--cor-comboio); font-weight: 700; cursor: pointer; }
 
 /* Modo avião: o mapa-múndi (escuro) ocupa a caixa do mapa */
 .mapa-voo .mapa { border-radius: inherit; }
@@ -230,7 +230,7 @@
 
 .selo-situacao.situacao-comprado {
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .trajeto-preco {

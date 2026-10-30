@@ -18,6 +18,7 @@ export function aplicarAcessibilidade(p: Preferencias = preferenciasDoAparelho()
   const html = document.documentElement
   html.dataset.fonte = p.fonte
   html.dataset.contraste = p.contraste ? 'alto' : 'normal'
+  html.dataset.tema = p.escuro ? 'escuro' : 'claro' // spec 109
 }
 
 export function salvarAcessibilidade(p: Preferencias) {

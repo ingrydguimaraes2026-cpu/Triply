@@ -7,6 +7,7 @@
   --caramelo: #b6771d;
   --laranja: #ff9d00;
   --dourado-claro: #ffcf71;
+  --creme: #fff6e5; /* texto claro em cima do couro (não muda no tema escuro) */
 
   --cor-fundo: #fff6e5;
   --cor-cartao: #ffffff;
@@ -17,6 +18,13 @@
   --cor-comboio-fundo: #ffe7b8;
   --cor-pessoal: #9a5b00; /* só você vê (laranja escurecido pra dar pra ler) */
   --cor-pessoal-fundo: var(--laranja);
+  /* Spec 109: tons que estavam fixos nos CSS das telas */
+  --cor-borda-forte: #ead7b4;
+  --cor-fundo-suave: #fff7e9;
+  --cor-erro: #8a2c0d;
+  --cor-erro-fundo: #fde6dc;
+  --cor-sucesso: #2f7d4f;
+  --cor-sucesso-fundo: #e2f2e7;
   --raio: 14px;
   --fonte-titulo: 'Fraunces Variable', Georgia, serif;
   font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
@@ -100,7 +108,7 @@ a {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-weight: 700;
   text-decoration: underline;
@@ -145,7 +153,7 @@ a {
 }
 
 .botao-compartilhar:hover {
-  color: var(--couro);
+  color: var(--cor-comboio);
   background: var(--cor-borda);
 }
 
@@ -192,4 +200,32 @@ html[data-contraste='alto'] .botao-texto {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------- Spec 109: tema escuro (beta, escolhido no Perfil; fica no aparelho) ----------
+   "Couro à noite": mesmo couro e laranja, fundo escuro. Dourado e laranja continuam só em fundos e selos. */
+html[data-tema='escuro'] {
+  color-scheme: dark;
+  --cor-fundo: #1a1009;
+  --cor-cartao: #2a1a0c;
+  --cor-texto: #fff0d9;
+  --cor-texto-suave: #d9c3a2;
+  --cor-borda: #45301d;
+  --cor-borda-forte: #5c3f27;
+  --cor-fundo-suave: #22150a;
+  --cor-comboio: var(--dourado-claro);
+  --cor-comboio-fundo: #3d2a14;
+  --cor-pessoal: #ffb547;
+  --cor-erro: #ffb4a1;
+  --cor-erro-fundo: #4a1d12;
+  --cor-sucesso: #8fd6a8;
+  --cor-sucesso-fundo: #173a24;
+}
+html[data-tema='escuro'] body {
+  background: var(--cor-fundo);
+}
+html[data-tema='escuro'][data-contraste='alto'] {
+  --cor-texto: #ffffff;
+  --cor-texto-suave: #fff0d9;
+  --cor-borda: #8a6a45;
 }

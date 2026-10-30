@@ -64,7 +64,7 @@
   padding: 1px 6px;
   border-radius: 6px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -85,8 +85,8 @@
   place-items: center;
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
-  background: #ffffff;
-  color: var(--couro);
+  background: var(--cor-cartao);
+  color: var(--cor-comboio);
   cursor: pointer;
 }
 
@@ -111,7 +111,7 @@
 .editor-confirmacao {
   margin: 10px 0 0 40px;
   padding: 12px 14px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: var(--raio);
   background: var(--cor-fundo);
   font-size: 14px;
@@ -134,7 +134,7 @@
   padding: 10px 14px;
   border-radius: var(--raio);
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 14px;
 }
 
@@ -148,7 +148,7 @@
   border: 1px dashed var(--caramelo);
   border-radius: var(--raio);
   background: transparent;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -174,9 +174,9 @@
   min-height: 50px;
   width: 100%;
   padding: 0 16px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: var(--raio);
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
 }
@@ -196,9 +196,9 @@
   margin: 0;
   padding: 6px;
   list-style: none;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: var(--raio);
-  background: #ffffff;
+  background: var(--cor-cartao);
   box-shadow: 0 16px 40px rgb(42 26 12 / 0.12);
 }
 
@@ -300,9 +300,9 @@
 .editor-datas input {
   min-height: 38px;
   padding: 0 8px;
-  border: 1px solid #e0c99d;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 10px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-size: 14px;
@@ -311,8 +311,8 @@
 .editor-noites {
   padding: 6px 10px;
   border-radius: 999px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
   font-size: 12px;
   font-weight: 800;
 }

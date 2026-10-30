@@ -97,7 +97,7 @@
   border: 1px dashed var(--caramelo);
   border-radius: 999px;
   background: none;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 12px;
   cursor: pointer;
 }

@@ -5,8 +5,8 @@
   margin-left: auto;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -62,7 +62,7 @@
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid var(--cor-borda);
-  background: #fff7e9;
+  background: var(--cor-fundo-suave);
 }
 
 .aviso > svg {
@@ -103,7 +103,7 @@
 
 .aviso-acoes button:hover:not(:disabled) {
   background: rgba(123, 84, 47, 0.1);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .aviso-acoes button:disabled {
@@ -132,14 +132,14 @@
   border: 1px dashed var(--caramelo);
   border-radius: 999px;
   background: transparent;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .aviso-novo:hover {
-  background: #fff7e9;
+  background: var(--cor-fundo-suave);
 }
 
 /* ---------- Tarefas (spec 020): checklist com responsável e prazo ---------- */
@@ -178,7 +178,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid var(--tracejado, #d9c3a2);
+  border: 1.5px solid var(--tracejado, var(--cor-borda-forte));
   border-radius: 6px;
   background: transparent;
   color: #fff;
@@ -234,7 +234,7 @@
 }
 
 .tarefa-prazo.atrasada {
-  color: #a1442b;
+  color: var(--cor-erro);
   font-weight: 600;
 }
 
@@ -259,7 +259,7 @@
 
 .tarefa-apagar:hover {
   background: rgba(123, 84, 47, 0.1);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .checklist-nova {
@@ -279,7 +279,7 @@
   font: inherit;
   font-size: 14px;
   color: var(--cor-texto);
-  background: var(--cor-fundo, #fff);
+  background: var(--cor-fundo, var(--cor-cartao));
 }
 
 .checklist-nova-linha {
@@ -367,7 +367,7 @@
 
 .enquete-acoes button:hover {
   background: rgba(123, 84, 47, 0.1);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .enquete-opcoes {
@@ -388,7 +388,7 @@
   padding: 9px 12px;
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
-  background: var(--cor-fundo, #fff);
+  background: var(--cor-fundo, var(--cor-cartao));
   cursor: pointer;
   overflow: hidden;
   text-align: left;
@@ -426,7 +426,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  border: 1.5px solid var(--tracejado, #d9c3a2);
+  border: 1.5px solid var(--tracejado, var(--cor-borda-forte));
   border-radius: 50%;
   color: #fff;
 }
@@ -467,7 +467,7 @@
   border: 1px dashed var(--caramelo);
   border-radius: 999px;
   background: transparent;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -475,7 +475,7 @@
 
 .enquete-nova-btn:hover,
 .enquete-add-opcao:hover {
-  background: #fff7e9;
+  background: var(--cor-fundo-suave);
 }
 
 .enquete-form {
@@ -485,7 +485,7 @@
   padding: 12px;
   border: 1px solid var(--cor-borda);
   border-radius: 12px;
-  background: #fffdf8;
+  background: var(--cor-cartao);
 }
 
 .enquete-form input[type='text'] {
@@ -495,7 +495,7 @@
   font: inherit;
   font-size: 14px;
   color: var(--cor-texto);
-  background: #fff;
+  background: var(--cor-cartao);
 }
 
 .enquete-form-opcao {
@@ -573,7 +573,7 @@
 }
 
 .resumo-vazio a {
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-weight: 700;
 }
 
@@ -604,7 +604,7 @@
 
 .overview-mapa-texto p {
   margin: 6px 0 0;
-  color: #e7d3b2;
+  color: var(--cor-borda-forte);
 }
 
 .overview-contagem {
@@ -640,7 +640,7 @@
   left: 13px;
   top: -12px;
   height: 22px;
-  border-left: 2px dashed #ead7b4;
+  border-left: 2px dashed var(--cor-borda-forte);
 }
 
 .roteiro-numero {
@@ -710,7 +710,7 @@
     top: 13px;
     left: 36px;
     right: 8px;
-    border-top: 2px dashed #ead7b4;
+    border-top: 2px dashed var(--cor-borda-forte);
   }
 }
 
@@ -809,8 +809,8 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: #ffe7b8;
-  color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
 }
 
 .categoria-nome {
@@ -820,7 +820,7 @@
 .categoria-barra {
   height: 8px;
   border-radius: 999px;
-  background: #f3e6cf;
+  background: var(--cor-fundo-suave);
   overflow: hidden;
 }
 
@@ -857,9 +857,9 @@
   flex: none;
   min-height: 40px;
   padding: 0 16px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 999px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-size: 14px;
@@ -892,7 +892,7 @@
   padding: 14px 16px;
   border: 1px dashed var(--caramelo);
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   font-family: ui-monospace, monospace;
   font-size: 14px;
   word-break: break-all;
@@ -902,8 +902,8 @@
   margin: 0;
   padding: 12px 16px;
   border-radius: 14px;
-  background: #fde6dc;
-  color: #8a2c0d;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
 }
 
 /* ---------- Overview: editar roteiro ---------- */
@@ -916,7 +916,7 @@
   border: 1px solid var(--cor-borda);
   border-radius: 10px;
   background: transparent;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -990,7 +990,7 @@
   aspect-ratio: 1;
   border-radius: 14px;
   overflow: hidden;
-  background: #ead7b4;
+  background: var(--cor-borda-forte);
 }
 
 .resumo-fotos img {
@@ -1087,7 +1087,7 @@
   padding: 6px 10px;
   border-radius: 10px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 14px;
   font-weight: 700;
 }
@@ -1172,7 +1172,7 @@
 }
 
 .membro-ficha a {
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .membro-ficha svg {
@@ -1346,7 +1346,7 @@
   padding: 12px 16px;
   border-radius: 16px;
   background: var(--couro);
-  color: var(--cor-fundo);
+  color: var(--creme);
   font-weight: 600;
   text-decoration: none;
 }

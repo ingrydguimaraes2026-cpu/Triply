@@ -4,9 +4,10 @@ export type Preferencias = {
   fonte: 'normal' | 'grande' | 'maior'
   contraste: boolean
   simples: boolean // "só o essencial": menos abas, pro familiar menos digital
+  escuro: boolean // spec 109: tema escuro (beta)
 }
 
-export const PREFERENCIAS_PADRAO: Preferencias = { fonte: 'normal', contraste: false, simples: false }
+export const PREFERENCIAS_PADRAO: Preferencias = { fonte: 'normal', contraste: false, simples: false, escuro: false }
 
 // Abas que ficam no modo simples: Início, Hoje, Financeiro, Fotos, Comboio
 export const ABAS_DO_MODO_SIMPLES = ['', 'hoje', 'financeiro', 'fotos', 'comboio']
@@ -23,6 +24,7 @@ export function lerPreferencias(texto: string | null): Preferencias {
       fonte: p.fonte === 'grande' || p.fonte === 'maior' ? p.fonte : 'normal',
       contraste: p.contraste === true,
       simples: p.simples === true,
+      escuro: p.escuro === true,
     }
   } catch {
     return { ...PREFERENCIAS_PADRAO }

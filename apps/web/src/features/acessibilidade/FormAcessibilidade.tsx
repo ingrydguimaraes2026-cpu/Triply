@@ -41,6 +41,14 @@ export default function FormAcessibilidade() {
       </label>
 
       <label className="acessibilidade-chave">
+        <input type="checkbox" checked={p.escuro} onChange={(e) => mudar({ escuro: e.target.checked })} />
+        <span>
+          Tema escuro (teste)
+          <small>Fundo escuro, bom à noite. Ainda em teste: avise se algo ficar difícil de ler.</small>
+        </span>
+      </label>
+
+      <label className="acessibilidade-chave">
         <input type="checkbox" checked={p.simples} onChange={(e) => mudar({ simples: e.target.checked })} />
         <span>
           Modo simples

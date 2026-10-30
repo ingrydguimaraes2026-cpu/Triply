@@ -20,7 +20,7 @@
 }
 
 .botao-comentarios:hover {
-  color: var(--couro);
+  color: var(--cor-comboio);
   background: var(--cor-borda);
 }
 
@@ -109,7 +109,7 @@
   padding: 0 2px;
   border-radius: 4px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-weight: 700;
 }
 

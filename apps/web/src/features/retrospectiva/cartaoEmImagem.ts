@@ -7,7 +7,7 @@ export async function cartaoEmImagem(cartao: CartaoDaRetrospectiva, nomeDaViagem
   const cor = (nome: string, reserva: string) => css.getPropertyValue(nome).trim() || reserva
   const fundo = cor('--couro', '#7b542f')
   const destaque = cor('--laranja', '#ff9d00')
-  const claro = cor('--cor-fundo', '#fff6e5')
+  const claro = cor('--creme', '#fff6e5')
   const titulo = css.getPropertyValue('--fonte-titulo').trim() || 'serif'
   const texto = "'Plus Jakarta Sans Variable', system-ui, sans-serif"
   await document.fonts?.ready

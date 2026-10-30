@@ -59,7 +59,7 @@
 }
 
 .acerto-valor {
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .carteiras li,
@@ -77,7 +77,7 @@
 .divisao-lista {
   padding: 12px 14px;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   border: 1px solid #f0e2c8;
 }
 
@@ -85,7 +85,7 @@
   width: 110px;
   min-height: 38px;
   padding: 0 10px;
-  border: 1px solid #e0c99d;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 10px;
   font: inherit;
   text-align: right;
@@ -171,7 +171,7 @@
   flex-direction: column;
   border-radius: 20px;
   border: 1px solid #f0e2c8;
-  background: #ffffff;
+  background: var(--cor-cartao);
   overflow: hidden;
 }
 
@@ -210,7 +210,7 @@
 }
 
 .gasto:hover {
-  background: #fffaf0;
+  background: var(--cor-fundo-suave);
 }
 
 .gasto-texto {

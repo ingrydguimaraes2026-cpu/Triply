@@ -23,7 +23,7 @@
   font-weight: 700;
   font-style: italic;
   letter-spacing: -0.03em;
-  color: var(--cor-fundo);
+  color: var(--creme);
 }
 
 .perdido-cartao {
@@ -104,12 +104,12 @@
 .perdido-botao.secundario {
   background: transparent;
   color: var(--cor-texto);
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   box-shadow: none;
 }
 
 .perdido-botao.secundario:hover {
-  background: #ffffff;
+  background: var(--cor-cartao);
 }
 
 @media (min-width: 900px) {

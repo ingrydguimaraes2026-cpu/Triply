@@ -78,7 +78,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 32 | H14 | Meu orçamento pessoal ◐ | P | ✅ feito (web) · spec 056 · banco a aplicar |
 | 33 | H16 | Exportar gastos (CSV, PDF, Splitwise) | P | ✅ feito (web) · spec 052 |
 | 34 | M9 | Busca na viagem (um campo acha tudo) | P | ✅ feito (web) · spec 053 |
-| 35 | M12 | Modo escuro | P | adiado pro fim: 309 cores fixas no CSS, precisa revisão visual |
+| 35 | M12 | Modo escuro | P | Feito como opção (teste) · spec 109 · falta revisão visual com login |
 | 36 | N2 | Arquivar viagem | P | ✅ feito (web) · spec 054 · banco a aplicar |
 | 37 | N3 | Repetir com o mesmo comboio | P | ✅ feito (web) · spec 055 · banco a aplicar |
 | 38 | N7 | Perfil viajante (dados que se repetem entre viagens) | P | ✅ coberto por 038 (passaporte) + 050 (ficha da pessoa); modelo de mala fica com I7 |

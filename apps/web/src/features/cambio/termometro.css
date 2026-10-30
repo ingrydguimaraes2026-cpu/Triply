@@ -44,7 +44,7 @@
 .termometro-grafico { margin: 0; }
 .termometro-area { position: relative; height: 140px; }
 .termometro-grafico svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.termometro-linha { fill: none; stroke: var(--couro); stroke-width: 2.5; stroke-linejoin: round; }
+.termometro-linha { fill: none; stroke: var(--cor-comboio); stroke-width: 2.5; stroke-linejoin: round; }
 .termometro-media { stroke: var(--caramelo); stroke-width: 1.5; stroke-dasharray: 5 5; opacity: 0.7; }
 .termometro-ponto {
   position: absolute;
@@ -100,7 +100,7 @@
 .termometro-links a { display: inline-flex; align-items: center; gap: 4px; color: var(--caramelo); font-size: 14px; font-weight: 700; }
 
 .termometro-meta .form-rotulo { display: inline-flex; align-items: center; gap: 6px; }
-.termometro-meta.bateu { border-color: #2f7d4f; background: #e2f2e7; }
+.termometro-meta.bateu { border-color: #2f7d4f; background: var(--cor-sucesso-fundo); }
 .termometro-meta.bateu p { color: #1f5a37; font-weight: 700; }
 
 .termometro-fonte { margin: 0; color: var(--cor-texto-suave); font-size: 11px; }

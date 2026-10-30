@@ -22,7 +22,7 @@
 
 .cofre-icone {
   flex-shrink: 0;
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .cofre-texto {
@@ -55,7 +55,7 @@
   padding: 0 14px;
   border: 1px dashed var(--cor-borda);
   border-radius: 12px;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -76,5 +76,5 @@
 }
 
 .bilhete-anexar:hover {
-  color: var(--couro);
+  color: var(--cor-comboio);
 }

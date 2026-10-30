@@ -12,7 +12,7 @@
 
 .convite-logo {
   font-size: 22px;
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .convite-cartao {
@@ -67,7 +67,7 @@
 
 .convite-erro {
   margin: 0;
-  color: #a1442b;
+  color: var(--cor-erro);
   font-weight: 600;
 }
 
@@ -75,7 +75,7 @@
   border: 0;
   background: none;
   padding: 4px;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font: inherit;
   font-weight: 600;
   cursor: pointer;

@@ -11,8 +11,8 @@ test('090: modo simples deixa só as abas essenciais', () => {
 })
 
 test('090: preferências guardadas: só valores conhecidos', () => {
-  assert.deepEqual(lerPreferencias(null), { fonte: 'normal', contraste: false, simples: false })
-  assert.deepEqual(lerPreferencias('{"fonte":"maior","contraste":true,"simples":true}'), { fonte: 'maior', contraste: true, simples: true })
-  assert.deepEqual(lerPreferencias('{"fonte":"gigante","contraste":"sim"}'), { fonte: 'normal', contraste: false, simples: false })
-  assert.deepEqual(lerPreferencias('lixo'), { fonte: 'normal', contraste: false, simples: false })
+  assert.deepEqual(lerPreferencias(null), { fonte: 'normal', contraste: false, simples: false, escuro: false })
+  assert.deepEqual(lerPreferencias('{"fonte":"maior","contraste":true,"simples":true,"escuro":true}'), { fonte: 'maior', contraste: true, simples: true, escuro: true })
+  assert.deepEqual(lerPreferencias('{"fonte":"gigante","contraste":"sim"}'), { fonte: 'normal', contraste: false, simples: false, escuro: false })
+  assert.deepEqual(lerPreferencias('lixo'), { fonte: 'normal', contraste: false, simples: false, escuro: false })
 })

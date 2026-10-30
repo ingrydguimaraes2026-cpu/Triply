@@ -9,7 +9,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 13px;
   font-weight: 800;
 }
@@ -195,7 +195,7 @@
   align-items: center;
   gap: 6px;
   min-height: 36px;
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-weight: 700;
   cursor: pointer;
 }

@@ -56,9 +56,9 @@
   justify-content: center;
   gap: 12px;
   min-height: 54px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-weight: 700;
@@ -88,7 +88,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #ead7b4;
+  background: var(--cor-borda-forte);
 }
 
 .login-campos {
@@ -122,9 +122,9 @@
   min-height: 54px;
   width: 100%;
   padding: 0 16px;
-  border: 1px solid #ead7b4;
+  border: 1px solid var(--cor-borda-forte);
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -203,12 +203,12 @@
 }
 
 .login-msg-erro {
-  background: #fde6dc;
-  color: #8a2c0d;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
 }
 
 .login-msg-aviso {
-  background: #ffe7b8;
+  background: var(--cor-comboio-fundo);
   color: var(--cor-texto);
 }
 
@@ -320,7 +320,7 @@
 
 .carrossel-pontos button.ativo::before {
   width: 20px;
-  background: #ffffff;
+  background: var(--cor-cartao);
 }
 
 @media (prefers-reduced-motion: reduce) {

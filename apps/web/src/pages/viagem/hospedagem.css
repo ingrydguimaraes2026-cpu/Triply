@@ -12,7 +12,7 @@
   border: 1px solid var(--cor-borda);
   font-size: 13px;
 }
-.hosp-resumo strong { font-family: var(--fonte-titulo); font-size: 20px; color: var(--couro); }
+.hosp-resumo strong { font-family: var(--fonte-titulo); font-size: 20px; color: var(--cor-comboio); }
 .hosp-resumo small { color: var(--cor-texto-suave); font-weight: 600; }
 .hosp-barra { display: block; height: 6px; border-radius: 999px; background: var(--cor-comboio-fundo); overflow: hidden; }
 .hosp-barra span { display: block; height: 100%; background: var(--laranja); transition: width 0.2s; }
@@ -47,7 +47,7 @@
   padding: 1px 7px;
   border-radius: 999px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 11px;
 }
 .hosp-seletor-marca {
@@ -57,7 +57,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 13px;
   font-weight: 800;
 }
@@ -67,7 +67,7 @@
 .hosp-seletor button[aria-pressed='true'] {
   background: var(--cor-texto);
   border-color: var(--cor-texto);
-  color: var(--cor-fundo);
+  color: var(--creme);
   opacity: 1;
 }
 
@@ -120,7 +120,7 @@
   padding: 0 14px;
   border-radius: 999px;
   border: 0;
-  background: rgb(255 255 255 / 0.95);
+  background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
   font-size: 13px;
@@ -140,7 +140,7 @@
   padding: 0 14px;
   border-radius: 999px;
   background: var(--cor-texto);
-  color: var(--cor-fundo);
+  color: var(--creme);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -160,7 +160,7 @@
 .hosp-painel-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .hosp-painel-topo h2 { margin: 0; font-family: var(--fonte-titulo); font-size: 26px; line-height: 1.1; }
 .hosp-painel-topo p { margin: 4px 0 0; color: var(--cor-texto-suave); font-size: 14px; }
-.hosp-selo { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--cor-comboio-fundo); color: var(--couro); }
+.hosp-selo { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--cor-comboio-fundo); color: var(--cor-comboio); }
 .hosp-selo.selo-precisa { background: var(--laranja); color: var(--cor-texto); }
 .hosp-selo.selo-resolvido { background: var(--couro); color: #fff; }
 
@@ -183,7 +183,7 @@
 
 /* Cartão de cada opção */
 .hosp-opcao { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-fundo); }
-.hosp-opcao.escolhida { border: 2px solid var(--laranja); background: #fff; box-shadow: 0 6px 20px rgb(123 84 47 / 0.12); }
+.hosp-opcao.escolhida { border: 2px solid var(--laranja); background: var(--cor-cartao); box-shadow: 0 6px 20px rgb(123 84 47 / 0.12); }
 .hosp-opcao-faixa { margin: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--caramelo); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
 .hosp-opcao-topo { display: flex; align-items: center; gap: 8px; }
 .hosp-site { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; background: var(--cor-borda); color: var(--cor-texto); }
@@ -204,9 +204,9 @@
 .hosp-opcao-rodape { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
 .hosp-voto {
   display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px;
-  border: 1px solid var(--cor-borda); background: #fff; color: var(--cor-texto); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--cor-texto); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
 }
-.hosp-voto.votei { border-color: #e0565b; color: #e0565b; background: #fdecec; }
+.hosp-voto.votei { border-color: #e0565b; color: #e0565b; background: var(--cor-erro-fundo); }
 .hosp-quem { display: flex; }
 .hosp-quem > * + * { margin-left: -6px; }
 .hosp-opcao-acoes { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -214,7 +214,7 @@
 .hosp-vazio { margin: 0; padding: 14px; border-radius: 12px; background: var(--cor-fundo); color: var(--cor-texto-suave); font-size: 14px; line-height: 1.45; text-align: center; }
 .hosp-adicionar {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px;
-  border-radius: 14px; border: 2px dashed var(--caramelo); background: transparent; color: var(--couro);
+  border-radius: 14px; border: 2px dashed var(--caramelo); background: transparent; color: var(--cor-comboio);
   font: inherit; font-weight: 700; cursor: pointer;
 }
 .hosp-adicionar:hover { background: var(--cor-comboio-fundo); }
@@ -231,12 +231,12 @@
 .guia-casa dl { display: flex; flex-direction: column; gap: 8px; margin: 0; }
 .guia-casa dt { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--cor-texto-suave); }
 .guia-casa dd { margin: 2px 0 0; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
-.guia-casa dd a { font-size: 13px; font-weight: 700; color: var(--couro); }
+.guia-casa dd a { font-size: 13px; font-weight: 700; color: var(--cor-comboio); }
 .guia-casa code { padding: 1px 6px; border-radius: 6px; background: var(--cor-cartao); border: 1px solid var(--cor-borda); font-size: 14px; }
 .guia-regras { white-space: pre-line; }
 .guia-copiar {
   display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 10px; border-radius: 999px;
-  border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--couro); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--cor-comboio); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
 }
 
 /* Prazo de cancelamento grátis (spec 041) */
@@ -258,7 +258,7 @@
   padding: 1px 8px;
   border-radius: 999px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-size: 12px;
   font-weight: 600;
 }

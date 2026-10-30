@@ -66,7 +66,7 @@
   padding: 12px 14px;
   border-radius: var(--raio);
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .feed-aviso p {
@@ -216,7 +216,7 @@
 }
 
 .post-menu:hover {
-  background: #f8eedd;
+  background: var(--cor-fundo-suave);
 }
 
 .post-confirmar {
@@ -228,7 +228,7 @@
   margin: 0 12px 10px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: #fbefe9;
+  background: var(--cor-erro-fundo);
   font-size: 14px;
 }
 
@@ -241,7 +241,7 @@
 .post-midia {
   position: relative;
   width: 100%;
-  background: #f2e6d2;
+  background: var(--cor-fundo-suave);
   overflow: hidden;
 }
 
@@ -273,7 +273,7 @@
 
 .post-sem-link {
   display: block;
-  background: #ead7b4;
+  background: var(--cor-borda-forte);
 }
 
 .post-contador {
@@ -484,7 +484,7 @@
 .esq-linha,
 .esq-foto {
   display: block;
-  background: linear-gradient(90deg, #f3e8d6 25%, #faf3e7 50%, #f3e8d6 75%);
+  background: linear-gradient(90deg, var(--cor-fundo-suave) 25%, var(--cor-fundo-suave) 50%, var(--cor-fundo-suave) 75%);
   background-size: 200% 100%;
   animation: esqueleto 1.2s ease-in-out infinite;
 }
@@ -582,7 +582,7 @@
   aspect-ratio: 1;
   padding: 0;
   border: 0;
-  background: #ead7b4;
+  background: var(--cor-borda-forte);
   cursor: pointer;
   overflow: hidden;
 }
@@ -678,8 +678,8 @@
   padding: 16px;
   border: 1.5px dashed var(--caramelo);
   border-radius: 20px;
-  background: #ffffff;
-  color: var(--couro);
+  background: var(--cor-cartao);
+  color: var(--cor-comboio);
   font-weight: 700;
   text-align: center;
   cursor: pointer;
@@ -700,7 +700,7 @@
 .barra-envio {
   height: 6px;
   border-radius: 999px;
-  background: #f3e6cf;
+  background: var(--cor-fundo-suave);
   overflow: hidden;
 }
 

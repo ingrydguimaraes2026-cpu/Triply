@@ -140,7 +140,7 @@
   height: 32px;
   border-radius: 10px;
   background: var(--cor-comboio-fundo);
-  color: var(--couro);
+  color: var(--cor-comboio);
 }
 
 .agenda-chegada .agenda-icone,
@@ -182,7 +182,7 @@
 
 /* Programação em paralelo (spec 070) */
 .agenda-participantes {
-  color: var(--couro);
+  color: var(--cor-comboio);
   font-weight: 700;
 }
 
