@@ -8,6 +8,7 @@ type Props = {
   viagemId: string
   destinos: Tables<'destinos'>[]
   destinoInicial: string | null
+  membros?: { id: string; nome: string }[] // spec 100: quem dá pra marcar
   aoTerminar: (postId: string) => void
 }
 
@@ -15,10 +16,11 @@ type Escolhida = { id: string; blob: Blob; previa: string }
 type Etapa = { tipo: 'parado' } | { tipo: 'preparando'; feitas: number; total: number } | { tipo: 'enviando'; feitas: number }
 
 // Novo post (spec 014): até 10 fotos, lugar e legenda. As fotos são comprimidas aqui mesmo, antes de enviar.
-export default function FormPost({ viagemId, destinos, destinoInicial, aoTerminar }: Props) {
+export default function FormPost({ viagemId, destinos, destinoInicial, membros = [], aoTerminar }: Props) {
   const [fotos, setFotos] = useState<Escolhida[]>([])
   const [destino, setDestino] = useState(destinoInicial ?? '') // lugar é opcional
   const [legenda, setLegenda] = useState('')
+  const [marcados, setMarcados] = useState<string[]>([]) // spec 100
   const [etapa, setEtapa] = useState<Etapa>({ tipo: 'parado' })
   const [erro, setErro] = useState<string | null>(null)
 
@@ -73,6 +75,7 @@ export default function FormPost({ viagemId, destinos, destinoInicial, aoTermina
         legenda,
         fotos.map((f) => f.blob),
         (feitas) => setEtapa({ tipo: 'enviando', feitas }),
+        marcados,
       )
       aoTerminar(id)
     } catch (erro) {
@@ -128,6 +131,29 @@ export default function FormPost({ viagemId, destinos, destinoInicial, aoTermina
           ))}
         </select>
       </div>
+
+      {membros.length > 1 && (
+        <fieldset className="form-campo post-marcar">
+          <legend className="form-rotulo">Quem está nas fotos? (opcional)</legend>
+          <div className="post-marcar-pessoas">
+            {membros.map((m) => {
+              const sim = marcados.includes(m.id)
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  aria-pressed={sim}
+                  className={sim ? 'ativo' : undefined}
+                  disabled={ocupado}
+                  onClick={() => setMarcados(sim ? marcados.filter((x) => x !== m.id) : [...marcados, m.id])}
+                >
+                  {m.nome.split(' ')[0]}
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
+      )}
 
       <div className="form-campo">
         <label className="form-rotulo" htmlFor="post-legenda">

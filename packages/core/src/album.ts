@@ -32,3 +32,13 @@ export function melhoresPosts<P extends PostBase>(posts: P[], quantos = 9): P[] 
     .sort((a, b) => b.curtidas.length - a.curtidas.length || b.comentarios.length - a.comentarios.length || b.criado_em.localeCompare(a.criado_em))
     .slice(0, quantos)
 }
+
+// Spec 100: "com Ingryd", "com Ingryd e Victor", "com Ingryd, Victor e mais 2"
+export function textoDosMarcados(ids: string[], nomeDe: (id: string) => string): string {
+  const nomes = ids.map((id) => nomeDe(id).split(' ')[0])
+  if (nomes.length === 0) return ''
+  if (nomes.length === 1) return `com ${nomes[0]}`
+  if (nomes.length === 2) return `com ${nomes[0]} e ${nomes[1]}`
+  if (nomes.length === 3) return `com ${nomes[0]}, ${nomes[1]} e ${nomes[2]}`
+  return `com ${nomes[0]}, ${nomes[1]} e mais ${nomes.length - 2}`
+}

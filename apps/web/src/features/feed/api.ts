@@ -7,19 +7,20 @@ const BUCKET = 'fotos'
 
 export type FotoDoPost = { id: string; caminho: string; url: string | null }
 export type Comentario = Tables<'comentarios'>
-export type Post = Tables<'posts'> & { fotos: FotoDoPost[]; curtidas: string[]; comentarios: Comentario[] }
+export type Post = Tables<'posts'> & { fotos: FotoDoPost[]; curtidas: string[]; comentarios: Comentario[]; marcados: string[] }
 
 type PostDoBanco = Tables<'posts'> & {
   fotos: { id: string; caminho: string; ordem: number }[]
   curtidas: { usuario_id: string }[]
   comentarios: Comentario[]
+  post_marcacoes?: { usuario_id: string }[] // spec 100
 }
 
 // Posts da viagem (mais novos primeiro), com link temporário de 1 hora pra cada foto (o bucket é privado)
 export async function buscarPosts(viagemId: string): Promise<Post[]> {
   const { data, error } = await supabase
     .from('posts')
-    .select('*, fotos(id, caminho, ordem), curtidas(usuario_id), comentarios(*)')
+    .select('*, fotos(id, caminho, ordem), curtidas(usuario_id), comentarios(*), post_marcacoes(usuario_id)')
     .eq('viagem_id', viagemId)
     .order('criado_em', { ascending: false })
   if (error) throw error
@@ -34,8 +35,9 @@ export async function buscarPosts(viagemId: string): Promise<Post[]> {
     for (const l of lote) if (l.path && l.signedUrl) links.set(l.path, l.signedUrl)
   }
 
-  return posts.map(({ fotos, curtidas, comentarios, ...post }) => ({
+  return posts.map(({ fotos, curtidas, comentarios, post_marcacoes, ...post }) => ({
     ...post,
+    marcados: (post_marcacoes ?? []).map((m) => m.usuario_id),
     fotos: [...fotos].sort((a, b) => a.ordem - b.ordem).map((f) => ({ id: f.id, caminho: f.caminho, url: links.get(f.caminho) ?? null })),
     curtidas: curtidas.map((c) => c.usuario_id),
     comentarios: [...comentarios].sort((a, b) => a.criado_em.localeCompare(b.criado_em)),
@@ -49,6 +51,7 @@ export async function criarPost(
   legenda: string,
   fotos: Blob[],
   aoEnviar?: (quantas: number) => void,
+  marcados: string[] = [], // spec 100: quem está nas fotos
 ) {
   const { data: post, error } = await supabase
     .from('posts')
@@ -76,7 +79,18 @@ export async function criarPost(
     await supabase.from('posts').delete().eq('id', post.id)
     throw erro
   }
+  // Marcações não desfazem o post se falharem (dá pra marcar de novo depois)
+  if (marcados.length) {
+    const { error: erroMarcas } = await supabase.from('post_marcacoes').insert(marcados.map((usuario_id) => ({ post_id: post.id, usuario_id })))
+    if (erroMarcas) console.error('Post salvo, mas não deu pra marcar as pessoas:', erroMarcas)
+  }
   return post.id
+}
+
+// Spec 100: tirar uma marcação (a própria pessoa, quem marcou ou o autor do post)
+export async function desmarcar(postId: string, usuarioId: string) {
+  const { error } = await supabase.from('post_marcacoes').delete().eq('post_id', postId).eq('usuario_id', usuarioId)
+  if (error) throw error
 }
 
 // Primeiro os arquivos, depois o post (as fotos, curtidas e comentários saem junto)

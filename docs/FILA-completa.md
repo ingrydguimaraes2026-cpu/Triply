@@ -162,7 +162,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 96 | K2 | Álbum por dia e destino ◐ | P | Pronto pra testar (web) · spec 098 |
 | 97 | K3 | Melhores fotos ◐ | P | Pronto pra testar (web) · spec 098 |
 | 98 | K5 | Baixar tudo (zip) | P | Pronto pra testar (web) · spec 099 |
-| 99 | K9 | Marcar pessoas nas fotos | P | a fazer |
+| 99 | K9 | Marcar pessoas nas fotos | P | Pronto pra testar (web) · spec 100 |
 | 100 | K6 | Diário da viagem | M | a fazer |
 | 101 | K4 | Fotos no mapa | M | a fazer |
 | 102 | K7 | Retrospectiva | G | a fazer |

@@ -6,7 +6,7 @@ import { diaPorExtenso } from '../../features/agenda/hooks'
 import BaixarFotos from '../../features/feed/BaixarFotos'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { usePosts } from '../../features/feed/hooks'
-import { apagarComentario, apagarPost, avisarComboio, comentar, curtir, descurtir, type Post } from '../../features/feed/api'
+import { apagarComentario, apagarPost, avisarComboio, comentar, curtir, descurtir, desmarcar, type Post } from '../../features/feed/api'
 import { alternarCurtida } from '../../features/feed/regras'
 import FormPost from '../../features/feed/FormPost'
 import PostCard from '../../features/feed/PostCard'
@@ -27,6 +27,7 @@ export default function Fotos() {
   const [busca] = useSearchParams()
   const [modo, setModo] = useState<'feed' | 'grade' | 'dias' | 'melhores'>('feed')
   const [postando, setPostando] = useState(false)
+  const [soComigo, setSoComigo] = useState(false) // spec 100
   const [comentariosDe, setComentariosDe] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [pedirAviso, setPedirAviso] = useState(false)
@@ -164,6 +165,7 @@ export default function Fotos() {
     </ul>
   )
   const melhores = melhoresPosts(posts) // spec 098
+  const comigo = posts.filter((p) => p.marcados.includes(meuId)) // spec 100
 
   return (
     <div className="feed-pagina">
@@ -258,7 +260,14 @@ export default function Fotos() {
             }
           />
         ) : modo === 'grade' ? (
-          grade(posts)
+          <>
+            {comigo.length > 0 && (
+              <button type="button" className={soComigo ? 'chip-filtro ativo' : 'chip-filtro'} aria-pressed={soComigo} onClick={() => setSoComigo(!soComigo)}>
+                Fotos em que estou ({comigo.length})
+              </button>
+            )}
+            {grade(soComigo ? comigo : posts)}
+          </>
         ) : modo === 'dias' ? (
           <div className="album-dias">
             {albumPorDia(posts, destinos).map((g) => (
@@ -293,6 +302,11 @@ export default function Fotos() {
                 aoComentar={aoComentar}
                 aoVerComentarios={(post) => setComentariosDe(post.id)}
                 aoApagar={aoApagar}
+                aoSairDaMarcacao={(post) =>
+                  desmarcar(post.id, meuId)
+                    .then(recarregar)
+                    .catch(() => setErro('Não deu pra tirar a marcação agora.'))
+                }
               />
             ))}
           </div>
@@ -304,6 +318,7 @@ export default function Fotos() {
             viagemId={viagem.id}
             destinos={destinos}
             destinoInicial={null}
+            membros={membros}
             aoTerminar={(id) => {
               setPostando(false)
               setModo('feed')

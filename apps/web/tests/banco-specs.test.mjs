@@ -1593,3 +1593,19 @@ test('091: duplica roteiro, transporte, lugar, agenda e lista, andando as datas'
   assert.equal((await db.query('select count(*)::int n from public.eventos_agenda where viagem_id = $1', [sem])).rows[0].n, 0)
   assert.equal((await db.query("select chegada from public.destinos where viagem_id = $1 and nome = 'Nice'", [sem])).rows[0].chegada, null)
 })
+
+// ---------------- 100: marcar pessoas nos posts ----------------
+test('100: comboio marca quem é do comboio; autor, quem marcou ou o marcado tira', async () => {
+  const db = await novoBanco()
+  const post = (await como(db, MEMBRO, `insert into public.posts (viagem_id, legenda) values ('${V}', 'praia') returning id`))[0].id
+  await como(db, ADM, 'insert into public.post_marcacoes (post_id, usuario_id) values ($1, $2)', [post, MEMBRO])
+  await como(db, MEMBRO, 'insert into public.post_marcacoes (post_id, usuario_id) values ($1, $2)', [post, ADM])
+  await assert.rejects(como(db, MEMBRO, 'insert into public.post_marcacoes (post_id, usuario_id) values ($1, $2)', [post, ESTRANHO]), /comboio/)
+  await assert.rejects(como(db, ESTRANHO, 'insert into public.post_marcacoes (post_id, usuario_id) values ($1, $2)', [post, ESTRANHO]), /row-level security|comboio/)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.post_marcacoes')).length, 0)
+  assert.equal((await como(db, ADM, 'select * from public.post_marcacoes')).length, 2)
+  // O marcado se tira; o autor do post tira qualquer um
+  await como(db, MEMBRO, 'delete from public.post_marcacoes where post_id = $1 and usuario_id = $2', [post, MEMBRO])
+  await como(db, MEMBRO, 'delete from public.post_marcacoes where post_id = $1 and usuario_id = $2', [post, ADM])
+  assert.equal((await db.query('select count(*)::int n from public.post_marcacoes')).rows[0].n, 0)
+})

@@ -1211,6 +1211,35 @@ export type Database = {
         }
         Relationships: []
       }
+      post_marcacoes: {
+        Row: {
+          criado_em: string
+          marcado_por: string
+          post_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          marcado_por?: string
+          post_id: string
+          usuario_id: string
+        }
+        Update: {
+          criado_em?: string
+          marcado_por?: string
+          post_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_marcacoes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: { autor: string; criado_em: string; destino_id: string | null; id: string; legenda: string | null; viagem_id: string }
         Insert: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id: string }

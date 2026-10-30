@@ -27,3 +27,14 @@ test('098: melhores fotos por curtida, comentário e data', () => {
   assert.deepEqual(melhoresPosts(posts).map((p) => p.id), ['e', 'b', 'd', 'a'])
   assert.equal(melhoresPosts(posts, 2).length, 2)
 })
+
+test('100: texto de quem está na foto', async () => {
+  const { textoDosMarcados } = await import(new URL('../../../packages/core/src/album.ts', import.meta.url))
+  const nomes = { a: 'Ingryd Guimarães', b: 'Victor', c: 'Ana', d: 'Bia' }
+  const de = (id) => nomes[id]
+  assert.equal(textoDosMarcados([], de), '')
+  assert.equal(textoDosMarcados(['a'], de), 'com Ingryd')
+  assert.equal(textoDosMarcados(['a', 'b'], de), 'com Ingryd e Victor')
+  assert.equal(textoDosMarcados(['a', 'b', 'c'], de), 'com Ingryd, Victor e Ana')
+  assert.equal(textoDosMarcados(['a', 'b', 'c', 'd'], de), 'com Ingryd, Victor e mais 2')
+})

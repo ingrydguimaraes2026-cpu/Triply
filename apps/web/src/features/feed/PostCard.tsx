@@ -4,6 +4,7 @@ import Avatar from '../../components/ui/Avatar'
 import type { Membro } from '../viagens/hooks'
 import type { Post } from './api'
 import { tempoAtras, textoDasCurtidas } from './regras'
+import { textoDosMarcados } from '@together/core'
 
 type Props = {
   post: Post
@@ -17,13 +18,14 @@ type Props = {
   aoComentar: (post: Post, texto: string) => Promise<boolean>
   aoVerComentarios: (post: Post) => void
   aoApagar: (post: Post) => Promise<void>
+  aoSairDaMarcacao?: (post: Post) => void // spec 100
 }
 
 // Formato da foto igual ao Instagram: segue a 1ª foto, entre 4:5 (em pé) e 1.91:1 (deitada)
 const proporcaoDa = (img: HTMLImageElement) => Math.min(1.91, Math.max(0.8, img.naturalWidth / img.naturalHeight || 1))
 
 // Um post do feed, estilo Instagram (spec 014)
-export default function PostCard({ post, autor, eu, nomeDe, lugar, meuId, podeApagar, aoCurtir, aoComentar, aoVerComentarios, aoApagar }: Props) {
+export default function PostCard({ post, autor, eu, nomeDe, lugar, meuId, podeApagar, aoCurtir, aoComentar, aoVerComentarios, aoApagar, aoSairDaMarcacao }: Props) {
   const [atual, setAtual] = useState(0) // foto visível no carrossel
   const [proporcao, setProporcao] = useState(0.8)
   const [coracao, setCoracao] = useState(false) // animação do toque duplo
@@ -80,6 +82,19 @@ export default function PostCard({ post, autor, eu, nomeDe, lugar, meuId, podeAp
             <time dateTime={post.criado_em}>{tempoAtras(post.criado_em)}</time>
           </p>
           {lugar && <span className="post-lugar">{lugar}</span>}
+          {post.marcados.length > 0 && (
+            <span className="post-marcados">
+              {textoDosMarcados(post.marcados, nomeDe)}
+              {aoSairDaMarcacao && post.marcados.includes(meuId) && (
+                <>
+                  {' · '}
+                  <button type="button" className="botao-texto post-sair-marcacao" onClick={() => aoSairDaMarcacao(post)}>
+                    me tirar
+                  </button>
+                </>
+              )}
+            </span>
+          )}
         </div>
         {podeApagar && (
           <button type="button" className="post-menu" onClick={() => setMenu((m) => !m)} aria-label="Opções do post" aria-expanded={menu}>
