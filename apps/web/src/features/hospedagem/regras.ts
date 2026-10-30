@@ -34,6 +34,7 @@ export type GuiaDaCasa = {
   wifiSenha: string | null
   codigoPorta: string | null
   regras: string | null
+  comoChegar?: string | null // spec 062: transfer do aeroporto/estação
 }
 
 export function guiaVazio(guia: GuiaDaCasa | undefined): boolean {

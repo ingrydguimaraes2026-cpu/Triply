@@ -97,7 +97,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 47 | C12 | Achar e reservar restaurante (TheFork / Maps) no destino (ideia: TheFork) | P | ✅ feito (web) · spec 059 |
 | 48 | C8 | Perto de mim (lugares salvos mais próximos) | P | ✅ feito (web) · spec 061 |
 | 49 | C10 | "Já fomos" (marcar lugar como visitado) | P | ✅ feito (web) · spec 061 · banco a aplicar |
-| 50 | D12 | Transfer de chegada (aeroporto/estação → hospedagem) | P | a fazer |
+| 50 | D12 | Transfer de chegada (aeroporto/estação → hospedagem) | P | ✅ feito (web) · spec 062 · banco a aplicar |
 | 51 | E11 | Vibe e etiquetas da opção de hospedagem + hostel na busca (ideia: Hostelworld) | P | a fazer |
 
 ## Fase 5 · Planejar melhor (itens M)

@@ -1280,3 +1280,11 @@ test('061: qualquer um do comboio marca o lugar como visitado; estranho não', a
   await como(db, MEMBRO, 'select public.marcar_visitado($1, false)', [id])
   assert.equal((await db.query('select visitado_em from public.lugares')).rows[0].visitado_em, null)
 })
+
+// ---------------- 062: como chegar ----------------
+test('062: como chegar na hospedagem, com limite de tamanho', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome, como_chegar) values ('${V}', '${NICE}', 'Casa', 'Ônibus 98 do aeroporto, € 6')`)
+  assert.equal((await como(db, MEMBRO, 'select como_chegar from public.hospedagens'))[0].como_chegar, 'Ônibus 98 do aeroporto, € 6')
+  await assert.rejects(como(db, ADM, `update public.hospedagens set como_chegar = repeat('x', 1001)`), /check/)
+})

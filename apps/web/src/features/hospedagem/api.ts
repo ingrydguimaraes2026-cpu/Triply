@@ -52,6 +52,7 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
       wifiSenha: h.wifi_senha,
       codigoPorta: h.codigo_porta,
       regras: h.regras_casa,
+      comoChegar: h.como_chegar,
     },
   }))
 }
@@ -109,6 +110,7 @@ export async function salvarGuiaDaCasa(id: string, guia: GuiaDaCasa) {
       wifi_senha: limpo(guia.wifiSenha),
       codigo_porta: limpo(guia.codigoPorta),
       regras_casa: limpo(guia.regras),
+      como_chegar: limpo(guia.comoChegar ?? null),
     })
     .eq('id', id)
     .select('id')

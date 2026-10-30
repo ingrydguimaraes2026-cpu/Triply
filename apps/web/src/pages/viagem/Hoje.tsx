@@ -16,7 +16,7 @@ import './hoje.css'
 
 type Hospedagem = Pick<
   Tables<'hospedagens'>,
-  'id' | 'nome' | 'endereco' | 'destino_id' | 'hora_checkin' | 'hora_checkout' | 'checkin' | 'checkout' | 'guarda_malas' | 'guarda_malas_obs'
+  'id' | 'nome' | 'endereco' | 'destino_id' | 'hora_checkin' | 'hora_checkout' | 'checkin' | 'checkout' | 'guarda_malas' | 'guarda_malas_obs' | 'como_chegar'
 >
 type GuardaVolumes = Pick<Tables<'lugares'>, 'id' | 'nome' | 'destino_id' | 'link' | 'horario'>
 type Ponto = Pick<Tables<'pontos_de_encontro'>, 'id' | 'local' | 'quando' | 'latitude' | 'longitude'>
@@ -42,7 +42,7 @@ export default function Hoje() {
     Promise.all([
       supabase
         .from('hospedagens')
-        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs')
+        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar')
         .eq('viagem_id', viagem.id)
         .eq('escolhida', true),
       supabase.from('pontos_de_encontro').select('id, local, quando, latitude, longitude').eq('viagem_id', viagem.id),
@@ -180,6 +180,12 @@ export default function Hoje() {
                 {dormimos.checkin === hoje && dormimos.hora_checkin && `Check-in a partir das ${dormimos.hora_checkin.slice(0, 5)} · `}
                 {dormimos.checkout === hoje && dormimos.hora_checkout && `Check-out até ${dormimos.hora_checkout.slice(0, 5)} · `}
               </small>
+              {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
+              {dormimos.como_chegar && onde?.chegada === hoje && (
+                <p className="hoje-como-chegar">
+                  <strong>Como chegar:</strong> {dormimos.como_chegar}
+                </p>
+              )}
               {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
             </div>
           ) : (

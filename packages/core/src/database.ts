@@ -471,6 +471,7 @@ export type Database = {
           checkin: string | null
           checkout: string | null
           codigo_porta: string | null
+          como_chegar: string | null
           criado_em: string
           criado_por: string
           destino_id: string | null
@@ -498,6 +499,7 @@ export type Database = {
           checkin?: string | null
           checkout?: string | null
           codigo_porta?: string | null
+          como_chegar?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
@@ -525,6 +527,7 @@ export type Database = {
           checkin?: string | null
           checkout?: string | null
           codigo_porta?: string | null
+          como_chegar?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null

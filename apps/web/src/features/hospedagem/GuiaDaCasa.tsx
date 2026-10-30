@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Check, Copy, KeyRound, MapPin, Pencil, ScrollText, Wifi } from 'lucide-react'
+import { Bus, Check, Copy, KeyRound, MapPin, Pencil, ScrollText, Wifi } from 'lucide-react'
 import { mensagemDeErro } from '../financeiro/api'
 import { guiaVazio, type GuiaDaCasa as Guia } from './regras'
 import BotaoIr from '../../components/ui/BotaoIr'
@@ -32,7 +32,7 @@ export default function GuiaDaCasa({ guia, podeEditar, aoEditar }: { guia?: Guia
     )
   }
 
-  const { endereco, wifiRede, wifiSenha, codigoPorta, regras } = guia!
+  const { endereco, wifiRede, wifiSenha, codigoPorta, regras, comoChegar } = guia!
   return (
     <section className="guia-casa" aria-label="Guia da casa">
       <header className="guia-casa-topo">
@@ -88,6 +88,14 @@ export default function GuiaDaCasa({ guia, podeEditar, aoEditar }: { guia?: Guia
             </dd>
           </div>
         )}
+        {comoChegar && (
+          <div>
+            <dt>
+              <Bus size={14} aria-hidden="true" /> Como chegar (aeroporto/estação)
+            </dt>
+            <dd className="guia-regras">{comoChegar}</dd>
+          </div>
+        )}
         {regras && (
           <div>
             <dt>
@@ -108,6 +116,7 @@ export function FormGuia({ guia, salvar, aoTerminar }: { guia?: Guia; salvar: (g
   const [wifiSenha, setWifiSenha] = useState(guia?.wifiSenha ?? '')
   const [codigoPorta, setCodigoPorta] = useState(guia?.codigoPorta ?? '')
   const [regras, setRegras] = useState(guia?.regras ?? '')
+  const [comoChegar, setComoChegar] = useState(guia?.comoChegar ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -116,7 +125,7 @@ export function FormGuia({ guia, salvar, aoTerminar }: { guia?: Guia; salvar: (g
     setErro(null)
     setSalvando(true)
     try {
-      await salvar({ endereco, wifiRede, wifiSenha, codigoPorta, regras })
+      await salvar({ endereco, wifiRede, wifiSenha, codigoPorta, regras, comoChegar })
       aoTerminar()
     } catch (erro) {
       console.error('Erro ao salvar o guia da casa:', erro)
@@ -172,6 +181,18 @@ export function FormGuia({ guia, salvar, aoTerminar }: { guia?: Guia; salvar: (g
           placeholder="Ex.: silêncio depois das 22h, lixo reciclável no pátio, deixar a chave na mesa."
           value={regras}
           onChange={(e) => setRegras(e.target.value)}
+        />
+      </div>
+      <div className="form-campo">
+        <label className="form-rotulo" htmlFor="guia-chegar">
+          Como chegar do aeroporto ou da estação
+        </label>
+        <textarea
+          id="guia-chegar"
+          maxLength={1000}
+          placeholder="Ex.: ônibus 98 do aeroporto até Place Garibaldi (€ 6, 30 min), depois 5 min a pé. Táxi: uns € 35."
+          value={comoChegar}
+          onChange={(e) => setComoChegar(e.target.value)}
         />
       </div>
       {erro && (
