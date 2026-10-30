@@ -143,7 +143,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 81 | M7 | Exportar a viagem em PDF | M | Pronto pra testar (web) · spec 088 |
 | 82 | M11 | Privacidade e LGPD (excluir conta, baixar meus dados) ◐ | M | Pronto pra testar (web) · spec 089 |
 | 83 | M10 | Acessibilidade e modo simples | M | Pronto pra testar (web) · spec 090 |
-| 84 | M15 | Outros idiomas (inglês, espanhol) | M | a fazer |
+| 84 | M15 | Outros idiomas (inglês, espanhol) | M | adiado: ~830 textos em ~90 telas (tamanho real G+); meia tradução deixa o app misturado. Plano abaixo |
 | 85 | N4 | Duplicar viagem e templates | M | a fazer |
 
 ## Fase 8 · IA, memórias e itens grandes
@@ -186,3 +186,4 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 - **F3 Pessoa sem app:** entra no saldo (alguém cobre por ela) ou é só nome na divisão? Vira membro normal quando cria conta?
 - **H7 Acerto pago / N1 Fechamento:** quem recebe precisa confirmar? O saldo zera na hora? Guarda histórico?
 - **F4 Núcleos / H8 Caixa:** dependem da resposta de H7 (mudam como o saldo é calculado).
+- **M15 Idiomas:** vale agora? Plano sugerido: (1) biblioteca pequena (`i18next` + `react-i18next`) ou um `t()` caseiro com dicionários em `packages/core/src/textos/` (web e mobile usam); (2) migrar tela por tela, começando por Login, menu e Financeiro; (3) datas e dinheiro já usam `toLocaleString`, só trocar `'pt-BR'` pelo idioma escolhido; (4) avisos no celular (Edge Functions) precisam saber o idioma de cada pessoa (coluna em `perfis`). Estimativa: 2 a 3 dias de trabalho focado.
