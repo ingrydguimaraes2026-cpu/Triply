@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { useSessao } from '../features/auth/hooks'
 import { CriarContaDoConvidado } from '../features/auth/FaixaConvidado'
 import MapaMundi from '../features/mapa/MapaMundi'
@@ -7,7 +7,7 @@ import Logo from '../components/ui/Logo'
 import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
 import { useBuscaDeLugares } from '../features/destinos/useBuscaDeLugares'
 import { mover } from '../features/destinos/ordem'
-import { criarViagem } from '../features/viagens/api'
+import { criarViagem, trazerComboio } from '../features/viagens/api'
 import { criarConvite } from '../features/comboio/api'
 import './nova-viagem.css'
 
@@ -86,6 +86,10 @@ function CriarViagem() {
   const moeda = moedaEscolhida ?? (destinos[0] ? moedaDoPais(destinos[0].codigoPais) : 'EUR')
 
   const [salvando, setSalvando] = useState(false)
+  // Spec 055: "Nova viagem com este comboio" (vem de /nova-viagem?comboio=<viagem antiga>)
+  const [busca_] = useSearchParams()
+  const comboioDe = busca_.get('comboio')
+  const [trazidos, setTrazidos] = useState<number | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [viagemId, setViagemId] = useState<string | null>(null)
   const [link, setLink] = useState<string | null>(null)
@@ -132,6 +136,10 @@ function CriarViagem() {
         destinos,
       })
       setViagemId(id)
+      if (comboioDe) {
+        // Se falhar, a viagem já existe: segue com o convite normal
+        setTrazidos(await trazerComboio(id, comboioDe).catch(() => null))
+      }
       setLink(await criarConvite(id))
       setPasso('comboio')
     } catch {
@@ -345,6 +353,11 @@ function CriarViagem() {
           <section className="onb-passo">
             <div>
               <h1>Essa viagem é de vocês.</h1>
+              {trazidos !== null && trazidos > 0 && (
+                <p className="onb-destaque">
+                  {trazidos} {trazidos === 1 ? 'pessoa do comboio já entrou' : 'pessoas do comboio já entraram'} nesta viagem.
+                </p>
+              )}
               <p className="onb-sub">Convide quem vai viajar com você para participar da mesma viagem no Together.</p>
               <p className="onb-sub">
                 Compartilhem o roteiro, organizem os planos, acompanhem os gastos e guardem as memórias juntos. Cada pessoa

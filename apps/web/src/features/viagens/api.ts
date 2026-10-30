@@ -117,3 +117,10 @@ export async function arquivarViagem(viagemId: string, arquivar: boolean) {
   const { error } = await supabase.rpc('arquivar_viagem', { p_viagem: viagemId, p_arquivar: arquivar })
   if (error) throw error
 }
+
+// Traz todo mundo do comboio de uma viagem antiga pra uma nova (spec 055). Devolve quantos entraram.
+export async function trazerComboio(novaId: string, origemId: string): Promise<number> {
+  const { data, error } = await supabase.rpc('trazer_comboio', { p_nova: novaId, p_origem: origemId })
+  if (error) throw error
+  return data ?? 0
+}

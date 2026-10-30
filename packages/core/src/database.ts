@@ -1815,6 +1815,13 @@ export type Database = {
         }
         Returns: { usuario_id: string; telefone: string | null; aniversario: string | null; restricoes: string | null; alergias: string | null; mobilidade: string | null; emergencia_nome: string | null; emergencia_telefone: string | null; tipo_sanguineo: string | null; remedios: string | null }[]
       }
+      trazer_comboio: {
+        Args: {
+          p_nova: string
+          p_origem: string
+        }
+        Returns: number
+      }
       ver_convite: { Args: { p_codigo: string }; Returns: Json }
       convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
       registrar_push: {

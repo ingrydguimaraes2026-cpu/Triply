@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { Cake, Check, Copy, HeartPulse, Link2, LogOut, MoreHorizontal, Phone, Ticket, Users, Utensils } from 'lucide-react'
+import { Link, useNavigate } from 'react-router'
+import { Cake, Check, Copy, Repeat, HeartPulse, Link2, LogOut, MoreHorizontal, Phone, Ticket, Users, Utensils } from 'lucide-react'
 import { aniversariosNaViagem, buscarFichasDoComboio, restricoesDoGrupo, telefoneParaLigar, type FichaNoComboio } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import {
@@ -276,6 +276,15 @@ export default function Comboio() {
             </ul>
           )}
         </Cartao>
+      )}
+
+      {/* Spec 055: começar outra viagem com as mesmas pessoas */}
+      {!sozinho && (
+        <div className="comboio-repetir">
+          <Link to={`/nova-viagem?comboio=${viagem.id}`} className="botao secundario">
+            <Repeat size={18} aria-hidden="true" /> Nova viagem com este comboio
+          </Link>
+        </div>
       )}
 
       <div className="comboio-sair">

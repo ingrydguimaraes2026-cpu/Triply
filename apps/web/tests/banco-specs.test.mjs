@@ -1216,3 +1216,20 @@ test('054: cada um arquiva só na própria lista', async () => {
   await como(db, ESTRANHO, `select public.arquivar_viagem('${V}', true)`)
   assert.equal((await db.query('select count(*)::int as n from public.comboio_membros where arquivada_em is not null')).rows[0].n, 0)
 })
+
+// ---------------- 055: repetir com o mesmo comboio ----------------
+test('055: ADM da viagem nova traz o comboio da antiga; quem não é ADM ou não é do comboio não traz', async () => {
+  const db = await novoBanco()
+  const NOVA = '22222222-2222-2222-2222-222222222222'
+  await db.exec(`insert into public.viagens (id, nome, criado_por) values ('${NOVA}', 'Nova', '${ADM}')`)
+  // Membro (não é ADM da nova) não consegue
+  await assert.rejects(como(db, MEMBRO, `select public.trazer_comboio('${NOVA}', '${V}')`), /ADM/)
+  const [{ trazer_comboio: n }] = await como(db, ADM, `select public.trazer_comboio('${NOVA}', '${V}')`)
+  assert.equal(n, 1) // o ADM já estava; entra o membro
+  const membros = (await db.query('select usuario_id, papel from public.comboio_membros where viagem_id = $1 order by papel', [NOVA])).rows
+  assert.deepEqual(membros.map((m) => m.papel), ['adm', 'membro'])
+  // Origem de outra pessoa: barrado
+  const ALHEIA = '33333333-3333-3333-3333-333333333333'
+  await db.exec(`insert into public.viagens (id, nome, criado_por) values ('${ALHEIA}', 'Alheia', '${ESTRANHO}')`)
+  await assert.rejects(como(db, ADM, `select public.trazer_comboio('${NOVA}', '${ALHEIA}')`), /comboio/)
+})
