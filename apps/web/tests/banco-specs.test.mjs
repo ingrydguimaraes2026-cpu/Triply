@@ -1188,3 +1188,16 @@ test('050: comboio vê alergias; saúde só pra quem a pessoa liberou; estranho 
   assert.equal((await como(db, ADM, 'select * from public.fichas_pessoais')).length, 0)
   await assert.rejects(como(db, MEMBRO, "update public.fichas_pessoais set tipo_sanguineo = 'Z'"), /check/)
 })
+
+// ---------------- 051: cheguei bem ----------------
+test('051: cada um registra a própria chegada; o comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.chegadas (viagem_id, onde) values ('${V}', 'Hotel em Nice')`)
+  assert.equal((await como(db, ADM, 'select onde from public.chegadas'))[0].onde, 'Hotel em Nice')
+  assert.equal((await como(db, ESTRANHO, 'select * from public.chegadas')).length, 0)
+  await assert.rejects(como(db, ADM, `insert into public.chegadas (viagem_id, usuario_id) values ('${V}', '${MEMBRO}')`), /row-level security/)
+  await assert.rejects(como(db, ESTRANHO, `insert into public.chegadas (viagem_id) values ('${V}')`), /row-level security/)
+  // ADM não apaga a chegada do membro
+  await como(db, ADM, 'delete from public.chegadas')
+  assert.equal((await db.query('select count(*)::int as n from public.chegadas')).rows[0].n, 1)
+})

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, Camera, CircleCheck, ListChecks, Lock, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -35,6 +35,7 @@ import { editarViagem } from '../../features/viagens/api'
 import OrcamentoCombinado from '../../features/orcamento-combinado/OrcamentoCombinado'
 import FichaDoPais from '../../features/ficha-do-pais/FichaDoPais'
 import ListasDoComboio from '../../features/listas/ListasDoComboio'
+import ChegueiBem from '../../features/chegadas/ChegueiBem'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -369,6 +370,11 @@ export default function Overview() {
         {/* Spec 021: enquetes rápidas pra decidir junto */}
         <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
           <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
+
+        {/* Spec 051: "cheguei bem" com um toque */}
+        <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
+          <ChegueiBem />
         </Cartao>
 
         {/* Spec 048: quem leva o quê + lista de compras */}

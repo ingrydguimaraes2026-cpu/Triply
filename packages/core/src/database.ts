@@ -16,6 +16,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      chegadas: {
+        Row: {
+          criado_em: string
+          id: string
+          onde: string | null
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          onde?: string | null
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          onde?: string | null
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       comentarios: {
         Row: { autor: string; criado_em: string; id: string; post_id: string; texto: string }
         Insert: { autor?: string; criado_em?: string; id?: string; post_id: string; texto: string }

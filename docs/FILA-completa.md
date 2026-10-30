@@ -73,7 +73,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 27 | I10 | Lista de compras com "lançar como gasto" | P | ✅ feito (web) · spec 048 · banco a aplicar |
 | 28 | F6 | Contatos de emergência e saúde (visível só pra quem a pessoa escolher) | P | ✅ feito (web) · spec 050 · banco a aplicar |
 | 29 | F5 | Ficha da pessoa (alergias, restrições, aniversário) ◐ | P | ✅ feito (web) · spec 050 · banco a aplicar |
-| 30 | F9 | "Cheguei bem" | P | a fazer |
+| 30 | F9 | "Cheguei bem" | P | ✅ feito (web) · spec 051 · banco a aplicar |
 | 31 | H13 | Gastos planejados e recorrentes | P | a fazer |
 | 32 | H14 | Meu orçamento pessoal ◐ | P | a fazer |
 | 33 | H16 | Exportar gastos (CSV, PDF, Splitwise) | P | a fazer |
