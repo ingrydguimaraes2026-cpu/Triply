@@ -201,7 +201,7 @@ export default function Financeiro() {
               titulo="Orçamento total"
               icone={Wallet}
               acao={
-                euSouAdm && (
+                (euSouAdm || viagem.membro_edita_orcamento) && (
                   <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'orcamento' })}>
                     <Settings2 size={16} aria-hidden="true" /> Definir
                   </button>

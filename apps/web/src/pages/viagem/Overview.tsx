@@ -75,6 +75,7 @@ function datasDoDestino(d: ItemRoteiro) {
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
 export default function Overview() {
   const { viagem, destinos, membros, meuId, euSouAdm, atualizarDestinos, atualizarViagem } = useViagemAtual()
+  const podeEditarRoteiro = euSouAdm || viagem.membro_edita_roteiro // spec 078
   useFocoDeItem() // destaca a enquete/ponto quando se chega por um link de compartilhar
 
   // Modo de edição do roteiro: enquanto edita, a lista E o mapa mostram o rascunho.
@@ -278,7 +279,7 @@ export default function Overview() {
           icone={MapPin}
           className={rascunho ? 'overview-roteiro editando' : 'overview-roteiro'}
           acao={
-            euSouAdm &&
+            podeEditarRoteiro &&
             !rascunho && (
               <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
                 <Pencil size={14} aria-hidden="true" /> Editar

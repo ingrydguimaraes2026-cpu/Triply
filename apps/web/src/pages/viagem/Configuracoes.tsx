@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Settings, Trash2 } from 'lucide-react'
+import { Settings, ShieldCheck, Trash2 } from 'lucide-react'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import ApagarViagem from '../../features/viagens/ApagarViagem'
@@ -9,9 +9,25 @@ import Cartao from '../../components/ui/Cartao'
 import EstadoVazio from '../../components/ui/EstadoVazio'
 import './abas.css'
 
+const PERMISSOES = [
+  { campo: 'membro_edita_roteiro', nome: 'Roteiro', explica: 'Destinos, ordem e datas' },
+  { campo: 'membro_edita_transportes', nome: 'Transportes', explica: 'Criar e editar trajetos' },
+  { campo: 'membro_edita_orcamento', nome: 'Orçamento', explica: 'Quanto gastar por categoria' },
+] as const
+
 // Configurações da viagem (spec 008): nome, datas, moeda e apagar. Só o ADM.
 export default function Configuracoes() {
   const { viagem, euSouAdm, atualizarViagem } = useViagemAtual()
+  const [erroPermissao, setErroPermissao] = useState<string | null>(null)
+
+  async function mudarPermissao(campo: (typeof PERMISSOES)[number]['campo'], ligado: boolean) {
+    setErroPermissao(null)
+    try {
+      atualizarViagem(await editarViagem(viagem.id, { [campo]: ligado }))
+    } catch {
+      setErroPermissao('Não deu pra salvar.')
+    }
+  }
   const [nome, setNome] = useState(viagem.nome)
   const [inicio, setInicio] = useState(viagem.data_inicio ?? '')
   const [fim, setFim] = useState(viagem.data_fim ?? '')
@@ -96,6 +112,21 @@ export default function Configuracoes() {
             </button>
           </div>
         </form>
+      </Cartao>
+
+      {/* Spec 078: o que o comboio também pode editar */}
+      <Cartao titulo="O que o comboio pode editar" icone={ShieldCheck}>
+        <p className="form-dica">Desligado = só quem é ADM edita. Ver e comentar continua liberado pra todo mundo.</p>
+        {PERMISSOES.map((p) => (
+          <label key={p.campo} className="interruptor">
+            <span>
+              <strong>{p.nome}</strong>
+              <small>{p.explica}</small>
+            </span>
+            <input type="checkbox" checked={viagem[p.campo]} onChange={(e) => mudarPermissao(p.campo, e.target.checked)} />
+          </label>
+        ))}
+        {erroPermissao && <p className="form-erro">{erroPermissao}</p>}
       </Cartao>
 
       <Cartao titulo="Apagar a viagem" icone={Trash2}>

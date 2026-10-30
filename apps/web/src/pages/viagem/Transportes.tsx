@@ -39,7 +39,9 @@ type Selecao = { tipo: 'tudo' } | { tipo: 'trecho'; indice: number } | { tipo: '
 
 // Transportes (spec 004): mapa do Google com o caminho, a rota cidade a cidade e os passeios (bate-e-volta).
 export default function Transportes() {
-  const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
+  const { viagem, destinos, membros, meuId, euSouAdm: souAdmDeVerdade } = useViagemAtual()
+  // Spec 078: com transportes liberados, o membro edita trajetos como o ADM
+  const euSouAdm = souAdmDeVerdade || viagem.membro_edita_transportes
   const [gastoDe, setGastoDe] = useState<GastoDoTrajeto>(null) // spec 035: lançar o trajeto como gasto
   const { estado, recarregar } = useTrajetos(viagem.id)
   const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
@@ -518,7 +520,7 @@ export default function Transportes() {
             moedaViagem={viagem.moeda_principal}
             membros={membros}
             meuId={meuId}
-            euSouAdm={euSouAdm}
+            euSouAdm={souAdmDeVerdade}
             inicial={{
               descricao: `${meio(gastoDe.meio).nome}: ${nomeDe(gastoDe.origem_id)} → ${nomeDe(gastoDe.destino_id)}`.slice(0, 200),
               valor: gastoDe.preco !== null ? Math.round(Number(gastoDe.preco) * 100) : undefined,

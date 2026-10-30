@@ -1433,3 +1433,25 @@ test('075: comboio sugere e vota em candidatos; só tira o próprio voto; estran
   await como(db, ADM, 'delete from public.destinos_candidatos where id = $1', [id])
   assert.equal((await db.query('select count(*)::int as n from public.candidato_votos')).rows[0].n, 0)
 })
+
+// ---------------- 078: permissões simples ----------------
+test('078: membro só edita roteiro/transportes/orçamento quando o ADM libera', async () => {
+  const db = await novoBanco()
+  const roteiro = [{ id: NICE }, { nome: 'Gênova', pais: 'Itália', latitude: 44.4, longitude: 8.93 }]
+  const salvarRoteiro = (quem) =>
+    como(db, quem, 'select public.salvar_roteiro($1, $2::jsonb, $3::uuid[])', [V, JSON.stringify(roteiro), [MONACO]])
+  // Padrão: só o ADM
+  await assert.rejects(como(db, MEMBRO, `insert into public.trajetos (viagem_id, origem_id, destino_id) values ('${V}', '${NICE}', '${MONACO}')`), /row-level security/)
+  await assert.rejects(salvarRoteiro(MEMBRO), /ADM/)
+  // Membro não consegue se liberar sozinho
+  await como(db, MEMBRO, `update public.viagens set membro_edita_transportes = true where id = '${V}'`)
+  assert.equal((await db.query('select membro_edita_transportes from public.viagens')).rows[0].membro_edita_transportes, false)
+  // ADM libera transportes e roteiro
+  await como(db, ADM, `update public.viagens set membro_edita_transportes = true, membro_edita_roteiro = true where id = '${V}'`)
+  await como(db, MEMBRO, `insert into public.trajetos (viagem_id, origem_id, destino_id) values ('${V}', '${NICE}', '${MONACO}')`)
+  await salvarRoteiro(MEMBRO)
+  assert.deepEqual((await db.query('select nome from public.destinos order by ordem')).rows.map((r) => r.nome), ['Nice', 'Gênova'])
+  // Orçamento continua só do ADM; estranho continua sem nada
+  await assert.rejects(como(db, MEMBRO, `insert into public.orcamentos (viagem_id, categoria, valor_meta) values ('${V}', 'alimentacao', 100)`), /row-level security/)
+  await assert.rejects(como(db, ESTRANHO, `insert into public.trajetos (viagem_id) values ('${V}')`), /row-level security/)
+})

@@ -118,7 +118,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 64 | D11 | Carro alugado e rodízio de motorista | M | ✅ feito (web) · spec 073 · banco a aplicar |
 | 65 | E7 | Quem dorme onde | M | ✅ feito (web) · spec 068 · banco a aplicar |
 | 66 | E9 | Prévia do link da opção (foto, título, preço) | M | ✅ feito (web + função) · spec 072 · banco a aplicar |
-| 67 | F7 | Permissões simples do ADM | M | a fazer |
+| 67 | F7 | Permissões simples do ADM | M | ✅ feito (web) · spec 078 · banco a aplicar (troca policies: revisar) |
 | 68 | I7 | Mala individual com modelo pelo clima | M | ✅ feito (web) · spec 069 · banco a aplicar |
 | 69 | C7 | Importar lista do Google Maps | M | a fazer |
 

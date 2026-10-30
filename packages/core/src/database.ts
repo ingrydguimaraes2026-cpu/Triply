@@ -1410,6 +1410,9 @@ export type Database = {
           data_fim: string | null
           data_inicio: string | null
           id: string
+          membro_edita_orcamento: boolean
+          membro_edita_roteiro: boolean
+          membro_edita_transportes: boolean
           moeda_principal: string
           nome: string
         }
@@ -1419,6 +1422,9 @@ export type Database = {
           data_fim?: string | null
           data_inicio?: string | null
           id?: string
+          membro_edita_orcamento?: boolean
+          membro_edita_roteiro?: boolean
+          membro_edita_transportes?: boolean
           moeda_principal?: string
           nome: string
         }
@@ -1428,6 +1434,9 @@ export type Database = {
           data_fim?: string | null
           data_inicio?: string | null
           id?: string
+          membro_edita_orcamento?: boolean
+          membro_edita_roteiro?: boolean
+          membro_edita_transportes?: boolean
           moeda_principal?: string
           nome?: string
         }
