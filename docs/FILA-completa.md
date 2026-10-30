@@ -52,7 +52,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 ## Fase 2 · Paridade do app mobile
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
-| 13 | M2 | Levar pro mobile: convidado, avisos, tarefas, enquetes, votos, clima, ponto de encontro (018 a 024) ◐ | G | ◐ já tinha convidado, avisos, tarefas, enquetes e ponto; entrou o clima (30/10). Falta: votos em lugares (o mobile ainda não tem Lugares) |
+| 13 | M2 | Levar pro mobile: convidado, avisos, tarefas, enquetes, votos, clima, ponto de encontro (018 a 024) ◐ | G | ◐ já tinha convidado, avisos, tarefas, enquetes e ponto; entrou o clima (30/10). Entrou a tela Lugares com votos e "novo lugar" (30/10, atalho na viagem). ✅ Linha fechada |
 | 14 | M2 | Levar pro mobile: compartilhar, guia da casa, comentários, cofre/bilhete, agenda, sino, lembretes (025 a 032) ◐ | G | ◐ entraram a agenda de hoje (só leitura), o sino de novidades, o guia da casa, o cofre pra abrir e os comentários nos gastos (30/10). Compartilhar já existia (ponto e enquete). Falta: lembretes (push no app nativo, precisa de expo-notifications). Sem Expo rodando aqui: só conferido com type-check |
 
 ## Fase 3 · Rápidos de alto impacto

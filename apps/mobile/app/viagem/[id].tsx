@@ -4,7 +4,7 @@ import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Car, Image as ImageIcon, Plus, ReceiptText, Route, Share2 } from 'lucide-react-native'
+import { ArrowLeft, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Share2 } from 'lucide-react-native'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
@@ -34,18 +34,19 @@ export default function DetalheDaViagem() {
   const [convite, setConvite] = useState<string | null>(null)
 
   const carga = useCarregar(async () => {
-    const [viagem, gastos, trajetos, fotos] = await Promise.all([
+    const [viagem, gastos, trajetos, fotos, lugares] = await Promise.all([
       buscarViagemComDetalhes(supabase, id),
       buscarGastos(supabase, id),
       buscarTrajetos(supabase, id),
       supabase.from('fotos').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
+      supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
     ])
-    return { viagem, gastos, trajetos, fotos: fotos.count ?? 0 }
+    return { viagem, gastos, trajetos, fotos: fotos.count ?? 0, lugares: lugares.count ?? 0 }
   }, [id])
 
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro' || !carga.dados.viagem) return <ErroNaTela aoTentar={carga.recarregar} />
-  const { viagem, gastos, trajetos, fotos } = carga.dados
+  const { viagem, gastos, trajetos, fotos, lugares } = carga.dados
   const contas = resumoDasContas(gastos, viagem.moeda)
   const meuSaldo = contas.saldos.get(meuId) ?? 0
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
@@ -59,6 +60,7 @@ export default function DetalheDaViagem() {
   const atalhos = [
     { Icone: Route, t: 'Roteiro', s: `${viagem.destinos.length} ${viagem.destinos.length === 1 ? 'destino' : 'destinos'}`, rota: '/roteiro' as Href },
     { Icone: Car, t: 'Transporte', s: trajetos.length ? `${trajetos.length} ${trajetos.length === 1 ? 'trajeto' : 'trajetos'}` : 'Nada ainda', rota: '/transportes' as Href },
+    { Icone: MapPin, t: 'Lugares', s: lugares ? `${lugares} ${lugares === 1 ? 'ideia' : 'ideias'}` : 'Nada ainda', rota: '/lugares' as Href },
     { Icone: ReceiptText, t: 'Contas', s: `${contas.quantidade} ${contas.quantidade === 1 ? 'gasto' : 'gastos'}`, rota: '/contas' as Href },
     { Icone: ImageIcon, t: 'Fotos', s: `${fotos} ${fotos === 1 ? 'foto' : 'fotos'}`, rota: '/fotos' as Href },
   ]
