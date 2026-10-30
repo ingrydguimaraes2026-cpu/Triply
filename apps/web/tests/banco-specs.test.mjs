@@ -1382,3 +1382,11 @@ test('069: mala é só minha; precisa ser do comboio', async () => {
   await assert.rejects(como(db, ESTRANHO, `insert into public.mala_itens (viagem_id, texto) values ('${V}', 'X')`), /row-level security/)
   await assert.rejects(como(db, MEMBRO, `insert into public.mala_itens (viagem_id, texto, quantidade) values ('${V}', 'X', 0)`), /check/)
 })
+
+// ---------------- 070: programação em paralelo ----------------
+test('070: evento com parte do comboio; só gente do comboio; sem repetir', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.eventos_agenda (viagem_id, dia, titulo, participantes) values ('${V}', '2027-06-02', 'Museu', '{${MEMBRO},${MEMBRO}}')`)
+  assert.deepEqual((await como(db, ADM, 'select participantes from public.eventos_agenda'))[0].participantes, [MEMBRO])
+  await assert.rejects(como(db, MEMBRO, `insert into public.eventos_agenda (viagem_id, dia, titulo, participantes) values ('${V}', '2027-06-02', 'X', '{${ESTRANHO}}')`), /comboio/)
+})

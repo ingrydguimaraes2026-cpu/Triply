@@ -415,6 +415,7 @@ export type DadosDoEvento = {
   titulo: string
   local: string | null
   observacao: string | null
+  participantes?: string[] // spec 070: vazio = o comboio inteiro
 }
 
 // Eventos livres da viagem, por dia e hora (sem hora no fim do dia)
@@ -438,6 +439,7 @@ export async function criarEventoDaAgenda(cli: ClienteTogether, viagemId: string
     titulo: dados.titulo.trim(),
     local: dados.local?.trim() || null,
     observacao: dados.observacao?.trim() || null,
+    participantes: dados.participantes ?? [],
   })
   if (error) throw error
 }
@@ -452,6 +454,7 @@ export async function editarEventoDaAgenda(cli: ClienteTogether, id: string, dad
       titulo: dados.titulo.trim(),
       local: dados.local?.trim() || null,
       observacao: dados.observacao?.trim() || null,
+      ...(dados.participantes ? { participantes: dados.participantes } : {}),
     })
     .eq('id', id)
     .select('id')

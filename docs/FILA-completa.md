@@ -110,7 +110,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 56 | A4 | Destinos candidatos com voto | M | a fazer |
 | 57 | B8 | Arrastar entre dias | M | a fazer |
 | 58 | B6 | Tempo entre compromissos (avisa quando não dá tempo) | M | a fazer |
-| 59 | B4 | Programação em paralelo (trilhas no mesmo dia) | M | a fazer |
+| 59 | B4 | Programação em paralelo (trilhas no mesmo dia) | M | ✅ feito (web) · spec 070 · banco a aplicar |
 | 60 | B9 | Sugestão de ordem (menos deslocamento) ◐ | M | a fazer |
 | 61 | D5 | Quem vai em cada trajeto + "meu itinerário" | M | ✅ feito (web) · spec 067 · banco a aplicar |
 | 62 | D8 | Conexões e estações (várias pernas) | M | a fazer |

@@ -3,22 +3,25 @@ import { Trash2 } from 'lucide-react'
 import { apagarEventoDaAgenda, criarEventoDaAgenda, editarEventoDaAgenda, type EventoDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { diaPorExtenso } from './hooks'
+import type { Membro } from '../viagens/hooks'
 
 type Props = {
   viagemId: string
   dias: string[] // dias da viagem (o evento cai num deles)
   diaInicial: string
   evento?: EventoDaAgenda // editando
+  membros: Membro[] // spec 070: quem vai
   aoTerminar: () => void
 }
 
 // Criar ou editar um evento livre da agenda (spec 029): "jantar no Le Safari às 20h".
-export default function FormEvento({ viagemId, dias, diaInicial, evento, aoTerminar }: Props) {
+export default function FormEvento({ viagemId, dias, diaInicial, evento, membros, aoTerminar }: Props) {
   const [titulo, setTitulo] = useState(evento?.titulo ?? '')
   const [dia, setDia] = useState(evento?.dia ?? diaInicial)
   const [hora, setHora] = useState(evento?.hora?.slice(0, 5) ?? '')
   const [local, setLocal] = useState(evento?.local ?? '')
   const [observacao, setObservacao] = useState(evento?.observacao ?? '')
+  const [participantes, setParticipantes] = useState<string[]>(evento?.participantes ?? [])
   const [salvando, setSalvando] = useState(false)
   const [confirmando, setConfirmando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -30,7 +33,8 @@ export default function FormEvento({ viagemId, dias, diaInicial, evento, aoTermi
     if (!titulo.trim()) return setErro('Dê um nome pro evento.')
     setErro(null)
     setSalvando(true)
-    const dados = { dia, hora: hora || null, titulo, local, observacao }
+    // Spec 070: todo mundo marcado = lista vazia (o comboio inteiro)
+    const dados = { dia, hora: hora || null, titulo, local, observacao, participantes: participantes.length === membros.length ? [] : participantes }
     try {
       if (evento) await editarEventoDaAgenda(supabase, evento.id, dados)
       else await criarEventoDaAgenda(supabase, viagemId, dados)
@@ -116,6 +120,21 @@ export default function FormEvento({ viagemId, dias, diaInicial, evento, aoTermi
           onChange={(e) => setObservacao(e.target.value)}
         />
       </div>
+      {membros.length > 1 && (
+        <fieldset className="form-campo passageiros">
+          <legend className="form-rotulo">Quem vai {participantes.length === 0 && '(ninguém marcado = todo mundo)'}</legend>
+          {membros.map((m) => (
+            <label key={m.id}>
+              <input
+                type="checkbox"
+                checked={participantes.includes(m.id)}
+                onChange={(e) => setParticipantes(e.target.checked ? [...participantes, m.id] : participantes.filter((p) => p !== m.id))}
+              />
+              {m.nome}
+            </label>
+          ))}
+        </fieldset>
+      )}
       {erro && (
         <p className="form-erro" role="alert">
           {erro}

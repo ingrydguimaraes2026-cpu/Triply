@@ -179,3 +179,9 @@
   gap: 8px;
   justify-content: flex-end;
 }
+
+/* Programação em paralelo (spec 070) */
+.agenda-participantes {
+  color: var(--couro);
+  font-weight: 700;
+}

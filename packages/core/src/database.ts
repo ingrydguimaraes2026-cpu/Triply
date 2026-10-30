@@ -1762,6 +1762,7 @@ export type Database = {
           id: string
           local: string | null
           observacao: string | null
+          participantes: string[]
           titulo: string
           viagem_id: string
         }
@@ -1773,6 +1774,7 @@ export type Database = {
           id?: string
           local?: string | null
           observacao?: string | null
+          participantes?: string[]
           titulo: string
           viagem_id: string
         }
@@ -1784,6 +1786,7 @@ export type Database = {
           id?: string
           local?: string | null
           observacao?: string | null
+          participantes?: string[]
           titulo?: string
           viagem_id?: string
         }

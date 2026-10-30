@@ -20,7 +20,7 @@ type Janela = { tipo: 'novo' } | { tipo: 'editar'; evento: EventoDaAgenda } | nu
 // Agenda do dia (spec 029): o que acontece em cada dia, com horário.
 // Junta sozinha os trajetos e as chegadas/saídas; o comboio acrescenta os eventos livres.
 export default function Agenda() {
-  const { viagem, destinos, meuId, euSouAdm } = useViagemAtual()
+  const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
   const [janela, setJanela] = useState<Janela>(null)
@@ -136,7 +136,13 @@ export default function Agenda() {
         ) : (
           <ol className="agenda-linha">
             {itens.map((item) => (
-              <LinhaDaAgenda key={item.chave} item={item} aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })} podeEditar={podeEditar} />
+              <LinhaDaAgenda
+                key={item.chave}
+                item={item}
+                aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })}
+                podeEditar={podeEditar}
+                nomes={(ids) => ids.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
+              />
             ))}
           </ol>
         )}
@@ -154,6 +160,7 @@ export default function Agenda() {
             dias={dias}
             diaInicial={dia}
             evento={janela.tipo === 'editar' ? janela.evento : undefined}
+            membros={membros}
             aoTerminar={() => {
               fechar()
               recarregar()
@@ -169,10 +176,12 @@ function LinhaDaAgenda({
   item,
   aoEditar,
   podeEditar,
+  nomes,
 }: {
   item: ItemDaAgenda
   aoEditar: (e: EventoDaAgenda) => void
   podeEditar: (e: EventoDaAgenda) => boolean
+  nomes: (ids: string[]) => string
 }) {
   const Icone =
     item.tipo === 'trajeto' ? meio(item.meio).icone : item.tipo === 'chegada' ? LogIn : item.tipo === 'saida' ? LogOut : Clock
@@ -186,6 +195,10 @@ function LinhaDaAgenda({
       <span className="agenda-texto">
         <strong>{item.titulo}</strong>
         {item.detalhe && <small>{item.detalhe}</small>}
+        {/* Spec 070: evento só de parte do comboio */}
+        {item.tipo === 'evento' && (item.evento.participantes?.length ?? 0) > 0 && (
+          <small className="agenda-participantes">só {nomes(item.evento.participantes)}</small>
+        )}
       </span>
       {item.tipo === 'trajeto' && (
         <Link to="../transportes" className="botao-texto" aria-label="Ver em Transportes">
