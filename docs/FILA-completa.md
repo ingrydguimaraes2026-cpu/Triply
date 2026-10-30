@@ -149,15 +149,15 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 ## Fase 8 · IA, memórias e itens grandes
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
-| 86 | L1 | Importar reserva (print/PDF/e-mail → item revisado) | M | a fazer |
-| 87 | L2 | E-mail próprio da viagem | M | a fazer |
-| 88 | H10 | Foto do recibo com leitura automática | M | a fazer |
-| 89 | L3 | Detector de furos ◐ | M | a fazer |
+| 86 | L1 | Importar reserva (print/PDF/e-mail → item revisado) | M | 🔒 precisa de IA (chave e custo) |
+| 87 | L2 | E-mail próprio da viagem | M | 🔒 precisa de serviço de e-mail de entrada (domínio, provedor) |
+| 88 | H10 | Foto do recibo com leitura automática | M | 🔒 precisa de IA (chave e custo) |
+| 89 | L3 | Detector de furos ◐ | M | Pronto pra testar (web) · spec 092 |
 | 90 | L8 | Gasto por frase ou voz | M | a fazer |
 | 91 | L4 | Sugestões de lugares por destino | M | a fazer |
 | 92 | L7 | Eventos e feriados nas datas | M | a fazer |
 | 93 | L5 | Montar o dia pelos votos | G | a fazer |
-| 94 | L6 | Assistente do comboio (aplicar / descartar) | G | a fazer |
+| 94 | L6 | Assistente do comboio (aplicar / descartar) | G | 🔒 precisa de IA (chave e custo) |
 | 95 | C6 | Colar link de rede social → lugar salvo | G | a fazer |
 | 96 | K2 | Álbum por dia e destino ◐ | P | a fazer |
 | 97 | K3 | Melhores fotos ◐ | P | a fazer |
@@ -186,4 +186,6 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 - **F3 Pessoa sem app:** entra no saldo (alguém cobre por ela) ou é só nome na divisão? Vira membro normal quando cria conta?
 - **H7 Acerto pago / N1 Fechamento:** quem recebe precisa confirmar? O saldo zera na hora? Guarda histórico?
 - **F4 Núcleos / H8 Caixa:** dependem da resposta de H7 (mudam como o saldo é calculado).
+- **IA (L1 importar reserva, H10 recibo, L6 assistente):** usar a API do Claude numa Edge Function? Precisa da chave (segredo no Supabase) e de um teto de gasto por mês. Com isso, L1 e H10 são 1 dia cada (foto/PDF → JSON revisado pela pessoa antes de salvar).
+- **L2 E-mail da viagem:** precisa de um provedor que receba e-mail e chame um webhook (ex.: Postmark Inbound, Cloudflare Email Workers) e de um domínio. Depois disso, junta com L1.
 - **M15 Idiomas:** vale agora? Plano sugerido: (1) biblioteca pequena (`i18next` + `react-i18next`) ou um `t()` caseiro com dicionários em `packages/core/src/textos/` (web e mobile usam); (2) migrar tela por tela, começando por Login, menu e Financeiro; (3) datas e dinheiro já usam `toLocaleString`, só trocar `'pt-BR'` pelo idioma escolhido; (4) avisos no celular (Edge Functions) precisam saber o idioma de cada pessoa (coluna em `perfis`). Estimativa: 2 a 3 dias de trabalho focado.

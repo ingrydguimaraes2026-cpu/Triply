@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { AlertTriangle, BarChart3, BedDouble, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
+import { encontrarFuros, formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -238,6 +238,19 @@ export default function Overview() {
         ])
       : null
 
+  // Spec 092: furos no plano (até o fim da viagem)
+  const furos =
+    destinos.length > 0 && trajetos.estado.status === 'pronto' && hospedagem.estado === 'pronto' && !(viagem.data_fim && viagem.data_fim < hojeTexto())
+      ? encontrarFuros({
+          destinos,
+          trajetos: trajetos.estado.trajetos,
+          escolhidas: hospedagem.itens.flatMap((i) =>
+            i.escolhida ? [{ destinoId: i.destino.id, nome: i.escolhida.nome, checkin: i.escolhida.checkin, checkout: i.escolhida.checkout }] : [],
+          ),
+        })
+      : []
+  const [vendoTodosFuros, setVendoTodosFuros] = useState(false)
+
   return (
     <div className="overview">
       {/* Spec 019: recados do ADM fixados no topo */}
@@ -360,6 +373,22 @@ export default function Overview() {
 
       {/* Coluna estreita: documentos e resumos */}
       <div className="overview-lateral">
+        {furos.length > 0 && (
+          <Cartao titulo={furos.length === 1 ? '1 furo no plano' : `${furos.length} furos no plano`} icone={AlertTriangle} className="overview-furos">
+            <ul className="furos-lista">
+              {(vendoTodosFuros ? furos : furos.slice(0, 4)).map((f) => (
+                <li key={f.chave} className={f.gravidade === 'alta' ? 'furo-alto' : undefined}>
+                  {f.aba ? <Link to={f.aba}>{f.texto}</Link> : f.texto}
+                </li>
+              ))}
+            </ul>
+            {furos.length > 4 && (
+              <button type="button" className="botao-texto" onClick={() => setVendoTodosFuros(!vendoTodosFuros)}>
+                {vendoTodosFuros ? 'Ver menos' : `Ver os ${furos.length}`}
+              </button>
+            )}
+          </Cartao>
+        )}
         {/* Spec 010: checklist de documentos */}
         <ChecklistDocumentos
           docs={docs}

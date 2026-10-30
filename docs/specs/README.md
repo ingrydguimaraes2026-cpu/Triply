@@ -104,6 +104,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 089 | [Privacidade e LGPD](089-privacidade-e-lgpd.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 | 090 | [Acessibilidade e modo simples](090-acessibilidade-e-modo-simples.md) | 7 | Pronto pra testar (web) · sem banco |
 | 091 | [Duplicar viagem](091-duplicar-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 092 | [Detector de furos](092-detector-de-furos.md) | 8 | Pronto pra testar (web) · sem banco |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
