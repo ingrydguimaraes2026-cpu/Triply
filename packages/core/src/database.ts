@@ -16,6 +16,29 @@ export type Database = {
   }
   public: {
     Tables: {
+      candidato_votos: {
+        Row: {
+          candidato_id: string
+          usuario_id: string
+        }
+        Insert: {
+          candidato_id: string
+          usuario_id?: string
+        }
+        Update: {
+          candidato_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidato_votos_candidato_id_fkey"
+            columns: ["candidato_id"]
+            isOneToOne: false
+            referencedRelation: "destinos_candidatos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chegadas: {
         Row: {
           criado_em: string
@@ -326,6 +349,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      destinos_candidatos: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          id: string
+          latitude: number | null
+          link: string | null
+          longitude: number | null
+          nome: string
+          pais: string | null
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          link?: string | null
+          longitude?: number | null
+          nome: string
+          pais?: string | null
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          link?: string | null
+          longitude?: number | null
+          nome?: string
+          pais?: string | null
+          viagem_id?: string
+        }
+        Relationships: []
       }
       disponibilidades: {
         Row: {

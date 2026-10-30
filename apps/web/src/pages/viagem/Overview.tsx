@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -38,6 +38,7 @@ import ListasDoComboio from '../../features/listas/ListasDoComboio'
 import ChegueiBem from '../../features/chegadas/ChegueiBem'
 import DatasEmComum from '../../features/datas-em-comum/DatasEmComum'
 import MinhaMala from '../../features/mala/MinhaMala'
+import DestinosCandidatos from '../../features/candidatos/DestinosCandidatos'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -393,6 +394,13 @@ export default function Overview() {
         <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
           <FichaDoPais viagem={viagem} destinos={destinos} />
         </Cartao>
+
+        {/* Spec 075: destinos candidatos (no modo sonhando, ou enquanto houver roteiro curto) */}
+        {destinos.length <= 1 && (
+          <Cartao titulo="Pra onde vamos?" icone={MapPinned} className="overview-candidatos">
+            <DestinosCandidatos />
+          </Cartao>
+        )}
 
         {/* Spec 065: datas em comum (mais útil antes de fechar as datas) */}
         {(!viagem.data_inicio || destinos.length === 0) && (

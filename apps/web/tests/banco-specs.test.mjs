@@ -1417,3 +1417,19 @@ test('074: estações e até 4 escalas no trajeto', async () => {
   await assert.rejects(como(db, ADM, `update public.trajetos set escalas = '{"local":"x"}'`), /check/)
   await assert.rejects(como(db, ADM, `update public.trajetos set escalas = '[1,2,3,4,5]'`), /check/)
 })
+
+// ---------------- 075: destinos candidatos ----------------
+test('075: comboio sugere e vota em candidatos; só tira o próprio voto; estranho não', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(db, MEMBRO, `insert into public.destinos_candidatos (viagem_id, nome, pais) values ('${V}', 'Lisboa', 'Portugal') returning id`)
+  await como(db, MEMBRO, 'insert into public.candidato_votos (candidato_id) values ($1)', [id])
+  await como(db, ADM, 'insert into public.candidato_votos (candidato_id) values ($1)', [id])
+  assert.equal((await como(db, ADM, 'select * from public.candidato_votos')).length, 2)
+  await como(db, ADM, `delete from public.candidato_votos where usuario_id = '${MEMBRO}'`)
+  assert.equal((await db.query('select count(*)::int as n from public.candidato_votos')).rows[0].n, 2)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.destinos_candidatos')).length, 0)
+  await assert.rejects(como(db, ESTRANHO, 'insert into public.candidato_votos (candidato_id) values ($1)', [id]), /row-level security/)
+  // ADM apaga o candidato do membro (os votos vão junto)
+  await como(db, ADM, 'delete from public.destinos_candidatos where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int as n from public.candidato_votos')).rows[0].n, 0)
+})

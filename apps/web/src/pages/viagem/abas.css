@@ -1228,3 +1228,11 @@
 }
 .overview-datas-comum { order: 2; }
 .overview-mala { order: 8; }
+
+/* Destinos candidatos (spec 075) */
+.overview-candidatos { order: 1; }
+
+.candidatos-busca {
+  display: grid;
+  gap: 4px;
+}
