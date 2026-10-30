@@ -96,6 +96,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 081 | [Divisão por pesos e por item](081-divisao-por-pesos-e-itens.md) (casal, criança, conta de restaurante) | 2 | M | 002 | Pronto pra testar (web) |
 | 082 | [Relatórios do Financeiro](082-relatorios.md) (por dia, por pessoa, custo por pessoa por dia) | 2 | M | 002 | Pronto pra testar (web) |
 | 083 | [Meio de pagamento e dinheiro na mão](083-meio-de-pagamento-e-dinheiro-na-mao.md) (cartão/conta/dinheiro, cotação do dia) | 2 | M | 003 | Pronto pra testar (web) · banco não aplicado |
+| 084 | [Movimento da carteira vira gasto](084-movimento-da-carteira-vira-gasto.md) | 2 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

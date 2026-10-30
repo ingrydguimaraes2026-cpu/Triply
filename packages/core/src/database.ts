@@ -1510,6 +1510,7 @@ export type Database = {
           criado_em: string
           data: string
           descricao: string | null
+          gasto_id: string | null
           gmail_message_id: string
           id: string
           moeda: string
@@ -1522,6 +1523,7 @@ export type Database = {
           criado_em?: string
           data?: string
           descricao?: string | null
+          gasto_id?: string | null
           gmail_message_id: string
           id?: string
           moeda: string
@@ -1534,6 +1536,7 @@ export type Database = {
           criado_em?: string
           data?: string
           descricao?: string | null
+          gasto_id?: string | null
           gmail_message_id?: string
           id?: string
           moeda?: string
@@ -2136,6 +2139,13 @@ export type Database = {
           p_viagem: string
         }
         Returns: { usuario_id: string; telefone: string | null; aniversario: string | null; restricoes: string | null; alergias: string | null; mobilidade: string | null; emergencia_nome: string | null; emergencia_telefone: string | null; tipo_sanguineo: string | null; remedios: string | null }[]
+      }
+      ligar_movimento_ao_gasto: {
+        Args: {
+          p_movimento: string
+          p_gasto: string
+        }
+        Returns: undefined
       }
       marcar_visitado: {
         Args: {

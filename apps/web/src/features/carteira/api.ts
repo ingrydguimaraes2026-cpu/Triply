@@ -9,7 +9,7 @@ const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
 
 export type Conexao = { email: string; status: 'ativo' | 'expirado' | 'erro'; expira_em: string | null; ultimo_sync: string | null }
 export type Carteira = { id: string; moeda: string; saldo_inicial: number; ajuste: number; saldo_atual: number }
-export type Movimento = { id: string; tipo: 'entrada' | 'gasto'; valor: number; moeda: string; descricao: string | null; data: string; provedor: string }
+export type Movimento = { id: string; tipo: 'entrada' | 'gasto'; valor: number; moeda: string; descricao: string | null; data: string; provedor: string; gasto_id: string | null }
 
 // ---------- Conexão do Gmail ----------
 
@@ -103,11 +103,17 @@ export async function ajustarSaldo(carteiraId: string, ajuste: number): Promise<
 export async function movimentos(carteiraId: string): Promise<Movimento[]> {
   const { data, error } = await supabase
     .from('movimentos_carteira')
-    .select('id, tipo, valor, moeda, descricao, data, provedor')
+    .select('id, tipo, valor, moeda, descricao, data, provedor, gasto_id')
     .eq('carteira_id', carteiraId)
     .order('data', { ascending: false })
   if (error) throw error
   return (data ?? []).map((m) => ({ ...m, valor: Number(m.valor) })) as Movimento[]
+}
+
+// Spec 084: liga o movimento ao gasto do comboio criado a partir dele
+export async function ligarAoGasto(movimentoId: string, gastoId: string): Promise<void> {
+  const { error } = await supabase.rpc('ligar_movimento_ao_gasto', { p_movimento: movimentoId, p_gasto: gastoId })
+  if (error) throw error
 }
 
 // Soma do euro de todo o comboio (só o número; vem de uma função que confere se sou do comboio)

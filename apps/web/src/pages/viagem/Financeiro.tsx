@@ -18,6 +18,7 @@ import FormOrcamento from '../../features/financeiro/FormOrcamento'
 import FormCambio from '../../features/cambio/FormCambio'
 import TermometroCambio from '../../features/cambio/TermometroCambio'
 import Carteira from '../../features/carteira/Carteira'
+import { ligarAoGasto, type Movimento } from '../../features/carteira/api'
 import { cotacoesDeHoje, type CompraDeMoeda } from '../../features/cambio/api'
 import { comparacaoComHoje, converter, mediasPorPar, montarTaxas } from '../../features/cambio/cotacao'
 import { formatarData } from '../../lib/datas'
@@ -34,7 +35,7 @@ import './abas.css'
 import './financeiro.css'
 
 type Janela =
-  | { tipo: 'gasto'; gasto?: Gasto }
+  | { tipo: 'gasto'; gasto?: Gasto; movimento?: Movimento }
   | { tipo: 'orcamento' }
   | { tipo: 'cambio'; compra?: CompraDeMoeda }
   | null
@@ -317,7 +318,15 @@ export default function Financeiro() {
           )}
 
           {/* Carteira de euro por e-mail (Wise/Nomad) */}
-          {moeda === 'EUR' && <Carteira viagemId={viagem.id} meuId={meuId} estado={carteira} recarregar={recarregarCarteira} />}
+          {moeda === 'EUR' && (
+            <Carteira
+              viagemId={viagem.id}
+              meuId={meuId}
+              estado={carteira}
+              recarregar={recarregarCarteira}
+              aoVirarGasto={(m) => setJanela({ tipo: 'gasto', movimento: m })}
+            />
+          )}
 
           {/* Spec 082: relatórios */}
           {contas.relatorio.porDia.length > 0 && (
@@ -521,7 +530,26 @@ export default function Financeiro() {
             meuId={meuId}
             euSouAdm={euSouAdm}
             gasto={janela.gasto}
-            aoTerminar={fechar}
+            inicial={
+              janela.movimento
+                ? {
+                    descricao: janela.movimento.descricao ?? 'Compra no cartão',
+                    valor: Math.round(janela.movimento.valor * 100),
+                    moeda: janela.movimento.moeda,
+                    categoria: 'outros',
+                    data: janela.movimento.data.slice(0, 10),
+                  }
+                : undefined
+            }
+            aoTerminar={async (idSalvo) => {
+              // Spec 084: veio de um movimento da carteira? Liga os dois pra não lançar de novo.
+              const mov = janela.movimento
+              fechar()
+              if (mov && idSalvo) {
+                await ligarAoGasto(mov.id, idSalvo).catch((e) => console.error('Erro ao ligar o movimento ao gasto:', e))
+                await recarregarCarteira()
+              }
+            }}
           />
         </Gaveta>
       )}

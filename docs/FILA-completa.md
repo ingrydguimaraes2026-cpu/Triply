@@ -132,7 +132,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 74 | H12 | Dinheiro na mão (espécie por pessoa) | M | ✅ feito (web) · spec 083 · banco a aplicar |
 | 75 | H15 | Relatórios | M | ✅ feito (web) · spec 082 |
 | 76 | H6 | Saldo das contas globais (spec 015) ◐ | G | a fazer |
-| 77 | H17 | Promover movimento da conta a gasto | M | a fazer |
+| 77 | H17 | Promover movimento da conta a gasto | M | Pronto pra testar (web) · spec 084 |
 
 ## Fase 7 · Plataforma
 | Nº | Cód. | Task | Tam. | Status |

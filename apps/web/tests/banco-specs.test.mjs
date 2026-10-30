@@ -1466,3 +1466,20 @@ test('083: meio de pagamento e cotação no gasto; compra de moeda em espécie',
   await como(db, MEMBRO, `insert into public.compras_cambio (viagem_id, usuario_id, moeda_origem, moeda_destino, valor_origem, valor_destino, especie) values ('${V}', '${MEMBRO}', 'BRL', 'EUR', 620, 100, true)`)
   assert.equal((await db.query('select especie from public.compras_cambio')).rows[0].especie, true)
 })
+
+// ---------------- 084: movimento da carteira vira gasto ----------------
+test('084: só o dono liga o movimento a um gasto dele, da mesma viagem', async () => {
+  const db = await novoBanco()
+  const cart = (await db.query(`insert into public.carteiras (viagem_id, usuario_id, moeda) values ('${V}', '${MEMBRO}', 'EUR') returning id`)).rows[0].id
+  const mov = (await db.query(`insert into public.movimentos_carteira (carteira_id, tipo, valor, moeda, provedor, gmail_message_id) values ($1, 'gasto', 12, 'EUR', 'wise', 'e1') returning id`, [cart])).rows[0].id
+  const meu = await salvarGasto(db, MEMBRO, cafe, metade)
+  const doAdm = await salvarGasto(db, ADM, cafe, metade)
+  const ligar = (quem, g) => como(db, quem, 'select public.ligar_movimento_ao_gasto($1, $2)', [mov, g])
+  await assert.rejects(ligar(ADM, doAdm), /Movimento não encontrado/)
+  await assert.rejects(ligar(MEMBRO, doAdm), /não é seu/)
+  await ligar(MEMBRO, meu)
+  assert.equal((await db.query('select gasto_id from public.movimentos_carteira')).rows[0].gasto_id, meu)
+  // Apagou o gasto: a ligação some, o movimento fica
+  await db.query('delete from public.gastos where id = $1', [meu])
+  assert.equal((await db.query('select gasto_id from public.movimentos_carteira')).rows[0].gasto_id, null)
+})

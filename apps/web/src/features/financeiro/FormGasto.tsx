@@ -19,7 +19,7 @@ type Props = {
   euSouAdm: boolean
   gasto?: Gasto // editando um gasto que já existe
   inicial?: Partial<DadosDoGasto> // começar já preenchido (ex.: vindo do lançamento rápido)
-  aoTerminar: () => void
+  aoTerminar: (idSalvo?: string) => void // recebe o id quando salvou (spec 084)
 }
 
 // Formulário completo do gasto (spec 002): valor, descrição, categoria, quem pagou e divisão.
@@ -142,7 +142,7 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
       }
       lembrarMoeda(moeda)
       avisarQueGastosMudaram()
-      aoTerminar()
+      aoTerminar(idSalvo)
     } catch (erro) {
       console.error('Erro ao salvar gasto:', erro)
       setErro(mensagemDeErro(erro, 'Não deu pra salvar o gasto. Tente de novo.'))

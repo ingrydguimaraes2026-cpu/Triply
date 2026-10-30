@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { ArrowDownLeft, ArrowUpRight, FileSearch, Mail, RefreshCw, Wallet } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Check, FileSearch, Mail, RefreshCw, Users, Wallet } from 'lucide-react'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
 import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
@@ -13,6 +13,7 @@ import {
   urlDeConsentimento,
   type Carteira as TCarteira,
   type ItemDiagnostico,
+  type Movimento,
 } from './api'
 import './carteira.css'
 
@@ -31,8 +32,14 @@ const euros = (v: number) => formatarDinheiro(Math.round(v * 100), 'EUR')
 
 // Carteira de euro da pessoa, alimentada pelos e-mails do Wise/Nomad (spec 015).
 // O estado vem do Financeiro (que também usa o saldo no card do topo), pra não buscar 2x.
-type Props = { viagemId: string; meuId: string; estado: EstadoCarteira; recarregar: () => Promise<void> }
-export default function Carteira({ viagemId, meuId, estado, recarregar }: Props) {
+type Props = {
+  viagemId: string
+  meuId: string
+  estado: EstadoCarteira
+  recarregar: () => Promise<void>
+  aoVirarGasto?: (m: Movimento) => void // spec 084: abre o formulário de gasto já preenchido
+}
+export default function Carteira({ viagemId, meuId, estado, recarregar, aoVirarGasto }: Props) {
   const [erro, setErro] = useState<string | null>(null)
   const [sincronizando, setSincronizando] = useState(false)
   const [ajustando, setAjustando] = useState(false)
@@ -186,6 +193,18 @@ export default function Carteira({ viagemId, meuId, estado, recarregar }: Props)
               <span className={`mov-valor ${m.tipo === 'entrada' ? 'mov-mais' : 'mov-menos'}`}>
                 {m.tipo === 'entrada' ? '+' : '−'} {formatarDinheiro(Math.round(m.valor * 100), m.moeda)}
               </span>
+              {m.tipo === 'gasto' &&
+                (m.gasto_id ? (
+                  <small className="mov-virou">
+                    <Check size={13} aria-hidden="true" /> já é gasto do comboio
+                  </small>
+                ) : (
+                  aoVirarGasto && (
+                    <button type="button" className="botao-texto mov-virar" onClick={() => aoVirarGasto(m)}>
+                      <Users size={14} aria-hidden="true" /> Virar gasto do comboio
+                    </button>
+                  )
+                ))}
             </li>
           ))}
         </ul>
