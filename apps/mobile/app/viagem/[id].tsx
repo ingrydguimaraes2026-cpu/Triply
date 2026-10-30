@@ -21,6 +21,7 @@ import { AgendaDeHoje } from '../../src/ui/AgendaDeHoje'
 import { Clima } from '../../src/ui/Clima'
 import { Novidades } from '../../src/ui/Novidades'
 import { GuiaDaCasa } from '../../src/ui/GuiaDaCasa'
+import { Cofre } from '../../src/ui/Cofre'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -160,6 +161,8 @@ export default function DetalheDaViagem() {
           <Clima viagemId={viagem.id} />
           {/* Spec 026: guia da casa de onde dormimos */}
           <GuiaDaCasa viagemId={viagem.id} />
+          {/* Spec 028: cofre (reservas, ingressos, bilhetes) */}
+          <Cofre viagemId={viagem.id} />
 
           {/* Spec 020: tarefas com responsável */}
           <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />

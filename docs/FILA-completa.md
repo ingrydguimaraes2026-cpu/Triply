@@ -53,7 +53,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
 | 13 | M2 | Levar pro mobile: convidado, avisos, tarefas, enquetes, votos, clima, ponto de encontro (018 a 024) ◐ | G | ◐ já tinha convidado, avisos, tarefas, enquetes e ponto; entrou o clima (30/10). Falta: votos em lugares (o mobile ainda não tem Lugares) |
-| 14 | M2 | Levar pro mobile: compartilhar, guia da casa, comentários, cofre/bilhete, agenda, sino, lembretes (025 a 032) ◐ | G | ◐ entraram a agenda de hoje (só leitura), o sino de novidades e o guia da casa (30/10). Falta: compartilhar item, comentários, cofre, lembretes (push no app nativo). Sem Expo rodando aqui: só conferido com type-check |
+| 14 | M2 | Levar pro mobile: compartilhar, guia da casa, comentários, cofre/bilhete, agenda, sino, lembretes (025 a 032) ◐ | G | ◐ entraram a agenda de hoje (só leitura), o sino de novidades, o guia da casa e o cofre pra abrir (30/10). Falta: compartilhar item, comentários, lembretes (push no app nativo). Sem Expo rodando aqui: só conferido com type-check |
 
 ## Fase 3 · Rápidos de alto impacto
 | Nº | Cód. | Task | Tam. | Status |
