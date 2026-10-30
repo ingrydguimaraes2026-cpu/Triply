@@ -39,9 +39,11 @@ export default function Lugares() {
   // Cópia local pra o coração responder na hora (antes do banco)
   const [lugares, setLugares] = useState<LugarComVotos[]>([])
   const [erro, setErro] = useState<string | null>(null)
+  // Só quando chega dado novo do banco (o objeto `carga` muda a cada render)
+  const carregados = carga.status === 'pronto' ? carga.dados[0] : null
   useEffect(() => {
-    if (carga.status === 'pronto') setLugares(carga.dados[0])
-  }, [carga])
+    if (carregados) setLugares(carregados)
+  }, [carregados])
 
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />
