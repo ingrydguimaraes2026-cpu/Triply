@@ -745,7 +745,9 @@ export type Database = {
           destino_id: string | null
           enviada_por: string
           id: string
+          latitude: number | null
           legenda: string | null
+          longitude: number | null
           ordem: number
           post_id: string
           viagem_id: string
@@ -756,7 +758,9 @@ export type Database = {
           destino_id?: string | null
           enviada_por?: string
           id?: string
+          latitude?: number | null
           legenda?: string | null
+          longitude?: number | null
           ordem?: number
           post_id: string
           viagem_id: string
@@ -767,7 +771,9 @@ export type Database = {
           destino_id?: string | null
           enviada_por?: string
           id?: string
+          latitude?: number | null
           legenda?: string | null
+          longitude?: number | null
           ordem?: number
           post_id?: string
           viagem_id?: string

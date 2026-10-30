@@ -82,6 +82,17 @@ export default function PostCard({ post, autor, eu, nomeDe, lugar, meuId, podeAp
             <time dateTime={post.criado_em}>{tempoAtras(post.criado_em)}</time>
           </p>
           {lugar && <span className="post-lugar">{lugar}</span>}
+          {/* Spec 108: onde a foto que está na tela foi tirada */}
+          {post.fotos[atual]?.latitude != null && (
+            <a
+              className="post-no-mapa-link"
+              href={`https://www.google.com/maps/search/?api=1&query=${post.fotos[atual].latitude},${post.fotos[atual].longitude}`}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              📍 ver no mapa
+            </a>
+          )}
           {post.marcados.length > 0 && (
             <span className="post-marcados">
               {textoDosMarcados(post.marcados, nomeDe)}

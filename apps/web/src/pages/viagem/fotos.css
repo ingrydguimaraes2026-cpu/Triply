@@ -793,3 +793,16 @@
   min-height: 0;
   padding: 0;
 }
+
+/* Spec 108: onde a foto foi tirada */
+.post-no-mapa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.post-no-mapa-link {
+  display: block;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}

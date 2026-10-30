@@ -51,6 +51,7 @@ export * from './viajante'
 export * from './frases'
 export * from './retrospectiva'
 export * from './livro'
+export * from './exif'
 export type * from './database'
 // Tipos de auth reexportados pra quem usa o core não precisar depender direto do supabase-js
 export type { Session, User } from '@supabase/supabase-js'

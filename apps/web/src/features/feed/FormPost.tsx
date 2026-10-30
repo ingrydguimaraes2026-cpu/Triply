@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ImagePlus, X } from 'lucide-react'
-import type { Tables } from '@together/core'
+import { gpsDoJpeg, type Tables } from '@together/core'
 import { ArquivoInvalido, comprimirFoto } from '../fotos/comprimir'
 import { criarPost, MAX_FOTOS_POR_POST } from './api'
 
@@ -12,7 +12,7 @@ type Props = {
   aoTerminar: (postId: string) => void
 }
 
-type Escolhida = { id: string; blob: Blob; previa: string }
+type Escolhida = { id: string; blob: Blob; previa: string; ponto: { latitude: number; longitude: number } | null }
 type Etapa = { tipo: 'parado' } | { tipo: 'preparando'; feitas: number; total: number } | { tipo: 'enviando'; feitas: number }
 
 // Novo post (spec 014): até 10 fotos, lugar e legenda. As fotos são comprimidas aqui mesmo, antes de enviar.
@@ -21,6 +21,7 @@ export default function FormPost({ viagemId, destinos, destinoInicial, membros =
   const [destino, setDestino] = useState(destinoInicial ?? '') // lugar é opcional
   const [legenda, setLegenda] = useState('')
   const [marcados, setMarcados] = useState<string[]>([]) // spec 100
+  const [noMapa, setNoMapa] = useState(false) // spec 108: desligado por padrão
   const [etapa, setEtapa] = useState<Etapa>({ tipo: 'parado' })
   const [erro, setErro] = useState<string | null>(null)
 
@@ -42,8 +43,10 @@ export default function FormPost({ viagemId, destinos, destinoInicial, membros =
     for (const [i, arquivo] of arquivos.entries()) {
       setEtapa({ tipo: 'preparando', feitas: i, total: arquivos.length })
       try {
+        // Spec 108: o GPS sai do original (a compressão apaga o EXIF). Só vai pro banco se marcar.
+        const ponto = arquivo.type === 'image/jpeg' ? gpsDoJpeg(new Uint8Array(await arquivo.slice(0, 256 * 1024).arrayBuffer())) : null
         const blob = await comprimirFoto(arquivo)
-        novas.push({ id: crypto.randomUUID(), blob, previa: URL.createObjectURL(blob) })
+        novas.push({ id: crypto.randomUUID(), blob, previa: URL.createObjectURL(blob), ponto })
       } catch (e) {
         if (!(e instanceof ArquivoInvalido)) console.error('Erro ao preparar foto:', e)
         ruins++
@@ -76,6 +79,7 @@ export default function FormPost({ viagemId, destinos, destinoInicial, membros =
         fotos.map((f) => f.blob),
         (feitas) => setEtapa({ tipo: 'enviando', feitas }),
         marcados,
+        noMapa ? fotos.map((f) => f.ponto) : [],
       )
       aoTerminar(id)
     } catch (erro) {
@@ -131,6 +135,12 @@ export default function FormPost({ viagemId, destinos, destinoInicial, membros =
           ))}
         </select>
       </div>
+
+      {fotos.some((f) => f.ponto) && (
+        <label className="post-no-mapa">
+          <input type="checkbox" checked={noMapa} onChange={(e) => setNoMapa(e.target.checked)} disabled={ocupado} /> Mostrar pro comboio onde as fotos foram tiradas
+        </label>
+      )}
 
       {membros.length > 1 && (
         <fieldset className="form-campo post-marcar">

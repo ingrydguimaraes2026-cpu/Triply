@@ -5,12 +5,12 @@ import type { Tables } from '@together/core'
 export const MAX_FOTOS_POR_POST = 10
 const BUCKET = 'fotos'
 
-export type FotoDoPost = { id: string; caminho: string; url: string | null }
+export type FotoDoPost = { id: string; caminho: string; url: string | null; latitude?: number | null; longitude?: number | null }
 export type Comentario = Tables<'comentarios'>
 export type Post = Tables<'posts'> & { fotos: FotoDoPost[]; curtidas: string[]; comentarios: Comentario[]; marcados: string[] }
 
 type PostDoBanco = Tables<'posts'> & {
-  fotos: { id: string; caminho: string; ordem: number }[]
+  fotos: { id: string; caminho: string; ordem: number; latitude: number | null; longitude: number | null }[]
   curtidas: { usuario_id: string }[]
   comentarios: Comentario[]
   post_marcacoes?: { usuario_id: string }[] // spec 100
@@ -20,7 +20,7 @@ type PostDoBanco = Tables<'posts'> & {
 export async function buscarPosts(viagemId: string): Promise<Post[]> {
   const { data, error } = await supabase
     .from('posts')
-    .select('*, fotos(id, caminho, ordem), curtidas(usuario_id), comentarios(*), post_marcacoes(usuario_id)')
+    .select('*, fotos(id, caminho, ordem, latitude, longitude), curtidas(usuario_id), comentarios(*), post_marcacoes(usuario_id)')
     .eq('viagem_id', viagemId)
     .order('criado_em', { ascending: false })
   if (error) throw error
@@ -38,7 +38,7 @@ export async function buscarPosts(viagemId: string): Promise<Post[]> {
   return posts.map(({ fotos, curtidas, comentarios, post_marcacoes, ...post }) => ({
     ...post,
     marcados: (post_marcacoes ?? []).map((m) => m.usuario_id),
-    fotos: [...fotos].sort((a, b) => a.ordem - b.ordem).map((f) => ({ id: f.id, caminho: f.caminho, url: links.get(f.caminho) ?? null })),
+    fotos: [...fotos].sort((a, b) => a.ordem - b.ordem).map((f) => ({ id: f.id, caminho: f.caminho, url: links.get(f.caminho) ?? null, latitude: f.latitude, longitude: f.longitude })),
     curtidas: curtidas.map((c) => c.usuario_id),
     comentarios: [...comentarios].sort((a, b) => a.criado_em.localeCompare(b.criado_em)),
   }))
@@ -52,6 +52,7 @@ export async function criarPost(
   fotos: Blob[],
   aoEnviar?: (quantas: number) => void,
   marcados: string[] = [], // spec 100: quem está nas fotos
+  pontos: ({ latitude: number; longitude: number } | null)[] = [], // spec 108: onde cada foto foi tirada
 ) {
   const { data: post, error } = await supabase
     .from('posts')
@@ -72,7 +73,7 @@ export async function criarPost(
     }
     const { error: erroFotos } = await supabase
       .from('fotos')
-      .insert(enviados.map((caminho, ordem) => ({ viagem_id: viagemId, destino_id: destinoId, post_id: post.id, caminho, ordem })))
+      .insert(enviados.map((caminho, ordem) => ({ viagem_id: viagemId, destino_id: destinoId, post_id: post.id, caminho, ordem, latitude: pontos[ordem]?.latitude ?? null, longitude: pontos[ordem]?.longitude ?? null })))
     if (erroFotos) throw erroFotos
   } catch (erro) {
     if (enviados.length) await supabase.storage.from(BUCKET).remove(enviados)
