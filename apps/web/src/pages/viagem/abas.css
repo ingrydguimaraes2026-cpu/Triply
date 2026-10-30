@@ -1078,3 +1078,21 @@
   justify-content: center;
   padding-top: 8px;
 }
+/* Decisão da enquete fechada (spec 044) */
+.enquete-decisao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.enquete-decisao time {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}

@@ -1120,3 +1120,18 @@ test('042: um resumo por viagem por dia; o app não chama nem lê', async () => 
   await assert.rejects(como(db, ADM, `select public.marcar_resumo('${V}', '2026-11-12')`), /permission denied/)
   assert.equal((await como(db, ADM, 'select * from public.resumos_enviados')).length, 0)
 })
+
+// ---------------- 044: decisões registradas ----------------
+test('044: fechar a enquete carimba a data; reabrir limpa; o app não escolhe a data', async () => {
+  const db = await novoBanco()
+  const id = await criarEnquete(db, ADM, ['Pizza', 'Sushi'], 'Jantar onde?')
+  const fechadaEm = async () => (await db.query('select fechada_em from public.enquetes where id = $1', [id])).rows[0].fechada_em
+  assert.equal(await fechadaEm(), null)
+  await como(db, ADM, "update public.enquetes set fechada = true, fechada_em = '2000-01-01' where id = $1", [id])
+  const data = await fechadaEm()
+  assert.ok(data && new Date(data).getFullYear() > 2020)
+  await como(db, ADM, 'update public.enquetes set pergunta = $2 where id = $1', [id, 'Jantar onde hoje?'])
+  assert.deepEqual(await fechadaEm(), data)
+  await como(db, ADM, 'update public.enquetes set fechada = false where id = $1', [id])
+  assert.equal(await fechadaEm(), null)
+})

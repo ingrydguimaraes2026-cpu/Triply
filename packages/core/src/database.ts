@@ -1457,6 +1457,7 @@ export type Database = {
           criado_em: string
           criado_por: string
           fechada: boolean
+          fechada_em: string | null
           id: string
           multipla: boolean
           pergunta: string
@@ -1466,6 +1467,7 @@ export type Database = {
           criado_em?: string
           criado_por?: string
           fechada?: boolean
+          fechada_em?: string | null
           id?: string
           multipla?: boolean
           pergunta: string
@@ -1475,6 +1477,7 @@ export type Database = {
           criado_em?: string
           criado_por?: string
           fechada?: boolean
+          fechada_em?: string | null
           id?: string
           multipla?: boolean
           pergunta?: string

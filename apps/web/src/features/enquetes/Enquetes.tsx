@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Check, Lock, Plus, Trash2, Unlock, X } from 'lucide-react'
+import { Check, Gavel, Lock, Plus, Trash2, Unlock, X } from 'lucide-react'
 import {
   apagarEnquete,
   buscarEnquetes,
   criarEnquete,
   fecharEnquete,
+  resultadoDaEnquete,
   votarEnquete,
   type Enquete,
 } from '@together/core'
@@ -135,6 +136,15 @@ export default function Enquetes({ viagemId, meuId, euSouAdm }: { viagemId: stri
                   )
                 })}
               </ul>
+              {e.fechada && resultadoDaEnquete(e.opcoes) && (
+                <p className="enquete-decisao">
+                  <Gavel size={14} aria-hidden="true" />{' '}
+                  {resultadoDaEnquete(e.opcoes)!.empate
+                    ? `Empate: ${resultadoDaEnquete(e.opcoes)!.vencedoras.join(' e ')}`
+                    : `Decidido: ${resultadoDaEnquete(e.opcoes)!.vencedoras[0]}`}
+                  {e.fechadaEm && <time dateTime={e.fechadaEm}> · {new Date(e.fechadaEm).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</time>}
+                </p>
+              )}
               <p className="enquete-rodape">
                 {total === 0 ? 'Ninguém votou ainda' : `${total} ${total === 1 ? 'pessoa votou' : 'pessoas votaram'}`}
                 {e.multipla ? ' · dá pra marcar várias' : ''}

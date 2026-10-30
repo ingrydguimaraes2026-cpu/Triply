@@ -480,6 +480,7 @@ export type Enquete = {
   pergunta: string
   multipla: boolean
   fechada: boolean
+  fechadaEm?: string | null // spec 044: quando virou decisão
   criadoPor: string
   criadoEm: string
   opcoes: OpcaoDeEnquete[]
@@ -489,7 +490,7 @@ export type Enquete = {
 export async function buscarEnquetes(cli: ClienteTogether, viagemId: string): Promise<Enquete[]> {
   const { data, error } = await cli
     .from('enquetes')
-    .select('id, pergunta, multipla, fechada, criado_por, criado_em, enquete_opcoes(id, texto, ordem, enquete_votos(usuario_id))')
+    .select('id, pergunta, multipla, fechada, fechada_em, criado_por, criado_em, enquete_opcoes(id, texto, ordem, enquete_votos(usuario_id))')
     .eq('viagem_id', viagemId)
     .order('criado_em', { ascending: false })
   if (error) throw error
@@ -498,6 +499,7 @@ export async function buscarEnquetes(cli: ClienteTogether, viagemId: string): Pr
     pergunta: e.pergunta,
     multipla: e.multipla,
     fechada: e.fechada,
+    fechadaEm: e.fechada_em,
     criadoPor: e.criado_por,
     criadoEm: e.criado_em,
     opcoes: [...(e.enquete_opcoes ?? [])]
