@@ -34,3 +34,14 @@ test('086: a tela mostra as marcações pendentes por cima do que veio do banco'
   assert.deepEqual(comPendentes(itens, fila, 'mala_itens'), [{ id: 'a', feito: false }, { id: 'b', feito: true }])
   assert.deepEqual(comPendentes(itens, fila, 'tarefas'), itens)
 })
+
+test('086: item criado sem internet aparece até o banco ter ele (sem repetir)', async () => {
+  const { comCriacoesPendentes } = await import(new URL('../../../packages/core/src/fila-offline.ts', import.meta.url))
+  const criacoes = [
+    { tabela: 'itens_lista', linha: { id: 'novo', viagem_id: 'v', texto: 'Água' }, quando: 1 },
+    { tabela: 'itens_lista', linha: { id: 'ja', viagem_id: 'v', texto: 'Pão' }, quando: 2 },
+    { tabela: 'itens_lista', linha: { id: 'outra', viagem_id: 'x', texto: 'Leite' }, quando: 3 },
+  ]
+  const lista = comCriacoesPendentes([{ id: 'ja', texto: 'Pão' }], criacoes, 'itens_lista', 'v')
+  assert.deepEqual(lista.map((i) => i.id), ['ja', 'novo'])
+})

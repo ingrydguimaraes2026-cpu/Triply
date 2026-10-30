@@ -12,13 +12,14 @@ import {
   type ItemDeLista,
   type TipoDeLista,
   comPendentes,
+  comCriacoesPendentes,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'
 import FormGasto from '../financeiro/FormGasto'
 import Gaveta from '../../components/ui/Gaveta'
 import './listas.css'
-import { lerMarcacoes, marcarOuGuardar } from '../offline/filaDeMarcacoes'
+import { criarOuGuardar, lerCriacoes, lerMarcacoes, marcarOuGuardar } from '../offline/filaDeMarcacoes'
 
 const NOMES: Record<TipoDeLista, string> = { levar: 'Quem leva', compras: 'Compras' }
 
@@ -34,7 +35,7 @@ export default function ListasDoComboio() {
 
   const recarregar = useCallback(() => {
     buscarItensDaLista(supabase, viagem.id)
-      .then((lista) => setItens(comPendentes(lista, lerMarcacoes(), 'itens_lista'))) // spec 086
+      .then((lista) => setItens(comPendentes(comCriacoesPendentes(lista, lerCriacoes(), 'itens_lista', viagem.id), lerMarcacoes(), 'itens_lista'))) // spec 086
       .catch((e) => {
         console.error('Erro ao buscar listas:', e)
         setErro('Não deu pra carregar as listas.')
@@ -47,7 +48,14 @@ export default function ListasDoComboio() {
     if (!valor.trim()) return
     setErro(null)
     try {
-      const novo = await criarItemDaLista(supabase, viagem.id, lista, valor, lista === 'compras' ? quantidade : null)
+      // Spec 086: o id nasce aqui; sem internet, o item fica na fila e aparece igual
+      const id = crypto.randomUUID()
+      const qtd = lista === 'compras' ? quantidade.trim() || null : null
+      const local: ItemDeLista = { id, viagem_id: viagem.id, lista, texto: valor.trim(), quantidade: qtd, quem_id: null, feito: false, criado_por: meuId, criado_em: new Date().toISOString() }
+      let novo = local
+      await criarOuGuardar({ tabela: 'itens_lista', linha: { id, viagem_id: viagem.id, lista, texto: local.texto, quantidade: qtd }, quando: Date.now() }, async () => {
+        novo = await criarItemDaLista(supabase, viagem.id, lista, valor, qtd, id)
+      })
       setItens((atual) => [...(atual ?? []), novo])
       setTexto('')
       setQuantidade('')

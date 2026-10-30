@@ -44,3 +44,15 @@ export function comPendentes<T extends { id: string }>(itens: T[], fila: Marcaca
     return m ? { ...i, ...m.campos } : i
   })
 }
+
+// ---------- Itens criados sem internet ----------
+// Cada item já nasce com o id gerado no aparelho: mandar duas vezes não duplica.
+
+export type Criacao = { tabela: 'itens_lista'; linha: { id: string; viagem_id: string } & Record<string, unknown>; quando: number }
+
+// O que a tela mostra: o que veio do banco + o que está na fila (sem repetir)
+export function comCriacoesPendentes<T extends { id: string }>(itens: T[], criacoes: Criacao[], tabela: Criacao['tabela'], viagemId: string): T[] {
+  const ids = new Set(itens.map((i) => i.id))
+  const pendentes = criacoes.filter((c) => c.tabela === tabela && c.linha.viagem_id === viagemId && !ids.has(c.linha.id)).map((c) => c.linha as unknown as T)
+  return [...itens, ...pendentes]
+}

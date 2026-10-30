@@ -30,10 +30,11 @@ export async function buscarItensDaLista(cli: ClienteTogether, viagemId: string)
   return data ?? []
 }
 
-export async function criarItemDaLista(cli: ClienteTogether, viagemId: string, lista: TipoDeLista, texto: string, quantidade?: string | null): Promise<ItemDeLista> {
+// `id` opcional: gerado no aparelho quando o item pode ficar na fila sem internet (spec 086)
+export async function criarItemDaLista(cli: ClienteTogether, viagemId: string, lista: TipoDeLista, texto: string, quantidade?: string | null, id?: string): Promise<ItemDeLista> {
   const { data, error } = await cli
     .from('itens_lista')
-    .insert({ viagem_id: viagemId, lista, texto: texto.trim(), quantidade: quantidade?.trim() || null })
+    .insert({ ...(id ? { id } : {}), viagem_id: viagemId, lista, texto: texto.trim(), quantidade: quantidade?.trim() || null })
     .select('*')
     .single()
   if (error) throw error

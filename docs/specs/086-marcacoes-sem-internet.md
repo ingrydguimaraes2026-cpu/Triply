@@ -18,9 +18,10 @@ Sem internet (avião, metrô, roaming desligado), marcar item da **lista do comb
   - item apagado enquanto isso: a marcação é descartada;
   - o banco recusou (ex.: saiu do comboio): descarta e não tenta mais.
 - A faixa "Sem internet" avisa que marcações também ficam guardadas.
+- **Novo item na lista do comboio** (compras, quem leva) também funciona sem internet: o id nasce no aparelho, o item aparece na hora e sobe quando a conexão volta (antes das marcações; mandar duas vezes não duplica).
 
 ## Não inclui (fica pra depois)
-- Criar itens, lugares, transportes e editar textos sem internet.
+- Criar itens da mala, lugares, transportes e editar textos sem internet.
 - Comparar com a hora da mudança de outra pessoa (hoje vence quem envia por último).
 - App mobile.
 
@@ -31,5 +32,5 @@ Sem internet (avião, metrô, roaming desligado), marcar item da **lista do comb
 - Sem migration. Chave `together:fila-marcacoes` no aparelho.
 
 ## Critérios de aceite
-- [x] Juntar marcações do mesmo item, ordem de envio, sobrepor pendentes na tela (testado: `fila-offline.test.mjs`).
+- [x] Juntar marcações do mesmo item, ordem de envio, sobrepor pendentes na tela; item criado sem internet aparece sem repetir (testado: `fila-offline.test.mjs`).
 - [ ] No navegador: DevTools → Network → Offline; marcar 2 itens da mala; recarregar (continuam marcados); voltar Online; ver no outro aparelho.
