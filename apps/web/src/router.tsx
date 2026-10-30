@@ -18,6 +18,7 @@ import Comboio from './pages/viagem/Comboio'
 import Configuracoes from './pages/viagem/Configuracoes'
 import Hoje from './pages/viagem/Hoje'
 import Imprimir from './pages/viagem/Imprimir'
+import Retrospectiva from './pages/viagem/Retrospectiva'
 import MinhasViagens from './pages/MinhasViagens'
 import Perfil from './pages/Perfil'
 import CarteiraConectado from './pages/CarteiraConectado'
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
               { path: 'comboio', element: <Comboio /> },
               { path: 'configuracoes', element: <Configuracoes /> },
               { path: 'imprimir', element: <Imprimir /> }, // spec 088
+              { path: 'retrospectiva', element: <Retrospectiva /> }, // spec 105
             ],
           },
         ],

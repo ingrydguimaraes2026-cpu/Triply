@@ -255,6 +255,12 @@ export default function Overview() {
     <div className="overview">
       {/* Spec 019: recados do ADM fixados no topo */}
       <FaixaAvisos viagemId={viagem.id} euSouAdm={euSouAdm} />
+      {/* Spec 105: viagem acabou → retrospectiva */}
+      {viagem.data_fim && viagem.data_fim < hojeTexto() && (
+        <Link to="retrospectiva" className="faixa-retrospectiva">
+          <Sparkles size={18} aria-hidden="true" /> A viagem acabou. Ver a retrospectiva →
+        </Link>
+      )}
       {/* Spec 046: viagem ainda sem destino ("sonhando") */}
       {destinos.length === 0 && (
         <section className="faixa-sonhando" aria-label="Modo sonhando">

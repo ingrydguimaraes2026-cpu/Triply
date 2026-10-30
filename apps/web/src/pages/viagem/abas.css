@@ -1337,3 +1337,16 @@
   margin-top: 10px;
   margin-right: 14px;
 }
+
+/* Spec 105: faixa da retrospectiva */
+.faixa-retrospectiva {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--couro);
+  color: var(--cor-fundo);
+  font-weight: 600;
+  text-decoration: none;
+}
