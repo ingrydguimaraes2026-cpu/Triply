@@ -9,6 +9,7 @@ import {
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
+import BotaoIr from '../../components/ui/BotaoIr'
 import './encontro.css'
 
 // Quando (ISO) → "qua 12 nov, 14:30" (ou só a data se vier sem hora)
@@ -89,6 +90,7 @@ export default function PontoDeEncontro({ viagemId, meuId, euSouAdm }: { viagemI
                 {p.quando && <span className="encontro-quando">{formatarQuando(p.quando)}</span>}
                 {p.observacao && <span className="encontro-obs">{p.observacao}</span>}
               </div>
+              <BotaoIr alvo={{ nome: p.local, latitude: p.latitude, longitude: p.longitude }} />
               <BotaoCompartilhar viagemId={viagemId} item={{ tipo: 'ponto', id: p.id, titulo: p.local }} />
               {podeApagar(p) && (
                 <button type="button" className="encontro-apagar" onClick={() => remover(p)} aria-label="Apagar ponto de encontro">

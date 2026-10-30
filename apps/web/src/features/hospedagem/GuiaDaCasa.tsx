@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Check, Copy, KeyRound, MapPin, Pencil, ScrollText, Wifi } from 'lucide-react'
 import { mensagemDeErro } from '../financeiro/api'
 import { guiaVazio, type GuiaDaCasa as Guia } from './regras'
+import BotaoIr from '../../components/ui/BotaoIr'
 
 // Guia da casa (spec 026): endereço, Wi-Fi, código da porta e regras, na hospedagem escolhida.
 export default function GuiaDaCasa({ guia, podeEditar, aoEditar }: { guia?: Guia; podeEditar: boolean; aoEditar: () => void }) {
@@ -52,7 +53,8 @@ export default function GuiaDaCasa({ guia, podeEditar, aoEditar }: { guia?: Guia
               {endereco}{' '}
               <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`} target="_blank" rel="noreferrer noopener">
                 Abrir no mapa
-              </a>
+              </a>{' '}
+              <BotaoIr alvo={{ nome: 'a hospedagem', endereco }} rotulo="Ir / corrida" />
             </dd>
           </div>
         )}

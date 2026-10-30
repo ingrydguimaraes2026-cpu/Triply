@@ -14,6 +14,7 @@ import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Gaveta from '../../components/ui/Gaveta'
+import BotaoIr from '../../components/ui/BotaoIr'
 import './abas.css'
 import './hospedagem.css'
 import './lugares.css'
@@ -72,6 +73,7 @@ export default function Lugares() {
             <a href={linkNoMapa(lugar, destino)} target="_blank" rel="noreferrer noopener">
               Ver no mapa <MapaIcone size={13} aria-hidden="true" />
             </a>
+            <BotaoIr alvo={{ nome: lugar.nome, cidade: destino ? [destino.nome, destino.pais].filter(Boolean).join(', ') : null }} />
             <button
               type="button"
               className={euVotei ? 'lugar-voto votou' : 'lugar-voto'}
