@@ -1267,6 +1267,9 @@ export type Database = {
           bate_e_volta: boolean
           chegada: string | null
           destino_id: string | null
+          escalas: Json
+          estacao_chegada: string | null
+          estacao_partida: string | null
           id: string
           link_reserva: string | null
           meio: string
@@ -1283,6 +1286,9 @@ export type Database = {
           bate_e_volta?: boolean
           chegada?: string | null
           destino_id?: string | null
+          escalas?: Json
+          estacao_chegada?: string | null
+          estacao_partida?: string | null
           id?: string
           link_reserva?: string | null
           meio?: string
@@ -1299,6 +1305,9 @@ export type Database = {
           bate_e_volta?: boolean
           chegada?: string | null
           destino_id?: string | null
+          escalas?: Json
+          estacao_chegada?: string | null
+          estacao_partida?: string | null
           id?: string
           link_reserva?: string | null
           meio?: string

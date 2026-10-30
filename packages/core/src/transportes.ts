@@ -75,3 +75,34 @@ export function rodizio(trechos: { motorista_id: string | null; km: number | nul
   }
   return [...mapa].map(([motoristaId, v]) => ({ motoristaId, ...v })).sort((a, b) => b.km - a.km)
 }
+
+// ---------- Conexões (spec 074) ----------
+
+export type Escala = { local: string; chegada: string | null; partida: string | null }
+
+// Lê o JSON do banco com cuidado (pode vir qualquer coisa)
+export function lerEscalas(valor: unknown): Escala[] {
+  if (!Array.isArray(valor)) return []
+  return valor
+    .filter((e): e is Record<string, unknown> => !!e && typeof e === 'object' && typeof (e as Record<string, unknown>).local === 'string')
+    .map((e) => ({
+      local: String(e.local),
+      chegada: typeof e.chegada === 'string' ? e.chegada : null,
+      partida: typeof e.partida === 'string' ? e.partida : null,
+    }))
+}
+
+// Tempo de conexão em minutos e se é curto (avião < 60 min; trem/ônibus < 15 min)
+export function conexoes(escalas: Escala[], meio: string): { local: string; minutos: number | null; curta: boolean }[] {
+  const minimo = meio === 'aviao' ? 60 : 15
+  return escalas.map((e) => {
+    const minutos = e.chegada && e.partida ? Math.round((Date.parse(e.partida) - Date.parse(e.chegada)) / 60000) : null
+    return { local: e.local, minutos, curta: minutos !== null && minutos < minimo }
+  })
+}
+
+export function textoDaConexao(minutos: number | null): string {
+  if (minutos === null) return ''
+  if (minutos < 60) return `${minutos} min`
+  return minutos % 60 ? `${Math.floor(minutos / 60)} h ${minutos % 60}` : `${minutos / 60} h`
+}

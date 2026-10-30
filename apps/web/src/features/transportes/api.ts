@@ -60,6 +60,9 @@ export type DadosDoTrajeto = {
   preco: number | null
   moeda: string | null
   motorista_id?: string | null // spec 073
+  estacao_partida?: string | null // spec 074
+  estacao_chegada?: string | null
+  escalas?: { local: string; chegada: string | null; partida: string | null }[]
 }
 
 // Só o ADM consegue (regra do banco)

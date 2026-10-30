@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from 'lucide-react'
-import { formatarDinheiro, kmEstimados, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
+import { conexoes, formatarDinheiro, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -151,6 +151,19 @@ export default function Transportes() {
               </button>
             )}
           </span>
+          {/* Spec 074: estações e escalas */}
+          {(t.estacao_partida || t.estacao_chegada) && (
+            <small>
+              {t.estacao_partida ?? '?'} → {t.estacao_chegada ?? '?'}
+            </small>
+          )}
+          {conexoes(lerEscalas(t.escalas), t.meio).map((c) => (
+            <small key={c.local} className={c.curta ? 'trajeto-conexao curta' : 'trajeto-conexao'}>
+              Escala em {c.local}
+              {c.minutos !== null && ` · ${textoDaConexao(c.minutos)} de conexão`}
+              {c.curta && ' · conexão curta!'}
+            </small>
+          ))}
           {t.observacao && <small className="trajeto-obs">{t.observacao}</small>}
           {t.link_reserva && (
             <a href={t.link_reserva} target="_blank" rel="noreferrer noopener" className="trajeto-link">

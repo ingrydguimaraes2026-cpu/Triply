@@ -86,6 +86,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 071 | [Mover evento entre dias](071-mover-entre-dias.md) (setas ‹ › na Agenda) | 2 | P | 029 | Pronto pra testar (web) |
 | 072 | [Prévia do link](072-previa-do-link.md) (título e foto da opção de hospedagem) | 2 | M | 011 | Pronto pra testar (web + função) · banco não aplicado |
 | 073 | [Carro e rodízio de motorista](073-carro-e-rodizio.md) (quem dirige, km estimados) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
+| 074 | [Conexões e estações](074-conexoes.md) (escalas com alerta de conexão curta) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

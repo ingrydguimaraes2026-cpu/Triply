@@ -285,3 +285,26 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+/* Conexões (spec 074) */
+.escalas {
+  display: grid;
+  gap: 6px;
+  border: 0;
+  padding: 0;
+}
+
+.escala {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 4px;
+}
+
+.escala input:first-child {
+  grid-column: 1 / -1;
+}
+
+.trajeto-conexao.curta {
+  color: var(--cor-pessoal);
+  font-weight: 700;
+}

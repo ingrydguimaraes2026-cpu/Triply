@@ -1404,3 +1404,16 @@ test('073: motorista do trecho de carro tem que ser do comboio', async () => {
   await como(db, ADM, `insert into public.trajetos (viagem_id, origem_id, destino_id, meio, motorista_id) values ('${V}', '${NICE}', '${MONACO}', 'carro', '${MEMBRO}')`)
   await assert.rejects(como(db, ADM, `update public.trajetos set motorista_id = '${ESTRANHO}'`), /comboio/)
 })
+
+// ---------------- 074: conexões ----------------
+test('074: estações e até 4 escalas no trajeto', async () => {
+  const db = await novoBanco()
+  await como(
+    db,
+    ADM,
+    `insert into public.trajetos (viagem_id, origem_id, destino_id, meio, estacao_partida, escalas) values ('${V}', '${NICE}', '${MONACO}', 'aviao', 'Terminal 2', '[{"local":"Frankfurt","chegada":"2027-06-01T10:00:00Z","partida":"2027-06-01T11:10:00Z"}]')`,
+  )
+  assert.equal((await como(db, MEMBRO, 'select escalas from public.trajetos'))[0].escalas[0].local, 'Frankfurt')
+  await assert.rejects(como(db, ADM, `update public.trajetos set escalas = '{"local":"x"}'`), /check/)
+  await assert.rejects(como(db, ADM, `update public.trajetos set escalas = '[1,2,3,4,5]'`), /check/)
+})

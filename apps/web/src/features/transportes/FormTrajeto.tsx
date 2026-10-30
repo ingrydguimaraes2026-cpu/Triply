@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
-import { SITUACOES_DO_TRAJETO, type Tables } from '@together/core'
+import { lerEscalas, SITUACOES_DO_TRAJETO, type Escala, type Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
 import { apagarTrajeto, criarBateEVolta, definirPassageiros, MEIOS, salvarTrajeto, type Trajeto } from './api'
 import type { Membro } from '../viagens/hooks'
@@ -32,6 +32,12 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
   const [situacao, setSituacao] = useState(trajeto?.situacao ?? 'sugestao')
   const [passageiros, setPassageiros] = useState<string[]>(trajeto?.passageiros ?? [])
   const [motorista, setMotorista] = useState(trajeto?.motorista_id ?? '')
+  // Spec 074: estação/terminal e escalas (horários no campo do celular, como partida/chegada)
+  const [estacaoPartida, setEstacaoPartida] = useState(trajeto?.estacao_partida ?? '')
+  const [estacaoChegada, setEstacaoChegada] = useState(trajeto?.estacao_chegada ?? '')
+  const [escalas, setEscalas] = useState<Escala[]>(() =>
+    lerEscalas(trajeto?.escalas).map((e) => ({ local: e.local, chegada: paraCampoHorario(e.chegada), partida: paraCampoHorario(e.partida) })),
+  )
   const [preco, setPreco] = useState(trajeto?.preco != null ? String(trajeto.preco).replace('.', ',') : '')
   const [moeda, setMoeda] = useState(trajeto?.moeda ?? moedaViagem)
   const [salvando, setSalvando] = useState(false)
@@ -69,6 +75,11 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
       preco: precoNumero,
       moeda: precoNumero === null ? null : moedaLimpa,
       motorista_id: meioEscolhido === 'carro' ? motorista || null : null,
+      estacao_partida: estacaoPartida.trim() || null,
+      estacao_chegada: estacaoChegada.trim() || null,
+      escalas: escalas
+        .filter((e) => e.local.trim())
+        .map((e) => ({ local: e.local.trim().slice(0, 80), chegada: deCampoHorario(e.chegada ?? ''), partida: deCampoHorario(e.partida ?? '') })),
     }
     setSalvando(true)
     try {
@@ -157,6 +168,40 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
         </div>
       </div>
       <p className="form-dica">Horários no fuso do seu celular.</p>
+
+      <div className="form-linha">
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-est-partida">
+            Estação / terminal de saída
+          </label>
+          <input id="trajeto-est-partida" maxLength={80} placeholder="Ex.: Terminal 2" value={estacaoPartida} onChange={(e) => setEstacaoPartida(e.target.value)} />
+        </div>
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-est-chegada">
+            De chegada
+          </label>
+          <input id="trajeto-est-chegada" maxLength={80} placeholder="Ex.: Milano Centrale" value={estacaoChegada} onChange={(e) => setEstacaoChegada(e.target.value)} />
+        </div>
+      </div>
+
+      <fieldset className="form-campo escalas">
+        <legend className="form-rotulo">Escalas / conexões</legend>
+        {escalas.map((e, i) => (
+          <div key={i} className="escala">
+            <input aria-label="Onde é a escala" placeholder="Ex.: Frankfurt" maxLength={80} value={e.local} onChange={(ev) => setEscalas(escalas.map((x, j) => (j === i ? { ...x, local: ev.target.value } : x)))} />
+            <input aria-label="Chega na escala" type="datetime-local" value={e.chegada ?? ''} onChange={(ev) => setEscalas(escalas.map((x, j) => (j === i ? { ...x, chegada: ev.target.value } : x)))} />
+            <input aria-label="Sai da escala" type="datetime-local" value={e.partida ?? ''} onChange={(ev) => setEscalas(escalas.map((x, j) => (j === i ? { ...x, partida: ev.target.value } : x)))} />
+            <button type="button" className="botao-texto" aria-label="Tirar escala" onClick={() => setEscalas(escalas.filter((_, j) => j !== i))}>
+              <Trash2 size={14} aria-hidden="true" />
+            </button>
+          </div>
+        ))}
+        {escalas.length < 4 && (
+          <button type="button" className="botao-texto alinhar-inicio" onClick={() => setEscalas([...escalas, { local: '', chegada: '', partida: '' }])}>
+            + Escala
+          </button>
+        )}
+      </fieldset>
 
       <label className="interruptor">
         <span>

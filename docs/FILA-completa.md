@@ -113,7 +113,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 59 | B4 | Programação em paralelo (trilhas no mesmo dia) | M | ✅ feito (web) · spec 070 · banco a aplicar |
 | 60 | B9 | Sugestão de ordem (menos deslocamento) ◐ | M | a fazer |
 | 61 | D5 | Quem vai em cada trajeto + "meu itinerário" | M | ✅ feito (web) · spec 067 · banco a aplicar |
-| 62 | D8 | Conexões e estações (várias pernas) | M | a fazer |
+| 62 | D8 | Conexões e estações (várias pernas) | M | ✅ feito (web) · spec 074 · banco a aplicar |
 | 63 | D9 | Último trem para a base | M | a fazer |
 | 64 | D11 | Carro alugado e rodízio de motorista | M | ✅ feito (web) · spec 073 · banco a aplicar |
 | 65 | E7 | Quem dorme onde | M | ✅ feito (web) · spec 068 · banco a aplicar |

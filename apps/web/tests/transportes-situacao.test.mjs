@@ -54,3 +54,14 @@ test('carro: km estimados, combustível e rodízio (spec 073)', async () => {
     { motoristaId: 'b', km: 50, trechos: 1 },
   ])
 })
+
+test('conexões: leitura segura do JSON, tempo e conexão curta (spec 074)', async () => {
+  const { lerEscalas, conexoes, textoDaConexao } = await import(new URL('../../../packages/core/src/transportes.ts', import.meta.url))
+  const escalas = lerEscalas([{ local: 'Frankfurt', chegada: '2027-06-01T10:00:00Z', partida: '2027-06-01T10:45:00Z' }, { nada: 1 }, 'x'])
+  assert.deepEqual(escalas, [{ local: 'Frankfurt', chegada: '2027-06-01T10:00:00Z', partida: '2027-06-01T10:45:00Z' }])
+  assert.deepEqual(conexoes(escalas, 'aviao'), [{ local: 'Frankfurt', minutos: 45, curta: true }])
+  assert.equal(conexoes(escalas, 'trem')[0].curta, false)
+  assert.deepEqual(lerEscalas(null), [])
+  assert.equal(textoDaConexao(70), '1 h 10')
+  assert.equal(textoDaConexao(45), '45 min')
+})
