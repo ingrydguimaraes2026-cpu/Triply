@@ -5,9 +5,10 @@ import { supabase } from './supabase'
 // Link de convite: o mesmo /convite/<código> do site, pra quem receber abrir em qualquer lugar.
 const SITE = process.env.EXPO_PUBLIC_SITE_URL ?? 'https://together-viagem.vercel.app'
 
+export const linkDoConvite = (codigo: string) => `${SITE}/convite/${codigo}`
+
 export async function gerarLinkDeConvite(viagemId: string) {
-  const codigo = await criarCodigoDeConvite(supabase, viagemId)
-  return `${SITE}/convite/${codigo}`
+  return linkDoConvite(await criarCodigoDeConvite(supabase, viagemId))
 }
 
 // Abre o "compartilhar" do celular. No navegador sem compartilhar, copia o link.

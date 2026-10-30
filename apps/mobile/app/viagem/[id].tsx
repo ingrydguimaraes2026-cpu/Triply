@@ -108,7 +108,10 @@ export default function DetalheDaViagem() {
 
         <View className="gap-4 px-5 pt-5">
           <View className="flex-row items-center justify-between">
-            <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={36} />
+            {/* Spec 007: tocar no comboio abre quem vai, papéis e sair */}
+            <Pressable onPress={() => ir('/comboio' as Href)} accessibilityLabel="Ver o comboio" className="active:opacity-80">
+              <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={36} />
+            </Pressable>
             <Pressable onPress={convidar} className="h-10 flex-row items-center gap-1.5 rounded-xl border border-tracejado px-3.5 active:opacity-80">
               <Plus size={18} color={cor.couro} />
               <Text className="font-body-semibold text-[14px] text-couro">Convidar</Text>

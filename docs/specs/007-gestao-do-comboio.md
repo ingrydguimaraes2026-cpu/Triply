@@ -1,6 +1,8 @@
 # 007. Gestão do comboio
 
-**Fase:** 2 · **Tamanho:** P · **Depende de:** — · **Status:** A fazer
+**Fase:** 2 · **Tamanho:** P · **Depende de:** — · **Status:** Pronto pra testar (web e app)
+
+> **No app (30/10):** `apps/mobile/app/comboio.tsx` (tocar nos avatares no detalhe da viagem). Quem vai com papel, menu "⋯" do ADM (Tornar ADM / Tornar membro / Remover com confirmação), convites ativos com Cancelar, Convidar e Sair da viagem com confirmação. O único ADM vê o aviso em vez do botão. Apagar a viagem fica no site. A lógica foi pro `@together/core` (`comboio.ts`); a web usa a mesma. Testado no navegador sem gravar (visão de membro e de ADM).
 
 ## Objetivo
 O ADM organiza quem está na viagem: tira alguém, passa outra pessoa pra ADM e vê ou cancela os convites. Qualquer membro pode sair da viagem.
