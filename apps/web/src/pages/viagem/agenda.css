@@ -185,3 +185,14 @@
   color: var(--couro);
   font-weight: 700;
 }
+
+/* Mover entre dias (spec 071) */
+.agenda-mover {
+  display: inline-flex;
+}
+
+.agenda-mover button {
+  padding: 0 6px;
+  font-size: 18px;
+  font-weight: 800;
+}

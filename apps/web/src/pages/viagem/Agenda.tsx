@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, Plus } from 'lucide-react'
-import { destinoDoDia, diasDoPeriodo, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
+import { destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
+import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -60,6 +61,26 @@ export default function Agenda() {
   )
 
   const fechar = () => setJanela(null)
+
+  // Spec 071: passa o evento pro dia anterior/seguinte (sem sair do período da viagem) e vai junto pro dia novo
+  async function mover(evento: EventoDaAgenda, direcao: -1 | 1) {
+    const i = dias.indexOf(evento.dia)
+    const novo = dias[i + direcao]
+    if (i === -1 || !novo) return
+    try {
+      await editarEventoDaAgenda(supabase, evento.id, {
+        dia: novo,
+        hora: evento.hora?.slice(0, 5) ?? null,
+        titulo: evento.titulo,
+        local: evento.local,
+        observacao: evento.observacao,
+      })
+      setEscolhido(novo)
+      recarregar()
+    } catch (e) {
+      console.error('Erro ao mover o evento:', e)
+    }
+  }
   const podeEditar = (e: EventoDaAgenda) => e.criado_por === meuId || euSouAdm
 
   if (dias.length === 0) {
@@ -141,6 +162,7 @@ export default function Agenda() {
                 item={item}
                 aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })}
                 podeEditar={podeEditar}
+                aoMover={mover}
                 nomes={(ids) => ids.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
               />
             ))}
@@ -177,11 +199,13 @@ function LinhaDaAgenda({
   aoEditar,
   podeEditar,
   nomes,
+  aoMover,
 }: {
   item: ItemDaAgenda
   aoEditar: (e: EventoDaAgenda) => void
   podeEditar: (e: EventoDaAgenda) => boolean
   nomes: (ids: string[]) => string
+  aoMover?: (e: EventoDaAgenda, direcao: -1 | 1) => void // spec 071
 }) {
   const Icone =
     item.tipo === 'trajeto' ? meio(item.meio).icone : item.tipo === 'chegada' ? LogIn : item.tipo === 'saida' ? LogOut : Clock
@@ -204,6 +228,16 @@ function LinhaDaAgenda({
         <Link to="../transportes" className="botao-texto" aria-label="Ver em Transportes">
           →
         </Link>
+      )}
+      {editavel && aoMover && (
+        <span className="agenda-mover">
+          <button type="button" className="botao-texto" onClick={() => aoMover(item.evento, -1)} aria-label={`Passar ${item.titulo} pro dia anterior`} title="Dia anterior">
+            ‹
+          </button>
+          <button type="button" className="botao-texto" onClick={() => aoMover(item.evento, 1)} aria-label={`Passar ${item.titulo} pro dia seguinte`} title="Dia seguinte">
+            ›
+          </button>
+        </span>
       )}
       {editavel && (
         <button type="button" className="botao-texto" onClick={() => aoEditar(item.evento)} aria-label={`Editar ${item.titulo}`}>

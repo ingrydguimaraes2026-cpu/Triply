@@ -83,6 +83,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 068 | [Quem dorme onde](068-quem-dorme-onde.md) (quartos, vagas, sorteio) | 2 | M | 011 | Pronto pra testar (web) · banco não aplicado |
 | 069 | [Minha mala](069-mala-individual.md) (checklist pessoal com modelo pelo clima) | 2 | M | 048 | Pronto pra testar (web) · banco não aplicado |
 | 070 | [Programação em paralelo](070-programacao-em-paralelo.md) (evento só de parte do comboio) | 2 | M | 029 | Pronto pra testar (web) · banco não aplicado |
+| 071 | [Mover evento entre dias](071-mover-entre-dias.md) (setas ‹ › na Agenda) | 2 | P | 029 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
