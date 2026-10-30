@@ -265,3 +265,34 @@
   gap: 8px;
   font-size: 14px;
 }
+
+/* Autocompletar do lugar (spec 064) */
+.lugar-sugestoes {
+  display: grid;
+  margin: 4px 0 0;
+  padding: 4px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  list-style: none;
+}
+
+.lugar-sugestoes button {
+  display: grid;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.lugar-sugestoes button:hover {
+  background: var(--cor-comboio-fundo);
+}
+
+.lugar-sugestoes small {
+  color: var(--cor-texto-suave);
+}

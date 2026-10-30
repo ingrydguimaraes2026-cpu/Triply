@@ -74,7 +74,15 @@ export default function Lugares() {
             <a href={linkNoMapa(lugar, destino)} target="_blank" rel="noreferrer noopener">
               Ver no mapa <MapaIcone size={13} aria-hidden="true" />
             </a>
-            <BotaoIr alvo={{ nome: lugar.nome, cidade: destino ? [destino.nome, destino.pais].filter(Boolean).join(', ') : null }} />
+            <BotaoIr
+              alvo={{
+                nome: lugar.nome,
+                endereco: lugar.endereco,
+                latitude: lugar.latitude,
+                longitude: lugar.longitude,
+                cidade: destino ? [destino.nome, destino.pais].filter(Boolean).join(', ') : null,
+              }}
+            />
             <button
               type="button"
               className={lugar.visitadoEm ? 'lugar-fomos foi' : 'lugar-fomos'}

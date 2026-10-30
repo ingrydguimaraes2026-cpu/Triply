@@ -1299,3 +1299,11 @@ test('063: etiquetas da lista (até 4) e nota de 0 a 10', async () => {
   await assert.rejects(como(db, ADM, "update public.hospedagens set etiquetas = '{social,tranquilo,seguro,cozinha,barato}'"), /check/)
   await assert.rejects(como(db, ADM, 'update public.hospedagens set nota = 11'), /check/)
 })
+
+// ---------------- 064: lugar com coordenadas ----------------
+test('064: lugar guarda coordenadas e endereço; latitude sem longitude é barrada', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.lugares (viagem_id, destino_id, nome, tipo, latitude, longitude, endereco) values ('${V}', '${NICE}', 'Le Safari', 'comida', 43.695, 7.275, 'Cours Saleya 1')`)
+  assert.equal((await como(db, ADM, 'select endereco from public.lugares'))[0].endereco, 'Cours Saleya 1')
+  await assert.rejects(como(db, MEMBRO, `insert into public.lugares (viagem_id, destino_id, nome, tipo, latitude) values ('${V}', '${NICE}', 'X', 'comida', 43.7)`), /coordenadas_juntas/)
+})

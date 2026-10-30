@@ -124,3 +124,41 @@ export function maisPerto<L extends { latitude: number; longitude: number }>(lug
 export function textoDaDistancia(metros: number): string {
   return metros < 1000 ? `${Math.round(metros / 10) * 10} m` : `${(metros / 1000).toFixed(1).replace('.', ',')} km`
 }
+
+// ---------- Buscar lugar com autocompletar (C4, spec 064) ----------
+// Photon (OpenStreetMap), puxando pra perto do destino. Sugere o tipo pelo que o OSM diz que é.
+
+export type Estabelecimento = { id: string; nome: string; endereco: string; latitude: number; longitude: number; tipo: 'passeio' | 'comida' | 'outro' }
+
+export function consultaDeEstabelecimentos(texto: string, latitude: number | null, longitude: number | null): string {
+  const perto = latitude !== null && longitude !== null ? `&lat=${latitude}&lon=${longitude}&location_bias_scale=0.5` : ''
+  return `https://photon.komoot.io/api/?q=${encodeURIComponent(texto.trim())}&limit=6${perto}`
+}
+
+const COMIDA = ['restaurant', 'cafe', 'bar', 'pub', 'fast_food', 'ice_cream', 'bakery', 'food_court', 'biergarten', 'pastry', 'deli']
+const PASSEIO_CHAVES = ['tourism', 'historic', 'leisure']
+
+type FeaturePhoton = {
+  geometry?: { coordinates?: [number, number] }
+  properties?: { osm_type?: string; osm_id?: number; osm_key?: string; osm_value?: string; name?: string; street?: string; housenumber?: string; city?: string; country?: string }
+}
+
+export function estabelecimentosDaResposta(resposta: { features?: FeaturePhoton[] }): Estabelecimento[] {
+  const lista: Estabelecimento[] = []
+  for (const f of resposta.features ?? []) {
+    const p = f.properties ?? {}
+    const c = f.geometry?.coordinates
+    if (!p.name || !c) continue
+    const rua = [p.street, p.housenumber].filter(Boolean).join(' ')
+    const tipo = COMIDA.includes(p.osm_value ?? '') ? 'comida' : PASSEIO_CHAVES.includes(p.osm_key ?? '') ? 'passeio' : 'outro'
+    lista.push({
+      id: `${p.osm_type ?? ''}${p.osm_id ?? lista.length}`,
+      nome: p.name,
+      endereco: [rua, p.city, p.country].filter(Boolean).join(', ').slice(0, 200),
+      latitude: c[1],
+      longitude: c[0],
+      tipo,
+    })
+  }
+  return lista
+}

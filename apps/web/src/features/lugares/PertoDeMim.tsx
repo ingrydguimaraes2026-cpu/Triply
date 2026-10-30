@@ -11,6 +11,8 @@ type ComPonto = { lugar: Lugar; destino: Destino | null; latitude: number; longi
 const memoria = new Map<string, { latitude: number; longitude: number } | null>()
 
 async function localizar(lugar: Lugar, destino: Destino | null) {
+  // Spec 064: lugar escolhido pelo autocompletar já tem coordenada
+  if (lugar.latitude != null && lugar.longitude != null) return { latitude: lugar.latitude, longitude: lugar.longitude }
   if (memoria.has(lugar.id)) return memoria.get(lugar.id)!
   try {
     const r = await fetch(consultaDoLugar(lugar.nome, destino?.nome ?? '', destino?.latitude ?? null, destino?.longitude ?? null))

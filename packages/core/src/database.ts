@@ -842,9 +842,12 @@ export type Database = {
           criado_em: string
           criado_por: string
           destino_id: string | null
+          endereco: string | null
           horario: string | null
           id: string
+          latitude: number | null
           link: string | null
+          longitude: number | null
           moeda: string
           nome: string
           observacao: string | null
@@ -857,9 +860,12 @@ export type Database = {
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
+          endereco?: string | null
           horario?: string | null
           id?: string
+          latitude?: number | null
           link?: string | null
+          longitude?: number | null
           moeda?: string
           nome: string
           observacao?: string | null
@@ -872,9 +878,12 @@ export type Database = {
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
+          endereco?: string | null
           horario?: string | null
           id?: string
+          latitude?: number | null
           link?: string | null
+          longitude?: number | null
           moeda?: string
           nome?: string
           observacao?: string | null

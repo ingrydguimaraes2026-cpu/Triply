@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
+import { consultaDeEstabelecimentos, estabelecimentosDaResposta, type Estabelecimento } from '@together/core'
 import { Trash2 } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
@@ -34,6 +35,38 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmando, setConfirmando] = useState(false)
+  // Spec 064: sugestões enquanto digita o nome (Photon, perto do destino)
+  const [ponto, setPonto] = useState<{ latitude: number; longitude: number; endereco: string } | null>(
+    lugar?.latitude != null && lugar?.longitude != null ? { latitude: lugar.latitude, longitude: lugar.longitude, endereco: lugar.endereco ?? '' } : null,
+  )
+  const [sugestoes, setSugestoes] = useState<Estabelecimento[]>([])
+  const [digitando, setDigitando] = useState(false)
+  const destinoEscolhido = destinos.find((d) => d.id === destino)
+
+  useEffect(() => {
+    if (!digitando || nome.trim().length < 3) return
+    const controle = new AbortController()
+    const espera = setTimeout(() => {
+      fetch(consultaDeEstabelecimentos(`${nome} ${destinoEscolhido?.nome ?? ''}`, destinoEscolhido?.latitude ?? null, destinoEscolhido?.longitude ?? null), {
+        signal: controle.signal,
+      })
+        .then((r) => (r.ok ? r.json() : { features: [] }))
+        .then((j) => setSugestoes(estabelecimentosDaResposta(j)))
+        .catch(() => {})
+    }, 400)
+    return () => {
+      clearTimeout(espera)
+      controle.abort()
+    }
+  }, [nome, digitando, destinoEscolhido])
+
+  function escolher(e: Estabelecimento) {
+    setNome(e.nome.slice(0, 120))
+    setPonto({ latitude: e.latitude, longitude: e.longitude, endereco: e.endereco })
+    if (!lugar && e.tipo !== 'outro') setTipo(e.tipo)
+    setSugestoes([])
+    setDigitando(false)
+  }
 
   async function enviar(e: FormEvent) {
     e.preventDefault()
@@ -56,6 +89,9 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
         preco,
         moeda,
         observacao: observacao.trim() || null,
+        latitude: ponto?.latitude ?? null,
+        longitude: ponto?.longitude ?? null,
+        endereco: ponto?.endereco || null,
       })
       aoTerminar()
     } catch (erro) {
@@ -103,9 +139,27 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
           maxLength={120}
           placeholder={tipoDeLugar(tipo).exemplo}
           value={nome}
-          onChange={(e) => setNome(e.target.value)}
+          onChange={(e) => {
+            setNome(e.target.value)
+            setDigitando(true)
+            setPonto(null)
+          }}
           autoFocus={!lugar}
+          autoComplete="off"
         />
+        {digitando && sugestoes.length > 0 && nome.trim().length >= 3 && (
+          <ul className="lugar-sugestoes" aria-label="Sugestões">
+            {sugestoes.map((e) => (
+              <li key={e.id}>
+                <button type="button" onClick={() => escolher(e)}>
+                  <strong>{e.nome}</strong>
+                  {e.endereco && <small>{e.endereco}</small>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {ponto && <p className="form-dica">📍 {ponto.endereco || 'Local no mapa salvo'}</p>}
       </div>
 
       <div className="form-campo">

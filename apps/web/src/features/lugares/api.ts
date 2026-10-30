@@ -12,6 +12,10 @@ export type DadosDoLugar = {
   preco: number | null
   moeda: string
   observacao: string | null
+  // Spec 064: onde fica (vem da sugestão do autocompletar)
+  latitude?: number | null
+  longitude?: number | null
+  endereco?: string | null
 }
 
 // Lugares da viagem (spec 016). O banco só devolve os das viagens em que a pessoa está no comboio.
@@ -36,6 +40,9 @@ export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
     criadoPor: l.criado_por,
     votos: (l.lugar_votos ?? []).map((v) => v.usuario_id),
     visitadoEm: l.visitado_em,
+    latitude: l.latitude,
+    longitude: l.longitude,
+    endereco: l.endereco,
   }))
 }
 
@@ -57,6 +64,7 @@ function paraLinha(d: DadosDoLugar) {
     preco: d.preco === null ? null : Number(paraBanco(d.preco)),
     moeda: d.moeda,
     observacao: d.observacao?.trim() || null,
+    ...(d.latitude !== undefined ? { latitude: d.latitude, longitude: d.longitude ?? null, endereco: d.endereco ?? null } : {}),
   }
 }
 

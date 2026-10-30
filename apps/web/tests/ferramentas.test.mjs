@@ -64,3 +64,18 @@ test('perto de mim: consulta, ponto do Photon, ordem e distância', () => {
   assert.equal(f.textoDaDistancia(111), '110 m')
   assert.equal(f.textoDaDistancia(11120), '11,1 km')
 })
+
+test('autocompletar de lugar: consulta e sugestões com tipo', () => {
+  assert.equal(f.consultaDeEstabelecimentos(' safari ', 43.7, 7.26), 'https://photon.komoot.io/api/?q=safari&limit=6&lat=43.7&lon=7.26&location_bias_scale=0.5')
+  const r = f.estabelecimentosDaResposta({
+    features: [
+      { geometry: { coordinates: [7.275, 43.695] }, properties: { osm_type: 'N', osm_id: 1, osm_key: 'amenity', osm_value: 'restaurant', name: 'Le Safari', street: 'Cours Saleya', housenumber: '1', city: 'Nice', country: 'França' } },
+      { geometry: { coordinates: [7.28, 43.69] }, properties: { osm_type: 'W', osm_id: 2, osm_key: 'tourism', osm_value: 'museum', name: 'Musée Matisse', city: 'Nice' } },
+      { geometry: { coordinates: [7.2, 43.6] }, properties: { osm_key: 'highway' } },
+    ],
+  })
+  assert.deepEqual(r.map((e) => [e.nome, e.tipo, e.endereco]), [
+    ['Le Safari', 'comida', 'Cours Saleya 1, Nice, França'],
+    ['Musée Matisse', 'passeio', 'Nice'],
+  ])
+})
