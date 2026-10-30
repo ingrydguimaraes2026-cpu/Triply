@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router'
 import { BellRing, CalendarDays, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus, Star } from 'lucide-react'
 import { albumPorDia, melhoresPosts } from '@together/core'
 import { diaPorExtenso } from '../../features/agenda/hooks'
+import BaixarFotos from '../../features/feed/BaixarFotos'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { usePosts } from '../../features/feed/hooks'
 import { apagarComentario, apagarPost, avisarComboio, comentar, curtir, descurtir, type Post } from '../../features/feed/api'
@@ -173,6 +174,8 @@ export default function Fotos() {
             ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} · ${totalDeFotos} ${totalDeFotos === 1 ? 'foto' : 'fotos'} · só o comboio vê`
             : 'O feed da viagem. Só quem viaja junto vê.'}
         </p>
+        {/* Spec 099: baixar tudo em .zip */}
+        {estado.status === 'pronto' && <BaixarFotos nomeDaViagem={viagem.nome} posts={posts} destinos={destinos} />}
       </header>
 
       {/* Barra de postar, como no Instagram/Facebook */}

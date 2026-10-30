@@ -745,3 +745,8 @@
   color: var(--cor-texto-suave);
   text-transform: none;
 }
+
+/* Spec 099: baixar todas em .zip */
+.baixar-fotos {
+  margin-top: 4px;
+}
