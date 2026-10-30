@@ -209,3 +209,19 @@
 .agenda-aperto.apertado {
   color: var(--caramelo);
 }
+
+/* Spec 095: feriado no dia */
+.agenda-feriado {
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-texto);
+  font-size: 14px;
+}
+.agenda-feriado svg {
+  vertical-align: -2px;
+}
+.agenda-feriado small {
+  color: var(--cor-texto-suave);
+}

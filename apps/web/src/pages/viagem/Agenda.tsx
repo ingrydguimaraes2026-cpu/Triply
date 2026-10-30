@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, Plus, Printer } from 'lucide-react'
+import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from 'lucide-react'
 import { compromissosApertados, destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -8,6 +8,7 @@ import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
 import { hojeTexto, periodoDosDestinos } from '../../features/destinos/datas'
 import { diaCurtinho, diaPorExtenso, useEventosDaAgenda } from '../../features/agenda/hooks'
+import { useFeriados } from '../../features/agenda/useFeriados'
 import FormEvento from '../../features/agenda/FormEvento'
 import { baixarCalendario } from '../../features/agenda/calendario'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
@@ -54,6 +55,8 @@ export default function Agenda() {
     [dia, destinos, trajetos, eventos],
   )
   const onde = dia ? destinoDoDia(dia, destinos) : undefined
+  const feriados = useFeriados(destinos) // spec 095
+  const feriadosDoDia = feriados.filter((f) => f.data === dia)
   const apertos = useMemo(() => compromissosApertados(itens), [itens]) // spec 077
   // Quantos itens cada dia tem (bolinha no botão do dia)
   const temAlgo = useMemo(
@@ -153,6 +156,12 @@ export default function Agenda() {
               <MapPin size={14} aria-hidden="true" /> em {onde.nome}
             </p>
           )}
+          {feriadosDoDia.map((f) => (
+            <p key={`${f.pais}${f.nome}`} className="agenda-feriado">
+              <PartyPopper size={14} aria-hidden="true" /> Feriado{f.regional ? ' regional' : ''} em {f.destino}: {f.nomeLocal}
+              {f.nomeLocal !== f.nome && <small> ({f.nome})</small>}. Lojas, bancos e alguns museus podem fechar.
+            </p>
+          ))}
         </header>
 
         {erro && <p className="form-erro">Não deu pra carregar os eventos agora.</p>}
