@@ -1096,3 +1096,37 @@
   color: var(--cor-texto-suave);
   font-weight: 500;
 }
+
+/* Orçamento combinado (spec 045) */
+.overview-orcamento-combinado { order: 4; }
+
+.orcamento-combinado {
+  display: grid;
+  gap: 10px;
+}
+
+.orcamento-combinado-resultado {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.orcamento-combinado-resultado.tipo-sem_acordo {
+  background: var(--dourado-claro);
+}
+
+.orcamento-combinado-resultado small {
+  color: var(--cor-texto-suave);
+}
+
+.orcamento-combinado-minha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}

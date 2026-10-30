@@ -658,6 +658,30 @@ export type Database = {
           },
         ]
       }
+      orcamento_faixas: {
+        Row: {
+          atualizado_em: string
+          maximo: number
+          minimo: number
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          maximo: number
+          minimo: number
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          maximo?: number
+          minimo?: number
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       orcamentos: {
         Row: {
           categoria: string
@@ -1663,6 +1687,12 @@ export type Database = {
           p_viagem: string
         }
         Returns: { usuario_id: string; situacao: string }[]
+      }
+      faixa_do_comboio: {
+        Args: {
+          p_viagem: string
+        }
+        Returns: { responderam: number; pessoas: number; minimo: number | null; maximo: number | null }[]
       }
       ver_convite: { Args: { p_codigo: string }; Returns: Json }
       convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }

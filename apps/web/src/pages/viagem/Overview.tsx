@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Pencil, Plus, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, Camera, ListChecks, Lock, MapPin, Pencil, PiggyBank, Plus, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -31,6 +31,7 @@ import Cofre from '../../features/cofre/Cofre'
 import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { useFocoDeItem } from '../../lib/foco'
 import { editarViagem } from '../../features/viagens/api'
+import OrcamentoCombinado from '../../features/orcamento-combinado/OrcamentoCombinado'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -335,6 +336,11 @@ export default function Overview() {
         {/* Spec 021: enquetes rápidas pra decidir junto */}
         <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
           <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
+
+        {/* Spec 045: orçamento combinado em segredo */}
+        <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">
+          <OrcamentoCombinado viagemId={viagem.id} meuId={meuId} moeda={viagem.moeda_principal} />
         </Cartao>
 
         {/* Spec 011: quantos destinos já têm onde ficar */}

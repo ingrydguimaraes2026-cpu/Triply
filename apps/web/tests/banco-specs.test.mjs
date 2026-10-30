@@ -1135,3 +1135,20 @@ test('044: fechar a enquete carimba a data; reabrir limpa; o app não escolhe a 
   await como(db, ADM, 'update public.enquetes set fechada = false where id = $1', [id])
   assert.equal(await fechadaEm(), null)
 })
+
+// ---------------- 045: orçamento combinado ----------------
+test('045: faixa de cada um é secreta; o comboio só vê a faixa comum (com 2+ respostas)', async () => {
+  const db = await novoBanco()
+  const faixa = (quem) => como(db, quem, `select * from public.faixa_do_comboio('${V}')`).then((r) => r[0])
+  await como(db, ADM, `insert into public.orcamento_faixas (viagem_id, minimo, maximo) values ('${V}', 5000, 9000)`)
+  // Só uma resposta: não mostra a faixa (seria a do ADM)
+  assert.deepEqual(await faixa(MEMBRO), { responderam: 1, pessoas: 2, minimo: null, maximo: null })
+  await como(db, MEMBRO, `insert into public.orcamento_faixas (viagem_id, minimo, maximo) values ('${V}', 6000, 12000)`)
+  const r = await faixa(MEMBRO)
+  assert.deepEqual([r.responderam, r.pessoas, Number(r.minimo), Number(r.maximo)], [2, 2, 6000, 9000])
+  // Ninguém vê a faixa do outro; estranho não vê nada nem grava
+  assert.equal((await como(db, MEMBRO, 'select * from public.orcamento_faixas')).length, 1)
+  assert.equal((await faixa(ESTRANHO)).responderam, 0)
+  await assert.rejects(como(db, ESTRANHO, `insert into public.orcamento_faixas (viagem_id, minimo, maximo) values ('${V}', 1, 2)`), /row-level security/)
+  await assert.rejects(como(db, MEMBRO, `update public.orcamento_faixas set maximo = 10 where viagem_id = '${V}'`), /check/)
+})
