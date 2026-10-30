@@ -19,6 +19,7 @@ import Configuracoes from './pages/viagem/Configuracoes'
 import Hoje from './pages/viagem/Hoje'
 import Imprimir from './pages/viagem/Imprimir'
 import Retrospectiva from './pages/viagem/Retrospectiva'
+import Livro from './pages/viagem/Livro'
 import MinhasViagens from './pages/MinhasViagens'
 import Perfil from './pages/Perfil'
 import CarteiraConectado from './pages/CarteiraConectado'
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
               { path: 'configuracoes', element: <Configuracoes /> },
               { path: 'imprimir', element: <Imprimir /> }, // spec 088
               { path: 'retrospectiva', element: <Retrospectiva /> }, // spec 105
+              { path: 'livro', element: <Livro /> }, // spec 106
             ],
           },
         ],

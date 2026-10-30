@@ -44,6 +44,9 @@ export default function Imprimir() {
         <Link to={`/viagem/${viagem.id}`} className="botao-texto">
           <ArrowLeft size={16} aria-hidden="true" /> Voltar
         </Link>
+        <Link to={`/viagem/${viagem.id}/livro`} className="botao-texto">
+          Livro com diário e fotos →
+        </Link>
         <label className="imprimir-opcao">
           <input type="checkbox" checked={comSegredos} onChange={(e) => setComSegredos(e.target.checked)} /> Incluir Wi-Fi e código da porta
         </label>

@@ -166,7 +166,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 100 | K6 | Diário da viagem | M | Pronto pra testar (web) · spec 101 |
 | 101 | K4 | Fotos no mapa | M | a fazer |
 | 102 | K7 | Retrospectiva | G | Pronto pra testar (web) · spec 105 |
-| 103 | K8 | Livro da viagem (PDF) | G | a fazer |
+| 103 | K8 | Livro da viagem (PDF) | G | Pronto pra testar (web) · spec 106 |
 | 104 | N5 | Mapa de onde já fui | M | Pronto pra testar (web) · spec 102 |
 | 105 | N6 | Estatísticas do viajante | M | Pronto pra testar (web) · spec 102 |
 | 106 | N8 | Indicar lugares pra um amigo | P | Pronto pra testar (web) · spec 103 |

@@ -1,0 +1,81 @@
+/* Spec 106: livro da viagem (usa a base do imprimir.css) */
+.livro-capa {
+  text-align: center;
+  padding: 3rem 0 2rem;
+}
+.livro-capa h1 {
+  font-size: 2.2rem;
+  margin: 1rem 0 0.5rem;
+}
+.livro-capa p {
+  margin: 0.2rem 0;
+  color: var(--cor-texto-suave);
+}
+.livro-comboio {
+  margin-top: 1rem !important;
+  font-weight: 600;
+}
+.livro-dia {
+  margin-top: 2rem;
+}
+.livro-agenda {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.livro-agenda li {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.15rem 0;
+}
+.livro-diario {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  border-left: 3px solid var(--laranja);
+  break-inside: avoid;
+}
+.livro-diario p {
+  margin: 0;
+  white-space: pre-wrap;
+  font-style: italic;
+}
+.livro-diario cite {
+  display: block;
+  margin-top: 0.3rem;
+  font-style: normal;
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+}
+.livro-fotos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 0.75rem;
+}
+.livro-fotos figure {
+  margin: 0;
+  break-inside: avoid;
+}
+.livro-fotos img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+.livro-fotos figcaption {
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+  margin-top: 2px;
+}
+@media print {
+  .livro-capa {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .livro-dia {
+    break-before: page;
+  }
+}

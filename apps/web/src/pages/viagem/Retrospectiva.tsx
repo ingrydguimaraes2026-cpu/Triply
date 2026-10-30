@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Download, Share2, Sparkles } from 'lucide-react'
+import { Link } from 'react-router'
+import { BookOpen, Download, Share2, Sparkles } from 'lucide-react'
 import { cartoesDaRetrospectiva, estatisticasDoViajante, formatarDinheiro, melhoresPosts, type CartaoDaRetrospectiva } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -79,7 +80,15 @@ export default function Retrospectiva() {
 
   return (
     <div className="retrospectiva">
-      <CabecalhoPagina titulo="Retrospectiva" subtitulo="A viagem em números. Toque num cartão pra postar no story." />
+      <CabecalhoPagina
+        titulo="Retrospectiva"
+        subtitulo="A viagem em números. Toque num cartão pra postar no story."
+        acao={
+          <Link to="../livro" className="botao secundario">
+            <BookOpen size={16} aria-hidden="true" /> Livro da viagem
+          </Link>
+        }
+      />
       {cartoes.length === 0 ? (
         <p className="form-dica">Ainda não tem números pra mostrar. Volte quando a viagem começar.</p>
       ) : (
