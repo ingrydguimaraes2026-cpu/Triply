@@ -167,8 +167,8 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 101 | K4 | Fotos no mapa | M | a fazer |
 | 102 | K7 | Retrospectiva | G | a fazer |
 | 103 | K8 | Livro da viagem (PDF) | G | a fazer |
-| 104 | N5 | Mapa de onde já fui | M | a fazer |
-| 105 | N6 | Estatísticas do viajante | M | a fazer |
+| 104 | N5 | Mapa de onde já fui | M | Pronto pra testar (web) · spec 102 |
+| 105 | N6 | Estatísticas do viajante | M | Pronto pra testar (web) · spec 102 |
 | 106 | N8 | Indicar lugares pra um amigo | P | a fazer |
 | 107 | D7 | Status do voo ao vivo (API paga) | M | a fazer |
 | 108 | D10 | Horários reais de trem e ônibus (API) | G | a fazer |

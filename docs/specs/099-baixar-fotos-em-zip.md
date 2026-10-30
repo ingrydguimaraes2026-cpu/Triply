@@ -19,7 +19,7 @@ Na aba Fotos, "Baixar todas (80) em .zip": um arquivo com todas as fotos da viag
 - App mobile.
 
 ## Riscos
-- Viagem com muitas fotos usa memória do celular (as fotos já são reduzidas no envio, ~300 KB cada: 300 fotos ≈ 90 MB). Se for problema, dividir por dia.
+- Viagem com muitas fotos usa memória do celular (as fotos já são reduzidas no envio, até 1 MB cada: 100 fotos ≈ até 100 MB). Se for problema, dividir por dia.
 
 ## Dados
 - Sem migration.

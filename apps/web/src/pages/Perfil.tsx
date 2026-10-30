@@ -8,6 +8,7 @@ import FormPassaporte from '../features/passaporte/FormPassaporte'
 import FormFicha from '../features/ficha-pessoal/FormFicha'
 import MinhaPrivacidade from '../features/privacidade/MinhaPrivacidade'
 import FormAcessibilidade from '../features/acessibilidade/FormAcessibilidade'
+import OndeJaFui from '../features/perfil/OndeJaFui'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -133,6 +134,7 @@ export default function Perfil() {
           </p>
         )}
 
+        <OndeJaFui />
         <FormFicha meuId={eu.id} />
         <FormPassaporte meuId={eu.id} />
         <FormAcessibilidade />

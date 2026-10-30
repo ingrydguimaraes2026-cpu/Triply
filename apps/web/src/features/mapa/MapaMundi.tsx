@@ -22,6 +22,8 @@ type Props = {
   zoomMaximo?: number
   // Mostra "1.", "2."... antes do nome de cada ponto
   numerar?: boolean
+  // Liga os pontos em ordem com uma linha (roteiro). Desligado: só os pontos (spec 102, onde já fui)
+  ligar?: boolean
 }
 
 type Visao = { k: number; x: number; y: number }
@@ -46,7 +48,7 @@ function carregarPaises() {
 
 const suave = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO, numerar = true }: Props) {
+export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO, numerar = true, ligar = true }: Props) {
   const caixaRef = useRef<HTMLDivElement>(null)
   const [tamanho, setTamanho] = useState({ w: 0, h: 0 })
   const [paises, setPaises] = useState<Pais[]>([])
@@ -169,7 +171,7 @@ export default function MapaMundi({ pontos, areaLivre, zoomMaximo = ZOOM_MAXIMO,
           ))}
         </g>
 
-        {rotas.map((d, i) => (
+        {(ligar ? rotas : []).map((d, i) => (
           <path key={i} d={d} className="mapa-rota" />
         ))}
 
