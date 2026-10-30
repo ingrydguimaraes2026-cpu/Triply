@@ -1390,3 +1390,10 @@ test('070: evento com parte do comboio; só gente do comboio; sem repetir', asyn
   assert.deepEqual((await como(db, ADM, 'select participantes from public.eventos_agenda'))[0].participantes, [MEMBRO])
   await assert.rejects(como(db, MEMBRO, `insert into public.eventos_agenda (viagem_id, dia, titulo, participantes) values ('${V}', '2027-06-02', 'X', '{${ESTRANHO}}')`), /comboio/)
 })
+
+// ---------------- 072: foto da opção ----------------
+test('072: foto da opção só https', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome, foto_url) values ('${V}', '${NICE}', 'Casa', 'https://img.exemplo.com/a.jpg')`)
+  await assert.rejects(como(db, ADM, "update public.hospedagens set foto_url = 'javascript:alert(1)'"), /check/)
+})

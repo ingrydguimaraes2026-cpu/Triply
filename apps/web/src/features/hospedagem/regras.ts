@@ -22,6 +22,7 @@ export type Opcao = {
   guardaMalas?: string | null // spec 060
   guardaMalasObs?: string | null
   etiquetas?: string[] // spec 063
+  fotoUrl?: string | null // spec 072
   nota?: number | null
   escolhida: boolean
   criadoPor: string

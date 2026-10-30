@@ -84,6 +84,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 069 | [Minha mala](069-mala-individual.md) (checklist pessoal com modelo pelo clima) | 2 | M | 048 | Pronto pra testar (web) · banco não aplicado |
 | 070 | [Programação em paralelo](070-programacao-em-paralelo.md) (evento só de parte do comboio) | 2 | M | 029 | Pronto pra testar (web) · banco não aplicado |
 | 071 | [Mover evento entre dias](071-mover-entre-dias.md) (setas ‹ › na Agenda) | 2 | P | 029 | Pronto pra testar (web) |
+| 072 | [Prévia do link](072-previa-do-link.md) (título e foto da opção de hospedagem) | 2 | M | 011 | Pronto pra testar (web + função) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

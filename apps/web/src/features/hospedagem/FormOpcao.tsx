@@ -5,6 +5,7 @@ import { mensagemDeErro } from '../financeiro/api'
 import { moedasDaViagem } from '../financeiro/categorias'
 import { lerValor, paraCampo } from '@together/core'
 import type { DadosDaOpcao } from './api'
+import { supabase } from '../../lib/supabase'
 import { detectarSite, ETIQUETAS_DA_HOSPEDAGEM, linkValido, sugerirNome, type Opcao } from './regras'
 
 type Props = {
@@ -40,6 +41,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmando, setConfirmando] = useState(false)
+  const [foto, setFoto] = useState<string | null>(opcao?.fotoUrl ?? null)
+  const [buscandoPrevia, setBuscandoPrevia] = useState(false)
 
   const site = linkValido(link.trim()) ? detectarSite(link.trim()) : null
 
@@ -49,6 +52,19 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
     if (!nome.trim() && linkValido(limpo)) {
       const sugestao = sugerirNome(limpo)
       if (sugestao) setNome(sugestao)
+    }
+    // Spec 072: puxa título e foto do link no servidor (se o site deixar)
+    if (linkValido(limpo) && limpo !== opcao?.link) {
+      setBuscandoPrevia(true)
+      supabase.functions
+        .invoke('previa-link', { body: { url: limpo } })
+        .then(({ data }) => {
+          const previa = data as { titulo?: string | null; imagem?: string | null } | null
+          if (previa?.imagem) setFoto(previa.imagem)
+          if (previa?.titulo) setNome((atual) => (atual.trim() && atual !== sugerirNome(limpo) ? atual : previa.titulo!.slice(0, 120)))
+        })
+        .catch(() => {})
+        .finally(() => setBuscandoPrevia(false))
     }
   }
 
@@ -78,6 +94,7 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         horaCheckin: horaCheckin || null,
         horaCheckout: horaCheckout || null,
         cancelamentoGratisAte: cancelamento || null,
+        fotoUrl: foto,
         guardaMalas: guardaMalas || null,
         guardaMalasObs: guardaMalasObs || null,
         etiquetas,
@@ -121,6 +138,15 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
           autoFocus={!opcao}
         />
         {site && <p className="form-dica">Reconhecido: {site.nome}</p>}
+        {buscandoPrevia && <p className="form-dica">Buscando a prévia do link…</p>}
+        {foto && (
+          <div className="hosp-previa">
+            <img src={foto} alt="" loading="lazy" referrerPolicy="no-referrer" />
+            <button type="button" className="botao-texto" onClick={() => setFoto(null)}>
+              Tirar foto
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="form-campo">

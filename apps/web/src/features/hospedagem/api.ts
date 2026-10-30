@@ -19,6 +19,7 @@ export type DadosDaOpcao = {
   guardaMalasObs: string | null
   etiquetas: string[] // spec 063
   nota: number | null
+  fotoUrl?: string | null // spec 072
 }
 
 // Opções de hospedagem da viagem, com quem votou em cada uma (spec 011)
@@ -46,6 +47,7 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
     guardaMalas: h.guarda_malas,
     guardaMalasObs: h.guarda_malas_obs,
     etiquetas: h.etiquetas ?? [],
+    fotoUrl: h.foto_url,
     nota: h.nota === null ? null : Number(h.nota),
     escolhida: h.escolhida,
     criadoPor: h.criado_por,
@@ -77,6 +79,7 @@ function paraLinha(d: DadosDaOpcao) {
     guarda_malas: d.guardaMalas || null,
     guarda_malas_obs: d.guardaMalasObs?.trim() || null,
     etiquetas: d.etiquetas,
+    ...(d.fotoUrl !== undefined ? { foto_url: d.fotoUrl } : {}),
     nota: d.nota,
   }
 }

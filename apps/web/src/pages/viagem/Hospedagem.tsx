@@ -118,6 +118,7 @@ export default function Hospedagem() {
           )}
         </div>
 
+        {opcao.fotoUrl && <img className="hosp-opcao-foto" src={opcao.fotoUrl} alt="" loading="lazy" referrerPolicy="no-referrer" />}
         <h4 className="hosp-opcao-nome">
           {opcao.link ? (
             <a href={opcao.link} target="_blank" rel="noreferrer noopener">

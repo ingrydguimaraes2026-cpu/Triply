@@ -496,6 +496,7 @@ export type Database = {
           endereco: string | null
           escolhida: boolean
           etiquetas: string[]
+          foto_url: string | null
           guarda_malas: string | null
           guarda_malas_obs: string | null
           hora_checkin: string | null
@@ -526,6 +527,7 @@ export type Database = {
           endereco?: string | null
           escolhida?: boolean
           etiquetas?: string[]
+          foto_url?: string | null
           guarda_malas?: string | null
           guarda_malas_obs?: string | null
           hora_checkin?: string | null
@@ -556,6 +558,7 @@ export type Database = {
           endereco?: string | null
           escolhida?: boolean
           etiquetas?: string[]
+          foto_url?: string | null
           guarda_malas?: string | null
           guarda_malas_obs?: string | null
           hora_checkin?: string | null
