@@ -1,4 +1,5 @@
-// Função "lembretes" (spec 032): push no celular 1 hora antes de cada trajeto e ponto de encontro.
+// Função "lembretes" (spec 032): push no celular 1 hora antes de cada trajeto e ponto de encontro,
+// e 2 dias antes do fim do cancelamento grátis da hospedagem escolhida (spec 041).
 // Chamada a cada 5 min pelo agendamento (pg_cron), sem corpo. Pode rodar de novo sem medo:
 // o banco (`lembretes_a_enviar`) só devolve cada lembrete uma vez.
 // Quem recebe: todo mundo do comboio da viagem que ligou os avisos no aparelho.
@@ -10,7 +11,7 @@ const VAPID_PUBLICA = 'BMT3M0-HThNnW4fGo8UHb2WQkWYQIx6kYd1rSlUQzJt9yyGBDprocMC0z
 const CONTATO = 'https://github.com/ingrydguimaraes2026-cpu/Triply'
 
 type Inscricao = { id: string; usuario_id: string; endpoint: string; p256dh: string; auth: string }
-type Lembrete = { tipo: 'trajeto' | 'ponto'; alvo_id: string; viagem_id: string; titulo: string | null; horario: string; meio: string | null }
+type Lembrete = { tipo: 'trajeto' | 'ponto' | 'cancelamento'; alvo_id: string; viagem_id: string; titulo: string | null; horario: string; meio: string | null }
 
 const json = (dados: unknown, status = 200) =>
   new Response(JSON.stringify(dados), { status, headers: { 'Content-Type': 'application/json' } })
@@ -29,7 +30,11 @@ function faltaQuanto(horario: string, agora = new Date()) {
 
 function textoDoLembrete(l: Lembrete) {
   const falta = faltaQuanto(l.horario)
-  const titulo = l.titulo?.trim() || (l.tipo === 'ponto' ? 'o ponto de encontro' : 'o trajeto')
+  const titulo = l.titulo?.trim() || (l.tipo === 'ponto' ? 'o ponto de encontro' : l.tipo === 'cancelamento' ? 'a hospedagem' : 'o trajeto')
+  if (l.tipo === 'cancelamento') {
+    const [, m, d] = l.horario.slice(0, 10).split('-')
+    return { titulo: '⏳ Cancelamento grátis acabando', corpo: `${titulo}: dá pra cancelar sem pagar só até ${d}/${m}. Ainda vão ficar?`, url: `/viagem/${l.viagem_id}/hospedagem`, tag: `lembrete-cancelamento-${l.alvo_id}` }
+  }
   if (l.tipo === 'ponto') {
     return { titulo: `📍 Encontro ${falta}`, corpo: `${titulo}. Não se atrase!`, url: `/viagem/${l.viagem_id}?foco=${l.alvo_id}`, tag: `lembrete-ponto-${l.alvo_id}` }
   }

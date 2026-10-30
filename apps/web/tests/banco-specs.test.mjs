@@ -1093,3 +1093,20 @@ test('039: comboio vê e cadastra seguro; só cobre gente do comboio; autor ou A
   assert.equal((await db.query('select cobertura from public.seguros_viagem')).rows[0].cobertura, 'Médico até US$ 60 mil')
   await assert.rejects(como(db, ESTRANHO, `insert into public.seguros_viagem (viagem_id, seguradora) values ('${V}', 'X')`), /row-level security/)
 })
+
+// ---------------- 041: prazo de cancelamento ----------------
+test('041: lembra 2 dias antes do cancelamento grátis, só da hospedagem escolhida, uma vez', async () => {
+  const db = await novoBanco()
+  await como(
+    db,
+    ADM,
+    `insert into public.hospedagens (viagem_id, destino_id, nome, escolhida, cancelamento_gratis_ate) values
+      ('${V}', '${NICE}', 'Casa escolhida', true, current_date + 1),
+      ('${V}', '${MONACO}', 'Opção não escolhida', false, current_date + 1),
+      ('${V}', null, 'Longe ainda', true, current_date + 10)`,
+  )
+  const r = await db.query("select tipo, titulo from public.lembretes_a_enviar() where tipo = 'cancelamento'")
+  assert.deepEqual(r.rows, [{ tipo: 'cancelamento', titulo: 'Casa escolhida' }])
+  assert.equal((await db.query("select * from public.lembretes_a_enviar() where tipo = 'cancelamento'")).rows.length, 0)
+  await assert.rejects(db.query("update public.hospedagens set cancelamento_gratis_ate = '1990-01-01'"), /check/)
+})

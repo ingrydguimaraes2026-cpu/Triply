@@ -18,6 +18,7 @@ export type Opcao = {
   horaCheckin?: string | null // "15:00" (a partir de)
   horaCheckout?: string | null // "10:00" (até)
   observacao: string | null
+  cancelamentoGratisAte?: string | null // spec 041
   escolhida: boolean
   criadoPor: string
   votos: string[] // ids de quem votou

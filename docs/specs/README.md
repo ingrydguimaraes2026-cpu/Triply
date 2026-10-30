@@ -53,6 +53,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 039 | [Seguro viagem](039-seguro-viagem.md) (telefone 24 h na Emergência, quem está coberto) | 2 | P | 037 | Pronto pra testar (web) · banco não aplicado |
 | 034 | [Offline de leitura](034-offline-de-leitura.md) (o que já abriu abre sem internet) | 2 | G | PWA | Pronto pra testar (web publicado) |
 | 040 | [Ir até o lugar e pedir corrida](040-ir-e-pedir-corrida.md) (Maps, Waze, Apple, Citymapper, Uber, Bolt, FREENOW) | 2 | P | 016, 024 | Pronto pra testar (web) |
+| 041 | [Prazo de cancelamento grátis](041-prazo-de-cancelamento.md) (contagem + lembrete 2 dias antes) | 2 | P | 011, 032 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

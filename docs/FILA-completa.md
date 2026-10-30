@@ -60,7 +60,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 |---|---|---|---|---|
 | 15 | C5 | Abrir no app de navegação (Maps, Waze, Apple, Citymapper) ◐ | P | ✅ feito (web) · spec 040 |
 | 16 | D13 | Pedir corrida comparando Uber, Bolt, Free Now (ideia: Bolt) | P | ✅ feito (web) · spec 040 |
-| 17 | E10 | Prazo de cancelamento grátis da reserva + lembrete | P | a fazer |
+| 17 | E10 | Prazo de cancelamento grátis da reserva + lembrete | P | ✅ feito (web) · spec 041 · banco a aplicar |
 | 18 | G6 | Resumo da noite (push 21h com o "amanhã") | P | a fazer |
 | 19 | G7 | Menções `@nome` em comentário e tarefa | P | a fazer |
 | 20 | A7 | Decisões registradas (enquete encerrada vira decisão) | P | a fazer |

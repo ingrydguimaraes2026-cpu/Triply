@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
+import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Hourglass, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
@@ -21,7 +21,8 @@ import GuiaDaCasa, { FormGuia } from '../../features/hospedagem/GuiaDaCasa'
 import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
-import { formatarDinheiro } from '@together/core'
+import { formatarDinheiro, prazoDeCancelamento } from '@together/core'
+import { hojeTexto } from '../../features/destinos/datas'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
@@ -91,6 +92,7 @@ export default function Hospedagem() {
     const autor = pessoaDe(opcao.criadoPor)
     const datasProprias = opcao.checkin && opcao.checkout && (opcao.checkin !== destino?.chegada || opcao.checkout !== destino?.saida)
     const horarios = textoDosHorarios(opcao, destino)
+    const prazo = prazoDeCancelamento(opcao.cancelamentoGratisAte ?? null, hojeTexto()) // spec 041
 
     return (
       <li key={opcao.id} className={destaque ? 'hosp-opcao escolhida' : 'hosp-opcao'}>
@@ -149,6 +151,17 @@ export default function Hospedagem() {
         {horarios && (
           <p className="hosp-opcao-datas">
             <Clock size={13} aria-hidden="true" /> {horarios}
+          </p>
+        )}
+        {prazo && prazo.nivel !== 'passou' && (
+          <p className={`hosp-opcao-datas hosp-cancelamento nivel-${prazo.nivel}`}>
+            <Hourglass size={13} aria-hidden="true" /> Cancelamento grátis até {formatarData(opcao.cancelamentoGratisAte!)}
+            {prazo.nivel === 'hoje' ? ' · é hoje!' : ` · faltam ${prazo.dias} ${prazo.dias === 1 ? 'dia' : 'dias'}`}
+          </p>
+        )}
+        {prazo?.nivel === 'passou' && (
+          <p className="hosp-opcao-datas">
+            <Hourglass size={13} aria-hidden="true" /> Cancelamento grátis acabou em {formatarData(opcao.cancelamentoGratisAte!)}
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}

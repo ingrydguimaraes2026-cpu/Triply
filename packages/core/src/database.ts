@@ -395,6 +395,7 @@ export type Database = {
       }
       hospedagens: {
         Row: {
+          cancelamento_gratis_ate: string | null
           checkin: string | null
           checkout: string | null
           codigo_porta: string | null
@@ -419,6 +420,7 @@ export type Database = {
           wifi_senha: string | null
         }
         Insert: {
+          cancelamento_gratis_ate?: string | null
           checkin?: string | null
           checkout?: string | null
           codigo_porta?: string | null
@@ -443,6 +445,7 @@ export type Database = {
           wifi_senha?: string | null
         }
         Update: {
+          cancelamento_gratis_ate?: string | null
           checkin?: string | null
           checkout?: string | null
           codigo_porta?: string | null

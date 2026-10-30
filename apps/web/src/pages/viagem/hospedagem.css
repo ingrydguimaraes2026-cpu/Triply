@@ -238,3 +238,10 @@
   display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 10px; border-radius: 999px;
   border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--couro); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
 }
+
+/* Prazo de cancelamento grátis (spec 041) */
+.hosp-cancelamento.nivel-perto,
+.hosp-cancelamento.nivel-hoje {
+  color: var(--cor-pessoal);
+  font-weight: 700;
+}

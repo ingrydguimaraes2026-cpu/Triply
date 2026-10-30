@@ -31,6 +31,7 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   const [checkout, setCheckout] = useState(opcao ? (opcao.checkout ?? '') : (destinoInicial?.saida ?? ''))
   const [horaCheckin, setHoraCheckin] = useState(opcao?.horaCheckin ?? '')
   const [horaCheckout, setHoraCheckout] = useState(opcao?.horaCheckout ?? '')
+  const [cancelamento, setCancelamento] = useState(opcao?.cancelamentoGratisAte ?? '')
   const [observacao, setObservacao] = useState(opcao?.observacao ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -70,6 +71,7 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         checkout: checkout || null,
         horaCheckin: horaCheckin || null,
         horaCheckout: horaCheckout || null,
+        cancelamentoGratisAte: cancelamento || null,
         observacao: observacao.trim() || null,
       })
       aoTerminar()
@@ -168,6 +170,14 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
           </label>
           <input id="hosp-hora-checkout" type="time" value={horaCheckout} onChange={(e) => setHoraCheckout(e.target.value)} />
         </div>
+      </div>
+
+      <div className="form-campo">
+        <label className="form-rotulo" htmlFor="hosp-cancelamento">
+          Cancelamento grátis até (opcional)
+        </label>
+        <input id="hosp-cancelamento" type="date" value={cancelamento} onChange={(e) => setCancelamento(e.target.value)} />
+        <p className="form-dica">Na escolhida, o comboio recebe um lembrete no celular 2 dias antes.</p>
       </div>
 
       {destinos.length > 1 && (

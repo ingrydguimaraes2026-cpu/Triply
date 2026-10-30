@@ -14,6 +14,7 @@ export type DadosDaOpcao = {
   horaCheckin: string | null // "22:00"
   horaCheckout: string | null
   observacao: string | null
+  cancelamentoGratisAte: string | null // spec 041
 }
 
 // Opções de hospedagem da viagem, com quem votou em cada uma (spec 011)
@@ -37,6 +38,7 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
     horaCheckin: h.hora_checkin?.slice(0, 5) ?? null,
     horaCheckout: h.hora_checkout?.slice(0, 5) ?? null,
     observacao: h.observacao,
+    cancelamentoGratisAte: h.cancelamento_gratis_ate,
     escolhida: h.escolhida,
     criadoPor: h.criado_por,
     votos: (h.hospedagem_votos ?? []).map((v) => v.usuario_id),
@@ -62,6 +64,7 @@ function paraLinha(d: DadosDaOpcao) {
     hora_checkin: d.horaCheckin || null,
     hora_checkout: d.horaCheckout || null,
     observacao: d.observacao?.trim() || null,
+    cancelamento_gratis_ate: d.cancelamentoGratisAte || null,
   }
 }
 

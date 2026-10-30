@@ -34,3 +34,19 @@ test('ponto de encontro: local no corpo e abre a Overview com foco', () => {
   assert.equal(a.corpo, 'Recepção do hotel. Não se atrase!')
   assert.equal(a.url, `/viagem/${V}?foco=p1`)
 })
+
+test('cancelamento: texto com a data do prazo e abre Hospedagem', () => {
+  const a = textoDoLembrete({ tipo: 'cancelamento', alvo_id: 'h1', viagem_id: V, titulo: 'Casa da Ana', horario: '2026-11-12T00:00:00+00:00', meio: null }, AGORA)
+  assert.equal(a.titulo, '⏳ Cancelamento grátis acabando')
+  assert.equal(a.corpo, 'Casa da Ana: dá pra cancelar sem pagar só até 12/11. Ainda vão ficar?')
+  assert.equal(a.url, `/viagem/${V}/hospedagem`)
+})
+
+test('prazo de cancelamento: tranquilo, perto, hoje e passou', async () => {
+  const { prazoDeCancelamento } = await import(new URL('../../../packages/core/src/lembretes.ts', import.meta.url))
+  assert.deepEqual(prazoDeCancelamento('2026-11-20', '2026-11-10'), { dias: 10, nivel: 'tranquilo' })
+  assert.deepEqual(prazoDeCancelamento('2026-11-12', '2026-11-10'), { dias: 2, nivel: 'perto' })
+  assert.deepEqual(prazoDeCancelamento('2026-11-10', '2026-11-10'), { dias: 0, nivel: 'hoje' })
+  assert.equal(prazoDeCancelamento('2026-11-01', '2026-11-10').nivel, 'passou')
+  assert.equal(prazoDeCancelamento(null, '2026-11-10'), null)
+})
