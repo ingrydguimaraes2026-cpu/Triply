@@ -6,7 +6,7 @@ import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from 'lucide
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
-import { Malinha } from '../../src/ui/Malinha'
+import { Agulha } from '../../src/ui/Agulha'
 import { Avatar, Cartao, IconeQuadrado, TituloDaTela } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -40,8 +40,8 @@ export default function Perfil() {
         </View>
 
         <View className="items-center gap-2 py-4">
-          <Malinha tamanho={96} />
-          <Text className="text-center font-body text-[14px] text-corpo">A Malinha guarda tudo da viagem pra vocês.</Text>
+          <Agulha tamanho={96} />
+          <Text className="text-center font-body text-[14px] text-corpo">A Agulha aponta o caminho da viagem pra vocês.</Text>
         </View>
 
         {ehConvidado ? (

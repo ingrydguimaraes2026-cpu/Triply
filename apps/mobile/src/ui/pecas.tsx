@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { ActivityIndicator, Pressable, Text, TextInput, View, type TextInputProps } from 'react-native'
 import { coresDePessoa, cor, sombra } from '../../theme'
 import { iniciais } from '../lib/formato'
-import { Malinha } from './Malinha'
+import { Agulha } from './Agulha'
 
 // Peças visuais do redesign (folha de componentes "1n" do design). Reaproveite antes de criar outra.
 
@@ -123,11 +123,11 @@ export function RotuloDeSecao({ children }: { children: ReactNode }) {
   return <Text className="mb-2.5 mt-1 font-body-bold text-[12px] uppercase tracking-widest text-suave">{children}</Text>
 }
 
-// Tela de "carregando" com a Malinha pensando
+// Tela de "carregando" com a Agulha pensando
 export function Carregando({ texto = 'Carregando…' }: { texto?: string }) {
   return (
     <View className="flex-1 items-center justify-center gap-3 bg-fundo">
-      <Malinha humor="pensando" tamanho={96} />
+      <Agulha humor="pensando" tamanho={96} />
       <Text className="font-body-medium text-[14px] text-suave">{texto}</Text>
     </View>
   )
@@ -137,7 +137,7 @@ export function Carregando({ texto = 'Carregando…' }: { texto?: string }) {
 export function ErroNaTela({ aoTentar }: { aoTentar: () => void }) {
   return (
     <View className="flex-1 items-center justify-center gap-3 bg-fundo px-8">
-      <Malinha humor="pensando" tamanho={96} />
+      <Agulha humor="pensando" tamanho={96} />
       <Text className="text-center font-display text-[22px] text-texto">Não deu pra carregar</Text>
       <Text className="text-center font-body text-[14px] text-corpo">Confira a internet e tente de novo.</Text>
       <View className="mt-2 self-stretch">

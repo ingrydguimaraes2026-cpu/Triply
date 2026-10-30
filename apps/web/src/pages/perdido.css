@@ -137,3 +137,7 @@
     animation: none;
   }
 }
+.perdido-mascote {
+  display: block;
+  margin: -64px auto 4px;
+}

@@ -21,7 +21,7 @@ const PUBLICAS = ['boas-vindas', 'login', 'convite']
 // Telas só de quem não está logado: quem já entrou é mandado pro início
 const SO_DESLOGADO = ['boas-vindas', 'login']
 
-// Raiz: carrega as fontes de marca, mostra a abertura com a Malinha, faz o porteiro
+// Raiz: carrega as fontes de marca, mostra a abertura com a Agulha, faz o porteiro
 // do login e enquadra o app numa largura de celular no navegador.
 export default function RootLayout() {
   const { sessao, carregando } = useSessao()
@@ -35,7 +35,7 @@ export default function RootLayout() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
   })
-  // Segura a abertura um instante pra animação da Malinha aparecer
+  // Segura a abertura um instante pra animação da Agulha aparecer
   const [aberturaVista, setAberturaVista] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setAberturaVista(true), 1400)

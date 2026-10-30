@@ -9,6 +9,7 @@ import { formatarPeriodo } from '../lib/datas'
 import ApagarViagem from '../features/viagens/ApagarViagem'
 import Avatar from '../components/ui/Avatar'
 import Gaveta from '../components/ui/Gaveta'
+import Agulha from '../components/ui/Agulha'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -151,6 +152,7 @@ export default function MinhasViagens() {
         {viagens === 'erro' && <p className="aviso-erro">Não deu pra carregar as viagens. Atualize a página.</p>}
         {ordenadas && ordenadas.length === 0 && arquivadas.length === 0 && (
           <div className="vazio">
+            <Agulha humor="dormindo" tamanho={120} />
             <p className="vazio-titulo">Nenhuma viagem ainda</p>
             <p className="vazio-texto">Crie a primeira e convide o comboio.</p>
             <Link to="/nova-viagem" className="botao">

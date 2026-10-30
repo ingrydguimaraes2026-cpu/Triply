@@ -12,7 +12,7 @@ import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
 import { FaixaConvidado } from '../../src/ui/FaixaConvidado'
 import { capaDaViagem } from '../../src/ui/fotos'
-import { Malinha } from '../../src/ui/Malinha'
+import { Agulha } from '../../src/ui/Agulha'
 import { Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor, sombra } from '../../theme'
 
@@ -127,7 +127,7 @@ function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemCo
   )
 }
 
-// Estado vazio: Malinha dormindo esperando a primeira viagem
+// Estado vazio: Agulha dormindo esperando a primeira viagem
 function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; aoEntrar: () => void }) {
   const insets = useSafeAreaInsets()
   const [comCodigo, setComCodigo] = useState(false)
@@ -153,7 +153,7 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
       <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
       <Text className="font-display text-[32px] leading-[36px] text-texto">Minhas viagens</Text>
       <View className="mt-6 flex-1 items-center justify-center gap-3 rounded-3xl border-[1.5px] border-dashed border-tracejado px-7 py-8">
-        <Malinha humor="dormindo" tamanho={140} />
+        <Agulha humor="dormindo" tamanho={140} />
         <Text className="text-center font-display text-[28px] leading-[31px] text-texto">A primeira viagem do grupo começa aqui</Text>
         <Text className="text-center font-body text-[15px] leading-6 text-corpo">Crie a viagem, convide a turma e montem o roteiro juntos.</Text>
         <View className="mt-3 self-stretch">

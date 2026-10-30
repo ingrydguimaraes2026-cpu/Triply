@@ -8,7 +8,7 @@ import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { diaCurto, diasDaViagem, paraIso, primeiroNome } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
-import { Malinha } from '../../src/ui/Malinha'
+import { Agulha } from '../../src/ui/Agulha'
 import { Avatar, Carregando, ErroNaTela, TituloDaTela } from '../../src/ui/pecas'
 import { SemViagem } from '../../src/ui/SemViagem'
 
@@ -64,7 +64,7 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
 
         {fotos.length === 0 ? (
           <View className="mt-16 items-center gap-3 px-6">
-            <Malinha humor="dormindo" tamanho={120} />
+            <Agulha humor="dormindo" tamanho={120} />
             <Text className="font-display text-[24px] text-texto">Nenhuma foto ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">As fotos que o comboio postar no feed aparecem aqui, separadas por dia.</Text>
           </View>

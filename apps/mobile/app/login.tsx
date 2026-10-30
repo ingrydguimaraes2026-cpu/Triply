@@ -8,11 +8,11 @@ import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react-native'
 import Svg, { Path } from 'react-native-svg'
 import { supabase } from '../src/lib/supabase'
 import { entrarComGoogle } from '../src/lib/google'
-import { Malinha } from '../src/ui/Malinha'
+import { Agulha } from '../src/ui/Agulha'
 import { Botao, Campo } from '../src/ui/pecas'
 import { cor } from '../theme'
 
-// Login / Cadastro (tela "1d" do design): faixa caramelo com a Malinha de logo e uma
+// Login / Cadastro (tela "1d" do design): faixa caramelo com a Agulha de logo e uma
 // folha clara que sobe com as abas Entrar | Criar conta.
 type Modo = 'entrar' | 'criar'
 
@@ -76,7 +76,7 @@ export default function Login() {
       <LinearGradient colors={['#B97A22', '#8A5A26', '#4A2E14']} locations={[0, 0.55, 1]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={{ height: 330, paddingTop: insets.top + 64, paddingHorizontal: 28 }}>
         <View className="mb-[18px] flex-row items-center gap-2.5">
           <View className="h-[52px] w-[52px] items-center justify-center rounded-2xl bg-fundo">
-            <Malinha tamanho={44} sombra={false} />
+            <Agulha tamanho={44} sombra={false} />
           </View>
           <Text className="font-display text-[24px] text-fundo">Together</Text>
         </View>

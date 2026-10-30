@@ -10,7 +10,7 @@ import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { diaCurto, hojeIso, lerData, primeiroNome } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
-import { Malinha } from '../../src/ui/Malinha'
+import { Agulha } from '../../src/ui/Agulha'
 import { Avatar, Botao, Cartao, Carregando, ErroNaTela, IconeQuadrado, RotuloDeSecao, TituloDaTela } from '../../src/ui/pecas'
 import { SemViagem } from '../../src/ui/SemViagem'
 import { ComentariosDoItem } from '../../src/ui/ComentariosDoItem'
@@ -98,7 +98,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
           <Text className="font-body text-[13px] text-corpo">Ninguém deve nada a ninguém.</Text>
         </View>
         <View className="flex-1 items-center justify-center gap-3 px-5">
-          <Malinha humor="dormindo" tamanho={130} />
+          <Agulha humor="dormindo" tamanho={130} />
           <Text className="mt-1.5 font-display text-[26px] text-texto">Nenhum gasto ainda</Text>
           <Text className="text-center font-body text-[15px] leading-6 text-corpo">Lance o primeiro gasto e o Together divide entre o grupo na hora.</Text>
         </View>

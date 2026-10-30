@@ -11,12 +11,12 @@ import { compartilharLink, gerarLinkDeConvite } from '../src/lib/convite'
 import { nomeDoMes, paraIso } from '../src/lib/formato'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
-import { Malinha } from '../src/ui/Malinha'
+import { Agulha } from '../src/ui/Agulha'
 import { Botao, BotaoRedondo, Campo, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
 
 // Criar viagem (tela "1m" do design): 3 etapas (pra onde, quando, moeda + convite)
-// e a tela de comemoração com a Malinha pulando.
+// e a tela de comemoração com a Agulha pulando.
 const SUGESTOES = [
   ['Chapada Diamantina', 'Bahia · trilhas e cachoeiras'],
   ['Jericoacoara', 'Ceará · praia e dunas'],
@@ -48,7 +48,7 @@ function ConvidadoSemConta() {
         </BotaoRedondo>
       </View>
       <View className="flex-1 items-center justify-center gap-4 px-8">
-        <Malinha tamanho={120} humor="pensando" />
+        <Agulha tamanho={120} humor="pensando" />
         <Text className="text-center font-display text-[26px] text-texto">Crie sua conta primeiro</Text>
         <Text className="text-center font-body text-[14px] leading-5 text-corpo">Pra criar uma viagem sua, transforme o acesso de convidado numa conta. Nada do que você já fez se perde.</Text>
         <View className="self-stretch">
@@ -137,7 +137,7 @@ function CriarViagem() {
       <LinearGradient colors={['#B97A22', '#8A5A26', '#4A2E14']} locations={[0, 0.55, 1]} style={{ flex: 1, justifyContent: 'flex-end', paddingHorizontal: 24, paddingBottom: insets.bottom + 40, gap: 14 }}>
         <StatusBar style="light" />
         <View className="-ml-1.5">
-          <Malinha humor="feliz" tamanho={130} />
+          <Agulha humor="feliz" tamanho={130} />
         </View>
         <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">{rotuloDoPeriodo}</Text>
         <Text className="font-display text-[44px] leading-[46px] text-fundo">{destino.trim()}</Text>

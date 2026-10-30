@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link, useRouteError } from 'react-router'
 import MapaMundi from '../features/mapa/MapaMundi'
 import Logo from '../components/ui/Logo'
+import Agulha from '../components/ui/Agulha'
 import './perdido.css'
 
 // Ponto Nemo: o lugar do oceano mais longe de qualquer terra
@@ -36,6 +37,7 @@ export default function Perdido({ tipo = 'naoEncontrada' }: { tipo?: keyof typeo
       </p>
 
       <main className="perdido-cartao">
+        <Agulha humor={tipo === 'erro' ? 'dormindo' : 'pensando'} tamanho={96} className="perdido-mascote" />
         <p className="perdido-codigo">{t.codigo}</p>
         <h1>{t.titulo}</h1>
         <p className="perdido-texto">{t.texto}</p>

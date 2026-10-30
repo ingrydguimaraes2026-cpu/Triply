@@ -9,7 +9,7 @@ import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { diaCurto, hora } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
-import { Malinha } from '../src/ui/Malinha'
+import { Agulha } from '../src/ui/Agulha'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
 import { cor } from '../theme'
 
@@ -66,7 +66,7 @@ export default function Transportes() {
 
         {lista.length === 0 ? (
           <View className="mt-10 items-center gap-3 px-6">
-            <Malinha humor="dormindo" tamanho={120} />
+            <Agulha humor="dormindo" tamanho={120} />
             <Text className="font-display text-[24px] text-texto">Nenhum trajeto ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Voos, carros e trens que o comboio cadastrar aparecem aqui.</Text>
           </View>

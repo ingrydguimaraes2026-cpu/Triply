@@ -9,7 +9,7 @@ import { conviteDepoisDoLogin } from '../../src/lib/convite'
 import { periodo } from '../../src/lib/formato'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
-import { Malinha } from '../../src/ui/Malinha'
+import { Agulha } from '../../src/ui/Agulha'
 import { Botao, Campo, Carregando } from '../../src/ui/pecas'
 import { StatusBar } from '../../src/ui/StatusBar'
 import { cor } from '../../theme'
@@ -65,7 +65,7 @@ export default function Convite() {
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-fundo px-8">
         <StatusBar style="dark" />
-        <Malinha tamanho={120} humor="pensando" />
+        <Agulha tamanho={120} humor="pensando" />
         <Text className="text-center font-display text-[26px] text-texto">Convite inválido</Text>
         <Text className="text-center font-body text-[14px] leading-5 text-corpo">Esse link expirou ou não existe. Peça um novo pra quem te convidou.</Text>
         <View className="self-stretch">
@@ -87,7 +87,7 @@ export default function Convite() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="items-center">
-          <Malinha tamanho={110} humor="feliz" />
+          <Agulha tamanho={110} humor="feliz" />
         </View>
         <View className="gap-2">
           <Text className="font-body-bold text-[12px] uppercase tracking-wider text-caramelo">Você foi convidado pra viagem</Text>

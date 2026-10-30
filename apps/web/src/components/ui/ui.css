@@ -603,3 +603,107 @@
   font-weight: 700;
   text-decoration: none;
 }
+
+/* Agulha, a mascote. As origens dos giros ficam nas coordenadas do desenho (viewBox 120). */
+.agulha {
+  flex: none;
+  overflow: visible;
+}
+
+.agulha * {
+  transform-box: view-box;
+}
+
+.agulha-corpo {
+  transform-origin: 60px 110px;
+  animation: agulha-flutua 2.8s ease-in-out infinite;
+}
+
+.agulha-ponteiro {
+  transform-origin: 60px 62px;
+  animation: agulha-balanca 2.8s ease-in-out infinite;
+}
+
+.agulha-braco {
+  transform-origin: 24px 74px;
+  animation: agulha-acena 1.4s ease-in-out infinite;
+}
+
+.agulha-feliz .agulha-corpo {
+  animation: agulha-pula 1s ease-in-out infinite;
+}
+
+.agulha-dormindo .agulha-corpo {
+  animation: agulha-respira 3.6s ease-in-out infinite;
+}
+
+.agulha-dormindo .agulha-ponteiro,
+.agulha-dormindo .agulha-braco {
+  animation: none;
+}
+
+.agulha-pensando .agulha-corpo {
+  animation: agulha-chacoalha 1.1s ease-in-out infinite;
+}
+
+.agulha-pensando .agulha-ponteiro {
+  animation: agulha-gira 0.9s linear infinite;
+}
+
+.agulha-pensando .agulha-pupila {
+  animation: agulha-olha 1.2s ease-in-out infinite;
+}
+
+.agulha-estrela {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: agulha-brilha 1.3s ease-in-out infinite;
+}
+
+.agulha-z {
+  animation: agulha-z 2.6s ease-out infinite;
+}
+
+@keyframes agulha-flutua {
+  50% { transform: translateY(-4px); }
+}
+@keyframes agulha-balanca {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+@keyframes agulha-acena {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(10deg); }
+}
+@keyframes agulha-pula {
+  50% { transform: translateY(-14px); }
+}
+@keyframes agulha-respira {
+  50% { transform: scale(1.03, 0.97); }
+}
+@keyframes agulha-chacoalha {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes agulha-gira {
+  to { transform: rotate(360deg); }
+}
+@keyframes agulha-olha {
+  0%, 100% { transform: translateX(-2.5px); }
+  50% { transform: translateX(2.5px); }
+}
+@keyframes agulha-brilha {
+  0%, 100% { transform: scale(0) rotate(0); }
+  50% { transform: scale(1) rotate(45deg); }
+}
+@keyframes agulha-z {
+  0% { transform: translate(0, 0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate(10px, -22px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agulha * {
+    animation: none !important;
+  }
+}
