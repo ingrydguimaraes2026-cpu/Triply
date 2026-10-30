@@ -4,9 +4,9 @@ Branch `monorepo-split`, **local** (o push dá 403: o app do Claude no GitHub n�
 
 ## Resumo
 
-- **83 commits**, specs **032 a 109** (78 specs novas), cada uma com doc em `docs/specs/`, testes e status no `docs/specs/README.md`.
+- **~90 commits**, specs **032 a 109** (78 specs novas), cada uma com doc em `docs/specs/`, testes e status no `docs/specs/README.md`.
 - Fila (`docs/FILA-completa.md`): Fases 1 a 8 andaram inteiras. O que sobrou está travado em decisão sua (lista abaixo) ou é paridade do mobile.
-- Tudo passa: `pnpm build`, `pnpm lint`, type-check do core e do mobile, e os testes (puros + banco no PGlite). **Nada foi visto no navegador com login** (não tenho `.env.local` nem conta): cada spec tem um critério "No navegador" desmarcado pra vocês.
+- Tudo passa: `pnpm build`, `pnpm lint`, type-check do core e do mobile, e os **410 testes** (puros + banco no PGlite, 0 falhas). **Nada foi visto no navegador com login** (não tenho `.env.local` nem conta): cada spec tem um critério "No navegador" desmarcado pra vocês.
 - **Nada foi pro ar**: nenhuma migration aplicada, nenhuma Edge Function publicada, nenhum push.
 
 ## O que entrou (por área)
