@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, Sun } from 'lucide-react'
-import { agoraEProximo, destinoDoDia, diaDePassagem, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
+import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, Sun, TrainFront } from 'lucide-react'
+import { agoraEProximo, destinoDoDia, diaDePassagem, linkUltimoTrem, voltaPraBase, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -73,6 +73,9 @@ export default function Hoje() {
   const passagem = diaDePassagem(hoje, onde, trajetos, destinos, diaNoFuso, horaNoFuso)
   const guardaDaqui = onde ? guardaVolumes.filter((g) => g.destino_id === onde.id) : []
   const hospedagemDaqui = onde ? hospedagens.find((h) => h.destino_id === onde.id) : undefined
+  // Spec 080 (D9): bate-e-volta hoje → hora da volta pra base (ou aviso de que falta)
+  const bateEVolta = voltaPraBase(hoje, trajetos, diaNoFuso)
+  const nomeDo = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? '?'
 
   return (
     <div className="hoje">
@@ -112,6 +115,21 @@ export default function Hoje() {
             <CalendarDays size={15} aria-hidden="true" /> Ver o dia inteiro
           </Link>
         </section>
+      )}
+
+      {bateEVolta && (
+        <Cartao titulo={`Volta pra ${nomeDo(bateEVolta.ida.origem_id)}`} icone={TrainFront}>
+          {bateEVolta.volta?.partida ? (
+            <p className="hoje-volta">
+              <strong>Saída {horaNoFuso(bateEVolta.volta.partida)}</strong> de {nomeDo(bateEVolta.ida.destino_id)} · {faltaPara(horaNoFuso(bateEVolta.volta.partida), horaAtual)}
+            </p>
+          ) : (
+            <p className="hoje-volta alerta">Sem horário de volta marcado. Confira o último trem antes de sair!</p>
+          )}
+          <a href={linkUltimoTrem(nomeDo(bateEVolta.ida.destino_id), nomeDo(bateEVolta.ida.origem_id))} target="_blank" rel="noreferrer noopener" className="botao-texto alinhar-inicio">
+            Último trem de {nomeDo(bateEVolta.ida.destino_id)} pra {nomeDo(bateEVolta.ida.origem_id)} <ExternalLink size={12} aria-hidden="true" />
+          </a>
+        </Cartao>
       )}
 
       {passagem && onde && (

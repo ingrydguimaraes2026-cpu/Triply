@@ -96,3 +96,13 @@
   font-size: 14px;
   white-space: pre-line;
 }
+
+/* Volta pra base (spec 080) */
+.hoje-volta {
+  margin: 0 0 6px;
+}
+
+.hoje-volta.alerta {
+  color: var(--cor-pessoal);
+  font-weight: 700;
+}

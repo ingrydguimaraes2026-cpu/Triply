@@ -114,7 +114,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 60 | B9 | Sugestão de ordem (menos deslocamento) ◐ | M | ✅ feito (web) · spec 076 |
 | 61 | D5 | Quem vai em cada trajeto + "meu itinerário" | M | ✅ feito (web) · spec 067 · banco a aplicar |
 | 62 | D8 | Conexões e estações (várias pernas) | M | ✅ feito (web) · spec 074 · banco a aplicar |
-| 63 | D9 | Último trem para a base | M | a fazer |
+| 63 | D9 | Último trem para a base | M | parcial (web) · spec 080: hora da volta e aviso; horário real do último trem fica com D10 |
 | 64 | D11 | Carro alugado e rodízio de motorista | M | ✅ feito (web) · spec 073 · banco a aplicar |
 | 65 | E7 | Quem dorme onde | M | ✅ feito (web) · spec 068 · banco a aplicar |
 | 66 | E9 | Prévia do link da opção (foto, título, preço) | M | ✅ feito (web + função) · spec 072 · banco a aplicar |

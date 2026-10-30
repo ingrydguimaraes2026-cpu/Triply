@@ -52,3 +52,15 @@ test('compromissos apertados: conflito com trajeto e folga curta (spec 077)', as
   assert.deepEqual(r.museu, { tipo: 'apertado', com: 'Almoço', minutos: 20 })
   assert.equal(r.jantar, undefined)
 })
+
+test('volta pra base no bate-e-volta (spec 080)', async () => {
+  const { voltaPraBase, linkUltimoTrem } = await import(new URL('../../../packages/core/src/hoje.ts', import.meta.url))
+  const dia = (s) => s.slice(0, 10)
+  const ida = { origem_id: 'nice', destino_id: 'monaco', partida: '2026-11-10T09:00:00', bate_e_volta: true }
+  const volta = { origem_id: 'monaco', destino_id: 'nice', partida: '2026-11-10T18:40:00', bate_e_volta: true }
+  assert.deepEqual(voltaPraBase('2026-11-10', [ida, volta], dia), { ida, volta })
+  const semHora = { ...volta, partida: null }
+  assert.equal(voltaPraBase('2026-11-10', [ida, semHora], dia).volta, semHora)
+  assert.equal(voltaPraBase('2026-11-11', [ida, volta], dia), null)
+  assert.match(linkUltimoTrem('Mônaco', 'Nice'), /%C3%BAltimo%20trem%20M%C3%B4naco%20para%20Nice/)
+})

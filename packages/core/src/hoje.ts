@@ -67,3 +67,27 @@ export function compromissosApertados(
   }
   return saida
 }
+
+// Último trem pra base (spec 080 / D9). Sem API de horários: olha o bate-e-volta de hoje e diz
+// a hora da volta combinada, ou avisa que não tem volta marcada.
+type TrajetoBV = { origem_id: string | null; destino_id: string | null; partida: string | null; bate_e_volta: boolean }
+
+export function voltaPraBase(
+  dia: string,
+  trajetos: TrajetoBV[],
+  diaDe: (instante: string) => string,
+): { ida: TrajetoBV; volta: TrajetoBV | null } | null {
+  const ida = trajetos
+    .filter((t) => t.bate_e_volta && t.partida && diaDe(t.partida) === dia)
+    .sort((a, b) => a.partida!.localeCompare(b.partida!))[0]
+  if (!ida) return null
+  const volta =
+    trajetos.find(
+      (t) => t.bate_e_volta && t !== ida && t.origem_id === ida.destino_id && t.destino_id === ida.origem_id && (!t.partida || diaDe(t.partida) === dia),
+    ) ?? null
+  return { ida, volta }
+}
+
+export function linkUltimoTrem(de: string, para: string): string {
+  return `https://www.google.com/search?q=${encodeURIComponent(`último trem ${de} para ${para} hoje`)}`
+}
