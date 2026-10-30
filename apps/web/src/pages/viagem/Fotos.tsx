@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { BellRing, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus } from 'lucide-react'
+import { BellRing, CalendarDays, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus, Star } from 'lucide-react'
+import { albumPorDia, melhoresPosts } from '@together/core'
+import { diaPorExtenso } from '../../features/agenda/hooks'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { usePosts } from '../../features/feed/hooks'
 import { apagarComentario, apagarPost, avisarComboio, comentar, curtir, descurtir, type Post } from '../../features/feed/api'
@@ -22,7 +24,7 @@ export default function Fotos() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado, recarregar, mudarPost, tirarPost } = usePosts(viagem.id)
   const [busca] = useSearchParams()
-  const [modo, setModo] = useState<'feed' | 'grade'>('feed')
+  const [modo, setModo] = useState<'feed' | 'grade' | 'dias' | 'melhores'>('feed')
   const [postando, setPostando] = useState(false)
   const [comentariosDe, setComentariosDe] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
@@ -139,6 +141,29 @@ export default function Fotos() {
   const eu = membros.find((m) => m.id === meuId)
   const totalDeFotos = posts.reduce((soma, p) => soma + p.fotos.length, 0)
 
+  // Grade de fotos (usada na Grade, no Por dia e nos Melhores)
+  const grade = (lista: typeof posts) => (
+    <ul className="grade">
+      {lista.map((p) => (
+        <li key={p.id}>
+          <button type="button" onClick={() => abrirNoFeed(p.id)} aria-label={`Abrir post de ${nomeDe(p.autor)}`}>
+            {p.fotos[0]?.url ? <img src={p.fotos[0].url} alt="" loading="lazy" decoding="async" /> : <span className="post-sem-link" />}
+            {p.fotos.length > 1 && <Layers className="grade-varias" size={18} aria-hidden="true" />}
+            <span className="grade-numeros" aria-hidden="true">
+              <span>
+                <Heart size={16} fill="currentColor" strokeWidth={0} /> {p.curtidas.length}
+              </span>
+              <span>
+                <MessageCircle size={16} fill="currentColor" strokeWidth={0} /> {p.comentarios.length}
+              </span>
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+  const melhores = melhoresPosts(posts) // spec 098
+
   return (
     <div className="feed-pagina">
       <header className="feed-cabecalho">
@@ -179,6 +204,13 @@ export default function Fotos() {
         </button>
         <button type="button" role="tab" aria-selected={modo === 'grade'} className={modo === 'grade' ? 'ativo' : undefined} onClick={() => setModo('grade')}>
           <LayoutGrid size={18} aria-hidden="true" /> Grade
+        </button>
+        {/* Spec 098: álbum por dia e melhores */}
+        <button type="button" role="tab" aria-selected={modo === 'dias'} className={modo === 'dias' ? 'ativo' : undefined} onClick={() => setModo('dias')}>
+          <CalendarDays size={18} aria-hidden="true" /> Por dia
+        </button>
+        <button type="button" role="tab" aria-selected={modo === 'melhores'} className={modo === 'melhores' ? 'ativo' : undefined} onClick={() => setModo('melhores')}>
+          <Star size={18} aria-hidden="true" /> Melhores
         </button>
       </div>
 
@@ -223,24 +255,25 @@ export default function Fotos() {
             }
           />
         ) : modo === 'grade' ? (
-          <ul className="grade">
-            {posts.map((p) => (
-              <li key={p.id}>
-                <button type="button" onClick={() => abrirNoFeed(p.id)} aria-label={`Abrir post de ${nomeDe(p.autor)}`}>
-                  {p.fotos[0]?.url ? <img src={p.fotos[0].url} alt="" loading="lazy" decoding="async" /> : <span className="post-sem-link" />}
-                  {p.fotos.length > 1 && <Layers className="grade-varias" size={18} aria-hidden="true" />}
-                  <span className="grade-numeros" aria-hidden="true">
-                    <span>
-                      <Heart size={16} fill="currentColor" strokeWidth={0} /> {p.curtidas.length}
-                    </span>
-                    <span>
-                      <MessageCircle size={16} fill="currentColor" strokeWidth={0} /> {p.comentarios.length}
-                    </span>
-                  </span>
-                </button>
-              </li>
+          grade(posts)
+        ) : modo === 'dias' ? (
+          <div className="album-dias">
+            {albumPorDia(posts, destinos).map((g) => (
+              <section key={g.dia}>
+                <h2 className="album-dia">
+                  {diaPorExtenso(g.dia)}
+                  {g.destino && <small> · {g.destino}</small>}
+                </h2>
+                {grade(g.posts)}
+              </section>
             ))}
-          </ul>
+          </div>
+        ) : modo === 'melhores' ? (
+          melhores.length === 0 ? (
+            <p className="form-dica">Curta as fotos do feed: as mais curtidas aparecem aqui.</p>
+          ) : (
+            grade(melhores)
+          )
         ) : (
           <div className="feed">
             {posts.map((p) => (

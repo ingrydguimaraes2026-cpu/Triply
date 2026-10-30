@@ -721,3 +721,27 @@
     transform: translateX(250%);
   }
 }
+
+/* Spec 098: 4 abas (Feed, Grade, Por dia, Melhores) cabem em 360px */
+@media (max-width: 420px) {
+  .feed-abas button {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 12px;
+    min-height: 52px;
+  }
+}
+.album-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.album-dia {
+  margin: 0 0 8px;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+.album-dia small {
+  color: var(--cor-texto-suave);
+  text-transform: none;
+}
