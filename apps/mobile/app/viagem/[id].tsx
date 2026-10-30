@@ -91,6 +91,15 @@ export default function DetalheDaViagem() {
             </Text>
             <Text className="mt-2 font-display text-[38px] leading-[40px] text-white">{viagem.nome}</Text>
           </View>
+          {/* Botões sobre a capa: rolam junto com ela, então não cobrem os cartões brancos */}
+          <View className="absolute left-5 right-5 flex-row justify-between" style={{ top: insets.top + 8 }}>
+            <BotaoRedondo claro aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+              <ArrowLeft size={20} color={cor.texto} />
+            </BotaoRedondo>
+            <BotaoRedondo claro aoTocar={convidar}>
+              <Share2 size={20} color={cor.texto} />
+            </BotaoRedondo>
+          </View>
         </View>
 
         <View className="gap-4 px-5 pt-5">
@@ -174,15 +183,6 @@ export default function DetalheDaViagem() {
           <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
         </View>
       </ScrollView>
-      {/* Botões fixos: ficam no lugar enquanto a capa rola */}
-      <View className="absolute left-5 right-5 flex-row justify-between" style={{ top: insets.top + 8 }}>
-        <BotaoRedondo claro aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
-          <ArrowLeft size={20} color={cor.texto} />
-        </BotaoRedondo>
-        <BotaoRedondo claro aoTocar={convidar}>
-          <Share2 size={20} color={cor.texto} />
-        </BotaoRedondo>
-      </View>
     </View>
   )
 }
