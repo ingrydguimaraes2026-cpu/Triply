@@ -25,7 +25,7 @@ Branch `monorepo-split`, **local** (o push dá 403: o app do Claude no GitHub n�
 | Tela Hoje | 058 Hoje · 059 ferramentas (conversor, gorjeta, motorista, banheiro, restaurante, guarda-volumes) · 104 frases úteis com áudio |
 | Fotos e memórias | 098 álbum por dia e melhores · 099 baixar .zip · 100 marcar pessoas · 101 diário · 102 onde já fui + estatísticas · 105 retrospectiva (cartões pro story) · 106 livro da viagem · 108 onde a foto foi tirada |
 | Offline | 034 offline de leitura (PWA) |
-| Mobile (Expo) | agenda de hoje, tempo, novidades, guia da casa, cofre (só type-check: não rodei o Expo) |
+| Mobile (Expo) | agenda de hoje, tempo, novidades, guia da casa, cofre, comentários nos gastos (só type-check: não rodei o Expo). Falta lembretes por push nativo |
 
 ## Pra pôr no ar (na ordem)
 
