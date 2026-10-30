@@ -416,3 +416,59 @@
   grid-column: 1 / -1;
   gap: 4px;
 }
+
+/* Relatórios (spec 082) */
+.relatorio {
+  display: grid;
+  gap: 10px;
+}
+
+.relatorio-barras {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.relatorio-barras li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.relatorio-barra {
+  display: grid;
+  gap: 2px;
+}
+
+.relatorio-barra span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--caramelo);
+}
+
+.relatorio-barra.dupla .pagou {
+  height: 4px;
+  background: var(--couro);
+}
+
+.relatorio-valor {
+  display: grid;
+  font-weight: 700;
+  text-align: right;
+}
+
+.relatorio-valor small {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+.relatorio-rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

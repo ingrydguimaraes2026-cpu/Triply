@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
 import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
 import APagar from '../../features/previstos/APagar'
+import Relatorio from '../../features/financeiro/Relatorio'
+import { relatorio } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
@@ -125,8 +127,18 @@ export default function Financeiro() {
         dados.gastos.map((g) => ({ pagoPor: g.pago_por, moeda: g.moeda, valor: g.valor, pessoal: g.pessoal, divisoes: g.divisoes })),
       ),
       totaisComboio: totalPorMoeda(doComboio),
+      // Spec 082: relatórios na moeda da viagem
+      relatorio: relatorio(
+        doComboio.map((g) => ({
+          data: g.data,
+          valor: emMoedaDaViagem(g),
+          pago_por: g.pago_por,
+          divisoes: g.divisoes.map((d) => ({ usuarioId: d.usuarioId, valor: converter(d.valor, g.moeda, moeda, taxas) ?? 0 })),
+        })),
+        membros.length,
+      ),
     }
-  }, [dados, moeda, hoje, meuId])
+  }, [dados, moeda, hoje, meuId, membros.length])
 
   const nome = (id: string) => nomeDaPessoa(id, membros, dados?.exMembros ?? [], meuId)
   const fechar = () => setJanela(null)
@@ -298,6 +310,13 @@ export default function Financeiro() {
 
           {/* Carteira de euro por e-mail (Wise/Nomad) */}
           {moeda === 'EUR' && <Carteira viagemId={viagem.id} meuId={meuId} estado={carteira} recarregar={recarregarCarteira} />}
+
+          {/* Spec 082: relatórios */}
+          {contas.relatorio.porDia.length > 0 && (
+            <Cartao titulo="Relatórios" icone={BarChart3}>
+              <Relatorio relatorio={contas.relatorio} moeda={moeda} nome={nome} />
+            </Cartao>
+          )}
 
           {/* Orçamento por categoria */}
           <Cartao titulo="Por categoria">
