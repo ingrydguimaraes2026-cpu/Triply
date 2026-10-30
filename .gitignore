@@ -28,3 +28,6 @@ expo-env.d.ts
 .env*
 # exemplos de env (sem segredo) podem ir pro GitHub
 !**/.env.example
+
+# Lixo do Supabase CLI
+supabase/.temp/
