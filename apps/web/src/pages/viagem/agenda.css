@@ -171,3 +171,11 @@
   font-size: 14px;
   font-weight: 700;
 }
+
+/* Botões do topo: Calendário (spec 036) + Evento */
+.agenda-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}

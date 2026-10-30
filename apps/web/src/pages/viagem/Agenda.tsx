@@ -8,6 +8,7 @@ import { meio } from '../../features/transportes/api'
 import { hojeTexto, periodoDosDestinos } from '../../features/destinos/datas'
 import { diaCurtinho, diaPorExtenso, useEventosDaAgenda } from '../../features/agenda/hooks'
 import FormEvento from '../../features/agenda/FormEvento'
+import { baixarCalendario } from '../../features/agenda/calendario'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import EstadoVazio from '../../components/ui/EstadoVazio'
 import Gaveta from '../../components/ui/Gaveta'
@@ -23,6 +24,19 @@ export default function Agenda() {
   const { estado } = useTrajetos(viagem.id)
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
   const [janela, setJanela] = useState<Janela>(null)
+  const [recadoCalendario, setRecadoCalendario] = useState<string | null>(null)
+
+  // Spec 036: baixa o .ics com tudo que tem data
+  async function calendario() {
+    setRecadoCalendario(null)
+    try {
+      const n = await baixarCalendario(viagem, destinos)
+      setRecadoCalendario(n ? `Arquivo com ${n} ${n === 1 ? 'item' : 'itens'} baixado. Abra ele pra pôr na sua agenda.` : 'Ainda não há nada com data pra pôr na agenda.')
+    } catch (e) {
+      console.error('Erro ao montar o calendário:', e)
+      setRecadoCalendario('Não deu pra montar o calendário agora.')
+    }
+  }
 
   // Datas dos destinos; sem elas, as datas da viagem (nome, datas e moeda)
   const periodo =
@@ -67,11 +81,21 @@ export default function Agenda() {
         titulo="Agenda"
         subtitulo="Trajetos e chegadas entram sozinhos. Acrescente o resto: jantar, passeio, reserva."
         acao={
-          <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
-            <Plus size={16} aria-hidden="true" /> Evento
-          </button>
+          <span className="agenda-acoes">
+            <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
+              <CalendarPlus size={16} aria-hidden="true" /> Calendário
+            </button>
+            <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
+              <Plus size={16} aria-hidden="true" /> Evento
+            </button>
+          </span>
         }
       />
+      {recadoCalendario && (
+        <p className="recado" role="status">
+          {recadoCalendario}
+        </p>
+      )}
 
       <nav className="agenda-dias" aria-label="Dias da viagem">
         {dias.map((d) => {

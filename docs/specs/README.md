@@ -47,6 +47,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 032 | [Lembretes no celular](032-lembretes.md) (1 h antes de trajeto e encontro) | 2 | M | 004, 013, 024 | Pronto pra testar (web) · banco não aplicado |
 | 033 | [Preferências de aviso](033-preferencias-de-aviso.md) (o que cada um recebe no celular) | 2 | P | 032 | Pronto pra testar (web) · banco não aplicado |
 | 035 | [Situação e preço do trajeto](035-situacao-e-preco-do-trajeto.md) (sugestão/reservado/comprado + lançar como gasto) | 2 | P | 002, 004 | Pronto pra testar (web) · banco não aplicado |
+| 036 | [Calendário da viagem](036-calendario-da-viagem.md) (.ics pro Google/iPhone/Outlook) | 2 | P | 029 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

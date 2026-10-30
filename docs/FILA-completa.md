@@ -39,7 +39,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 1 | B5 | Lembretes (push antes de trem, check-out, encontro) · spec 032 | M | ✅ feito (web) · banco a aplicar |
 | 2 | G4 | Preferências de notificação por tipo (completa o sino da 031) · spec 033 | P | ✅ feito (web) · banco a aplicar |
 | 3 | D4 | Situação e preço do trajeto + "lançar como gasto" | P | ✅ feito (web) · spec 035 · banco a aplicar |
-| 4 | M6 | Calendário da viagem (ICS) no Google/Apple | P | a fazer |
+| 4 | M6 | Calendário da viagem (ICS) no Google/Apple | P | ✅ feito (web) · spec 036 |
 | 5 | J3 | Botão de emergência (número local, consulado, seguro) | P | a fazer |
 | 6 | I2 | Nacionalidade no perfil (sem número de documento) | P | a fazer |
 | 7 | I3 | Validade do passaporte com alerta de 6 meses | P | a fazer |
