@@ -5,6 +5,8 @@
 ## A meta
 O comboio planeja, decide, paga, se encontra e guarda as memórias da viagem **sem sair do Together**. O WhatsApp continua sendo o lugar da conversa; o Together é onde as coisas ficam resolvidas.
 
+> **Ordem de execução de tudo:** `docs/FILA-completa.md` (uma task atrás da outra). Ideias vindas de outros apps: `docs/ideias-de-outros-apps.md`.
+
 ## Como usar este plano
 1. Cada item vira uma **spec curta** em `docs/specs/` antes de codar (use o `_modelo.md`).
 2. A regra fica no `packages/core`. A tela é feita no **site e no app**.
