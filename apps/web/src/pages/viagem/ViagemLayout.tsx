@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, LogOut, MapPinned, Plus, Settings, TrainFront, Users, Wallet } from 'lucide-react'
+import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, LogOut, MapPinned, Plus, Search, Settings, TrainFront, Users, Wallet } from 'lucide-react'
 import { sair, useSessao } from '../../features/auth/hooks'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -12,6 +12,7 @@ import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
 import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import Emergencia from '../../features/emergencia/Emergencia'
 import FaixaOffline from '../../features/offline/FaixaOffline'
+import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -59,6 +60,7 @@ export default function ViagemLayout() {
   // Spec 031: sino de novidades (no topo do celular e no menu do computador)
   const [vendoNovidades, setVendoNovidades] = useState(false)
   const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
+  const [buscando, setBuscando] = useState(false) // spec 053
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
 
   // Qual aba está aberta ('' = Overview) e quais abas guardadas já foram visitadas nesta viagem
@@ -112,6 +114,9 @@ export default function ViagemLayout() {
           <strong>{viagem.nome}</strong>
           <ChevronRight size={16} aria-hidden="true" />
         </Link>
+        <button type="button" className="viagem-topo-icone botao-sos" onClick={() => setBuscando(true)} aria-label="Buscar na viagem">
+          <Search size={20} aria-hidden="true" />
+        </button>
         <button type="button" className="viagem-topo-icone botao-sos" onClick={() => setVendoEmergencia(true)} aria-label="Emergência">
           <LifeBuoy size={20} aria-hidden="true" />
         </button>
@@ -162,6 +167,9 @@ export default function ViagemLayout() {
             ))}
           </div>
           <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />
+          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setBuscando(true)}>
+            <Search size={18} aria-hidden="true" /> Buscar
+          </button>
           <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setVendoEmergencia(true)}>
             <LifeBuoy size={18} aria-hidden="true" /> Emergência
           </button>
@@ -211,6 +219,12 @@ export default function ViagemLayout() {
         <p className="recado" role="status">
           {recado}
         </p>
+      )}
+
+      {buscando && (
+        <Gaveta titulo="Buscar na viagem" aoFechar={() => setBuscando(false)}>
+          <BuscaNaViagem viagemId={viagem.id} destinos={destinos} aoEscolher={() => setBuscando(false)} />
+        </Gaveta>
       )}
 
       {vendoEmergencia && (
