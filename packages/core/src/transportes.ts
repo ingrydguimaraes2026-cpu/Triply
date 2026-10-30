@@ -38,3 +38,11 @@ export function resumoDosTrajetos(trajetos: TrajetoComPreco[]): {
     semPreco,
   }
 }
+
+// Contagem e progresso (spec 049): "78% pronto" = média das partes que existem (cada parte vale igual)
+export function prontidao(partes: { nome: string; feitas: number; total: number }[]): { porcento: number; faltando: string[] } | null {
+  const validas = partes.filter((p) => p.total > 0)
+  if (validas.length === 0) return null
+  const media = validas.reduce((soma, p) => soma + Math.min(1, p.feitas / p.total), 0) / validas.length
+  return { porcento: Math.round(media * 100), faltando: validas.filter((p) => p.feitas < p.total).map((p) => p.nome) }
+}

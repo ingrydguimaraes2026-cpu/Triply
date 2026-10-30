@@ -14,7 +14,8 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { formatarDinheiro } from '@together/core'
+import { formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
+import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
 import { diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
@@ -220,6 +221,17 @@ export default function Overview() {
   }
   const areaLivre = useMemo(() => ({ esquerda: 24, topo: 120, direita: 24, baixo: 24 }), [])
   const falta = contagem(viagem.data_inicio, viagem.data_fim)
+  // Spec 049: quanto da preparação já está pronto (antes da viagem começar)
+  const comprados = trajetos.estado.status === 'pronto' ? resumoDosTrajetos(trajetos.estado.trajetos) : null
+  const docsProgresso = progresso(docs.checklist.itens, docs.meus)
+  const pronto =
+    viagem.data_inicio && viagem.data_inicio > hojeTexto()
+      ? prontidao([
+          { nome: 'documentos', feitas: docsProgresso.feitas, total: docsProgresso.total },
+          { nome: 'hospedagem', feitas: hospResumo.resolvidos, total: hospResumo.total },
+          { nome: 'trajetos comprados', feitas: comprados?.comprados ?? 0, total: comprados?.total ?? 0 },
+        ])
+      : null
 
   return (
     <div className="overview">
@@ -245,7 +257,12 @@ export default function Overview() {
           <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
           {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
           <div className="overview-mapa-texto">
-            {falta && <span className="overview-contagem">{falta}</span>}
+            {falta && (
+              <span className="overview-contagem" title={pronto?.faltando.length ? `Falta: ${pronto.faltando.join(', ')}` : undefined}>
+                {falta}
+                {pronto && ` · ${pronto.porcento}% pronto`}
+              </span>
+            )}
             <h1>{viagem.nome}</h1>
             <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
           </div>

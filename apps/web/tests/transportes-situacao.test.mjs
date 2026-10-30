@@ -26,3 +26,16 @@ test('resumo vazio e nome da situação', () => {
   assert.equal(nomeDaSituacao('reservado'), 'Reservado')
   assert.equal(nomeDaSituacao('qualquer'), 'Sugestão')
 })
+
+test('prontidão: média das partes que existem e o que falta', async () => {
+  const { prontidao } = await import(new URL('../../../packages/core/src/transportes.ts', import.meta.url))
+  assert.deepEqual(
+    prontidao([
+      { nome: 'documentos', feitas: 3, total: 4 },
+      { nome: 'hospedagem', feitas: 2, total: 2 },
+      { nome: 'trajetos', feitas: 0, total: 0 },
+    ]),
+    { porcento: 88, faltando: ['documentos'] },
+  )
+  assert.equal(prontidao([{ nome: 'x', feitas: 0, total: 0 }]), null)
+})

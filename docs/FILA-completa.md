@@ -69,7 +69,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 23 | I9 | Ficha do país (tomada, gorjeta, fuso, emergência, internet) | P | ✅ feito (web) · spec 047 |
 | 24 | I12 | Internet no destino: lembrete do eSIM antes de embarcar (ideia: Holafly) | P | ✅ feito (web) · spec 047 |
 | 25 | I8 | Itens do grupo ("quem leva o adaptador") | P | ✅ feito (web) · spec 048 · banco a aplicar |
-| 26 | I11 | Contagem e progresso ("faltam 23 dias · 78% pronto") | P | a fazer |
+| 26 | I11 | Contagem e progresso ("faltam 23 dias · 78% pronto") | P | ✅ feito (web) · spec 049 |
 | 27 | I10 | Lista de compras com "lançar como gasto" | P | ✅ feito (web) · spec 048 · banco a aplicar |
 | 28 | F6 | Contatos de emergência e saúde (visível só pra quem a pessoa escolher) | P | a fazer |
 | 29 | F5 | Ficha da pessoa (alergias, restrições, aniversário) ◐ | P | a fazer |
