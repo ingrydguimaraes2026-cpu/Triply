@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { AlertTriangle, BarChart3, BedDouble, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { AlertTriangle, BarChart3, BedDouble, ChevronDown, ChevronUp, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -251,6 +251,28 @@ export default function Overview() {
       : []
   const [vendoTodosFuros, setVendoTodosFuros] = useState(false)
 
+  // A Overview tem muitos cartões. Os essenciais ficam sempre à mostra; os secundários
+  // entram atrás de um "Mostrar mais da viagem" (a escolha fica guardada no aparelho).
+  // Na fase de planejar (sem destino ou sem datas), as ferramentas de decisão aparecem direto.
+  const planejando = destinos.length === 0 || !viagem.data_inicio
+  const [verMais, setVerMais] = useState(() => {
+    try {
+      return localStorage.getItem('overview-ver-mais') === '1'
+    } catch {
+      return false
+    }
+  })
+  const alternarVerMais = () =>
+    setVerMais((v) => {
+      const novo = !v
+      try {
+        localStorage.setItem('overview-ver-mais', novo ? '1' : '0')
+      } catch {
+        /* sem storage (aba privada): só não lembra */
+      }
+      return novo
+    })
+
   return (
     <div className="overview">
       {/* Spec 019: recados do ADM fixados no topo */}
@@ -403,32 +425,9 @@ export default function Overview() {
           passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
         />
 
-        {/* Roadmap #8: clima dia a dia de cada destino */}
-        <ClimaDaViagem destinos={destinos} />
-
         {/* Spec 021: enquetes rápidas pra decidir junto */}
         <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
           <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
-        </Cartao>
-
-        {/* Spec 051: "cheguei bem" com um toque */}
-        <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
-          <ChegueiBem />
-        </Cartao>
-
-        {/* Spec 069: mala individual (só a pessoa vê) */}
-        <Cartao titulo="Minha mala" icone={Luggage} className="overview-mala">
-          <MinhaMala />
-        </Cartao>
-
-        {/* Spec 048: quem leva o quê + lista de compras */}
-        <Cartao titulo="Listas do comboio" icone={ShoppingBasket} className="overview-listas">
-          <ListasDoComboio />
-        </Cartao>
-
-        {/* Spec 047: ficha do país + lembrete do eSIM */}
-        <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
-          <FichaDoPais viagem={viagem} destinos={destinos} />
         </Cartao>
 
         {/* Spec 075: destinos candidatos (no modo sonhando, ou enquanto houver roteiro curto) */}
@@ -444,11 +443,6 @@ export default function Overview() {
             <DatasEmComum />
           </Cartao>
         )}
-
-        {/* Spec 045: orçamento combinado em segredo */}
-        <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">
-          <OrcamentoCombinado viagemId={viagem.id} meuId={meuId} moeda={viagem.moeda_principal} />
-        </Cartao>
 
         {/* Spec 011: quantos destinos já têm onde ficar */}
         <Cartao titulo="Hospedagem" icone={BedDouble} acao={<Link to="hospedagem">Abrir</Link>} className="overview-hospedagem">
@@ -504,21 +498,6 @@ export default function Overview() {
           )}
         </Cartao>
 
-        {/* Spec 020: tarefas com responsável */}
-        <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
-          <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
-        </Cartao>
-
-        {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
-        <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
-          <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
-        </Cartao>
-
-        {/* Spec 028: cofre (reservas, ingressos, PDFs) */}
-        <Cartao titulo="Cofre" icone={Lock} className="overview-cofre">
-          <Cofre />
-        </Cartao>
-
         {/* Spec 006: o próximo trajeto (o mesmo que aparece em Transportes) */}
         <Cartao titulo="Próximo trajeto" icone={TrainFront} acao={<Link to="transportes">Abrir</Link>} className="overview-trajeto">
           {proximo ? (
@@ -549,6 +528,68 @@ export default function Overview() {
             ))}
           </ul>
         </Cartao>
+
+        {/* Mais da viagem: os cartões secundários ficam aqui, abertos por este botão */}
+        <button type="button" className="overview-ver-mais" onClick={alternarVerMais} aria-expanded={verMais}>
+          {verMais ? (
+            <>
+              <ChevronUp size={16} aria-hidden="true" /> Ver menos
+            </>
+          ) : (
+            <>
+              <ChevronDown size={16} aria-hidden="true" /> Mostrar mais da viagem
+            </>
+          )}
+        </button>
+
+        {/* Spec 045: orçamento combinado — visível ao planejar (o modo sonhando pede), senão em "mais" */}
+        {(verMais || planejando) && (
+          <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">
+            <OrcamentoCombinado viagemId={viagem.id} meuId={meuId} moeda={viagem.moeda_principal} />
+          </Cartao>
+        )}
+
+        {verMais && (
+          <>
+            {/* Roadmap #8: clima dia a dia de cada destino */}
+            <ClimaDaViagem destinos={destinos} />
+
+            {/* Spec 020: tarefas com responsável */}
+            <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
+              <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
+            </Cartao>
+
+            {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
+            <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
+              <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+            </Cartao>
+
+            {/* Spec 051: "cheguei bem" com um toque */}
+            <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
+              <ChegueiBem />
+            </Cartao>
+
+            {/* Spec 069: mala individual (só a pessoa vê) */}
+            <Cartao titulo="Minha mala" icone={Luggage} className="overview-mala">
+              <MinhaMala />
+            </Cartao>
+
+            {/* Spec 048: quem leva o quê + lista de compras */}
+            <Cartao titulo="Listas do comboio" icone={ShoppingBasket} className="overview-listas">
+              <ListasDoComboio />
+            </Cartao>
+
+            {/* Spec 047: ficha do país + lembrete do eSIM */}
+            <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
+              <FichaDoPais viagem={viagem} destinos={destinos} />
+            </Cartao>
+
+            {/* Spec 028: cofre (reservas, ingressos, PDFs) */}
+            <Cartao titulo="Cofre" icone={Lock} className="overview-cofre">
+              <Cofre />
+            </Cartao>
+          </>
+        )}
       </div>
     </div>
   )

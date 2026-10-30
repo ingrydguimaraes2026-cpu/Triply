@@ -1350,3 +1350,50 @@
   font-weight: 600;
   text-decoration: none;
 }
+
+/* ---------- Overview: ordem dos cartões + "Mostrar mais" (revisão de design) ----------
+   Bloco único e no fim do arquivo de propósito: consolida os `order` que estavam
+   espalhados (e conflitando) e manda em todos eles. Essenciais primeiro; secundários
+   depois do botão "Mostrar mais da viagem". */
+.overview-mapa { order: 1; }
+.overview-roteiro { order: 2; }
+.overview-furos { order: 3; }
+.overview-documentos { order: 4; }
+.overview-hospedagem { order: 5; }
+.overview-orcamento { order: 6; }
+.overview-enquetes { order: 7; }
+.overview-candidatos { order: 7; }
+.overview-datas-comum { order: 7; }
+.overview-trajeto { order: 8; }
+.overview-fotos { order: 9; }
+.overview-comboio-cartao { order: 10; }
+.overview-ver-mais { order: 11; }
+.overview-orcamento-combinado { order: 12; }
+.overview-clima { order: 13; }
+.overview-cheguei { order: 14; }
+.overview-mala { order: 15; }
+.overview-listas { order: 16; }
+.overview-ficha-pais { order: 17; }
+.overview-encontro { order: 18; }
+.overview-tarefas { order: 19; }
+.overview-cofre { order: 20; }
+
+.overview-ver-mais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border: 1px dashed var(--cor-borda-forte);
+  border-radius: 14px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-comboio);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.overview-ver-mais:hover {
+  background: var(--cor-borda);
+}
