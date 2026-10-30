@@ -173,7 +173,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 107 | D7 | Status do voo ao vivo (API paga) | M | a fazer |
 | 108 | D10 | Horários reais de trem e ônibus (API) | G | a fazer |
 | 109 | C9 | Mapa offline do destino | G | a fazer |
-| 110 | J7 | Frases úteis com áudio | M | a fazer |
+| 110 | J7 | Frases úteis com áudio | M | Pronto pra testar (web) · spec 104 |
 | 111 | F8 | Localização ao vivo temporária | G | a fazer |
 | 112 | M14 | Carteira do celular (Apple/Google Wallet) | M | a fazer |
 | 113 | M13 | Widgets e Live Activities | G | a fazer |

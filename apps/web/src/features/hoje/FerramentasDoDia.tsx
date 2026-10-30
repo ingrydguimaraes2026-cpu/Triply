@@ -18,6 +18,8 @@ import { codigoDoPais } from '../documentos/paises'
 import { moedaDoPais } from '../destinos/buscarCidades'
 import Cartao from '../../components/ui/Cartao'
 import './ferramentas.css'
+import FrasesUteis from './FrasesUteis'
+import { idiomaDoPais } from '@together/core'
 
 type Props = { destino: Tables<'destinos'> | null; moedaViagem: string; enderecoHospedagem: string | null }
 
@@ -37,6 +39,7 @@ export default function FerramentasDoDia({ destino, moedaViagem, enderecoHospeda
     <div className="ferramentas">
       <Conversor moeda={moedaLocal === 'BRL' ? moedaViagem : moedaLocal} />
       <Gorjeta pais={pais} moeda={moedaLocal} />
+      {idiomaDoPais(pais) && <FrasesUteis idioma={idiomaDoPais(pais)!} />}
       {enderecoHospedagem && <MostrarProMotorista endereco={enderecoHospedagem} />}
       {destino && <Banheiros destino={destino} />}
       {destino && (
