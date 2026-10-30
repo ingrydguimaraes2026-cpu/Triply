@@ -25,3 +25,22 @@ test('datasForaDeOrdem', () => {
   assert.equal(datasForaDeOrdem([{ chegada: '2026-11-05' }, { chegada: '2026-11-01' }]), true)
   assert.equal(datasForaDeOrdem([{}, {}]), false)
 })
+
+test('sugerir ordem: vizinho mais perto a partir do primeiro (spec 076)', async () => {
+  const { sugerirOrdem } = await import(new URL('../src/features/destinos/ordem.ts', import.meta.url))
+  const roma = { chave: 'roma', latitude: 41.9, longitude: 12.5 }
+  const milao = { chave: 'milao', latitude: 45.46, longitude: 9.19 }
+  const florenca = { chave: 'florenca', latitude: 43.77, longitude: 11.25 }
+  const veneza = { chave: 'veneza', latitude: 45.44, longitude: 12.33 }
+  // Roma → Milão → Florença → Veneza dá zigue-zague; o melhor é Roma → Florença → Milão → Veneza (ou parecido)
+  const s = sugerirOrdem([roma, milao, florenca, veneza])
+  assert.equal(s.chavesNaOrdem[0], 'roma')
+  assert.equal(s.chavesNaOrdem[1], 'florenca')
+  assert.ok(s.economiaKm >= 30)
+  assert.match(s.fonte, /linha reta/)
+  // Já está boa: não sugere
+  assert.equal(sugerirOrdem([roma, florenca, milao]), null)
+  // Sem coordenada fica no fim
+  const comVazio = sugerirOrdem([roma, milao, florenca, veneza, { chave: 'x', latitude: null, longitude: null }])
+  assert.equal(comVazio.chavesNaOrdem.at(-1), 'x')
+})

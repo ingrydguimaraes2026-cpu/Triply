@@ -41,3 +41,47 @@ export type SugestaoDeOrdem = {
   motivo: string
   fonte: string
 }
+
+// ---------- Sugestão de ordem (spec 076) ----------
+// Vizinho mais perto, a partir do PRIMEIRO destino (o ponto de partida fica onde está).
+// Só sugere quando economiza pelo menos 10% e 30 km. Itens sem coordenada ficam no fim, na ordem de antes.
+
+type ComPonto = { chave: string; latitude: number | null; longitude: number | null }
+
+function km(a: ComPonto, b: ComPonto): number {
+  const rad = (g: number) => (g * Math.PI) / 180
+  const h =
+    Math.sin(rad(b.latitude! - a.latitude!) / 2) ** 2 + Math.cos(rad(a.latitude!)) * Math.cos(rad(b.latitude!)) * Math.sin(rad(b.longitude! - a.longitude!) / 2) ** 2
+  return 2 * 6371 * Math.asin(Math.sqrt(h))
+}
+
+function totalKm(lista: ComPonto[]): number {
+  let soma = 0
+  for (let i = 1; i < lista.length; i++) soma += km(lista[i - 1], lista[i])
+  return soma
+}
+
+export function sugerirOrdem(lista: ComPonto[]): (SugestaoDeOrdem & { economiaKm: number }) | null {
+  const comPonto = lista.filter((d) => d.latitude !== null && d.longitude !== null)
+  const semPonto = lista.filter((d) => d.latitude === null || d.longitude === null)
+  if (comPonto.length < 3) return null
+  const [primeiro, ...resto] = comPonto
+  const caminho = [primeiro]
+  const faltam = [...resto]
+  while (faltam.length) {
+    const atual = caminho[caminho.length - 1]
+    let melhor = 0
+    for (let i = 1; i < faltam.length; i++) if (km(atual, faltam[i]) < km(atual, faltam[melhor])) melhor = i
+    caminho.push(...faltam.splice(melhor, 1))
+  }
+  const antes = totalKm(comPonto)
+  const depois = totalKm(caminho)
+  const economia = antes - depois
+  if (economia < 30 || economia < antes * 0.1) return null
+  return {
+    chavesNaOrdem: [...caminho, ...semPonto].map((d) => d.chave),
+    motivo: `Essa ordem anda uns ${Math.round(economia)} km a menos (de ${Math.round(antes)} pra ${Math.round(depois)} km).`,
+    fonte: 'Distância em linha reta entre as cidades (cálculo próprio, sem trânsito nem horários)',
+    economiaKm: Math.round(economia),
+  }
+}

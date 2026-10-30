@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp, Plus, X } from 'lucide-react'
 import { buscarCidades, type Cidade } from './buscarCidades'
 import { useBuscaDeLugares } from './useBuscaDeLugares'
 import { contarVinculos, type ItemRoteiro, type Vinculos } from './api'
-import { datasForaDeOrdem, mover } from './ordem'
+import { aplicarOrdem, datasForaDeOrdem, mover, sugerirOrdem } from './ordem'
 import { avisosDasDatas, contarNoites, textoNoites } from './datas'
 import './editor-roteiro.css'
 
@@ -123,6 +123,8 @@ export default function EditorRoteiro({
   const avisoDatas = datasForaDeOrdem(itens)
   const avisosDeData = avisosDasDatas(itens, periodo?.inicio ?? null, periodo?.fim ?? null)
   const bloqueado = avisosDeData.some((a) => a.tipo === 'bloqueia')
+  // Spec 076: sugestão de ordem com menos deslocamento (só quando ainda não tem datas, pra não bagunçar)
+  const sugestao = itens.some((i) => i.chegada) ? null : sugerirOrdem(itens)
 
   return (
     <div className="editor-roteiro">
@@ -131,6 +133,20 @@ export default function EditorRoteiro({
       </p>
 
       {itens.length > 1 && <p className="editor-dica">Use ↑ e ↓ para mudar a ordem</p>}
+
+      {sugestao && (
+        <div className="editor-sugestao">
+          <p>
+            <strong>Sugestão de ordem:</strong> {sugestao.chavesNaOrdem.map((c) => itens.find((i) => i.chave === c)?.nome).join(' → ')}
+          </p>
+          <small>
+            {sugestao.motivo} Fonte: {sugestao.fonte}.
+          </small>
+          <button type="button" className="botao secundario pequeno" onClick={() => aoMudar(aplicarOrdem(itens, sugestao.chavesNaOrdem))}>
+            Usar essa ordem
+          </button>
+        </div>
+      )}
 
       {vazio ? (
         <p className="editor-vazio">O roteiro está vazio. Adicione pelo menos um lugar para salvar.</p>

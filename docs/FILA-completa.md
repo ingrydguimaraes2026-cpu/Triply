@@ -111,7 +111,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 57 | B8 | Arrastar entre dias | M | ✅ feito (web) · spec 071 (setas ‹ ›, sem arrastar) |
 | 58 | B6 | Tempo entre compromissos (avisa quando não dá tempo) | M | a fazer |
 | 59 | B4 | Programação em paralelo (trilhas no mesmo dia) | M | ✅ feito (web) · spec 070 · banco a aplicar |
-| 60 | B9 | Sugestão de ordem (menos deslocamento) ◐ | M | a fazer |
+| 60 | B9 | Sugestão de ordem (menos deslocamento) ◐ | M | ✅ feito (web) · spec 076 |
 | 61 | D5 | Quem vai em cada trajeto + "meu itinerário" | M | ✅ feito (web) · spec 067 · banco a aplicar |
 | 62 | D8 | Conexões e estações (várias pernas) | M | ✅ feito (web) · spec 074 · banco a aplicar |
 | 63 | D9 | Último trem para a base | M | a fazer |

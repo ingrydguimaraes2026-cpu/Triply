@@ -88,6 +88,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 073 | [Carro e rodízio de motorista](073-carro-e-rodizio.md) (quem dirige, km estimados) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
 | 074 | [Conexões e estações](074-conexoes.md) (escalas com alerta de conexão curta) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
 | 075 | [Destinos candidatos](075-destinos-candidatos.md) ("Pra onde vamos?" com voto) | 2 | M | 046 | Pronto pra testar (web) · banco não aplicado |
+| 076 | [Sugestão de ordem do roteiro](076-sugestao-de-ordem.md) (menos km, com a fonte) | 2 | M | PR #3 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

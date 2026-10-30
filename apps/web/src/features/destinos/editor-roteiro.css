@@ -320,3 +320,24 @@
 .editor-aviso-data {
   font-size: 14px;
 }
+/* Sugestão de ordem (spec 076) */
+.editor-sugestao {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.editor-sugestao p {
+  margin: 0;
+}
+
+.editor-sugestao small {
+  color: var(--cor-texto-suave);
+}
+
+.editor-sugestao button {
+  justify-self: start;
+}
