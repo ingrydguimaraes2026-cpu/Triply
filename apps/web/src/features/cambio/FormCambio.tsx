@@ -22,6 +22,7 @@ export default function FormCambio({ viagemId, moedaViagem, compra, aoTerminar }
   const [pagoTexto, setPagoTexto] = useState(compra ? paraCampo(compra.valorOrigem) : '')
   const [recebidoTexto, setRecebidoTexto] = useState(compra ? paraCampo(compra.valorDestino) : '')
   const [data, setData] = useState(compra?.data ?? hojeTexto())
+  const [especie, setEspecie] = useState(compra?.especie ?? false)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmando, setConfirmando] = useState(false)
@@ -38,7 +39,7 @@ export default function FormCambio({ viagemId, moedaViagem, compra, aoTerminar }
     setSalvando(true)
     setErro(null)
     try {
-      await salvarCompra(viagemId, { id: compra?.id, moedaOrigem: origem, moedaDestino: destino, valorOrigem: pago, valorDestino: recebido, data })
+      await salvarCompra(viagemId, { id: compra?.id, moedaOrigem: origem, moedaDestino: destino, valorOrigem: pago, valorDestino: recebido, data, especie })
       aoTerminar()
     } catch (erro) {
       console.error('Erro ao salvar compra de moeda:', erro)
@@ -107,6 +108,14 @@ export default function FormCambio({ viagemId, moedaViagem, compra, aoTerminar }
         </label>
         <input id="cambio-data" type="date" value={data} onChange={(e) => setData(e.target.value)} />
       </div>
+
+      <label className="interruptor">
+        <span>
+          <strong>Em dinheiro vivo</strong>
+          <small>Notas na carteira (entra no "dinheiro na mão")</small>
+        </span>
+        <input type="checkbox" checked={especie} onChange={(e) => setEspecie(e.target.checked)} />
+      </label>
 
       {erro && (
         <p className="form-erro" role="alert">

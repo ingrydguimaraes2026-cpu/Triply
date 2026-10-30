@@ -1455,3 +1455,14 @@ test('078: membro só edita roteiro/transportes/orçamento quando o ADM libera',
   await assert.rejects(como(db, MEMBRO, `insert into public.orcamentos (viagem_id, categoria, valor_meta) values ('${V}', 'alimentacao', 100)`), /row-level security/)
   await assert.rejects(como(db, ESTRANHO, `insert into public.trajetos (viagem_id) values ('${V}')`), /row-level security/)
 })
+
+// ---------------- 083: meio de pagamento ----------------
+test('083: meio de pagamento e cotação no gasto; compra de moeda em espécie', async () => {
+  const db = await novoBanco()
+  const id = await salvarGasto(db, MEMBRO, cafe, metade)
+  await como(db, MEMBRO, "update public.gastos set meio_pagamento = 'especie', cotacao_reais = 6.123456 where id = $1", [id])
+  assert.equal((await db.query('select meio_pagamento from public.gastos')).rows[0].meio_pagamento, 'especie')
+  await assert.rejects(como(db, MEMBRO, "update public.gastos set meio_pagamento = 'pix' where id = $1", [id]), /check/)
+  await como(db, MEMBRO, `insert into public.compras_cambio (viagem_id, usuario_id, moeda_origem, moeda_destino, valor_origem, valor_destino, especie) values ('${V}', '${MEMBRO}', 'BRL', 'EUR', 620, 100, true)`)
+  assert.equal((await db.query('select especie from public.compras_cambio')).rows[0].especie, true)
+})

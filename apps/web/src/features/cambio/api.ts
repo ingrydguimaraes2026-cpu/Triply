@@ -29,6 +29,7 @@ export type DadosDaCompra = {
   valorOrigem: number // centavos
   valorDestino: number // centavos
   data: string
+  especie?: boolean // spec 083: dinheiro vivo
 }
 
 // Cada pessoa registra e edita só as próprias compras (regra do banco)
@@ -39,6 +40,7 @@ export async function salvarCompra(viagemId: string, compra: DadosDaCompra) {
     valor_origem: Number(paraBanco(compra.valorOrigem)),
     valor_destino: Number(paraBanco(compra.valorDestino)),
     data: compra.data,
+    ...(compra.especie !== undefined ? { especie: compra.especie } : {}),
   }
   const { error } = compra.id
     ? await supabase.from('compras_cambio').update(linha).eq('id', compra.id)

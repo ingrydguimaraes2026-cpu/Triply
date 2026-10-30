@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, Banknote, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
 import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
 import APagar from '../../features/previstos/APagar'
 import Relatorio from '../../features/financeiro/Relatorio'
-import { relatorio } from '@together/core'
+import { dinheiroNaMao, relatorio } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
@@ -140,6 +140,7 @@ export default function Financeiro() {
     }
   }, [dados, moeda, hoje, meuId, membros.length])
 
+  const meuDinheiro = dados ? dinheiroNaMao(dados.compras, dados.gastos, meuId) : [] // spec 083
   const nome = (id: string) => nomeDaPessoa(id, membros, dados?.exMembros ?? [], meuId)
   const fechar = () => setJanela(null)
 
@@ -242,6 +243,13 @@ export default function Financeiro() {
                 <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
               )}
             </Cartao>
+            {/* Spec 083: quanto de dinheiro vivo eu ainda tenho */}
+            {meuDinheiro.length > 0 && (
+              <Cartao titulo="Dinheiro na mão" icone={Banknote}>
+                <p className="numero">{meuDinheiro.map((d) => formatarDinheiro(d.valor, d.moeda)).join(' + ')}</p>
+                <p className="numero-legenda">Compras em espécie menos o que você pagou em dinheiro</p>
+              </Cartao>
+            )}
             <Cartao titulo="A pagar" icone={CalendarClock}>
               <APagar viagemId={viagem.id} moeda={moeda} membros={membros} meuId={meuId} euSouAdm={euSouAdm} aoLancar={recarregar} />
             </Cartao>

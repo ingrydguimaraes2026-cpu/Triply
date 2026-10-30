@@ -3,7 +3,9 @@ import { Trash2 } from 'lucide-react'
 import Avatar from '../../components/ui/Avatar'
 import { hojeTexto } from '../destinos/datas'
 import type { Membro } from '../viagens/hooks'
-import { conferirDivisao, dividirIgual, dividirPorItens, dividirPorPesos, type Divisao } from '@together/core'
+import { conferirDivisao, dividirIgual, dividirPorItens, dividirPorPesos, MEIOS_DE_PAGAMENTO, type Divisao } from '@together/core'
+import { supabase } from '../../lib/supabase'
+import { cotacoesDeHoje } from '../cambio/api'
 import { apagarGasto, avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto, type Gasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
 import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
@@ -63,6 +65,7 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
   const [porPessoa, setPorPessoa] = useState<Record<string, string>>(() =>
     Object.fromEntries((base?.divisoes ?? []).map((d) => [d.usuarioId, paraCampo(d.valor)])),
   )
+  const [meioPagamento, setMeioPagamento] = useState<string | null>(gasto?.meio_pagamento ?? null) // spec 083
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmandoApagar, setConfirmandoApagar] = useState(false)
@@ -116,7 +119,7 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
     }
     setSalvando(true)
     try {
-      await salvarGasto(viagemId, {
+      const idSalvo = await salvarGasto(viagemId, {
         id: gasto?.id ?? inicial?.id,
         descricao: descricao.trim() || acharCategoria(cat).nome,
         valor: total,
@@ -128,6 +131,15 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
         rascunho: false,
         divisoes,
       })
+      // Spec 083: meio de pagamento e cotação do dia congelada (quem lançou grava; se falhar, o gasto já foi)
+      if (souAutor && (meioPagamento || moeda !== 'BRL')) {
+        const taxa = moeda === 'BRL' ? null : (await cotacoesDeHoje('BRL', [moeda]))?.[moeda]
+        await supabase
+          .from('gastos')
+          .update({ meio_pagamento: meioPagamento, ...(taxa ? { cotacao_reais: Math.round((1 / taxa) * 1e6) / 1e6 } : {}) })
+          .eq('id', idSalvo)
+          .then(({ error }) => error && console.error('Erro ao gravar o meio de pagamento:', error))
+      }
       lembrarMoeda(moeda)
       avisarQueGastosMudaram()
       aoTerminar()
@@ -261,6 +273,17 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
         </span>
         <input type="checkbox" checked={pessoal} onChange={(e) => setPessoal(e.target.checked)} />
       </label>
+
+      <div className="form-campo">
+        <span className="form-rotulo">Como pagou? (opcional)</span>
+        <div className="modos-divisao">
+          {MEIOS_DE_PAGAMENTO.map((m) => (
+            <button key={m.chave} type="button" aria-pressed={meioPagamento === m.chave} onClick={() => setMeioPagamento(meioPagamento === m.chave ? null : m.chave)}>
+              {m.nome}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {!pessoal && (
         <>

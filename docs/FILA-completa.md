@@ -128,8 +128,8 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 70 | F4 | Núcleos (casal, família) 🔒 | M | a fazer |
 | 71 | H9 | Divisão por pesos e por item | M | ✅ feito (web) · spec 081 |
 | 72 | H8 | Caixa do comboio (só registro) 🔒 | M | a fazer |
-| 73 | H11 | Câmbio congelado e meio de pagamento no gasto | M | a fazer |
-| 74 | H12 | Dinheiro na mão (espécie por pessoa) | M | a fazer |
+| 73 | H11 | Câmbio congelado e meio de pagamento no gasto | M | ✅ feito (web) · spec 083 · banco a aplicar (cotação só registro) |
+| 74 | H12 | Dinheiro na mão (espécie por pessoa) | M | ✅ feito (web) · spec 083 · banco a aplicar |
 | 75 | H15 | Relatórios | M | ✅ feito (web) · spec 082 |
 | 76 | H6 | Saldo das contas globais (spec 015) ◐ | G | a fazer |
 | 77 | H17 | Promover movimento da conta a gasto | M | a fazer |

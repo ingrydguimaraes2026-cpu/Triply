@@ -218,6 +218,7 @@ export type Database = {
           cotacao: number | null
           criado_em: string
           data: string
+          especie: boolean
           id: string
           moeda_destino: string
           moeda_origem: string
@@ -230,6 +231,7 @@ export type Database = {
           cotacao?: number | null
           criado_em?: string
           data?: string
+          especie?: boolean
           id?: string
           moeda_destino?: string
           moeda_origem?: string
@@ -242,6 +244,7 @@ export type Database = {
           cotacao?: number | null
           criado_em?: string
           data?: string
+          especie?: boolean
           id?: string
           moeda_destino?: string
           moeda_origem?: string
@@ -761,11 +764,13 @@ export type Database = {
       gastos: {
         Row: {
           categoria: string
+          cotacao_reais: number | null
           criado_em: string
           criado_por: string
           data: string
           descricao: string
           id: string
+          meio_pagamento: string | null
           moeda: string
           pago_por: string
           pessoal: boolean
@@ -775,11 +780,13 @@ export type Database = {
         }
         Insert: {
           categoria?: string
+          cotacao_reais?: number | null
           criado_em?: string
           criado_por?: string
           data?: string
           descricao: string
           id?: string
+          meio_pagamento?: string | null
           moeda?: string
           pago_por: string
           pessoal?: boolean
@@ -789,11 +796,13 @@ export type Database = {
         }
         Update: {
           categoria?: string
+          cotacao_reais?: number | null
           criado_em?: string
           criado_por?: string
           data?: string
           descricao?: string
           id?: string
+          meio_pagamento?: string | null
           moeda?: string
           pago_por?: string
           pessoal?: boolean
