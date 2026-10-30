@@ -56,7 +56,13 @@ Deno.serve(async () => {
   let enviados = 0
   for (const l of lembretes as Lembrete[]) {
     const { data: membros } = await admin.from('comboio_membros').select('usuario_id').eq('viagem_id', l.viagem_id)
-    const pessoas = (membros ?? []).map((m) => m.usuario_id)
+    let pessoas = (membros ?? []).map((m) => m.usuario_id)
+    // Spec 067: trajeto com lista de passageiros avisa só quem vai
+    if (l.tipo === 'trajeto') {
+      const { data: passageiros } = await admin.from('trajeto_passageiros').select('usuario_id').eq('trajeto_id', l.alvo_id)
+      const lista = new Set((passageiros ?? []).map((p) => p.usuario_id))
+      if (lista.size > 0) pessoas = pessoas.filter((p) => lista.has(p))
+    }
     if (pessoas.length === 0) continue
 
     // Quem desligou esse tipo de aviso (spec G4) não recebe

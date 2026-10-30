@@ -2,12 +2,14 @@ import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
 import { SITUACOES_DO_TRAJETO, type Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
-import { apagarTrajeto, criarBateEVolta, MEIOS, salvarTrajeto, type Trajeto } from './api'
+import { apagarTrajeto, criarBateEVolta, definirPassageiros, MEIOS, salvarTrajeto, type Trajeto } from './api'
+import type { Membro } from '../viagens/hooks'
 import { deCampoHorario, paraCampoHorario } from './avisos'
 
 type Props = {
   viagemId: string
   moedaViagem: string
+  membros: Membro[] // spec 067: quem vai
   destinos: Tables<'destinos'>[]
   trajeto?: Trajeto // editando
   origemId?: string // já vem preenchido pelo trecho
@@ -16,7 +18,7 @@ type Props = {
 }
 
 // Formulário do trajeto (spec 004). Só o ADM chega aqui.
-export default function FormTrajeto({ viagemId, moedaViagem, destinos, trajeto, origemId, destinoId, aoTerminar }: Props) {
+export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, trajeto, origemId, destinoId, aoTerminar }: Props) {
   const [origem, setOrigem] = useState(trajeto ? (trajeto.origem_id ?? '') : (origemId ?? ''))
   const [destino, setDestino] = useState(trajeto ? (trajeto.destino_id ?? '') : (destinoId ?? ''))
   const [meioEscolhido, setMeio] = useState(trajeto?.meio ?? 'trem')
@@ -28,6 +30,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, destinos, trajeto, 
   const [observacao, setObservacao] = useState(trajeto?.observacao ?? '')
   const [link, setLink] = useState(trajeto?.link_reserva ?? '')
   const [situacao, setSituacao] = useState(trajeto?.situacao ?? 'sugestao')
+  const [passageiros, setPassageiros] = useState<string[]>(trajeto?.passageiros ?? [])
   const [preco, setPreco] = useState(trajeto?.preco != null ? String(trajeto.preco).replace('.', ',') : '')
   const [moeda, setMoeda] = useState(trajeto?.moeda ?? moedaViagem)
   const [salvando, setSalvando] = useState(false)
@@ -67,11 +70,12 @@ export default function FormTrajeto({ viagemId, moedaViagem, destinos, trajeto, 
     }
     setSalvando(true)
     try {
-      if (criandoVolta) {
-        await criarBateEVolta(viagemId, dados, { partida: deCampoHorario(voltaPartida), chegada: deCampoHorario(voltaChegada) })
-      } else {
-        await salvarTrajeto(viagemId, dados, trajeto?.id)
-      }
+      const ids = criandoVolta
+        ? await criarBateEVolta(viagemId, dados, { partida: deCampoHorario(voltaPartida), chegada: deCampoHorario(voltaChegada) })
+        : [await salvarTrajeto(viagemId, dados, trajeto?.id)]
+      // Spec 067: todo mundo marcado = lista vazia (o comboio inteiro, inclusive quem entrar depois)
+      const todos = passageiros.length === membros.length
+      if (passageiros.length > 0 || (trajeto?.passageiros.length ?? 0) > 0) await definirPassageiros(ids, todos ? [] : passageiros)
       aoTerminar()
     } catch (erro) {
       console.error('Erro ao salvar trajeto:', erro)
@@ -175,6 +179,22 @@ export default function FormTrajeto({ viagemId, moedaViagem, destinos, trajeto, 
             <input id="volta-chegada" type="datetime-local" value={voltaChegada} min={voltaPartida || undefined} onChange={(e) => setVoltaChegada(e.target.value)} />
           </div>
         </div>
+      )}
+
+      {membros.length > 1 && (
+        <fieldset className="form-campo passageiros">
+          <legend className="form-rotulo">Quem vai {passageiros.length === 0 && '(ninguém marcado = todo mundo)'}</legend>
+          {membros.map((m) => (
+            <label key={m.id}>
+              <input
+                type="checkbox"
+                checked={passageiros.includes(m.id)}
+                onChange={(e) => setPassageiros(e.target.checked ? [...passageiros, m.id] : passageiros.filter((p) => p !== m.id))}
+              />
+              {m.nome}
+            </label>
+          ))}
+        </fieldset>
       )}
 
       <div className="form-campo">

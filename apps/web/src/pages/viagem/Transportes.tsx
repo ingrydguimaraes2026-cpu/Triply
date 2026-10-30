@@ -6,7 +6,7 @@ import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { useCofre } from '../../features/cofre/hooks'
 import BilheteDoTrajeto from '../../features/cofre/BilheteDoTrajeto'
-import { meio, type Trajeto } from '../../features/transportes/api'
+import { meio, vouNesse, type Trajeto } from '../../features/transportes/api'
 import { avisosDoTrajeto, diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
 import {
   agruparPasseios,
@@ -50,7 +50,9 @@ export default function Transportes() {
     trechosDaRota(destinos).some(({ de, para }) => trechoLongo(de, para)) ? 'aviao' : 'transporte',
   )
 
-  const trajetos = estado.status === 'pronto' ? estado.trajetos : []
+  const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
+  const todosTrajetos = estado.status === 'pronto' ? estado.trajetos : []
+  const trajetos = soOsMeus ? todosTrajetos.filter((t) => vouNesse(t, meuId)) : todosTrajetos
   const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
   const nomeDe = (id: string | null) => destinoDe(id)?.nome ?? 'Sem destino'
 
@@ -120,6 +122,12 @@ export default function Transportes() {
             {t.chegada && ` → ${diaLocal(t.chegada) !== (t.partida && diaLocal(t.partida)) ? `${formatarData(diaLocal(t.chegada))} ` : ''}${hora(t.chegada)}`}
           </small>
           <span className="trajeto-situacao">
+            {/* Spec 067: quem vai */}
+            {t.passageiros.length > 0 && (
+              <span className={t.passageiros.includes(meuId) ? 'selo-passageiros meu' : 'selo-passageiros'}>
+                {t.passageiros.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
+              </span>
+            )}
             <span className={`selo-situacao situacao-${t.situacao}`}>{nomeDaSituacao(t.situacao)}</span>
             {t.preco !== null && t.moeda && <span className="trajeto-preco">{formatarDinheiro(Math.round(Number(t.preco) * 100), t.moeda)}</span>}
             {t.preco !== null && t.moeda && t.situacao !== 'sugestao' && (
@@ -170,6 +178,15 @@ export default function Transportes() {
             {destinos.length} {destinos.length === 1 ? 'parada' : 'paradas'} · {trajetos.length}{' '}
             {trajetos.length === 1 ? 'trajeto cadastrado' : 'trajetos cadastrados'}
           </p>
+          {todosTrajetos.some((t) => t.passageiros.length > 0) && (
+            <label className="interruptor trajeto-meus">
+              <span>
+                <strong>Meu itinerário</strong>
+                <small>Só os trajetos em que você vai</small>
+              </span>
+              <input type="checkbox" checked={soOsMeus} onChange={(e) => setSoOsMeus(e.target.checked)} />
+            </label>
+          )}
           {trajetos.length > 0 && (
             <p className="trajeto-resumo">
               {resumo.comprados} de {resumo.total} {resumo.total === 1 ? 'comprado' : 'comprados'}
@@ -445,6 +462,7 @@ export default function Transportes() {
           <FormTrajeto
             viagemId={viagem.id}
             moedaViagem={viagem.moeda_principal}
+            membros={membros}
             destinos={destinos}
             trajeto={janela.trajeto}
             origemId={janela.origemId}

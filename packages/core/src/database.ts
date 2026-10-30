@@ -1176,6 +1176,29 @@ export type Database = {
         }
         Relationships: []
       }
+      trajeto_passageiros: {
+        Row: {
+          trajeto_id: string
+          usuario_id: string
+        }
+        Insert: {
+          trajeto_id: string
+          usuario_id: string
+        }
+        Update: {
+          trajeto_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trajeto_passageiros_trajeto_id_fkey"
+            columns: ["trajeto_id"]
+            isOneToOne: false
+            referencedRelation: "trajetos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trajetos: {
         Row: {
           bate_e_volta: boolean

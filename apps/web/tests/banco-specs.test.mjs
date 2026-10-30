@@ -1338,3 +1338,17 @@ test('066: até 3 "não abro mão" por pessoa por destino; comboio vê; só tira
   await como(db, ADM, `delete from public.lugar_prioridades where usuario_id = '${MEMBRO}'`)
   assert.equal((await db.query('select count(*)::int as n from public.lugar_prioridades')).rows[0].n, 5)
 })
+
+// ---------------- 067: passageiros ----------------
+test('067: ADM define passageiros; cada um se põe/tira; só gente do comboio', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(db, ADM, `insert into public.trajetos (viagem_id, origem_id, destino_id) values ('${V}', '${NICE}', '${MONACO}') returning id`)
+  await como(db, ADM, 'insert into public.trajeto_passageiros (trajeto_id, usuario_id) values ($1, $2)', [id, ADM])
+  await como(db, MEMBRO, 'insert into public.trajeto_passageiros (trajeto_id, usuario_id) values ($1, $2)', [id, MEMBRO])
+  assert.equal((await como(db, MEMBRO, 'select * from public.trajeto_passageiros')).length, 2)
+  // Membro não põe nem tira outra pessoa
+  await como(db, MEMBRO, 'delete from public.trajeto_passageiros where usuario_id = $1', [ADM])
+  assert.equal((await db.query('select count(*)::int as n from public.trajeto_passageiros')).rows[0].n, 2)
+  await assert.rejects(como(db, ADM, 'insert into public.trajeto_passageiros (trajeto_id, usuario_id) values ($1, $2)', [id, ESTRANHO]), /comboio/)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.trajeto_passageiros')).length, 0)
+})

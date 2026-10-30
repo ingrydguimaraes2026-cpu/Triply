@@ -2,7 +2,8 @@ import { Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon }
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '@together/core'
 
-export type Trajeto = Tables<'trajetos'>
+// passageiros: spec 067 (lista vazia = o comboio inteiro vai)
+export type Trajeto = Tables<'trajetos'> & { passageiros: string[] }
 
 // Mesmos meios da tabela "trajetos" no banco
 export const MEIOS: { chave: string; nome: string; icone: LucideIcon }[] = [
@@ -23,11 +24,27 @@ export function meio(chave: string) {
 export async function buscarTrajetos(viagemId: string): Promise<Trajeto[]> {
   const { data, error } = await supabase
     .from('trajetos')
-    .select('*')
+    .select('*, trajeto_passageiros (usuario_id)')
     .eq('viagem_id', viagemId)
     .order('partida', { ascending: true, nullsFirst: false })
   if (error) throw error
-  return data
+  return data.map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) }))
+}
+
+// Spec 067: troca a lista de passageiros do trajeto (vazia = todo mundo). Só o ADM (o banco confere).
+export async function definirPassageiros(trajetoIds: string[], passageiros: string[]) {
+  const { error } = await supabase.from('trajeto_passageiros').delete().in('trajeto_id', trajetoIds)
+  if (error) throw error
+  if (passageiros.length === 0) return
+  const { error: erro2 } = await supabase
+    .from('trajeto_passageiros')
+    .insert(trajetoIds.flatMap((trajeto_id) => passageiros.map((usuario_id) => ({ trajeto_id, usuario_id }))))
+  if (erro2) throw erro2
+}
+
+// "Meu itinerário": os trajetos em que eu vou
+export function vouNesse(t: Pick<Trajeto, 'passageiros'>, meuId: string) {
+  return t.passageiros.length === 0 || t.passageiros.includes(meuId)
 }
 
 export type DadosDoTrajeto = {
@@ -45,16 +62,20 @@ export type DadosDoTrajeto = {
 }
 
 // Só o ADM consegue (regra do banco)
-export async function salvarTrajeto(viagemId: string, dados: DadosDoTrajeto, id?: string) {
-  const { error } = id
-    ? await supabase.from('trajetos').update(dados).eq('id', id)
-    : await supabase.from('trajetos').insert({ ...dados, viagem_id: viagemId })
+export async function salvarTrajeto(viagemId: string, dados: DadosDoTrajeto, id?: string): Promise<string> {
+  if (id) {
+    const { error } = await supabase.from('trajetos').update(dados).eq('id', id)
+    if (error) throw error
+    return id
+  }
+  const { data, error } = await supabase.from('trajetos').insert({ ...dados, viagem_id: viagemId }).select('id').single()
   if (error) throw error
+  return data.id
 }
 
 // Bate-e-volta: ida e volta gravadas juntas (um insert só = tudo ou nada)
-export async function criarBateEVolta(viagemId: string, ida: DadosDoTrajeto, volta: Pick<DadosDoTrajeto, 'partida' | 'chegada'>) {
-  const { error } = await supabase.from('trajetos').insert([
+export async function criarBateEVolta(viagemId: string, ida: DadosDoTrajeto, volta: Pick<DadosDoTrajeto, 'partida' | 'chegada'>): Promise<string[]> {
+  const { data, error } = await supabase.from('trajetos').insert([
     { ...ida, viagem_id: viagemId, bate_e_volta: true },
     {
       ...ida,
@@ -67,8 +88,9 @@ export async function criarBateEVolta(viagemId: string, ida: DadosDoTrajeto, vol
       preco: null, // o preço (ida e volta) fica só na ida, pra não contar em dobro
       moeda: null,
     },
-  ])
+  ]).select('id')
   if (error) throw error
+  return data.map((t) => t.id)
 }
 
 export async function apagarTrajeto(id: string) {
