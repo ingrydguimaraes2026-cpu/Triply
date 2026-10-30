@@ -1397,3 +1397,10 @@ test('072: foto da opção só https', async () => {
   await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome, foto_url) values ('${V}', '${NICE}', 'Casa', 'https://img.exemplo.com/a.jpg')`)
   await assert.rejects(como(db, ADM, "update public.hospedagens set foto_url = 'javascript:alert(1)'"), /check/)
 })
+
+// ---------------- 073: motorista ----------------
+test('073: motorista do trecho de carro tem que ser do comboio', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.trajetos (viagem_id, origem_id, destino_id, meio, motorista_id) values ('${V}', '${NICE}', '${MONACO}', 'carro', '${MEMBRO}')`)
+  await assert.rejects(como(db, ADM, `update public.trajetos set motorista_id = '${ESTRANHO}'`), /comboio/)
+})

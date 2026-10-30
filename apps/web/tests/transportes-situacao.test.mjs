@@ -39,3 +39,18 @@ test('prontidão: média das partes que existem e o que falta', async () => {
   )
   assert.equal(prontidao([{ nome: 'x', feitas: 0, total: 0 }]), null)
 })
+
+test('carro: km estimados, combustível e rodízio (spec 073)', async () => {
+  const { kmEstimados, combustivelEstimado, rodizio } = await import(new URL('../../../packages/core/src/transportes.ts', import.meta.url))
+  const nice = { latitude: 43.7, longitude: 7.26 }
+  const monaco = { latitude: 43.73, longitude: 7.42 }
+  const km = kmEstimados(nice, monaco)
+  assert.ok(km >= 15 && km <= 20, String(km))
+  assert.equal(kmEstimados(nice, { latitude: null, longitude: null }), null)
+  // 120 km a 12 km/l com litro a € 1,90 = € 19,00
+  assert.equal(combustivelEstimado(120, 12, 190), 1900)
+  assert.deepEqual(rodizio([{ motorista_id: 'a', km: 100 }, { motorista_id: 'b', km: 50 }, { motorista_id: 'a', km: 20 }, { motorista_id: null, km: 10 }]), [
+    { motoristaId: 'a', km: 120, trechos: 2 },
+    { motoristaId: 'b', km: 50, trechos: 1 },
+  ])
+})

@@ -1271,6 +1271,7 @@ export type Database = {
           link_reserva: string | null
           meio: string
           moeda: string | null
+          motorista_id: string | null
           observacao: string | null
           origem_id: string | null
           partida: string | null
@@ -1286,6 +1287,7 @@ export type Database = {
           link_reserva?: string | null
           meio?: string
           moeda?: string | null
+          motorista_id?: string | null
           observacao?: string | null
           origem_id?: string | null
           partida?: string | null
@@ -1301,6 +1303,7 @@ export type Database = {
           link_reserva?: string | null
           meio?: string
           moeda?: string | null
+          motorista_id?: string | null
           observacao?: string | null
           origem_id?: string | null
           partida?: string | null

@@ -59,6 +59,7 @@ export type DadosDoTrajeto = {
   situacao: string
   preco: number | null
   moeda: string | null
+  motorista_id?: string | null // spec 073
 }
 
 // Só o ADM consegue (regra do banco)

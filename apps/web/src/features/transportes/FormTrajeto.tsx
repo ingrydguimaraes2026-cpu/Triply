@@ -31,6 +31,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
   const [link, setLink] = useState(trajeto?.link_reserva ?? '')
   const [situacao, setSituacao] = useState(trajeto?.situacao ?? 'sugestao')
   const [passageiros, setPassageiros] = useState<string[]>(trajeto?.passageiros ?? [])
+  const [motorista, setMotorista] = useState(trajeto?.motorista_id ?? '')
   const [preco, setPreco] = useState(trajeto?.preco != null ? String(trajeto.preco).replace('.', ',') : '')
   const [moeda, setMoeda] = useState(trajeto?.moeda ?? moedaViagem)
   const [salvando, setSalvando] = useState(false)
@@ -67,6 +68,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
       situacao,
       preco: precoNumero,
       moeda: precoNumero === null ? null : moedaLimpa,
+      motorista_id: meioEscolhido === 'carro' ? motorista || null : null,
     }
     setSalvando(true)
     try {
@@ -178,6 +180,22 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
             </label>
             <input id="volta-chegada" type="datetime-local" value={voltaChegada} min={voltaPartida || undefined} onChange={(e) => setVoltaChegada(e.target.value)} />
           </div>
+        </div>
+      )}
+
+      {meioEscolhido === 'carro' && (
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-motorista">
+            Quem dirige
+          </label>
+          <select id="trajeto-motorista" value={motorista} onChange={(e) => setMotorista(e.target.value)}>
+            <option value="">A combinar</option>
+            {membros.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 

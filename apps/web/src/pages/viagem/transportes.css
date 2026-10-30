@@ -278,3 +278,10 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Carro e rodízio (spec 073) */
+.trajeto-carro {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+}

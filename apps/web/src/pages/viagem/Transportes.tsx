@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from 'lucide-react'
-import { formatarDinheiro, nomeDaSituacao, resumoDosTrajetos, type Tables } from '@together/core'
+import { formatarDinheiro, kmEstimados, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -68,6 +68,13 @@ export default function Transportes() {
   const todosAvisos = trajetos.flatMap((t) => avisosDoTrajeto(t, destinos, trajetos).map((texto) => ({ texto, trajeto: t })))
   const avisos = todosAvisos.filter((a, i) => todosAvisos.findIndex((b) => b.texto === a.texto) === i)
   const resumo = resumoDosTrajetos(trajetos)
+  // Spec 073: km estimados de cada trecho de carro e o rodízio de motoristas
+  const kmDoTrajeto = (t: Trajeto) => {
+    const de = destinoDe(t.origem_id)
+    const para = destinoDe(t.destino_id)
+    return de && para ? kmEstimados(de, para) : null
+  }
+  const motoristas = rodizio(trajetos.filter((t) => t.meio === 'carro').map((t) => ({ motorista_id: t.motorista_id ?? null, km: kmDoTrajeto(t) })))
   const proximo = proximoDeslocamento(trajetos, destinos.map((d) => d.id))
 
   const porDia = new Map<string, Trajeto[]>()
@@ -129,6 +136,14 @@ export default function Transportes() {
               </span>
             )}
             <span className={`selo-situacao situacao-${t.situacao}`}>{nomeDaSituacao(t.situacao)}</span>
+            {/* Spec 073: carro, quem dirige e km estimados */}
+            {t.meio === 'carro' && (t.motorista_id || kmDoTrajeto(t)) && (
+              <span className="trajeto-carro">
+                {t.motorista_id && `${t.motorista_id === meuId ? 'Você dirige' : `${membros.find((m) => m.id === t.motorista_id)?.nome.split(' ')[0] ?? '?'} dirige`}`}
+                {t.motorista_id && kmDoTrajeto(t) && ' · '}
+                {kmDoTrajeto(t) && `~${kmDoTrajeto(t)} km`}
+              </span>
+            )}
             {t.preco !== null && t.moeda && <span className="trajeto-preco">{formatarDinheiro(Math.round(Number(t.preco) * 100), t.moeda)}</span>}
             {t.preco !== null && t.moeda && t.situacao !== 'sugestao' && (
               <button type="button" className="botao-texto" onClick={() => setGastoDe(t)}>
@@ -186,6 +201,14 @@ export default function Transportes() {
               </span>
               <input type="checkbox" checked={soOsMeus} onChange={(e) => setSoOsMeus(e.target.checked)} />
             </label>
+          )}
+          {motoristas.length > 0 && (
+            <p className="trajeto-resumo">
+              Rodízio no volante:{' '}
+              {motoristas
+                .map((m) => `${m.motoristaId === meuId ? 'você' : (membros.find((x) => x.id === m.motoristaId)?.nome.split(' ')[0] ?? '?')} ~${m.km} km`)
+                .join(' · ')}
+            </p>
           )}
           {trajetos.length > 0 && (
             <p className="trajeto-resumo">
