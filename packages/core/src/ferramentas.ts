@@ -226,3 +226,26 @@ export function sugestoesDaResposta(
   }
   return lista.sort((a, b) => Number(!!b.wikipedia) - Number(!!a.wikipedia) || a.metros - b.metros).slice(0, 12)
 }
+
+// ---------- Localização ao vivo do comboio (F8, spec 107) ----------
+
+export type PosicaoDoComboio = { usuario_id: string; latitude: number; longitude: number; atualizado_em: string; ate: string }
+
+// Quem está compartilhando: mais perto primeiro (sem a minha posição, pela atualização mais nova)
+export function comboioPorPerto(
+  posicoes: PosicaoDoComboio[],
+  eu: { latitude: number; longitude: number } | null,
+  agora: Date,
+): { usuarioId: string; metros: number | null; minutosAtras: number; restamMinutos: number; latitude: number; longitude: number }[] {
+  return posicoes
+    .filter((p) => Date.parse(p.ate) > agora.getTime())
+    .map((p) => ({
+      usuarioId: p.usuario_id,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      metros: eu ? distanciaEmMetros(eu.latitude, eu.longitude, p.latitude, p.longitude) : null,
+      minutosAtras: Math.max(0, Math.round((agora.getTime() - Date.parse(p.atualizado_em)) / 60000)),
+      restamMinutos: Math.max(0, Math.round((Date.parse(p.ate) - agora.getTime()) / 60000)),
+    }))
+    .sort((a, b) => (a.metros ?? Infinity) - (b.metros ?? Infinity) || a.minutosAtras - b.minutosAtras)
+}

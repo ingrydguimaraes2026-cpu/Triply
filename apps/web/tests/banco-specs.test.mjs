@@ -1634,3 +1634,25 @@ test('089+101: meus dados traz o diário e excluir apaga o diário', async () =>
   await como(db, ADM, 'select public.excluir_meus_dados()')
   assert.equal((await db.query('select count(*)::int n from public.diario')).rows[0].n, 0)
 })
+
+// ---------------- 107: localização ao vivo ----------------
+test('107: comboio vê enquanto vale; até 8 h; só a própria; vencida some', async () => {
+  const db = await novoBanco()
+  const gravar = (quem, horas) =>
+    como(db, quem, `insert into public.localizacoes_ao_vivo (viagem_id, latitude, longitude, ate) values ('${V}', 43.7, 7.26, now() + interval '${horas} hours')
+      on conflict (viagem_id, usuario_id) do update set latitude = excluded.latitude, longitude = excluded.longitude, ate = excluded.ate`)
+  await gravar(MEMBRO, 2)
+  assert.equal((await como(db, ADM, 'select * from public.localizacoes_ao_vivo')).length, 1)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.localizacoes_ao_vivo')).length, 0)
+  await assert.rejects(gravar(MEMBRO, 9), /8 horas/)
+  await assert.rejects(gravar(ESTRANHO, 1), /row-level security/)
+  // ADM não mexe na do membro
+  await como(db, ADM, 'update public.localizacoes_ao_vivo set latitude = 0')
+  assert.equal((await db.query('select latitude from public.localizacoes_ao_vivo')).rows[0].latitude, 43.7)
+  // Venceu: ninguém vê, e a limpeza apaga
+  // (o gatilho não deixa pôr no passado: desliga só pra simular o tempo passando)
+  await db.exec("alter table public.localizacoes_ao_vivo disable trigger conferir_localizacao; update public.localizacoes_ao_vivo set ate = now() - interval '1 minute'; alter table public.localizacoes_ao_vivo enable trigger conferir_localizacao;")
+  assert.equal((await como(db, MEMBRO, 'select * from public.localizacoes_ao_vivo')).length, 0)
+  await db.query('select privado.limpar_localizacoes()')
+  assert.equal((await db.query('select count(*)::int n from public.localizacoes_ao_vivo')).rows[0].n, 0)
+})

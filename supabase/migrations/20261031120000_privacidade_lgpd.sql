@@ -122,12 +122,15 @@ begin
   delete from public.metas_cambio where usuario_id = eu;
   delete from public.chegadas where usuario_id = eu;
   delete from public.seguros_viagem where criado_por = eu;
-  -- Tabelas de migrations posteriores (specs 100 e 101): só se já existirem
+  -- Tabelas de migrations posteriores (specs 100, 101 e 107): só se já existirem
   if to_regclass('public.diario') is not null then
     execute 'delete from public.diario where autor = $1' using eu;
   end if;
   if to_regclass('public.post_marcacoes') is not null then
     execute 'delete from public.post_marcacoes where usuario_id = $1' using eu;
+  end if;
+  if to_regclass('public.localizacoes_ao_vivo') is not null then
+    execute 'delete from public.localizacoes_ao_vivo where usuario_id = $1' using eu;
   end if;
 
   update public.perfis set nome = 'Conta excluída', avatar_url = null where id = eu;

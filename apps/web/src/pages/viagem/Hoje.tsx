@@ -11,6 +11,7 @@ import BotaoIr from '../../components/ui/BotaoIr'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
+import OndeEstaOComboio from '../../features/hoje/OndeEstaOComboio'
 import './abas.css'
 import './hoje.css'
 
@@ -23,7 +24,7 @@ type Ponto = Pick<Tables<'pontos_de_encontro'>, 'id' | 'local' | 'quando' | 'lat
 
 // Tela Hoje (spec 058): o que está acontecendo agora, o próximo, onde dormimos, encontro e as ferramentas do dia.
 export default function Hoje() {
-  const { viagem, destinos } = useViagemAtual()
+  const { viagem, destinos, membros, meuId } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
   const { eventos } = useEventosDaAgenda(viagem.id)
   const [hospedagens, setHospedagens] = useState<Hospedagem[]>([])
@@ -177,6 +178,9 @@ export default function Hoje() {
           </div>
         </Cartao>
       )}
+
+      {/* Spec 107: localização ao vivo (só com mais gente no comboio) */}
+      {membros.length > 1 && <OndeEstaOComboio viagemId={viagem.id} membros={membros} meuId={meuId} />}
 
       {encontrosDeHoje.length > 0 && (
         <Cartao titulo="Encontro" icone={MapPin}>

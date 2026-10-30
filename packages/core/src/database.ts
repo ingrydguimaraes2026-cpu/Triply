@@ -945,6 +945,36 @@ export type Database = {
         }
         Relationships: []
       }
+      localizacoes_ao_vivo: {
+        Row: {
+          ate: string
+          atualizado_em: string
+          latitude: number
+          longitude: number
+          precisao_m: number | null
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          ate: string
+          atualizado_em?: string
+          latitude: number
+          longitude: number
+          precisao_m?: number | null
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          ate?: string
+          atualizado_em?: string
+          latitude?: number
+          longitude?: number
+          precisao_m?: number | null
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       lugar_prioridades: {
         Row: {
           criado_em: string
