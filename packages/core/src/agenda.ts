@@ -9,7 +9,7 @@ export type EventoDaAgenda = Tables<'eventos_agenda'>
 
 export type ItemDaAgenda =
   | { tipo: 'saida' | 'chegada'; chave: string; hora: ''; titulo: string; detalhe: string }
-  | { tipo: 'trajeto'; chave: string; hora: string; titulo: string; detalhe: string; meio: string; trajetoId: string }
+  | { tipo: 'trajeto'; chave: string; hora: string; titulo: string; detalhe: string; meio: string; trajetoId: string; fim?: string }
   | { tipo: 'evento'; chave: string; hora: string; titulo: string; detalhe: string; evento: EventoDaAgenda }
 
 // "2026-11-20T18:30:00Z" → o dia no fuso do aparelho ("2026-11-20")
@@ -71,6 +71,8 @@ export function montarAgendaDoDia(
       detalhe: [t.chegada ? `chega ${horaNoFuso(t.chegada)}` : null, t.observacao].filter(Boolean).join(' · '),
       meio: t.meio,
       trajetoId: t.id,
+      // Spec 077: até que horas o trajeto ocupa o dia (pra avisar compromisso por cima)
+      ...(t.chegada && diaNoFuso(t.chegada) === dia ? { fim: horaNoFuso(t.chegada) } : {}),
     })
   }
 

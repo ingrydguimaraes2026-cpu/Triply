@@ -47,3 +47,23 @@ export function diaDePassagem(
   if (onde.saida === dia || saida) return { tipo: 'mudanca', saida }
   return null
 }
+
+// Tempo entre compromissos (spec 077). Sem API de rota: avisa quando um compromisso começa
+// antes do anterior acabar (ex.: jantar marcado com o trem ainda andando) ou com menos de `folga` min.
+export function compromissosApertados(
+  itens: { chave: string; hora: string; titulo: string; fim?: string }[],
+  folga = 30,
+): Record<string, { tipo: 'conflito' | 'apertado'; com: string; minutos: number }> {
+  const m = (h: string) => Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5))
+  const comHora = itens.filter((i) => i.hora).sort((a, b) => a.hora.localeCompare(b.hora))
+  const saida: Record<string, { tipo: 'conflito' | 'apertado'; com: string; minutos: number }> = {}
+  for (let i = 1; i < comHora.length; i++) {
+    const antes = comHora[i - 1]
+    const agora = comHora[i]
+    const termina = antes.fim ? m(antes.fim) : m(antes.hora)
+    const minutos = m(agora.hora) - termina
+    if (antes.fim && minutos < 0) saida[agora.chave] = { tipo: 'conflito', com: antes.titulo, minutos }
+    else if (minutos >= 0 && minutos < folga && agora.hora !== antes.hora) saida[agora.chave] = { tipo: 'apertado', com: antes.titulo, minutos }
+  }
+  return saida
+}

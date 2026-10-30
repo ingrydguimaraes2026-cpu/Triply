@@ -38,3 +38,17 @@ test('dia de passagem e de mudança', async () => {
   assert.equal(diaDePassagem('2026-11-12', ROMA, [], [MILAO, ROMA], dia, hora), null)
   assert.equal(diaDePassagem('2026-11-12', undefined, [], [], dia, hora), null)
 })
+
+test('compromissos apertados: conflito com trajeto e folga curta (spec 077)', async () => {
+  const { compromissosApertados } = await import(new URL('../../../packages/core/src/hoje.ts', import.meta.url))
+  const r = compromissosApertados([
+    { chave: 'trem', hora: '09:15', titulo: 'Nice → Roma', fim: '15:40' },
+    { chave: 'almoco', hora: '13:00', titulo: 'Almoço' },
+    { chave: 'museu', hora: '13:20', titulo: 'Museu' },
+    { chave: 'jantar', hora: '20:00', titulo: 'Jantar' },
+    { chave: 'livre', hora: '', titulo: 'Comprar chip' },
+  ])
+  assert.deepEqual(r.almoco, { tipo: 'conflito', com: 'Nice → Roma', minutos: -160 })
+  assert.deepEqual(r.museu, { tipo: 'apertado', com: 'Almoço', minutos: 20 })
+  assert.equal(r.jantar, undefined)
+})

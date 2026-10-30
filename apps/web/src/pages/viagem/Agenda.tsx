@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, Plus } from 'lucide-react'
-import { destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
+import { compromissosApertados, destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -54,6 +54,7 @@ export default function Agenda() {
     [dia, destinos, trajetos, eventos],
   )
   const onde = dia ? destinoDoDia(dia, destinos) : undefined
+  const apertos = useMemo(() => compromissosApertados(itens), [itens]) // spec 077
   // Quantos itens cada dia tem (bolinha no botão do dia)
   const temAlgo = useMemo(
     () => new Set(dias.filter((d) => montarAgendaDoDia(d, { destinos, trajetos, eventos: eventos ?? [] }).length > 0)),
@@ -163,6 +164,7 @@ export default function Agenda() {
                 aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })}
                 podeEditar={podeEditar}
                 aoMover={mover}
+                aperto={apertos[item.chave]}
                 nomes={(ids) => ids.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
               />
             ))}
@@ -200,12 +202,14 @@ function LinhaDaAgenda({
   podeEditar,
   nomes,
   aoMover,
+  aperto,
 }: {
   item: ItemDaAgenda
   aoEditar: (e: EventoDaAgenda) => void
   podeEditar: (e: EventoDaAgenda) => boolean
   nomes: (ids: string[]) => string
   aoMover?: (e: EventoDaAgenda, direcao: -1 | 1) => void // spec 071
+  aperto?: { tipo: 'conflito' | 'apertado'; com: string; minutos: number } // spec 077
 }) {
   const Icone =
     item.tipo === 'trajeto' ? meio(item.meio).icone : item.tipo === 'chegada' ? LogIn : item.tipo === 'saida' ? LogOut : Clock
@@ -219,6 +223,11 @@ function LinhaDaAgenda({
       <span className="agenda-texto">
         <strong>{item.titulo}</strong>
         {item.detalhe && <small>{item.detalhe}</small>}
+        {aperto && (
+          <small className={`agenda-aperto ${aperto.tipo}`}>
+            {aperto.tipo === 'conflito' ? `⚠ Começa antes de acabar "${aperto.com}"` : `⏱ Só ${aperto.minutos} min depois de "${aperto.com}"`}
+          </small>
+        )}
         {/* Spec 070: evento só de parte do comboio */}
         {item.tipo === 'evento' && (item.evento.participantes?.length ?? 0) > 0 && (
           <small className="agenda-participantes">só {nomes(item.evento.participantes)}</small>

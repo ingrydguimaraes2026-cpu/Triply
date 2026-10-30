@@ -196,3 +196,16 @@
   font-size: 18px;
   font-weight: 800;
 }
+
+/* Tempo entre compromissos (spec 077) */
+.agenda-aperto {
+  font-weight: 700;
+}
+
+.agenda-aperto.conflito {
+  color: var(--cor-pessoal);
+}
+
+.agenda-aperto.apertado {
+  color: var(--caramelo);
+}
