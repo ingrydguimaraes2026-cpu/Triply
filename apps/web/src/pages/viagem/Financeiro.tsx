@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Coins, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, Coins, Download, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
+import { baixarArquivo } from '../../lib/baixar'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
@@ -130,10 +132,43 @@ export default function Financeiro() {
     return [...porDia]
   }, [dados, filtro, soPessoais])
 
+  // Spec 052: exportar os gastos (planilha em português ou formato do Splitwise)
+  function exportar(formato: 'planilha' | 'splitwise') {
+    if (!dados) return
+    const pessoas = [
+      ...membros.map((m) => ({ id: m.id, nome: m.nome })),
+      ...dados.exMembros.map((p) => ({ id: p.id, nome: `${p.nome} (ex-membro)` })),
+    ]
+    // Gasto pessoal dos outros nunca chega aqui (o banco só devolve os meus)
+    const base = nomeDoArquivoIcs(viagem.nome).replace(/\.ics$/, '')
+    if (formato === 'planilha') {
+      baixarArquivo(`${base}-gastos.csv`, gastosEmCsv(dados.gastos, pessoas, (c) => categoria(c).nome), 'text/csv;charset=utf-8')
+    } else {
+      baixarArquivo(`${base}-splitwise.csv`, gastosParaSplitwise(dados.gastos, pessoas), 'text/csv;charset=utf-8')
+    }
+  }
+
   const botaoLancar = (
-    <button type="button" className="botao" onClick={() => setJanela({ tipo: 'gasto' })}>
-      <Plus size={18} aria-hidden="true" /> Lançar gasto
-    </button>
+    <span className="financeiro-acoes">
+      {dados && dados.gastos.length > 0 && (
+        <details className="menu-exportar">
+          <summary className="botao secundario">
+            <Download size={16} aria-hidden="true" /> Exportar
+          </summary>
+          <div>
+            <button type="button" onClick={() => exportar('planilha')}>
+              Planilha (Excel, Google Planilhas)
+            </button>
+            <button type="button" onClick={() => exportar('splitwise')}>
+              Formato do Splitwise
+            </button>
+          </div>
+        </details>
+      )}
+      <button type="button" className="botao" onClick={() => setJanela({ tipo: 'gasto' })}>
+        <Plus size={18} aria-hidden="true" /> Lançar gasto
+      </button>
+    </span>
   )
 
   return (

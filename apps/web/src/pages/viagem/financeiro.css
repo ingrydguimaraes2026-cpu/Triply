@@ -265,3 +265,52 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Exportar gastos (spec 052) */
+.financeiro-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.menu-exportar {
+  position: relative;
+}
+
+.menu-exportar summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.menu-exportar summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-exportar > div {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  top: calc(100% + 6px);
+  display: grid;
+  min-width: 230px;
+  padding: 6px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  box-shadow: 0 8px 24px rgb(59 39 21 / 15%);
+}
+
+.menu-exportar > div button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-exportar > div button:hover {
+  background: var(--cor-comboio-fundo);
+}

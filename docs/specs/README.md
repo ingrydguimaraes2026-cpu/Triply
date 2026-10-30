@@ -64,6 +64,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 049 | [Contagem e progresso](049-contagem-e-progresso.md) ("faltam 23 dias · 78% pronto") | 2 | P | 006, 035 | Pronto pra testar (web) |
 | 050 | [Ficha da pessoa + emergência e saúde](050-ficha-da-pessoa.md) (alergias, aniversário, saúde só pra quem liberar) | 2 | P | 007, 008 | Pronto pra testar (web) · banco não aplicado |
 | 051 | ["Cheguei bem"](051-cheguei-bem.md) (um toque avisa o comboio) | 2 | P | 013 | Pronto pra testar (web) · banco não aplicado |
+| 052 | [Exportar gastos](052-exportar-gastos.md) (planilha e Splitwise) | 2 | P | 002 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

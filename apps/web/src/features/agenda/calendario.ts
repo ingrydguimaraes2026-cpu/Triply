@@ -3,6 +3,7 @@
 import { gerarIcs, nomeDoArquivoIcs, type ItemDoCalendario, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { meio } from '../transportes/api'
+import { baixarArquivo } from '../../lib/baixar'
 
 type Viagem = Pick<Tables<'viagens'>, 'id' | 'nome'>
 type Destino = Pick<Tables<'destinos'>, 'id' | 'nome' | 'chegada' | 'saida'>
@@ -76,14 +77,6 @@ export async function itensDoCalendario(viagem: Viagem, destinos: Destino[]): Pr
 // Monta e baixa o arquivo
 export async function baixarCalendario(viagem: Viagem, destinos: Destino[]): Promise<number> {
   const itens = await itensDoCalendario(viagem, destinos)
-  const arquivo = new Blob([gerarIcs(viagem.nome, itens)], { type: 'text/calendar;charset=utf-8' })
-  const url = URL.createObjectURL(arquivo)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = nomeDoArquivoIcs(viagem.nome)
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  baixarArquivo(nomeDoArquivoIcs(viagem.nome), gerarIcs(viagem.nome, itens), 'text/calendar;charset=utf-8')
   return itens.length
 }
