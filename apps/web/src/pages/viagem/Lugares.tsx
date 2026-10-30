@@ -17,6 +17,8 @@ import Gaveta from '../../components/ui/Gaveta'
 import BotaoIr from '../../components/ui/BotaoIr'
 import PertoDeMim from '../../features/lugares/PertoDeMim'
 import ImportarDoMaps from '../../features/lugares/ImportarDoMaps'
+import SugestoesDoDestino from '../../features/lugares/SugestoesDoDestino'
+import { adicionarLugar } from '../../features/lugares/api'
 import './abas.css'
 import './hospedagem.css'
 import './lugares.css'
@@ -202,6 +204,27 @@ export default function Lugares() {
         <button type="button" className="hosp-adicionar" onClick={() => setJanela({ destinoId: destino.id, tipo: filtro ?? undefined })}>
           <Plus size={16} aria-hidden="true" /> Adicionar lugar
         </button>
+        {/* Spec 094: sugestões do OpenStreetMap */}
+        <SugestoesDoDestino
+          key={destino.id}
+          destino={destino}
+          jaSalvos={lugares.map((x) => x.nome)}
+          aoSalvar={async (s) => {
+            await adicionarLugar(viagem.id, {
+              destinoId: destino.id,
+              tipo: 'passeio',
+              nome: s.nome,
+              link: s.wikipedia,
+              horario: null,
+              preco: null,
+              moeda: viagem.moeda_principal,
+              observacao: null,
+              latitude: s.latitude,
+              longitude: s.longitude,
+            })
+            await l.recarregar()
+          }}
+        />
       </section>
     )
   }

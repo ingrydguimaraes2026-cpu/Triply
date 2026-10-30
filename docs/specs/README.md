@@ -106,6 +106,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 091 | [Duplicar viagem](091-duplicar-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
 | 092 | [Detector de furos](092-detector-de-furos.md) | 8 | Pronto pra testar (web) · sem banco |
 | 093 | [Gasto por frase ou voz](093-gasto-por-frase-ou-voz.md) | 8 | Pronto pra testar (web) · sem banco |
+| 094 | [Sugestões de lugares por destino](094-sugestoes-de-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

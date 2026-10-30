@@ -162,3 +162,67 @@ export function estabelecimentosDaResposta(resposta: { features?: FeaturePhoton[
   }
   return lista
 }
+
+// ---------- Sugestões de lugares por destino (L4, spec 094) ----------
+// Atrações do OpenStreetMap perto do destino. Só as que têm verbete na Wikipédia/Wikidata
+// (sinal de que são conhecidas). Sem chave e sem custo.
+
+export type Sugestao = {
+  id: string
+  nome: string
+  tipo: 'museu' | 'mirante' | 'atracao' | 'historico'
+  latitude: number
+  longitude: number
+  metros: number
+  wikipedia: string | null // link
+}
+
+export function consultaDeSugestoes(latitude: number, longitude: number, raioMetros = 5000): string {
+  const perto = `(around:${raioMetros},${latitude},${longitude})`
+  const q =
+    `[out:json][timeout:20];(` +
+    `nwr["tourism"~"^(attraction|museum|viewpoint|gallery)$"]["name"]["wikidata"]${perto};` +
+    `nwr["historic"~"^(castle|monument|ruins|fort)$"]["name"]["wikidata"]${perto};` +
+    `);out center 80;`
+  return `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`
+}
+
+const simples = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '')
+
+function linkDaWikipedia(tag: string | undefined): string | null {
+  // "pt:Torre Eiffel" → https://pt.wikipedia.org/wiki/Torre_Eiffel
+  const m = tag?.match(/^([a-z-]{2,12}):(.+)$/)
+  return m ? `https://${m[1]}.wikipedia.org/wiki/${encodeURIComponent(m[2].replace(/ /g, '_'))}` : null
+}
+
+// Com Wikipédia primeiro, depois por distância. Tira o que já está salvo (pelo nome). No máximo 12.
+export function sugestoesDaResposta(
+  resposta: { elements?: ElementoOsm[] },
+  latitude: number,
+  longitude: number,
+  jaSalvos: string[],
+): Sugestao[] {
+  const salvos = new Set(jaSalvos.map(simples))
+  const vistos = new Set<string>()
+  const lista: Sugestao[] = []
+  for (const e of resposta.elements ?? []) {
+    const lat = e.lat ?? e.center?.lat
+    const lon = e.lon ?? e.center?.lon
+    const t = e.tags ?? {}
+    const nome = t['name:pt'] ?? t.name
+    if (lat === undefined || lon === undefined || !nome) continue
+    const chave = simples(nome)
+    if (salvos.has(chave) || vistos.has(chave)) continue
+    vistos.add(chave)
+    lista.push({
+      id: `${e.id}`,
+      nome,
+      tipo: t.tourism === 'museum' || t.tourism === 'gallery' ? 'museu' : t.tourism === 'viewpoint' ? 'mirante' : t.historic ? 'historico' : 'atracao',
+      latitude: lat,
+      longitude: lon,
+      metros: distanciaEmMetros(latitude, longitude, lat, lon),
+      wikipedia: linkDaWikipedia(t['wikipedia']),
+    })
+  }
+  return lista.sort((a, b) => Number(!!b.wikipedia) - Number(!!a.wikipedia) || a.metros - b.metros).slice(0, 12)
+}
