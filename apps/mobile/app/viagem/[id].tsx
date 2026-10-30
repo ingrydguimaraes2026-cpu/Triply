@@ -17,6 +17,8 @@ import { Avisos } from '../../src/ui/Avisos'
 import { Tarefas } from '../../src/ui/Tarefas'
 import { Enquetes } from '../../src/ui/Enquetes'
 import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
+import { AgendaDeHoje } from '../../src/ui/AgendaDeHoje'
+import { Clima } from '../../src/ui/Clima'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -147,6 +149,10 @@ export default function DetalheDaViagem() {
               )}
             </Cartao>
           </Pressable>
+
+          {/* Spec 029 e 022: agenda do dia e tempo (paridade com o site) */}
+          <AgendaDeHoje viagemId={viagem.id} inicio={viagem.dataInicio} fim={viagem.dataFim} />
+          <Clima viagemId={viagem.id} />
 
           {/* Spec 020: tarefas com responsável */}
           <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
