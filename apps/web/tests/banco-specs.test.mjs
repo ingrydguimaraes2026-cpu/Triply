@@ -1372,3 +1372,13 @@ test('068: quartos com vagas; cada um entra num só; cheio barra; só comboio', 
   await assert.rejects(como(db, ESTRANHO, 'select public.entrar_no_quarto($1, true)', [q2]), /não encontrado/)
   await assert.rejects(como(db, ADM, `update public.quartos set ocupantes = '{${ESTRANHO}}' where id = $1`, [q2]), /comboio/)
 })
+
+// ---------------- 069: mala individual ----------------
+test('069: mala é só minha; precisa ser do comboio', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.mala_itens (viagem_id, texto, quantidade) values ('${V}', 'Meias', 5)`)
+  assert.equal((await como(db, ADM, 'select * from public.mala_itens')).length, 0)
+  assert.equal((await como(db, MEMBRO, 'select texto from public.mala_itens'))[0].texto, 'Meias')
+  await assert.rejects(como(db, ESTRANHO, `insert into public.mala_itens (viagem_id, texto) values ('${V}', 'X')`), /row-level security/)
+  await assert.rejects(como(db, MEMBRO, `insert into public.mala_itens (viagem_id, texto, quantidade) values ('${V}', 'X', 0)`), /check/)
+})

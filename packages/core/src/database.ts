@@ -825,6 +825,36 @@ export type Database = {
           },
         ]
       }
+      mala_itens: {
+        Row: {
+          criado_em: string
+          feito: boolean
+          id: string
+          quantidade: number | null
+          texto: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          feito?: boolean
+          id?: string
+          quantidade?: number | null
+          texto: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          feito?: boolean
+          id?: string
+          quantidade?: number | null
+          texto?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       orcamento_faixas: {
         Row: {
           atualizado_em: string

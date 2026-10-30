@@ -81,6 +81,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 066 | ["Não abro mão"](066-nao-abro-mao.md) (3 obrigatórios por pessoa por destino) | 2 | M | 022 | Pronto pra testar (web) · banco não aplicado |
 | 067 | [Quem vai em cada trajeto](067-quem-vai-no-trajeto.md) (+ "meu itinerário" e lembrete só pra quem vai) | 2 | M | 004, 032 | Pronto pra testar (web) · banco não aplicado |
 | 068 | [Quem dorme onde](068-quem-dorme-onde.md) (quartos, vagas, sorteio) | 2 | M | 011 | Pronto pra testar (web) · banco não aplicado |
+| 069 | [Minha mala](069-mala-individual.md) (checklist pessoal com modelo pelo clima) | 2 | M | 048 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, CalendarRange, Camera, CircleCheck, ListChecks, Lock, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -37,6 +37,7 @@ import FichaDoPais from '../../features/ficha-do-pais/FichaDoPais'
 import ListasDoComboio from '../../features/listas/ListasDoComboio'
 import ChegueiBem from '../../features/chegadas/ChegueiBem'
 import DatasEmComum from '../../features/datas-em-comum/DatasEmComum'
+import MinhaMala from '../../features/mala/MinhaMala'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -376,6 +377,11 @@ export default function Overview() {
         {/* Spec 051: "cheguei bem" com um toque */}
         <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
           <ChegueiBem />
+        </Cartao>
+
+        {/* Spec 069: mala individual (só a pessoa vê) */}
+        <Cartao titulo="Minha mala" icone={Luggage} className="overview-mala">
+          <MinhaMala />
         </Cartao>
 
         {/* Spec 048: quem leva o quê + lista de compras */}
