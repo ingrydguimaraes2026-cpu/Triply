@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { AuthError, Session } from '@supabase/supabase-js'
 import { supabase } from '../../lib/supabase'
+import { apagarCopiasOffline } from '../offline/cache'
 
 // Diz se tem alguém logado. "carregando" fica true até o Supabase responder.
 export function useSessao() {
@@ -74,8 +75,11 @@ export function trocarSenha(novaSenha: string) {
   return supabase.auth.updateUser({ password: novaSenha })
 }
 
-export function sair() {
-  return supabase.auth.signOut()
+// Sair também apaga as cópias offline (spec 034), pra outra conta no mesmo aparelho não ver nada
+export async function sair() {
+  const resultado = await supabase.auth.signOut()
+  await apagarCopiasOffline()
+  return resultado
 }
 
 // Transforma os erros do Supabase (em inglês) em mensagens pra pessoa

@@ -367,3 +367,30 @@
   background: none;
   cursor: pointer;
 }
+
+/* Sem internet (spec 034) */
+.faixa-offline {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 16px;
+  background: var(--dourado-claro);
+  color: var(--cor-texto);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.faixa-offline svg {
+  flex: none;
+}
+
+@media (min-width: 1024px) {
+  /* No computador a faixa ocupa as duas colunas do grid */
+  .faixa-offline {
+    grid-column: 1 / -1;
+  }
+}

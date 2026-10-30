@@ -51,6 +51,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 037 | [Botão de emergência](037-emergencia.md) (números do país, hospital, consulado) | 2 | P | 010 | Pronto pra testar (web) |
 | 038 | [Passaporte: nacionalidade e validade](038-passaporte-e-nacionalidade.md) (aviso de 6 meses) | 2 | P | 008, 010 | Pronto pra testar (web) · banco não aplicado |
 | 039 | [Seguro viagem](039-seguro-viagem.md) (telefone 24 h na Emergência, quem está coberto) | 2 | P | 037 | Pronto pra testar (web) · banco não aplicado |
+| 034 | [Offline de leitura](034-offline-de-leitura.md) (o que já abriu abre sem internet) | 2 | G | PWA | Pronto pra testar (web publicado) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

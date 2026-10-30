@@ -44,7 +44,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 6 | I2 | Nacionalidade no perfil (sem número de documento) | P | ✅ feito (web) · spec 038 · banco a aplicar |
 | 7 | I3 | Validade do passaporte com alerta de 6 meses | P | ✅ feito (web) · spec 038 · banco a aplicar |
 | 8 | I5 | Seguro viagem (apólice, telefone 24 h, quem está coberto) | P | ✅ feito (web) · spec 039 · banco a aplicar |
-| 9 | M3 | Offline de leitura · spec 034 | G | a fazer |
+| 9 | M3 | Offline de leitura · spec 034 | G | ✅ feito (web) · spec 034 |
 | 10 | F3 | Pessoa sem app · spec 030 🔒 | P | a fazer |
 | 11 | H7 | Marcar acerto como pago 🔒 | P | a fazer |
 | 12 | N1 | Fechamento da viagem 🔒 | P | a fazer |

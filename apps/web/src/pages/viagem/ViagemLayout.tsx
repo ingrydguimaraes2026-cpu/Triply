@@ -11,6 +11,7 @@ import { useNovidades } from '../../features/notificacoes/hooks'
 import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
 import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import Emergencia from '../../features/emergencia/Emergencia'
+import FaixaOffline from '../../features/offline/FaixaOffline'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -104,6 +105,7 @@ export default function ViagemLayout() {
 
   return (
     <div className="viagem">
+      <FaixaOffline />
       {/* Celular: barra de cima com a viagem (leva pra Minhas viagens) e o perfil */}
       <header className="viagem-topo-celular">
         <Link to="/viagens" className="viagem-topo-nome">
