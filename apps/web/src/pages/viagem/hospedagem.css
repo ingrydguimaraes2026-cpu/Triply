@@ -245,3 +245,26 @@
   color: var(--cor-pessoal);
   font-weight: 700;
 }
+
+/* Vibe da opção (spec 063) */
+.hosp-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0;
+}
+
+.hosp-etiquetas span {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hosp-etiquetas .hosp-nota {
+  background: var(--dourado-claro);
+  color: var(--cor-texto);
+  font-weight: 800;
+}

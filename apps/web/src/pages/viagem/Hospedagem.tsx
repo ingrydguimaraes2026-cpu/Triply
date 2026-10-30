@@ -13,6 +13,7 @@ import {
   textoDosHorarios,
   TIPOS_NO_MAPA,
   type DestinoDaHospedagem,
+  nomeDaEtiqueta,
   type Opcao,
   type TipoNoMapa,
 } from '../../features/hospedagem/regras'
@@ -162,6 +163,14 @@ export default function Hospedagem() {
         {prazo?.nivel === 'passou' && (
           <p className="hosp-opcao-datas">
             <Hourglass size={13} aria-hidden="true" /> Cancelamento grátis acabou em {formatarData(opcao.cancelamentoGratisAte!)}
+          </p>
+        )}
+        {((opcao.etiquetas?.length ?? 0) > 0 || opcao.nota != null) && (
+          <p className="hosp-etiquetas">
+            {opcao.nota != null && <span className="hosp-nota">★ {String(opcao.nota).replace('.', ',')}</span>}
+            {opcao.etiquetas?.map((e) => (
+              <span key={e}>{nomeDaEtiqueta(e)}</span>
+            ))}
           </p>
         )}
         {opcao.guardaMalas && (

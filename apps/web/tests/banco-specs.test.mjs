@@ -1288,3 +1288,14 @@ test('062: como chegar na hospedagem, com limite de tamanho', async () => {
   assert.equal((await como(db, MEMBRO, 'select como_chegar from public.hospedagens'))[0].como_chegar, 'Ônibus 98 do aeroporto, € 6')
   await assert.rejects(como(db, ADM, `update public.hospedagens set como_chegar = repeat('x', 1001)`), /check/)
 })
+
+// ---------------- 063: vibe da hospedagem ----------------
+test('063: etiquetas da lista (até 4) e nota de 0 a 10', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome, etiquetas, nota) values ('${V}', '${NICE}', 'Hostel', '{social,barato}', 8.7)`)
+  const h = (await como(db, MEMBRO, 'select etiquetas, nota::text from public.hospedagens'))[0]
+  assert.deepEqual([h.etiquetas, h.nota], [['social', 'barato'], '8.7'])
+  await assert.rejects(como(db, ADM, "update public.hospedagens set etiquetas = '{festa}'"), /check/)
+  await assert.rejects(como(db, ADM, "update public.hospedagens set etiquetas = '{social,tranquilo,seguro,cozinha,barato}'"), /check/)
+  await assert.rejects(como(db, ADM, 'update public.hospedagens set nota = 11'), /check/)
+})

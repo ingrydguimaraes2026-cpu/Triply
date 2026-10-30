@@ -477,6 +477,7 @@ export type Database = {
           destino_id: string | null
           endereco: string | null
           escolhida: boolean
+          etiquetas: string[]
           guarda_malas: string | null
           guarda_malas_obs: string | null
           hora_checkin: string | null
@@ -486,6 +487,7 @@ export type Database = {
           link: string | null
           moeda: string
           nome: string
+          nota: number | null
           observacao: string | null
           preco_total: number | null
           regras_casa: string | null
@@ -505,6 +507,7 @@ export type Database = {
           destino_id?: string | null
           endereco?: string | null
           escolhida?: boolean
+          etiquetas?: string[]
           guarda_malas?: string | null
           guarda_malas_obs?: string | null
           hora_checkin?: string | null
@@ -514,6 +517,7 @@ export type Database = {
           link?: string | null
           moeda?: string
           nome: string
+          nota?: number | null
           observacao?: string | null
           preco_total?: number | null
           regras_casa?: string | null
@@ -533,6 +537,7 @@ export type Database = {
           destino_id?: string | null
           endereco?: string | null
           escolhida?: boolean
+          etiquetas?: string[]
           guarda_malas?: string | null
           guarda_malas_obs?: string | null
           hora_checkin?: string | null
@@ -542,6 +547,7 @@ export type Database = {
           link?: string | null
           moeda?: string
           nome?: string
+          nota?: number | null
           observacao?: string | null
           preco_total?: number | null
           regras_casa?: string | null

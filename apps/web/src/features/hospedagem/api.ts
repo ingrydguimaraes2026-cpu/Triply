@@ -17,6 +17,8 @@ export type DadosDaOpcao = {
   cancelamentoGratisAte: string | null // spec 041
   guardaMalas: string | null // spec 060: 'sim' | 'nao' | 'perguntar'
   guardaMalasObs: string | null
+  etiquetas: string[] // spec 063
+  nota: number | null
 }
 
 // Opções de hospedagem da viagem, com quem votou em cada uma (spec 011)
@@ -43,6 +45,8 @@ export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
     cancelamentoGratisAte: h.cancelamento_gratis_ate,
     guardaMalas: h.guarda_malas,
     guardaMalasObs: h.guarda_malas_obs,
+    etiquetas: h.etiquetas ?? [],
+    nota: h.nota === null ? null : Number(h.nota),
     escolhida: h.escolhida,
     criadoPor: h.criado_por,
     votos: (h.hospedagem_votos ?? []).map((v) => v.usuario_id),
@@ -72,6 +76,8 @@ function paraLinha(d: DadosDaOpcao) {
     cancelamento_gratis_ate: d.cancelamentoGratisAte || null,
     guarda_malas: d.guardaMalas || null,
     guarda_malas_obs: d.guardaMalasObs?.trim() || null,
+    etiquetas: d.etiquetas,
+    nota: d.nota,
   }
 }
 

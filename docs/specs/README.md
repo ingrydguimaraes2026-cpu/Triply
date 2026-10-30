@@ -75,6 +75,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 060 | [Malas antes do check-in + dia de passagem](060-malas-e-dia-de-passagem.md) (na Hospedagem e na Hoje) | 2 | P | 011, 058 | Pronto pra testar (web) · banco não aplicado |
 | 061 | ["Já fomos" e "Perto de mim"](061-ja-fomos-e-perto-de-mim.md) (Lugares) | 2 | P | 016, 040 | Pronto pra testar (web) · banco não aplicado |
 | 062 | [Transfer de chegada](062-como-chegar.md) ("como chegar" no guia e na Hoje) | 2 | P | 026, 058 | Pronto pra testar (web) · banco não aplicado |
+| 063 | [Vibe da hospedagem + hostels](063-vibe-da-hospedagem.md) (etiquetas, nota, busca de hostels) | 2 | P | 011 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

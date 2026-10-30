@@ -21,6 +21,8 @@ export type Opcao = {
   cancelamentoGratisAte?: string | null // spec 041
   guardaMalas?: string | null // spec 060
   guardaMalasObs?: string | null
+  etiquetas?: string[] // spec 063
+  nota?: number | null
   escolhida: boolean
   criadoPor: string
   votos: string[] // ids de quem votou
@@ -43,7 +45,7 @@ export function guiaVazio(guia: GuiaDaCasa | undefined): boolean {
 
 // ---------------- Links de busca ----------------
 
-export type Busca = { site: 'airbnb' | 'booking' | 'maps'; nome: string; url: string }
+export type Busca = { site: 'airbnb' | 'booking' | 'hostelworld' | 'maps'; nome: string; url: string }
 
 // "Nice, França" (só o nome se o país vier vazio ou repetido)
 export function localDaBusca(destino: Pick<DestinoBase, 'nome' | 'pais'>) {
@@ -86,7 +88,25 @@ export function linksDeBusca(destino: DestinoBase, pessoas: number): Busca[] {
     },
     { site: 'booking', nome: 'Booking', url: `https://www.booking.com/searchresults.pt-br.html?${booking}` },
     { site: 'maps', nome: 'Google Maps', url: `https://www.google.com/maps/search/?${maps}` },
+    // Spec 063 (ideia do Hostelworld): hostels com avaliação e "vibe". Busca, porque o site não tem link de pesquisa estável.
+    { site: 'hostelworld', nome: 'Hostels', url: `https://www.google.com/search?${new URLSearchParams({ q: `hostelworld ${local}` })}` },
   ]
+}
+
+// ---------------- Vibe da opção (spec 063) ----------------
+
+export const ETIQUETAS_DA_HOSPEDAGEM: { chave: string; nome: string }[] = [
+  { chave: 'social', nome: 'Social / animado' },
+  { chave: 'tranquilo', nome: 'Tranquilo' },
+  { chave: 'seguro', nome: 'Seguro' },
+  { chave: 'bem_localizado', nome: 'Bem localizado' },
+  { chave: 'cozinha', nome: 'Tem cozinha' },
+  { chave: 'familia', nome: 'Bom pra família' },
+  { chave: 'barato', nome: 'Barato' },
+]
+
+export function nomeDaEtiqueta(chave: string): string {
+  return ETIQUETAS_DA_HOSPEDAGEM.find((e) => e.chave === chave)?.nome ?? chave
 }
 
 // ---------------- Site do link ----------------

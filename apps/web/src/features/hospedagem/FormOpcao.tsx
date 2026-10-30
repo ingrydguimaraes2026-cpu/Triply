@@ -5,7 +5,7 @@ import { mensagemDeErro } from '../financeiro/api'
 import { moedasDaViagem } from '../financeiro/categorias'
 import { lerValor, paraCampo } from '@together/core'
 import type { DadosDaOpcao } from './api'
-import { detectarSite, linkValido, sugerirNome, type Opcao } from './regras'
+import { detectarSite, ETIQUETAS_DA_HOSPEDAGEM, linkValido, sugerirNome, type Opcao } from './regras'
 
 type Props = {
   destinos: Tables<'destinos'>[]
@@ -34,6 +34,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   const [cancelamento, setCancelamento] = useState(opcao?.cancelamentoGratisAte ?? '')
   const [guardaMalas, setGuardaMalas] = useState(opcao?.guardaMalas ?? '')
   const [guardaMalasObs, setGuardaMalasObs] = useState(opcao?.guardaMalasObs ?? '')
+  const [etiquetas, setEtiquetas] = useState<string[]>(opcao?.etiquetas ?? [])
+  const [nota, setNota] = useState(opcao?.nota != null ? String(opcao.nota).replace('.', ',') : '')
   const [observacao, setObservacao] = useState(opcao?.observacao ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -60,6 +62,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
     const preco = valorTexto.trim() ? lerValor(valorTexto) : null
     if (valorTexto.trim() && preco === null) return setErro('Preço inválido. Ex.: 480 ou 1.234,50')
     if (checkin && checkout && checkout < checkin) return setErro('O check-out está antes do check-in.')
+    const notaNumero = nota.trim() ? Number(nota.trim().replace(',', '.')) : null
+    if (notaNumero !== null && (!Number.isFinite(notaNumero) || notaNumero < 0 || notaNumero > 10)) return setErro('A nota vai de 0 a 10. Ex.: 8,7')
 
     setSalvando(true)
     try {
@@ -76,6 +80,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         cancelamentoGratisAte: cancelamento || null,
         guardaMalas: guardaMalas || null,
         guardaMalasObs: guardaMalasObs || null,
+        etiquetas,
+        nota: notaNumero,
         observacao: observacao.trim() || null,
       })
       aoTerminar()
@@ -182,6 +188,30 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         </label>
         <input id="hosp-cancelamento" type="date" value={cancelamento} onChange={(e) => setCancelamento(e.target.value)} />
         <p className="form-dica">Na escolhida, o comboio recebe um lembrete no celular 2 dias antes.</p>
+      </div>
+
+      <div className="form-campo">
+        <span className="form-rotulo">Como é o lugar? (até 4)</span>
+        <div className="escolhas">
+          {ETIQUETAS_DA_HOSPEDAGEM.map((e) => (
+            <button
+              key={e.chave}
+              type="button"
+              aria-pressed={etiquetas.includes(e.chave)}
+              onClick={() =>
+                setEtiquetas(etiquetas.includes(e.chave) ? etiquetas.filter((x) => x !== e.chave) : etiquetas.length < 4 ? [...etiquetas, e.chave] : etiquetas)
+              }
+            >
+              {e.nome}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="form-campo">
+        <label className="form-rotulo" htmlFor="hosp-nota">
+          Nota no site (0 a 10)
+        </label>
+        <input id="hosp-nota" inputMode="decimal" placeholder="Ex.: 8,7" value={nota} onChange={(e) => setNota(e.target.value)} />
       </div>
 
       <div className="form-linha">

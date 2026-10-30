@@ -158,3 +158,10 @@ test('horário: só um dos dois, sem datas, e "da 1h"/"da meia-noite"', () => {
 test('horário: sem nenhum horário, não mostra nada (opções antigas)', () => {
   assert.equal(textoDosHorarios({ checkin: '2027-06-07', checkout: '2027-06-09' }, null), null)
 })
+
+test('busca de hostels e nome das etiquetas (spec 063)', async () => {
+  const { linksDeBusca, nomeDaEtiqueta } = await import(new URL('../src/features/hospedagem/regras.ts', import.meta.url))
+  const hostels = linksDeBusca({ id: 'n', nome: 'Nice', pais: 'França', chegada: null, saida: null }, 2).find((b) => b.site === 'hostelworld')
+  assert.match(hostels.url, /q=hostelworld\+Nice%2C\+Fran/)
+  assert.equal(nomeDaEtiqueta('bem_localizado'), 'Bem localizado')
+})
