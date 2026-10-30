@@ -112,6 +112,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 097 | [Link de rede social vira lugar](097-link-de-rede-social-vira-lugar.md) | 8 | Pronto pra testar (web) · sem banco |
 | 098 | [Álbum por dia e melhores fotos](098-album-por-dia-e-melhores.md) | 8 | Pronto pra testar (web) · sem banco |
 | 099 | [Baixar fotos em .zip](099-baixar-fotos-em-zip.md) | 8 | Pronto pra testar (web) · sem banco |
+| 103 | [Indicar lugares pra um amigo](103-indicar-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
 | 102 | [Onde já fui e estatísticas](102-onde-ja-fui-e-estatisticas.md) | 8 | Pronto pra testar (web) · sem banco |
 | 101 | [Diário da viagem](101-diario-da-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
 | 100 | [Marcar pessoas nas fotos](100-marcar-pessoas-nas-fotos.md) | 8 | Pronto pra testar (web) · banco não aplicado |

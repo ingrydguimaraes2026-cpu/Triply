@@ -1331,3 +1331,9 @@
   color: var(--cor-texto-suave);
   font-variant-numeric: tabular-nums;
 }
+
+/* Spec 103: indicar lugares */
+.indicar-lugares {
+  margin-top: 10px;
+  margin-right: 14px;
+}

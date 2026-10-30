@@ -32,3 +32,26 @@ test('corrida: Uber com destino; Bolt e Free Now sem', () => {
   assert.equal(bolt.preenche, false)
   assert.equal(freenow.preenche, false)
 })
+
+test('103: texto pra indicar lugares, recomendados primeiro', async () => {
+  const { textoParaIndicar } = await import(new URL('../../../packages/core/src/navegacao.ts', import.meta.url))
+  const texto = textoParaIndicar('Nice', [
+    { nome: 'Castelo', tipo: 'passeio', votos: 3, visitado: false },
+    { nome: 'Pizzaria', tipo: 'comida', votos: 1, visitado: true, latitude: 43.7, longitude: 7.26, observacao: 'peça a de trufa' },
+    { nome: 'Guarda-volumes X', tipo: 'guarda_volumes', votos: 0, visitado: false },
+  ])
+  assert.equal(
+    texto,
+    [
+      'Minhas dicas em Nice:',
+      '',
+      '🍽️ Pizzaria ✓ fomos e recomendo (peça a de trufa)',
+      'https://www.google.com/maps/search/?api=1&query=43.7,7.26',
+      '',
+      '📍 Castelo',
+      'https://www.google.com/maps/search/?api=1&query=Castelo%20Nice',
+      '',
+      'Montado no Together',
+    ].join('\n'),
+  )
+})

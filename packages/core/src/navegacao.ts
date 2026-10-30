@@ -72,3 +72,35 @@ export function linksDeCorrida(a: Alvo): LinkDeApp[] {
     { chave: 'freenow', nome: 'FREENOW', url: 'https://www.free-now.com/', preenche: false },
   ]
 }
+
+// ---------- Indicar lugares pra um amigo (N8, spec 103) ----------
+// Texto pronto pro WhatsApp com os lugares de um destino. Links do Google Maps (o amigo não
+// precisa ter o app). Fomos e recomendamos primeiro, depois os mais curtidos.
+
+type LugarParaIndicar = {
+  nome: string
+  tipo: string
+  votos: number
+  visitado: boolean
+  latitude?: number | null
+  longitude?: number | null
+  link?: string | null
+  observacao?: string | null
+}
+
+const EMOJI: Record<string, string> = { comida: '🍽️', passeio: '📍', guarda_volumes: '🧳', outro: '⭐' }
+
+export function textoParaIndicar(destino: string, lugares: LugarParaIndicar[]): string {
+  const lista = lugares
+    .filter((l) => l.tipo !== 'guarda_volumes' || l.visitado)
+    .sort((a, b) => Number(b.visitado) - Number(a.visitado) || b.votos - a.votos || a.nome.localeCompare(b.nome))
+  const linhas = lista.map((l) => {
+    const onde =
+      l.latitude != null && l.longitude != null
+        ? `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}`
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome} ${destino}`)}`
+    const dica = l.observacao?.trim() ? ` (${l.observacao.trim().slice(0, 80)})` : ''
+    return `${EMOJI[l.tipo] ?? '📍'} ${l.nome}${l.visitado ? ' ✓ fomos e recomendo' : ''}${dica}\n${onde}`
+  })
+  return [`Minhas dicas em ${destino}:`, '', ...linhas.flatMap((l) => [l, '']), 'Montado no Together'].join('\n')
+}

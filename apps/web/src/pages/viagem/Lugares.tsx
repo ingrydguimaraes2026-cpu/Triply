@@ -19,6 +19,7 @@ import PertoDeMim from '../../features/lugares/PertoDeMim'
 import ImportarDoMaps from '../../features/lugares/ImportarDoMaps'
 import SugestoesDoDestino from '../../features/lugares/SugestoesDoDestino'
 import MontarDias from '../../features/lugares/MontarDias'
+import IndicarLugares from '../../features/lugares/IndicarLugares'
 import { adicionarLugar } from '../../features/lugares/api'
 import './abas.css'
 import './hospedagem.css'
@@ -205,6 +206,8 @@ export default function Lugares() {
         <button type="button" className="hosp-adicionar" onClick={() => setJanela({ destinoId: destino.id, tipo: filtro ?? undefined })}>
           <Plus size={16} aria-hidden="true" /> Adicionar lugar
         </button>
+        {/* Spec 103: indicar pra um amigo */}
+        <IndicarLugares destino={destino.nome} lugares={lugares} />
         {/* Spec 096: montar os dias pelos votos */}
         <MontarDias key={`m${destino.id}`} viagemId={viagem.id} destino={destino} lugares={lugares} />
         {/* Spec 094: sugestões do OpenStreetMap */}
