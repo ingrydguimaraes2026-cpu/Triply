@@ -2170,6 +2170,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      excluir_meus_dados: {
+        Args: never
+        Returns: undefined
+      }
       faixa_do_comboio: {
         Args: {
           p_viagem: string
@@ -2195,6 +2199,10 @@ export type Database = {
           p_visitado: boolean
         }
         Returns: undefined
+      }
+      meus_dados: {
+        Args: never
+        Returns: Json
       }
       restaurar_da_lixeira: {
         Args: {

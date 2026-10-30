@@ -6,6 +6,7 @@ import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
 import FormPassaporte from '../features/passaporte/FormPassaporte'
 import FormFicha from '../features/ficha-pessoal/FormFicha'
+import MinhaPrivacidade from '../features/privacidade/MinhaPrivacidade'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -133,6 +134,7 @@ export default function Perfil() {
 
         <FormFicha meuId={eu.id} />
         <FormPassaporte meuId={eu.id} />
+        <MinhaPrivacidade />
       </main>
     </div>
   )

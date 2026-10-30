@@ -1524,3 +1524,39 @@ test('087: só quem apagou ou o ADM restaura; edições seguidas viram uma; gast
   // Apagar a viagem não quebra (cascata não registra)
   await db.query(`delete from public.viagens where id = '${V}'`)
 })
+
+// ---------------- 089: privacidade e LGPD ----------------
+test('089: meus dados traz o que é meu e nunca o gasto pessoal dos outros', async () => {
+  const db = await novoBanco()
+  await salvarGasto(db, MEMBRO, cafe, metade)
+  await salvarGasto(db, ADM, { ...cafe, descricao: 'Segredo', pago_por: ADM, pessoal: true }, [{ usuario_id: ADM, valor: '12.00' }])
+  const [{ dados }] = await como(db, MEMBRO, 'select public.meus_dados() as dados')
+  assert.equal(dados.perfil.nome, 'Ingryd')
+  assert.equal(dados.email, 'membro@teste')
+  assert.deepEqual(dados.gastos.map((g) => g.descricao), ['Café'])
+  assert.equal(dados.minhas_partes.length, 1)
+  assert.equal(dados.viagens[0].nome, 'Riviera')
+  await assert.rejects(db.query('select public.meus_dados()'), /logado/)
+})
+
+test('089: excluir passa o ADM pra frente, sai das viagens e apaga o pessoal', async () => {
+  const db = await novoBanco()
+  const id = await salvarGasto(db, MEMBRO, cafe, metade)
+  await salvarGasto(db, ADM, { ...cafe, pago_por: ADM, pessoal: true }, [{ usuario_id: ADM, valor: '12.00' }])
+  // Viagem só do ADM: some
+  await db.query(`insert into public.viagens (id, nome, criado_por) values ('22222222-2222-2222-2222-222222222222', 'Sozinho', '${ADM}')`)
+  await como(db, ADM, 'select public.excluir_meus_dados()')
+  assert.deepEqual((await db.query('select usuario_id, papel from public.comboio_membros')).rows, [{ usuario_id: MEMBRO, papel: 'adm' }])
+  assert.equal((await db.query("select count(*)::int n from public.viagens where nome = 'Sozinho'")).rows[0].n, 0)
+  assert.equal((await db.query('select count(*)::int n from public.gastos where pessoal')).rows[0].n, 0)
+  // O gasto dividido continua, com o nome trocado
+  assert.equal((await db.query('select count(*)::int n from public.gastos where id = $1', [id])).rows[0].n, 1)
+  assert.equal((await db.query(`select nome from public.perfis where id = '${ADM}'`)).rows[0].nome, 'Conta excluída')
+})
+
+test('089: não deixa a viagem só com convidado sem conta', async () => {
+  const db = await novoBanco()
+  await db.query(`update auth.users set is_anonymous = true where id = '${MEMBRO}'`)
+  await assert.rejects(como(db, ADM, 'select public.excluir_meus_dados()'), /só sobram convidados/)
+  assert.equal((await db.query('select count(*)::int n from public.comboio_membros')).rows[0].n, 2)
+})
