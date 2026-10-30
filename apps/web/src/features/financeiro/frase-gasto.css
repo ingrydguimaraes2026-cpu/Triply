@@ -1,0 +1,26 @@
+/* Spec 093: gasto por frase ou voz */
+.frase-gasto {
+  display: flex;
+  gap: 8px;
+}
+.frase-gasto input {
+  flex: 1;
+  min-width: 0;
+}
+.frase-mic {
+  flex-shrink: 0;
+  width: 48px;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.frase-mic.ouvindo {
+  background: var(--laranja);
+  border-color: var(--laranja);
+}

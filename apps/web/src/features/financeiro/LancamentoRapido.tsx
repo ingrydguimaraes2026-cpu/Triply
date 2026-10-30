@@ -1,10 +1,13 @@
-import { useState, type FormEvent } from 'react'
+import { useCallback, useState, type FormEvent } from 'react'
+import { Mic, MicOff } from 'lucide-react'
 import { hojeTexto } from '../destinos/datas'
 import type { Membro } from '../viagens/hooks'
 import { dividirIgual } from '@together/core'
 import { avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
-import { lerValor } from '@together/core'
+import { lerFraseDeGasto, lerValor, paraCampo } from '@together/core'
+import { useVoz } from './useVoz'
+import './frase-gasto.css'
 import { ehErroDeRede, guardarNaFila } from './fila'
 import { lembrarMoeda, ultimaMoeda } from './preferencias'
 
@@ -25,20 +28,41 @@ export default function LancamentoRapido({ viagemId, moedaViagem, membros, meuId
   const [cat, setCat] = useState('alimentacao')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
+  // Spec 093: o que veio da frase (escrita ou falada)
+  const [frase, setFrase] = useState('')
+  const [descricao, setDescricao] = useState('')
+  const [pagoPor, setPagoPor] = useState(meuId)
+  const [pessoal, setPessoal] = useState(false)
+
+  const usarFrase = useCallback(
+    (texto: string) => {
+      setFrase(texto)
+      const g = lerFraseDeGasto(texto, { pessoas: membros, meuId })
+      if (g.valor) setValorTexto(paraCampo(g.valor))
+      if (g.moeda) setMoeda(g.moeda)
+      if (g.categoria) setCat(g.categoria)
+      setDescricao(g.descricao)
+      setPagoPor(g.pagoPor ?? meuId)
+      setPessoal(g.pessoal)
+    },
+    [membros, meuId],
+  )
+  const voz = useVoz(usarFrase)
 
   function montar(): DadosDoGasto & { id: string } {
     const valor = lerValor(valorTexto) ?? 0
     return {
       id: crypto.randomUUID(),
-      descricao: acharCategoria(cat).nome,
+      descricao: descricao || acharCategoria(cat).nome,
       valor,
       moeda,
       categoria: cat,
       data: hojeTexto(),
-      pagoPor: meuId,
-      pessoal: false,
+      // Gasto pessoal é sempre de quem lança
+      pagoPor: pessoal ? meuId : pagoPor,
+      pessoal,
       rascunho: true,
-      divisoes: dividirIgual(valor, membros.map((m) => m.id), meuId),
+      divisoes: pessoal ? [{ usuarioId: meuId, valor }] : dividirIgual(valor, membros.map((m) => m.id), pagoPor),
     }
   }
 
@@ -68,6 +92,28 @@ export default function LancamentoRapido({ viagemId, moedaViagem, membros, meuId
 
   return (
     <form className="form" onSubmit={salvar} noValidate>
+      {/* Spec 093: escrever ou falar o gasto */}
+      <div className="frase-gasto">
+        <input
+          type="text"
+          autoComplete="off"
+          placeholder="Ou escreva: jantar 45,50 a Ingryd pagou"
+          aria-label="Gasto em uma frase"
+          value={frase}
+          onChange={(e) => usarFrase(e.target.value)}
+        />
+        {voz.disponivel && (
+          <button
+            type="button"
+            className={voz.ouvindo ? 'frase-mic ouvindo' : 'frase-mic'}
+            onClick={voz.ouvindo ? voz.parar : voz.ouvir}
+            aria-label={voz.ouvindo ? 'Parar de ouvir' : 'Falar o gasto'}
+          >
+            {voz.ouvindo ? <MicOff size={18} aria-hidden="true" /> : <Mic size={18} aria-hidden="true" />}
+          </button>
+        )}
+      </div>
+      {voz.erro && <p className="form-dica">{voz.erro}</p>}
       <div className="valor-grande">
         <input
           inputMode="decimal"
@@ -94,7 +140,11 @@ export default function LancamentoRapido({ viagemId, moedaViagem, membros, meuId
         ))}
       </div>
 
-      <p className="form-dica">Você pagou · dividido entre todos · hoje</p>
+      <p className="form-dica">
+        {descricao && <strong>{descricao} · </strong>}
+        {pessoal || pagoPor === meuId ? 'Você pagou' : `${membros.find((m) => m.id === pagoPor)?.nome.split(' ')[0] ?? 'Alguém'} pagou`} ·{' '}
+        {pessoal ? 'só seu' : 'dividido entre todos'} · hoje
+      </p>
       {erro && (
         <p className="form-erro" role="alert">
           {erro}

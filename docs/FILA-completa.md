@@ -153,7 +153,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 87 | L2 | E-mail próprio da viagem | M | 🔒 precisa de serviço de e-mail de entrada (domínio, provedor) |
 | 88 | H10 | Foto do recibo com leitura automática | M | 🔒 precisa de IA (chave e custo) |
 | 89 | L3 | Detector de furos ◐ | M | Pronto pra testar (web) · spec 092 |
-| 90 | L8 | Gasto por frase ou voz | M | a fazer |
+| 90 | L8 | Gasto por frase ou voz | M | Pronto pra testar (web) · spec 093 |
 | 91 | L4 | Sugestões de lugares por destino | M | a fazer |
 | 92 | L7 | Eventos e feriados nas datas | M | a fazer |
 | 93 | L5 | Montar o dia pelos votos | G | a fazer |
