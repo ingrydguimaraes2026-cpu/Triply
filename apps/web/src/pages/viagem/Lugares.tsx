@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCheck, ExternalLink, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
+import { CheckCheck, ExternalLink, Flag, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
@@ -32,6 +32,7 @@ export default function Lugares() {
   const [selecionado, setSelecionado] = useState<string | null>(null)
   const [filtro, setFiltro] = useState<TipoDeLugar | null>(null)
   const [janela, setJanela] = useState<Janela>(null)
+  const [avisoPrioridade, setAvisoPrioridade] = useState<string | null>(null)
   const fechar = () => setJanela(null)
 
   const item = l.itens.find((i) => i.destino.id === selecionado) ?? l.itens[0] ?? null
@@ -83,6 +84,22 @@ export default function Lugares() {
                 cidade: destino ? [destino.nome, destino.pais].filter(Boolean).join(', ') : null,
               }}
             />
+            <button
+              type="button"
+              className={(lugar.prioridades ?? []).includes(meuId) ? 'lugar-fomos foi' : 'lugar-fomos'}
+              aria-pressed={(lugar.prioridades ?? []).includes(meuId)}
+              title="Até 3 por destino"
+              onClick={() =>
+                l.marcarPrioridade(lugar.id, !(lugar.prioridades ?? []).includes(meuId)).catch(() => setAvisoPrioridade('Você já tem 3 "não abro mão" nesse destino. Tire um pra marcar outro.'))
+              }
+            >
+              <Flag size={13} aria-hidden="true" /> Não abro mão
+            </button>
+            {(lugar.prioridades?.length ?? 0) > 0 && (
+              <small className="lugar-prioridades">
+                obrigatório pra {lugar.prioridades!.map((id) => (id === meuId ? 'você' : (pessoaDe(id)?.nome.split(' ')[0] ?? 'alguém'))).join(', ')}
+              </small>
+            )}
             <button
               type="button"
               className={lugar.visitadoEm ? 'lugar-fomos foi' : 'lugar-fomos'}
@@ -206,6 +223,12 @@ export default function Lugares() {
           )
         }
       />
+
+      {avisoPrioridade && (
+        <p className="form-erro" role="alert" onClick={() => setAvisoPrioridade(null)}>
+          {avisoPrioridade}
+        </p>
+      )}
 
       {l.estado === 'erro' && (
         <div className="aviso-erro">

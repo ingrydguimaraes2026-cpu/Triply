@@ -296,3 +296,9 @@
 .lugar-sugestoes small {
   color: var(--cor-texto-suave);
 }
+
+/* "Não abro mão" (spec 066) */
+.lugar-prioridades {
+  color: var(--couro);
+  font-weight: 700;
+}

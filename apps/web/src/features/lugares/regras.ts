@@ -29,6 +29,7 @@ export type Lugar = {
   criadoPor: string
   votos: string[] // ids de quem curtiu (spec 022)
   visitadoEm?: string | null // spec 061: "já fomos"
+  prioridades?: string[] // spec 066: quem "não abre mão"
   latitude?: number | null // spec 064
   longitude?: number | null
   endereco?: string | null

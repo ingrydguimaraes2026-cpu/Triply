@@ -799,6 +799,32 @@ export type Database = {
         }
         Relationships: []
       }
+      lugar_prioridades: {
+        Row: {
+          criado_em: string
+          lugar_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          lugar_id: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          lugar_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lugar_prioridades_lugar_id_fkey"
+            columns: ["lugar_id"]
+            isOneToOne: false
+            referencedRelation: "lugares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orcamento_faixas: {
         Row: {
           atualizado_em: string

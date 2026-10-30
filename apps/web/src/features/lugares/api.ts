@@ -23,7 +23,7 @@ export type DadosDoLugar = {
 export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
   const { data, error } = await supabase
     .from('lugares')
-    .select('*, lugar_votos (usuario_id)')
+    .select('*, lugar_votos (usuario_id), lugar_prioridades (usuario_id)')
     .eq('viagem_id', viagemId)
     .order('criado_em')
   if (error) throw error
@@ -39,6 +39,7 @@ export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
     observacao: l.observacao,
     criadoPor: l.criado_por,
     votos: (l.lugar_votos ?? []).map((v) => v.usuario_id),
+    prioridades: (l.lugar_prioridades ?? []).map((p) => p.usuario_id),
     visitadoEm: l.visitado_em,
     latitude: l.latitude,
     longitude: l.longitude,
@@ -89,5 +90,13 @@ export async function apagarLugar(id: string) {
 // "Já fomos" (spec 061): qualquer um do comboio marca
 export async function marcarVisitado(id: string, visitado: boolean) {
   const { error } = await supabase.rpc('marcar_visitado', { p_lugar: id, p_visitado: visitado })
+  if (error) throw error
+}
+
+// "Não abro mão" (spec 066): até 3 por destino (o banco confere)
+export async function marcarPrioridade(id: string, meuId: string, sim: boolean) {
+  const { error } = sim
+    ? await supabase.from('lugar_prioridades').insert({ lugar_id: id })
+    : await supabase.from('lugar_prioridades').delete().eq('lugar_id', id).eq('usuario_id', meuId)
   if (error) throw error
 }

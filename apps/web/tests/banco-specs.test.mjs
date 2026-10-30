@@ -1318,3 +1318,23 @@ test('065: cada um marca os próprios dias; comboio vê; estranho não', async (
   await como(db, ADM, 'delete from public.disponibilidades')
   assert.equal((await db.query('select count(*)::int as n from public.disponibilidades')).rows[0].n, 2)
 })
+
+// ---------------- 066: não abro mão ----------------
+test('066: até 3 "não abro mão" por pessoa por destino; comboio vê; só tira o seu', async () => {
+  const db = await novoBanco()
+  const ids = []
+  for (const nome of ['A', 'B', 'C', 'D']) {
+    const [{ id }] = await como(db, ADM, `insert into public.lugares (viagem_id, destino_id, nome, tipo) values ('${V}', '${NICE}', '${nome}', 'passeio') returning id`)
+    ids.push(id)
+  }
+  const [{ id: emMonaco }] = await como(db, ADM, `insert into public.lugares (viagem_id, destino_id, nome, tipo) values ('${V}', '${MONACO}', 'Cassino', 'passeio') returning id`)
+  for (const id of ids.slice(0, 3)) await como(db, MEMBRO, 'insert into public.lugar_prioridades (lugar_id) values ($1)', [id])
+  await assert.rejects(como(db, MEMBRO, 'insert into public.lugar_prioridades (lugar_id) values ($1)', [ids[3]]), /3/)
+  // Outro destino tem a própria cota; outra pessoa também
+  await como(db, MEMBRO, 'insert into public.lugar_prioridades (lugar_id) values ($1)', [emMonaco])
+  await como(db, ADM, 'insert into public.lugar_prioridades (lugar_id) values ($1)', [ids[3]])
+  assert.equal((await como(db, ADM, 'select * from public.lugar_prioridades')).length, 5)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.lugar_prioridades')).length, 0)
+  await como(db, ADM, `delete from public.lugar_prioridades where usuario_id = '${MEMBRO}'`)
+  assert.equal((await db.query('select count(*)::int as n from public.lugar_prioridades')).rows[0].n, 5)
+})

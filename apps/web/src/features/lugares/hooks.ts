@@ -85,7 +85,31 @@ export function useLugares(viagemId: string, destinos: Tables<'destinos'>[], meu
     [recarregar],
   )
 
+  // Spec 066: "não abro mão". Se passar de 3 no destino, o banco recusa e a tela volta.
+  const marcarPrioridade = useCallback(
+    async (id: string, sim: boolean) => {
+      setEstado((atual) =>
+        atual.status !== 'pronto'
+          ? atual
+          : {
+              status: 'pronto',
+              lugares: atual.lugares.map((l) =>
+                l.id !== id ? l : { ...l, prioridades: sim ? [...(l.prioridades ?? []).filter((p) => p !== meuId), meuId] : (l.prioridades ?? []).filter((p) => p !== meuId) },
+              ),
+            },
+      )
+      try {
+        await api.marcarPrioridade(id, meuId, sim)
+      } catch (erro) {
+        await recarregar()
+        throw erro
+      }
+    },
+    [meuId, recarregar],
+  )
+
   return {
+    marcarPrioridade,
     marcarVisitado,
     lugares,
     estado: estado.status,
