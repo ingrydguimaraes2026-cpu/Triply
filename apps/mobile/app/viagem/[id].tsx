@@ -19,6 +19,7 @@ import { Enquetes } from '../../src/ui/Enquetes'
 import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
 import { AgendaDeHoje } from '../../src/ui/AgendaDeHoje'
 import { Clima } from '../../src/ui/Clima'
+import { Novidades } from '../../src/ui/Novidades'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -102,6 +103,9 @@ export default function DetalheDaViagem() {
 
           {/* Spec 019: recados do ADM fixados no topo da viagem */}
           <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />
+
+          {/* Spec 031: o que mudou desde a última vez */}
+          <Novidades viagemId={viagem.id} meuId={meuId} membros={viagem.membros} />
 
           <View className="flex-row flex-wrap gap-2.5">
             {atalhos.map(({ Icone, t, s, rota }) => (
