@@ -5,6 +5,7 @@ import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } fr
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
 import FormPassaporte from '../features/passaporte/FormPassaporte'
+import FormFicha from '../features/ficha-pessoal/FormFicha'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -130,6 +131,7 @@ export default function Perfil() {
           </p>
         )}
 
+        <FormFicha meuId={eu.id} />
         <FormPassaporte meuId={eu.id} />
       </main>
     </div>

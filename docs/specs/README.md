@@ -62,6 +62,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 047 | [Ficha do país + internet no destino](047-ficha-do-pais.md) (tomada, gorjeta, idioma, eSIM) | 2 | P | 010, 020 | Pronto pra testar (web) |
 | 048 | [Listas do comboio](048-listas-do-comboio.md) (quem leva + compras com lançar como gasto) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
 | 049 | [Contagem e progresso](049-contagem-e-progresso.md) ("faltam 23 dias · 78% pronto") | 2 | P | 006, 035 | Pronto pra testar (web) |
+| 050 | [Ficha da pessoa + emergência e saúde](050-ficha-da-pessoa.md) (alergias, aniversário, saúde só pra quem liberar) | 2 | P | 007, 008 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Check, Copy, Link2, LogOut, MoreHorizontal, Ticket, Users } from 'lucide-react'
+import { Cake, Check, Copy, HeartPulse, Link2, LogOut, MoreHorizontal, Phone, Ticket, Users, Utensils } from 'lucide-react'
+import { aniversariosNaViagem, buscarFichasDoComboio, restricoesDoGrupo, telefoneParaLigar, type FichaNoComboio } from '@together/core'
+import { supabase } from '../../lib/supabase'
 import {
   buscarConvidados,
   buscarConvites,
@@ -24,6 +26,20 @@ import './abas.css'
 // Comboio (spec 007): quem vai, convites e sair da viagem. O ADM organiza as pessoas.
 export default function Comboio() {
   const { viagem, membros, meuId, euSouAdm, recarregar } = useViagemAtual()
+  // Spec 050: fichas do comboio (alergias, aniversário, emergência quando liberada)
+  const [fichas, setFichas] = useState<FichaNoComboio[]>([])
+  useEffect(() => {
+    let ativo = true
+    buscarFichasDoComboio(supabase, viagem.id)
+      .then((f) => ativo && setFichas(f))
+      .catch((e) => console.error('Erro ao buscar fichas:', e))
+    return () => {
+      ativo = false
+    }
+  }, [viagem.id])
+  const nomeDoMembro = (id: string) => membros.find((m) => m.id === id)?.nome ?? 'Alguém'
+  const aniversarios = aniversariosNaViagem(fichas, viagem.data_inicio, viagem.data_fim)
+  const proRestaurante = restricoesDoGrupo(fichas, nomeDoMembro)
   const navegar = useNavigate()
   const [link, setLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
@@ -149,6 +165,23 @@ export default function Comboio() {
       )}
       {link && <p className="link-convite">{link.replace(/^https?:\/\//, '')}</p>}
 
+      {(proRestaurante.length > 0 || aniversarios.length > 0) && (
+        <Cartao titulo="Bom saber" icone={Utensils}>
+          <ul className="bom-saber">
+            {aniversarios.map((a) => (
+              <li key={a.usuarioId}>
+                <Cake size={15} aria-hidden="true" /> {nomeDoMembro(a.usuarioId)} faz aniversário em {formatarData(a.dia)}, durante a viagem!
+              </li>
+            ))}
+            {proRestaurante.map((r) => (
+              <li key={r}>
+                <Utensils size={15} aria-hidden="true" /> {r}
+              </li>
+            ))}
+          </ul>
+        </Cartao>
+      )}
+
       <Cartao titulo="Quem vai" icone={Users}>
         <ul className="membros">
           {membros.map((m) => {
@@ -163,6 +196,7 @@ export default function Comboio() {
                       {souEu && ' (você)'}
                     </strong>
                     <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
+                    <FichaResumo ficha={fichas.find((f) => f.usuario_id === m.id)} />
                   </span>
                   {m.papel === 'adm' && <span className="selo">ADM</span>}
                   {convidados.includes(m.id) && (
@@ -308,5 +342,32 @@ export default function Comboio() {
         </Gaveta>
       )}
     </>
+  )
+}
+
+// Linha da ficha do membro (spec 050): telefone, alergia e, se liberado, emergência
+function FichaResumo({ ficha }: { ficha?: FichaNoComboio }) {
+  if (!ficha) return null
+  return (
+    <span className="membro-ficha">
+      {ficha.telefone && (
+        <a href={`tel:${telefoneParaLigar(ficha.telefone)}`}>
+          <Phone size={12} aria-hidden="true" /> {ficha.telefone}
+        </a>
+      )}
+      {ficha.alergias && <span>Alergia: {ficha.alergias}</span>}
+      {ficha.emergencia_nome && (
+        <span>
+          <HeartPulse size={12} aria-hidden="true" /> Emergência: {ficha.emergencia_nome}
+          {ficha.emergencia_telefone && (
+            <>
+              {' '}
+              · <a href={`tel:${telefoneParaLigar(ficha.emergencia_telefone)}`}>{ficha.emergencia_telefone}</a>
+            </>
+          )}
+          {ficha.tipo_sanguineo && ` · ${ficha.tipo_sanguineo}`}
+        </span>
+      )}
+    </span>
   )
 }

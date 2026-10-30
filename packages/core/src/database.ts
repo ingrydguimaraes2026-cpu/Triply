@@ -360,6 +360,51 @@ export type Database = {
           },
         ]
       }
+      fichas_pessoais: {
+        Row: {
+          alergias: string | null
+          aniversario: string | null
+          atualizado_em: string
+          emergencia_nome: string | null
+          emergencia_telefone: string | null
+          mobilidade: string | null
+          remedios: string | null
+          restricoes: string | null
+          saude_visivel_para: string
+          telefone: string | null
+          tipo_sanguineo: string | null
+          usuario_id: string
+        }
+        Insert: {
+          alergias?: string | null
+          aniversario?: string | null
+          atualizado_em?: string
+          emergencia_nome?: string | null
+          emergencia_telefone?: string | null
+          mobilidade?: string | null
+          remedios?: string | null
+          restricoes?: string | null
+          saude_visivel_para?: string
+          telefone?: string | null
+          tipo_sanguineo?: string | null
+          usuario_id?: string
+        }
+        Update: {
+          alergias?: string | null
+          aniversario?: string | null
+          atualizado_em?: string
+          emergencia_nome?: string | null
+          emergencia_telefone?: string | null
+          mobilidade?: string | null
+          remedios?: string | null
+          restricoes?: string | null
+          saude_visivel_para?: string
+          telefone?: string | null
+          tipo_sanguineo?: string | null
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       hospedagem_votos: {
         Row: {
           criado_em: string
@@ -1729,6 +1774,12 @@ export type Database = {
           p_viagem: string
         }
         Returns: { responderam: number; pessoas: number; minimo: number | null; maximo: number | null }[]
+      }
+      fichas_do_comboio: {
+        Args: {
+          p_viagem: string
+        }
+        Returns: { usuario_id: string; telefone: string | null; aniversario: string | null; restricoes: string | null; alergias: string | null; mobilidade: string | null; emergencia_nome: string | null; emergencia_telefone: string | null; tipo_sanguineo: string | null; remedios: string | null }[]
       }
       ver_convite: { Args: { p_codigo: string }; Returns: Json }
       convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }

@@ -1160,3 +1160,36 @@
 }
 .overview-ficha-pais { order: 2; }
 .overview-listas { order: 8; }
+
+/* Ficha da pessoa no comboio (spec 050) */
+.membro-ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 2px;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.membro-ficha a {
+  color: var(--couro);
+}
+
+.membro-ficha svg {
+  vertical-align: -2px;
+}
+
+.bom-saber {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.bom-saber svg {
+  margin-right: 4px;
+  color: var(--caramelo);
+  vertical-align: -3px;
+}

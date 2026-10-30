@@ -1171,3 +1171,20 @@ test('048: comboio cria e marca itens; só passa pra gente do comboio; só autor
   await como(db, ADM, 'delete from public.itens_lista where id = $1', [id])
   assert.equal((await db.query("select count(*)::int as n from public.itens_lista where lista = 'levar'")).rows[0].n, 0)
 })
+
+// ---------------- 050: ficha da pessoa ----------------
+test('050: comboio vê alergias; saúde só pra quem a pessoa liberou; estranho não vê nada', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, "insert into public.fichas_pessoais (alergias, emergencia_nome, tipo_sanguineo) values ('Amendoim', 'Mãe', 'O+')")
+  const doMembro = (quem) => como(db, quem, `select alergias, emergencia_nome, tipo_sanguineo from public.fichas_do_comboio('${V}') where usuario_id = '${MEMBRO}'`)
+  // Padrão 'adm': o ADM vê a saúde
+  assert.deepEqual(await doMembro(ADM), [{ alergias: 'Amendoim', emergencia_nome: 'Mãe', tipo_sanguineo: 'O+' }])
+  await como(db, MEMBRO, "update public.fichas_pessoais set saude_visivel_para = 'ninguem'")
+  assert.deepEqual(await doMembro(ADM), [{ alergias: 'Amendoim', emergencia_nome: null, tipo_sanguineo: null }])
+  // A própria pessoa sempre vê a dela
+  assert.equal((await doMembro(MEMBRO))[0].tipo_sanguineo, 'O+')
+  assert.equal((await como(db, ESTRANHO, `select * from public.fichas_do_comboio('${V}')`)).length, 0)
+  // Ninguém lê a tabela dos outros direto
+  assert.equal((await como(db, ADM, 'select * from public.fichas_pessoais')).length, 0)
+  await assert.rejects(como(db, MEMBRO, "update public.fichas_pessoais set tipo_sanguineo = 'Z'"), /check/)
+})
