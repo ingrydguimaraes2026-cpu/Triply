@@ -20,6 +20,7 @@ import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
 import { AgendaDeHoje } from '../../src/ui/AgendaDeHoje'
 import { Clima } from '../../src/ui/Clima'
 import { Novidades } from '../../src/ui/Novidades'
+import { GuiaDaCasa } from '../../src/ui/GuiaDaCasa'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -157,6 +158,8 @@ export default function DetalheDaViagem() {
           {/* Spec 029 e 022: agenda do dia e tempo (paridade com o site) */}
           <AgendaDeHoje viagemId={viagem.id} inicio={viagem.dataInicio} fim={viagem.dataFim} />
           <Clima viagemId={viagem.id} />
+          {/* Spec 026: guia da casa de onde dormimos */}
+          <GuiaDaCasa viagemId={viagem.id} />
 
           {/* Spec 020: tarefas com responsável */}
           <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
