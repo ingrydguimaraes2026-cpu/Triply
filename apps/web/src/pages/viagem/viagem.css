@@ -360,3 +360,10 @@
   color: var(--cor-texto);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
 }
+
+/* Botão de emergência (spec 037): botão sem cara de botão, igual ao sino */
+.botao-sos {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}

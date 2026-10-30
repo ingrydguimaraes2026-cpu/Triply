@@ -1,0 +1,61 @@
+/* Emergência (spec 037). Só cores do global.css. */
+.emergencia {
+  display: grid;
+  gap: 16px;
+}
+
+.emergencia-pais h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.emergencia-pais h3 small {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+.emergencia-numeros {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.emergencia-numeros a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.emergencia-pais.atual .emergencia-numeros a {
+  background: var(--laranja);
+}
+
+.emergencia-numeros strong {
+  min-width: 48px;
+  font-size: 22px;
+}
+
+.emergencia-numeros span {
+  font-size: 14px;
+}
+
+.emergencia-links {
+  display: grid;
+  gap: 6px;
+}
+
+.emergencia-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 600;
+}
