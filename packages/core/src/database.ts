@@ -859,6 +859,51 @@ export type Database = {
           },
         ]
       }
+      seguros_viagem: {
+        Row: {
+          apolice: string | null
+          atualizado_em: string
+          cobertos: string[]
+          cobertura: string | null
+          criado_em: string
+          criado_por: string
+          id: string
+          seguradora: string
+          telefone: string | null
+          valido_ate: string | null
+          valido_de: string | null
+          viagem_id: string
+        }
+        Insert: {
+          apolice?: string | null
+          atualizado_em?: string
+          cobertos?: string[]
+          cobertura?: string | null
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          seguradora: string
+          telefone?: string | null
+          valido_ate?: string | null
+          valido_de?: string | null
+          viagem_id: string
+        }
+        Update: {
+          apolice?: string | null
+          atualizado_em?: string
+          cobertos?: string[]
+          cobertura?: string | null
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          seguradora?: string
+          telefone?: string | null
+          valido_ate?: string | null
+          valido_de?: string | null
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       trajetos: {
         Row: {
           bate_e_volta: boolean

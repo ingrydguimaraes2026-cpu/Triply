@@ -50,6 +50,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 036 | [Calendário da viagem](036-calendario-da-viagem.md) (.ics pro Google/iPhone/Outlook) | 2 | P | 029 | Pronto pra testar (web) |
 | 037 | [Botão de emergência](037-emergencia.md) (números do país, hospital, consulado) | 2 | P | 010 | Pronto pra testar (web) |
 | 038 | [Passaporte: nacionalidade e validade](038-passaporte-e-nacionalidade.md) (aviso de 6 meses) | 2 | P | 008, 010 | Pronto pra testar (web) · banco não aplicado |
+| 039 | [Seguro viagem](039-seguro-viagem.md) (telefone 24 h na Emergência, quem está coberto) | 2 | P | 037 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

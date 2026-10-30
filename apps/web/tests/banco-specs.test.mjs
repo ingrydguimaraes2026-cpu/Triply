@@ -1072,3 +1072,24 @@ test('038: sem validade informada vira "sem_data"; país inválido e 4 nacionali
   await assert.rejects(como(db, MEMBRO, "insert into public.documentos_pessoais (nacionalidades) values ('{BR,IT,PT,ES}')"), /check/)
   await assert.rejects(como(db, ADM, `insert into public.documentos_pessoais (usuario_id) values ('${MEMBRO}')`), /row-level security/)
 })
+
+// ---------------- 039: seguro viagem ----------------
+test('039: comboio vê e cadastra seguro; só cobre gente do comboio; autor ou ADM edita', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(
+    db,
+    MEMBRO,
+    `insert into public.seguros_viagem (viagem_id, seguradora, telefone, cobertos) values ('${V}', 'Assist Card', '+55 11 4000-0000', '{${MEMBRO},${ADM}}') returning id`,
+  )
+  assert.equal((await como(db, ADM, 'select seguradora from public.seguros_viagem'))[0].seguradora, 'Assist Card')
+  assert.equal((await como(db, ESTRANHO, 'select * from public.seguros_viagem')).length, 0)
+  await assert.rejects(
+    como(db, MEMBRO, `insert into public.seguros_viagem (viagem_id, seguradora, cobertos) values ('${V}', 'X', '{${ESTRANHO}}')`),
+    /comboio/,
+  )
+  await assert.rejects(como(db, MEMBRO, `insert into public.seguros_viagem (viagem_id, seguradora, telefone) values ('${V}', 'X', 'liga pra mim')`), /check/)
+  // ADM edita o do membro; estranho não cadastra
+  await como(db, ADM, `update public.seguros_viagem set cobertura = 'Médico até US$ 60 mil' where id = $1`, [id])
+  assert.equal((await db.query('select cobertura from public.seguros_viagem')).rows[0].cobertura, 'Médico até US$ 60 mil')
+  await assert.rejects(como(db, ESTRANHO, `insert into public.seguros_viagem (viagem_id, seguradora) values ('${V}', 'X')`), /row-level security/)
+})

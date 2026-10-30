@@ -2,13 +2,17 @@ import { ExternalLink, Hospital, Landmark, Phone } from 'lucide-react'
 import { destinoDoDia, linkConsuladoDoBrasil, linkHospitalPerto, numerosDeEmergencia, type Tables } from '@together/core'
 import { codigoDoPais } from '../documentos/paises'
 import { hojeTexto } from '../destinos/datas'
+import SeguroDaViagem from './SeguroViagem'
+import type { Membro } from '../viagens/hooks'
 import './emergencia.css'
 
 type Destino = Tables<'destinos'>
 
 // Emergência (spec 037): números do país onde o comboio está + hospital perto + consulado do Brasil.
 // Tudo vem junto com o app (funciona sem internet, menos os links de busca).
-export default function Emergencia({ destinos }: { destinos: Destino[] }) {
+type Seguro = { viagemId: string; meuId: string; euSouAdm: boolean; membros: Membro[]; inicio: string | null; fim: string | null }
+
+export default function Emergencia({ destinos, seguro }: { destinos: Destino[]; seguro?: Seguro }) {
   const hoje = hojeTexto()
   // Onde estamos hoje; fora das datas, o primeiro destino; e os outros países do roteiro embaixo
   const atual = destinoDoDia(hoje, destinos) ?? destinos[0]
@@ -24,6 +28,7 @@ export default function Emergencia({ destinos }: { destinos: Destino[] }) {
     return (
       <div className="emergencia">
         <ListaDeNumeros numeros={numeros} />
+        {seguro && <SeguroDaViagem {...seguro} />}
       </div>
     )
   }
@@ -51,6 +56,7 @@ export default function Emergencia({ destinos }: { destinos: Destino[] }) {
           </section>
         )
       })}
+      {seguro && <SeguroDaViagem {...seguro} />}
       <p className="dica">Perdeu o passaporte? Procure o consulado do Brasil mais perto e faça um boletim de ocorrência na polícia local.</p>
     </div>
   )

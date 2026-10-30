@@ -213,7 +213,10 @@ export default function ViagemLayout() {
 
       {vendoEmergencia && (
         <Gaveta titulo="Emergência" aoFechar={() => setVendoEmergencia(false)}>
-          <Emergencia destinos={destinos} />
+          <Emergencia
+            destinos={destinos}
+            seguro={{ viagemId: viagem.id, meuId, euSouAdm, membros, inicio: viagem.data_inicio, fim: viagem.data_fim }}
+          />
         </Gaveta>
       )}
 
