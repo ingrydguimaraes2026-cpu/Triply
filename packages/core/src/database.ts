@@ -1131,6 +1131,36 @@ export type Database = {
           },
         ]
       }
+      quartos: {
+        Row: {
+          criado_em: string
+          hospedagem_id: string
+          id: string
+          nome: string
+          ocupantes: string[]
+          vagas: number
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          hospedagem_id: string
+          id?: string
+          nome: string
+          ocupantes?: string[]
+          vagas?: number
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          hospedagem_id?: string
+          id?: string
+          nome?: string
+          ocupantes?: string[]
+          vagas?: number
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       seguros_viagem: {
         Row: {
           apolice: string | null
@@ -1960,6 +1990,13 @@ export type Database = {
         Args: {
           p_viagem: string
           p_arquivar: boolean
+        }
+        Returns: undefined
+      }
+      entrar_no_quarto: {
+        Args: {
+          p_quarto: string
+          p_entrar: boolean
         }
         Returns: undefined
       }

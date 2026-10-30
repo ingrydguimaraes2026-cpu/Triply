@@ -116,7 +116,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 62 | D8 | Conexões e estações (várias pernas) | M | a fazer |
 | 63 | D9 | Último trem para a base | M | a fazer |
 | 64 | D11 | Carro alugado e rodízio de motorista | M | a fazer |
-| 65 | E7 | Quem dorme onde | M | a fazer |
+| 65 | E7 | Quem dorme onde | M | ✅ feito (web) · spec 068 · banco a aplicar |
 | 66 | E9 | Prévia do link da opção (foto, título, preço) | M | a fazer |
 | 67 | F7 | Permissões simples do ADM | M | a fazer |
 | 68 | I7 | Mala individual com modelo pelo clima | M | a fazer |

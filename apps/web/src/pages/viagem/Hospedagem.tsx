@@ -19,6 +19,7 @@ import {
 } from '../../features/hospedagem/regras'
 import FormOpcao from '../../features/hospedagem/FormOpcao'
 import GuiaDaCasa, { FormGuia } from '../../features/hospedagem/GuiaDaCasa'
+import QuemDormeOnde from '../../features/hospedagem/QuemDormeOnde'
 import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
@@ -182,6 +183,7 @@ export default function Hospedagem() {
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}
         {destaque && <GuiaDaCasa guia={opcao.guia} podeEditar={podeEditar} aoEditar={() => setJanela({ tipo: 'guia', opcao })} />}
+        {destaque && <QuemDormeOnde viagemId={viagem.id} hospedagemId={opcao.id} membros={membros} meuId={meuId} podeEditar={podeEditar} />}
 
         <div className="hosp-opcao-rodape">
           <button

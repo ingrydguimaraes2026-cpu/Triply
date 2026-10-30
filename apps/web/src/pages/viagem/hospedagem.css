@@ -268,3 +268,59 @@
   color: var(--cor-texto);
   font-weight: 800;
 }
+
+/* Quem dorme onde (spec 068) */
+.quartos {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--cor-borda);
+}
+
+.quartos h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.quartos-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quarto-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quarto-topo small {
+  color: var(--cor-texto-suave);
+}
+
+.quarto-ocupantes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.quartos-novo {
+  display: flex;
+  gap: 6px;
+}
+
+.quartos-novo input:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.quartos-novo input[type='number'] {
+  width: 60px;
+}

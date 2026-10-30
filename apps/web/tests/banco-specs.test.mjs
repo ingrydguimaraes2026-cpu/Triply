@@ -1352,3 +1352,23 @@ test('067: ADM define passageiros; cada um se põe/tira; só gente do comboio', 
   await assert.rejects(como(db, ADM, 'insert into public.trajeto_passageiros (trajeto_id, usuario_id) values ($1, $2)', [id, ESTRANHO]), /comboio/)
   assert.equal((await como(db, ESTRANHO, 'select * from public.trajeto_passageiros')).length, 0)
 })
+
+// ---------------- 068: quem dorme onde ----------------
+test('068: quartos com vagas; cada um entra num só; cheio barra; só comboio', async () => {
+  const db = await novoBanco()
+  const [{ id: hosp }] = await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome) values ('${V}', '${NICE}', 'Casa') returning id`)
+  const [{ id: q1 }] = await como(db, ADM, `insert into public.quartos (hospedagem_id, viagem_id, nome, vagas) values ($1, '${V}', 'Quarto 1', 1) returning id`, [hosp])
+  const [{ id: q2 }] = await como(db, ADM, `insert into public.quartos (hospedagem_id, viagem_id, nome, vagas) values ($1, '${V}', 'Sofá-cama', 2) returning id`, [hosp])
+  await como(db, MEMBRO, 'select public.entrar_no_quarto($1, true)', [q1])
+  // Quarto 1 (1 vaga) cheio: o ADM não entra
+  await assert.rejects(como(db, ADM, 'select public.entrar_no_quarto($1, true)', [q1]), /cheio/)
+  // Trocar de quarto: sai do 1 e entra no 2
+  await como(db, MEMBRO, 'select public.entrar_no_quarto($1, true)', [q2])
+  const ocupacao = (await db.query('select nome, ocupantes from public.quartos order by nome')).rows
+  assert.deepEqual(ocupacao.map((q) => [q.nome, q.ocupantes.length]), [['Quarto 1', 0], ['Sofá-cama', 1]])
+  // Membro não cria quarto na opção do ADM; estranho não vê nem entra
+  await assert.rejects(como(db, MEMBRO, `insert into public.quartos (hospedagem_id, viagem_id, nome) values ($1, '${V}', 'X')`, [hosp]), /row-level security/)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.quartos')).length, 0)
+  await assert.rejects(como(db, ESTRANHO, 'select public.entrar_no_quarto($1, true)', [q2]), /não encontrado/)
+  await assert.rejects(como(db, ADM, `update public.quartos set ocupantes = '{${ESTRANHO}}' where id = $1`, [q2]), /comboio/)
+})
