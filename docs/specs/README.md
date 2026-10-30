@@ -59,6 +59,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 044 | [Decisões registradas](044-decisoes-registradas.md) (enquete fechada vira decisão) | 2 | P | 021 | Pronto pra testar (web) · banco não aplicado |
 | 045 | [Orçamento combinado](045-orcamento-combinado.md) (faixa secreta de cada um, faixa comum pro comboio) | 2 | P | 003 | Pronto pra testar (web) · banco não aplicado |
 | 046 | [Modo sonhando](046-modo-sonhando.md) (criar a viagem antes de saber o destino) | 2 | P | 021, 045 | Pronto pra testar (web) |
+| 047 | [Ficha do país + internet no destino](047-ficha-do-pais.md) (tomada, gorjeta, idioma, eSIM) | 2 | P | 010, 020 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
