@@ -327,6 +327,24 @@ export type Database = {
           },
         ]
       }
+      disponibilidades: {
+        Row: {
+          dia: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          dia: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          dia?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       documentos_pessoais: {
         Row: {
           atualizado_em: string

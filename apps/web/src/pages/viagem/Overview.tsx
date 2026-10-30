@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { BarChart3, BedDouble, Camera, CircleCheck, ListChecks, Lock, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { BarChart3, BedDouble, CalendarRange, Camera, CircleCheck, ListChecks, Lock, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -36,6 +36,7 @@ import OrcamentoCombinado from '../../features/orcamento-combinado/OrcamentoComb
 import FichaDoPais from '../../features/ficha-do-pais/FichaDoPais'
 import ListasDoComboio from '../../features/listas/ListasDoComboio'
 import ChegueiBem from '../../features/chegadas/ChegueiBem'
+import DatasEmComum from '../../features/datas-em-comum/DatasEmComum'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
@@ -386,6 +387,13 @@ export default function Overview() {
         <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
           <FichaDoPais viagem={viagem} destinos={destinos} />
         </Cartao>
+
+        {/* Spec 065: datas em comum (mais útil antes de fechar as datas) */}
+        {(!viagem.data_inicio || destinos.length === 0) && (
+          <Cartao titulo="Datas em comum" icone={CalendarRange} className="overview-datas-comum">
+            <DatasEmComum />
+          </Cartao>
+        )}
 
         {/* Spec 045: orçamento combinado em segredo */}
         <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">

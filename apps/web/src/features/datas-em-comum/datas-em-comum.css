@@ -1,0 +1,79 @@
+/* Datas em comum (spec 065). Só cores do global.css. */
+.datas-comum {
+  display: grid;
+  gap: 10px;
+}
+
+.datas-comum-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-transform: capitalize;
+}
+
+.datas-comum-grade {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.datas-comum-semana {
+  color: var(--cor-texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.datas-comum-dia {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.datas-comum-dia small {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.datas-comum-dia.nivel-1 {
+  background: var(--cor-comboio-fundo);
+}
+
+.datas-comum-dia.nivel-2 {
+  background: var(--dourado-claro);
+}
+
+.datas-comum-dia.nivel-3 {
+  background: var(--laranja);
+  font-weight: 800;
+}
+
+.datas-comum-dia.meu {
+  border-color: var(--couro);
+}
+
+.datas-comum-janelas {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.datas-comum-janelas li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}

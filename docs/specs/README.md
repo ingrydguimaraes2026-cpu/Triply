@@ -77,6 +77,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 062 | [Transfer de chegada](062-como-chegar.md) ("como chegar" no guia e na Hoje) | 2 | P | 026, 058 | Pronto pra testar (web) · banco não aplicado |
 | 063 | [Vibe da hospedagem + hostels](063-vibe-da-hospedagem.md) (etiquetas, nota, busca de hostels) | 2 | P | 011 | Pronto pra testar (web) · banco não aplicado |
 | 064 | [Buscar lugar com autocompletar](064-buscar-lugar.md) (sugestões reais, guarda onde fica) | 2 | M | 016 | Pronto pra testar (web) · banco não aplicado |
+| 065 | [Datas em comum](065-datas-em-comum.md) (cada um pinta os dias livres) | 2 | M | 007 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

@@ -1307,3 +1307,14 @@ test('064: lugar guarda coordenadas e endereço; latitude sem longitude é barra
   assert.equal((await como(db, ADM, 'select endereco from public.lugares'))[0].endereco, 'Cours Saleya 1')
   await assert.rejects(como(db, MEMBRO, `insert into public.lugares (viagem_id, destino_id, nome, tipo, latitude) values ('${V}', '${NICE}', 'X', 'comida', 43.7)`), /coordenadas_juntas/)
 })
+
+// ---------------- 065: datas em comum ----------------
+test('065: cada um marca os próprios dias; comboio vê; estranho não', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.disponibilidades (viagem_id, dia) values ('${V}', '2027-06-01'), ('${V}', '2027-06-02')`)
+  assert.equal((await como(db, ADM, 'select * from public.disponibilidades')).length, 2)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.disponibilidades')).length, 0)
+  await assert.rejects(como(db, ADM, `insert into public.disponibilidades (viagem_id, usuario_id, dia) values ('${V}', '${MEMBRO}', '2027-06-03')`), /row-level security/)
+  await como(db, ADM, 'delete from public.disponibilidades')
+  assert.equal((await db.query('select count(*)::int as n from public.disponibilidades')).rows[0].n, 2)
+})

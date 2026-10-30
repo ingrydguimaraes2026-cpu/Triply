@@ -105,7 +105,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 |---|---|---|---|---|
 | 52 | C3 | Lugares no mapa (pins por tipo e dia) | M | parcial: lugares já guardam coordenada (spec 064); falta o mapa com pins (junto do C9) |
 | 53 | C4 | Buscar lugar com autocompletar | M | ✅ feito (web) · spec 064 · banco a aplicar |
-| 54 | A2 | Datas em comum (cada um pinta os dias livres) | M | a fazer |
+| 54 | A2 | Datas em comum (cada um pinta os dias livres) | M | ✅ feito (web) · spec 065 · banco a aplicar |
 | 55 | A6 | "Não abro mão" (3 obrigatórios por pessoa) | M | a fazer |
 | 56 | A4 | Destinos candidatos com voto | M | a fazer |
 | 57 | B8 | Arrastar entre dias | M | a fazer |
