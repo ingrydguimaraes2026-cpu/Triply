@@ -1243,3 +1243,21 @@ test('056: cada um vê e muda só o próprio orçamento; precisa ser do comboio'
   await assert.rejects(como(db, ESTRANHO, `insert into public.orcamentos_pessoais (viagem_id, meta) values ('${V}', 1)`), /row-level security/)
   await assert.rejects(como(db, MEMBRO, `update public.orcamentos_pessoais set meta = 0`), /check/)
 })
+
+// ---------------- 057: pagamentos previstos ----------------
+test('057: comboio cria previsto; quem paga marca como pago ligando ao gasto; estranho não', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(
+    db,
+    ADM,
+    `insert into public.pagamentos_previstos (viagem_id, descricao, valor, moeda, vence_em, quem_paga) values ('${V}', 'Saldo do Airbnb', 600, 'EUR', '2027-06-01', '${MEMBRO}') returning id`,
+  )
+  assert.equal((await como(db, MEMBRO, 'select descricao from public.pagamentos_previstos'))[0].descricao, 'Saldo do Airbnb')
+  assert.equal((await como(db, ESTRANHO, 'select * from public.pagamentos_previstos')).length, 0)
+  const gasto = await salvarGasto(db, MEMBRO, { ...cafe, descricao: 'Saldo do Airbnb', valor: '600.00' }, [{ usuario_id: MEMBRO, valor: '300.00' }, { usuario_id: ADM, valor: '300.00' }])
+  // Quem paga (não é autor nem ADM) consegue ligar o gasto
+  await como(db, MEMBRO, 'update public.pagamentos_previstos set gasto_id = $2 where id = $1', [id, gasto])
+  assert.equal((await db.query('select gasto_id from public.pagamentos_previstos')).rows[0].gasto_id, gasto)
+  await assert.rejects(como(db, ADM, `update public.pagamentos_previstos set quem_paga = '${ESTRANHO}' where id = $1`, [id]), /comboio/)
+  await assert.rejects(como(db, ADM, `insert into public.pagamentos_previstos (viagem_id, descricao, valor, moeda) values ('${V}', 'X', 0, 'EUR')`), /check/)
+})

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
 import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
+import APagar from '../../features/previstos/APagar'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
@@ -228,6 +229,9 @@ export default function Financeiro() {
               {contas.semCotacao.length > 0 && (
                 <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
               )}
+            </Cartao>
+            <Cartao titulo="A pagar" icone={CalendarClock}>
+              <APagar viagemId={viagem.id} moeda={moeda} membros={membros} meuId={meuId} euSouAdm={euSouAdm} aoLancar={recarregar} />
             </Cartao>
             <Cartao titulo="Meu orçamento" icone={UserRound}>
               <MeuOrcamento

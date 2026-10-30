@@ -931,6 +931,51 @@ export type Database = {
         }
         Relationships: []
       }
+      pagamentos_previstos: {
+        Row: {
+          categoria: string
+          criado_em: string
+          criado_por: string
+          descricao: string
+          gasto_id: string | null
+          id: string
+          moeda: string
+          pago_em: string | null
+          quem_paga: string | null
+          valor: number
+          vence_em: string | null
+          viagem_id: string
+        }
+        Insert: {
+          categoria?: string
+          criado_em?: string
+          criado_por?: string
+          descricao: string
+          gasto_id?: string | null
+          id?: string
+          moeda: string
+          pago_em?: string | null
+          quem_paga?: string | null
+          valor: number
+          vence_em?: string | null
+          viagem_id: string
+        }
+        Update: {
+          categoria?: string
+          criado_em?: string
+          criado_por?: string
+          descricao?: string
+          gasto_id?: string | null
+          id?: string
+          moeda?: string
+          pago_em?: string | null
+          quem_paga?: string | null
+          valor?: number
+          vence_em?: string | null
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           avatar_url: string | null

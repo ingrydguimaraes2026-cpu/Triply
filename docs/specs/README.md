@@ -69,6 +69,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 054 | [Arquivar viagem](054-arquivar-viagem.md) (some só da minha lista) | 2 | P | 008 | Pronto pra testar (web) · banco não aplicado |
 | 055 | [Repetir com o mesmo comboio](055-repetir-comboio.md) (nova viagem já com as pessoas) | 2 | P | 007 | Pronto pra testar (web) · banco não aplicado |
 | 056 | [Meu orçamento pessoal](056-meu-orcamento.md) (minha parte + pessoais, quanto sobra por dia) | 2 | P | 003 | Pronto pra testar (web) · banco não aplicado |
+| 057 | [Gastos planejados e recorrentes](057-pagamentos-previstos.md) ("A pagar", fora dos acertos até pagar) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
