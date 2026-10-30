@@ -7,3 +7,18 @@ interface RespostaFetch {
 }
 
 declare function fetch(url: string): Promise<RespostaFetch>
+
+// URL e URLSearchParams também existem igual na web e no app (o Expo traz a versão completa)
+declare class URL {
+  constructor(url: string)
+  readonly hostname: string
+  readonly pathname: string
+  readonly protocol: string
+}
+
+declare class URLSearchParams {
+  constructor(init?: Record<string, string>)
+  set(nome: string, valor: string): void
+  append(nome: string, valor: string): void
+  toString(): string
+}

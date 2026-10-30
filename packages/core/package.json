@@ -8,7 +8,8 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./paises": "./src/paises.ts"
+    "./paises": "./src/paises.ts",
+    "./hospedagem": "./src/hospedagem.ts"
   },
   "scripts": {
     "type-check": "tsc --noEmit"

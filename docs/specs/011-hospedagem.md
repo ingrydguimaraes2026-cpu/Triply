@@ -1,6 +1,8 @@
 # 011. Hospedagem
 
-**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Pronto pra testar
+**Fase:** 2 · **Tamanho:** M · **Depende de:** 001 · **Status:** Pronto pra testar (web e app)
+
+> **No app (30/10):** `apps/mobile/app/hospedagem.tsx`, atalho "Hospedagem" no detalhe da viagem. Tem resumo com barra, busca pronta, opções com contas, coração, "Escolher esta" (ADM) e "Nova opção" (link, nome sugerido, preço, moeda). Ficam só no site: "Lançar como gasto", editar/apagar opção, etiquetas, horários e guia da casa. As regras e o acesso ao banco foram pro `@together/core` (`hospedagem.ts`); a web usa os mesmos.
 
 ## Objetivo
 Para cada destino do roteiro, o comboio busca onde ficar (Airbnb, Booking, Google Maps já preenchidos com cidade, datas e número de pessoas), junta as opções que cada um achou, vota, e o ADM fecha a escolhida. O app mostra quanto sai por pessoa e por noite e lança o valor como gasto.

@@ -4,7 +4,7 @@ import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Share2, Sun } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Share2, Sun } from 'lucide-react-native'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
@@ -61,6 +61,7 @@ export default function DetalheDaViagem() {
     { Icone: Sun, t: 'Hoje', s: 'Agora e próximo', rota: '/hoje' as Href },
     { Icone: Route, t: 'Roteiro', s: `${viagem.destinos.length} ${viagem.destinos.length === 1 ? 'destino' : 'destinos'}`, rota: '/roteiro' as Href },
     { Icone: Car, t: 'Transporte', s: trajetos.length ? `${trajetos.length} ${trajetos.length === 1 ? 'trajeto' : 'trajetos'}` : 'Nada ainda', rota: '/transportes' as Href },
+    { Icone: BedDouble, t: 'Hospedagem', s: 'Opções e votos', rota: '/hospedagem' as Href },
     { Icone: MapPin, t: 'Lugares', s: lugares ? `${lugares} ${lugares === 1 ? 'ideia' : 'ideias'}` : 'Nada ainda', rota: '/lugares' as Href },
     { Icone: ReceiptText, t: 'Contas', s: `${contas.quantidade} ${contas.quantidade === 1 ? 'gasto' : 'gastos'}`, rota: '/contas' as Href },
     { Icone: ImageIcon, t: 'Fotos', s: `${fotos} ${fotos === 1 ? 'foto' : 'fotos'}`, rota: '/fotos' as Href },

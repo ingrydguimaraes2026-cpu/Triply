@@ -194,7 +194,7 @@ export default function Hoje() {
                 {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
               </>
             ) : (
-              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe no site, em Hospedagem.</Text>
+              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
             )}
           </Bloco>
         ) : null}

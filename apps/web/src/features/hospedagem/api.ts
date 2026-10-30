@@ -1,110 +1,30 @@
 import { supabase } from '../../lib/supabase'
-import { deBanco, paraBanco } from '@together/core'
+import {
+  adicionarOpcaoDeHospedagem,
+  buscarOpcoesDeHospedagem,
+  escolherHospedagem,
+  linhaDaOpcao,
+  votarNaHospedagem,
+  type DadosDaOpcao,
+} from '@together/core'
 import type { GuiaDaCasa, Opcao } from './regras'
 
-// O que o formulário manda (preço em centavos)
-export type DadosDaOpcao = {
-  destinoId: string
-  nome: string
-  link: string | null
-  precoTotal: number | null
-  moeda: string
-  checkin: string | null
-  checkout: string | null
-  horaCheckin: string | null // "22:00"
-  horaCheckout: string | null
-  observacao: string | null
-  cancelamentoGratisAte: string | null // spec 041
-  guardaMalas: string | null // spec 060: 'sim' | 'nao' | 'perguntar'
-  guardaMalasObs: string | null
-  etiquetas: string[] // spec 063
-  nota: number | null
-  fotoUrl?: string | null // spec 072
-}
+// Buscar, adicionar, votar e escolher moram no @together/core (o app usa também)
+export type { DadosDaOpcao } from '@together/core'
 
-// Opções de hospedagem da viagem, com quem votou em cada uma (spec 011)
-export async function buscarOpcoes(viagemId: string): Promise<Opcao[]> {
-  const { data, error } = await supabase
-    .from('hospedagens')
-    .select('*, hospedagem_votos (usuario_id)')
-    .eq('viagem_id', viagemId)
-    .order('criado_em')
-  if (error) throw error
-  return (data ?? []).map((h) => ({
-    id: h.id,
-    destinoId: h.destino_id,
-    nome: h.nome,
-    link: h.link,
-    precoTotal: h.preco_total === null ? null : deBanco(h.preco_total),
-    moeda: h.moeda,
-    checkin: h.checkin,
-    checkout: h.checkout,
-    // O banco devolve "22:00:00": a tela usa "22:00"
-    horaCheckin: h.hora_checkin?.slice(0, 5) ?? null,
-    horaCheckout: h.hora_checkout?.slice(0, 5) ?? null,
-    observacao: h.observacao,
-    cancelamentoGratisAte: h.cancelamento_gratis_ate,
-    guardaMalas: h.guarda_malas,
-    guardaMalasObs: h.guarda_malas_obs,
-    etiquetas: h.etiquetas ?? [],
-    fotoUrl: h.foto_url,
-    nota: h.nota === null ? null : Number(h.nota),
-    escolhida: h.escolhida,
-    criadoPor: h.criado_por,
-    votos: (h.hospedagem_votos ?? []).map((v) => v.usuario_id),
-    guia: {
-      endereco: h.endereco,
-      wifiRede: h.wifi_rede,
-      wifiSenha: h.wifi_senha,
-      codigoPorta: h.codigo_porta,
-      regras: h.regras_casa,
-      comoChegar: h.como_chegar,
-    },
-  }))
-}
-
-function paraLinha(d: DadosDaOpcao) {
-  return {
-    destino_id: d.destinoId,
-    nome: d.nome.trim(),
-    link: d.link?.trim() || null,
-    preco_total: d.precoTotal === null ? null : Number(paraBanco(d.precoTotal)),
-    moeda: d.moeda,
-    checkin: d.checkin || null,
-    checkout: d.checkout || null,
-    hora_checkin: d.horaCheckin || null,
-    hora_checkout: d.horaCheckout || null,
-    observacao: d.observacao?.trim() || null,
-    cancelamento_gratis_ate: d.cancelamentoGratisAte || null,
-    guarda_malas: d.guardaMalas || null,
-    guarda_malas_obs: d.guardaMalasObs?.trim() || null,
-    etiquetas: d.etiquetas,
-    ...(d.fotoUrl !== undefined ? { foto_url: d.fotoUrl } : {}),
-    nota: d.nota,
-  }
-}
-
-export async function adicionarOpcao(viagemId: string, dados: DadosDaOpcao) {
-  const { error } = await supabase.from('hospedagens').insert({ viagem_id: viagemId, ...paraLinha(dados) })
-  if (error) throw error
-}
+export const buscarOpcoes = (viagemId: string): Promise<Opcao[]> => buscarOpcoesDeHospedagem(supabase, viagemId)
+export const adicionarOpcao = (viagemId: string, dados: DadosDaOpcao) => adicionarOpcaoDeHospedagem(supabase, viagemId, dados)
+export const votar = (hospedagemId: string, meuId: string, sim: boolean) => votarNaHospedagem(supabase, hospedagemId, meuId, sim)
+export const escolherOpcao = (id: string, escolher: boolean) => escolherHospedagem(supabase, id, escolher)
 
 export async function editarOpcao(id: string, dados: DadosDaOpcao) {
-  const { error } = await supabase.from('hospedagens').update(paraLinha(dados)).eq('id', id)
+  const { error } = await supabase.from('hospedagens').update(linhaDaOpcao(dados)).eq('id', id)
   if (error) throw error
 }
 
 export async function apagarOpcao(id: string) {
   const { error } = await supabase.from('hospedagens').delete().eq('id', id)
   if (error) throw error
-}
-
-export async function votar(hospedagemId: string, meuId: string, sim: boolean) {
-  const { error } = sim
-    ? await supabase.from('hospedagem_votos').insert({ hospedagem_id: hospedagemId, usuario_id: meuId })
-    : await supabase.from('hospedagem_votos').delete().eq('hospedagem_id', hospedagemId).eq('usuario_id', meuId)
-  // Voto repetido (clicou duas vezes) não é erro
-  if (error && error.code !== '23505') throw error
 }
 
 // Guia da casa (spec 026). Quem criou a opção ou o ADM (o banco confere).
@@ -126,10 +46,4 @@ export async function salvarGuiaDaCasa(id: string, guia: GuiaDaCasa) {
   if (error) throw error
   // A RLS não dá erro quando barra o update: só não muda nada
   if (!data?.length) throw new Error('Só quem adicionou a opção ou o ADM pode editar o guia.')
-}
-
-// Só o ADM (o banco confere)
-export async function escolherOpcao(id: string, escolher: boolean) {
-  const { error } = await supabase.rpc('escolher_hospedagem', { p_hospedagem: id, p_escolher: escolher })
-  if (error) throw error
 }
