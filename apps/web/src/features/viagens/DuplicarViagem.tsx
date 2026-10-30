@@ -22,7 +22,8 @@ export default function DuplicarViagem({ viagem, comComboio }: Props) {
     if (!nome.trim()) return setErro('Dê um nome pra viagem nova.')
     setErro(null)
     setSalvando(true)
-    const { data: nova, error } = await supabase.rpc('duplicar_viagem', { p_origem: viagem.id, p_nome: nome.trim(), p_inicio: inicio || null })
+    // A função aceita p_inicio nulo (= sem datas), mas o gerador de tipos marca como string; o cast documenta isso.
+    const { data: nova, error } = await supabase.rpc('duplicar_viagem', { p_origem: viagem.id, p_nome: nome.trim(), p_inicio: (inicio || null) as unknown as string })
     if (error || !nova) {
       console.error('Erro ao duplicar:', error)
       setSalvando(false)

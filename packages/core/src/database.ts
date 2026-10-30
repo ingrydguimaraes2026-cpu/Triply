@@ -16,6 +16,184 @@ export type Database = {
   }
   public: {
     Tables: {
+      arquivos_viagem: {
+        Row: {
+          caminho: string
+          criado_em: string
+          enviado_por: string
+          id: string
+          nome: string
+          tamanho: number
+          tipo: string
+          trajeto_id: string | null
+          viagem_id: string
+        }
+        Insert: {
+          caminho: string
+          criado_em?: string
+          enviado_por?: string
+          id?: string
+          nome: string
+          tamanho: number
+          tipo: string
+          trajeto_id?: string | null
+          viagem_id: string
+        }
+        Update: {
+          caminho?: string
+          criado_em?: string
+          enviado_por?: string
+          id?: string
+          nome?: string
+          tamanho?: number
+          tipo?: string
+          trajeto_id?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "arquivos_viagem_enviado_por_fkey"
+            columns: ["enviado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arquivos_viagem_trajeto_id_fkey"
+            columns: ["trajeto_id"]
+            isOneToOne: false
+            referencedRelation: "trajetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arquivos_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atividades_viagem: {
+        Row: {
+          alvo_id: string | null
+          autor: string | null
+          criado_em: string
+          id: string
+          tipo: string
+          titulo: string | null
+          viagem_id: string
+        }
+        Insert: {
+          alvo_id?: string | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          tipo: string
+          titulo?: string | null
+          viagem_id: string
+        }
+        Update: {
+          alvo_id?: string | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          tipo?: string
+          titulo?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_viagem_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atividades_vistas: {
+        Row: {
+          usuario_id: string
+          viagem_id: string
+          visto_em: string
+        }
+        Insert: {
+          usuario_id?: string
+          viagem_id: string
+          visto_em?: string
+        }
+        Update: {
+          usuario_id?: string
+          viagem_id?: string
+          visto_em?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atividades_vistas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atividades_vistas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      avisos: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criado_por: string
+          id: string
+          texto: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          texto: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          texto?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidato_votos: {
         Row: {
           candidato_id: string
@@ -35,6 +213,58 @@ export type Database = {
             columns: ["candidato_id"]
             isOneToOne: false
             referencedRelation: "destinos_candidatos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidato_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carteiras: {
+        Row: {
+          ajuste: number
+          criado_em: string
+          id: string
+          moeda: string
+          saldo_inicial: number
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          ajuste?: number
+          criado_em?: string
+          id?: string
+          moeda?: string
+          saldo_inicial?: number
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          ajuste?: number
+          criado_em?: string
+          id?: string
+          moeda?: string
+          saldo_inicial?: number
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carteiras_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carteiras_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
             referencedColumns: ["id"]
           },
         ]
@@ -61,46 +291,19 @@ export type Database = {
           usuario_id?: string
           viagem_id?: string
         }
-        Relationships: []
-      }
-      comentarios: {
-        Row: { autor: string; criado_em: string; id: string; post_id: string; texto: string }
-        Insert: { autor?: string; criado_em?: string; id?: string; post_id: string; texto: string }
-        Update: { autor?: string; criado_em?: string; id?: string; post_id?: string; texto?: string }
         Relationships: [
           {
-            foreignKeyName: "comentarios_autor_fkey"
-            columns: ["autor"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comentarios_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      curtidas: {
-        Row: { criado_em: string; post_id: string; usuario_id: string }
-        Insert: { criado_em?: string; post_id: string; usuario_id?: string }
-        Update: { criado_em?: string; post_id?: string; usuario_id?: string }
-        Relationships: [
-          {
-            foreignKeyName: "curtidas_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "curtidas_usuario_id_fkey"
+            foreignKeyName: "chegadas_usuario_id_fkey"
             columns: ["usuario_id"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chegadas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
             referencedColumns: ["id"]
           },
         ]
@@ -140,6 +343,45 @@ export type Database = {
             columns: ["viagem_id"]
             isOneToOne: false
             referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comentarios: {
+        Row: {
+          autor: string
+          criado_em: string
+          id: string
+          post_id: string
+          texto: string
+        }
+        Insert: {
+          autor?: string
+          criado_em?: string
+          id?: string
+          post_id: string
+          texto: string
+        }
+        Update: {
+          autor?: string
+          criado_em?: string
+          id?: string
+          post_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comentarios_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comentarios_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
@@ -309,6 +551,39 @@ export type Database = {
           },
         ]
       }
+      curtidas: {
+        Row: {
+          criado_em: string
+          post_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          post_id: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          post_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curtidas_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curtidas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       destinos: {
         Row: {
           chegada: string | null
@@ -387,7 +662,22 @@ export type Database = {
           pais?: string | null
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "destinos_candidatos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "destinos_candidatos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diario: {
         Row: {
@@ -420,7 +710,22 @@ export type Database = {
           viagem_id?: string
           visibilidade?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "diario_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diario_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       disponibilidades: {
         Row: {
@@ -438,7 +743,22 @@ export type Database = {
           usuario_id?: string
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "disponibilidades_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disponibilidades_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documentos_pessoais: {
         Row: {
@@ -459,7 +779,15 @@ export type Database = {
           passaporte_validade?: string | null
           usuario_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "documentos_pessoais_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: true
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documentos_status: {
         Row: {
@@ -493,6 +821,180 @@ export type Database = {
           },
           {
             foreignKeyName: "documentos_status_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enquete_opcoes: {
+        Row: {
+          enquete_id: string
+          id: string
+          ordem: number
+          texto: string
+        }
+        Insert: {
+          enquete_id: string
+          id?: string
+          ordem?: number
+          texto: string
+        }
+        Update: {
+          enquete_id?: string
+          id?: string
+          ordem?: number
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquete_opcoes_enquete_id_fkey"
+            columns: ["enquete_id"]
+            isOneToOne: false
+            referencedRelation: "enquetes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enquete_votos: {
+        Row: {
+          criado_em: string
+          enquete_id: string
+          opcao_id: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          enquete_id: string
+          opcao_id: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          enquete_id?: string
+          opcao_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquete_votos_enquete_id_fkey"
+            columns: ["enquete_id"]
+            isOneToOne: false
+            referencedRelation: "enquetes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquete_votos_opcao_id_fkey"
+            columns: ["opcao_id"]
+            isOneToOne: false
+            referencedRelation: "enquete_opcoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquete_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enquetes: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          fechada: boolean
+          fechada_em: string | null
+          id: string
+          multipla: boolean
+          pergunta: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          fechada?: boolean
+          fechada_em?: string | null
+          id?: string
+          multipla?: boolean
+          pergunta: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          fechada?: boolean
+          fechada_em?: string | null
+          id?: string
+          multipla?: boolean
+          pergunta?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquetes_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enquetes_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eventos_agenda: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          dia: string
+          hora: string | null
+          id: string
+          local: string | null
+          observacao: string | null
+          participantes: string[]
+          titulo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          dia: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          observacao?: string | null
+          participantes?: string[]
+          titulo: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          dia?: string
+          hora?: string | null
+          id?: string
+          local?: string | null
+          observacao?: string | null
+          participantes?: string[]
+          titulo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_agenda_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_agenda_viagem_id_fkey"
             columns: ["viagem_id"]
             isOneToOne: false
             referencedRelation: "viagens"
@@ -543,7 +1045,233 @@ export type Database = {
           tipo_sanguineo?: string | null
           usuario_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fichas_pessoais_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: true
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fotos: {
+        Row: {
+          caminho: string
+          criado_em: string
+          destino_id: string | null
+          enviada_por: string
+          id: string
+          latitude: number | null
+          legenda: string | null
+          longitude: number | null
+          ordem: number
+          post_id: string
+          viagem_id: string
+        }
+        Insert: {
+          caminho: string
+          criado_em?: string
+          destino_id?: string | null
+          enviada_por?: string
+          id?: string
+          latitude?: number | null
+          legenda?: string | null
+          longitude?: number | null
+          ordem?: number
+          post_id: string
+          viagem_id: string
+        }
+        Update: {
+          caminho?: string
+          criado_em?: string
+          destino_id?: string | null
+          enviada_por?: string
+          id?: string
+          latitude?: number | null
+          legenda?: string | null
+          longitude?: number | null
+          ordem?: number
+          post_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fotos_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fotos_enviada_por_fkey"
+            columns: ["enviada_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fotos_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fotos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gasto_divisoes: {
+        Row: {
+          gasto_id: string
+          usuario_id: string
+          valor: number
+        }
+        Insert: {
+          gasto_id: string
+          usuario_id: string
+          valor: number
+        }
+        Update: {
+          gasto_id?: string
+          usuario_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gasto_divisoes_gasto_id_fkey"
+            columns: ["gasto_id"]
+            isOneToOne: false
+            referencedRelation: "gastos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gasto_divisoes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gastos: {
+        Row: {
+          categoria: string
+          cotacao_reais: number | null
+          criado_em: string
+          criado_por: string
+          data: string
+          descricao: string
+          id: string
+          meio_pagamento: string | null
+          moeda: string
+          pago_por: string
+          pessoal: boolean
+          rascunho: boolean
+          valor: number
+          viagem_id: string
+        }
+        Insert: {
+          categoria?: string
+          cotacao_reais?: number | null
+          criado_em?: string
+          criado_por?: string
+          data?: string
+          descricao: string
+          id?: string
+          meio_pagamento?: string | null
+          moeda?: string
+          pago_por: string
+          pessoal?: boolean
+          rascunho?: boolean
+          valor: number
+          viagem_id: string
+        }
+        Update: {
+          categoria?: string
+          cotacao_reais?: number | null
+          criado_em?: string
+          criado_por?: string
+          data?: string
+          descricao?: string
+          id?: string
+          meio_pagamento?: string | null
+          moeda?: string
+          pago_por?: string
+          pessoal?: boolean
+          rascunho?: boolean
+          valor?: number
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gastos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gastos_pago_por_fkey"
+            columns: ["pago_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gastos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gmail_contas: {
+        Row: {
+          criado_em: string
+          email: string
+          erro: string | null
+          expira_em: string | null
+          refresh_token: string | null
+          status: string
+          ultimo_sync: string | null
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          email: string
+          erro?: string | null
+          expira_em?: string | null
+          refresh_token?: string | null
+          status?: string
+          ultimo_sync?: string | null
+          usuario_id: string
+        }
+        Update: {
+          criado_em?: string
+          email?: string
+          erro?: string | null
+          expira_em?: string | null
+          refresh_token?: string | null
+          status?: string
+          ultimo_sync?: string | null
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gmail_contas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: true
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       historico_viagem: {
         Row: {
@@ -585,7 +1313,29 @@ export type Database = {
           titulo?: string | null
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "historico_viagem_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_viagem_privado_de_fkey"
+            columns: ["privado_de"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hospedagem_votos: {
         Row: {
@@ -738,183 +1488,6 @@ export type Database = {
           },
         ]
       }
-      fotos: {
-        Row: {
-          caminho: string
-          criado_em: string
-          destino_id: string | null
-          enviada_por: string
-          id: string
-          latitude: number | null
-          legenda: string | null
-          longitude: number | null
-          ordem: number
-          post_id: string
-          viagem_id: string
-        }
-        Insert: {
-          caminho: string
-          criado_em?: string
-          destino_id?: string | null
-          enviada_por?: string
-          id?: string
-          latitude?: number | null
-          legenda?: string | null
-          longitude?: number | null
-          ordem?: number
-          post_id: string
-          viagem_id: string
-        }
-        Update: {
-          caminho?: string
-          criado_em?: string
-          destino_id?: string | null
-          enviada_por?: string
-          id?: string
-          latitude?: number | null
-          legenda?: string | null
-          longitude?: number | null
-          ordem?: number
-          post_id?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fotos_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fotos_destino_id_fkey"
-            columns: ["destino_id"]
-            isOneToOne: false
-            referencedRelation: "destinos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fotos_enviada_por_fkey"
-            columns: ["enviada_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fotos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gasto_divisoes: {
-        Row: {
-          gasto_id: string
-          usuario_id: string
-          valor: number
-        }
-        Insert: {
-          gasto_id: string
-          usuario_id: string
-          valor: number
-        }
-        Update: {
-          gasto_id?: string
-          usuario_id?: string
-          valor?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gasto_divisoes_gasto_id_fkey"
-            columns: ["gasto_id"]
-            isOneToOne: false
-            referencedRelation: "gastos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gasto_divisoes_usuario_id_fkey"
-            columns: ["usuario_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gastos: {
-        Row: {
-          categoria: string
-          cotacao_reais: number | null
-          criado_em: string
-          criado_por: string
-          data: string
-          descricao: string
-          id: string
-          meio_pagamento: string | null
-          moeda: string
-          pago_por: string
-          pessoal: boolean
-          rascunho: boolean
-          valor: number
-          viagem_id: string
-        }
-        Insert: {
-          categoria?: string
-          cotacao_reais?: number | null
-          criado_em?: string
-          criado_por?: string
-          data?: string
-          descricao: string
-          id?: string
-          meio_pagamento?: string | null
-          moeda?: string
-          pago_por: string
-          pessoal?: boolean
-          rascunho?: boolean
-          valor: number
-          viagem_id: string
-        }
-        Update: {
-          categoria?: string
-          cotacao_reais?: number | null
-          criado_em?: string
-          criado_por?: string
-          data?: string
-          descricao?: string
-          id?: string
-          meio_pagamento?: string | null
-          moeda?: string
-          pago_por?: string
-          pessoal?: boolean
-          rascunho?: boolean
-          valor?: number
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gastos_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gastos_pago_por_fkey"
-            columns: ["pago_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gastos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       itens_lista: {
         Row: {
           criado_em: string
@@ -949,6 +1522,49 @@ export type Database = {
           texto?: string
           viagem_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "itens_lista_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "itens_lista_quem_id_fkey"
+            columns: ["quem_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "itens_lista_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lembretes_enviados: {
+        Row: {
+          alvo_id: string
+          enviado_em: string
+          horario: string
+          tipo: string
+        }
+        Insert: {
+          alvo_id: string
+          enviado_em?: string
+          horario: string
+          tipo: string
+        }
+        Update: {
+          alvo_id?: string
+          enviado_em?: string
+          horario?: string
+          tipo?: string
+        }
         Relationships: []
       }
       localizacoes_ao_vivo: {
@@ -979,7 +1595,22 @@ export type Database = {
           usuario_id?: string
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "localizacoes_ao_vivo_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "localizacoes_ao_vivo_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lugar_prioridades: {
         Row: {
@@ -1005,90 +1636,44 @@ export type Database = {
             referencedRelation: "lugares"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lugar_prioridades_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
         ]
       }
-      mala_itens: {
+      lugar_votos: {
         Row: {
           criado_em: string
-          feito: boolean
-          id: string
-          quantidade: number | null
-          texto: string
+          lugar_id: string
           usuario_id: string
-          viagem_id: string
         }
         Insert: {
           criado_em?: string
-          feito?: boolean
-          id?: string
-          quantidade?: number | null
-          texto: string
+          lugar_id: string
           usuario_id?: string
-          viagem_id: string
         }
         Update: {
           criado_em?: string
-          feito?: boolean
-          id?: string
-          quantidade?: number | null
-          texto?: string
+          lugar_id?: string
           usuario_id?: string
-          viagem_id?: string
-        }
-        Relationships: []
-      }
-      orcamento_faixas: {
-        Row: {
-          atualizado_em: string
-          maximo: number
-          minimo: number
-          usuario_id: string
-          viagem_id: string
-        }
-        Insert: {
-          atualizado_em?: string
-          maximo: number
-          minimo: number
-          usuario_id?: string
-          viagem_id: string
-        }
-        Update: {
-          atualizado_em?: string
-          maximo?: number
-          minimo?: number
-          usuario_id?: string
-          viagem_id?: string
-        }
-        Relationships: []
-      }
-      orcamentos: {
-        Row: {
-          categoria: string
-          id: string
-          moeda: string
-          valor_meta: number
-          viagem_id: string
-        }
-        Insert: {
-          categoria: string
-          id?: string
-          moeda?: string
-          valor_meta: number
-          viagem_id: string
-        }
-        Update: {
-          categoria?: string
-          id?: string
-          moeda?: string
-          valor_meta?: number
-          viagem_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "orcamentos_viagem_id_fkey"
-            columns: ["viagem_id"]
+            foreignKeyName: "lugar_votos_lugar_id_fkey"
+            columns: ["lugar_id"]
             isOneToOne: false
-            referencedRelation: "viagens"
+            referencedRelation: "lugares"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lugar_votos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
             referencedColumns: ["id"]
           },
         ]
@@ -1172,10 +1757,88 @@ export type Database = {
           },
         ]
       }
+      mala_itens: {
+        Row: {
+          criado_em: string
+          feito: boolean
+          id: string
+          quantidade: number | null
+          texto: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          feito?: boolean
+          id?: string
+          quantidade?: number | null
+          texto: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          feito?: boolean
+          id?: string
+          quantidade?: number | null
+          texto?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mala_itens_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mala_itens_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       metas_cambio: {
-        Row: { atualizado_em: string; avisado_em: string | null; avisar: boolean; abaixo: boolean; boletim_em: string | null; meta: number | null; moeda: string; ultimo_valor: number | null; usuario_id: string; viagem_id: string }
-        Insert: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id: string }
-        Update: { atualizado_em?: string; avisado_em?: string | null; avisar?: boolean; abaixo?: boolean; boletim_em?: string | null; meta?: number | null; moeda?: string; ultimo_valor?: number | null; usuario_id?: string; viagem_id?: string }
+        Row: {
+          abaixo: boolean
+          atualizado_em: string
+          avisado_em: string | null
+          avisar: boolean
+          boletim_em: string | null
+          meta: number | null
+          moeda: string
+          ultimo_valor: number | null
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          abaixo?: boolean
+          atualizado_em?: string
+          avisado_em?: string | null
+          avisar?: boolean
+          boletim_em?: string | null
+          meta?: number | null
+          moeda: string
+          ultimo_valor?: number | null
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          abaixo?: boolean
+          atualizado_em?: string
+          avisado_em?: string | null
+          avisar?: boolean
+          boletim_em?: string | null
+          meta?: number | null
+          moeda?: string
+          ultimo_valor?: number | null
+          usuario_id?: string
+          viagem_id?: string
+        }
         Relationships: [
           {
             foreignKeyName: "metas_cambio_usuario_id_fkey"
@@ -1186,6 +1849,141 @@ export type Database = {
           },
           {
             foreignKeyName: "metas_cambio_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      movimentos_carteira: {
+        Row: {
+          carteira_id: string
+          criado_em: string
+          data: string
+          descricao: string | null
+          gasto_id: string | null
+          gmail_message_id: string
+          id: string
+          moeda: string
+          provedor: string
+          tipo: string
+          valor: number
+        }
+        Insert: {
+          carteira_id: string
+          criado_em?: string
+          data?: string
+          descricao?: string | null
+          gasto_id?: string | null
+          gmail_message_id: string
+          id?: string
+          moeda: string
+          provedor: string
+          tipo: string
+          valor: number
+        }
+        Update: {
+          carteira_id?: string
+          criado_em?: string
+          data?: string
+          descricao?: string | null
+          gasto_id?: string | null
+          gmail_message_id?: string
+          id?: string
+          moeda?: string
+          provedor?: string
+          tipo?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
+            columns: ["carteira_id"]
+            isOneToOne: false
+            referencedRelation: "carteiras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
+            columns: ["carteira_id"]
+            isOneToOne: false
+            referencedRelation: "carteiras_com_saldo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_carteira_gasto_id_fkey"
+            columns: ["gasto_id"]
+            isOneToOne: false
+            referencedRelation: "gastos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orcamento_faixas: {
+        Row: {
+          atualizado_em: string
+          maximo: number
+          minimo: number
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          maximo: number
+          minimo: number
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          maximo?: number
+          minimo?: number
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orcamento_faixas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orcamento_faixas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orcamentos: {
+        Row: {
+          categoria: string
+          id: string
+          moeda: string
+          valor_meta: number
+          viagem_id: string
+        }
+        Insert: {
+          categoria: string
+          id?: string
+          moeda?: string
+          valor_meta: number
+          viagem_id: string
+        }
+        Update: {
+          categoria?: string
+          id?: string
+          moeda?: string
+          valor_meta?: number
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orcamentos_viagem_id_fkey"
             columns: ["viagem_id"]
             isOneToOne: false
             referencedRelation: "viagens"
@@ -1212,7 +2010,22 @@ export type Database = {
           usuario_id?: string
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orcamentos_pessoais_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orcamentos_pessoais_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pagamentos_previstos: {
         Row: {
@@ -1257,7 +2070,36 @@ export type Database = {
           vence_em?: string | null
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_previstos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_previstos_gasto_id_fkey"
+            columns: ["gasto_id"]
+            isOneToOne: false
+            referencedRelation: "gastos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_previstos_quem_paga_fkey"
+            columns: ["quem_paga"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_previstos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       perfis: {
         Row: {
@@ -1280,6 +2122,60 @@ export type Database = {
         }
         Relationships: []
       }
+      pontos_de_encontro: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criado_por: string
+          id: string
+          latitude: number | null
+          local: string
+          longitude: number | null
+          observacao: string | null
+          quando: string | null
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          local: string
+          longitude?: number | null
+          observacao?: string | null
+          quando?: string | null
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string
+          id?: string
+          latitude?: number | null
+          local?: string
+          longitude?: number | null
+          observacao?: string | null
+          quando?: string | null
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pontos_de_encontro_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pontos_de_encontro_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_marcacoes: {
         Row: {
           criado_em: string
@@ -1301,18 +2197,53 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "post_marcacoes_marcado_por_fkey"
+            columns: ["marcado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "post_marcacoes_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "post_marcacoes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
         ]
       }
       posts: {
-        Row: { autor: string; criado_em: string; destino_id: string | null; id: string; legenda: string | null; viagem_id: string }
-        Insert: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id: string }
-        Update: { autor?: string; criado_em?: string; destino_id?: string | null; id?: string; legenda?: string | null; viagem_id?: string }
+        Row: {
+          autor: string
+          criado_em: string
+          destino_id: string | null
+          id: string
+          legenda: string | null
+          viagem_id: string
+        }
+        Insert: {
+          autor?: string
+          criado_em?: string
+          destino_id?: string | null
+          id?: string
+          legenda?: string | null
+          viagem_id: string
+        }
+        Update: {
+          autor?: string
+          criado_em?: string
+          destino_id?: string | null
+          id?: string
+          legenda?: string | null
+          viagem_id?: string
+        }
         Relationships: [
           {
             foreignKeyName: "posts_autor_fkey"
@@ -1356,12 +2287,41 @@ export type Database = {
           tipo?: string
           usuario_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "preferencias_aviso_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_inscricoes: {
-        Row: { auth: string; criado_em: string; endpoint: string; id: string; p256dh: string; usuario_id: string }
-        Insert: { auth: string; criado_em?: string; endpoint: string; id?: string; p256dh: string; usuario_id?: string }
-        Update: { auth?: string; criado_em?: string; endpoint?: string; id?: string; p256dh?: string; usuario_id?: string }
+        Row: {
+          auth: string
+          criado_em: string
+          endpoint: string
+          id: string
+          p256dh: string
+          usuario_id: string
+        }
+        Insert: {
+          auth: string
+          criado_em?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          usuario_id?: string
+        }
+        Update: {
+          auth?: string
+          criado_em?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          usuario_id?: string
+        }
         Relationships: [
           {
             foreignKeyName: "push_inscricoes_usuario_id_fkey"
@@ -1400,7 +2360,48 @@ export type Database = {
           vagas?: number
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "quartos_hospedagem_id_fkey"
+            columns: ["hospedagem_id"]
+            isOneToOne: false
+            referencedRelation: "hospedagens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quartos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resumos_enviados: {
+        Row: {
+          dia: string
+          enviado_em: string
+          viagem_id: string
+        }
+        Insert: {
+          dia: string
+          enviado_em?: string
+          viagem_id: string
+        }
+        Update: {
+          dia?: string
+          enviado_em?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resumos_enviados_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       seguros_viagem: {
         Row: {
@@ -1445,7 +2446,77 @@ export type Database = {
           valido_de?: string | null
           viagem_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "seguros_viagem_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seguros_viagem_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tarefas: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          feita: boolean
+          id: string
+          prazo: string | null
+          responsavel_id: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          feita?: boolean
+          id?: string
+          prazo?: string | null
+          responsavel_id?: string | null
+          titulo: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          feita?: boolean
+          id?: string
+          prazo?: string | null
+          responsavel_id?: string | null
+          titulo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tarefas_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trajeto_passageiros: {
         Row: {
@@ -1466,6 +2537,13 @@ export type Database = {
             columns: ["trajeto_id"]
             isOneToOne: false
             referencedRelation: "trajetos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trajeto_passageiros_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
             referencedColumns: ["id"]
           },
         ]
@@ -1537,6 +2615,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "trajetos_motorista_id_fkey"
+            columns: ["motorista_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trajetos_origem_id_fkey"
             columns: ["origem_id"]
             isOneToOne: false
@@ -1599,602 +2684,6 @@ export type Database = {
           },
         ]
       }
-      carteiras: {
-        Row: {
-          ajuste: number
-          criado_em: string
-          id: string
-          moeda: string
-          saldo_inicial: number
-          usuario_id: string
-          viagem_id: string
-        }
-        Insert: {
-          ajuste?: number
-          criado_em?: string
-          id?: string
-          moeda?: string
-          saldo_inicial?: number
-          usuario_id?: string
-          viagem_id: string
-        }
-        Update: {
-          ajuste?: number
-          criado_em?: string
-          id?: string
-          moeda?: string
-          saldo_inicial?: number
-          usuario_id?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "carteiras_usuario_id_fkey"
-            columns: ["usuario_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "carteiras_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      movimentos_carteira: {
-        Row: {
-          carteira_id: string
-          criado_em: string
-          data: string
-          descricao: string | null
-          gasto_id: string | null
-          gmail_message_id: string
-          id: string
-          moeda: string
-          provedor: string
-          tipo: string
-          valor: number
-        }
-        Insert: {
-          carteira_id: string
-          criado_em?: string
-          data?: string
-          descricao?: string | null
-          gasto_id?: string | null
-          gmail_message_id: string
-          id?: string
-          moeda: string
-          provedor: string
-          tipo: string
-          valor: number
-        }
-        Update: {
-          carteira_id?: string
-          criado_em?: string
-          data?: string
-          descricao?: string | null
-          gasto_id?: string | null
-          gmail_message_id?: string
-          id?: string
-          moeda?: string
-          provedor?: string
-          tipo?: string
-          valor?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
-            columns: ["carteira_id"]
-            isOneToOne: false
-            referencedRelation: "carteiras"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "movimentos_carteira_carteira_id_fkey"
-            columns: ["carteira_id"]
-            isOneToOne: false
-            referencedRelation: "carteiras_com_saldo"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      arquivos_viagem: {
-        Row: {
-          caminho: string
-          criado_em: string
-          enviado_por: string
-          id: string
-          nome: string
-          tamanho: number
-          tipo: string
-          trajeto_id: string | null
-          viagem_id: string
-        }
-        Insert: {
-          caminho: string
-          criado_em?: string
-          enviado_por?: string
-          id?: string
-          nome: string
-          tamanho: number
-          tipo: string
-          trajeto_id?: string | null
-          viagem_id: string
-        }
-        Update: {
-          caminho?: string
-          criado_em?: string
-          enviado_por?: string
-          id?: string
-          nome?: string
-          tamanho?: number
-          tipo?: string
-          trajeto_id?: string | null
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "arquivos_viagem_enviado_por_fkey"
-            columns: ["enviado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "arquivos_viagem_trajeto_id_fkey"
-            columns: ["trajeto_id"]
-            isOneToOne: false
-            referencedRelation: "trajetos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "arquivos_viagem_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      avisos: {
-        Row: {
-          atualizado_em: string
-          criado_em: string
-          criado_por: string
-          id: string
-          texto: string
-          viagem_id: string
-        }
-        Insert: {
-          atualizado_em?: string
-          criado_em?: string
-          criado_por?: string
-          id?: string
-          texto: string
-          viagem_id: string
-        }
-        Update: {
-          atualizado_em?: string
-          criado_em?: string
-          criado_por?: string
-          id?: string
-          texto?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "avisos_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "avisos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      pontos_de_encontro: {
-        Row: {
-          atualizado_em: string
-          criado_em: string
-          criado_por: string
-          id: string
-          latitude: number | null
-          local: string
-          longitude: number | null
-          observacao: string | null
-          quando: string | null
-          viagem_id: string
-        }
-        Insert: {
-          atualizado_em?: string
-          criado_em?: string
-          criado_por?: string
-          id?: string
-          latitude?: number | null
-          local: string
-          longitude?: number | null
-          observacao?: string | null
-          quando?: string | null
-          viagem_id: string
-        }
-        Update: {
-          atualizado_em?: string
-          criado_em?: string
-          criado_por?: string
-          id?: string
-          latitude?: number | null
-          local?: string
-          longitude?: number | null
-          observacao?: string | null
-          quando?: string | null
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pontos_de_encontro_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pontos_de_encontro_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tarefas: {
-        Row: {
-          criado_em: string
-          criado_por: string
-          feita: boolean
-          id: string
-          prazo: string | null
-          responsavel_id: string | null
-          titulo: string
-          viagem_id: string
-        }
-        Insert: {
-          criado_em?: string
-          criado_por?: string
-          feita?: boolean
-          id?: string
-          prazo?: string | null
-          responsavel_id?: string | null
-          titulo: string
-          viagem_id: string
-        }
-        Update: {
-          criado_em?: string
-          criado_por?: string
-          feita?: boolean
-          id?: string
-          prazo?: string | null
-          responsavel_id?: string | null
-          titulo?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tarefas_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tarefas_responsavel_id_fkey"
-            columns: ["responsavel_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tarefas_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      atividades_viagem: {
-        Row: {
-          alvo_id: string | null
-          autor: string | null
-          criado_em: string
-          id: string
-          tipo: string
-          titulo: string | null
-          viagem_id: string
-        }
-        Insert: {
-          alvo_id?: string | null
-          autor?: string | null
-          criado_em?: string
-          id?: string
-          tipo: string
-          titulo?: string | null
-          viagem_id: string
-        }
-        Update: {
-          alvo_id?: string | null
-          autor?: string | null
-          criado_em?: string
-          id?: string
-          tipo?: string
-          titulo?: string | null
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "atividades_viagem_autor_fkey"
-            columns: ["autor"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "atividades_viagem_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      atividades_vistas: {
-        Row: {
-          usuario_id: string
-          viagem_id: string
-          visto_em: string
-        }
-        Insert: {
-          usuario_id?: string
-          viagem_id: string
-          visto_em?: string
-        }
-        Update: {
-          usuario_id?: string
-          viagem_id?: string
-          visto_em?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "atividades_vistas_usuario_id_fkey"
-            columns: ["usuario_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "atividades_vistas_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      eventos_agenda: {
-        Row: {
-          criado_em: string
-          criado_por: string
-          dia: string
-          hora: string | null
-          id: string
-          local: string | null
-          observacao: string | null
-          participantes: string[]
-          titulo: string
-          viagem_id: string
-        }
-        Insert: {
-          criado_em?: string
-          criado_por?: string
-          dia: string
-          hora?: string | null
-          id?: string
-          local?: string | null
-          observacao?: string | null
-          participantes?: string[]
-          titulo: string
-          viagem_id: string
-        }
-        Update: {
-          criado_em?: string
-          criado_por?: string
-          dia?: string
-          hora?: string | null
-          id?: string
-          local?: string | null
-          observacao?: string | null
-          participantes?: string[]
-          titulo?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "eventos_agenda_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "eventos_agenda_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      enquetes: {
-        Row: {
-          criado_em: string
-          criado_por: string
-          fechada: boolean
-          fechada_em: string | null
-          id: string
-          multipla: boolean
-          pergunta: string
-          viagem_id: string
-        }
-        Insert: {
-          criado_em?: string
-          criado_por?: string
-          fechada?: boolean
-          fechada_em?: string | null
-          id?: string
-          multipla?: boolean
-          pergunta: string
-          viagem_id: string
-        }
-        Update: {
-          criado_em?: string
-          criado_por?: string
-          fechada?: boolean
-          fechada_em?: string | null
-          id?: string
-          multipla?: boolean
-          pergunta?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "enquetes_criado_por_fkey"
-            columns: ["criado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "enquetes_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      enquete_opcoes: {
-        Row: {
-          enquete_id: string
-          id: string
-          ordem: number
-          texto: string
-        }
-        Insert: {
-          enquete_id: string
-          id?: string
-          ordem?: number
-          texto: string
-        }
-        Update: {
-          enquete_id?: string
-          id?: string
-          ordem?: number
-          texto?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "enquete_opcoes_enquete_id_fkey"
-            columns: ["enquete_id"]
-            isOneToOne: false
-            referencedRelation: "enquetes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      enquete_votos: {
-        Row: {
-          criado_em: string
-          enquete_id: string
-          opcao_id: string
-          usuario_id: string
-        }
-        Insert: {
-          criado_em?: string
-          enquete_id: string
-          opcao_id: string
-          usuario_id?: string
-        }
-        Update: {
-          criado_em?: string
-          enquete_id?: string
-          opcao_id?: string
-          usuario_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "enquete_votos_enquete_id_fkey"
-            columns: ["enquete_id"]
-            isOneToOne: false
-            referencedRelation: "enquetes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "enquete_votos_opcao_id_fkey"
-            columns: ["opcao_id"]
-            isOneToOne: false
-            referencedRelation: "enquete_opcoes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "enquete_votos_usuario_id_fkey"
-            columns: ["usuario_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      lugar_votos: {
-        Row: {
-          criado_em: string
-          lugar_id: string
-          usuario_id: string
-        }
-        Insert: {
-          criado_em?: string
-          lugar_id: string
-          usuario_id?: string
-        }
-        Update: {
-          criado_em?: string
-          lugar_id?: string
-          usuario_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lugar_votos_lugar_id_fkey"
-            columns: ["lugar_id"]
-            isOneToOne: false
-            referencedRelation: "lugares"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "lugar_votos_usuario_id_fkey"
-            columns: ["usuario_id"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       carteiras_com_saldo: {
@@ -2247,92 +2736,107 @@ export type Database = {
       }
     }
     Functions: {
-      aceitar_convite: { Args: { p_codigo: string; p_nome?: string }; Returns: string }
+      aceitar_convite: {
+        Args: { p_codigo: string; p_nome?: string }
+        Returns: string
+      }
       alertas_de_passaporte: {
-        Args: {
-          p_viagem: string
-        }
-        Returns: { usuario_id: string; situacao: string }[]
+        Args: { p_viagem: string }
+        Returns: {
+          situacao: string
+          usuario_id: string
+        }[]
       }
       arquivar_viagem: {
-        Args: {
-          p_viagem: string
-          p_arquivar: boolean
-        }
+        Args: { p_arquivar: boolean; p_viagem: string }
         Returns: undefined
       }
-      duplicar_viagem: {
+      convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
+      criar_enquete: {
         Args: {
-          p_origem: string
-          p_nome: string
-          p_inicio: string | null
+          p_multipla: boolean
+          p_opcoes: Json
+          p_pergunta: string
+          p_viagem: string
         }
+        Returns: string
+      }
+      duplicar_viagem: {
+        Args: { p_inicio: string; p_nome: string; p_origem: string }
         Returns: string
       }
       entrar_no_quarto: {
-        Args: {
-          p_quarto: string
-          p_entrar: boolean
-        }
-        Returns: undefined
-      }
-      excluir_meus_dados: {
-        Args: never
-        Returns: undefined
-      }
-      faixa_do_comboio: {
-        Args: {
-          p_viagem: string
-        }
-        Returns: { responderam: number; pessoas: number; minimo: number | null; maximo: number | null }[]
-      }
-      fichas_do_comboio: {
-        Args: {
-          p_viagem: string
-        }
-        Returns: { usuario_id: string; telefone: string | null; aniversario: string | null; restricoes: string | null; alergias: string | null; mobilidade: string | null; emergencia_nome: string | null; emergencia_telefone: string | null; tipo_sanguineo: string | null; remedios: string | null }[]
-      }
-      ligar_movimento_ao_gasto: {
-        Args: {
-          p_movimento: string
-          p_gasto: string
-        }
-        Returns: undefined
-      }
-      marcar_visitado: {
-        Args: {
-          p_lugar: string
-          p_visitado: boolean
-        }
-        Returns: undefined
-      }
-      meus_dados: {
-        Args: never
-        Returns: Json
-      }
-      restaurar_da_lixeira: {
-        Args: {
-          p_id: string
-        }
-        Returns: string
-      }
-      trazer_comboio: {
-        Args: {
-          p_nova: string
-          p_origem: string
-        }
-        Returns: number
-      }
-      ver_convite: { Args: { p_codigo: string }; Returns: Json }
-      convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
-      registrar_push: {
-        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Args: { p_entrar: boolean; p_quarto: string }
         Returns: undefined
       }
       escolher_hospedagem: {
         Args: { p_escolher?: boolean; p_hospedagem: string }
         Returns: undefined
       }
+      excluir_meus_dados: { Args: never; Returns: undefined }
+      faixa_do_comboio: {
+        Args: { p_viagem: string }
+        Returns: {
+          maximo: number
+          minimo: number
+          pessoas: number
+          responderam: number
+        }[]
+      }
+      fichas_do_comboio: {
+        Args: { p_viagem: string }
+        Returns: {
+          alergias: string
+          aniversario: string
+          emergencia_nome: string
+          emergencia_telefone: string
+          mobilidade: string
+          remedios: string
+          restricoes: string
+          telefone: string
+          tipo_sanguineo: string
+          usuario_id: string
+        }[]
+      }
+      lembretes_a_enviar: {
+        Args: { p_antecedencia?: string }
+        Returns: {
+          alvo_id: string
+          horario: string
+          meio: string
+          tipo: string
+          titulo: string
+          viagem_id: string
+        }[]
+      }
+      ligar_movimento_ao_gasto: {
+        Args: { p_gasto: string; p_movimento: string }
+        Returns: undefined
+      }
+      marcar_resumo: {
+        Args: { p_dia: string; p_viagem: string }
+        Returns: boolean
+      }
+      marcar_visitado: {
+        Args: { p_lugar: string; p_visitado: boolean }
+        Returns: undefined
+      }
+      meus_dados: { Args: never; Returns: Json }
+      minha_conexao_gmail: {
+        Args: never
+        Returns: {
+          email: string
+          expira_em: string
+          status: string
+          ultimo_sync: string
+        }[]
+      }
+      registrar_push: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      restaurar_da_lixeira: { Args: { p_id: string }; Returns: string }
+      saldo_euro_do_comboio: { Args: { p_viagem_id: string }; Returns: number }
       salvar_gasto: {
         Args: { p_divisoes?: Json; p_gasto: Json; p_viagem: string }
         Returns: string
@@ -2357,21 +2861,15 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      minha_conexao_gmail: {
-        Args: never
-        Returns: {
-          email: string
-          expira_em: string
-          status: string
-          ultimo_sync: string
-        }[]
+      trazer_comboio: {
+        Args: { p_nova: string; p_origem: string }
+        Returns: number
       }
-      saldo_euro_do_comboio: { Args: { p_viagem_id: string }; Returns: number }
-      criar_enquete: {
-        Args: { p_viagem: string; p_pergunta: string; p_multipla: boolean; p_opcoes: Json }
-        Returns: string
+      ver_convite: { Args: { p_codigo: string }; Returns: Json }
+      votar_enquete: {
+        Args: { p_marcar?: boolean; p_opcao: string }
+        Returns: undefined
       }
-      votar_enquete: { Args: { p_opcao: string; p_marcar?: boolean }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
@@ -2464,3 +2962,43 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
