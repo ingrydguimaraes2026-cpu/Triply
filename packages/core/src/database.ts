@@ -658,6 +658,42 @@ export type Database = {
           },
         ]
       }
+      itens_lista: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          feito: boolean
+          id: string
+          lista: string
+          quantidade: string | null
+          quem_id: string | null
+          texto: string
+          viagem_id: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string
+          feito?: boolean
+          id?: string
+          lista: string
+          quantidade?: string | null
+          quem_id?: string | null
+          texto: string
+          viagem_id: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          feito?: boolean
+          id?: string
+          lista?: string
+          quantidade?: string | null
+          quem_id?: string | null
+          texto?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       orcamento_faixas: {
         Row: {
           atualizado_em: string

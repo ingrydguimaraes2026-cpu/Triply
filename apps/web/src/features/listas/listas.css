@@ -1,0 +1,117 @@
+/* Listas do comboio (spec 048). Só cores do global.css. */
+.listas {
+  display: grid;
+  gap: 10px;
+}
+
+.listas-abas {
+  display: flex;
+  gap: 6px;
+}
+
+.listas-abas button {
+  padding: 4px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.listas-abas button[aria-selected='true'] {
+  border-color: var(--laranja);
+  background: var(--laranja);
+  font-weight: 700;
+}
+
+.listas-resumo {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.listas-itens {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listas-itens li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.listas-itens li.feito .listas-texto {
+  color: var(--cor-texto-suave);
+  text-decoration: line-through;
+}
+
+.listas-marca {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--caramelo);
+  border-radius: 6px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+
+.listas-marca[aria-pressed='true'] {
+  border-color: var(--laranja);
+  background: var(--laranja);
+}
+
+.listas-texto {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.listas-texto small {
+  color: var(--cor-texto-suave);
+}
+
+.listas-itens select {
+  max-width: 110px;
+  font-size: 13px;
+}
+
+.listas-sugestoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.listas-sugestoes button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 999px;
+  background: none;
+  color: var(--couro);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.listas-nova {
+  display: flex;
+  gap: 6px;
+}
+
+.listas-nova input {
+  flex: 1;
+  min-width: 0;
+}
+
+.listas-nova .listas-qtd {
+  flex: 0 0 64px;
+}

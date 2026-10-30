@@ -1152,3 +1152,22 @@ test('045: faixa de cada um é secreta; o comboio só vê a faixa comum (com 2+ 
   await assert.rejects(como(db, ESTRANHO, `insert into public.orcamento_faixas (viagem_id, minimo, maximo) values ('${V}', 1, 2)`), /row-level security/)
   await assert.rejects(como(db, MEMBRO, `update public.orcamento_faixas set maximo = 10 where viagem_id = '${V}'`), /check/)
 })
+
+// ---------------- 048: listas do comboio ----------------
+test('048: comboio cria e marca itens; só passa pra gente do comboio; só autor/ADM apaga', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(db, MEMBRO, `insert into public.itens_lista (viagem_id, lista, texto, quem_id) values ('${V}', 'levar', 'Adaptador', '${MEMBRO}') returning id`)
+  await como(db, ADM, `insert into public.itens_lista (viagem_id, lista, texto) values ('${V}', 'compras', 'Água')`)
+  // O ADM marca o item do membro como feito (lista é do grupo)
+  await como(db, ADM, 'update public.itens_lista set feito = true where id = $1', [id])
+  assert.equal((await db.query('select feito from public.itens_lista where id = $1', [id])).rows[0].feito, true)
+  await assert.rejects(como(db, MEMBRO, `update public.itens_lista set quem_id = '${ESTRANHO}' where id = $1`, [id]), /comboio/)
+  await assert.rejects(como(db, MEMBRO, "update public.itens_lista set lista = 'compras' where id = $1", [id]), /mudar/)
+  await assert.rejects(como(db, MEMBRO, `insert into public.itens_lista (viagem_id, lista, texto) values ('${V}', 'mala', 'X')`), /check/)
+  assert.equal((await como(db, ESTRANHO, 'select * from public.itens_lista')).length, 0)
+  // Membro não apaga o item do ADM; ADM apaga o do membro
+  await como(db, MEMBRO, "delete from public.itens_lista where lista = 'compras'")
+  assert.equal((await db.query("select count(*)::int as n from public.itens_lista where lista = 'compras'")).rows[0].n, 1)
+  await como(db, ADM, 'delete from public.itens_lista where id = $1', [id])
+  assert.equal((await db.query("select count(*)::int as n from public.itens_lista where lista = 'levar'")).rows[0].n, 0)
+})
