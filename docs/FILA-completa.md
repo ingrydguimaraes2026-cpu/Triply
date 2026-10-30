@@ -170,13 +170,13 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 104 | N5 | Mapa de onde já fui | M | Pronto pra testar (web) · spec 102 |
 | 105 | N6 | Estatísticas do viajante | M | Pronto pra testar (web) · spec 102 |
 | 106 | N8 | Indicar lugares pra um amigo | P | Pronto pra testar (web) · spec 103 |
-| 107 | D7 | Status do voo ao vivo (API paga) | M | a fazer |
-| 108 | D10 | Horários reais de trem e ônibus (API) | G | a fazer |
-| 109 | C9 | Mapa offline do destino | G | a fazer |
+| 107 | D7 | Status do voo ao vivo (API paga) | M | 🔒 precisa escolher a API e o custo (AeroDataBox, FlightAware) |
+| 108 | D10 | Horários reais de trem e ônibus (API) | G | 🔒 cada país tem a sua API (SNCF, Trenitalia, DB); precisa escolher por onde começar |
+| 109 | C9 | Mapa offline do destino | G | 🔒 precisa de biblioteca nova (MapLibre + PMTiles) e espaço no Storage; decidir antes |
 | 110 | J7 | Frases úteis com áudio | M | Pronto pra testar (web) · spec 104 |
 | 111 | F8 | Localização ao vivo temporária | G | a fazer |
-| 112 | M14 | Carteira do celular (Apple/Google Wallet) | M | a fazer |
-| 113 | M13 | Widgets e Live Activities | G | a fazer |
+| 112 | M14 | Carteira do celular (Apple/Google Wallet) | M | 🔒 precisa de conta Apple Developer e certificado pra assinar o cartão |
+| 113 | M13 | Widgets e Live Activities | G | 🔒 só no app nativo (Expo); entra junto com a paridade do mobile |
 
 **Fora da fila de propósito:** G8 Bot de WhatsApp (custo da API oficial; avaliar depois) e tudo da seção "O que NÃO vamos fazer" do `docs/ROADMAP.md`.
 
