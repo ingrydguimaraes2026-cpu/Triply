@@ -15,6 +15,8 @@ import Emergencia from '../../features/emergencia/Emergencia'
 import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
+import { useAcessibilidade } from '../../lib/acessibilidade'
+import { abasVisiveis } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -68,6 +70,7 @@ export default function ViagemLayout() {
   const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
   const [buscando, setBuscando] = useState(false) // spec 053
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
+  const { simples } = useAcessibilidade() // spec 090: modo simples mostra menos abas
   // Spec 085: mudança de outra pessoa aparece na hora (só escuta depois que a viagem carregou)
   useTempoReal(estado.status === 'pronta' ? id : undefined, estado.status === 'pronta' ? estado.dados.recarregar : semNada)
 
@@ -154,8 +157,8 @@ export default function ViagemLayout() {
           <span>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</span>
         </Link>
 
-        <nav className="viagem-abas" aria-label="Abas da viagem">
-          {ABAS.map(({ para, rotulo, curto, icone: Icone }) => (
+        <nav className={simples ? 'viagem-abas simples' : 'viagem-abas'} aria-label="Abas da viagem">
+          {abasVisiveis(ABAS, simples).map(({ para, rotulo, curto, icone: Icone }) => (
             <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo}>
               <Icone size={20} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>

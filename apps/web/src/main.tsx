@@ -5,6 +5,10 @@ import { router } from './router'
 import '@fontsource-variable/fraunces'
 import '@fontsource-variable/plus-jakarta-sans'
 import './styles/global.css'
+import { aplicarAcessibilidade } from './lib/acessibilidade'
+
+// Spec 090: letra maior / alto contraste escolhidos neste aparelho
+aplicarAcessibilidade()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,0 +1,62 @@
+/* Spec 090: leitura e modo simples */
+.acessibilidade h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+}
+.acessibilidade-fonte {
+  border: 0;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+.acessibilidade-opcoes {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.acessibilidade-opcoes button {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.acessibilidade-opcoes button:nth-child(2) {
+  font-size: 1.1em;
+}
+.acessibilidade-opcoes button:nth-child(3) {
+  font-size: 1.25em;
+}
+.acessibilidade-opcoes button.ativo {
+  background: var(--laranja);
+  border-color: var(--laranja);
+}
+.acessibilidade-chave {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--cor-borda);
+  cursor: pointer;
+}
+.acessibilidade-chave input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+.acessibilidade-chave span {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+.acessibilidade-chave small {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}

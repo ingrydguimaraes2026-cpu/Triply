@@ -163,3 +163,33 @@ a {
     box-shadow: 0 0 0 0 transparent;
   }
 }
+
+/* ---------- Spec 090: acessibilidade (escolhida no Perfil, fica no aparelho) ---------- */
+/* Letra maior: aumenta tudo junto (boa parte do CSS usa px, então "zoom" é o que funciona) */
+html[data-fonte='grande'] body {
+  zoom: 1.15;
+}
+html[data-fonte='maior'] body {
+  zoom: 1.3;
+}
+/* Alto contraste: texto suave vira quase o texto, bordas mais escuras */
+html[data-contraste='alto'] {
+  --cor-texto: #1f1206;
+  --cor-texto-suave: #3b2715;
+  --cor-borda: #b08a55;
+}
+html[data-contraste='alto'] a,
+html[data-contraste='alto'] .botao-texto {
+  text-decoration: underline;
+}
+/* Quem pediu menos movimento no sistema não vê animação */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

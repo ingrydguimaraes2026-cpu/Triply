@@ -7,6 +7,7 @@ import Avatar from '../components/ui/Avatar'
 import FormPassaporte from '../features/passaporte/FormPassaporte'
 import FormFicha from '../features/ficha-pessoal/FormFicha'
 import MinhaPrivacidade from '../features/privacidade/MinhaPrivacidade'
+import FormAcessibilidade from '../features/acessibilidade/FormAcessibilidade'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -134,6 +135,7 @@ export default function Perfil() {
 
         <FormFicha meuId={eu.id} />
         <FormPassaporte meuId={eu.id} />
+        <FormAcessibilidade />
         <MinhaPrivacidade />
       </main>
     </div>

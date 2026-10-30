@@ -142,7 +142,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 80 | M8 | Histórico e lixeira de 30 dias | M | Pronto pra testar (web) · spec 087 |
 | 81 | M7 | Exportar a viagem em PDF | M | Pronto pra testar (web) · spec 088 |
 | 82 | M11 | Privacidade e LGPD (excluir conta, baixar meus dados) ◐ | M | Pronto pra testar (web) · spec 089 |
-| 83 | M10 | Acessibilidade e modo simples | M | a fazer |
+| 83 | M10 | Acessibilidade e modo simples | M | Pronto pra testar (web) · spec 090 |
 | 84 | M15 | Outros idiomas (inglês, espanhol) | M | a fazer |
 | 85 | N4 | Duplicar viagem e templates | M | a fazer |
 

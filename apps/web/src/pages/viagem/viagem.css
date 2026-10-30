@@ -56,6 +56,14 @@
   color: var(--laranja);
 }
 
+/* Spec 090: modo simples, 5 abas maiores */
+.viagem-abas.simples {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.viagem-abas.simples a {
+  font-size: 12px;
+}
+
 /* Aba guardada (Overview, Hospedagem, Transportes): mesmo espaçamento do conteúdo */
 .aba-guardada {
   display: flex;
