@@ -231,3 +231,38 @@
   flex: 1;
   min-width: 0;
 }
+
+/* Arquivar viagem (spec 054) */
+.cartao-viagem-arquivar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.cartao-viagem-arquivar:hover {
+  border-color: var(--caramelo);
+}
+
+.viagens-arquivadas {
+  margin-top: 24px;
+}
+
+.viagens-arquivadas summary {
+  color: var(--cor-texto-suave);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.viagens-arquivadas .lista-viagens {
+  margin-top: 12px;
+  opacity: 0.85;
+}

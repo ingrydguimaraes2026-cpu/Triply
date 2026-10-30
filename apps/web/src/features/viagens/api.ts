@@ -69,6 +69,7 @@ export type ResumoDaViagem = {
   destinos: string[]
   membros: { id: string; nome: string; avatarUrl: string | null; papel: 'adm' | 'membro' }[]
   souAdm: boolean // quem está usando é ADM desta viagem (só o ADM pode apagar)
+  arquivada: boolean // spec 054: eu tirei da minha lista
 }
 
 // Todas as viagens da pessoa (o RLS do banco já filtra: só as que ela está no comboio)
@@ -76,7 +77,7 @@ export async function buscarMinhasViagens(): Promise<ResumoDaViagem[]> {
   const [{ data, error }, { data: sessao }] = await Promise.all([
     supabase
       .from('viagens')
-      .select('id, nome, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(papel, perfis(id, nome, avatar_url))')
+      .select('id, nome, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(papel, arquivada_em, perfis(id, nome, avatar_url))')
       .order('criado_em', { ascending: false }),
     supabase.auth.getUser(),
   ])
@@ -96,6 +97,7 @@ export async function buscarMinhasViagens(): Promise<ResumoDaViagem[]> {
       destinos: [...v.destinos].sort((a, b) => a.ordem - b.ordem).map((d) => d.nome),
       membros,
       souAdm: membros.some((m) => m.id === meuId && m.papel === 'adm'),
+      arquivada: v.comboio_membros.some((m) => m.perfis?.id === meuId && m.arquivada_em !== null),
     }
   })
 }
@@ -108,4 +110,10 @@ export function situacaoDaViagem(inicio: string | null, fim: string | null, hoje
   if (fim && fim < hoje) return 'concluida'
   if (inicio && inicio > hoje) return 'proxima'
   return 'agora'
+}
+
+// Arquiva (ou volta) a viagem só na MINHA lista (spec 054)
+export async function arquivarViagem(viagemId: string, arquivar: boolean) {
+  const { error } = await supabase.rpc('arquivar_viagem', { p_viagem: viagemId, p_arquivar: arquivar })
+  if (error) throw error
 }

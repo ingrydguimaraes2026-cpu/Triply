@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowRight, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
-import { buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
+import { Archive, ArchiveRestore, ArrowRight, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
+import { arquivarViagem, buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
 import { sair, useSessao } from '../features/auth/hooks'
 import FaixaConvidado from '../features/auth/FaixaConvidado'
@@ -35,6 +35,17 @@ export default function MinhasViagens() {
     setParaApagar(null)
   }
 
+  // Spec 054: arquivar só na minha lista (sem recarregar a página)
+  async function arquivar(v: ResumoDaViagem, arquivar: boolean) {
+    setViagens((atual) => (Array.isArray(atual) ? atual.map((x) => (x.id === v.id ? { ...x, arquivada: arquivar } : x)) : atual))
+    try {
+      await arquivarViagem(v.id, arquivar)
+    } catch (e) {
+      console.error('Erro ao arquivar:', e)
+      setViagens((atual) => (Array.isArray(atual) ? atual.map((x) => (x.id === v.id ? { ...x, arquivada: !arquivar } : x)) : atual))
+    }
+  }
+
   useEffect(() => {
     buscarMinhasViagens()
       .then(setViagens)
@@ -45,11 +56,54 @@ export default function MinhasViagens() {
   }, [])
 
   const hoje = hojeTexto()
-  const ordenadas =
+  const todas =
     Array.isArray(viagens) &&
     [...viagens]
       .map((v) => ({ ...v, situacao: situacaoDaViagem(v.dataInicio, v.dataFim, hoje) }))
       .sort((a, b) => PESO[a.situacao] - PESO[b.situacao] || (a.dataInicio ?? '').localeCompare(b.dataInicio ?? ''))
+  const ordenadas = todas && todas.filter((v) => !v.arquivada)
+  const arquivadas = todas ? todas.filter((v) => v.arquivada) : []
+
+  const cartao = (v: ResumoDaViagem & { situacao: Situacao }) => (
+              <li key={v.id} className="lista-viagens-item">
+                <Link to={`/viagem/${v.id}`} className={`cartao-viagem ${v.situacao}${v.souAdm ? ' com-apagar' : ''}`}>
+                  {SELOS[v.situacao] && <span className="cartao-viagem-selo">{SELOS[v.situacao]}</span>}
+                  <strong>{v.nome}</strong>
+                  <span className="cartao-viagem-periodo">{formatarPeriodo(v.dataInicio, v.dataFim)}</span>
+                  {v.destinos.length > 0 && <span className="cartao-viagem-destinos">{v.destinos.join(' → ')}</span>}
+                  <span className="cartao-viagem-comboio">
+                    {v.membros.slice(0, 5).map((m) => (
+                      <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} />
+                    ))}
+                    {v.membros.length > 5 && <small>+{v.membros.length - 5}</small>}
+                    <span className="cartao-viagem-abrir">
+                      Abrir <ArrowRight size={14} aria-hidden="true" />
+                    </span>
+                  </span>
+                </Link>
+                {/* Fora do link de propósito: botão dentro de link não funciona direito. Só o ADM pode apagar. */}
+                {v.souAdm && (
+                  <button
+                    type="button"
+                    className="cartao-viagem-apagar"
+                    onClick={() => setParaApagar(v)}
+                    aria-label={`Apagar a viagem ${v.nome}`}
+                    title="Apagar viagem"
+                  >
+                    <Trash2 size={18} aria-hidden="true" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="cartao-viagem-arquivar"
+                  onClick={() => arquivar(v, !v.arquivada)}
+                  aria-label={v.arquivada ? `Voltar ${v.nome} pra lista` : `Arquivar ${v.nome}`}
+                  title={v.arquivada ? 'Voltar pra lista' : 'Arquivar (só some da sua lista)'}
+                >
+                  {v.arquivada ? <ArchiveRestore size={16} aria-hidden="true" /> : <Archive size={16} aria-hidden="true" />}
+                </button>
+              </li>
+  )
 
   return (
     <div className="pagina-solta">
@@ -95,7 +149,7 @@ export default function MinhasViagens() {
 
         {viagens === null && <p className="carregando-texto">Carregando…</p>}
         {viagens === 'erro' && <p className="aviso-erro">Não deu pra carregar as viagens. Atualize a página.</p>}
-        {ordenadas && ordenadas.length === 0 && (
+        {ordenadas && ordenadas.length === 0 && arquivadas.length === 0 && (
           <div className="vazio">
             <p className="vazio-titulo">Nenhuma viagem ainda</p>
             <p className="vazio-texto">Crie a primeira e convide o comboio.</p>
@@ -107,38 +161,15 @@ export default function MinhasViagens() {
 
         {ordenadas && ordenadas.length > 0 && (
           <ul className="lista-viagens">
-            {ordenadas.map((v) => (
-              <li key={v.id} className="lista-viagens-item">
-                <Link to={`/viagem/${v.id}`} className={`cartao-viagem ${v.situacao}${v.souAdm ? ' com-apagar' : ''}`}>
-                  {SELOS[v.situacao] && <span className="cartao-viagem-selo">{SELOS[v.situacao]}</span>}
-                  <strong>{v.nome}</strong>
-                  <span className="cartao-viagem-periodo">{formatarPeriodo(v.dataInicio, v.dataFim)}</span>
-                  {v.destinos.length > 0 && <span className="cartao-viagem-destinos">{v.destinos.join(' → ')}</span>}
-                  <span className="cartao-viagem-comboio">
-                    {v.membros.slice(0, 5).map((m) => (
-                      <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} />
-                    ))}
-                    {v.membros.length > 5 && <small>+{v.membros.length - 5}</small>}
-                    <span className="cartao-viagem-abrir">
-                      Abrir <ArrowRight size={14} aria-hidden="true" />
-                    </span>
-                  </span>
-                </Link>
-                {/* Fora do link de propósito: botão dentro de link não funciona direito. Só o ADM pode apagar. */}
-                {v.souAdm && (
-                  <button
-                    type="button"
-                    className="cartao-viagem-apagar"
-                    onClick={() => setParaApagar(v)}
-                    aria-label={`Apagar a viagem ${v.nome}`}
-                    title="Apagar viagem"
-                  >
-                    <Trash2 size={18} aria-hidden="true" />
-                  </button>
-                )}
-              </li>
-            ))}
+            {ordenadas.map((v) => cartao(v))}
           </ul>
+        )}
+
+        {arquivadas.length > 0 && (
+          <details className="viagens-arquivadas">
+            <summary>Arquivadas ({arquivadas.length})</summary>
+            <ul className="lista-viagens">{arquivadas.map((v) => cartao(v))}</ul>
+          </details>
         )}
 
         {paraApagar && (

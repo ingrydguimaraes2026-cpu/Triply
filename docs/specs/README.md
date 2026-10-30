@@ -66,6 +66,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 051 | ["Cheguei bem"](051-cheguei-bem.md) (um toque avisa o comboio) | 2 | P | 013 | Pronto pra testar (web) · banco não aplicado |
 | 052 | [Exportar gastos](052-exportar-gastos.md) (planilha e Splitwise) | 2 | P | 002 | Pronto pra testar (web) |
 | 053 | [Busca na viagem](053-busca-na-viagem.md) (um campo acha tudo) | 2 | P | várias | Pronto pra testar (web) |
+| 054 | [Arquivar viagem](054-arquivar-viagem.md) (some só da minha lista) | 2 | P | 008 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

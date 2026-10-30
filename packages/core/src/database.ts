@@ -84,18 +84,21 @@ export type Database = {
       }
       comboio_membros: {
         Row: {
+          arquivada_em: string | null
           entrou_em: string
           papel: string
           usuario_id: string
           viagem_id: string
         }
         Insert: {
+          arquivada_em?: string | null
           entrou_em?: string
           papel?: string
           usuario_id: string
           viagem_id: string
         }
         Update: {
+          arquivada_em?: string | null
           entrou_em?: string
           papel?: string
           usuario_id?: string
@@ -1792,6 +1795,13 @@ export type Database = {
           p_viagem: string
         }
         Returns: { usuario_id: string; situacao: string }[]
+      }
+      arquivar_viagem: {
+        Args: {
+          p_viagem: string
+          p_arquivar: boolean
+        }
+        Returns: undefined
       }
       faixa_do_comboio: {
         Args: {

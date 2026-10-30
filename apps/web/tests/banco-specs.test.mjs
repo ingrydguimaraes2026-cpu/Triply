@@ -1201,3 +1201,18 @@ test('051: cada um registra a própria chegada; o comboio vê; estranho não', a
   await como(db, ADM, 'delete from public.chegadas')
   assert.equal((await db.query('select count(*)::int as n from public.chegadas')).rows[0].n, 1)
 })
+
+// ---------------- 054: arquivar viagem ----------------
+test('054: cada um arquiva só na própria lista', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `select public.arquivar_viagem('${V}', true)`)
+  const arquivada = async (quem) =>
+    (await db.query('select arquivada_em from public.comboio_membros where viagem_id = $1 and usuario_id = $2', [V, quem])).rows[0].arquivada_em
+  assert.ok(await arquivada(MEMBRO))
+  assert.equal(await arquivada(ADM), null)
+  await como(db, MEMBRO, `select public.arquivar_viagem('${V}', false)`)
+  assert.equal(await arquivada(MEMBRO), null)
+  // Estranho chamando não muda nada
+  await como(db, ESTRANHO, `select public.arquivar_viagem('${V}', true)`)
+  assert.equal((await db.query('select count(*)::int as n from public.comboio_membros where arquivada_em is not null')).rows[0].n, 0)
+})
