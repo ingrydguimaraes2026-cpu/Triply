@@ -7,7 +7,7 @@ export default function FaixaOffline() {
   if (!semInternet) return null
   return (
     <p className="faixa-offline" role="status">
-      <WifiOff size={16} aria-hidden="true" /> Sem internet: mostrando o que você já abriu. Gastos rápidos ficam guardados e sobem quando a conexão voltar.
+      <WifiOff size={16} aria-hidden="true" /> Sem internet: mostrando o que você já abriu. Gastos e marcações (listas, mala, tarefas) ficam guardados e sobem quando a conexão voltar.
     </p>
   )
 }

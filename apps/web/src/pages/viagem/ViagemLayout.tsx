@@ -6,6 +6,7 @@ import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
 import { enviarFila } from '../../features/financeiro/fila'
+import { enviarMarcacoes } from '../../features/offline/filaDeMarcacoes'
 import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
 import { useNovidades } from '../../features/notificacoes/hooks'
 import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
@@ -91,6 +92,8 @@ export default function ViagemLayout() {
           avisarQueGastosMudaram()
           setRecado(n === 1 ? 'O gasto guardado sem internet foi enviado.' : `${n} gastos guardados sem internet foram enviados.`)
         }
+        // Spec 086: marcações (listas, mala, tarefas) guardadas sem internet
+        return enviarMarcacoes()
       })
     enviar()
     window.addEventListener('online', enviar)

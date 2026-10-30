@@ -11,12 +11,14 @@ import {
   SUGESTOES_LEVAR,
   type ItemDeLista,
   type TipoDeLista,
+  comPendentes,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'
 import FormGasto from '../financeiro/FormGasto'
 import Gaveta from '../../components/ui/Gaveta'
 import './listas.css'
+import { lerMarcacoes, marcarOuGuardar } from '../offline/filaDeMarcacoes'
 
 const NOMES: Record<TipoDeLista, string> = { levar: 'Quem leva', compras: 'Compras' }
 
@@ -32,7 +34,7 @@ export default function ListasDoComboio() {
 
   const recarregar = useCallback(() => {
     buscarItensDaLista(supabase, viagem.id)
-      .then(setItens)
+      .then((lista) => setItens(comPendentes(lista, lerMarcacoes(), 'itens_lista'))) // spec 086
       .catch((e) => {
         console.error('Erro ao buscar listas:', e)
         setErro('Não deu pra carregar as listas.')
@@ -58,7 +60,8 @@ export default function ListasDoComboio() {
     const antes = itens
     setItens((atual) => (atual ?? []).map((i) => (i.id === item.id ? { ...i, ...mudanca } : i)))
     try {
-      await mudarItemDaLista(supabase, item.id, mudanca)
+      // Spec 086: sem internet, fica guardado e sobe depois
+      await marcarOuGuardar('itens_lista', item.id, mudanca, () => mudarItemDaLista(supabase, item.id, mudanca))
     } catch {
       setItens(antes)
       setErro('Não deu pra salvar.')

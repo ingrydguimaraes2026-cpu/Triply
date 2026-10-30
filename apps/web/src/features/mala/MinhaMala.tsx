@@ -10,10 +10,12 @@ import {
   tirarDaMala,
   type ItemDaMala,
   type ModeloDeMala,
+  comPendentes,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'
 import '../listas/listas.css'
+import { lerMarcacoes, marcarOuGuardar } from '../offline/filaDeMarcacoes'
 
 function diasDaViagem(inicio: string | null, fim: string | null) {
   if (!inicio || !fim) return 5
@@ -30,7 +32,7 @@ export default function MinhaMala() {
 
   const recarregar = useCallback(() => {
     buscarMinhaMala(supabase, viagem.id)
-      .then(setItens)
+      .then((lista) => setItens(comPendentes(lista, lerMarcacoes(), 'mala_itens'))) // spec 086
       .catch(() => setErro('Não deu pra carregar a mala.'))
   }, [viagem.id])
   useEffect(recarregar, [recarregar])
@@ -48,7 +50,7 @@ export default function MinhaMala() {
   async function marcar(i: ItemDaMala) {
     setItens((atual) => (atual ?? []).map((x) => (x.id === i.id ? { ...x, feito: !i.feito } : x)))
     try {
-      await marcarNaMala(supabase, i.id, !i.feito)
+      await marcarOuGuardar('mala_itens', i.id, { feito: !i.feito }, () => marcarNaMala(supabase, i.id, !i.feito)) // spec 086
     } catch {
       recarregar()
     }

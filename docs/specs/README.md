@@ -98,6 +98,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 083 | [Meio de pagamento e dinheiro na mão](083-meio-de-pagamento-e-dinheiro-na-mao.md) (cartão/conta/dinheiro, cotação do dia) | 2 | M | 003 | Pronto pra testar (web) · banco não aplicado |
 | 084 | [Movimento da carteira vira gasto](084-movimento-da-carteira-vira-gasto.md) | 2 | Pronto pra testar (web) · banco não aplicado |
 | 085 | [Tempo real](085-tempo-real.md) | 7 | Pronto pra testar (web) · banco não aplicado |
+| 086 | [Marcações sem internet](086-marcacoes-sem-internet.md) | 7 | Pronto pra testar (web) · sem banco |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

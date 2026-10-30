@@ -7,9 +7,11 @@ import {
   criarTarefa,
   editarTarefa,
   type Tarefa,
+  comPendentes,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { formatarData } from '../../lib/datas'
+import { lerMarcacoes, marcarOuGuardar } from '../offline/filaDeMarcacoes'
 
 type Pessoa = { id: string; nome: string }
 
@@ -35,7 +37,7 @@ export default function Checklist({
   useEffect(() => {
     let vivo = true
     buscarTarefas(supabase, viagemId)
-      .then((lista) => vivo && setTarefas(lista))
+      .then((lista) => vivo && setTarefas(comPendentes(lista, lerMarcacoes(), 'tarefas'))) // spec 086
       .catch(() => vivo && setTarefas([]))
     return () => {
       vivo = false
@@ -79,7 +81,7 @@ export default function Checklist({
     const feita = !t.feita
     setTarefas((atual) => ordenar((atual ?? []).map((x) => (x.id === t.id ? { ...x, feita } : x))))
     try {
-      await alternarTarefa(supabase, t.id, feita)
+      await marcarOuGuardar('tarefas', t.id, { feita }, () => alternarTarefa(supabase, t.id, feita)) // spec 086
     } catch (erro) {
       console.error('Erro ao marcar a tarefa:', erro)
       setTarefas((atual) => ordenar((atual ?? []).map((x) => (x.id === t.id ? { ...x, feita: !feita } : x))))
