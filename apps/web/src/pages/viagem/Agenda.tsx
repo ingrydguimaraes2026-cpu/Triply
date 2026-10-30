@@ -9,6 +9,7 @@ import { meio } from '../../features/transportes/api'
 import { hojeTexto, periodoDosDestinos } from '../../features/destinos/datas'
 import { diaCurtinho, diaPorExtenso, useEventosDaAgenda } from '../../features/agenda/hooks'
 import { useFeriados } from '../../features/agenda/useFeriados'
+import DiarioDoDia from '../../features/diario/DiarioDoDia'
 import FormEvento from '../../features/agenda/FormEvento'
 import { baixarCalendario } from '../../features/agenda/calendario'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
@@ -187,6 +188,8 @@ export default function Agenda() {
             Ideias do que fazer em {onde.nome} →
           </Link>
         )}
+        {/* Spec 101: diário do dia (só a partir do próprio dia) */}
+        {dia <= hoje && <DiarioDoDia key={dia} viagemId={viagem.id} dia={dia} membros={membros} meuId={meuId} />}
       </section>
 
       {janela && (

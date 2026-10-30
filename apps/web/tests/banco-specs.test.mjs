@@ -1609,3 +1609,28 @@ test('100: comboio marca quem é do comboio; autor, quem marcou ou o marcado tir
   await como(db, MEMBRO, 'delete from public.post_marcacoes where post_id = $1 and usuario_id = $2', [post, ADM])
   assert.equal((await db.query('select count(*)::int n from public.post_marcacoes')).rows[0].n, 0)
 })
+
+// ---------------- 101: diário da viagem ----------------
+test('101: diário do comboio todos leem; "só eu" só o dono; ninguém escreve no dos outros', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, `insert into public.diario (viagem_id, dia, texto) values ('${V}', '2026-11-20', 'Dia lindo em Nice')`)
+  await como(db, ADM, `insert into public.diario (viagem_id, dia, texto, visibilidade) values ('${V}', '2026-11-20', 'Segredo', 'so_eu')`)
+  assert.deepEqual((await como(db, MEMBRO, 'select texto from public.diario order by texto')).map((r) => r.texto), ['Dia lindo em Nice'])
+  assert.deepEqual((await como(db, ADM, 'select texto from public.diario order by texto')).map((r) => r.texto), ['Dia lindo em Nice', 'Segredo'])
+  assert.equal((await como(db, ESTRANHO, 'select * from public.diario')).length, 0)
+  // Um por pessoa por dia
+  await assert.rejects(como(db, MEMBRO, `insert into public.diario (viagem_id, dia, texto) values ('${V}', '2026-11-20', 'De novo')`), /duplicate|unique/)
+  // ADM não muda o do membro (0 linhas)
+  await como(db, ADM, "update public.diario set texto = 'hackeado' where texto = 'Dia lindo em Nice'")
+  assert.equal((await db.query("select count(*)::int n from public.diario where texto = 'hackeado'")).rows[0].n, 0)
+  await assert.rejects(como(db, ESTRANHO, `insert into public.diario (viagem_id, dia, texto) values ('${V}', '2026-11-21', 'Oi')`), /row-level security/)
+})
+
+test('089+101: meus dados traz o diário e excluir apaga o diário', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.diario (viagem_id, dia, texto) values ('${V}', '2026-11-20', 'Meu dia')`)
+  const [{ dados }] = await como(db, ADM, 'select public.meus_dados() as dados')
+  assert.deepEqual(dados.diario.map((d) => d.texto), ['Meu dia'])
+  await como(db, ADM, 'select public.excluir_meus_dados()')
+  assert.equal((await db.query('select count(*)::int n from public.diario')).rows[0].n, 0)
+})

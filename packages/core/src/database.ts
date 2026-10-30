@@ -389,6 +389,39 @@ export type Database = {
         }
         Relationships: []
       }
+      diario: {
+        Row: {
+          autor: string
+          criado_em: string
+          dia: string
+          editado_em: string
+          id: string
+          texto: string
+          viagem_id: string
+          visibilidade: string
+        }
+        Insert: {
+          autor?: string
+          criado_em?: string
+          dia: string
+          editado_em?: string
+          id?: string
+          texto: string
+          viagem_id: string
+          visibilidade?: string
+        }
+        Update: {
+          autor?: string
+          criado_em?: string
+          dia?: string
+          editado_em?: string
+          id?: string
+          texto?: string
+          viagem_id?: string
+          visibilidade?: string
+        }
+        Relationships: []
+      }
       disponibilidades: {
         Row: {
           dia: string

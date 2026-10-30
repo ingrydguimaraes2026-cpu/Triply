@@ -8,7 +8,7 @@
 --    - em cada viagem: se eu sou a única pessoa, a viagem é apagada; se eu sou o único ADM,
 --      o ADM passa pra quem entrou primeiro (com conta, não convidado); depois eu saio;
 --    - apaga ficha, documentos, mala, orçamento pessoal, carteira, avisos no celular,
---      disponibilidades, metas de câmbio, chegadas e meus gastos pessoais;
+--      disponibilidades, metas de câmbio, chegadas, diário, marcações em fotos e meus gastos pessoais;
 --    - o perfil vira "Conta excluída" (sem foto). Gastos, fotos e posts que o comboio
 --      divide continuam, com esse nome, pra não bagunçar as contas de quem ficou.
 --    A Edge Function `excluir-conta` chama esta função e depois desativa o login.
@@ -28,9 +28,15 @@ set search_path = ''
 as $$
 declare
   eu uuid := (select auth.uid());
+  v_extra jsonb;
 begin
   if eu is null then
     raise exception 'Precisa estar logado.' using errcode = '42501';
+  end if;
+  -- Diário (spec 101): tabela de uma migration posterior; só entra se já existir
+  if to_regclass('public.diario') is not null then
+    execute 'select jsonb_build_object(''diario'', coalesce((select jsonb_agg(to_jsonb(x)) from public.diario x where x.autor = $1), ''[]''))'
+    into v_extra using eu;
   end if;
   return jsonb_build_object(
     'gerado_em', now(),
@@ -54,7 +60,7 @@ begin
     'posts', coalesce((select jsonb_agg(to_jsonb(x)) from public.posts x where x.autor = eu), '[]'),
     'comentarios', coalesce((select jsonb_agg(to_jsonb(x)) from public.comentarios x where x.autor = eu), '[]'),
     'comentarios_em_itens', coalesce((select jsonb_agg(to_jsonb(x)) from public.comentarios_item x where x.autor = eu), '[]')
-  );
+  ) || coalesce(v_extra, '{}'::jsonb);
 end;
 $$;
 
@@ -116,6 +122,13 @@ begin
   delete from public.metas_cambio where usuario_id = eu;
   delete from public.chegadas where usuario_id = eu;
   delete from public.seguros_viagem where criado_por = eu;
+  -- Tabelas de migrations posteriores (specs 100 e 101): só se já existirem
+  if to_regclass('public.diario') is not null then
+    execute 'delete from public.diario where autor = $1' using eu;
+  end if;
+  if to_regclass('public.post_marcacoes') is not null then
+    execute 'delete from public.post_marcacoes where usuario_id = $1' using eu;
+  end if;
 
   update public.perfis set nome = 'Conta excluída', avatar_url = null where id = eu;
 end;
