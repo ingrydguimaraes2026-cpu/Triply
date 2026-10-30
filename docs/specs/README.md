@@ -46,6 +46,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 031 | [Central de notificações](031-central-de-notificacoes.md) (sino com o que o comboio fez desde a última visita) | 2 | M | várias | Pronto pra testar (web) |
 | 032 | [Lembretes no celular](032-lembretes.md) (1 h antes de trajeto e encontro) | 2 | M | 004, 013, 024 | Pronto pra testar (web) · banco não aplicado |
 | 033 | [Preferências de aviso](033-preferencias-de-aviso.md) (o que cada um recebe no celular) | 2 | P | 032 | Pronto pra testar (web) · banco não aplicado |
+| 035 | [Situação e preço do trajeto](035-situacao-e-preco-do-trajeto.md) (sugestão/reservado/comprado + lançar como gasto) | 2 | P | 002, 004 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

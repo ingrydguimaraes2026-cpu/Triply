@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { Trash2 } from 'lucide-react'
-import type { Tables } from '@together/core'
+import { SITUACOES_DO_TRAJETO, type Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
 import { apagarTrajeto, criarBateEVolta, MEIOS, salvarTrajeto, type Trajeto } from './api'
 import { deCampoHorario, paraCampoHorario } from './avisos'
 
 type Props = {
   viagemId: string
+  moedaViagem: string
   destinos: Tables<'destinos'>[]
   trajeto?: Trajeto // editando
   origemId?: string // já vem preenchido pelo trecho
@@ -15,7 +16,7 @@ type Props = {
 }
 
 // Formulário do trajeto (spec 004). Só o ADM chega aqui.
-export default function FormTrajeto({ viagemId, destinos, trajeto, origemId, destinoId, aoTerminar }: Props) {
+export default function FormTrajeto({ viagemId, moedaViagem, destinos, trajeto, origemId, destinoId, aoTerminar }: Props) {
   const [origem, setOrigem] = useState(trajeto ? (trajeto.origem_id ?? '') : (origemId ?? ''))
   const [destino, setDestino] = useState(trajeto ? (trajeto.destino_id ?? '') : (destinoId ?? ''))
   const [meioEscolhido, setMeio] = useState(trajeto?.meio ?? 'trem')
@@ -26,6 +27,9 @@ export default function FormTrajeto({ viagemId, destinos, trajeto, origemId, des
   const [voltaChegada, setVoltaChegada] = useState('')
   const [observacao, setObservacao] = useState(trajeto?.observacao ?? '')
   const [link, setLink] = useState(trajeto?.link_reserva ?? '')
+  const [situacao, setSituacao] = useState(trajeto?.situacao ?? 'sugestao')
+  const [preco, setPreco] = useState(trajeto?.preco != null ? String(trajeto.preco).replace('.', ',') : '')
+  const [moeda, setMoeda] = useState(trajeto?.moeda ?? moedaViagem)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [confirmando, setConfirmando] = useState(false)
@@ -43,6 +47,11 @@ export default function FormTrajeto({ viagemId, destinos, trajeto, origemId, des
     const linkLimpo = link.trim()
     if (linkLimpo && !/^https?:\/\//i.test(linkLimpo)) return setErro('O link precisa começar com http:// ou https://')
 
+    const precoNumero = preco.trim() ? Number(preco.trim().replace(/\./g, '').replace(',', '.')) : null
+    if (precoNumero !== null && (!Number.isFinite(precoNumero) || precoNumero < 0)) return setErro('O preço não está certo. Ex.: 45,50')
+    const moedaLimpa = moeda.trim().toUpperCase()
+    if (precoNumero !== null && !/^[A-Z]{3}$/.test(moedaLimpa)) return setErro('A moeda tem 3 letras. Ex.: EUR')
+
     const dados = {
       origem_id: origem,
       destino_id: destino,
@@ -52,6 +61,9 @@ export default function FormTrajeto({ viagemId, destinos, trajeto, origemId, des
       bate_e_volta: bateEVolta,
       observacao: observacao.trim() || null,
       link_reserva: linkLimpo || null,
+      situacao,
+      preco: precoNumero,
+      moeda: precoNumero === null ? null : moedaLimpa,
     }
     setSalvando(true)
     try {
@@ -164,6 +176,31 @@ export default function FormTrajeto({ viagemId, destinos, trajeto, origemId, des
           </div>
         </div>
       )}
+
+      <div className="form-campo">
+        <span className="form-rotulo">Situação</span>
+        <div className="escolhas">
+          {SITUACOES_DO_TRAJETO.map((s) => (
+            <button key={s.chave} type="button" aria-pressed={situacao === s.chave} onClick={() => setSituacao(s.chave)}>
+              {s.nome}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="form-linha">
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-preco">
+            Preço {bateEVolta && !trajeto ? '(ida e volta)' : ''} pro comboio
+          </label>
+          <input id="trajeto-preco" inputMode="decimal" placeholder="Ex.: 45,50" value={preco} onChange={(e) => setPreco(e.target.value)} />
+        </div>
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-moeda">
+            Moeda
+          </label>
+          <input id="trajeto-moeda" maxLength={3} value={moeda} onChange={(e) => setMoeda(e.target.value.toUpperCase())} />
+        </div>
+      </div>
 
       <div className="form-campo">
         <label className="form-rotulo" htmlFor="trajeto-obs">

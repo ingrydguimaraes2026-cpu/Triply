@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route } from 'lucide-react'
-import type { Tables } from '@together/core'
+import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from 'lucide-react'
+import { formatarDinheiro, nomeDaSituacao, resumoDosTrajetos, type Tables } from '@together/core'
+import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { useCofre } from '../../features/cofre/hooks'
@@ -33,11 +34,13 @@ import './transportes.css'
 
 type Destino = Tables<'destinos'>
 type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string } | null
+type GastoDoTrajeto = Trajeto | null
 type Selecao = { tipo: 'tudo' } | { tipo: 'trecho'; indice: number } | { tipo: 'passeio'; id: string }
 
 // Transportes (spec 004): mapa do Google com o caminho, a rota cidade a cidade e os passeios (bate-e-volta).
 export default function Transportes() {
-  const { viagem, destinos, euSouAdm } = useViagemAtual()
+  const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
+  const [gastoDe, setGastoDe] = useState<GastoDoTrajeto>(null) // spec 035: lançar o trajeto como gasto
   const { estado, recarregar } = useTrajetos(viagem.id)
   const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
   const [janela, setJanela] = useState<Janela>(null)
@@ -62,6 +65,7 @@ export default function Transportes() {
 
   const todosAvisos = trajetos.flatMap((t) => avisosDoTrajeto(t, destinos, trajetos).map((texto) => ({ texto, trajeto: t })))
   const avisos = todosAvisos.filter((a, i) => todosAvisos.findIndex((b) => b.texto === a.texto) === i)
+  const resumo = resumoDosTrajetos(trajetos)
   const proximo = proximoDeslocamento(trajetos, destinos.map((d) => d.id))
 
   const porDia = new Map<string, Trajeto[]>()
@@ -115,6 +119,15 @@ export default function Transportes() {
             {t.partida ? ` · ${formatarData(diaLocal(t.partida))} ${hora(t.partida)}` : ' · sem horário'}
             {t.chegada && ` → ${diaLocal(t.chegada) !== (t.partida && diaLocal(t.partida)) ? `${formatarData(diaLocal(t.chegada))} ` : ''}${hora(t.chegada)}`}
           </small>
+          <span className="trajeto-situacao">
+            <span className={`selo-situacao situacao-${t.situacao}`}>{nomeDaSituacao(t.situacao)}</span>
+            {t.preco !== null && t.moeda && <span className="trajeto-preco">{formatarDinheiro(Math.round(Number(t.preco) * 100), t.moeda)}</span>}
+            {t.preco !== null && t.moeda && t.situacao !== 'sugestao' && (
+              <button type="button" className="botao-texto" onClick={() => setGastoDe(t)}>
+                <Wallet size={14} aria-hidden="true" /> Lançar como gasto
+              </button>
+            )}
+          </span>
           {t.observacao && <small className="trajeto-obs">{t.observacao}</small>}
           {t.link_reserva && (
             <a href={t.link_reserva} target="_blank" rel="noreferrer noopener" className="trajeto-link">
@@ -157,6 +170,13 @@ export default function Transportes() {
             {destinos.length} {destinos.length === 1 ? 'parada' : 'paradas'} · {trajetos.length}{' '}
             {trajetos.length === 1 ? 'trajeto cadastrado' : 'trajetos cadastrados'}
           </p>
+          {trajetos.length > 0 && (
+            <p className="trajeto-resumo">
+              {resumo.comprados} de {resumo.total} {resumo.total === 1 ? 'comprado' : 'comprados'}
+              {resumo.aPagar.length > 0 && ` · falta pagar ${resumo.aPagar.map((p) => formatarDinheiro(p.valor, p.moeda)).join(' + ')}`}
+              {resumo.semPreco > 0 && ` · ${resumo.semPreco} sem preço`}
+            </p>
+          )}
         </div>
       </header>
       {trechos.length === 0 ? (
@@ -424,6 +444,7 @@ export default function Transportes() {
         <Gaveta titulo={janela.trajeto ? 'Editar trajeto' : 'Adicionar trajeto'} aoFechar={fechar}>
           <FormTrajeto
             viagemId={viagem.id}
+            moedaViagem={viagem.moeda_principal}
             destinos={destinos}
             trajeto={janela.trajeto}
             origemId={janela.origemId}
@@ -432,6 +453,26 @@ export default function Transportes() {
               fechar()
               recarregar()
             }}
+          />
+        </Gaveta>
+      )}
+
+      {gastoDe && (
+        <Gaveta titulo="Lançar trajeto como gasto" aoFechar={() => setGastoDe(null)}>
+          <FormGasto
+            viagemId={viagem.id}
+            moedaViagem={viagem.moeda_principal}
+            membros={membros}
+            meuId={meuId}
+            euSouAdm={euSouAdm}
+            inicial={{
+              descricao: `${meio(gastoDe.meio).nome}: ${nomeDe(gastoDe.origem_id)} → ${nomeDe(gastoDe.destino_id)}`.slice(0, 200),
+              valor: gastoDe.preco !== null ? Math.round(Number(gastoDe.preco) * 100) : undefined,
+              moeda: gastoDe.moeda ?? undefined,
+              categoria: 'transporte',
+              ...(gastoDe.partida ? { data: diaLocal(gastoDe.partida) } : {}),
+            }}
+            aoTerminar={() => setGastoDe(null)}
           />
         </Gaveta>
       )}

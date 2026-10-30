@@ -1034,3 +1034,17 @@ test('033: cada um liga/desliga os próprios avisos e não vê os dos outros', a
   // Tipo inventado não entra
   await assert.rejects(como(db, MEMBRO, "insert into public.preferencias_aviso (tipo) values ('spam')"), /check/)
 })
+
+// ---------------- 035: situação e preço do trajeto ----------------
+test('035: trajeto nasce como sugestão; ADM marca comprado com preço; preço sem moeda é barrado', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(db, ADM, `insert into public.trajetos (viagem_id, origem_id, destino_id) values ('${V}', '${NICE}', '${MONACO}') returning id, situacao`)
+  assert.equal((await db.query('select situacao from public.trajetos')).rows[0].situacao, 'sugestao')
+  await como(db, ADM, `update public.trajetos set situacao = 'comprado', preco = 45.50, moeda = 'EUR' where id = $1`, [id])
+  assert.deepEqual((await como(db, MEMBRO, 'select situacao, preco::text, moeda from public.trajetos'))[0], { situacao: 'comprado', preco: '45.50', moeda: 'EUR' })
+  await assert.rejects(como(db, ADM, `update public.trajetos set preco = 10, moeda = null where id = $1`, [id]), /preco_com_moeda/)
+  await assert.rejects(como(db, ADM, `update public.trajetos set situacao = 'pago' where id = $1`, [id]), /check/)
+  // Membro não muda a situação (o ADM edita trajetos)
+  await como(db, MEMBRO, `update public.trajetos set situacao = 'sugestao' where id = $1`, [id])
+  assert.equal((await db.query('select situacao from public.trajetos')).rows[0].situacao, 'comprado')
+})

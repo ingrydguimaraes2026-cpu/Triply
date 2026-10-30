@@ -204,3 +204,41 @@
 /* Camada do Google Maps: escondida (não destruída) no modo avião */
 .mapa-camada { position: absolute; inset: 0; }
 .mapa-camada[hidden] { display: none; }
+
+/* Situação e preço do trajeto (spec 035) */
+.trajeto-situacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 4px;
+}
+
+.selo-situacao {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--cor-borda);
+  color: var(--cor-texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.selo-situacao.situacao-reservado {
+  background: var(--dourado-claro);
+  color: var(--cor-texto);
+}
+
+.selo-situacao.situacao-comprado {
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+}
+
+.trajeto-preco {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.trajeto-resumo {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}

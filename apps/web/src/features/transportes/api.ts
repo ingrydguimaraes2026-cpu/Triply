@@ -39,6 +39,9 @@ export type DadosDoTrajeto = {
   bate_e_volta: boolean
   observacao: string | null
   link_reserva: string | null
+  situacao: string
+  preco: number | null
+  moeda: string | null
 }
 
 // Só o ADM consegue (regra do banco)
@@ -61,6 +64,8 @@ export async function criarBateEVolta(viagemId: string, ida: DadosDoTrajeto, vol
       destino_id: ida.origem_id,
       partida: volta.partida,
       chegada: volta.chegada,
+      preco: null, // o preço (ida e volta) fica só na ida, pra não contar em dobro
+      moeda: null,
     },
   ])
   if (error) throw error

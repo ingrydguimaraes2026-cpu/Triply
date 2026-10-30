@@ -846,9 +846,12 @@ export type Database = {
           id: string
           link_reserva: string | null
           meio: string
+          moeda: string | null
           observacao: string | null
           origem_id: string | null
           partida: string | null
+          preco: number | null
+          situacao: string
           viagem_id: string
         }
         Insert: {
@@ -858,9 +861,12 @@ export type Database = {
           id?: string
           link_reserva?: string | null
           meio?: string
+          moeda?: string | null
           observacao?: string | null
           origem_id?: string | null
           partida?: string | null
+          preco?: number | null
+          situacao?: string
           viagem_id: string
         }
         Update: {
@@ -870,9 +876,12 @@ export type Database = {
           id?: string
           link_reserva?: string | null
           meio?: string
+          moeda?: string | null
           observacao?: string | null
           origem_id?: string | null
           partida?: string | null
+          preco?: number | null
+          situacao?: string
           viagem_id?: string
         }
         Relationships: [
