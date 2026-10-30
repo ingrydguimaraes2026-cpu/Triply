@@ -2,7 +2,7 @@
 
 **Fase:** 2 · **Tamanho:** M · **Depende de:** 024, 029, 040 · **Status:** Pronto pra testar (web e app)
 
-> **No app (30/10):** `apps/mobile/app/hoje.tsx`, atalho "Hoje" no detalhe da viagem. Tem agora/próximo, volta pra base, dia de passagem (malas e guarda-volumes), encontro e onde dormimos, com "Ir" (Maps) e "Corrida" (Uber). Ficam só no site: onde está o comboio (107) e as ferramentas do dia (059). Pra testar fora da viagem, em desenvolvimento: `/hoje?dia=2027-06-07T10:00`.
+> **No app (30/10):** `apps/mobile/app/hoje.tsx`, atalho "Hoje" no detalhe da viagem. Tem agora/próximo, volta pra base, dia de passagem (malas e guarda-volumes), encontro e onde dormimos, com "Ir" (Maps) e "Corrida" (Uber). Embaixo vêm as ferramentas do dia (059). Fica só no site: onde está o comboio (107). Pra testar fora da viagem, em desenvolvimento: `/hoje?dia=2027-06-07T10:00`.
 
 ## Objetivo
 Uma aba **Hoje** (logo depois da Overview) que mostra só o que importa no dia: o que está acontecendo agora, o próximo compromisso com "em 25 min", onde o comboio dorme hoje (com "Ir / corrida"), o encontro do dia e as ferramentas da spec 059.

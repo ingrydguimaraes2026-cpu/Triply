@@ -1,6 +1,8 @@
 # 059. Ferramentas do dia (na tela Hoje)
 
-**Fase:** 2 · **Tamanho:** P · **Depende de:** 012, 058 · **Status:** Pronto pra testar (web)
+**Fase:** 2 · **Tamanho:** P · **Depende de:** 012, 058 · **Status:** Pronto pra testar (web e app)
+
+> **No app (30/10):** `apps/mobile/src/ui/FerramentasDoDia.tsx`, no fim da tela Hoje. Tem conversor, gorjeta, frases (sem áudio), mostrar pro motorista, comer por perto e guardar as malas. Fica só no site: banheiro grátis perto (precisa do `expo-location`). `codigoDoPais`, `moedaDoPais` e `cotacoesDeHoje` foram pro `@together/core`.
 
 ## Objetivo
 Na tela Hoje, as ferramentas de rua: quanto dá em reais, gorjeta dividida, endereço pro motorista, banheiro grátis perto, onde comer e onde guardar a mala.

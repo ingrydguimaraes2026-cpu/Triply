@@ -273,11 +273,5 @@ export async function buscarCidades(
   ])
 }
 
-// Moeda mais provável pelo país do primeiro destino
-const ZONA_EURO = ['AT', 'BE', 'HR', 'CY', 'EE', 'FI', 'FR', 'DE', 'GR', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PT', 'SK', 'SI', 'ES', 'MC', 'SM', 'VA', 'AD', 'ME', 'XK']
-const OUTRAS: Record<string, string> = { US: 'USD', GB: 'GBP', CH: 'CHF', BR: 'BRL', AR: 'ARS', CL: 'CLP', JP: 'JPY', CA: 'CAD', AU: 'AUD', MX: 'MXN', UY: 'UYU', CZ: 'CZK', HU: 'HUF', PL: 'PLN', DK: 'DKK', SE: 'SEK', NO: 'NOK', TR: 'TRY', TH: 'THB', CN: 'CNY', ZA: 'ZAR' }
-
-export function moedaDoPais(codigoPais: string): string {
-  if (ZONA_EURO.includes(codigoPais)) return 'EUR'
-  return OUTRAS[codigoPais] ?? 'EUR'
-}
+// Moeda mais provável pelo país (mora no @together/core)
+export { moedaDoPais } from '@together/core/paises'

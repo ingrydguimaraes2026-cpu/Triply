@@ -1,8 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront, type LucideIcon } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from 'lucide-react-native'
 import {
   agoraEProximo,
   buscarDestinos,
@@ -25,7 +25,8 @@ import { supabase } from '../src/lib/supabase'
 import { diaLongo, hojeIso, lerData } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
 import { BotaoIr } from '../src/ui/BotaoIr'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { Bloco, FerramentasDoDia } from '../src/ui/FerramentasDoDia'
+import { BotaoRedondo, Cartao, Carregando, ErroNaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
 
 // Tela Hoje (spec 058 no mobile, + 060, 062 e 080): o que está acontecendo agora,
@@ -197,6 +198,9 @@ export default function Hoje() {
             )}
           </Bloco>
         ) : null}
+
+        {/* Spec 059: as ferramentas valem até fora da viagem (o destino é o de hoje ou o primeiro) */}
+        <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda} enderecoHospedagem={dormimos?.endereco ?? null} />
       </ScrollView>
     </View>
   )
@@ -214,20 +218,6 @@ function ItemDoDia({ rotulo, destaque, hora, titulo, detalhe }: { rotulo: string
       </Text>
       {detalhe ? <Text className="font-body text-[13px] text-suave">{detalhe}</Text> : null}
     </View>
-  )
-}
-
-function Bloco({ Icone, titulo, children }: { Icone: LucideIcon; titulo: string; children: ReactNode }) {
-  return (
-    <Cartao className="gap-2.5 p-4">
-      <View className="flex-row items-center gap-3">
-        <IconeQuadrado tamanho={36}>
-          <Icone size={18} color={cor.couro} />
-        </IconeQuadrado>
-        <Text className="font-body-bold text-[15px] text-texto">{titulo}</Text>
-      </View>
-      {children}
-    </Cartao>
   )
 }
 

@@ -71,7 +71,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 056 | [Meu orçamento pessoal](056-meu-orcamento.md) (minha parte + pessoais, quanto sobra por dia) | 2 | P | 003 | Pronto pra testar (web) · banco não aplicado |
 | 057 | [Gastos planejados e recorrentes](057-pagamentos-previstos.md) ("A pagar", fora dos acertos até pagar) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
 | 058 | [Tela Hoje](058-tela-hoje.md) (agora, próximo, onde dormimos, encontro) | 2 | M | 029, 040 | Pronto pra testar (web e app) |
-| 059 | [Ferramentas do dia](059-ferramentas-do-dia.md) (conversor, gorjeta, motorista, banheiro, restaurante, malas) | 2 | P | 058 | Pronto pra testar (web) |
+| 059 | [Ferramentas do dia](059-ferramentas-do-dia.md) (conversor, gorjeta, motorista, banheiro, restaurante, malas) | 2 | P | 058 | Pronto pra testar (web e app) |
 | 060 | [Malas antes do check-in + dia de passagem](060-malas-e-dia-de-passagem.md) (na Hospedagem e na Hoje) | 2 | P | 011, 058 | Pronto pra testar (web) · banco não aplicado |
 | 061 | ["Já fomos" e "Perto de mim"](061-ja-fomos-e-perto-de-mim.md) (Lugares) | 2 | P | 016, 040 | Pronto pra testar (web) · banco não aplicado |
 | 062 | [Transfer de chegada](062-como-chegar.md) ("como chegar" no guia e na Hoje) | 2 | P | 026, 058 | Pronto pra testar (web) · banco não aplicado |

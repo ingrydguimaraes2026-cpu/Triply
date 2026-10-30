@@ -54,32 +54,8 @@ export async function apagarCompra(id: string) {
 }
 
 // ---------- Cotação de hoje (Frankfurter, grátis e sem chave) ----------
-// Resposta: "1 <base> = X <moeda>". Guardada em memória por 3 horas.
-const TRES_HORAS = 3 * 60 * 60 * 1000
-const memoria = new Map<string, { quando: number; taxas: Record<string, number> }>()
-
-/**
- * Cotações de hoje pra converter pra moeda `base`.
- * Devolve `taxas[X]` = quantas unidades de X valem 1 da base (o mesmo formato de cotacao.ts).
- * Sem internet ou moeda que o Frankfurter não tem → null.
- */
-export async function cotacoesDeHoje(base: string, moedas: string[]): Promise<Record<string, number> | null> {
-  const lista = [...new Set(moedas.filter((m) => m !== base))].sort()
-  if (lista.length === 0) return {}
-  const chave = `${base}:${lista.join(',')}`
-  const guardado = memoria.get(chave)
-  if (guardado && Date.now() - guardado.quando < TRES_HORAS) return guardado.taxas
-  try {
-    const resposta = await fetch(`https://api.frankfurter.dev/v1/latest?base=${base}&symbols=${lista.join(',')}`)
-    if (!resposta.ok) return null
-    const dados: { rates?: Record<string, number> } = await resposta.json()
-    const taxas = dados.rates ?? {}
-    memoria.set(chave, { quando: Date.now(), taxas })
-    return taxas
-  } catch {
-    return null
-  }
-}
+// Mora no @together/core (o app usa também). Guardada em memória por 3 horas.
+export { cotacoesDeHoje } from '@together/core'
 
 // ---------- Termômetro do câmbio (Financeiro) ----------
 // Histórico: Frankfurter (Banco Central Europeu, 1 valor por dia útil). Agora: AwesomeAPI (comercial, atualiza durante o dia).
