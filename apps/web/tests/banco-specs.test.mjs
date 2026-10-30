@@ -1269,3 +1269,14 @@ test('060: hospedagem guarda malas: sim/não/perguntar e observação curta', as
   assert.deepEqual((await como(db, MEMBRO, 'select guarda_malas, guarda_malas_obs from public.hospedagens'))[0], { guarda_malas: 'sim', guarda_malas_obs: 'até 22h' })
   await assert.rejects(como(db, ADM, "update public.hospedagens set guarda_malas = 'talvez'"), /check/)
 })
+
+// ---------------- 061: já fomos ----------------
+test('061: qualquer um do comboio marca o lugar como visitado; estranho não', async () => {
+  const db = await novoBanco()
+  const [{ id }] = await como(db, ADM, `insert into public.lugares (viagem_id, destino_id, nome, tipo) values ('${V}', '${NICE}', 'Castelo', 'passeio') returning id`)
+  await como(db, MEMBRO, 'select public.marcar_visitado($1, true)', [id])
+  assert.ok((await db.query('select visitado_em from public.lugares')).rows[0].visitado_em)
+  await assert.rejects(como(db, ESTRANHO, 'select public.marcar_visitado($1, false)', [id]), /não encontrado/)
+  await como(db, MEMBRO, 'select public.marcar_visitado($1, false)', [id])
+  assert.equal((await db.query('select visitado_em from public.lugares')).rows[0].visitado_em, null)
+})

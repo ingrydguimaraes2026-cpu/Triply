@@ -95,8 +95,8 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 45 | J5 | Dia de passagem (guarda-volumes + horário-limite + último trem) ◐ | P | ✅ feito (web) · spec 060 |
 | 46 | C11 | Banheiro grátis perto, dados do OpenStreetMap (ideia: Flush) | P | ✅ feito (web) · spec 059 |
 | 47 | C12 | Achar e reservar restaurante (TheFork / Maps) no destino (ideia: TheFork) | P | ✅ feito (web) · spec 059 |
-| 48 | C8 | Perto de mim (lugares salvos mais próximos) | P | a fazer |
-| 49 | C10 | "Já fomos" (marcar lugar como visitado) | P | a fazer |
+| 48 | C8 | Perto de mim (lugares salvos mais próximos) | P | ✅ feito (web) · spec 061 |
+| 49 | C10 | "Já fomos" (marcar lugar como visitado) | P | ✅ feito (web) · spec 061 · banco a aplicar |
 | 50 | D12 | Transfer de chegada (aeroporto/estação → hospedagem) | P | a fazer |
 | 51 | E11 | Vibe e etiquetas da opção de hospedagem + hostel na busca (ideia: Hostelworld) | P | a fazer |
 

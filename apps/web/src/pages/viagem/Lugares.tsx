@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
+import { CheckCheck, ExternalLink, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
@@ -15,6 +15,7 @@ import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Gaveta from '../../components/ui/Gaveta'
 import BotaoIr from '../../components/ui/BotaoIr'
+import PertoDeMim from '../../features/lugares/PertoDeMim'
 import './abas.css'
 import './hospedagem.css'
 import './lugares.css'
@@ -74,6 +75,14 @@ export default function Lugares() {
               Ver no mapa <MapaIcone size={13} aria-hidden="true" />
             </a>
             <BotaoIr alvo={{ nome: lugar.nome, cidade: destino ? [destino.nome, destino.pais].filter(Boolean).join(', ') : null }} />
+            <button
+              type="button"
+              className={lugar.visitadoEm ? 'lugar-fomos foi' : 'lugar-fomos'}
+              aria-pressed={!!lugar.visitadoEm}
+              onClick={() => l.marcarVisitado(lugar.id, !lugar.visitadoEm)}
+            >
+              <CheckCheck size={13} aria-hidden="true" /> {lugar.visitadoEm ? 'Já fomos' : 'Fomos?'}
+            </button>
             <button
               type="button"
               className={euVotei ? 'lugar-voto votou' : 'lugar-voto'}
@@ -182,7 +191,9 @@ export default function Lugares() {
             <div className="hosp-resumo" aria-label="Resumo dos lugares">
               <span>
                 <strong>{l.total}</strong> {l.total === 1 ? 'lugar anotado' : 'lugares anotados'}
+                {l.lugares.some((x) => x.visitadoEm) && ` · ${l.lugares.filter((x) => x.visitadoEm).length} visitados`}
               </span>
+              <PertoDeMim lugares={l.lugares} destinos={destinos} />
             </div>
           )
         }

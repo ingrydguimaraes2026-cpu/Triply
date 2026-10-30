@@ -67,7 +67,27 @@ export function useLugares(viagemId: string, destinos: Tables<'destinos'>[], meu
     [meuId, recarregar],
   )
 
+  // Spec 061: "já fomos" muda na hora; se o banco recusar, recarrega
+  const marcarVisitado = useCallback(
+    async (id: string, sim: boolean) => {
+      setEstado((atual) =>
+        atual.status !== 'pronto'
+          ? atual
+          : { status: 'pronto', lugares: atual.lugares.map((l) => (l.id !== id ? l : { ...l, visitadoEm: sim ? new Date().toISOString() : null })) },
+      )
+      try {
+        await api.marcarVisitado(id, sim)
+      } catch (erro) {
+        console.error('Erro ao marcar visitado:', erro)
+        await recarregar()
+      }
+    },
+    [recarregar],
+  )
+
   return {
+    marcarVisitado,
+    lugares,
     estado: estado.status,
     itens,
     soltos,

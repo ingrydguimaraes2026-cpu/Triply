@@ -842,6 +842,7 @@ export type Database = {
           preco: number | null
           tipo: string
           viagem_id: string
+          visitado_em: string | null
         }
         Insert: {
           criado_em?: string
@@ -856,6 +857,7 @@ export type Database = {
           preco?: number | null
           tipo?: string
           viagem_id: string
+          visitado_em?: string | null
         }
         Update: {
           criado_em?: string
@@ -870,6 +872,7 @@ export type Database = {
           preco?: number | null
           tipo?: string
           viagem_id?: string
+          visitado_em?: string | null
         }
         Relationships: [
           {
@@ -1886,6 +1889,13 @@ export type Database = {
           p_viagem: string
         }
         Returns: { usuario_id: string; telefone: string | null; aniversario: string | null; restricoes: string | null; alergias: string | null; mobilidade: string | null; emergencia_nome: string | null; emergencia_telefone: string | null; tipo_sanguineo: string | null; remedios: string | null }[]
+      }
+      marcar_visitado: {
+        Args: {
+          p_lugar: string
+          p_visitado: boolean
+        }
+        Returns: undefined
       }
       trazer_comboio: {
         Args: {

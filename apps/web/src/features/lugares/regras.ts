@@ -28,6 +28,7 @@ export type Lugar = {
   observacao: string | null
   criadoPor: string
   votos: string[] // ids de quem curtiu (spec 022)
+  visitadoEm?: string | null // spec 061: "já fomos"
 }
 
 type DestinoBase = { id: string; nome: string; pais: string | null; chegada: string | null; saida: string | null }

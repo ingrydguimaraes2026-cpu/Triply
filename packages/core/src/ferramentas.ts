@@ -97,3 +97,30 @@ export function linksDeGuardaVolumes(cidade: string): { nome: string; url: strin
     { nome: 'Radical Storage', url: busca(`Radical Storage ${cidade}`) },
   ]
 }
+
+// ---------- Perto de mim (C8, spec 061) ----------
+// Os lugares salvos não têm coordenada: o app procura cada um no Photon (OpenStreetMap), perto do destino.
+
+export function consultaDoLugar(nome: string, cidade: string, latitude: number | null, longitude: number | null): string {
+  const perto = latitude !== null && longitude !== null ? `&lat=${latitude}&lon=${longitude}` : ''
+  return `https://photon.komoot.io/api/?q=${encodeURIComponent(`${nome} ${cidade}`.trim())}&limit=1${perto}`
+}
+
+type RespostaPhoton = { features?: { geometry?: { coordinates?: [number, number] } }[] }
+
+export function pontoDaResposta(resposta: RespostaPhoton): { latitude: number; longitude: number } | null {
+  const c = resposta.features?.[0]?.geometry?.coordinates
+  return c ? { latitude: c[1], longitude: c[0] } : null
+}
+
+// Os mais perto primeiro; descarta o que ficou a mais de 50 km (o Photon achou outro lugar com o mesmo nome)
+export function maisPerto<L extends { latitude: number; longitude: number }>(lugares: L[], latitude: number, longitude: number): (L & { metros: number })[] {
+  return lugares
+    .map((l) => ({ ...l, metros: distanciaEmMetros(latitude, longitude, l.latitude, l.longitude) }))
+    .filter((l) => l.metros <= 50000)
+    .sort((a, b) => a.metros - b.metros)
+}
+
+export function textoDaDistancia(metros: number): string {
+  return metros < 1000 ? `${Math.round(metros / 10) * 10} m` : `${(metros / 1000).toFixed(1).replace('.', ',')} km`
+}

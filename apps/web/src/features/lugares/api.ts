@@ -35,6 +35,7 @@ export async function buscarLugares(viagemId: string): Promise<Lugar[]> {
     observacao: l.observacao,
     criadoPor: l.criado_por,
     votos: (l.lugar_votos ?? []).map((v) => v.usuario_id),
+    visitadoEm: l.visitado_em,
   }))
 }
 
@@ -75,4 +76,10 @@ export async function apagarLugar(id: string) {
   const { error, count } = await supabase.from('lugares').delete({ count: 'exact' }).eq('id', id)
   if (error) throw error
   if (count === 0) throw new Error('Sem permissão pra apagar este lugar')
+}
+
+// "Já fomos" (spec 061): qualquer um do comboio marca
+export async function marcarVisitado(id: string, visitado: boolean) {
+  const { error } = await supabase.rpc('marcar_visitado', { p_lugar: id, p_visitado: visitado })
+  if (error) throw error
 }

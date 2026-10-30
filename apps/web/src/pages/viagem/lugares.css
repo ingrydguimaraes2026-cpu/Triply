@@ -223,3 +223,45 @@
   outline: 3px solid rgb(255 157 0 / 0.45);
   outline-offset: 2px;
 }
+
+/* "Já fomos" e "Perto de mim" (spec 061) */
+.lugar-fomos {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lugar-fomos.foi {
+  border-color: var(--couro);
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+}
+
+.perto-de-mim {
+  display: grid;
+  gap: 8px;
+}
+
+.perto-lista {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perto-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}

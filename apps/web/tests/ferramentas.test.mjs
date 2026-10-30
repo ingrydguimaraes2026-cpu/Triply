@@ -46,3 +46,21 @@ test('links de restaurante e guarda-volumes', () => {
   assert.equal(f.linksDeGuardaVolumes('Roma').length, 3)
   assert.match(f.consultaDeBanheiros(43.7, 7.26), /^https:\/\/overpass-api\.de\/api\/interpreter\?data=/)
 })
+
+test('perto de mim: consulta, ponto do Photon, ordem e distância', () => {
+  assert.equal(f.consultaDoLugar('Le Safari', 'Nice', 43.7, 7.26), 'https://photon.komoot.io/api/?q=Le%20Safari%20Nice&limit=1&lat=43.7&lon=7.26')
+  assert.deepEqual(f.pontoDaResposta({ features: [{ geometry: { coordinates: [7.27, 43.69] } }] }), { latitude: 43.69, longitude: 7.27 })
+  assert.equal(f.pontoDaResposta({ features: [] }), null)
+  const r = f.maisPerto(
+    [
+      { nome: 'longe', latitude: 43.8, longitude: 7.26 },
+      { nome: 'perto', latitude: 43.701, longitude: 7.26 },
+      { nome: 'outro país', latitude: 48.85, longitude: 2.35 },
+    ],
+    43.7,
+    7.26,
+  )
+  assert.deepEqual(r.map((l) => l.nome), ['perto', 'longe'])
+  assert.equal(f.textoDaDistancia(111), '110 m')
+  assert.equal(f.textoDaDistancia(11120), '11,1 km')
+})
