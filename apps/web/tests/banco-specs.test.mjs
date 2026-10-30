@@ -980,3 +980,41 @@ test('031: "visto até" é de cada um', async () => {
   // Estranho não marca visto numa viagem que não é dele
   await assert.rejects(como(db, ESTRANHO, 'insert into public.atividades_vistas (viagem_id) values ($1)', [V]), /row-level security/)
 })
+
+// ---------------- 032: lembretes ----------------
+const lembretes = (db) => db.query('select tipo, titulo, meio from public.lembretes_a_enviar()').then((r) => r.rows)
+
+test('032: trajeto e ponto que vencem na próxima hora saem uma vez só', async () => {
+  const db = await novoBanco()
+  await db.exec(`
+    insert into public.trajetos (viagem_id, origem_id, destino_id, meio, partida) values
+      ('${V}', '${NICE}', '${MONACO}', 'trem', now() + interval '40 minutes'),
+      ('${V}', '${MONACO}', '${NICE}', 'onibus', now() + interval '3 hours'),
+      ('${V}', '${MONACO}', '${NICE}', 'trem', now() - interval '10 minutes');
+    insert into public.pontos_de_encontro (viagem_id, local, quando, criado_por) values ('${V}', 'Praça Masséna', now() + interval '20 minutes', '${ADM}');
+  `)
+  const primeira = await lembretes(db)
+  assert.deepEqual(
+    primeira.map((l) => [l.tipo, l.titulo, l.meio]).sort(),
+    [
+      ['ponto', 'Praça Masséna', null],
+      ['trajeto', 'Nice → Mônaco', 'trem'],
+    ],
+  )
+  // Rodar de novo não repete
+  assert.equal((await lembretes(db)).length, 0)
+})
+
+test('032: mudou o horário, lembra de novo', async () => {
+  const db = await novoBanco()
+  await db.exec(`insert into public.trajetos (viagem_id, origem_id, destino_id, partida) values ('${V}', '${NICE}', '${MONACO}', now() + interval '30 minutes')`)
+  assert.equal((await lembretes(db)).length, 1)
+  await db.exec(`update public.trajetos set partida = now() + interval '50 minutes'`)
+  assert.equal((await lembretes(db)).length, 1)
+})
+
+test('032: quem usa o app não chama a função nem lê o que foi enviado', async () => {
+  const db = await novoBanco()
+  await assert.rejects(como(db, ADM, 'select * from public.lembretes_a_enviar()'), /permission denied/)
+  assert.equal((await como(db, ADM, 'select * from public.lembretes_enviados')).length, 0)
+})
