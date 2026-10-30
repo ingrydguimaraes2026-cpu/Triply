@@ -21,6 +21,7 @@ import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
+import HistoricoDaViagem from '../../features/historico/HistoricoDaViagem'
 import './abas.css'
 
 // Comboio (spec 007): quem vai, convites e sair da viagem. O ADM organiza as pessoas.
@@ -277,6 +278,9 @@ export default function Comboio() {
           )}
         </Cartao>
       )}
+
+      {/* Spec 087: histórico e lixeira */}
+      <HistoricoDaViagem />
 
       {/* Spec 055: começar outra viagem com as mesmas pessoas */}
       {!sozinho && (

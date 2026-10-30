@@ -512,6 +512,48 @@ export type Database = {
         }
         Relationships: []
       }
+      historico_viagem: {
+        Row: {
+          acao: string
+          antes: Json | null
+          autor: string | null
+          criado_em: string
+          id: string
+          linha_id: string
+          privado_de: string | null
+          restaurado_em: string | null
+          tabela: string
+          titulo: string | null
+          viagem_id: string
+        }
+        Insert: {
+          acao: string
+          antes?: Json | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          linha_id: string
+          privado_de?: string | null
+          restaurado_em?: string | null
+          tabela: string
+          titulo?: string | null
+          viagem_id: string
+        }
+        Update: {
+          acao?: string
+          antes?: Json | null
+          autor?: string | null
+          criado_em?: string
+          id?: string
+          linha_id?: string
+          privado_de?: string | null
+          restaurado_em?: string | null
+          tabela?: string
+          titulo?: string | null
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       hospedagem_votos: {
         Row: {
           criado_em: string
@@ -2153,6 +2195,12 @@ export type Database = {
           p_visitado: boolean
         }
         Returns: undefined
+      }
+      restaurar_da_lixeira: {
+        Args: {
+          p_id: string
+        }
+        Returns: string
       }
       trazer_comboio: {
         Args: {

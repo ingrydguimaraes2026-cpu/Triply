@@ -1483,3 +1483,44 @@ test('084: só o dono liga o movimento a um gasto dele, da mesma viagem', async 
   await db.query('delete from public.gastos where id = $1', [meu])
   assert.equal((await db.query('select gasto_id from public.movimentos_carteira')).rows[0].gasto_id, null)
 })
+
+// ---------------- 087: histórico e lixeira ----------------
+test('087: apagar gasto vai pra lixeira com a divisão e volta igual', async () => {
+  const db = await novoBanco()
+  const id = await salvarGasto(db, MEMBRO, cafe, metade)
+  await como(db, MEMBRO, 'delete from public.gastos where id = $1', [id])
+  assert.equal((await db.query('select count(*)::int n from public.gasto_divisoes')).rows[0].n, 0)
+  const h = (await como(db, ADM, "select id, titulo, autor from public.historico_viagem where acao = 'apagou'"))[0]
+  assert.equal(h.titulo, 'Café')
+  assert.equal(h.autor, MEMBRO)
+  // Estranho não vê nem restaura; o ADM restaura
+  assert.equal((await como(db, ESTRANHO, 'select * from public.historico_viagem')).length, 0)
+  await assert.rejects(como(db, ESTRANHO, 'select public.restaurar_da_lixeira($1)', [h.id]), /não encontrado/)
+  await como(db, ADM, 'select public.restaurar_da_lixeira($1)', [h.id])
+  assert.equal((await db.query('select descricao from public.gastos where id = $1', [id])).rows[0].descricao, 'Café')
+  assert.deepEqual((await db.query('select valor from public.gasto_divisoes order by usuario_id')).rows.map((r) => Number(r.valor)), [6, 6])
+  await assert.rejects(como(db, ADM, 'select public.restaurar_da_lixeira($1)', [h.id]), /já foi restaurado/)
+})
+
+test('087: só quem apagou ou o ADM restaura; edições seguidas viram uma; gasto pessoal é privado', async () => {
+  const db = await novoBanco()
+  await db.query(`insert into public.comboio_membros (viagem_id, usuario_id, papel) values ('${V}', '${ESTRANHO}', 'membro')`)
+  const lugar = (await como(db, ADM, `insert into public.lugares (viagem_id, destino_id, nome) values ('${V}', '${NICE}', 'Castelo') returning id`))[0].id
+  await como(db, ADM, "update public.lugares set nome = 'Castelo de Nice' where id = $1", [lugar])
+  await como(db, ADM, "update public.lugares set nome = 'Colline du Château' where id = $1", [lugar])
+  assert.equal((await db.query("select count(*)::int n from public.historico_viagem where acao = 'editou'")).rows[0].n, 1)
+  await como(db, ADM, 'delete from public.lugares where id = $1', [lugar])
+  // Destino apagado nesse meio tempo: volta sem destino
+  await db.query(`delete from public.destinos where id = '${NICE}'`)
+  const h = (await db.query("select id from public.historico_viagem where acao = 'apagou'")).rows[0].id
+  await assert.rejects(como(db, ESTRANHO, 'select public.restaurar_da_lixeira($1)', [h]), /Só quem apagou/)
+  await como(db, ADM, 'select public.restaurar_da_lixeira($1)', [h])
+  assert.equal((await db.query('select destino_id from public.lugares where id = $1', [lugar])).rows[0].destino_id, null)
+  // Gasto pessoal: só o dono vê no histórico
+  const pessoal = await salvarGasto(db, MEMBRO, { ...cafe, pessoal: true }, [{ usuario_id: MEMBRO, valor: '12.00' }])
+  await como(db, MEMBRO, 'delete from public.gastos where id = $1', [pessoal])
+  assert.equal((await como(db, ADM, "select * from public.historico_viagem where tabela = 'gastos'")).length, 0)
+  assert.equal((await como(db, MEMBRO, "select * from public.historico_viagem where tabela = 'gastos'")).length, 1)
+  // Apagar a viagem não quebra (cascata não registra)
+  await db.query(`delete from public.viagens where id = '${V}'`)
+})

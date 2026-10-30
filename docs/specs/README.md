@@ -99,6 +99,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 084 | [Movimento da carteira vira gasto](084-movimento-da-carteira-vira-gasto.md) | 2 | Pronto pra testar (web) · banco não aplicado |
 | 085 | [Tempo real](085-tempo-real.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 | 086 | [Marcações sem internet](086-marcacoes-sem-internet.md) | 7 | Pronto pra testar (web) · sem banco |
+| 087 | [Histórico e lixeira](087-historico-e-lixeira.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
