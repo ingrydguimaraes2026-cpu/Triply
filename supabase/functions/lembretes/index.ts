@@ -4,6 +4,7 @@
 // o banco (`lembretes_a_enviar`) só devolve cada lembrete uma vez.
 // Quem recebe: todo mundo do comboio da viagem que ligou os avisos no aparelho.
 // Segredos: VAPID_PRIVATE_KEY (o mesmo das funções avisos-cambio e avisos-feed).
+// Spec 110: além do site (Web Push), manda pro app do celular pelo serviço de push do Expo (sem segredo).
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
 import webpush from 'npm:web-push@3.6.7'
 
@@ -11,6 +12,7 @@ const VAPID_PUBLICA = 'BMT3M0-HThNnW4fGo8UHb2WQkWYQIx6kYd1rSlUQzJt9yyGBDprocMC0z
 const CONTATO = 'https://github.com/ingrydguimaraes2026-cpu/Triply'
 
 type Inscricao = { id: string; usuario_id: string; endpoint: string; p256dh: string; auth: string }
+type AparelhoDoApp = { id: string; token: string }
 type Lembrete = { tipo: 'trajeto' | 'ponto' | 'cancelamento'; alvo_id: string; viagem_id: string; titulo: string | null; horario: string; meio: string | null }
 
 const json = (dados: unknown, status = 200) =>
@@ -74,11 +76,19 @@ Deno.serve(async () => {
       .in('usuario_id', pessoas)
     const fora = new Set((desligados ?? []).map((d) => d.usuario_id))
 
-    const { data: aparelhos } = await admin
-      .from('push_inscricoes')
-      .select('id, usuario_id, endpoint, p256dh, auth')
-      .in('usuario_id', pessoas.filter((p) => !fora.has(p)))
-    const dados = JSON.stringify(textoDoLembrete(l))
+    const quem = pessoas.filter((p) => !fora.has(p))
+    const { data: aparelhos } = await admin.from('push_inscricoes').select('id, usuario_id, endpoint, p256dh, auth').in('usuario_id', quem)
+    const texto = textoDoLembrete(l)
+    const dados = JSON.stringify(texto)
+
+    // App do celular (spec 110): o toque abre a viagem certa
+    const { data: doApp } = await admin.from('push_expo').select('id, token').in('usuario_id', quem)
+    enviados += await mandarPeloExpo((id) => admin.from('push_expo').delete().eq('id', id), (doApp ?? []) as AparelhoDoApp[], {
+      title: texto.titulo,
+      body: texto.corpo,
+      data: { tipo: l.tipo, viagemId: l.viagem_id, url: texto.url },
+    })
+
     for (const a of (aparelhos ?? []) as Inscricao[]) {
       try {
         await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, dados, { TTL: 60 * 60 })
@@ -92,3 +102,32 @@ Deno.serve(async () => {
   }
   return json({ lembretes: lembretes.length, enviados })
 })
+
+// Serviço de push do Expo: até 100 avisos por chamada; a resposta vem na mesma ordem.
+// Aparelho que desinstalou o app (DeviceNotRegistered) sai da lista.
+async function mandarPeloExpo(
+  esquecer: (id: string) => PromiseLike<unknown>,
+  aparelhos: AparelhoDoApp[],
+  aviso: { title: string; body: string; data: Record<string, unknown> },
+) {
+  let enviados = 0
+  for (let i = 0; i < aparelhos.length; i += 100) {
+    const lote = aparelhos.slice(i, i + 100)
+    try {
+      const resposta = await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(lote.map((a) => ({ to: a.token, sound: 'default', channelId: 'lembretes', ttl: 60 * 60, ...aviso }))),
+      })
+      const { data: recibos } = (await resposta.json()) as { data?: { status: string; details?: { error?: string } }[] }
+      for (const [j, r] of (recibos ?? []).entries()) {
+        if (r.status === 'ok') enviados++
+        else if (r.details?.error === 'DeviceNotRegistered') await esquecer(lote[j].id)
+        else console.error('Falha ao enviar push do app:', r.details?.error)
+      }
+    } catch (erro) {
+      console.error('Serviço do Expo fora do ar:', (erro as Error).message)
+    }
+  }
+  return enviados
+}

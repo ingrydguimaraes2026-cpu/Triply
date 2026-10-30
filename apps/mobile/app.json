@@ -26,7 +26,13 @@
       "expo-router",
       "expo-font",
       "expo-splash-screen",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "color": "#B97A22"
+        }
+      ]
     ]
   }
 }

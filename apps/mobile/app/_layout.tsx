@@ -1,5 +1,6 @@
 import '../global.css'
 import { useEffect, useState } from 'react'
+import { Platform } from 'react-native'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts, Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces'
@@ -14,6 +15,7 @@ import { useSessao } from '../src/lib/sessao'
 import { Moldura } from '../src/ui/Moldura'
 import { Splash } from '../src/ui/Splash'
 import { ProvedorViagemAtual } from '../src/dados/viagemAtual'
+import { AbrirAvisos } from '../src/ui/AbrirAvisos'
 import { cor } from '../theme'
 
 // Telas que quem NÃO está logado pode ver
@@ -60,6 +62,8 @@ export default function RootLayout() {
       <Moldura>
         {pronto ? (
           <ProvedorViagemAtual>
+            {/* Spec 110: avisos do app (no navegador não tem push do Expo) */}
+            {Platform.OS !== 'web' && sessao ? <AbrirAvisos /> : null}
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
               <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
               <Stack.Screen name="novo-gasto" options={{ presentation: 'modal' }} />

@@ -1656,3 +1656,32 @@ test('107: comboio vê enquanto vale; até 8 h; só a própria; vencida some', a
   await db.query('select privado.limpar_localizacoes()')
   assert.equal((await db.query('select count(*)::int n from public.localizacoes_ao_vivo')).rows[0].n, 0)
 })
+
+// ---------------- 110: avisos no app nativo (token do Expo) ----------------
+test('110: cada um registra o token do próprio aparelho e só vê os seus', async () => {
+  const db = await novoBanco()
+  const TOKEN = 'ExponentPushToken[abc123]'
+  await como(db, MEMBRO, 'select public.registrar_push_expo($1, $2)', [TOKEN, 'android'])
+  assert.deepEqual(await como(db, MEMBRO, 'select token, plataforma from public.push_expo'), [{ token: TOKEN, plataforma: 'android' }])
+  assert.equal((await como(db, ADM, 'select * from public.push_expo')).length, 0)
+  // Ninguém grava direto na tabela (só pela função)
+  await assert.rejects(como(db, ADM, "insert into public.push_expo (token, plataforma) values ('ExponentPushToken[x]', 'ios')"), /row-level security|permission denied/)
+  // Sem login não chama
+  await assert.rejects(como(db, null, 'select public.registrar_push_expo($1, $2)', ['ExponentPushToken[y]', 'ios']), /permission denied/)
+  // Token torto ou plataforma estranha não entra
+  await assert.rejects(como(db, MEMBRO, 'select public.registrar_push_expo($1, $2)', ['qualquer-coisa', 'android']), /check constraint/)
+  await assert.rejects(como(db, MEMBRO, 'select public.registrar_push_expo($1, $2)', ['ExpoPushToken[z]', 'web']), /check constraint/)
+})
+
+test('110: o mesmo aparelho logado em outra conta passa pra ela; cada um apaga só os seus', async () => {
+  const db = await novoBanco()
+  const TOKEN = 'ExpoPushToken[mesmo-celular]'
+  await como(db, MEMBRO, 'select public.registrar_push_expo($1, $2)', [TOKEN, 'ios'])
+  await como(db, ADM, 'select public.registrar_push_expo($1, $2)', [TOKEN, 'ios'])
+  assert.equal((await como(db, MEMBRO, 'select * from public.push_expo')).length, 0)
+  assert.equal((await como(db, ADM, 'select * from public.push_expo')).length, 1)
+  await como(db, MEMBRO, 'delete from public.push_expo')
+  assert.equal((await db.query('select count(*)::int n from public.push_expo')).rows[0].n, 1)
+  await como(db, ADM, 'delete from public.push_expo')
+  assert.equal((await db.query('select count(*)::int n from public.push_expo')).rows[0].n, 0)
+})

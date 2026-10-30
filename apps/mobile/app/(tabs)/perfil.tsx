@@ -7,6 +7,8 @@ import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
 import { Agulha } from '../../src/ui/Agulha'
+import { AvisosNoCelular } from '../../src/ui/AvisosNoCelular'
+import { esquecerEsteAparelho } from '../../src/lib/avisos'
 import { Avatar, Cartao, IconeQuadrado, TituloDaTela } from '../../src/ui/pecas'
 import { cor } from '../../theme'
 
@@ -39,6 +41,9 @@ export default function Perfil() {
           <Numero Icone={Users} valor={companheiros} rotulo={companheiros === 1 ? 'companheiro' : 'companheiros'} />
         </View>
 
+        {/* Spec 110: lembretes e outros avisos no celular */}
+        {sessao ? <AvisosNoCelular meuId={meuId} /> : null}
+
         <View className="items-center gap-2 py-4">
           <Agulha tamanho={96} />
           <Text className="text-center font-body text-[14px] text-corpo">A Agulha aponta o caminho da viagem pra vocês.</Text>
@@ -62,6 +67,7 @@ export default function Perfil() {
         <Pressable
           onPress={() => {
             const sairDeVez = async () => {
+              await esquecerEsteAparelho().catch((e) => console.error('Erro ao esquecer o aparelho:', e))
               await supabase.auth.signOut()
               router.replace('/boas-vindas')
             }

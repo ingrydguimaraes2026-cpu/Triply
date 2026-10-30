@@ -2297,6 +2297,38 @@ export type Database = {
           },
         ]
       }
+      push_expo: {
+        Row: {
+          criado_em: string
+          id: string
+          plataforma: string
+          token: string
+          usuario_id: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          plataforma: string
+          token: string
+          usuario_id?: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          plataforma?: string
+          token?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_expo_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_inscricoes: {
         Row: {
           auth: string
@@ -2833,6 +2865,10 @@ export type Database = {
       }
       registrar_push: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      registrar_push_expo: {
+        Args: { p_plataforma: string; p_token: string }
         Returns: undefined
       }
       restaurar_da_lixeira: { Args: { p_id: string }; Returns: string }
