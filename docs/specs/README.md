@@ -55,6 +55,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 040 | [Ir até o lugar e pedir corrida](040-ir-e-pedir-corrida.md) (Maps, Waze, Apple, Citymapper, Uber, Bolt, FREENOW) | 2 | P | 016, 024 | Pronto pra testar (web) |
 | 041 | [Prazo de cancelamento grátis](041-prazo-de-cancelamento.md) (contagem + lembrete 2 dias antes) | 2 | P | 011, 032 | Pronto pra testar (web) · banco não aplicado |
 | 042 | [Resumo da noite](042-resumo-da-noite.md) (push às 21h com o amanhã) | 2 | P | 029, 032 | Pronto pra testar (servidor) · banco não aplicado |
+| 043 | [Menções @nome](043-mencoes.md) (destaque + aviso no celular) | 2 | P | 027 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

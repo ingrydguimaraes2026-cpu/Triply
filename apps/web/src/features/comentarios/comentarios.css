@@ -103,3 +103,39 @@
   opacity: 0.5;
   cursor: default;
 }
+
+/* Menções @nome (spec 043) */
+.mencao {
+  padding: 0 2px;
+  border-radius: 4px;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+  font-weight: 700;
+}
+
+.mencao.eu {
+  background: var(--laranja);
+  color: var(--cor-texto);
+}
+
+.mencao-sugestoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.mencao-sugestoes button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}

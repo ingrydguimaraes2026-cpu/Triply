@@ -1,6 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { MessageCircle, Trash2 } from 'lucide-react'
 import {
+  acharMencoes,
+  completarMencao,
+  partesComMencoes,
+  sugerirMencoes,
   apagarComentarioDoItem,
   buscarComentariosDoItem,
   comentarNoItem,
@@ -54,6 +58,7 @@ function Conversa({ alvo, aoMudar }: { alvo: AlvoDoComentario; aoMudar?: () => v
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
   const membro = (id: string) => membros.find((m) => m.id === id)
+  const sugestoes = sugerirMencoes(texto, membros.filter((m) => m.id !== meuId)) // spec 043
 
   // Depende do tipo e do id (não do objeto `alvo`, que é recriado a cada render da página)
   const { tipo, id } = alvo
@@ -82,6 +87,10 @@ function Conversa({ alvo, aoMudar }: { alvo: AlvoDoComentario; aoMudar?: () => v
       setComentarios((atual) => [...(atual ?? []), novo])
       setTexto('')
       aoMudar?.()
+      // Spec 043: avisa no celular quem foi mencionado (se der erro, o comentário já foi; só loga)
+      if (acharMencoes(novo.texto, membros).some((id) => id !== meuId)) {
+        supabase.functions.invoke('avisar-mencao', { body: { comentario_id: novo.id } }).catch((e) => console.error('Erro ao avisar menção:', e))
+      }
     } catch (e) {
       console.error('Erro ao comentar:', e)
       setErro('Não deu pra comentar. Confira a internet e tente de novo.')
@@ -116,7 +125,16 @@ function Conversa({ alvo, aoMudar }: { alvo: AlvoDoComentario; aoMudar?: () => v
               <li key={c.id}>
                 <Avatar nome={quem?.nome ?? 'Ex-membro'} url={quem?.avatarUrl ?? null} tamanho={30} />
                 <p>
-                  <strong>{c.autor === meuId ? 'Você' : (quem?.nome ?? 'Ex-membro')}</strong> {c.texto}
+                  <strong>{c.autor === meuId ? 'Você' : (quem?.nome ?? 'Ex-membro')}</strong>{' '}
+                  {partesComMencoes(c.texto, membros).map((parte, i) =>
+                    parte.pessoaId ? (
+                      <mark key={i} className={parte.pessoaId === meuId ? 'mencao eu' : 'mencao'}>
+                        {parte.texto}
+                      </mark>
+                    ) : (
+                      parte.texto
+                    ),
+                  )}
                   <time dateTime={c.criado_em}>{tempoAtras(c.criado_em)}</time>
                 </p>
                 {(c.autor === meuId || euSouAdm) && (
@@ -134,9 +152,20 @@ function Conversa({ alvo, aoMudar }: { alvo: AlvoDoComentario; aoMudar?: () => v
           {erro}
         </p>
       )}
+      {sugestoes && (
+        <ul className="mencao-sugestoes" aria-label="Mencionar alguém">
+          {sugestoes.pessoas.map((p) => (
+            <li key={p.id}>
+              <button type="button" onClick={() => setTexto(completarMencao(texto, p))}>
+                <Avatar nome={p.nome} url={p.avatarUrl} tamanho={22} /> {p.nome}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       <form className="comentarios-item-form" onSubmit={enviar}>
         <input
-          placeholder="Escreva um comentário…"
+          placeholder="Escreva um comentário… (@ pra chamar alguém)"
           maxLength={1000}
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
