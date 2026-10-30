@@ -24,16 +24,22 @@ export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
   const [estado, setEstado] = useState<'carregando' | 'pronto' | 'erro'>('carregando')
   const [resultado, setResultado] = useState<ClimaDoDestino[]>([])
 
-  // Só destinos que dá pra consultar: têm coordenadas e pelo menos a data de chegada
-  const elegiveis = destinos.filter((d) => d.latitude != null && d.longitude != null && d.chegada)
-  const assinatura = elegiveis.map((d) => `${d.id}:${d.chegada}:${d.saida ?? ''}`).join('|')
+  const hoje = hojeTexto()
+  // Só destinos que dá pra consultar: coordenadas, data de chegada e que ainda não passaram.
+  // Limita aos próximos (por chegada) pra não disparar uma busca por destino de uma vez só.
+  const MAX_DESTINOS = 6
+  const proximos = destinos
+    .filter((d) => d.latitude != null && d.longitude != null && d.chegada && (d.saida ?? d.chegada)! >= hoje)
+    .sort((a, b) => a.chegada!.localeCompare(b.chegada!))
+  const mostrados = proximos.slice(0, MAX_DESTINOS)
+  const escondidos = proximos.length - mostrados.length
+  const assinatura = mostrados.map((d) => `${d.id}:${d.chegada}:${d.saida ?? ''}`).join('|')
 
   useEffect(() => {
     let vivo = true
-    const hoje = hojeTexto()
     setEstado('carregando')
     Promise.all(
-      elegiveis.map(async (destino) => ({
+      mostrados.map(async (destino) => ({
         destino,
         dias: await buscarClima(destino.latitude, destino.longitude, destino.chegada, destino.saida ?? destino.chegada, hoje),
       })),
@@ -47,13 +53,13 @@ export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
     return () => {
       vivo = false
     }
-    // assinatura resume os destinos elegíveis; refaz a busca só quando eles mudam
+    // assinatura resume os destinos mostrados; refaz a busca só quando eles mudam
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assinatura])
 
   // Nada pra mostrar (sem coordenadas/datas, ou viagem já passou): o cartão nem aparece
   if (estado === 'pronto' && resultado.length === 0) return null
-  if (estado === 'carregando' && elegiveis.length === 0) return null
+  if (estado === 'carregando' && mostrados.length === 0) return null
 
   return (
     <Cartao titulo="Clima" icone={CloudSun} className="overview-clima">
@@ -84,6 +90,11 @@ export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
               </ul>
             </div>
           ))}
+          {escondidos > 0 && (
+            <p className="clima-nota">
+              Mostrando os próximos {MAX_DESTINOS} destinos (+{escondidos} mais pra frente).
+            </p>
+          )}
           {resultado.some((r) => r.dias.some((p) => p.tipo === 'estimativa')) && (
             <p className="clima-nota">Dias mais distantes são estimativa pelo mesmo período do ano passado.</p>
           )}
