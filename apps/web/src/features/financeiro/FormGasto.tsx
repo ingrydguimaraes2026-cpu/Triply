@@ -3,7 +3,7 @@ import { Trash2 } from 'lucide-react'
 import Avatar from '../../components/ui/Avatar'
 import { hojeTexto } from '../destinos/datas'
 import type { Membro } from '../viagens/hooks'
-import { conferirDivisao, dividirIgual, type Divisao } from '@together/core'
+import { conferirDivisao, dividirIgual, dividirPorItens, dividirPorPesos, type Divisao } from '@together/core'
 import { apagarGasto, avisarQueGastosMudaram, mensagemDeErro, salvarGasto, type DadosDoGasto, type Gasto } from './api'
 import { CATEGORIAS, categoria as acharCategoria, moedasDaViagem } from './categorias'
 import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
@@ -50,11 +50,16 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
     base?.divisoes?.length ? base.divisoes.map((d) => d.usuarioId).filter((id) => idsComboio.includes(id)) : idsComboio,
   )
   // Divisão igual a partir do que veio do banco? Se os valores não forem iguais, abre "valores diferentes"
-  const [diferentes, setDiferentes] = useState(() => {
+  const [diferentesDoBanco] = useState(() => {
     if (!base?.divisoes?.length || !base.valor) return false
     const igual = dividirIgual(base.valor, base.divisoes.map((d) => d.usuarioId), base.pagoPor ?? meuId)
     return igual.some((d, i) => d.valor !== base.divisoes![i].valor)
   })
+  // Spec 081: jeito de dividir. Gasto antigo com valores diferentes abre em "valores".
+  const [modo, setModo] = useState<'igual' | 'valores' | 'pesos' | 'itens'>(diferentesDoBanco ? 'valores' : 'igual')
+  const diferentes = modo === 'valores'
+  const [pesos, setPesos] = useState<Record<string, string>>({})
+  const [itens, setItens] = useState<{ descricao: string; valor: string; pessoas: string[] }[]>([{ descricao: '', valor: '', pessoas: [] }])
   const [porPessoa, setPorPessoa] = useState<Record<string, string>>(() =>
     Object.fromEntries((base?.divisoes ?? []).map((d) => [d.usuarioId, paraCampo(d.valor)])),
   )
@@ -65,11 +70,28 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
   const total = lerValor(valorTexto)
   const ordenados = idsComboio.filter((id) => participantes.includes(id))
 
+  const pesoDe = (id: string) => {
+    const n = Number((pesos[id] ?? '1').replace(',', '.'))
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  }
+  const porItens =
+    total && modo === 'itens'
+      ? dividirPorItens(
+          total,
+          itens.map((i) => ({ valor: lerValor(i.valor) ?? 0, pessoas: i.pessoas })),
+          ordenados,
+          pagoPor,
+        )
+      : null
   const divisoes: Divisao[] = !total
     ? []
-    : diferentes
+    : modo === 'valores'
       ? ordenados.map((usuarioId) => ({ usuarioId, valor: lerValor(porPessoa[usuarioId] ?? '') ?? 0 }))
-      : dividirIgual(total, ordenados, pagoPor)
+      : modo === 'pesos'
+        ? dividirPorPesos(total, ordenados.map((usuarioId) => ({ usuarioId, peso: pesoDe(usuarioId) })), pagoPor)
+        : modo === 'itens'
+          ? (porItens?.partes ?? [])
+          : dividirIgual(total, ordenados, pagoPor)
 
   const conferencia = total ? conferirDivisao(total, divisoes) : null
 
@@ -264,9 +286,21 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
                 </button>
               ))}
             </div>
-            <button type="button" className="botao-texto alinhar-inicio" onClick={() => setDiferentes(!diferentes)}>
-              {diferentes ? 'Dividir igual' : 'Valores diferentes'}
-            </button>
+            <div className="modos-divisao" role="radiogroup" aria-label="Como dividir">
+              {(
+                [
+                  ['igual', 'Igual'],
+                  ['valores', 'Valores'],
+                  ['pesos', 'Pesos'],
+                  ['itens', 'Por item'],
+                ] as const
+              ).map(([chave, nome]) => (
+                <button key={chave} type="button" role="radio" aria-checked={modo === chave} aria-pressed={modo === chave} onClick={() => setModo(chave)}>
+                  {nome}
+                </button>
+              ))}
+            </div>
+            {modo === 'pesos' && <p className="form-dica">Peso 2 = casal (paga dobrado); 0,5 = criança.</p>}
           </div>
 
           {ordenados.length > 0 && (
@@ -285,6 +319,16 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
                         value={porPessoa[id] ?? ''}
                         onChange={(e) => setPorPessoa({ ...porPessoa, [id]: e.target.value })}
                       />
+                    ) : modo === 'pesos' ? (
+                      <span className="divisao-peso">
+                        <input
+                          inputMode="decimal"
+                          aria-label={`Peso de ${m.nome}`}
+                          value={pesos[id] ?? '1'}
+                          onChange={(e) => setPesos({ ...pesos, [id]: e.target.value })}
+                        />
+                        <span>{total ? formatarDinheiro(valor, moeda) : '—'}</span>
+                      </span>
                     ) : (
                       <span>{total ? formatarDinheiro(valor, moeda) : '—'}</span>
                     )}
@@ -292,6 +336,48 @@ export default function FormGasto({ viagemId, moedaViagem, membros, meuId, euSou
                 )
               })}
             </ul>
+          )}
+          {modo === 'itens' && (
+            <div className="divisao-itens">
+              {itens.map((item, i) => (
+                <div key={i} className="divisao-item">
+                  <input
+                    aria-label="O que foi"
+                    placeholder="Ex.: pizza"
+                    value={item.descricao}
+                    onChange={(e) => setItens(itens.map((x, j) => (j === i ? { ...x, descricao: e.target.value } : x)))}
+                  />
+                  <input
+                    aria-label="Valor do item"
+                    inputMode="decimal"
+                    placeholder="0,00"
+                    value={item.valor}
+                    onChange={(e) => setItens(itens.map((x, j) => (j === i ? { ...x, valor: e.target.value } : x)))}
+                  />
+                  <div className="divisao-item-pessoas">
+                    {ordenados.map((id) => (
+                      <button
+                        key={id}
+                        type="button"
+                        aria-pressed={item.pessoas.includes(id)}
+                        onClick={() =>
+                          setItens(itens.map((x, j) => (j === i ? { ...x, pessoas: x.pessoas.includes(id) ? x.pessoas.filter((p) => p !== id) : [...x.pessoas, id] } : x)))
+                        }
+                      >
+                        {id === meuId ? 'Eu' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="botao-texto alinhar-inicio" onClick={() => setItens([...itens, { descricao: '', valor: '', pessoas: [] }])}>
+                + Item
+              </button>
+              {porItens && !porItens.passou && porItens.semDono > 0 && (
+                <p className="form-dica">{formatarDinheiro(porItens.semDono, moeda)} sem item marcado (serviço, couvert…): dividido igual entre todos.</p>
+              )}
+              {porItens?.passou && <p className="form-aviso">Os itens somam mais que o total do gasto.</p>}
+            </div>
           )}
           {diferentes && conferencia && !conferencia.fecha && (
             <p className="form-aviso">

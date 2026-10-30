@@ -359,3 +359,60 @@
   flex: 1;
   min-width: 0;
 }
+
+/* Divisão por pesos e por item (spec 081) */
+.modos-divisao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.modos-divisao button,
+.divisao-item-pessoas button {
+  padding: 4px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.modos-divisao button[aria-pressed='true'],
+.divisao-item-pessoas button[aria-pressed='true'] {
+  border-color: var(--laranja);
+  background: var(--laranja);
+  font-weight: 700;
+}
+
+.divisao-peso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divisao-peso input {
+  width: 52px;
+}
+
+.divisao-itens {
+  display: grid;
+  gap: 8px;
+}
+
+.divisao-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+}
+
+.divisao-item-pessoas {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: 4px;
+}

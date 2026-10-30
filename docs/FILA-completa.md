@@ -126,7 +126,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
 | 70 | F4 | Núcleos (casal, família) 🔒 | M | a fazer |
-| 71 | H9 | Divisão por pesos e por item | M | a fazer |
+| 71 | H9 | Divisão por pesos e por item | M | ✅ feito (web) · spec 081 |
 | 72 | H8 | Caixa do comboio (só registro) 🔒 | M | a fazer |
 | 73 | H11 | Câmbio congelado e meio de pagamento no gasto | M | a fazer |
 | 74 | H12 | Dinheiro na mão (espécie por pessoa) | M | a fazer |
