@@ -18,13 +18,19 @@ function escapar(texto: string): string {
   return texto.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n')
 }
 
+// Tamanho de um caractere em UTF-8 (o core não tem TextEncoder: roda na web e no mobile)
+function bytesUtf8(ch: string): number {
+  const c = ch.codePointAt(0) ?? 0
+  return c < 0x80 ? 1 : c < 0x800 ? 2 : c < 0x10000 ? 3 : 4
+}
+
 // Linhas do .ics têm no máximo 75 bytes; o resto continua na linha de baixo começando com espaço
 function dobrar(linha: string): string {
   const partes: string[] = []
   let atual = ''
   let bytes = 0
   for (const ch of linha) {
-    const tam = new TextEncoder().encode(ch).length
+    const tam = bytesUtf8(ch)
     if (bytes + tam > (partes.length ? 74 : 75)) {
       partes.push(atual)
       atual = ''

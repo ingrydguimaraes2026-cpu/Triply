@@ -193,3 +193,41 @@
   outline: 3px solid rgb(255 157 0 / 0.45);
   outline-offset: 2px;
 }
+
+/* Passaporte no perfil (spec 038) */
+.perfil-secao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.perfil-paises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-paises li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 10px;
+  border-radius: 999px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.perfil-pais-novo {
+  display: flex;
+  gap: 8px;
+}
+
+.perfil-pais-novo input {
+  flex: 1;
+  min-width: 0;
+}

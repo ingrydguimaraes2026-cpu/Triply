@@ -214,3 +214,32 @@
   color: var(--cor-texto-suave);
   font-size: 12px;
 }
+
+/* Aviso do passaporte (spec 038) */
+.aviso-passaporte {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.aviso-passaporte-linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 13px;
+}
+
+.aviso-passaporte-linha svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.aviso-passaporte-linha.nivel-renovar,
+.aviso-passaporte-linha.nivel-vencido {
+  background: var(--dourado-claro);
+  font-weight: 600;
+}

@@ -4,6 +4,7 @@ import { ArrowLeft, Camera } from 'lucide-react'
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
+import FormPassaporte from '../features/passaporte/FormPassaporte'
 import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
@@ -128,6 +129,8 @@ export default function Perfil() {
             {mensagem.texto}
           </p>
         )}
+
+        <FormPassaporte meuId={eu.id} />
       </main>
     </div>
   )

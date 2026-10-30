@@ -300,6 +300,27 @@ export type Database = {
           },
         ]
       }
+      documentos_pessoais: {
+        Row: {
+          atualizado_em: string
+          nacionalidades: string[]
+          passaporte_validade: string | null
+          usuario_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          nacionalidades?: string[]
+          passaporte_validade?: string | null
+          usuario_id?: string
+        }
+        Update: {
+          atualizado_em?: string
+          nacionalidades?: string[]
+          passaporte_validade?: string | null
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       documentos_status: {
         Row: {
           atualizado_em: string
@@ -1586,6 +1607,12 @@ export type Database = {
     }
     Functions: {
       aceitar_convite: { Args: { p_codigo: string; p_nome?: string }; Returns: string }
+      alertas_de_passaporte: {
+        Args: {
+          p_viagem: string
+        }
+        Returns: { usuario_id: string; situacao: string }[]
+      }
       ver_convite: { Args: { p_codigo: string }; Returns: Json }
       convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
       registrar_push: {

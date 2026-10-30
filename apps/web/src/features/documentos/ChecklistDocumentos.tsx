@@ -7,17 +7,20 @@ import Avatar from '../../components/ui/Avatar'
 import { prazoVencido, progresso, textoDoPrazo, type ItemChecklist, type Status } from './checklist'
 import { nomeDoPais } from './paises'
 import type { useDocumentos } from './hooks'
+import AvisoPassaporte from '../passaporte/AvisoPassaporte'
+import { PAISES_SCHENGEN } from './regras'
 import './checklist-documentos.css'
 
 type Props = {
   docs: ReturnType<typeof useDocumentos>
   membros: Membro[]
   className?: string
+  passaporte?: { viagemId: string; meuId: string; volta: string | null; euSouAdm: boolean } // spec 038
 }
 
 // Checklist de documentos de entrada (spec 010), na Overview ao lado do mapa.
 // Cada linha: marcar como resolvido, prazo; abrindo a linha: explicação, fonte, "não preciso" e quem já resolveu.
-export default function ChecklistDocumentos({ docs, membros, className }: Props) {
+export default function ChecklistDocumentos({ docs, membros, className, passaporte }: Props) {
   const { checklist, estado, meus, marcar, resolveram, recarregar } = docs
   const [aberto, setAberto] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
@@ -120,6 +123,9 @@ export default function ChecklistDocumentos({ docs, membros, className }: Props)
         </span>
       </header>
       <p className="checklist-docs-sub">Pra entrar em {checklist.paises.map(nomeDoPais).join(', ')} com passaporte brasileiro</p>
+      {passaporte && (
+        <AvisoPassaporte {...passaporte} membros={membros} temSchengen={checklist.paises.some((p) => PAISES_SCHENGEN.includes(p))} />
+      )}
       <div className="checklist-docs-barra" aria-hidden="true">
         <span style={{ width: `${total ? (feitas / total) * 100 : 0}%` }} />
       </div>

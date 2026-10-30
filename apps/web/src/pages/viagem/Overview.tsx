@@ -322,7 +322,12 @@ export default function Overview() {
       {/* Coluna estreita: documentos e resumos */}
       <div className="overview-lateral">
         {/* Spec 010: checklist de documentos */}
-        <ChecklistDocumentos docs={docs} membros={membros} className="overview-documentos" />
+        <ChecklistDocumentos
+          docs={docs}
+          membros={membros}
+          className="overview-documentos"
+          passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
+        />
 
         {/* Roadmap #8: clima dia a dia de cada destino */}
         <ClimaDaViagem destinos={destinos} />

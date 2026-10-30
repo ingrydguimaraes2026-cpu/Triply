@@ -1048,3 +1048,27 @@ test('035: trajeto nasce como sugestão; ADM marca comprado com preço; preço s
   await como(db, MEMBRO, `update public.trajetos set situacao = 'sugestao' where id = $1`, [id])
   assert.equal((await db.query('select situacao from public.trajetos')).rows[0].situacao, 'comprado')
 })
+
+// ---------------- 038: passaporte e nacionalidade ----------------
+test('038: só a própria pessoa vê a validade; o comboio só recebe o alerta', async () => {
+  const db = await novoBanco()
+  await db.exec(`update public.viagens set data_inicio = '2027-06-01', data_fim = '2027-06-20' where id = '${V}'`)
+  await como(db, MEMBRO, "insert into public.documentos_pessoais (nacionalidades, passaporte_validade) values ('{BR,IT}', '2027-09-01')")
+  await como(db, ADM, "insert into public.documentos_pessoais (passaporte_validade) values ('2030-01-01')")
+  // ADM não vê a linha do membro
+  assert.equal((await como(db, ADM, 'select * from public.documentos_pessoais')).length, 1)
+  assert.deepEqual((await como(db, MEMBRO, 'select nacionalidades from public.documentos_pessoais'))[0].nacionalidades, ['BR', 'IT'])
+  // Alerta: membro vence antes de 20/12/2027 (volta + 6 meses); ADM está ok
+  assert.deepEqual(await como(db, ADM, `select usuario_id, situacao from public.alertas_de_passaporte('${V}')`), [{ usuario_id: MEMBRO, situacao: 'vence' }])
+  // Quem não é do comboio não recebe nada
+  assert.equal((await como(db, ESTRANHO, `select * from public.alertas_de_passaporte('${V}')`)).length, 0)
+})
+
+test('038: sem validade informada vira "sem_data"; país inválido e 4 nacionalidades são barrados', async () => {
+  const db = await novoBanco()
+  const alertas = await como(db, MEMBRO, `select usuario_id, situacao from public.alertas_de_passaporte('${V}') order by usuario_id`)
+  assert.deepEqual(alertas.map((a) => a.situacao), ['sem_data', 'sem_data'])
+  await assert.rejects(como(db, MEMBRO, "insert into public.documentos_pessoais (nacionalidades) values ('{brasil}')"), /check/)
+  await assert.rejects(como(db, MEMBRO, "insert into public.documentos_pessoais (nacionalidades) values ('{BR,IT,PT,ES}')"), /check/)
+  await assert.rejects(como(db, ADM, `insert into public.documentos_pessoais (usuario_id) values ('${MEMBRO}')`), /row-level security/)
+})
