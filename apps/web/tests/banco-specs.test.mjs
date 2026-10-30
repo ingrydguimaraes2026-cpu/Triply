@@ -1018,3 +1018,19 @@ test('032: quem usa o app não chama a função nem lê o que foi enviado', asyn
   await assert.rejects(como(db, ADM, 'select * from public.lembretes_a_enviar()'), /permission denied/)
   assert.equal((await como(db, ADM, 'select * from public.lembretes_enviados')).length, 0)
 })
+
+// ---------------- 033: preferências de aviso ----------------
+test('033: cada um liga/desliga os próprios avisos e não vê os dos outros', async () => {
+  const db = await novoBanco()
+  await como(db, MEMBRO, "insert into public.preferencias_aviso (tipo, ligado) values ('lembretes', false)")
+  await como(db, MEMBRO, "update public.preferencias_aviso set ligado = true where tipo = 'lembretes'")
+  assert.deepEqual(await como(db, MEMBRO, 'select tipo, ligado from public.preferencias_aviso'), [{ tipo: 'lembretes', ligado: true }])
+  // O ADM não vê nem mexe na preferência do membro
+  assert.equal((await como(db, ADM, 'select * from public.preferencias_aviso')).length, 0)
+  await como(db, ADM, "update public.preferencias_aviso set ligado = false")
+  assert.equal((await como(db, MEMBRO, 'select ligado from public.preferencias_aviso'))[0].ligado, true)
+  // Ninguém grava preferência no nome de outra pessoa
+  await assert.rejects(como(db, ADM, `insert into public.preferencias_aviso (usuario_id, tipo, ligado) values ('${MEMBRO}', 'fotos', false)`), /row-level security/)
+  // Tipo inventado não entra
+  await assert.rejects(como(db, MEMBRO, "insert into public.preferencias_aviso (tipo) values ('spam')"), /check/)
+})

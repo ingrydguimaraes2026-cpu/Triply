@@ -803,6 +803,27 @@ export type Database = {
           },
         ]
       }
+      preferencias_aviso: {
+        Row: {
+          atualizado_em: string
+          ligado: boolean
+          tipo: string
+          usuario_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          ligado?: boolean
+          tipo: string
+          usuario_id?: string
+        }
+        Update: {
+          atualizado_em?: string
+          ligado?: boolean
+          tipo?: string
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       push_inscricoes: {
         Row: { auth: string; criado_em: string; endpoint: string; id: string; p256dh: string; usuario_id: string }
         Insert: { auth: string; criado_em?: string; endpoint: string; id?: string; p256dh: string; usuario_id?: string }

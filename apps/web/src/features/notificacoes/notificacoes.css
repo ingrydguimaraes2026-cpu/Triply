@@ -83,3 +83,71 @@
   border-radius: 50%;
   background: var(--laranja);
 }
+
+/* Avisos no celular (specs 032 e 033) */
+.avisos-celular {
+  margin-bottom: 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+}
+
+.avisos-celular-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.avisos-celular-topo > span:nth-child(2) {
+  display: grid;
+  flex: 1;
+}
+
+.avisos-celular-topo small,
+.avisos-celular-lista small {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.avisos-celular-seta {
+  color: var(--caramelo);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.avisos-celular-corpo {
+  display: grid;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.avisos-celular-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.avisos-celular-lista label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.avisos-celular-lista label > span {
+  display: grid;
+}
+
+.avisos-celular-lista input {
+  margin-top: 3px;
+  accent-color: var(--laranja);
+}

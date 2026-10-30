@@ -36,8 +36,8 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 ## Fase 1 · Fechar a Onda 1
 | Nº | Cód. | Task | Tam. | Status |
 |---|---|---|---|---|
-| 1 | B5 | Lembretes (push antes de trem, check-out, encontro) · spec 032 | M | em andamento |
-| 2 | G4 | Preferências de notificação por tipo (completa o sino da 031) ◐ | P | a fazer |
+| 1 | B5 | Lembretes (push antes de trem, check-out, encontro) · spec 032 | M | ✅ feito (web) · banco a aplicar |
+| 2 | G4 | Preferências de notificação por tipo (completa o sino da 031) · spec 033 | P | ✅ feito (web) · banco a aplicar |
 | 3 | D4 | Situação e preço do trajeto + "lançar como gasto" | P | a fazer |
 | 4 | M6 | Calendário da viagem (ICS) no Google/Apple | P | a fazer |
 | 5 | J3 | Botão de emergência (número local, consulado, seguro) | P | a fazer |

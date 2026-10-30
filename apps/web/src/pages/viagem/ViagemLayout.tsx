@@ -9,6 +9,7 @@ import { enviarFila } from '../../features/financeiro/fila'
 import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
 import { useNovidades } from '../../features/notificacoes/hooks'
 import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
+import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -204,6 +205,7 @@ export default function ViagemLayout() {
 
       {vendoNovidades && (
         <Gaveta titulo="Novidades" aoFechar={() => setVendoNovidades(false)}>
+          <AvisosNoCelular meuId={meuId} />
           <Novidades
             atividades={novidades.atividades}
             vistoEm={novidades.vistoEm}

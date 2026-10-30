@@ -44,6 +44,8 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 028 | [Cofre da viagem + bilhete no trajeto](028-cofre-e-bilhete.md) (PDFs e fotos de reservas) | 2 | M | 004 | Pronto pra testar (web) |
 | 029 | [Agenda do dia](029-agenda-do-dia.md) (trajetos, chegadas e eventos por dia, com hora) | 2 | G | 003, 004 | Pronto pra testar (web) |
 | 031 | [Central de notificações](031-central-de-notificacoes.md) (sino com o que o comboio fez desde a última visita) | 2 | M | várias | Pronto pra testar (web) |
+| 032 | [Lembretes no celular](032-lembretes.md) (1 h antes de trajeto e encontro) | 2 | M | 004, 013, 024 | Pronto pra testar (web) · banco não aplicado |
+| 033 | [Preferências de aviso](033-preferencias-de-aviso.md) (o que cada um recebe no celular) | 2 | P | 032 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

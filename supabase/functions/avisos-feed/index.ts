@@ -87,6 +87,18 @@ Deno.serve(async (req) => {
     return json({ erro: 'Mande post_id ou comentario_id.' }, 400)
   }
 
+  // Quem desligou os avisos de fotos (spec 033) não recebe
+  if (destinatarios.length > 0) {
+    const { data: desligados } = await admin
+      .from('preferencias_aviso')
+      .select('usuario_id')
+      .eq('tipo', 'fotos')
+      .eq('ligado', false)
+      .in('usuario_id', destinatarios)
+    const fora = new Set((desligados ?? []).map((d) => d.usuario_id))
+    destinatarios = destinatarios.filter((id) => !fora.has(id))
+  }
+
   if (destinatarios.length === 0) return json({ enviados: 0 })
 
   const { data: aparelhos } = await admin.from('push_inscricoes').select('id, endpoint, p256dh, auth').in('usuario_id', destinatarios)
