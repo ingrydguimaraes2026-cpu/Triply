@@ -72,6 +72,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 057 | [Gastos planejados e recorrentes](057-pagamentos-previstos.md) ("A pagar", fora dos acertos até pagar) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
 | 058 | [Tela Hoje](058-tela-hoje.md) (agora, próximo, onde dormimos, encontro) | 2 | M | 029, 040 | Pronto pra testar (web) |
 | 059 | [Ferramentas do dia](059-ferramentas-do-dia.md) (conversor, gorjeta, motorista, banheiro, restaurante, malas) | 2 | P | 058 | Pronto pra testar (web) |
+| 060 | [Malas antes do check-in + dia de passagem](060-malas-e-dia-de-passagem.md) (na Hospedagem e na Hoje) | 2 | P | 011, 058 | Pronto pra testar (web) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

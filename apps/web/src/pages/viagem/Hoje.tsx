@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, MapPin, Sun } from 'lucide-react'
-import { agoraEProximo, destinoDoDia, faltaPara, horaNoFuso, montarAgendaDoDia, type Tables } from '@together/core'
+import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, Sun } from 'lucide-react'
+import { agoraEProximo, destinoDoDia, diaDePassagem, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -14,7 +14,11 @@ import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
 import './abas.css'
 import './hoje.css'
 
-type Hospedagem = Pick<Tables<'hospedagens'>, 'id' | 'nome' | 'endereco' | 'destino_id' | 'hora_checkin' | 'hora_checkout' | 'checkin' | 'checkout'>
+type Hospedagem = Pick<
+  Tables<'hospedagens'>,
+  'id' | 'nome' | 'endereco' | 'destino_id' | 'hora_checkin' | 'hora_checkout' | 'checkin' | 'checkout' | 'guarda_malas' | 'guarda_malas_obs'
+>
+type GuardaVolumes = Pick<Tables<'lugares'>, 'id' | 'nome' | 'destino_id' | 'link' | 'horario'>
 type Ponto = Pick<Tables<'pontos_de_encontro'>, 'id' | 'local' | 'quando' | 'latitude' | 'longitude'>
 
 // Tela Hoje (spec 058): o que está acontecendo agora, o próximo, onde dormimos, encontro e as ferramentas do dia.
@@ -24,6 +28,7 @@ export default function Hoje() {
   const { eventos } = useEventosDaAgenda(viagem.id)
   const [hospedagens, setHospedagens] = useState<Hospedagem[]>([])
   const [pontos, setPontos] = useState<Ponto[]>([])
+  const [guardaVolumes, setGuardaVolumes] = useState<GuardaVolumes[]>([])
   const [agora, setAgora] = useState(() => new Date())
 
   // Atualiza o "agora" a cada minuto
@@ -35,13 +40,19 @@ export default function Hoje() {
   useEffect(() => {
     let ativo = true
     Promise.all([
-      supabase.from('hospedagens').select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout').eq('viagem_id', viagem.id).eq('escolhida', true),
+      supabase
+        .from('hospedagens')
+        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs')
+        .eq('viagem_id', viagem.id)
+        .eq('escolhida', true),
       supabase.from('pontos_de_encontro').select('id, local, quando, latitude, longitude').eq('viagem_id', viagem.id),
+      supabase.from('lugares').select('id, nome, destino_id, link, horario').eq('viagem_id', viagem.id).eq('tipo', 'guarda_volumes'),
     ])
-      .then(([h, p]) => {
+      .then(([h, p, g]) => {
         if (!ativo) return
         setHospedagens(h.data ?? [])
         setPontos(p.data ?? [])
+        setGuardaVolumes(g.data ?? [])
       })
       .catch((e) => console.error('Erro ao carregar o Hoje:', e))
     return () => {
@@ -58,6 +69,10 @@ export default function Hoje() {
   const dormimos = onde ? hospedagens.find((h) => h.destino_id === onde.id) : undefined
   const encontrosDeHoje = pontos.filter((p) => p.quando && p.quando.slice(0, 10) <= hoje && new Date(p.quando).toDateString() === agora.toDateString())
   const naViagem = !!onde
+  // Spec 060 (J5): dia de passagem ou de troca de cidade → lembrar das malas e da hora de sair
+  const passagem = diaDePassagem(hoje, onde, trajetos, destinos, diaNoFuso, horaNoFuso)
+  const guardaDaqui = onde ? guardaVolumes.filter((g) => g.destino_id === onde.id) : []
+  const hospedagemDaqui = onde ? hospedagens.find((h) => h.destino_id === onde.id) : undefined
 
   return (
     <div className="hoje">
@@ -97,6 +112,52 @@ export default function Hoje() {
             <CalendarDays size={15} aria-hidden="true" /> Ver o dia inteiro
           </Link>
         </section>
+      )}
+
+      {passagem && onde && (
+        <Cartao titulo={passagem.tipo === 'passagem' ? 'Dia de passagem' : 'Dia de trocar de cidade'} icone={Luggage}>
+          <div className="hoje-passagem">
+            {passagem.saida && (
+              <p>
+                <strong>Saída {passagem.saida.hora}</strong> pra {passagem.saida.para} · {faltaPara(passagem.saida.hora, horaAtual)}
+              </p>
+            )}
+            {hospedagemDaqui?.guarda_malas === 'sim' && (
+              <p>
+                {hospedagemDaqui.nome} guarda as malas{hospedagemDaqui.guarda_malas_obs ? ` (${hospedagemDaqui.guarda_malas_obs})` : ''}.
+              </p>
+            )}
+            {guardaDaqui.length > 0 && (
+              <ul>
+                {guardaDaqui.map((g) => (
+                  <li key={g.id}>
+                    {g.link ? (
+                      <a href={g.link} target="_blank" rel="noreferrer noopener">
+                        {g.nome} <ExternalLink size={12} aria-hidden="true" />
+                      </a>
+                    ) : (
+                      g.nome
+                    )}
+                    {g.horario && <small> · {g.horario}</small>}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {guardaDaqui.length === 0 && hospedagemDaqui?.guarda_malas !== 'sim' && (
+              <p className="dica">
+                Onde deixar as malas?{' '}
+                {linksDeGuardaVolumes(onde.nome).map((l, i) => (
+                  <span key={l.url}>
+                    {i > 0 && ' · '}
+                    <a href={l.url} target="_blank" rel="noreferrer noopener">
+                      {l.nome}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
+        </Cartao>
       )}
 
       {encontrosDeHoje.length > 0 && (

@@ -90,9 +90,9 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 40 | J2 | Conversor de moeda na mão ◐ | P | ✅ feito (web) · spec 059 |
 | 41 | J4 | Mostrar pro motorista (endereço no idioma local, tela cheia) | P | ✅ feito (web) · spec 059 |
 | 42 | J6 | Gorjeta e divisão de conta pelo costume do país | P | ✅ feito (web) · spec 059 |
-| 43 | E8 | Malas antes do check-in (guarda-volumes na hospedagem) ◐ | P | a fazer |
+| 43 | E8 | Malas antes do check-in (guarda-volumes na hospedagem) ◐ | P | ✅ feito (web) · spec 060 · banco a aplicar |
 | 44 | E12 | Busca pronta de guarda-volumes perto (ideia: Nannybag) | P | ✅ feito (web) · spec 059 |
-| 45 | J5 | Dia de passagem (guarda-volumes + horário-limite + último trem) ◐ | P | a fazer |
+| 45 | J5 | Dia de passagem (guarda-volumes + horário-limite + último trem) ◐ | P | ✅ feito (web) · spec 060 |
 | 46 | C11 | Banheiro grátis perto, dados do OpenStreetMap (ideia: Flush) | P | ✅ feito (web) · spec 059 |
 | 47 | C12 | Achar e reservar restaurante (TheFork / Maps) no destino (ideia: TheFork) | P | ✅ feito (web) · spec 059 |
 | 48 | C8 | Perto de mim (lugares salvos mais próximos) | P | a fazer |

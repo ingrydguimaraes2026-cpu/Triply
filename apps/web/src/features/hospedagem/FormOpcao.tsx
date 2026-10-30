@@ -32,6 +32,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   const [horaCheckin, setHoraCheckin] = useState(opcao?.horaCheckin ?? '')
   const [horaCheckout, setHoraCheckout] = useState(opcao?.horaCheckout ?? '')
   const [cancelamento, setCancelamento] = useState(opcao?.cancelamentoGratisAte ?? '')
+  const [guardaMalas, setGuardaMalas] = useState(opcao?.guardaMalas ?? '')
+  const [guardaMalasObs, setGuardaMalasObs] = useState(opcao?.guardaMalasObs ?? '')
   const [observacao, setObservacao] = useState(opcao?.observacao ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -72,6 +74,8 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         horaCheckin: horaCheckin || null,
         horaCheckout: horaCheckout || null,
         cancelamentoGratisAte: cancelamento || null,
+        guardaMalas: guardaMalas || null,
+        guardaMalasObs: guardaMalasObs || null,
         observacao: observacao.trim() || null,
       })
       aoTerminar()
@@ -178,6 +182,26 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         </label>
         <input id="hosp-cancelamento" type="date" value={cancelamento} onChange={(e) => setCancelamento(e.target.value)} />
         <p className="form-dica">Na escolhida, o comboio recebe um lembrete no celular 2 dias antes.</p>
+      </div>
+
+      <div className="form-linha">
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="hosp-malas">
+            Guarda as malas antes do check-in?
+          </label>
+          <select id="hosp-malas" value={guardaMalas} onChange={(e) => setGuardaMalas(e.target.value)}>
+            <option value="">Não sei</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+            <option value="perguntar">Perguntar ao anfitrião</option>
+          </select>
+        </div>
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="hosp-malas-obs">
+            Detalhe
+          </label>
+          <input id="hosp-malas-obs" maxLength={120} placeholder="Ex.: até 22h, € 5 por mala" value={guardaMalasObs} onChange={(e) => setGuardaMalasObs(e.target.value)} />
+        </div>
       </div>
 
       {destinos.length > 1 && (

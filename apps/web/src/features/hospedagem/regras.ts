@@ -19,6 +19,8 @@ export type Opcao = {
   horaCheckout?: string | null // "10:00" (até)
   observacao: string | null
   cancelamentoGratisAte?: string | null // spec 041
+  guardaMalas?: string | null // spec 060
+  guardaMalasObs?: string | null
   escolhida: boolean
   criadoPor: string
   votos: string[] // ids de quem votou

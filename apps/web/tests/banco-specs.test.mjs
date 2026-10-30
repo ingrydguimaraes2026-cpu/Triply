@@ -1261,3 +1261,11 @@ test('057: comboio cria previsto; quem paga marca como pago ligando ao gasto; es
   await assert.rejects(como(db, ADM, `update public.pagamentos_previstos set quem_paga = '${ESTRANHO}' where id = $1`, [id]), /comboio/)
   await assert.rejects(como(db, ADM, `insert into public.pagamentos_previstos (viagem_id, descricao, valor, moeda) values ('${V}', 'X', 0, 'EUR')`), /check/)
 })
+
+// ---------------- 060: malas antes do check-in ----------------
+test('060: hospedagem guarda malas: sim/não/perguntar e observação curta', async () => {
+  const db = await novoBanco()
+  await como(db, ADM, `insert into public.hospedagens (viagem_id, destino_id, nome, guarda_malas, guarda_malas_obs) values ('${V}', '${NICE}', 'Casa', 'sim', 'até 22h')`)
+  assert.deepEqual((await como(db, MEMBRO, 'select guarda_malas, guarda_malas_obs from public.hospedagens'))[0], { guarda_malas: 'sim', guarda_malas_obs: 'até 22h' })
+  await assert.rejects(como(db, ADM, "update public.hospedagens set guarda_malas = 'talvez'"), /check/)
+})

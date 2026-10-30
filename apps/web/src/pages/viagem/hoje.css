@@ -72,3 +72,18 @@
   gap: 8px;
   margin: 0;
 }
+
+/* Dia de passagem (spec 060) */
+.hoje-passagem {
+  display: grid;
+  gap: 6px;
+}
+
+.hoje-passagem p {
+  margin: 0;
+}
+
+.hoje-passagem ul {
+  margin: 0;
+  padding-left: 18px;
+}

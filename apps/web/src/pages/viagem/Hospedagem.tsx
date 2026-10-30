@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Hourglass, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
+import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Hourglass, Luggage, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
@@ -162,6 +162,13 @@ export default function Hospedagem() {
         {prazo?.nivel === 'passou' && (
           <p className="hosp-opcao-datas">
             <Hourglass size={13} aria-hidden="true" /> Cancelamento grátis acabou em {formatarData(opcao.cancelamentoGratisAte!)}
+          </p>
+        )}
+        {opcao.guardaMalas && (
+          <p className="hosp-opcao-datas">
+            <Luggage size={13} aria-hidden="true" />{' '}
+            {opcao.guardaMalas === 'sim' ? 'Guarda as malas' : opcao.guardaMalas === 'nao' ? 'Não guarda malas' : 'Guardar malas: perguntar ao anfitrião'}
+            {opcao.guardaMalasObs && ` · ${opcao.guardaMalasObs}`}
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}

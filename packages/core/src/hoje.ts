@@ -23,3 +23,27 @@ export function faltaPara(hora: string, horaAtual: string): string {
   if (dif < 60) return `em ${dif} min`
   return dif % 60 ? `em ${Math.floor(dif / 60)} h ${dif % 60} min` : `em ${dif / 60} h`
 }
+
+// Dia de passagem (spec 060 / J5): hoje o comboio sai do destino (bate-e-volta de 0 noites ou troca de cidade)?
+// Devolve a primeira saída do dia, pra mostrar "saída 15:40 pra Roma" e lembrar das malas.
+type DestinoP = { id: string; nome: string; chegada: string | null; saida: string | null }
+type TrajetoP = { origem_id: string | null; destino_id: string | null; partida: string | null }
+
+export function diaDePassagem(
+  dia: string,
+  onde: DestinoP | undefined,
+  trajetos: TrajetoP[],
+  destinos: DestinoP[],
+  diaDe: (instante: string) => string,
+  horaDe: (instante: string) => string,
+): { tipo: 'passagem' | 'mudanca'; saida: { hora: string; para: string } | null } | null {
+  if (!onde) return null
+  const saidas = trajetos
+    .filter((t) => t.origem_id === onde.id && t.partida && diaDe(t.partida) === dia)
+    .sort((a, b) => a.partida!.localeCompare(b.partida!))
+  const primeira = saidas[0]
+  const saida = primeira ? { hora: horaDe(primeira.partida!), para: destinos.find((d) => d.id === primeira.destino_id)?.nome ?? '?' } : null
+  if (onde.chegada === dia && onde.saida === dia) return { tipo: 'passagem', saida }
+  if (onde.saida === dia || saida) return { tipo: 'mudanca', saida }
+  return null
+}

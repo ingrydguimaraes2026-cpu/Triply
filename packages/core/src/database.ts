@@ -476,6 +476,8 @@ export type Database = {
           destino_id: string | null
           endereco: string | null
           escolhida: boolean
+          guarda_malas: string | null
+          guarda_malas_obs: string | null
           hora_checkin: string | null
           hora_checkin_limite: string | null
           hora_checkout: string | null
@@ -501,6 +503,8 @@ export type Database = {
           destino_id?: string | null
           endereco?: string | null
           escolhida?: boolean
+          guarda_malas?: string | null
+          guarda_malas_obs?: string | null
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
           hora_checkout?: string | null
@@ -526,6 +530,8 @@ export type Database = {
           destino_id?: string | null
           endereco?: string | null
           escolhida?: boolean
+          guarda_malas?: string | null
+          guarda_malas_obs?: string | null
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
           hora_checkout?: string | null
