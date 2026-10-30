@@ -3,14 +3,29 @@ import { Animated, PanResponder, Pressable, ScrollView, Text, View } from 'react
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
-import { Bed, Bus, Car, Footprints, MapPin, Mountain, Plane, Route, Ship, TrainFront, Utensils, type LucideIcon } from 'lucide-react-native'
-import { buscarClima, buscarDestinos, buscarLugares, buscarTrajetos, interpretarTempo, type Destino, type Lugar, type PrevisaoDia, type Trajeto, type ViagemComDetalhes } from '@together/core'
+import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from 'lucide-react-native'
+import {
+  buscarClima,
+  buscarDestinos,
+  buscarEventosDaAgenda,
+  buscarLugares,
+  buscarTrajetos,
+  interpretarTempo,
+  montarAgendaDoDia,
+  type Destino,
+  type EventoDaAgenda,
+  type Lugar,
+  type PrevisaoDia,
+  type Trajeto,
+  type ViagemComDetalhes,
+} from '@together/core'
 import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
-import { diaCurto, diaLongo, diasDaViagem, hora, paraIso } from '../../src/lib/formato'
+import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
 import { Carregando, ErroNaTela, IconeQuadrado } from '../../src/ui/pecas'
 import { SemViagem } from '../../src/ui/SemViagem'
+import { FormEvento } from '../../src/ui/FormEvento'
 import { useTamanhoDaTela } from '../../src/ui/Moldura'
 import { cor } from '../../theme'
 
@@ -25,21 +40,45 @@ export default function Roteiro() {
   return <RoteiroDaViagem viagem={atual} />
 }
 
-type Item = { chave: string; hora: string; Icone: LucideIcon; titulo: string; detalhe: string }
+type Item = { chave: string; hora: string; Icone: LucideIcon; titulo: string; detalhe: string; evento?: EventoDaAgenda }
 
 function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
   const carga = useCarregar(
-    () => Promise.all([buscarDestinos(supabase, viagem.id), buscarLugares(supabase, viagem.id), buscarTrajetos(supabase, viagem.id)]),
+    () =>
+      Promise.all([
+        buscarDestinos(supabase, viagem.id),
+        buscarLugares(supabase, viagem.id),
+        buscarTrajetos(supabase, viagem.id),
+        buscarEventosDaAgenda(supabase, viagem.id),
+      ]),
     [viagem.id],
   )
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const [destinos, lugares, trajetos] = carga.dados
-  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} />
+  const [destinos, lugares, trajetos, eventos] = carga.dados
+  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} aoMudar={carga.recarregar} />
 }
 
-function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalhes; destinos: Destino[]; lugares: Lugar[]; trajetos: Trajeto[] }) {
+function Tela({
+  viagem,
+  destinos,
+  lugares,
+  trajetos,
+  eventos,
+  aoMudar,
+}: {
+  viagem: ViagemComDetalhes
+  destinos: Destino[]
+  lugares: Lugar[]
+  trajetos: Trajeto[]
+  eventos: EventoDaAgenda[]
+  aoMudar: () => void
+}) {
   const insets = useSafeAreaInsets()
+  const { meuId } = useViagemAtual()
+  const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
+  // Formulário aberto: novo evento (sem `evento`) ou editando um
+  const [form, setForm] = useState<{ evento?: EventoDaAgenda } | null>(null)
   const { width, height } = useTamanhoDaTela()
   const largura = width
   const alturaDoMapa = Math.round(height * 0.66)
@@ -50,7 +89,7 @@ function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalh
   }, [viagem.dataInicio, viagem.dataFim])
   const [diaEscolhido, setDiaEscolhido] = useState(0)
   const dia = dias[Math.min(diaEscolhido, dias.length - 1)]
-  const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos), [dia, destinos, lugares, trajetos])
+  const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos, eventos), [dia, destinos, lugares, trajetos, eventos])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
   const onde = destinoDoDia(paraIso(dia), destinos)
 
@@ -119,9 +158,16 @@ function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalh
             )
           })}
         </ScrollView>
-        <View className="flex-row items-baseline justify-between px-5 pb-2 pt-3.5">
-          <Text className="font-display text-[22px] text-texto">{diaLongo(dia)}</Text>
-          <Text className="font-body text-[13px] text-suave">{onde ? onde.nome : `${itens.length} paradas`}</Text>
+        <View className="flex-row items-center justify-between gap-3 px-5 pb-2 pt-3.5">
+          <View className="min-w-0 flex-1">
+            <Text className="font-display text-[22px] text-texto">{diaLongo(dia)}</Text>
+            <Text className="font-body text-[13px] text-suave">{onde ? onde.nome : `${itens.length} paradas`}</Text>
+          </View>
+          {/* Spec 029: evento livre do comboio nesse dia */}
+          <Pressable onPress={() => setForm({})} className="h-10 flex-row items-center gap-1.5 rounded-xl bg-couro px-3.5 active:opacity-80">
+            <Plus size={17} color="#fff" />
+            <Text className="font-body-bold text-[14px] text-white">Evento</Text>
+          </Pressable>
         </View>
         {previsaoDoDia ? (
           <View className="flex-row items-center gap-1.5 px-5 pb-1">
@@ -137,31 +183,54 @@ function Tela({ viagem, destinos, lugares, trajetos }: { viagem: ViagemComDetalh
         <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
-              Nada marcado pra esse dia ainda.{'\n'}Os lugares e trajetos que vocês adicionarem aparecem aqui.
+              Nada marcado pra esse dia ainda.{'\n'}Adicione um evento ou um trajeto com horário.
             </Text>
           ) : (
-            itens.map((it, i) => (
-              <View key={it.chave} className="flex-row gap-3">
-                <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
-                <View className="w-3.5 items-center">
-                  <View className="h-5 w-0.5" style={{ backgroundColor: i === 0 ? 'transparent' : '#E3D2B8' }} />
-                  <View className="h-2.5 w-2.5 rounded-full border-2 border-fundo bg-couro" style={{ boxShadow: '0 0 0 1.5px #7B542F' }} />
-                  <View className="w-0.5 flex-1" style={{ backgroundColor: i === itens.length - 1 ? 'transparent' : '#E3D2B8' }} />
-                </View>
-                <View className="mb-2.5 min-w-0 flex-1 flex-row items-center gap-3 rounded-2xl bg-cartao p-3.5" style={{ boxShadow: '0 4px 14px rgba(74,46,20,0.06)' }}>
-                  <IconeQuadrado tamanho={36}>
-                    <it.Icone size={19} color={cor.couro} />
-                  </IconeQuadrado>
-                  <View className="min-w-0 flex-1">
-                    <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
-                    {it.detalhe ? <Text className="mt-0.5 font-body text-[12.5px] text-suave">{it.detalhe}</Text> : null}
+            itens.map((it, i) => {
+              // Lápis só nos eventos que eu criei (o ADM mexe em todos)
+              const editavel = !!it.evento && (it.evento.criado_por === meuId || euSouAdm)
+              return (
+                <View key={it.chave} className="flex-row gap-3">
+                  <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
+                  <View className="w-3.5 items-center">
+                    <View className="h-5 w-0.5" style={{ backgroundColor: i === 0 ? 'transparent' : '#E3D2B8' }} />
+                    <View className="h-2.5 w-2.5 rounded-full border-2 border-fundo bg-couro" style={{ boxShadow: '0 0 0 1.5px #7B542F' }} />
+                    <View className="w-0.5 flex-1" style={{ backgroundColor: i === itens.length - 1 ? 'transparent' : '#E3D2B8' }} />
                   </View>
+                  <Pressable
+                    onPress={editavel ? () => setForm({ evento: it.evento }) : undefined}
+                    disabled={!editavel}
+                    accessibilityLabel={editavel ? `Editar ${it.titulo}` : undefined}
+                    className="mb-2.5 min-w-0 flex-1 flex-row items-center gap-3 rounded-2xl bg-cartao p-3.5 active:opacity-80"
+                    style={{ boxShadow: '0 4px 14px rgba(74,46,20,0.06)' }}
+                  >
+                    <IconeQuadrado tamanho={36}>
+                      <it.Icone size={19} color={cor.couro} />
+                    </IconeQuadrado>
+                    <View className="min-w-0 flex-1">
+                      <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
+                      {it.detalhe ? <Text className="mt-0.5 font-body text-[12.5px] text-suave">{it.detalhe}</Text> : null}
+                    </View>
+                    {editavel ? <Pencil size={15} color={cor.suave} /> : null}
+                  </Pressable>
                 </View>
-              </View>
-            ))
+              )
+            })
           )}
         </ScrollView>
       </Animated.View>
+      {form ? (
+        <FormEvento
+          viagemId={viagem.id}
+          dia={paraIso(dia)}
+          evento={form.evento}
+          aoFechar={() => setForm(null)}
+          aoSalvar={() => {
+            setForm(null)
+            aoMudar()
+          }}
+        />
+      ) : null}
     </View>
   )
 }
@@ -171,24 +240,14 @@ function destinoDoDia(dia: string, destinos: Destino[]) {
   return destinos.find((d) => d.chegada && d.chegada <= dia && (d.saida ?? d.chegada) >= dia)
 }
 
-// Linha do tempo do dia: trajetos que partem nele, chegadas/saídas e os lugares do destino
-function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos: Trajeto[]): Item[] {
-  const nomeDe = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? '?'
-  const itens: Item[] = []
-  for (const t of trajetos) {
-    if (!t.partida || paraIso(new Date(t.partida)) !== dia) continue
-    itens.push({
-      chave: 't' + t.id,
-      hora: hora(t.partida),
-      Icone: ICONE_DO_MEIO[t.meio] ?? Route,
-      titulo: `${nomeDe(t.origem_id)} → ${nomeDe(t.destino_id)}`,
-      detalhe: [t.observacao, t.chegada ? `chega ${hora(t.chegada)}` : null].filter(Boolean).join(' · '),
-    })
-  }
-  for (const d of destinos) {
-    if (d.chegada === dia) itens.push({ chave: 'c' + d.id, hora: '', Icone: Bed, titulo: `Chegada em ${d.nome}`, detalhe: d.pais ?? '' })
-    if (d.saida === dia && d.saida !== d.chegada) itens.push({ chave: 's' + d.id, hora: '', Icone: MapPin, titulo: `Saída de ${d.nome}`, detalhe: '' })
-  }
+// Linha do tempo do dia (spec 029, igual à web): saídas, trajetos e eventos por hora, chegadas.
+// No fim, os lugares do destino (ideias do que fazer, sem hora).
+function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos: Trajeto[], eventos: EventoDaAgenda[]): Item[] {
+  const itens: Item[] = montarAgendaDoDia(dia, { destinos, trajetos, eventos }).map((i) => {
+    if (i.tipo === 'trajeto') return { chave: i.chave, hora: i.hora, Icone: ICONE_DO_MEIO[i.meio] ?? Route, titulo: i.titulo, detalhe: i.detalhe }
+    if (i.tipo === 'evento') return { chave: i.chave, hora: i.hora, Icone: CalendarDays, titulo: i.titulo, detalhe: i.detalhe, evento: i.evento }
+    return { chave: i.chave, hora: '', Icone: i.tipo === 'chegada' ? Bed : MapPin, titulo: i.titulo, detalhe: i.detalhe }
+  })
   const onde = destinoDoDia(dia, destinos)
   if (onde) {
     for (const l of lugares.filter((x) => x.destino_id === onde.id)) {

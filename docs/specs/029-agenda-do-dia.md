@@ -1,6 +1,8 @@
 # 029. Agenda do dia
 
-**Fase:** 2 · **Tamanho:** G · **Depende de:** 003, 004 · **Status:** Pronto pra testar (web)
+**Fase:** 2 · **Tamanho:** G · **Depende de:** 003, 004 · **Status:** Pronto pra testar (web e app)
+
+> **No app (30/10):** a aba Roteiro monta o dia com `montarAgendaDoDia` do core (trajetos, eventos, chegadas e saídas; os lugares do destino vêm no fim). Botão "+ Evento" no dia e toque no evento pra editar ou apagar (só quem criou ou o ADM, com lápis). Formulário: `apps/mobile/src/ui/FormEvento.tsx` (hora aceita 20, 20h, 9h30, 20:00). Fica só no site: escolher quem vai (spec 070) e trocar o dia do evento.
 
 ## Objetivo
 Ver o que acontece em cada dia da viagem, com horário, num lugar só: trem das 9h15, chegada em Roma, jantar às 20h.
@@ -25,7 +27,6 @@ Ver o que acontece em cada dia da viagem, com horário, num lugar só: trem das 
 - Lugares com dia marcado na agenda (hoje lugar não tem dia; fica o link pra aba Lugares).
 - Arrastar pra reordenar.
 - Check-in/check-out da hospedagem na linha do tempo.
-- Mobile: o roteiro do app ainda usa a montagem antiga. Trocar por `montarAgendaDoDia` do core quando levarmos pro mobile.
 
 ## Telas
 - **Sem datas no roteiro:** "Sem datas no roteiro · Coloque as datas de chegada e saída dos destinos na Overview pra montar a agenda."
