@@ -91,6 +91,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 076 | [Sugestão de ordem do roteiro](076-sugestao-de-ordem.md) (menos km, com a fonte) | 2 | M | PR #3 | Pronto pra testar (web) |
 | 077 | [Tempo entre compromissos](077-tempo-entre-compromissos.md) (avisa sobreposição e folga curta) | 2 | M | 029 | Pronto pra testar (web) |
 | 078 | [Permissões simples](078-permissoes-simples.md) (roteiro, transportes, orçamento pro comboio) | 2 | M | 007 | Pronto pra testar (web) · banco não aplicado |
+| 079 | [Importar lista do Google Maps](079-importar-do-maps.md) (CSV do Takeout) | 2 | M | 016 | Pronto pra testar (web) |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

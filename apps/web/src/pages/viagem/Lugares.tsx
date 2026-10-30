@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCheck, ExternalLink, Flag, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
+import { CheckCheck, ExternalLink, Flag, Upload, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
@@ -16,6 +16,7 @@ import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Gaveta from '../../components/ui/Gaveta'
 import BotaoIr from '../../components/ui/BotaoIr'
 import PertoDeMim from '../../features/lugares/PertoDeMim'
+import ImportarDoMaps from '../../features/lugares/ImportarDoMaps'
 import './abas.css'
 import './hospedagem.css'
 import './lugares.css'
@@ -33,6 +34,7 @@ export default function Lugares() {
   const [filtro, setFiltro] = useState<TipoDeLugar | null>(null)
   const [janela, setJanela] = useState<Janela>(null)
   const [avisoPrioridade, setAvisoPrioridade] = useState<string | null>(null)
+  const [importando, setImportando] = useState(false) // spec 079
   const fechar = () => setJanela(null)
 
   const item = l.itens.find((i) => i.destino.id === selecionado) ?? l.itens[0] ?? null
@@ -212,15 +214,18 @@ export default function Lugares() {
         titulo="Lugares"
         subtitulo="Passeios, comida e guarda-volumes de cada destino, pro comboio inteiro ver."
         acao={
-          l.total > 0 && (
-            <div className="hosp-resumo" aria-label="Resumo dos lugares">
+          <div className="hosp-resumo" aria-label="Resumo dos lugares">
+            {l.total > 0 && (
               <span>
                 <strong>{l.total}</strong> {l.total === 1 ? 'lugar anotado' : 'lugares anotados'}
                 {l.lugares.some((x) => x.visitadoEm) && ` · ${l.lugares.filter((x) => x.visitadoEm).length} visitados`}
               </span>
-              <PertoDeMim lugares={l.lugares} destinos={destinos} />
-            </div>
-          )
+            )}
+            {l.total > 0 && <PertoDeMim lugares={l.lugares} destinos={destinos} />}
+            <button type="button" className="botao-texto" onClick={() => setImportando(true)}>
+              <Upload size={14} aria-hidden="true" /> Importar do Google Maps
+            </button>
+          </div>
         }
       />
 
@@ -290,6 +295,19 @@ export default function Lugares() {
             salvar={(dados) => (lugarAberto ? l.editar(lugarAberto.id, dados) : l.adicionar(dados))}
             apagar={lugarAberto ? () => l.apagar(lugarAberto.id) : undefined}
             aoTerminar={fechar}
+          />
+        </Gaveta>
+      )}
+      {importando && (
+        <Gaveta titulo="Importar lista do Google Maps" aoFechar={() => setImportando(false)}>
+          <ImportarDoMaps
+            viagemId={viagem.id}
+            destinos={destinos}
+            moeda={viagem.moeda_principal}
+            aoTerminar={() => {
+              setImportando(false)
+              l.recarregar()
+            }}
           />
         </Gaveta>
       )}

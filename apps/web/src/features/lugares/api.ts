@@ -100,3 +100,17 @@ export async function marcarPrioridade(id: string, meuId: string, sim: boolean) 
     : await supabase.from('lugar_prioridades').delete().eq('lugar_id', id).eq('usuario_id', meuId)
   if (error) throw error
 }
+
+// Importar lista do Google Maps (spec 079): vários lugares de uma vez
+export async function importarLugares(
+  viagemId: string,
+  destinoId: string | null,
+  tipo: string,
+  moeda: string,
+  lista: { nome: string; observacao: string | null; link: string | null }[],
+) {
+  const { error } = await supabase
+    .from('lugares')
+    .insert(lista.map((l) => ({ viagem_id: viagemId, destino_id: destinoId, tipo, moeda, nome: l.nome, observacao: l.observacao, link: l.link })))
+  if (error) throw error
+}

@@ -120,7 +120,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 66 | E9 | Prévia do link da opção (foto, título, preço) | M | ✅ feito (web + função) · spec 072 · banco a aplicar |
 | 67 | F7 | Permissões simples do ADM | M | ✅ feito (web) · spec 078 · banco a aplicar (troca policies: revisar) |
 | 68 | I7 | Mala individual com modelo pelo clima | M | ✅ feito (web) · spec 069 · banco a aplicar |
-| 69 | C7 | Importar lista do Google Maps | M | a fazer |
+| 69 | C7 | Importar lista do Google Maps | M | ✅ feito (web) · spec 079 (CSV do Google Takeout) |
 
 ## Fase 6 · Dinheiro avançado
 | Nº | Cód. | Task | Tam. | Status |
