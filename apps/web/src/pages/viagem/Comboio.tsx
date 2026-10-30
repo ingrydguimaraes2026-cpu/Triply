@@ -22,6 +22,7 @@ import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
 import HistoricoDaViagem from '../../features/historico/HistoricoDaViagem'
+import DuplicarViagem from '../../features/viagens/DuplicarViagem'
 import './abas.css'
 
 // Comboio (spec 007): quem vai, convites e sair da viagem. O ADM organiza as pessoas.
@@ -282,14 +283,15 @@ export default function Comboio() {
       {/* Spec 087: histórico e lixeira */}
       <HistoricoDaViagem />
 
-      {/* Spec 055: começar outra viagem com as mesmas pessoas */}
-      {!sozinho && (
-        <div className="comboio-repetir">
+      {/* Spec 055: começar outra viagem com as mesmas pessoas · Spec 091: duplicar o planejamento */}
+      <div className="comboio-repetir">
+        {!sozinho && (
           <Link to={`/nova-viagem?comboio=${viagem.id}`} className="botao secundario">
             <Repeat size={18} aria-hidden="true" /> Nova viagem com este comboio
           </Link>
-        </div>
-      )}
+        )}
+        <DuplicarViagem viagem={viagem} comComboio={!sozinho} />
+      </div>
 
       <div className="comboio-sair">
         <button type="button" className="botao secundario" onClick={() => setSaindo(true)}>

@@ -1224,7 +1224,20 @@
 /* Repetir com o mesmo comboio (spec 055) */
 .comboio-repetir {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
+}
+/* Spec 091: caixinha "Trazer o comboio junto" */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.form-check input {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 .overview-datas-comum { order: 2; }
 .overview-mala { order: 8; }

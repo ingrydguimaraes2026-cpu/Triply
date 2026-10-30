@@ -1560,3 +1560,36 @@ test('089: não deixa a viagem só com convidado sem conta', async () => {
   await assert.rejects(como(db, ADM, 'select public.excluir_meus_dados()'), /só sobram convidados/)
   assert.equal((await db.query('select count(*)::int n from public.comboio_membros')).rows[0].n, 2)
 })
+
+// ---------------- 091: duplicar viagem ----------------
+test('091: duplica roteiro, transporte, lugar, agenda e lista, andando as datas', async () => {
+  const db = await novoBanco()
+  await db.query(`update public.viagens set data_inicio = '2026-11-20', data_fim = '2026-11-23' where id = '${V}'`)
+  await db.query(`update public.destinos set chegada = '2026-11-20', saida = '2026-11-22' where id = '${NICE}'`)
+  await como(db, ADM, `insert into public.trajetos (viagem_id, origem_id, destino_id, partida) values ('${V}', '${NICE}', '${MONACO}', '2026-11-22T09:00:00Z')`)
+  await como(db, MEMBRO, `insert into public.lugares (viagem_id, destino_id, nome, visitado_em) values ('${V}', '${NICE}', 'Castelo', now())`)
+  await como(db, MEMBRO, `insert into public.eventos_agenda (viagem_id, dia, titulo) values ('${V}', '2026-11-21', 'Jantar')`)
+  await como(db, MEMBRO, `insert into public.itens_lista (viagem_id, lista, texto, feito, quem_id) values ('${V}', 'levar', 'Adaptador', true, '${MEMBRO}')`)
+  await salvarGasto(db, MEMBRO, cafe, metade)
+
+  await assert.rejects(como(db, ESTRANHO, `select public.duplicar_viagem('${V}', 'Cópia', null)`), /não é do comboio/)
+  const [{ nova }] = await como(db, MEMBRO, `select public.duplicar_viagem('${V}', 'Riviera 2027', '2027-05-10') as nova`)
+
+  const v2 = (await db.query('select data_inicio::text, data_fim::text from public.viagens where id = $1', [nova])).rows[0]
+  assert.deepEqual(v2, { data_inicio: '2027-05-10', data_fim: '2027-05-13' })
+  assert.deepEqual((await db.query('select usuario_id, papel from public.comboio_membros where viagem_id = $1', [nova])).rows, [{ usuario_id: MEMBRO, papel: 'adm' }])
+  const nice2 = (await db.query("select id, chegada::text from public.destinos where viagem_id = $1 and nome = 'Nice'", [nova])).rows[0]
+  assert.equal(nice2.chegada, '2027-05-10')
+  const t = (await db.query('select origem_id, partida from public.trajetos where viagem_id = $1', [nova])).rows[0]
+  assert.equal(t.origem_id, nice2.id)
+  assert.equal(new Date(t.partida).toISOString(), '2027-05-12T09:00:00.000Z')
+  const l = (await db.query('select destino_id, visitado_em from public.lugares where viagem_id = $1', [nova])).rows[0]
+  assert.deepEqual(l, { destino_id: nice2.id, visitado_em: null })
+  assert.equal((await db.query('select dia::text from public.eventos_agenda where viagem_id = $1', [nova])).rows[0].dia, '2027-05-11')
+  assert.deepEqual((await db.query('select feito, quem_id from public.itens_lista where viagem_id = $1', [nova])).rows, [{ feito: false, quem_id: null }])
+  assert.equal((await db.query('select count(*)::int n from public.gastos where viagem_id = $1', [nova])).rows[0].n, 0)
+  // Sem data: datas em branco e agenda fica de fora
+  const [{ sem }] = await como(db, MEMBRO, `select public.duplicar_viagem('${V}', 'Sem data', null) as sem`)
+  assert.equal((await db.query('select count(*)::int n from public.eventos_agenda where viagem_id = $1', [sem])).rows[0].n, 0)
+  assert.equal((await db.query("select chegada from public.destinos where viagem_id = $1 and nome = 'Nice'", [sem])).rows[0].chegada, null)
+})

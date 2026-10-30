@@ -144,7 +144,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 82 | M11 | Privacidade e LGPD (excluir conta, baixar meus dados) ◐ | M | Pronto pra testar (web) · spec 089 |
 | 83 | M10 | Acessibilidade e modo simples | M | Pronto pra testar (web) · spec 090 |
 | 84 | M15 | Outros idiomas (inglês, espanhol) | M | adiado: ~830 textos em ~90 telas (tamanho real G+); meia tradução deixa o app misturado. Plano abaixo |
-| 85 | N4 | Duplicar viagem e templates | M | a fazer |
+| 85 | N4 | Duplicar viagem e templates | M | Parcial: duplicar (spec 091); templates por link fica pra depois |
 
 ## Fase 8 · IA, memórias e itens grandes
 | Nº | Cód. | Task | Tam. | Status |

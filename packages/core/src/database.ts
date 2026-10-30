@@ -2163,6 +2163,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      duplicar_viagem: {
+        Args: {
+          p_origem: string
+          p_nome: string
+          p_inicio: string | null
+        }
+        Returns: string
+      }
       entrar_no_quarto: {
         Args: {
           p_quarto: string
