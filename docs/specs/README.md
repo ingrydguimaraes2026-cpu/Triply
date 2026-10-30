@@ -108,6 +108,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 093 | [Gasto por frase ou voz](093-gasto-por-frase-ou-voz.md) | 8 | Pronto pra testar (web) · sem banco |
 | 094 | [Sugestões de lugares por destino](094-sugestoes-de-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
 | 095 | [Feriados nas datas](095-feriados-nas-datas.md) | 8 | Pronto pra testar (web) · sem banco |
+| 096 | [Montar os dias pelos votos](096-montar-os-dias-pelos-votos.md) | 8 | Pronto pra testar (web) · sem banco |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
