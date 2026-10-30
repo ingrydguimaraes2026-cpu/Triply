@@ -71,3 +71,18 @@ test('agenda do dia: dia sem nada fica vazio', () => {
 test('hora no fuso: HH:MM com zero à esquerda', () => {
   assert.equal(horaNoFuso(local('2026-11-20', '07:05')), '07:05')
 })
+
+test('088: roteiro pra imprimir pula os dias vazios e diz onde o comboio está', async () => {
+  const { roteiroDiaADia } = await import(new URL('../../../packages/core/src/agenda.ts', import.meta.url))
+  const destinos = [
+    { id: 'n', nome: 'Nice', chegada: '2026-11-20', saida: '2026-11-22' },
+    { id: 'm', nome: 'Mônaco', chegada: '2026-11-22', saida: '2026-11-23' },
+  ]
+  const eventos = [{ id: 'e', dia: '2026-11-21', hora: '20:00:00', titulo: 'Jantar', local: null, observacao: null }]
+  const dias = roteiroDiaADia('2026-11-20', '2026-11-23', { destinos, trajetos: [], eventos })
+  assert.deepEqual(dias.map((d) => d.dia), ['2026-11-20', '2026-11-21', '2026-11-22', '2026-11-23'])
+  assert.equal(dias[1].onde.nome, 'Nice')
+  assert.equal(dias[1].itens[0].titulo, 'Jantar')
+  assert.equal(dias[2].onde.nome, 'Mônaco')
+  assert.deepEqual(roteiroDiaADia('2026-11-24', '2026-11-25', { destinos, trajetos: [], eventos }), [])
+})

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, Plus } from 'lucide-react'
+import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, Plus, Printer } from 'lucide-react'
 import { compromissosApertados, destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -104,6 +104,9 @@ export default function Agenda() {
         subtitulo="Trajetos e chegadas entram sozinhos. Acrescente o resto: jantar, passeio, reserva."
         acao={
           <span className="agenda-acoes">
+            <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
+              <Printer size={16} aria-hidden="true" /> PDF
+            </Link>
             <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
               <CalendarPlus size={16} aria-hidden="true" /> Calendário
             </button>

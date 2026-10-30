@@ -92,3 +92,15 @@ export function montarAgendaDoDia(
   comHora.sort((a, b) => a.hora.localeCompare(b.hora))
   return [...saidas, ...comHora, ...semHora, ...chegadas]
 }
+
+// Spec 088: roteiro pra imprimir. Todos os dias da viagem que têm alguma coisa,
+// com onde o comboio está naquele dia. Dias vazios ficam de fora.
+export function roteiroDiaADia<D extends Destino>(
+  inicio: string | null,
+  fim: string | null,
+  dados: { destinos: D[]; trajetos: Trajeto[]; eventos: EventoDaAgenda[] },
+): { dia: string; onde: D | undefined; itens: ItemDaAgenda[] }[] {
+  return diasDoPeriodo(inicio, fim)
+    .map((dia) => ({ dia, onde: destinoDoDia(dia, dados.destinos), itens: montarAgendaDoDia(dia, dados) }))
+    .filter((d) => d.itens.length > 0)
+}

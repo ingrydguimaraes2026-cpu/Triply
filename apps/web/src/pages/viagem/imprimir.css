@@ -1,0 +1,112 @@
+/* Spec 088: página pra imprimir / salvar PDF */
+.imprimir {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1rem;
+  color: var(--cor-texto);
+}
+.imprimir-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.imprimir-opcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+.imprimir-topo h1 {
+  margin: 0.5rem 0 0.25rem;
+}
+.imprimir-topo p,
+.imprimir-vazio,
+.imprimir-rodape,
+.imprimir small {
+  color: var(--cor-texto-suave);
+}
+.imprimir section {
+  margin-top: 1.5rem;
+}
+.imprimir h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--cor-borda);
+  padding-bottom: 0.3rem;
+}
+.imprimir h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.3rem;
+  text-transform: capitalize;
+}
+.imprimir-dia {
+  break-inside: avoid;
+}
+.imprimir-dia ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.imprimir-dia li {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+}
+.imprimir-hora {
+  flex-shrink: 0;
+  width: 3rem;
+  font-variant-numeric: tabular-nums;
+}
+.imprimir table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  display: block;
+  overflow-x: auto;
+}
+.imprimir th,
+.imprimir td {
+  text-align: left;
+  padding: 0.35rem 0.5rem 0.35rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  vertical-align: top;
+}
+.imprimir-casa {
+  break-inside: avoid;
+}
+.imprimir-casa p {
+  margin: 0.15rem 0;
+}
+.imprimir-rodape {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+}
+
+@media print {
+  /* Esconde o menu e as abas da viagem: só a folha aparece */
+  body * {
+    visibility: hidden;
+  }
+  .imprimir,
+  .imprimir * {
+    visibility: visible;
+  }
+  .imprimir {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .imprimir-barra {
+    display: none;
+  }
+  .imprimir {
+    max-width: none;
+    padding: 0;
+  }
+  .imprimir table {
+    display: table;
+  }
+}

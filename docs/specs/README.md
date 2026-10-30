@@ -100,6 +100,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 085 | [Tempo real](085-tempo-real.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 | 086 | [Marcações sem internet](086-marcacoes-sem-internet.md) | 7 | Pronto pra testar (web) · sem banco |
 | 087 | [Histórico e lixeira](087-historico-e-lixeira.md) | 7 | Pronto pra testar (web) · banco não aplicado |
+| 088 | [A viagem em PDF](088-viagem-em-pdf.md) | 7 | Pronto pra testar (web) · sem banco |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 
