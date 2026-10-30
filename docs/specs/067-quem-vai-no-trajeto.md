@@ -21,7 +21,7 @@ O ADM marca quem vai em cada trajeto (gente chegando em voos diferentes, quem vo
 - App mobile.
 
 ## Dados
-- **Migration:** `supabase/migrations/20261030240000_passageiros.sql` — `trajeto_passageiros`.
+- **Migration:** `supabase/migrations/20261030235000_passageiros.sql` — `trajeto_passageiros`.
 
 ## Quem pode o quê
 | Ação | ADM | A própria pessoa | Outros | Fora do comboio |
