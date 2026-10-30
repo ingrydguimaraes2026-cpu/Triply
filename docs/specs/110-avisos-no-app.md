@@ -1,6 +1,6 @@
 # 110. Avisos no app do celular (push do Expo)
 
-**Fase:** 2 (paridade do mobile) · **Tamanho:** M · **Depende de:** 032, 033 · **Status:** Pronto pra testar (código) · banco **não aplicado** · função **não publicada**
+**Fase:** 2 (paridade do mobile) · **Tamanho:** M · **Depende de:** 032, 033 · **Status:** Pronto pra testar (código) · banco aplicado · função publicada (30/10)
 
 ## Objetivo
 Quem usa o app instalado recebe os lembretes (1 h antes do trajeto e do encontro, prazo de cancelamento) no celular, igual a quem usa o site. Tocar no aviso abre a viagem certa.
@@ -20,14 +20,14 @@ Quem usa o app instalado recebe os lembretes (1 h antes do trajeto e do encontro
 - App no navegador (Expo web): continua sem push; o cartão explica e manda usar o site.
 
 ## Dados
-- **Migration:** `supabase/migrations/20261031180000_push_do_app.sql`.
+- **Migration:** `supabase/migrations/20261030162108_push_do_app.sql`.
 - `push_expo` (`token` único, `plataforma` ios/android): cada um vê e apaga só os seus; gravar só por `registrar_push_expo` (passa o aparelho pra conta que logou por último).
 - **Função:** `supabase/functions/lembretes` (`mandarPeloExpo`, sem segredo novo).
 
 ## Pra funcionar de verdade (depende do Victor)
 1. **Projeto no EAS:** rodar `eas init` em `apps/mobile` (cria `extra.eas.projectId` no `app.json`). Sem ele o cartão mostra "ainda não estão prontos nesta versão".
 2. **Build de desenvolvimento** (`eas build --profile development`): o Expo Go não recebe push remoto no Android.
-3. Aplicar a migration e publicar a função `lembretes` no Supabase.
+3. ~~Aplicar a migration e publicar a função~~ (feito em 30/10).
 
 ## Quem pode o quê
 | Ação | Dono do aparelho | Outra pessoa | Sem login |
