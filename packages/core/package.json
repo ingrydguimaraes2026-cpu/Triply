@@ -9,7 +9,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./paises": "./src/paises.ts",
-    "./hospedagem": "./src/hospedagem.ts"
+    "./hospedagem": "./src/hospedagem.ts",
+    "./documentos": "./src/documentos.ts",
+    "./documentos-regras": "./src/documentos-regras.ts",
+    "./exigencias": "./src/exigencias.ts"
   },
   "scripts": {
     "type-check": "tsc --noEmit"

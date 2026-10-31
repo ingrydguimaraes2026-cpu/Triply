@@ -1,14 +1,36 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Tables } from '@together/core'
+import { buscarExigencias, buscarMeusPassaportes, type Tables } from '@together/core'
+import { supabase } from '../../lib/supabase'
 import { buscarStatus, marcarStatus, type StatusDoComboio } from './api'
-import { montarChecklist, type Status } from './checklist'
+import { montarChecklist, type ExigenciaAutomatica, type Status } from './checklist'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; lista: StatusDoComboio[] }
 
 // Checklist da viagem + o que cada pessoa do comboio já marcou (aba Documentos e Overview)
 export function useDocumentos(viagem: Tables<'viagens'>, destinos: Tables<'destinos'>[], meuId: string) {
   const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
-  const checklist = useMemo(() => montarChecklist(viagem, destinos), [viagem, destinos])
+  const [automaticas, setAutomaticas] = useState<Map<string, ExigenciaAutomatica>>(new Map())
+  const checklist = useMemo(() => montarChecklist(viagem, destinos, automaticas), [viagem, destinos, automaticas])
+
+  // Spec 111: exigências automáticas dos países sem regra à mão, pelo meu passaporte mais fácil.
+  // Se falhar, o checklist continua com o link do Itamaraty nesses países.
+  const semRegra = checklist.semRegra.join(',')
+  useEffect(() => {
+    if (!semRegra) return
+    let ativo = true
+    buscarMeusPassaportes(supabase, meuId)
+      .catch((): string[] => ['BR'])
+      .then((passaportes) => buscarExigencias(supabase, semRegra.split(','), passaportes))
+      .then(({ porDestino, fontes }) => {
+        if (!ativo) return
+        const dadosDe = (fonte: string) => fontes.find((f) => f.fonte === fonte)?.dadosDe ?? null
+        setAutomaticas(new Map([...porDestino].map(([p, e]) => [p, { ...e, dadosDe: dadosDe(e.fonte) }])))
+      })
+      .catch((erro) => console.error('Erro ao buscar exigências automáticas:', erro))
+    return () => {
+      ativo = false
+    }
+  }, [semRegra, meuId])
 
   const buscar = useCallback(async (): Promise<Estado> => {
     try {

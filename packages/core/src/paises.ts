@@ -147,3 +147,33 @@ export async function cotacoesDeHoje(base: string, moedas: string[]): Promise<Re
     return null
   }
 }
+
+// "MC" → "Mônaco". Sem Intl.DisplayNames no aparelho, usa a tabela de reserva (ou o próprio código).
+const NOMES_PT: Record<string, string> = {
+  FR: 'França', IT: 'Itália', ES: 'Espanha', PT: 'Portugal', DE: 'Alemanha', CH: 'Suíça', AT: 'Áustria',
+  BE: 'Bélgica', NL: 'Países Baixos', GB: 'Reino Unido', IE: 'Irlanda', MC: 'Mônaco', GR: 'Grécia',
+  HR: 'Croácia', CZ: 'Tchéquia', HU: 'Hungria', PL: 'Polônia', DK: 'Dinamarca', SE: 'Suécia', NO: 'Noruega',
+  TR: 'Turquia', US: 'Estados Unidos', CA: 'Canadá', MX: 'México', AR: 'Argentina', CL: 'Chile',
+  UY: 'Uruguai', PY: 'Paraguai', BO: 'Bolívia', PE: 'Peru', EC: 'Equador', CO: 'Colômbia', BR: 'Brasil',
+  JP: 'Japão', CN: 'China', TH: 'Tailândia', ZA: 'África do Sul', AU: 'Austrália', NZ: 'Nova Zelândia',
+  IN: 'Índia', EG: 'Egito', MA: 'Marrocos', AE: 'Emirados Árabes Unidos', KR: 'Coreia do Sul',
+  VN: 'Vietnã', ID: 'Indonésia', SM: 'San Marino', AD: 'Andorra', LU: 'Luxemburgo', MT: 'Malta', VA: 'Vaticano',
+  IL: 'Israel', CU: 'Cuba', DO: 'República Dominicana', SG: 'Singapura', MY: 'Malásia', PH: 'Filipinas',
+}
+let nomesPt: Intl.DisplayNames | null | undefined
+export function nomeDoPais(codigo: string): string {
+  if (nomesPt === undefined) {
+    try {
+      nomesPt = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['pt-BR'], { type: 'region' }) : null
+    } catch {
+      nomesPt = null
+    }
+  }
+  try {
+    const nome = nomesPt?.of(codigo)
+    if (nome && nome !== codigo) return nome
+  } catch {
+    // código estranho: cai na reserva
+  }
+  return NOMES_PT[codigo] ?? codigo
+}

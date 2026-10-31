@@ -4,7 +4,7 @@ import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sun } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, Car, FileCheck, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sun } from 'lucide-react-native'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
@@ -65,6 +65,7 @@ export default function DetalheDaViagem() {
     { Icone: MapPin, t: 'Lugares', s: lugares ? `${lugares} ${lugares === 1 ? 'ideia' : 'ideias'}` : 'Nada ainda', rota: '/lugares' as Href },
     { Icone: ReceiptText, t: 'Contas', s: `${contas.quantidade} ${contas.quantidade === 1 ? 'gasto' : 'gastos'}`, rota: '/contas' as Href },
     { Icone: ImageIcon, t: 'Fotos', s: `${fotos} ${fotos === 1 ? 'foto' : 'fotos'}`, rota: '/fotos' as Href },
+    { Icone: FileCheck, t: 'Documentos', s: 'Visto e passaporte', rota: '/documentos' as Href },
   ]
 
   async function convidar() {

@@ -16,6 +16,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertas_de_exigencias: {
+        Row: {
+          criado_em: string
+          destino: string
+          encontrado: string
+          esperado: string
+          id: number
+          motivo: string
+          passaporte: string
+          resolvido: boolean
+        }
+        Insert: {
+          criado_em?: string
+          destino: string
+          encontrado: string
+          esperado: string
+          id?: never
+          motivo: string
+          passaporte: string
+          resolvido?: boolean
+        }
+        Update: {
+          criado_em?: string
+          destino?: string
+          encontrado?: string
+          esperado?: string
+          id?: never
+          motivo?: string
+          passaporte?: string
+          resolvido?: boolean
+        }
+        Relationships: []
+      }
       arquivos_viagem: {
         Row: {
           caminho: string
@@ -1002,6 +1035,30 @@ export type Database = {
           },
         ]
       }
+      exigencias_de_entrada: {
+        Row: {
+          destino: string
+          dias: number | null
+          fonte: string
+          passaporte: string
+          tipo: string
+        }
+        Insert: {
+          destino: string
+          dias?: number | null
+          fonte: string
+          passaporte: string
+          tipo: string
+        }
+        Update: {
+          destino?: string
+          dias?: number | null
+          fonte?: string
+          passaporte?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
       fichas_pessoais: {
         Row: {
           alergias: string | null
@@ -1054,6 +1111,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      fontes_de_exigencias: {
+        Row: {
+          dados_de: string | null
+          erro: string | null
+          fonte: string
+          lido_em: string | null
+          linhas: number | null
+          tentado_em: string | null
+        }
+        Insert: {
+          dados_de?: string | null
+          erro?: string | null
+          fonte: string
+          lido_em?: string | null
+          linhas?: number | null
+          tentado_em?: string | null
+        }
+        Update: {
+          dados_de?: string | null
+          erro?: string | null
+          fonte?: string
+          lido_em?: string | null
+          linhas?: number | null
+          tentado_em?: string | null
+        }
+        Relationships: []
       }
       fotos: {
         Row: {
@@ -2899,6 +2983,10 @@ export type Database = {
       }
       trazer_comboio: {
         Args: { p_nova: string; p_origem: string }
+        Returns: number
+      }
+      trocar_exigencias: {
+        Args: { p_dados: Json; p_dados_de: string; p_fonte: string }
         Returns: number
       }
       ver_convite: { Args: { p_codigo: string }; Returns: Json }

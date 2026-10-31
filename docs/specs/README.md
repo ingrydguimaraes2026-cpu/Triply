@@ -22,7 +22,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | Pronto pra testar (web e app) |
 | 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar · app: Configurações (nome, datas, moeda, permissões); apagar só no site |
 | 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
-| 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar |
+| 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar (web e app) · países sem regra à mão usam a 111 |
 | 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar (web e app) |
 | 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
 | 013 | [Boletim do câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Pronto pra testar |
@@ -113,6 +113,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 098 | [Álbum por dia e melhores fotos](098-album-por-dia-e-melhores.md) | 8 | Pronto pra testar (web) · sem banco |
 | 099 | [Baixar fotos em .zip](099-baixar-fotos-em-zip.md) | 8 | Pronto pra testar (web) · sem banco |
 | 110 | [Avisos no app do celular](110-avisos-no-app.md) (push do Expo pros lembretes) | 2 | Pronto pra testar (código) · banco aplicado · falta EAS |
+| 111 | [Exigências de entrada automáticas](111-exigencias-automaticas.md) (Wikipédia + Passport Index, por passaporte) | 2 | Pronto pra testar (web e app) · banco aplicado (20261031003430) · função publicada e agendada (seg 6h UTC) |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |
