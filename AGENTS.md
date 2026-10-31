@@ -86,7 +86,12 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 - Ao terminar, use os **critérios de aceite** da spec como roteiro de teste e atualize o status no `docs/specs/README.md`.
 - Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: `lucide-react`.
 - Variáveis de ambiente do navegador começam com `VITE_`. Nunca colocar segredos nelas.
-- Antes de dizer que terminou: `npm run build` e `npm run lint` sem erros. Se der erro, explique e conserte.
+- Antes de dizer que terminou, confira só o que a mudança pode quebrar (rodar tudo sempre gasta tempo à toa):
+  - Mexeu no app (`apps/mobile`) ou no core: `npx tsc --noEmit` na pasta que mudou.
+  - Mexeu no site (`apps/web`): `npm run build` e `npm run lint`.
+  - `npm test` (testes de lógica e regras do banco, não de tela) **só** se mexeu em dinheiro, datas, regras ou banco. Rode **uma vez**, em primeiro plano, e mostre só o resumo (quantos passaram/falharam). A falha do `zip.test.mjs` no Windows (nome com acento) é antiga: ignore.
+  - Tela e responsividade não têm teste automático: confira abrindo no navegador (360px e desktop). Sem navegador, diga isso em vez de inventar outro teste.
+  - Se der erro, explique e conserte.
 
 ## 6. O que já existe (pra contextualizar e montar roteiros de teste)
 
