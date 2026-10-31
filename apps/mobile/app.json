@@ -33,7 +33,14 @@
           "color": "#B97A22"
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Together usa suas fotos pra você postar no feed da viagem.",
+          "cameraPermission": "O Together usa a câmera pra você tirar fotos e postar no feed da viagem."
+        }
+      ]
     ]
   }
 }

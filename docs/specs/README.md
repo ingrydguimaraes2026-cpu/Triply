@@ -26,7 +26,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar (web e app) |
 | 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
 | 013 | [Boletim do câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Pronto pra testar |
-| 014 | [Feed de fotos do comboio](014-feed-de-fotos.md) | 2 | G | 005, 013 | Pronto pra testar |
+| 014 | [Feed de fotos do comboio](014-feed-de-fotos.md) | 2 | G | 005, 013 | Pronto pra testar (web e app: feed, postar até 10 fotos, curtir, comentar) |
 | 015 | [Saldo da viagem por e-mail (Wise e Nomad)](015-saldo-por-email.md) | 3 | G | 002, 003, 013 | Pausada (fora da fila por decisão do Victor, 31/10/2026) |
 | 016 | [Lugares de cada destino](016-lugares-dos-destinos.md) (passeios, comida, guarda-volumes) | 2 | M | 001 | Pronto pra testar |
 | 011+ | [Hospedagem: horário de check-in/out](011-hospedagem.md#atualização-de-23102026-horário-de-check-in-e-check-out) | 2 | P | 011 | Pronto pra testar |
@@ -115,7 +115,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 110 | [Avisos no app do celular](110-avisos-no-app.md) (push do Expo pros lembretes) | 2 | Pronto pra testar (código) · banco aplicado · falta EAS |
 | 111 | [Exigências de entrada automáticas](111-exigencias-automaticas.md) (Wikipédia + Passport Index, por passaporte) | 2 | Pronto pra testar (web e app) · banco aplicado (20261031003430) · função publicada e agendada (seg 6h UTC) |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
-| 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |
 | 106 | [Livro da viagem](106-livro-da-viagem.md) | 8 | Pronto pra testar (web e app: PDF pelo compartilhar) · sem banco |
 | 105 | [Retrospectiva da viagem](105-retrospectiva.md) | 8 | Pronto pra testar (web e app: cartão vira imagem) · sem banco |
@@ -123,7 +123,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 103 | [Indicar lugares pra um amigo](103-indicar-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
 | 102 | [Onde já fui e estatísticas](102-onde-ja-fui-e-estatisticas.md) | 8 | Pronto pra testar (web) · sem banco |
 | 101 | [Diário da viagem](101-diario-da-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
-| 100 | [Marcar pessoas nas fotos](100-marcar-pessoas-nas-fotos.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 100 | [Marcar pessoas nas fotos](100-marcar-pessoas-nas-fotos.md) | 8 | Pronto pra testar (web e app) · banco não aplicado |
 
 Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
 

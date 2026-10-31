@@ -12,7 +12,8 @@
     "./hospedagem": "./src/hospedagem.ts",
     "./documentos": "./src/documentos.ts",
     "./documentos-regras": "./src/documentos-regras.ts",
-    "./exigencias": "./src/exigencias.ts"
+    "./exigencias": "./src/exigencias.ts",
+    "./feed-regras": "./src/feed-regras.ts"
   },
   "scripts": {
     "type-check": "tsc --noEmit"

@@ -67,6 +67,7 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
               <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
               <Stack.Screen name="novo-gasto" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="novo-post" options={{ presentation: 'modal' }} />
               <Stack.Screen name="criar-conta" options={{ presentation: 'modal' }} />
             </Stack>
           </ProvedorViagemAtual>
