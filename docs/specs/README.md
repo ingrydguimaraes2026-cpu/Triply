@@ -27,7 +27,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
 | 013 | [Boletim do câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Pronto pra testar |
 | 014 | [Feed de fotos do comboio](014-feed-de-fotos.md) | 2 | G | 005, 013 | Pronto pra testar |
-| 015 | [Saldo da viagem por e-mail (Wise e Nomad)](015-saldo-por-email.md) | 3 | G | 002, 003, 013 | A fazer |
+| 015 | [Saldo da viagem por e-mail (Wise e Nomad)](015-saldo-por-email.md) | 3 | G | 002, 003, 013 | Pausada (fora da fila por decisão do Victor, 31/10/2026) |
 | 016 | [Lugares de cada destino](016-lugares-dos-destinos.md) (passeios, comida, guarda-volumes) | 2 | M | 001 | Pronto pra testar |
 | 011+ | [Hospedagem: horário de check-in/out](011-hospedagem.md#atualização-de-23102026-horário-de-check-in-e-check-out) | 2 | P | 011 | Pronto pra testar |
 | 017 | [Arquitetura: monorepo, core e app mobile](017-arquitetura-monorepo-e-mobile.md) | 3 | G | app atual | Em andamento |
