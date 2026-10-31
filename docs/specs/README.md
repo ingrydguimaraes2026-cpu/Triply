@@ -100,7 +100,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 085 | [Tempo real](085-tempo-real.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 | 086 | [Marcações sem internet](086-marcacoes-sem-internet.md) | 7 | Pronto pra testar (web) · sem banco |
 | 087 | [Histórico e lixeira](087-historico-e-lixeira.md) | 7 | Pronto pra testar (web) · banco não aplicado |
-| 088 | [A viagem em PDF](088-viagem-em-pdf.md) | 7 | Pronto pra testar (web) · sem banco |
+| 088 | [A viagem em PDF](088-viagem-em-pdf.md) | 7 | Pronto pra testar (web e app: PDF pelo compartilhar) · sem banco |
 | 089 | [Privacidade e LGPD](089-privacidade-e-lgpd.md) | 7 | Pronto pra testar (web) · banco não aplicado |
 | 090 | [Acessibilidade e modo simples](090-acessibilidade-e-modo-simples.md) | 7 | Pronto pra testar (web) · sem banco |
 | 091 | [Duplicar viagem](091-duplicar-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
@@ -117,8 +117,8 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |
-| 106 | [Livro da viagem](106-livro-da-viagem.md) | 8 | Pronto pra testar (web) · sem banco |
-| 105 | [Retrospectiva da viagem](105-retrospectiva.md) | 8 | Pronto pra testar (web) · sem banco |
+| 106 | [Livro da viagem](106-livro-da-viagem.md) | 8 | Pronto pra testar (web e app: PDF pelo compartilhar) · sem banco |
+| 105 | [Retrospectiva da viagem](105-retrospectiva.md) | 8 | Pronto pra testar (web e app: cartão vira imagem) · sem banco |
 | 104 | [Frases úteis com áudio](104-frases-uteis.md) | 8 | Pronto pra testar (web) · sem banco |
 | 103 | [Indicar lugares pra um amigo](103-indicar-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
 | 102 | [Onde já fui e estatísticas](102-onde-ja-fui-e-estatisticas.md) | 8 | Pronto pra testar (web) · sem banco |

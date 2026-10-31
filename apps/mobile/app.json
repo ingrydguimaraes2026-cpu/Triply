@@ -32,7 +32,8 @@
         {
           "color": "#B97A22"
         }
-      ]
+      ],
+      "expo-sharing"
     ]
   }
 }
