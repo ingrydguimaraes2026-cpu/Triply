@@ -1,3 +1,4 @@
+import { editarViagem as editarViagemNoCore } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import type { Cidade } from '../destinos/buscarCidades'
 import { apagarArquivosDaViagem } from '../fotos/api'
@@ -44,22 +45,9 @@ export async function criarViagem(dados: NovaViagem) {
 }
 
 
-// Muda nome, datas ou moeda da viagem (só o ADM consegue: regra do banco)
-export async function editarViagem(
-  id: string,
-  campos: {
-    nome?: string
-    data_inicio?: string | null
-    data_fim?: string | null
-    moeda_principal?: string
-    membro_edita_roteiro?: boolean // spec 078
-    membro_edita_transportes?: boolean
-    membro_edita_orcamento?: boolean
-  },
-) {
-  const { data, error } = await supabase.from('viagens').update(campos).eq('id', id).select('*').single()
-  if (error) throw error
-  return data
+// Muda nome, datas, moeda ou permissões da viagem (só o ADM consegue: regra do banco). A consulta mora no core.
+export function editarViagem(id: string, campos: Parameters<typeof editarViagemNoCore>[2]) {
+  return editarViagemNoCore(supabase, id, campos)
 }
 // Apaga a viagem inteira (só o ADM). Primeiro os arquivos das fotos e do cofre, que o banco não apaga sozinho.
 export async function apagarViagem(id: string) {

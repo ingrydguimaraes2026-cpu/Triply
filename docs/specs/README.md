@@ -20,7 +20,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 005 | [Fotos](005-fotos.md) | 1 | M | — | Pronto pra testar |
 | 006 | [Overview com dados reais](006-overview-com-dados-reais.md) | 2 | P | 002, 003, 004, 005 | Pronto pra testar |
 | 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | Pronto pra testar (web e app) |
-| 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar |
+| 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar · app: Configurações (nome, datas, moeda, permissões); apagar só no site |
 | 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
 | 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar |
 | 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar (web e app) |

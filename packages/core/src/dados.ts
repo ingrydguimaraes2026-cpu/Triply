@@ -672,3 +672,32 @@ export async function apagarComentarioDoItem(cli: ClienteTogether, id: string): 
   const { error } = await cli.from('comentarios_item').delete().eq('id', id)
   if (error) throw error
 }
+
+// Configurações da viagem (spec 008 + permissões da 078). Só o ADM salva: regra do banco.
+export type ConfiguracoesDaViagem = Pick<
+  Tables<'viagens'>,
+  'id' | 'nome' | 'data_inicio' | 'data_fim' | 'moeda_principal' | 'membro_edita_roteiro' | 'membro_edita_transportes' | 'membro_edita_orcamento'
+>
+
+export async function buscarConfiguracoesDaViagem(cli: ClienteTogether, viagemId: string): Promise<ConfiguracoesDaViagem | null> {
+  const { data, error } = await cli
+    .from('viagens')
+    .select('id, nome, data_inicio, data_fim, moeda_principal, membro_edita_roteiro, membro_edita_transportes, membro_edita_orcamento')
+    .eq('id', viagemId)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+export async function editarViagem(cli: ClienteTogether, viagemId: string, campos: Partial<Omit<ConfiguracoesDaViagem, 'id'>>) {
+  const { data, error } = await cli.from('viagens').update(campos).eq('id', viagemId).select('*').single()
+  if (error) throw error
+  return data
+}
+
+// Moedas que aparecem nos formulários (a da viagem entra sempre, mesmo se não estiver na lista)
+export const MOEDAS = ['EUR', 'BRL', 'USD', 'GBP', 'CHF', 'ARS', 'CLP', 'JPY', 'CZK', 'HUF', 'PLN', 'DKK', 'SEK', 'NOK', 'TRY', 'MXN']
+
+export function moedasDaViagem(moedaPrincipal: string, extras: string[] = []) {
+  return [...new Set([moedaPrincipal, ...extras, ...MOEDAS])]
+}

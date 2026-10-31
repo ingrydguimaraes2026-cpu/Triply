@@ -4,7 +4,7 @@ import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Share2, Sun } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, Car, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sun } from 'lucide-react-native'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
@@ -94,9 +94,17 @@ export default function DetalheDaViagem() {
             <BotaoRedondo claro aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
               <ArrowLeft size={20} color={cor.texto} />
             </BotaoRedondo>
-            <BotaoRedondo claro aoTocar={convidar}>
-              <Share2 size={20} color={cor.texto} />
-            </BotaoRedondo>
+            <View className="flex-row gap-2.5">
+              {/* Spec 008: nome, datas, moeda e permissões (só o ADM) */}
+              {euSouAdm ? (
+                <BotaoRedondo claro aoTocar={() => ir('/configuracoes' as Href)}>
+                  <Settings size={20} color={cor.texto} />
+                </BotaoRedondo>
+              ) : null}
+              <BotaoRedondo claro aoTocar={convidar}>
+                <Share2 size={20} color={cor.texto} />
+              </BotaoRedondo>
+            </View>
           </View>
         </View>
 

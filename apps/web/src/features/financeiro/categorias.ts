@@ -14,9 +14,5 @@ export function categoria(chave: string) {
   return CATEGORIAS.find((c) => c.chave === chave) ?? CATEGORIAS[5]
 }
 
-// Moedas que aparecem nos formulários (a da viagem entra sempre, mesmo se não estiver aqui)
-export const MOEDAS = ['EUR', 'BRL', 'USD', 'GBP', 'CHF', 'ARS', 'CLP', 'JPY', 'CZK', 'HUF', 'PLN', 'DKK', 'SEK', 'NOK', 'TRY', 'MXN']
-
-export function moedasDaViagem(moedaPrincipal: string, extras: string[] = []) {
-  return [...new Set([moedaPrincipal, ...extras, ...MOEDAS])]
-}
+// Moedas: a lista mora no core (web e app usam a mesma)
+export { MOEDAS, moedasDaViagem } from '@together/core'

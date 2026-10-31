@@ -4,8 +4,27 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@together/web", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@together/web",
+        "dev"
+      ],
       "port": 5173
+    },
+    {
+      "name": "mobile",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@together/mobile",
+        "exec",
+        "expo",
+        "start",
+        "--web",
+        "--port",
+        "8089"
+      ],
+      "port": 8089
     }
   ]
 }
