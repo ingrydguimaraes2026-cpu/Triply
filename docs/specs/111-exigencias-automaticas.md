@@ -53,11 +53,11 @@ A tabela à mão da 010 continua valendo pros países que ela cobre (checklist c
 | Ver alertas | – | – | ✓ (Victor por SQL) |
 
 ## Critérios de aceite
-- [ ] Depois de rodar a função, `exigencias_de_entrada` tem o Brasil pela Wikipédia (~200 destinos) e todos os passaportes pelo dataset (~39 mil linhas).
-- [ ] Viagem com Tailândia mostra "Tailândia: sem visto até 90 dias" com fonte e data, em vez de "ainda não temos".
+- [x] Depois de rodar a função, `exigencias_de_entrada` tem o Brasil pela Wikipédia (~200 destinos) e todos os passaportes pelo dataset (~39 mil linhas).
+- [x] Viagem com Tailândia mostra "Tailândia: sem visto até 90 dias" com fonte e data, em vez de "ainda não temos".
 - [ ] Viagem com Índia mostra "e-visa" como tarefa com prazo.
 - [ ] Pessoa com nacionalidade italiana no perfil vê a exigência do passaporte mais fácil nos países automáticos.
-- [ ] Países da tabela à mão (França, Reino Unido...) continuam iguais.
+- [x] Países da tabela à mão (França, Reino Unido...) continuam iguais.
 - [ ] Quebrar a URL da Wikipédia de propósito: a função registra o erro e os dados antigos continuam.
 - [ ] App mostra o mesmo checklist do site e as marcações valem nos dois.
 
@@ -68,3 +68,9 @@ A tabela à mão da 010 continua valendo pros países que ela cobre (checklist c
 - O Deno da função não importa do core: o leitor da Wikipédia e o mapa de tipos ficam copiados lá (avisar no comentário).
 - Wikipédia: cada linha da tabela tem `{{Timatic|nationality=BR|destination=XX}}`, que já dá o código do país. O tipo está na 2ª célula, os dias na 3ª ("90 days", "3 months").
 - Mandar `User-Agent` na chamada da Wikipédia (regra da API deles).
+
+## Teste no banco real (31/10/2026)
+- Função rodada: Wikipédia 228 países (dados de 19/10/2026), Passport Index 39.402 linhas (17/02/2026), 11 alertas (o que importa: México virou e-visa pela Wikipédia; a tabela à mão diz visto).
+- App (Paulo, viagem Galeão, 390px): destino de teste "Bangkok (teste)" → item "Tailândia: sem visto até 90 dias · automático", texto e link do Itamaraty certos. Destino apagado depois.
+- Marcar/desmarcar Passaporte grava em `documentos_status` (1/4 → 0/4).
+- Logado vê as exigências; anônimo sem login não vê nada. Passaporte italiano: EUA vira ETA.
