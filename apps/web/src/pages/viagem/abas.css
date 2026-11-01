@@ -591,7 +591,7 @@
   top: 20px;
   left: 20px;
   right: 20px;
-  color: #fff6e5;
+  color: var(--creme);
   pointer-events: none;
 }
 

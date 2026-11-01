@@ -1,31 +1,37 @@
 /* Cores e medidas do site. Mude aqui e muda em tudo.
-   Paleta "Couro e laranja" do Color Hunt: 7B542F · B6771D · FF9D00 · FFCF71
-   https://colorhunt.co/palette/7b542fb6771dff9d00ffcf71
-   Dourado e laranja NÃO servem pra texto (pouco contraste): só fundos, barras e selos. */
+   Paleta do redesign "Malinha" (Couro e caramelo), a mesma do app: apps/mobile/theme.ts.
+   Mudou lá, muda aqui também (os nomes do site ficaram os antigos pra não mexer nas telas).
+   Dourado e "laranja" NÃO servem pra texto (pouco contraste): só fundos, barras e selos. */
 :root {
   --couro: #7b542f;
-  --caramelo: #b6771d;
-  --laranja: #ff9d00;
-  --dourado-claro: #ffcf71;
-  --creme: #fff6e5; /* texto claro em cima do couro (não muda no tema escuro) */
+  --caramelo: #b97a22;
+  --laranja: #e3a04a; /* no app é o "dourado" */
+  --dourado-claro: #f6ead7; /* no app é o "chip" (fundo de ícone e selo) */
+  --creme: #f5e9d6; /* texto claro em cima do couro ou de foto (não muda no tema escuro) */
+  --escuro: #4a2e14;
 
-  --cor-fundo: #fff6e5;
+  --cor-fundo: #fbf3e6;
   --cor-cartao: #ffffff;
   --cor-texto: #3b2715;
-  --cor-texto-suave: #7b542f;
-  --cor-borda: #f0dfc0;
+  --cor-texto-suave: #7a5f45;
+  --cor-borda: #eadcc6;
   --cor-comboio: var(--couro); /* compartilhado com o comboio */
-  --cor-comboio-fundo: #ffe7b8;
-  --cor-pessoal: #9a5b00; /* só você vê (laranja escurecido pra dar pra ler) */
+  --cor-comboio-fundo: #f1e4cf;
+  --cor-pessoal: #9a5b00; /* só você vê (dourado escurecido pra dar pra ler) */
   --cor-pessoal-fundo: var(--laranja);
   /* Spec 109: tons que estavam fixos nos CSS das telas */
-  --cor-borda-forte: #ead7b4;
-  --cor-fundo-suave: #fff7e9;
-  --cor-erro: #8a2c0d;
-  --cor-erro-fundo: #fde6dc;
-  --cor-sucesso: #2f7d4f;
-  --cor-sucesso-fundo: #e2f2e7;
-  --raio: 14px;
+  --cor-borda-forte: #d9c3a2;
+  --cor-fundo-suave: #f6ead7;
+  --cor-erro: #a1442b;
+  --cor-erro-fundo: #f6e2da;
+  --cor-sucesso: #5e6b2e;
+  --cor-sucesso-fundo: #eef0df;
+  /* Sombras marrons do app */
+  --sombra-cartao: 0 4px 14px rgba(74, 46, 20, 0.06);
+  --sombra-botao: 0 8px 20px rgba(123, 84, 47, 0.28);
+  --sombra-flutuante: 0 4px 12px rgba(74, 46, 20, 0.15);
+  --sombra-hero: 0 18px 40px rgba(74, 46, 20, 0.25);
+  --raio: 18px;
   --fonte-titulo: 'Fraunces Variable', Georgia, serif;
   font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
   color: var(--cor-texto);
@@ -65,6 +71,8 @@ a {
   background: var(--cor-cartao);
   border-radius: var(--raio);
   padding: 16px;
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-cartao);
 }
 
 .botao {
@@ -72,12 +80,13 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 0 20px;
+  min-height: 52px;
+  padding: 0 22px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--couro);
   color: #ffffff;
+  box-shadow: var(--sombra-botao);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -93,8 +102,9 @@ a {
 .campo input {
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid #e0c99d;
-  border-radius: 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
   font: inherit;
 }
 

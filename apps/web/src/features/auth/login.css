@@ -347,7 +347,7 @@
   left: 20px;
   right: 20px;
   bottom: 20px;
-  color: #fff6e5;
+  color: var(--creme);
 }
 
 .login-foto-texto h2 {
