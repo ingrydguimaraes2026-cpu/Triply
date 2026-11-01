@@ -81,6 +81,7 @@ export default function Retrospectiva() {
   return (
     <div className="retrospectiva">
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Retrospectiva"
         subtitulo="A viagem em números. Toque num cartão pra postar no story."
         acao={

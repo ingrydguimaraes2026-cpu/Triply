@@ -148,6 +148,7 @@ export default function Comboio() {
   return (
     <>
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Comboio"
         subtitulo={`${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'} nessa viagem`}
         acao={

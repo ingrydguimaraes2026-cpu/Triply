@@ -62,7 +62,7 @@ export default function Configuracoes() {
 
   return (
     <>
-      <CabecalhoPagina titulo="Configurações" subtitulo="Nome, datas e moeda da viagem. Só o ADM vê esta página." />
+      <CabecalhoPagina acima={viagem.nome} titulo="Configurações" subtitulo="Nome, datas e moeda da viagem. Só o ADM vê esta página." />
 
       <Cartao titulo="Viagem" icone={Settings}>
         <form className="form" onSubmit={salvar} noValidate>

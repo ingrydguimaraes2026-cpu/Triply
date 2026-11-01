@@ -27,7 +27,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 11 | Hospedagem | `app/hospedagem.tsx` | `pages/viagem/Hospedagem.tsx` | ✅ feito |
 | 12 | Lugares | `app/lugares.tsx` | `pages/viagem/Lugares.tsx` | ✅ feito |
 | 13 | Transportes | `app/transportes.tsx` | `pages/viagem/Transportes.tsx` | ✅ feito |
-| 14 | Comboio e Configurações | `app/comboio.tsx`, `configuracoes.tsx` | `pages/viagem/Comboio.tsx`, `Configuracoes.tsx` | a fazer |
+| 14 | Comboio e Configurações | `app/comboio.tsx`, `configuracoes.tsx` | `pages/viagem/Comboio.tsx`, `Configuracoes.tsx` | ✅ feito |
 | 15 | Nova viagem, convite e 404 | `app/nova-viagem.tsx`, `convite/[codigo].tsx` | `NovaViagem.tsx`, `Convite.tsx`, `Perdido.tsx` | a fazer |
 
 ## Não inclui (fica pra depois)
