@@ -579,42 +579,179 @@
 
 .overview-mapa {
   position: relative;
-  min-height: 320px;
-  border-radius: 28px;
+  min-height: 280px;
+  border-radius: 20px;
   overflow: hidden;
   background: #1a1009;
+  box-shadow: var(--sombra-cartao);
 }
 
-.overview-mapa-texto {
-  position: absolute;
-  z-index: 1;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  color: var(--creme);
-  pointer-events: none;
-}
-
-.overview-mapa-texto h1 {
-  margin: 10px 0 0;
-  font-size: 30px;
-  line-height: 1.1;
+/* ---------- Capa da viagem (spec 112, tela "1g" do app) ---------- */
+.overview-capa {
+  order: -2;
+  position: relative;
+  height: 330px;
+  margin: -20px -16px 0; /* no celular encosta nas bordas, como no app */
+  overflow: hidden;
+  border-radius: 0 0 28px 28px;
+  background: var(--couro);
   color: #ffffff;
 }
 
-.overview-mapa-texto p {
-  margin: 6px 0 0;
-  color: var(--cor-borda-forte);
+.overview-capa img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Degradê do app: escurece em cima (botões) e embaixo (texto) */
+.overview-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(74 46 20 / 0.35) 0%, rgb(74 46 20 / 0) 30%, rgb(185 122 34 / 0.4) 60%, #4a2e14 100%);
 }
 
 .overview-contagem {
-  display: inline-block;
-  padding: 6px 12px;
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: 999px;
-  background: var(--laranja);
-  color: #2a1a0c;
+  background: #fbf3e6;
+  color: #3b2715;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
+}
+
+.overview-contagem svg {
+  color: var(--caramelo);
+}
+
+.overview-capa-texto {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+}
+
+.overview-capa-texto > p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.overview-capa-texto h1 {
+  margin: 8px 0 16px;
+  font-size: 38px;
+  line-height: 1.05;
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+
+.overview-capa-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.overview-capa-comboio {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--creme);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.overview-capa-comboio .avatar {
+  border-color: #5a3818;
+}
+
+/* ---------- Atalhos (quadradinhos do app) ---------- */
+.overview-atalhos {
+  order: -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.overview-atalho {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+html[data-tema='escuro'] .overview-atalho {
+  border: 1px solid var(--cor-borda);
+}
+
+.overview-atalho:hover {
+  box-shadow: var(--sombra-flutuante);
+  transform: translateY(-1px);
+}
+
+.overview-atalho strong {
+  display: block;
+  font-size: 15px;
+}
+
+.overview-atalho small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--cor-texto-suave);
+}
+
+@media (min-width: 640px) {
+  .overview-atalhos {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .overview-capa {
+    height: 360px;
+    margin: 0;
+    border-radius: 28px;
+    box-shadow: var(--sombra-hero);
+  }
+
+  .overview-capa-texto {
+    left: 32px;
+    right: 32px;
+    bottom: 28px;
+  }
+
+  .overview-capa-texto h1 {
+    font-size: 48px;
+  }
+
+  .overview-atalhos {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 .roteiro-lista {
@@ -730,16 +867,13 @@
   }
 
   .overview-mapa {
-    min-height: 420px;
+    min-height: 380px;
   }
 
-  .overview-mapa-texto {
-    top: 28px;
-    left: 32px;
-  }
-
-  .overview-mapa-texto h1 {
-    font-size: 42px;
+  /* Capa e atalhos ocupam as duas colunas */
+  .overview-capa,
+  .overview-atalhos {
+    grid-column: 1 / -1;
   }
 }
 

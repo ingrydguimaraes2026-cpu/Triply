@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { AlertTriangle, BarChart3, BedDouble, ChevronDown, ChevronUp, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ShoppingBasket, Sparkles, TrainFront, Users, Wallet } from 'lucide-react'
+import { AlertTriangle, BarChart3, BedDouble, Car, ChevronDown, ChevronUp, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { encontrarFuros, formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
+import { capaDaViagem, encontrarFuros, formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -42,6 +42,8 @@ import DestinosCandidatos from '../../features/candidatos/DestinosCandidatos'
 import { diasAte, formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Cartao from '../../components/ui/Cartao'
+import IconeQuadrado from '../../components/ui/IconeQuadrado'
+import PilhaDeAvatares from '../../components/ui/PilhaDeAvatares'
 import './abas.css'
 
 // Frase da contagem regressiva no topo do mapa
@@ -224,7 +226,7 @@ export default function Overview() {
       setSalvando(false)
     }
   }
-  const areaLivre = useMemo(() => ({ esquerda: 24, topo: 120, direita: 24, baixo: 24 }), [])
+  const areaLivre = useMemo(() => ({ esquerda: 24, topo: 24, direita: 24, baixo: 24 }), [])
   const falta = contagem(viagem.data_inicio, viagem.data_fim)
   // Spec 049: quanto da preparação já está pronto (antes da viagem começar)
   const comprados = trajetos.estado.status === 'pronto' ? resumoDosTrajetos(trajetos.estado.trajetos) : null
@@ -273,8 +275,71 @@ export default function Overview() {
       return novo
     })
 
+  // Atalhos do app (tela "1g" do design): um quadradinho pra cada parte da viagem
+  const qtdTrajetos = trajetos.estado.status === 'pronto' ? trajetos.estado.trajetos.length : null
+  const atalhos = [
+    { para: 'hoje', Icone: Sun, titulo: 'Hoje', sub: 'Agora e próximo' },
+    { para: 'agenda', Icone: Route, titulo: 'Roteiro', sub: `${destinos.length} ${destinos.length === 1 ? 'destino' : 'destinos'}` },
+    {
+      para: 'transportes',
+      Icone: Car,
+      titulo: 'Transporte',
+      sub: qtdTrajetos ? `${qtdTrajetos} ${qtdTrajetos === 1 ? 'trajeto' : 'trajetos'}` : 'Nada ainda',
+    },
+    { para: 'hospedagem', Icone: BedDouble, titulo: 'Hospedagem', sub: hospResumo.total ? `${hospResumo.resolvidos} de ${hospResumo.total} fechadas` : 'Opções e votos' },
+    { para: 'lugares', Icone: MapPinned, titulo: 'Lugares', sub: 'Ideias e votos' },
+    {
+      para: 'financeiro',
+      Icone: ReceiptText,
+      titulo: 'Contas',
+      sub: resumo && resumo !== 'erro' && resumo.gasto > 0 ? formatarDinheiro(resumo.gasto, viagem.moeda_principal) : 'Gastos e acertos',
+    },
+    { para: 'fotos', Icone: ImageIcon, titulo: 'Fotos', sub: 'Feed do comboio' },
+    { para: 'comboio', Icone: Users, titulo: 'Comboio', sub: `${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}` },
+    { para: 'retrospectiva', Icone: Sparkles, titulo: 'Retrospectiva', sub: 'A viagem em números' },
+    { para: 'imprimir', Icone: FileText, titulo: 'PDF', sub: 'Roteiro e livro' },
+  ]
+
   return (
     <div className="overview">
+      {/* Capa da viagem, igual à do app (mesma foto): datas, nome e o comboio */}
+      <section className="overview-capa">
+        <img src={capaDaViagem(viagem.id, 1600)} alt="" />
+        {falta && (
+          <span className="overview-contagem" title={pronto?.faltando.length ? `Falta: ${pronto.faltando.join(', ')}` : undefined}>
+            <Clock size={16} aria-hidden="true" />
+            {falta}
+            {pronto && ` · ${pronto.porcento}% pronto`}
+          </span>
+        )}
+        <div className="overview-capa-texto">
+          <p>{[formatarPeriodo(viagem.data_inicio, viagem.data_fim), destinos[0]?.nome].filter(Boolean).join(' · ')}</p>
+          <h1>{viagem.nome}</h1>
+          <div className="overview-capa-rodape">
+            {/* Spec 007: tocar no comboio abre quem vai, papéis e convites */}
+            <Link to="comboio" className="overview-capa-comboio" aria-label="Ver o comboio">
+              <PilhaDeAvatares pessoas={membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} tamanho={34} />
+              {membros.length} {membros.length === 1 ? 'viajante' : 'viajantes'}
+            </Link>
+            <Link to="comboio" className="botao claro compacto">
+              <Plus size={18} aria-hidden="true" /> Convidar
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <nav className="overview-atalhos" aria-label="Partes da viagem">
+        {atalhos.map(({ para, Icone, titulo, sub }) => (
+          <Link key={para} to={para} className="overview-atalho">
+            <IconeQuadrado icone={Icone} />
+            <span>
+              <strong>{titulo}</strong>
+              <small>{sub}</small>
+            </span>
+          </Link>
+        ))}
+      </nav>
+
       {/* Spec 019: recados do ADM fixados no topo */}
       <FaixaAvisos viagemId={viagem.id} euSouAdm={euSouAdm} />
       {/* Spec 105: viagem acabou → retrospectiva */}
@@ -302,16 +367,6 @@ export default function Overview() {
         <section className="overview-mapa">
           <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
           {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
-          <div className="overview-mapa-texto">
-            {falta && (
-              <span className="overview-contagem" title={pronto?.faltando.length ? `Falta: ${pronto.faltando.join(', ')}` : undefined}>
-                {falta}
-                {pronto && ` · ${pronto.porcento}% pronto`}
-              </span>
-            )}
-            <h1>{viagem.nome}</h1>
-            <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
-          </div>
         </section>
 
         {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
