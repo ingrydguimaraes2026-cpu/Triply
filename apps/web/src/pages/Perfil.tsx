@@ -4,15 +4,17 @@ import { ArrowLeft, Camera } from 'lucide-react'
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
+import Agulha from '../components/ui/Agulha'
+import Carregando from '../components/ui/Carregando'
+import ErroNaTela from '../components/ui/ErroNaTela'
 import FormPassaporte from '../features/passaporte/FormPassaporte'
 import FormFicha from '../features/ficha-pessoal/FormFicha'
 import MinhaPrivacidade from '../features/privacidade/MinhaPrivacidade'
 import FormAcessibilidade from '../features/acessibilidade/FormAcessibilidade'
 import OndeJaFui from '../features/perfil/OndeJaFui'
-import '../components/ui/ui.css'
 import './minhas-viagens.css'
 
-// "/perfil" (spec 008): nome e foto. Aparecem no comboio de todas as viagens.
+// "/perfil" (spec 008): nome e foto. Aparecem no comboio de todas as viagens. Visual do app (spec 112).
 export default function Perfil() {
   const [perfil, setPerfil] = useState<MeuPerfil | null | 'erro'>(null)
   const [nome, setNome] = useState('')
@@ -28,13 +30,17 @@ export default function Perfil() {
       .catch(() => setPerfil('erro'))
   }, [])
 
-  if (perfil === null) return <div className="pagina-solta" />
+  if (perfil === null) {
+    return (
+      <div className="pagina-solta">
+        <Carregando texto="Buscando seu perfil…" />
+      </div>
+    )
+  }
   if (perfil === 'erro') {
     return (
       <div className="pagina-solta">
-        <main className="pagina-solta-conteudo">
-          <p className="aviso-erro">Não deu pra carregar o perfil. Atualize a página.</p>
-        </main>
+        <ErroNaTela titulo="Não deu pra carregar o perfil" aoTentar={() => window.location.reload()} />
       </div>
     )
   }
@@ -94,14 +100,16 @@ export default function Perfil() {
       <main className="pagina-solta-conteudo estreita">
         <div className="cabecalho-pagina">
           <div>
-            <h1>Seu perfil</h1>
-            {eu.email && <p>{eu.email}</p>}
+            <h1>Perfil</h1>
           </div>
         </div>
 
+        {/* Cartão do topo do Perfil do app: foto, nome e e-mail */}
         <section className="cartao-ui perfil-foto">
-          <Avatar nome={eu.nome || '?'} url={eu.avatarUrl} tamanho={96} />
+          <Avatar nome={eu.nome || '?'} url={eu.avatarUrl} tamanho={72} />
           <div className="perfil-foto-acoes">
+            <strong className="perfil-nome">{eu.nome || 'Sem nome'}</strong>
+            {eu.email && <span className="perfil-email">{eu.email}</span>}
             <label className="botao secundario">
               <Camera size={18} aria-hidden="true" /> {eu.avatarUrl ? 'Trocar foto' : 'Colocar foto'}
               <input type="file" accept="image/*" className="visualmente-oculto" disabled={salvando} onChange={(e) => escolherFoto(e.target.files?.[0])} />
@@ -139,6 +147,11 @@ export default function Perfil() {
         <FormPassaporte meuId={eu.id} />
         <FormAcessibilidade />
         <MinhaPrivacidade />
+
+        <div className="perfil-agulha">
+          <Agulha tamanho={96} />
+          <p>A Agulha aponta o caminho da viagem pra vocês.</p>
+        </div>
       </main>
     </div>
   )

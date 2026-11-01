@@ -408,3 +408,36 @@ html[data-tema='escuro'] .viagem-linha-link {
   flex: 1;
   min-width: 0;
 }
+
+.perfil-foto-acoes .botao.secundario {
+  margin-top: 6px;
+}
+
+.perfil-nome {
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.perfil-email {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.perfil-agulha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.perfil-agulha p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
