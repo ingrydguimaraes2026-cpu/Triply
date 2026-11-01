@@ -14,6 +14,7 @@ import Comentarios from '../../features/feed/Comentarios'
 import { ligarAvisos, situacaoDoAviso } from '../../features/cambio/avisos'
 import Avatar from '../../components/ui/Avatar'
 import EstadoVazio from '../../components/ui/EstadoVazio'
+import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
 import './fotos.css'
@@ -170,6 +171,7 @@ export default function Fotos() {
   return (
     <div className="feed-pagina">
       <header className="feed-cabecalho">
+        <p className="feed-acima">{viagem.nome}</p>
         <h1>Fotos</h1>
         <p>
           {estado.status === 'pronto' && posts.length > 0
@@ -238,14 +240,7 @@ export default function Fotos() {
           ))}
         </div>
       )}
-      {estado.status === 'erro' && (
-        <div className="aviso-erro">
-          <p>Não deu pra carregar o feed.</p>
-          <button type="button" className="botao secundario pequeno" onClick={recarregar}>
-            Tentar de novo
-          </button>
-        </div>
-      )}
+      {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar o feed" aoTentar={recarregar} />}
 
       {estado.status === 'pronto' &&
         (posts.length === 0 ? (

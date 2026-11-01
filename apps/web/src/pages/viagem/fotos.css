@@ -806,3 +806,54 @@
   font-size: 12px;
   color: var(--cor-texto-suave);
 }
+
+/* ---------- Spec 112: no estilo do app ---------- */
+.feed-cabecalho .feed-acima {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+/* Abas Feed / Grade / Por dia / Melhores: pílula bege com a ativa branca, como as abas do app */
+.feed-abas {
+  gap: 2px;
+  padding: 4px;
+  border-bottom: 0;
+  border-radius: 14px;
+  background: var(--cor-comboio-fundo);
+}
+
+.feed-abas button {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-radius: 11px;
+  font-weight: 700;
+}
+
+.feed-abas button.ativo {
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  box-shadow: 0 2px 8px rgba(74, 46, 20, 0.1);
+}
+
+.feed-compor {
+  border-color: transparent;
+  box-shadow: var(--sombra-cartao);
+}
+
+html[data-tema='escuro'] .feed-compor {
+  border-color: var(--cor-borda);
+}
+
+@media (min-width: 641px) {
+  .post {
+    border-color: transparent;
+    border-radius: 20px;
+    box-shadow: var(--sombra-cartao);
+  }
+
+  html[data-tema='escuro'] .post {
+    border-color: var(--cor-borda);
+  }
+}
