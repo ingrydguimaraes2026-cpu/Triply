@@ -1,9 +1,9 @@
-// Logo do Together (conceito "Rota", escolhido em 18/10/2026):
-// a letra "t" vira uma pessoa, e a trilha pontilhada leva até o destino.
-// O "t" e o nome usam a cor do texto onde a logo está (creme no escuro, marrom no claro);
-// a trilha e o destino são sempre laranja.
-// Uso: <Logo /> (símbolo + nome) ou <Logo comNome={false} /> (só o símbolo).
-// O tamanho segue o font-size de quem está em volta.
+import Agulha from './Agulha'
+
+// Logo do Together, igual à marca do app (spec 112): a Agulha num quadradinho bege + o nome na serifada.
+// O nome usa a cor do texto onde a logo está; o tamanho segue o font-size de quem está em volta.
+// Uso: <Logo /> (Agulha + nome) ou <Logo comNome={false} /> (só a Agulha).
+// O símbolo antigo ("Rota", 18/10/2026) continua em SimboloTogether, pra quem ainda precisar dele.
 
 type Props = {
   comNome?: boolean
@@ -25,8 +25,10 @@ export function SimboloTogether() {
 export default function Logo({ comNome = true, className }: Props) {
   return (
     <span className={`logo ${className ?? ''}`} aria-label={comNome ? undefined : 'Together'} role={comNome ? undefined : 'img'}>
-      <SimboloTogether />
-      {comNome && <span className="logo-nome">together</span>}
+      <span className="logo-agulha" aria-hidden="true">
+        <Agulha tamanho={30} sombra={false} />
+      </span>
+      {comNome && <span className="logo-nome">Together</span>}
     </span>
   )
 }

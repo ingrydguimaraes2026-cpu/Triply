@@ -1,6 +1,6 @@
 # 112. Site no estilo do app
 
-**Fase:** 7 · **Tamanho:** G · **Depende de:** redesign "Malinha" do mobile · **Status:** Em andamento
+**Fase:** 7 · **Tamanho:** G · **Depende de:** redesign "Malinha" do mobile · **Status:** Pronto pra testar
 
 ## Objetivo
 O site (`apps/web`) fica com a mesma cara do app do celular (`apps/mobile`): mesmas cores, cartões, botões, títulos e capas com foto. Quem usa os dois sente que é o mesmo produto.
@@ -28,7 +28,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 12 | Lugares | `app/lugares.tsx` | `pages/viagem/Lugares.tsx` | ✅ feito |
 | 13 | Transportes | `app/transportes.tsx` | `pages/viagem/Transportes.tsx` | ✅ feito |
 | 14 | Comboio e Configurações | `app/comboio.tsx`, `configuracoes.tsx` | `pages/viagem/Comboio.tsx`, `Configuracoes.tsx` | ✅ feito |
-| 15 | Nova viagem, convite e 404 | `app/nova-viagem.tsx`, `convite/[codigo].tsx` | `NovaViagem.tsx`, `Convite.tsx`, `Perdido.tsx` | a fazer |
+| 15 | Nova viagem, convite e 404 | `app/nova-viagem.tsx`, `convite/[codigo].tsx` | `NovaViagem.tsx`, `Convite.tsx`, `Perdido.tsx` | ✅ feito (logo vira a marca do app) |
 
 ## Não inclui (fica pra depois)
 - Funcionalidade nova. É só visual: nada muda no que cada tela faz.
@@ -56,7 +56,12 @@ Valem pra cada etapa:
 - [ ] `npm run build` e `npm run lint` passam.
 
 ## Perguntas em aberto
-- O logo do site (símbolo "Rota") continua com o laranja `#FF9D00` ou passa pro dourado do app?
+- ~~O logo do site (símbolo "Rota") continua com o laranja?~~ Decidido na etapa 15: o `Logo` passou a ser a marca do app (Agulha no quadradinho bege + "Together"). O símbolo antigo continua em `SimboloTogether`, sem uso.
+
+## Como ficou (01/11/2026)
+- Etapas 0 a 15 feitas, uma por commit. `npm run build` e `npm run lint` passaram em todas.
+- **Não foi visto no navegador**: a extensão do Chrome não conectou nesta sessão. Os critérios "lado a lado", "360px" e "tema escuro" ficam pra conferir com login.
+- Mudou junto: a regra da foto de capa foi pro `@together/core` (`capaDaViagem`), e o app passou a importar de lá.
 
 ## Dicas pra implementar
 - Cores só por variável de `styles/global.css` (os nomes antigos foram mantidos e apontam pros valores do app; `--laranja` agora é o dourado `#E3A04A`).
