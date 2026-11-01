@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router'
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import {
   criarConta,
   destinoDepoisDoLogin,
@@ -10,7 +11,7 @@ import {
   useSessao,
 } from '../features/auth/hooks'
 import CarrosselFotos from '../features/auth/CarrosselFotos'
-import Logo from '../components/ui/Logo'
+import Agulha from '../components/ui/Agulha'
 import '../features/auth/login.css'
 
 type Modo = 'entrar' | 'criar' | 'recuperar'
@@ -33,7 +34,21 @@ const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
   },
 }
 
-// Tela de login: Google em primeiro (mais rápido) e e-mail/senha como alternativa.
+// Marca do Together como no app: a Agulha num quadradinho claro + o nome na serifada
+function Marca({ className }: { className: string }) {
+  return (
+    <p className={`login-marca ${className}`}>
+      <span className="login-marca-agulha">
+        <Agulha tamanho={44} sombra={false} />
+      </span>
+      Together
+    </p>
+  )
+}
+
+// Tela de login no estilo do app (spec 112): no celular, faixa caramelo com a Agulha e uma folha
+// clara com as abas Entrar | Criar conta. No computador, formulário de um lado e foto do outro.
+// Google em primeiro (mais rápido) e e-mail/senha como alternativa.
 export default function Login() {
   const { sessao, carregando } = useSessao()
   const [modo, setModo] = useState<Modo>('entrar')
@@ -90,19 +105,39 @@ export default function Login() {
 
   return (
     <div className="login">
+      <header className="login-faixa">
+        <Marca className="login-marca-faixa" />
+        <h2>Viajem juntos.</h2>
+        <p>Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
+      </header>
+
       <main className="login-lado">
-        <p className="login-logo">
-          <Logo />
-        </p>
+        <Marca className="login-marca-pc" />
 
         <div className="login-form">
-          <div>
+          {/* No celular o título só aparece no "esqueci a senha"; nas outras telas as abas bastam */}
+          <div className={modo === 'recuperar' ? undefined : 'login-cabeca-pc'}>
             <h1 className="login-titulo">{texto.titulo}</h1>
             <p className="login-sub">{texto.sub}</p>
           </div>
 
           {modo !== 'recuperar' && (
             <>
+              <div className="login-abas" role="tablist" aria-label="Entrar ou criar conta">
+                {(['entrar', 'criar'] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    role="tab"
+                    aria-selected={modo === m}
+                    className={modo === m ? 'ativa' : undefined}
+                    onClick={() => trocarModo(m)}
+                  >
+                    {m === 'entrar' ? 'Entrar' : 'Criar conta'}
+                  </button>
+                ))}
+              </div>
+
               <button type="button" className="login-google" onClick={google}>
                 <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
                   <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
@@ -113,7 +148,7 @@ export default function Login() {
                 Continuar com Google
               </button>
               <div className="login-divisor">
-                <span>ou</span>
+                <span>ou com e-mail</span>
               </div>
             </>
           )}
@@ -122,10 +157,12 @@ export default function Login() {
             {modo === 'criar' && (
               <div className="login-campo">
                 <label htmlFor="nome">Seu nome</label>
+                <User size={20} aria-hidden="true" />
                 <input
                   id="nome"
                   required
                   autoComplete="name"
+                  placeholder="Seu nome"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                 />
@@ -134,11 +171,13 @@ export default function Login() {
 
             <div className="login-campo">
               <label htmlFor="email">E-mail</label>
+              <Mail size={20} aria-hidden="true" className="login-campo-icone-forte" />
               <input
                 id="email"
                 type="email"
                 required
                 autoComplete="email"
+                placeholder="voce@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -146,45 +185,39 @@ export default function Login() {
 
             {modo !== 'recuperar' && (
               <div className="login-campo">
-                <div className="login-campo-topo">
-                  <label htmlFor="senha">Senha</label>
-                  {modo === 'entrar' && (
-                    <button type="button" className="link login-esqueci" onClick={() => trocarModo('recuperar')}>
-                      Esqueci a senha
-                    </button>
-                  )}
-                </div>
-                <div className="login-senha">
-                  <input
-                    id="senha"
-                    type={mostrarSenha ? 'text' : 'password'}
-                    required
-                    minLength={modo === 'criar' ? 8 : undefined}
-                    autoComplete={modo === 'criar' ? 'new-password' : 'current-password'}
-                    value={senha}
-                    aria-describedby={modo === 'criar' ? 'dica-senha' : undefined}
-                    onChange={(e) => setSenha(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="login-olho"
-                    onClick={() => setMostrarSenha(!mostrarSenha)}
-                    aria-label={mostrarSenha ? 'Esconder senha' : 'Mostrar senha'}
-                    aria-pressed={mostrarSenha}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
-                      <circle cx="12" cy="12" r="3" />
-                      {mostrarSenha && <path d="M4 4l16 16" />}
-                    </svg>
-                  </button>
-                </div>
-                {modo === 'criar' && (
-                  <small id="dica-senha" className="login-dica">
-                    Mínimo de 8 caracteres.
-                  </small>
-                )}
+                <label htmlFor="senha">Senha</label>
+                <Lock size={20} aria-hidden="true" />
+                <input
+                  id="senha"
+                  type={mostrarSenha ? 'text' : 'password'}
+                  required
+                  minLength={modo === 'criar' ? 8 : undefined}
+                  autoComplete={modo === 'criar' ? 'new-password' : 'current-password'}
+                  placeholder="Sua senha"
+                  value={senha}
+                  aria-describedby={modo === 'criar' ? 'dica-senha' : undefined}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="login-olho"
+                  onClick={() => setMostrarSenha(!mostrarSenha)}
+                  aria-label={mostrarSenha ? 'Esconder senha' : 'Mostrar senha'}
+                  aria-pressed={mostrarSenha}
+                >
+                  {mostrarSenha ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
+                </button>
               </div>
+            )}
+            {modo === 'criar' && (
+              <small id="dica-senha" className="login-dica">
+                Mínimo de 8 caracteres.
+              </small>
+            )}
+            {modo === 'entrar' && (
+              <button type="button" className="login-esqueci" onClick={() => trocarModo('recuperar')}>
+                Esqueci minha senha
+              </button>
             )}
 
             {erro && (
@@ -198,48 +231,30 @@ export default function Login() {
               </p>
             )}
 
-            <button type="submit" className="login-enviar" disabled={enviando}>
+            <button type="submit" className="botao login-enviar" disabled={enviando}>
               {enviando ? 'Aguarde…' : texto.botao}
-              {!enviando && (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              )}
             </button>
           </form>
 
-          <p className="login-trocar">
-            {modo === 'entrar' ? (
-              <>
-                Ainda não tem conta?{' '}
-                <button type="button" className="link" onClick={() => trocarModo('criar')}>
-                  Criar conta
-                </button>
-              </>
-            ) : (
-              <>
-                {modo === 'criar' ? 'Já tem conta? ' : 'Lembrou a senha? '}
-                <button type="button" className="link" onClick={() => trocarModo('entrar')}>
-                  Entrar
-                </button>
-              </>
-            )}
-          </p>
+          {modo === 'recuperar' ? (
+            <p className="login-trocar">
+              Lembrou a senha?{' '}
+              <button type="button" className="link" onClick={() => trocarModo('entrar')}>
+                Entrar
+              </button>
+            </p>
+          ) : (
+            <p className="login-termos">Ao continuar, você concorda com os Termos de uso e a Política de privacidade.</p>
+          )}
         </div>
-
       </main>
 
       <aside className="login-foto">
         <CarrosselFotos />
-        <p className="login-logo login-logo-foto" aria-hidden="true">
-          <Logo />
-        </p>
-
         <div className="login-foto-texto">
           <h2>Viajem juntos.</h2>
           <p>Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
         </div>
-
       </aside>
     </div>
   )

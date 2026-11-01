@@ -1,32 +1,79 @@
-/* Tela de login: formulário de um lado, foto grande do outro.
-   No celular a foto vira uma faixa no topo. */
+/* Tela de login no estilo do app (spec 112, tela "1d" do design).
+   Celular: faixa caramelo com a Agulha e uma folha clara que sobe por cima.
+   Computador: formulário de um lado, foto grande do outro. */
 
 .login {
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
   background: var(--cor-fundo);
 }
 
-/* ---------- Lado do formulário ---------- */
+/* ---------- Marca (Agulha + nome) ---------- */
+.login-marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.login-marca-agulha {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #fbf3e6; /* fica claro também no tema escuro, como no app */
+}
+
+/* ---------- Faixa do celular ---------- */
+.login-faixa {
+  min-height: 330px;
+  padding: 64px 28px 54px;
+  background: linear-gradient(160deg, #b97a22 0%, #8a5a26 55%, #4a2e14 100%);
+  color: #fbf3e6;
+}
+
+.login-marca-faixa {
+  margin-bottom: 18px;
+}
+
+.login-faixa h2 {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.05;
+  color: #fbf3e6;
+}
+
+.login-faixa p:not(.login-marca) {
+  max-width: 290px;
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--creme);
+}
+
+/* ---------- Folha do formulário ---------- */
 .login-lado {
+  position: relative;
+  margin-top: -30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: 28px 16px 24px;
+  padding: 24px 24px 32px;
+  border-radius: 28px 28px 0 0;
+  background: var(--cor-fundo);
 }
 
-.login-logo {
-  align-self: flex-start;
-  margin: 0;
-  font-family: var(--fonte-titulo);
-  font-size: 26px;
-  font-weight: 700;
-  font-style: italic;
-  letter-spacing: -0.03em;
-  color: var(--cor-texto);
+.login-marca-pc,
+.login-cabeca-pc {
+  display: none;
 }
 
 .login-form {
@@ -34,53 +81,76 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 14px;
 }
 
 .login-titulo {
   margin: 0;
-  font-size: 36px;
+  font-size: 32px;
   line-height: 1.1;
   color: var(--cor-texto);
 }
 
 .login-sub {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--cor-texto-suave);
   line-height: 1.5;
+}
+
+/* Abas Entrar | Criar conta */
+.login-abas {
+  display: flex;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--cor-comboio-fundo);
+}
+
+.login-abas button {
+  flex: 1;
+  height: 40px;
+  border: 0;
+  border-radius: 11px;
+  background: none;
+  color: var(--cor-texto-suave);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-abas button.ativa {
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  box-shadow: 0 2px 8px rgba(74, 46, 20, 0.1);
 }
 
 .login-google {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 54px;
-  border: 1px solid var(--cor-borda-forte);
+  gap: 10px;
+  min-height: 52px;
+  border: 1px solid var(--cor-borda);
   border-radius: 16px;
   background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgb(59 39 21 / 0.06);
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
 .login-google:hover {
-  border-color: var(--caramelo);
-  box-shadow: 0 6px 18px rgb(59 39 21 / 0.1);
-  transform: translateY(-1px);
+  border-color: var(--cor-borda-forte);
+  box-shadow: var(--sombra-cartao);
 }
 
 .login-divisor {
   display: flex;
   align-items: center;
-  gap: 14px;
-  color: #a08460;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  gap: 12px;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
 }
 
 .login-divisor::before,
@@ -88,65 +158,71 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--cor-borda-forte);
+  background: var(--cor-borda);
 }
 
 .login-campos {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
+/* Campo com ícone à esquerda, como o Campo do app. O rótulo fica só pra leitor de tela. */
 .login-campo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  position: relative;
 }
 
 .login-campo label {
-  font-size: 14px;
-  font-weight: 700;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
-.login-campo-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.login-campo > svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-texto-suave);
+  pointer-events: none;
 }
 
-.login-esqueci {
-  font-size: 14px;
+.login-campo > svg.login-campo-icone-forte {
+  color: var(--couro);
+}
+
+html[data-tema='escuro'] .login-campo > svg.login-campo-icone-forte {
+  color: var(--cor-comboio);
 }
 
 .login-campo input {
-  min-height: 54px;
   width: 100%;
-  padding: 0 16px;
-  border: 1px solid var(--cor-borda-forte);
+  min-height: 52px;
+  padding: 0 52px 0 46px;
+  border: 1px solid var(--cor-borda);
   border-radius: 16px;
   background: var(--cor-cartao);
   color: var(--cor-texto);
   font: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  font-size: 15px;
+  transition: border-color 0.15s;
+}
+
+.login-campo input::placeholder {
+  color: var(--cor-texto-suave);
 }
 
 .login-campo input:focus {
   outline: none;
-  border-color: var(--caramelo);
-  box-shadow: 0 0 0 4px rgb(255 157 0 / 0.22);
-}
-
-.login-senha {
-  position: relative;
-}
-
-.login-senha input {
-  padding-right: 56px;
+  border-color: var(--couro);
 }
 
 .login-olho {
   position: absolute;
-  right: 6px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   width: 44px;
@@ -160,56 +236,46 @@
   cursor: pointer;
 }
 
-.login-olho:hover {
-  background: var(--cor-fundo);
+.login-esqueci {
+  align-self: flex-end;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-comboio);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-esqueci:hover {
+  text-decoration: underline;
 }
 
 .login-enviar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 54px;
+  width: 100%;
+  min-height: 56px;
   margin-top: 4px;
-  border: 0;
-  border-radius: 16px;
-  background: var(--couro);
-  color: #ffffff;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgb(123 84 47 / 0.28);
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  font-size: 16px;
 }
 
-.login-enviar:hover {
-  background: #664423;
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgb(123 84 47 / 0.32);
-}
-
-.login-enviar:disabled {
-  opacity: 0.7;
-  cursor: wait;
-  transform: none;
+.login-enviar:hover:not(:disabled) {
+  background: var(--escuro);
 }
 
 .login-msg {
   margin: 0;
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.5;
 }
 
 .login-msg-erro {
-  background: var(--cor-erro-fundo);
   color: var(--cor-erro);
 }
 
 .login-msg-aviso {
-  background: var(--cor-comboio-fundo);
-  color: var(--cor-texto);
+  color: var(--cor-sucesso);
 }
 
 .login-trocar {
@@ -218,40 +284,29 @@
   color: var(--cor-texto-suave);
 }
 
+.login-termos {
+  margin: 0;
+  padding: 0 12px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cor-texto-suave);
+}
+
 .login-dica {
+  margin-top: -6px;
   color: var(--cor-texto-suave);
   font-size: 13px;
 }
 
-/* No celular o logo fica em cima da foto */
-.login-lado > .login-logo {
-  display: none;
-}
-
-.login-logo-foto {
-  position: absolute;
-  z-index: 2;
-  top: 14px;
-  left: 14px;
-  padding: 4px 14px 6px;
-  border-radius: 999px;
-  background: rgb(42 26 12 / 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #ffffff;
-  font-size: 20px;
-}
-
-/* ---------- Lado da foto ---------- */
+/* ---------- Lado da foto (só no computador) ---------- */
 .login-foto {
-  order: -1;
+  display: none;
   position: relative;
-  height: 30vh;
-  min-height: 220px;
-  margin: 12px 12px 0;
-  border-radius: 28px;
+  border-radius: 32px;
   overflow: hidden;
   background: var(--caramelo);
+  box-shadow: var(--sombra-hero);
 }
 
 .carrossel {
@@ -320,7 +375,7 @@
 
 .carrossel-pontos button.ativo::before {
   width: 20px;
-  background: var(--cor-cartao);
+  background: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -330,57 +385,66 @@
   }
 }
 
-/* Escurece a parte de baixo pra o texto branco aparecer bem */
+/* Escurece a parte de baixo com o marrom do app pra o texto claro aparecer bem */
 .login-foto::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(to top, rgb(42 26 12 / 0.78) 0%, rgb(42 26 12 / 0.2) 45%, transparent 70%);
+  background: linear-gradient(to top, rgb(74 46 20 / 0.82) 0%, rgb(74 46 20 / 0.25) 45%, transparent 70%);
 }
 
 .login-foto-texto {
   position: absolute;
   z-index: 2;
   pointer-events: none;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
+  left: 48px;
+  right: 48px;
+  bottom: 48px;
   color: var(--creme);
 }
 
 .login-foto-texto h2 {
   margin: 0;
-  font-size: 34px;
+  font-size: 68px;
   line-height: 1;
-  color: #ffffff;
+  color: #fbf3e6;
 }
 
 .login-foto-texto p {
-  margin: 8px 0 0;
-  max-width: 380px;
+  margin: 12px 0 0;
+  max-width: 420px;
   line-height: 1.5;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 /* ---------- Computador ---------- */
 @media (min-width: 960px) {
   .login {
     grid-template-columns: minmax(440px, 1fr) 1.15fr;
+    grid-template-rows: 1fr;
+  }
+
+  .login-faixa {
+    display: none;
   }
 
   .login-lado {
+    margin-top: 0;
     padding: 36px 48px 28px;
-    gap: 0;
+    border-radius: 0;
   }
 
-  .login-lado > .login-logo {
+  .login-marca-pc {
+    display: flex;
+    align-self: flex-start;
+    color: var(--cor-texto);
+  }
+
+  .login-cabeca-pc {
     display: block;
-  }
-
-  .login-logo-foto {
-    display: none;
+    margin-bottom: 6px;
   }
 
   .login-form {
@@ -388,27 +452,11 @@
   }
 
   .login-titulo {
-    font-size: 44px;
+    font-size: 40px;
   }
 
   .login-foto {
-    order: 0;
-    height: auto;
+    display: block;
     margin: 16px 16px 16px 0;
-    border-radius: 32px;
-  }
-
-  .login-foto-texto {
-    left: 48px;
-    right: 48px;
-    bottom: 48px;
-  }
-
-  .login-foto-texto h2 {
-    font-size: 68px;
-  }
-
-  .login-foto-texto p {
-    font-size: 18px;
   }
 }

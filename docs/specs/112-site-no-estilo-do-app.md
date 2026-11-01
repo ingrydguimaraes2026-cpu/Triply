@@ -15,7 +15,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 |---|---|---|---|---|
 | 0 | Cores, sombras e cantos | `apps/mobile/theme.ts` | `styles/global.css` | ✅ feito |
 | 1 | Peças base: cartão, botões, botão redondo, ícone quadrado, título da tela, rótulo de seção, campo, carregando, avatares | `src/ui/pecas.tsx` | `components/ui/` | ✅ feito |
-| 2 | Login, criar conta, esqueci a senha | `app/login.tsx`, `criar-conta.tsx` | `pages/Login.tsx` | a fazer |
+| 2 | Login, criar conta, esqueci a senha | `app/login.tsx`, `criar-conta.tsx` | `pages/Login.tsx` | ✅ feito |
 | 3 | Minhas viagens (lista com capa) | `app/(tabs)/index.tsx` | `pages/MinhasViagens.tsx`, `Inicio.tsx` | a fazer |
 | 4 | Moldura da viagem: capa com foto, menu e abas | `app/viagem/[id].tsx`, `(tabs)/_layout.tsx` | `pages/viagem/ViagemLayout.tsx` | a fazer |
 | 5 | Overview | `app/viagem/[id].tsx` | `pages/viagem/Overview.tsx` | a fazer |
