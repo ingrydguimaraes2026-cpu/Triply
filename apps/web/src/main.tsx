@@ -5,6 +5,7 @@ import { router } from './router'
 import '@fontsource-variable/fraunces'
 import '@fontsource-variable/plus-jakarta-sans'
 import './styles/global.css'
+import './components/ui/ui.css' // peças visuais (spec 112): valem em todas as telas
 import { aplicarAcessibilidade } from './lib/acessibilidade'
 
 // Spec 090: letra maior / alto contraste escolhidos neste aparelho

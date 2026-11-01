@@ -2,8 +2,8 @@
 
 .cartao-ui {
   background: var(--cor-cartao);
-  border: 1px solid var(--cor-borda);
-  border-radius: 24px;
+  border: 1px solid transparent;
+  border-radius: 20px;
   padding: 20px;
   box-shadow: var(--sombra-cartao);
   display: flex;
@@ -32,7 +32,7 @@
 }
 
 .cartao-ui-topo h2 svg {
-  color: var(--caramelo);
+  color: var(--couro);
 }
 
 .cartao-ui-topo a {
@@ -57,8 +57,15 @@
 
 .cabecalho-pagina h1 {
   margin: 0;
-  font-size: 34px;
-  line-height: 1.1;
+  font-size: 32px;
+  line-height: 1.12;
+  color: var(--cor-texto);
+}
+
+.cabecalho-pagina .cabecalho-pagina-acima {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .cabecalho-pagina p {
@@ -120,22 +127,131 @@
   display: inline-grid;
   place-items: center;
   border-radius: 50%;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--cor-fundo);
   background: var(--caramelo);
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
   object-fit: cover;
 }
 
-/* Botão secundário (contorno) */
+/* Botão secundário (contorno), igual ao do app: branco, borda bege e texto couro */
 .botao.secundario {
-  background: transparent;
-  color: var(--cor-texto);
+  background: var(--cor-cartao);
+  color: var(--cor-comboio);
   border: 1px solid var(--cor-borda-forte);
+  box-shadow: none;
 }
 
 .botao.secundario:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* Botão claro (em cima de foto ou do couro) */
+.botao.claro {
+  background: var(--cor-fundo);
+  color: var(--escuro);
+  box-shadow: none;
+}
+
+/* Botão menor (h-11 no app) */
+.botao.compacto {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+/* ---------- Peças do redesign do app (spec 112) ---------- */
+.icone-quadrado {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  background: var(--dourado-claro);
+  color: var(--couro);
+}
+
+html[data-tema='escuro'] .icone-quadrado {
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+}
+
+.botao-redondo {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
   background: var(--cor-cartao);
+  color: var(--cor-texto);
+  box-shadow: 0 4px 12px rgba(74, 46, 20, 0.08);
+  cursor: pointer;
+}
+
+.botao-redondo.claro {
+  background: color-mix(in srgb, var(--cor-fundo) 90%, transparent);
+  box-shadow: none;
+}
+
+.botao-redondo:hover {
+  opacity: 0.85;
+}
+
+.rotulo-secao {
+  margin: 4px 0 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.pilha-avatares {
+  display: inline-flex;
+  padding-left: 10px;
+}
+
+.pilha-avatares > .avatar {
+  margin-left: -10px;
+}
+
+.pilha-sobra {
+  background: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+
+.carregando-tela {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 50vh;
+  padding: 32px;
+  text-align: center;
+}
+
+.carregando-tela.compacto {
+  min-height: 0;
+  padding: 16px;
+}
+
+.carregando-tela p {
+  margin: 0;
+  max-width: 320px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+.carregando-tela .erro-tela-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cor-texto);
 }
 
 /* ---------- Gaveta (formulários) ---------- */
@@ -706,4 +822,9 @@
   .agulha * {
     animation: none !important;
   }
+}
+
+/* No tema escuro o cartão precisa da borda pra se separar do fundo */
+html[data-tema='escuro'] .cartao-ui {
+  border-color: var(--cor-borda);
 }

@@ -71,7 +71,7 @@ a {
   background: var(--cor-cartao);
   border-radius: var(--raio);
   padding: 16px;
-  border: 1px solid var(--cor-borda);
+  border: 1px solid transparent;
   box-shadow: var(--sombra-cartao);
 }
 
@@ -230,6 +230,9 @@ html[data-tema='escuro'] {
   --cor-erro-fundo: #4a1d12;
   --cor-sucesso: #8fd6a8;
   --cor-sucesso-fundo: #173a24;
+}
+html[data-tema='escuro'] .cartao {
+  border-color: var(--cor-borda);
 }
 html[data-tema='escuro'] body {
   background: var(--cor-fundo);
