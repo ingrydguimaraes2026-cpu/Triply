@@ -23,7 +23,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 7 | Roteiro e agenda | `app/(tabs)/roteiro.tsx` | `pages/viagem/Agenda.tsx` | ✅ feito |
 | 8 | Fotos | `app/(tabs)/fotos.tsx`, `novo-post.tsx` | `pages/viagem/Fotos.tsx` | ✅ feito |
 | 9 | Perfil | `app/(tabs)/perfil.tsx` | `pages/Perfil.tsx` | ✅ feito |
-| 10 | Hoje | `app/hoje.tsx` | `pages/viagem/Hoje.tsx` | a fazer |
+| 10 | Hoje | `app/hoje.tsx` | `pages/viagem/Hoje.tsx` | ✅ feito |
 | 11 | Hospedagem | `app/hospedagem.tsx` | `pages/viagem/Hospedagem.tsx` | a fazer |
 | 12 | Lugares | `app/lugares.tsx` | `pages/viagem/Lugares.tsx` | a fazer |
 | 13 | Transportes | `app/transportes.tsx` | `pages/viagem/Transportes.tsx` | a fazer |

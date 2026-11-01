@@ -80,7 +80,7 @@ export default function Hoje() {
 
   return (
     <div className="hoje">
-      <CabecalhoPagina titulo={onde ? `Hoje em ${onde.nome}` : 'Hoje'} subtitulo={diaPorExtenso(hoje)} />
+      <CabecalhoPagina acima={viagem.nome} titulo={onde ? `Hoje em ${onde.nome}` : 'Hoje'} subtitulo={diaPorExtenso(hoje)} />
 
       {!naViagem && (
         <p className="hoje-fora">

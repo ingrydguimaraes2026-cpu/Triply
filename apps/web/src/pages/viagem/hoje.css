@@ -106,3 +106,37 @@
   color: var(--cor-pessoal);
   font-weight: 700;
 }
+
+/* ---------- Spec 112: no estilo da tela Hoje do app ---------- */
+.hoje-item {
+  border-color: transparent;
+  border-radius: 20px;
+  box-shadow: var(--sombra-cartao);
+}
+
+html[data-tema='escuro'] .hoje-item {
+  border-color: var(--cor-borda);
+}
+
+.hoje-item.agora {
+  border-color: transparent;
+  background: var(--dourado-claro);
+  box-shadow: none;
+}
+
+html[data-tema='escuro'] .hoje-item.agora {
+  background: var(--cor-comboio-fundo);
+}
+
+.hoje-item strong {
+  font-size: 16px;
+}
+
+.hoje-rotulo {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.hoje-fora {
+  border-radius: 20px;
+}
