@@ -303,3 +303,13 @@
   font-weight: 700;
 }
 .importar-passos { margin: 0; padding-left: 18px; }
+
+/* Spec 112: cartão do lugar com sombra marrom, como no app */
+.lugar {
+  border-color: transparent;
+  box-shadow: var(--sombra-cartao);
+}
+
+html[data-tema='escuro'] .lugar {
+  border-color: var(--cor-borda);
+}

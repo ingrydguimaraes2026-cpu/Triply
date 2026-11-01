@@ -13,6 +13,8 @@ import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import Carregando from '../../components/ui/Carregando'
+import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import BotaoIr from '../../components/ui/BotaoIr'
 import PertoDeMim from '../../features/lugares/PertoDeMim'
@@ -240,6 +242,7 @@ export default function Lugares() {
   return (
     <>
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Lugares"
         subtitulo="Passeios, comida e guarda-volumes de cada destino, pro comboio inteiro ver."
         acao={
@@ -265,12 +268,7 @@ export default function Lugares() {
       )}
 
       {l.estado === 'erro' && (
-        <div className="aviso-erro">
-          <p>Não deu pra carregar os lugares.</p>
-          <button type="button" className="botao secundario pequeno" onClick={l.recarregar}>
-            Tentar de novo
-          </button>
-        </div>
+        <ErroNaTela titulo="Não deu pra carregar os lugares" aoTentar={l.recarregar} />
       )}
 
       {!item ? (
@@ -300,7 +298,7 @@ export default function Lugares() {
         </>
       )}
 
-      {l.estado === 'carregando' && <p className="carregando-texto">Carregando os lugares…</p>}
+      {l.estado === 'carregando' && <Carregando texto="Carregando os lugares…" compacto />}
 
       {l.soltos.length > 0 && (
         <section className="cartao-ui">
