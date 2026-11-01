@@ -24,7 +24,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 8 | Fotos | `app/(tabs)/fotos.tsx`, `novo-post.tsx` | `pages/viagem/Fotos.tsx` | ✅ feito |
 | 9 | Perfil | `app/(tabs)/perfil.tsx` | `pages/Perfil.tsx` | ✅ feito |
 | 10 | Hoje | `app/hoje.tsx` | `pages/viagem/Hoje.tsx` | ✅ feito |
-| 11 | Hospedagem | `app/hospedagem.tsx` | `pages/viagem/Hospedagem.tsx` | a fazer |
+| 11 | Hospedagem | `app/hospedagem.tsx` | `pages/viagem/Hospedagem.tsx` | ✅ feito |
 | 12 | Lugares | `app/lugares.tsx` | `pages/viagem/Lugares.tsx` | a fazer |
 | 13 | Transportes | `app/transportes.tsx` | `pages/viagem/Transportes.tsx` | a fazer |
 | 14 | Comboio e Configurações | `app/comboio.tsx`, `configuracoes.tsx` | `pages/viagem/Comboio.tsx`, `Configuracoes.tsx` | a fazer |

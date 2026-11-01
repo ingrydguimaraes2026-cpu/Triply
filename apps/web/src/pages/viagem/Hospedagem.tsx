@@ -28,6 +28,8 @@ import { hojeTexto } from '../../features/destinos/datas'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import Carregando from '../../components/ui/Carregando'
+import ErroNaTela from '../../components/ui/ErroNaTela'
 import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import Gaveta from '../../components/ui/Gaveta'
@@ -315,6 +317,7 @@ export default function Hospedagem() {
   return (
     <>
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Hospedagem"
         subtitulo="Ache no mapa, cole o link, votem e fechem onde o comboio vai dormir."
         acao={
@@ -338,12 +341,7 @@ export default function Hospedagem() {
       />
 
       {h.estado === 'erro' && (
-        <div className="aviso-erro">
-          <p>Não deu pra carregar as opções de hospedagem.</p>
-          <button type="button" className="botao secundario pequeno" onClick={h.recarregar}>
-            Tentar de novo
-          </button>
-        </div>
+        <ErroNaTela titulo="Não deu pra carregar as opções de hospedagem" aoTentar={h.recarregar} />
       )}
       {erro && (
         <p className="aviso-erro" role="alert">
@@ -393,7 +391,7 @@ export default function Hospedagem() {
         </>
       )}
 
-      {h.estado === 'carregando' && <p className="carregando-texto">Carregando as opções…</p>}
+      {h.estado === 'carregando' && <Carregando texto="Carregando as opções…" compacto />}'
 
       {h.soltas.length > 0 && (
         <section className="cartao-ui">
