@@ -1,4 +1,4 @@
-/* Telas fora da viagem: Minhas viagens e Perfil (spec 008) */
+/* Telas fora da viagem: Minhas viagens e Perfil (spec 008), no estilo do app (spec 112) */
 
 .pagina-solta {
   min-height: 100vh;
@@ -6,13 +6,15 @@
   background: var(--cor-fundo);
 }
 
+/* Barra de cima clara, como o app (sem faixa escura) */
 .pagina-solta-topo {
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
-  background: #2a1a0c;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 4px;
 }
 
 .pagina-solta-topo nav {
@@ -21,28 +23,39 @@
 }
 
 .pagina-solta-topo .botao-texto {
-  color: var(--cor-borda-forte);
+  color: var(--cor-comboio);
   text-decoration: none;
 }
 
 .pagina-solta-topo .botao-texto:hover {
-  background: rgb(255 255 255 / 0.06);
+  background: var(--cor-comboio-fundo);
 }
 
 .pagina-solta-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--fonte-titulo);
-  font-size: 24px;
-  font-weight: 700;
-  font-style: italic;
-  letter-spacing: -0.03em;
-  color: var(--dourado-claro);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--cor-texto);
   text-decoration: none;
+}
+
+.pagina-solta-agulha {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--dourado-claro);
 }
 
 .pagina-solta-conteudo {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 28px 16px 64px;
+  padding: 20px 16px 64px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -52,87 +65,296 @@
   max-width: 560px;
 }
 
-.lista-viagens {
+/* ---------- Viagem em destaque (cartão grande com a capa) ---------- */
+.viagem-destaque {
+  position: relative;
+}
+
+.viagem-destaque-link {
+  position: relative;
+  display: block;
+  height: 470px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--couro);
+  box-shadow: var(--sombra-hero);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.viagem-destaque-link img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease-out;
+}
+
+.viagem-destaque-link:hover img {
+  transform: scale(1.03);
+}
+
+/* Degradê caramelo → marrom por cima da foto, igual ao app */
+.viagem-destaque-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(185 122 34 / 0) 38%, rgb(185 122 34 / 0.55) 62%, #4a2e14 100%);
+}
+
+.viagem-destaque-etiqueta {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fbf3e6;
+  color: #3b2715;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.viagem-destaque-etiqueta svg {
+  color: var(--caramelo);
+}
+
+.viagem-destaque-texto {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viagem-destaque-acima {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.viagem-destaque-texto strong {
+  margin: 8px 0 18px;
+  font-family: var(--fonte-titulo);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.viagem-destaque-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.viagem-destaque-comboio {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--creme);
+}
+
+.viagem-destaque-comboio .avatar {
+  border-color: #5a3818;
+}
+
+.viagem-destaque-seta {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fbf3e6;
+  color: #4a2e14;
+}
+
+/* ---------- Lista (miniatura + nome) ---------- */
+.viagens-secao {
+  margin: 12px 0 12px;
+  font-size: 22px;
+  color: var(--cor-texto);
+}
+
+.viagens-lista {
   margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
 }
 
-.cartao-viagem {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 20px;
-  border: 1px solid var(--cor-borda);
-  border-radius: 24px;
-  background: var(--cor-cartao);
-  color: var(--cor-texto);
-  text-decoration: none;
-  box-shadow: 0 1px 2px rgb(59 39 21 / 0.04), 0 8px 24px rgb(59 39 21 / 0.05);
-  transition: transform 0.15s, box-shadow 0.15s;
+.viagem-linha {
+  position: relative;
 }
 
-.cartao-viagem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 4px rgb(59 39 21 / 0.06), 0 12px 32px rgb(59 39 21 / 0.08);
-}
-
-.cartao-viagem.agora {
-  border-color: var(--laranja);
-}
-
-.cartao-viagem.concluida {
-  opacity: 0.8;
-}
-
-.cartao-viagem strong {
-  font-family: var(--fonte-titulo);
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.cartao-viagem-selo {
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--cor-comboio-fundo);
-  color: var(--cor-comboio);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.cartao-viagem.agora .cartao-viagem-selo {
-  background: var(--laranja);
-  color: #2a1a0c;
-}
-
-.cartao-viagem-periodo,
-.cartao-viagem-destinos {
-  color: var(--cor-texto-suave);
-  font-size: 14px;
-}
-
-.cartao-viagem-comboio {
+.viagem-linha-link {
   display: flex;
   align-items: center;
-  margin-top: auto;
-  padding-top: 8px;
+  gap: 14px;
+  padding: 12px 92px 12px 12px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow 0.15s;
 }
 
-.cartao-viagem-comboio .avatar + .avatar {
-  margin-left: -6px;
+html[data-tema='escuro'] .viagem-linha-link {
+  border: 1px solid var(--cor-borda);
 }
 
-.cartao-viagem-comboio small {
-  margin-left: 6px;
+.viagem-linha-link:hover {
+  box-shadow: var(--sombra-flutuante);
+}
+
+.viagem-linha-link img {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--cor-borda-forte);
+}
+
+.viagem-linha-texto {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viagem-linha-texto strong {
+  overflow: hidden;
+  font-family: var(--fonte-titulo);
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.viagem-linha-texto span {
+  font-size: 13px;
   color: var(--cor-texto-suave);
 }
 
+.viagem-linha-seta {
+  flex: none;
+  color: var(--cor-texto-suave);
+}
+
+/* Arquivar e apagar: fora do link, no canto */
+.viagem-acoes {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+}
+
+.viagem-acoes button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.viagem-acoes button:hover {
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+}
+
+.viagem-acoes button[title='Apagar viagem']:hover {
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+}
+
+/* No destaque, em cima da foto */
+.viagem-acoes.claro {
+  top: 16px;
+  right: 16px;
+  transform: none;
+}
+
+.viagem-acoes.claro button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgb(251 243 230 / 0.9);
+  color: #4a2e14;
+}
+
+/* Estado vazio: Agulha dormindo esperando a primeira viagem */
+.viagens-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 28px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.viagens-vazio h2 {
+  max-width: 420px;
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.12;
+}
+
+.viagens-vazio p {
+  max-width: 360px;
+  margin: 0 0 8px;
+  color: var(--cor-texto-suave);
+  line-height: 1.6;
+}
+
+.viagens-arquivadas summary {
+  color: var(--cor-texto-suave);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.viagens-arquivadas .viagens-lista {
+  margin-top: 12px;
+  opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+  .viagem-destaque-link {
+    height: 420px;
+  }
+
+  .viagem-destaque-texto strong {
+    font-size: 34px;
+  }
+}
+
+/* ---------- Perfil ---------- */
 .perfil-foto {
   flex-direction: row;
   align-items: center;
@@ -147,51 +369,6 @@
 
 .perfil-foto-acoes label {
   cursor: pointer;
-}
-
-/* Ações do cartão: "Abrir" (o cartão todo é o link) e a lixeira do ADM, fora do link, no canto de baixo */
-.lista-viagens-item {
-  position: relative;
-}
-
-.cartao-viagem-abrir {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  color: var(--cor-comboio);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-/* Abre espaço pra lixeira não ficar por cima do "Abrir" */
-.cartao-viagem.com-apagar .cartao-viagem-comboio {
-  padding-right: 52px;
-}
-
-.cartao-viagem-apagar {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--cor-borda);
-  border-radius: 12px;
-  background: var(--cor-cartao);
-  color: #a3330f;
-  cursor: pointer;
-}
-
-.cartao-viagem-apagar:hover {
-  background: var(--cor-erro-fundo);
-  border-color: #a3330f;
-}
-
-.cartao-viagem-apagar:focus-visible {
-  outline: 3px solid rgb(255 157 0 / 0.45);
-  outline-offset: 2px;
 }
 
 /* Passaporte no perfil (spec 038) */
@@ -230,39 +407,4 @@
 .perfil-pais-novo input {
   flex: 1;
   min-width: 0;
-}
-
-/* Arquivar viagem (spec 054) */
-.cartao-viagem-arquivar {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--cor-borda);
-  border-radius: 10px;
-  background: var(--cor-cartao);
-  color: var(--cor-texto-suave);
-  cursor: pointer;
-}
-
-.cartao-viagem-arquivar:hover {
-  border-color: var(--caramelo);
-}
-
-.viagens-arquivadas {
-  margin-top: 24px;
-}
-
-.viagens-arquivadas summary {
-  color: var(--cor-texto-suave);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.viagens-arquivadas .lista-viagens {
-  margin-top: 12px;
-  opacity: 0.85;
 }

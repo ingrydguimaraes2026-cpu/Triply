@@ -1,32 +1,47 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Archive, ArchiveRestore, ArrowRight, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
+import { Archive, ArchiveRestore, ArrowRight, ChevronRight, Clock, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
+import { capaDaViagem } from '@together/core'
 import { arquivarViagem, buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
 import { sair, useSessao } from '../features/auth/hooks'
 import FaixaConvidado from '../features/auth/FaixaConvidado'
-import { formatarPeriodo } from '../lib/datas'
+import { diasAte, formatarPeriodo } from '../lib/datas'
 import ApagarViagem from '../features/viagens/ApagarViagem'
-import Avatar from '../components/ui/Avatar'
 import Gaveta from '../components/ui/Gaveta'
 import Agulha from '../components/ui/Agulha'
-import '../components/ui/ui.css'
+import Carregando from '../components/ui/Carregando'
+import ErroNaTela from '../components/ui/ErroNaTela'
+import PilhaDeAvatares from '../components/ui/PilhaDeAvatares'
 import './minhas-viagens.css'
 
-const SELOS: Record<Situacao, string | null> = {
-  agora: 'Acontecendo agora',
-  proxima: 'Próxima',
-  concluida: 'Concluída',
-  'sem-data': null,
-}
+type ViagemNaLista = ResumoDaViagem & { situacao: Situacao }
 
 // Ordem da lista: acontecendo agora, próximas (da mais perto), sem data, concluídas
 const PESO: Record<Situacao, number> = { agora: 0, proxima: 1, 'sem-data': 2, concluida: 3 }
 
-// "/viagens" (spec 008): todas as viagens da pessoa
+// "Faltam 12 dias", "É amanhã!", "Acontecendo agora"... (igual ao cartão de destaque do app)
+function etiquetaDaViagem(v: ViagemNaLista) {
+  if (v.situacao === 'agora') return 'Acontecendo agora'
+  if (v.situacao === 'concluida') return 'Já foi'
+  if (!v.dataInicio) return 'Sem data ainda'
+  const faltam = diasAte(v.dataInicio)
+  if (faltam > 1) return `Faltam ${faltam} dias`
+  return faltam === 1 ? 'É amanhã!' : 'É hoje!'
+}
+
+function mesEAno(data: string | null) {
+  if (!data) return 'Sem data'
+  const [ano, mes] = data.split('-').map(Number)
+  const nome = new Date(ano, mes - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
+  return `${nome} ${ano}`
+}
+
+// "/viagens" (spec 008), no estilo do app (spec 112): a viagem mais perto em destaque com a capa,
+// e as outras numa lista com miniatura.
 export default function MinhasViagens() {
   const [viagens, setViagens] = useState<ResumoDaViagem[] | null | 'erro'>(null)
-  const { ehConvidado } = useSessao()
+  const { sessao, ehConvidado } = useSessao()
   // Viagem que a pessoa pediu pra apagar (abre a confirmação)
   const [paraApagar, setParaApagar] = useState<ResumoDaViagem | null>(null)
 
@@ -47,70 +62,77 @@ export default function MinhasViagens() {
     }
   }
 
-  useEffect(() => {
+  function carregar() {
+    setViagens(null)
     buscarMinhasViagens()
       .then(setViagens)
       .catch((e) => {
         console.error('Erro ao buscar viagens:', e)
         setViagens('erro')
       })
-  }, [])
+  }
+
+  useEffect(carregar, [])
 
   const hoje = hojeTexto()
-  const todas =
-    Array.isArray(viagens) &&
-    [...viagens]
-      .map((v) => ({ ...v, situacao: situacaoDaViagem(v.dataInicio, v.dataFim, hoje) }))
-      .sort((a, b) => PESO[a.situacao] - PESO[b.situacao] || (a.dataInicio ?? '').localeCompare(b.dataInicio ?? ''))
-  const ordenadas = todas && todas.filter((v) => !v.arquivada)
-  const arquivadas = todas ? todas.filter((v) => v.arquivada) : []
+  const todas: ViagemNaLista[] = Array.isArray(viagens)
+    ? [...viagens]
+        .map((v) => ({ ...v, situacao: situacaoDaViagem(v.dataInicio, v.dataFim, hoje) }))
+        .sort((a, b) => PESO[a.situacao] - PESO[b.situacao] || (a.dataInicio ?? '').localeCompare(b.dataInicio ?? ''))
+    : []
+  const ativas = todas.filter((v) => !v.arquivada)
+  const arquivadas = todas.filter((v) => v.arquivada)
+  // Destaque: a que está acontecendo ou a próxima. Só concluídas? Nenhuma em destaque.
+  const destaque = ativas[0] && ativas[0].situacao !== 'concluida' ? ativas[0] : null
+  const proximas = ativas.filter((v) => v !== destaque && v.situacao !== 'concluida')
+  const passadas = ativas.filter((v) => v.situacao === 'concluida')
 
-  const cartao = (v: ResumoDaViagem & { situacao: Situacao }) => (
-              <li key={v.id} className="lista-viagens-item">
-                <Link to={`/viagem/${v.id}`} className={`cartao-viagem ${v.situacao}${v.souAdm ? ' com-apagar' : ''}`}>
-                  {SELOS[v.situacao] && <span className="cartao-viagem-selo">{SELOS[v.situacao]}</span>}
-                  <strong>{v.nome}</strong>
-                  <span className="cartao-viagem-periodo">{formatarPeriodo(v.dataInicio, v.dataFim)}</span>
-                  {v.destinos.length > 0 && <span className="cartao-viagem-destinos">{v.destinos.join(' → ')}</span>}
-                  <span className="cartao-viagem-comboio">
-                    {v.membros.slice(0, 5).map((m) => (
-                      <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} />
-                    ))}
-                    {v.membros.length > 5 && <small>+{v.membros.length - 5}</small>}
-                    <span className="cartao-viagem-abrir">
-                      Abrir <ArrowRight size={14} aria-hidden="true" />
-                    </span>
-                  </span>
-                </Link>
-                {/* Fora do link de propósito: botão dentro de link não funciona direito. Só o ADM pode apagar. */}
-                {v.souAdm && (
-                  <button
-                    type="button"
-                    className="cartao-viagem-apagar"
-                    onClick={() => setParaApagar(v)}
-                    aria-label={`Apagar a viagem ${v.nome}`}
-                    title="Apagar viagem"
-                  >
-                    <Trash2 size={18} aria-hidden="true" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="cartao-viagem-arquivar"
-                  onClick={() => arquivar(v, !v.arquivada)}
-                  aria-label={v.arquivada ? `Voltar ${v.nome} pra lista` : `Arquivar ${v.nome}`}
-                  title={v.arquivada ? 'Voltar pra lista' : 'Arquivar (só some da sua lista)'}
-                >
-                  {v.arquivada ? <ArchiveRestore size={16} aria-hidden="true" /> : <Archive size={16} aria-hidden="true" />}
-                </button>
-              </li>
+  const meuNome = Array.isArray(viagens) ? viagens.flatMap((v) => v.membros).find((m) => m.id === sessao?.user.id)?.nome : undefined
+  const ola = meuNome ? `Olá, ${meuNome.trim().split(/\s+/)[0]}` : 'Olá'
+
+  // Apagar (só ADM) e arquivar: fora do link de propósito, porque botão dentro de link não funciona direito
+  const acoes = (v: ViagemNaLista, claro?: boolean) => (
+    <span className={claro ? 'viagem-acoes claro' : 'viagem-acoes'}>
+      <button
+        type="button"
+        onClick={() => arquivar(v, !v.arquivada)}
+        aria-label={v.arquivada ? `Voltar ${v.nome} pra lista` : `Arquivar ${v.nome}`}
+        title={v.arquivada ? 'Voltar pra lista' : 'Arquivar (só some da sua lista)'}
+      >
+        {v.arquivada ? <ArchiveRestore size={16} aria-hidden="true" /> : <Archive size={16} aria-hidden="true" />}
+      </button>
+      {v.souAdm && (
+        <button type="button" onClick={() => setParaApagar(v)} aria-label={`Apagar a viagem ${v.nome}`} title="Apagar viagem">
+          <Trash2 size={16} aria-hidden="true" />
+        </button>
+      )}
+    </span>
+  )
+
+  const linha = (v: ViagemNaLista) => (
+    <li key={v.id} className="viagem-linha">
+      <Link to={`/viagem/${v.id}`} className="viagem-linha-link">
+        <img src={capaDaViagem(v.id, 200)} alt="" loading="lazy" />
+        <span className="viagem-linha-texto">
+          <strong>{v.nome}</strong>
+          <span>
+            {mesEAno(v.dataInicio)} · {v.membros.length} {v.membros.length === 1 ? 'pessoa' : 'pessoas'}
+          </span>
+        </span>
+        <ChevronRight size={20} aria-hidden="true" className="viagem-linha-seta" />
+      </Link>
+      {acoes(v)}
+    </li>
   )
 
   return (
     <div className="pagina-solta">
       <header className="pagina-solta-topo">
         <Link to="/" className="pagina-solta-logo">
-          together
+          <span className="pagina-solta-agulha">
+            <Agulha tamanho={30} sombra={false} />
+          </span>
+          Together
         </Link>
         <nav>
           <Link to="/perfil" className="botao-texto">
@@ -132,15 +154,12 @@ export default function MinhasViagens() {
       <main className="pagina-solta-conteudo">
         <div className="cabecalho-pagina">
           <div>
+            <p className="cabecalho-pagina-acima">{ola}</p>
             <h1>Minhas viagens</h1>
-            {Array.isArray(viagens) && (
-              <p>
-                {viagens.length} {viagens.length === 1 ? 'viagem' : 'viagens'}
-              </p>
-            )}
           </div>
+          {/* Convidado cria conta antes de criar viagem (spec 018) */}
           {!ehConvidado && (
-            <Link to="/nova-viagem" className="botao">
+            <Link to="/nova-viagem" className="botao compacto">
               <Plus size={18} aria-hidden="true" /> Nova viagem
             </Link>
           )}
@@ -148,29 +167,69 @@ export default function MinhasViagens() {
 
         <FaixaConvidado />
 
-        {viagens === null && <p className="carregando-texto">Carregando…</p>}
-        {viagens === 'erro' && <p className="aviso-erro">Não deu pra carregar as viagens. Atualize a página.</p>}
-        {ordenadas && ordenadas.length === 0 && arquivadas.length === 0 && (
-          <div className="vazio">
-            <Agulha humor="dormindo" tamanho={120} />
-            <p className="vazio-titulo">Nenhuma viagem ainda</p>
-            <p className="vazio-texto">Crie a primeira e convide o comboio.</p>
-            <Link to="/nova-viagem" className="botao">
-              Criar viagem
-            </Link>
+        {viagens === null && <Carregando texto="Arrumando a mala…" />}
+        {viagens === 'erro' && <ErroNaTela aoTentar={carregar} />}
+
+        {Array.isArray(viagens) && ativas.length === 0 && arquivadas.length === 0 && (
+          <div className="viagens-vazio">
+            <Agulha humor="dormindo" tamanho={140} />
+            <h2>A primeira viagem do grupo começa aqui</h2>
+            <p>Crie a viagem, convide a turma e montem o roteiro juntos.</p>
+            {!ehConvidado && (
+              <Link to="/nova-viagem" className="botao">
+                <Plus size={20} aria-hidden="true" /> Nova viagem
+              </Link>
+            )}
           </div>
         )}
 
-        {ordenadas && ordenadas.length > 0 && (
-          <ul className="lista-viagens">
-            {ordenadas.map((v) => cartao(v))}
-          </ul>
+        {destaque && (
+          <div className="viagem-destaque">
+            <Link to={`/viagem/${destaque.id}`} className="viagem-destaque-link">
+              <img src={capaDaViagem(destaque.id, 1400)} alt="" />
+              <span className="viagem-destaque-etiqueta">
+                <Clock size={16} aria-hidden="true" /> {etiquetaDaViagem(destaque)}
+              </span>
+              <span className="viagem-destaque-texto">
+                <span className="viagem-destaque-acima">
+                  {[destaque.destinos.length > 1 ? `${destaque.destinos.length} destinos` : destaque.destinos[0], formatarPeriodo(destaque.dataInicio, destaque.dataFim)]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
+                <strong>{destaque.nome}</strong>
+                <span className="viagem-destaque-rodape">
+                  <span className="viagem-destaque-comboio">
+                    <PilhaDeAvatares pessoas={destaque.membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} />
+                    {destaque.membros.length} {destaque.membros.length === 1 ? 'viajante' : 'viajantes'}
+                  </span>
+                  <span className="viagem-destaque-seta" aria-hidden="true">
+                    <ArrowRight size={20} />
+                  </span>
+                </span>
+              </span>
+            </Link>
+            {acoes(destaque, true)}
+          </div>
+        )}
+
+        {proximas.length > 0 && (
+          <section>
+            <h2 className="viagens-secao">Próximas</h2>
+            <ul className="viagens-lista">{proximas.map(linha)}</ul>
+          </section>
+        )}
+
+        {passadas.length > 0 && (
+          <section>
+            <h2 className="viagens-secao">Viagens passadas</h2>
+            <ul className="viagens-lista">{passadas.map(linha)}</ul>
+          </section>
         )}
 
         {arquivadas.length > 0 && (
           <details className="viagens-arquivadas">
             <summary>Arquivadas ({arquivadas.length})</summary>
-            <ul className="lista-viagens">{arquivadas.map((v) => cartao(v))}</ul>
+            <ul className="viagens-lista">{arquivadas.map(linha)}</ul>
           </details>
         )}
 
