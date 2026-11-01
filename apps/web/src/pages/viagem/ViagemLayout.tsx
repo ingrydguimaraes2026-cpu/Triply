@@ -16,11 +16,11 @@ import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis } from '@together/core'
+import { abasVisiveis, capaDaViagem } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
-import Logo from '../../components/ui/Logo'
+import Agulha from '../../components/ui/Agulha'
 import Gaveta from '../../components/ui/Gaveta'
 import Perdido from '../Perdido'
 import Overview from './Overview'
@@ -53,7 +53,7 @@ const ABAS_GUARDADAS = [
 
 type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<DadosDoGasto> } | null
 
-// Moldura de todas as telas de uma viagem: menu + a aba escolhida.
+// Moldura de todas as telas de uma viagem: menu + a aba escolhida (visual do app, spec 112).
 // Carrega os dados da viagem uma vez e passa pras abas (veja useViagemAtual).
 // Função vazia fixa (não muda a cada render), pra quando a viagem ainda não carregou
 const semNada = async () => {}
@@ -146,10 +146,15 @@ export default function ViagemLayout() {
 
       <aside className="viagem-menu">
         <Link to="/viagens" className="viagem-logo" aria-label="Together: ver todas as viagens">
-          <Logo />
+          <span className="viagem-logo-agulha">
+            <Agulha tamanho={30} sombra={false} />
+          </span>
+          Together
         </Link>
 
+        {/* Mini capa da viagem, a mesma foto do app */}
         <Link to="/viagens" className="viagem-atual" aria-label={`${viagem.nome}: ver todas as viagens`}>
+          <img src={capaDaViagem(viagem.id, 600)} alt="" />
           <span className="viagem-atual-rotulo">
             Viagem <ChevronRight size={12} aria-hidden="true" />
           </span>

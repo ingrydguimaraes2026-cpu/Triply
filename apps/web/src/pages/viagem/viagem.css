@@ -1,5 +1,5 @@
-/* Moldura da viagem: menu escuro + conteúdo creme.
-   Computador: menu na lateral esquerda. Celular: abas fixas embaixo. */
+/* Moldura da viagem no estilo do app (spec 112): tudo claro, sem faixa escura.
+   Computador: menu branco na lateral esquerda. Celular: barra de cima e abas fixas embaixo, como no app. */
 
 .viagem {
   min-height: 100vh;
@@ -12,14 +12,17 @@
   background: var(--cor-fundo);
 }
 
-/* ---------- Celular ---------- */
+/* ---------- Celular: abas embaixo (a barra do app) ---------- */
 .viagem-menu {
   position: fixed;
   z-index: 10;
   left: 0;
   right: 0;
   bottom: 0;
-  background: #2a1a0c;
+  border-top: 1px solid var(--cor-borda);
+  background: color-mix(in srgb, var(--cor-cartao) 96%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -46,14 +49,23 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  color: #c9b08a;
+  color: #8a7058; /* "apagado" do app */
   font-size: 9.5px; /* 9 abas em 360px: cada uma tem ~40px */
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .viagem-abas a.active {
-  color: var(--laranja);
+  color: var(--cor-comboio);
+  font-weight: 700;
+}
+
+.viagem-abas a.active svg {
+  stroke-width: 2.2;
+}
+
+html[data-tema='escuro'] .viagem-abas a:not(.active) {
+  color: var(--cor-texto-suave);
 }
 
 /* Spec 090: modo simples, 5 abas maiores */
@@ -84,11 +96,11 @@
   gap: 20px;
 }
 
-/* ---------- Computador ---------- */
+/* ---------- Computador: menu branco na lateral ---------- */
 @media (min-width: 1024px) {
   .viagem {
     display: grid;
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 264px minmax(0, 1fr);
   }
 
   .viagem-menu {
@@ -98,62 +110,115 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    gap: 28px;
-    padding: 28px 16px;
+    gap: 22px;
+    padding: 24px 14px;
+    overflow-y: auto;
+    border-top: 0;
+    border-right: 1px solid var(--cor-borda);
+    background: var(--cor-cartao);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .viagem-logo {
-    display: block;
-    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
     font-family: var(--fonte-titulo);
-    font-size: 26px;
-    font-weight: 700;
-    font-style: italic;
-    letter-spacing: -0.03em;
-    color: var(--creme);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--cor-texto);
     text-decoration: none;
   }
 
+  .viagem-logo-agulha {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--dourado-claro);
+  }
+
+  /* Viagem atual: mini capa com o nome em cima, como o cartão de destaque do app */
   .viagem-atual {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 16px;
+    justify-content: flex-end;
+    gap: 2px;
+    min-height: 132px;
+    padding: 14px;
+    overflow: hidden;
     border-radius: 18px;
-    background: rgb(255 207 113 / 0.08);
-    border: 1px solid rgb(255 207 113 / 0.14);
-    color: #c9b08a;
-    font-size: 13px;
+    background: var(--couro);
+    box-shadow: var(--sombra-cartao);
+    color: var(--creme);
+    font-size: 12px;
+  }
+
+  .viagem-atual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease-out;
+  }
+
+  .viagem-atual:hover img {
+    transform: scale(1.03);
+  }
+
+  .viagem-atual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgb(185 122 34 / 0) 20%, rgb(185 122 34 / 0.5) 55%, #4a2e14 100%);
+  }
+
+  .viagem-atual > span,
+  .viagem-atual > strong {
+    position: relative;
+    z-index: 1;
   }
 
   .viagem-atual-rotulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     font-size: 11px;
+    font-weight: 600;
   }
 
   .viagem-atual strong {
     font-family: var(--fonte-titulo);
-    font-size: 19px;
+    font-size: 20px;
     font-weight: 600;
-    line-height: 1.2;
-    color: var(--creme);
+    line-height: 1.15;
+    color: #ffffff;
   }
 
   .viagem-abas {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
 
   .viagem-abas a {
-    min-height: 46px;
+    min-height: 44px;
     flex-direction: row;
     justify-content: flex-start;
     gap: 12px;
-    padding: 0 14px;
+    padding: 0 12px;
     border-radius: 14px;
+    color: var(--cor-texto-suave);
     font-size: 15px;
+    font-weight: 500;
     transition: background 0.15s, color 0.15s;
   }
 
@@ -166,46 +231,54 @@
   }
 
   .viagem-abas a:hover {
-    background: rgb(255 255 255 / 0.05);
-    color: var(--creme);
+    background: var(--cor-fundo-suave);
+    color: var(--cor-texto);
   }
 
+  /* Aba ativa: fundo bege do ícone quadrado do app e texto couro */
   .viagem-abas a.active {
-    background: var(--laranja);
-    color: #2a1a0c;
+    background: var(--dourado-claro);
+    color: var(--cor-comboio);
     font-weight: 700;
+  }
+
+  html[data-tema='escuro'] .viagem-abas a.active {
+    background: var(--cor-comboio-fundo);
+  }
+
+  .viagem-abas .so-computador {
+    display: flex;
   }
 
   .viagem-menu-rodape {
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cor-borda);
   }
 
   .viagem-comboio-mini {
     display: flex;
-    padding: 0 12px 12px;
-  }
-
-  .viagem-comboio-mini .avatar + .avatar {
-    margin-left: -8px;
+    padding: 0 12px 10px 22px;
   }
 
   .viagem-comboio-mini .avatar {
-    border-color: #2a1a0c;
+    margin-left: -10px;
+    border-color: var(--cor-cartao);
   }
 
   .viagem-menu-acao {
-    min-height: 42px;
+    min-height: 40px;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 14px;
+    padding: 0 12px;
     border: 0;
-    border-radius: 14px;
+    border-radius: 12px;
     background: none;
-    color: #c9b08a;
+    color: var(--cor-texto-suave);
     font: inherit;
     font-size: 14px;
     text-decoration: none;
@@ -213,8 +286,8 @@
   }
 
   .viagem-menu-acao:hover {
-    background: rgb(255 255 255 / 0.05);
-    color: var(--creme);
+    background: var(--cor-fundo-suave);
+    color: var(--cor-texto);
   }
 
   .viagem-conteudo {
@@ -224,16 +297,19 @@
   }
 }
 
-/* ---------- Celular: barra de cima (spec 008) ---------- */
+/* ---------- Celular: barra de cima clara (spec 008) ---------- */
 .viagem-topo-celular {
   position: sticky;
   z-index: 9;
   top: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
-  background: #2a1a0c;
+  gap: 6px;
+  padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px;
+  border-bottom: 1px solid var(--cor-borda);
+  background: color-mix(in srgb, var(--cor-fundo) 94%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .viagem-topo-nome {
@@ -242,7 +318,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--creme);
+  color: var(--cor-texto);
   text-decoration: none;
 }
 
@@ -251,14 +327,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--fonte-titulo);
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
 }
 
 .viagem-topo-nome svg,
 .viagem-topo-icone {
   flex: none;
-  color: #c9b08a;
+  color: var(--cor-texto-suave);
 }
 
 .viagem-topo-icone {
@@ -266,10 +342,15 @@
   height: 40px;
   display: grid;
   place-items: center;
+  border-radius: 50%;
+}
+
+.viagem-topo-icone:hover {
+  background: var(--cor-comboio-fundo);
 }
 
 .viagem-topo-celular .avatar {
-  border-color: #2a1a0c;
+  border-color: var(--cor-fundo);
 }
 
 .viagem-abas .so-computador {
@@ -280,7 +361,7 @@
   text-decoration: none;
 }
 
-/* ---------- Lançamento rápido (spec 009) ---------- */
+/* ---------- Lançamento rápido (spec 009): botão principal do app ---------- */
 .botao-flutuante {
   position: fixed;
   z-index: 11;
@@ -292,9 +373,9 @@
   place-items: center;
   border: 0;
   border-radius: 20px;
-  background: var(--laranja);
-  color: #2a1a0c;
-  box-shadow: 0 6px 20px rgb(42 26 12 / 0.35);
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: var(--sombra-botao);
   cursor: pointer;
 }
 
@@ -312,30 +393,16 @@
   max-width: 440px;
   padding: 12px 16px;
   border-radius: 14px;
-  background: #2a1a0c;
+  background: var(--escuro);
   color: var(--creme);
   font-size: 14px;
-  box-shadow: 0 8px 24px rgb(42 26 12 / 0.3);
+  box-shadow: var(--sombra-flutuante);
 }
 
 @media (min-width: 1024px) {
   .viagem-topo-celular,
   .botao-flutuante {
     display: none;
-  }
-
-  .viagem-abas .so-computador {
-    display: flex;
-  }
-
-  .viagem-atual-rotulo {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .viagem-atual:hover {
-    background: rgb(255 207 113 / 0.14);
   }
 
   .recado {

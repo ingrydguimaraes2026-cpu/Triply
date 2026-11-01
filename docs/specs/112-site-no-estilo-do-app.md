@@ -17,7 +17,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 1 | Peças base: cartão, botões, botão redondo, ícone quadrado, título da tela, rótulo de seção, campo, carregando, avatares | `src/ui/pecas.tsx` | `components/ui/` | ✅ feito |
 | 2 | Login, criar conta, esqueci a senha | `app/login.tsx`, `criar-conta.tsx` | `pages/Login.tsx` | ✅ feito |
 | 3 | Minhas viagens (lista com capa) | `app/(tabs)/index.tsx` | `pages/MinhasViagens.tsx`, `Inicio.tsx` | ✅ feito |
-| 4 | Moldura da viagem: capa com foto, menu e abas | `app/viagem/[id].tsx`, `(tabs)/_layout.tsx` | `pages/viagem/ViagemLayout.tsx` | a fazer |
+| 4 | Moldura da viagem: capa com foto, menu e abas | `app/viagem/[id].tsx`, `(tabs)/_layout.tsx` | `pages/viagem/ViagemLayout.tsx` | ✅ feito |
 | 5 | Overview | `app/viagem/[id].tsx` | `pages/viagem/Overview.tsx` | a fazer |
 | 6 | Financeiro (contas) | `app/(tabs)/contas.tsx`, `novo-gasto.tsx` | `pages/viagem/Financeiro.tsx` | a fazer |
 | 7 | Roteiro e agenda | `app/(tabs)/roteiro.tsx` | `pages/viagem/Agenda.tsx` | a fazer |
