@@ -20,7 +20,7 @@ Uma tela por vez, nesta ordem. Só começa a próxima quando a anterior está pr
 | 4 | Moldura da viagem: capa com foto, menu e abas | `app/viagem/[id].tsx`, `(tabs)/_layout.tsx` | `pages/viagem/ViagemLayout.tsx` | ✅ feito |
 | 5 | Overview | `app/viagem/[id].tsx` | `pages/viagem/Overview.tsx` | ✅ feito |
 | 6 | Financeiro (contas) | `app/(tabs)/contas.tsx`, `novo-gasto.tsx` | `pages/viagem/Financeiro.tsx` | ✅ feito |
-| 7 | Roteiro e agenda | `app/(tabs)/roteiro.tsx` | `pages/viagem/Agenda.tsx` | a fazer |
+| 7 | Roteiro e agenda | `app/(tabs)/roteiro.tsx` | `pages/viagem/Agenda.tsx` | ✅ feito |
 | 8 | Fotos | `app/(tabs)/fotos.tsx`, `novo-post.tsx` | `pages/viagem/Fotos.tsx` | a fazer |
 | 9 | Perfil | `app/(tabs)/perfil.tsx` | `pages/Perfil.tsx` | a fazer |
 | 10 | Hoje | `app/hoje.tsx` | `pages/viagem/Hoje.tsx` | a fazer |

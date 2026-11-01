@@ -91,7 +91,7 @@ export default function Agenda() {
   if (dias.length === 0) {
     return (
       <div className="agenda">
-        <CabecalhoPagina titulo="Agenda" subtitulo="O que acontece em cada dia, com horário." />
+        <CabecalhoPagina acima={viagem.nome} titulo="Agenda" subtitulo="O que acontece em cada dia, com horário." />
         <EstadoVazio
           icone={CalendarDays}
           titulo="Sem datas no roteiro"
@@ -104,6 +104,7 @@ export default function Agenda() {
   return (
     <div className="agenda">
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Agenda"
         subtitulo="Trajetos e chegadas entram sozinhos. Acrescente o resto: jantar, passeio, reserva."
         acao={
