@@ -9,7 +9,7 @@ import { dinheiroNaMao, relatorio } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useCarteira } from '../../features/carteira/hooks'
 import { useFinanceiro, nomeDaPessoa } from '../../features/financeiro/hooks'
-import { calcularAcertos, totalPorMoeda } from '@together/core'
+import { calcularAcertos, totalPorMoeda, type Acerto } from '@together/core'
 import { CATEGORIAS, categoria } from '../../features/financeiro/categorias'
 import { formatarDinheiro } from '@together/core'
 import type { Gasto } from '../../features/financeiro/api'
@@ -30,6 +30,8 @@ import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import EstadoVazio from '../../components/ui/EstadoVazio'
+import Carregando from '../../components/ui/Carregando'
+import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
 import './financeiro.css'
@@ -195,20 +197,22 @@ export default function Financeiro() {
 
   return (
     <>
-      <CabecalhoPagina titulo="Financeiro" subtitulo={`Orçamento, quem pagou o quê e câmbio · em ${moeda}`} acao={botaoLancar} />
+      <CabecalhoPagina acima={viagem.nome} titulo="Financeiro" subtitulo={`Orçamento, quem pagou o quê e câmbio · em ${moeda}`} acao={botaoLancar} />
 
-      {estado.status === 'carregando' && <p className="carregando-texto">Carregando o financeiro…</p>}
-      {estado.status === 'erro' && (
-        <div className="aviso-erro">
-          <p>Não deu pra carregar o financeiro.</p>
-          <button type="button" className="botao secundario pequeno" onClick={recarregar}>
-            Tentar de novo
-          </button>
-        </div>
-      )}
+      {estado.status === 'carregando' && <Carregando texto="Somando as contas…" />}
+      {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar o financeiro" aoTentar={recarregar} />}
 
       {dados && contas && (
         <>
+          {/* Meu saldo em destaque, como o cartão do topo das Contas do app */}
+          <MeuSaldo
+            acertos={contas.acertos}
+            meuId={meuId}
+            moeda={moeda}
+            nome={nome}
+            total={contas.gastoComboio}
+            pessoas={membros.length}
+          />
           {/* Os 3 números do topo */}
           <div className="numeros">
             <Cartao
@@ -372,7 +376,7 @@ export default function Financeiro() {
 
           <div className="financeiro-grade">
             {/* Acertos: quem deve pra quem */}
-            <Cartao titulo="Acertos" icone={HandCoins}>
+            <Cartao titulo="Acertos" icone={HandCoins} className="cartao-acertos">
               {contas.acertos.length === 0 ? (
                 <p className="form-dica">Tudo certo: ninguém deve nada pra ninguém.</p>
               ) : (
@@ -604,4 +608,60 @@ function Carteiras(compras: CompraDeMoeda[]) {
     mapa.set(chave, atual)
   }
   return [...mapa.values()].map((c) => ({ ...c, media: c.pago / c.total }))
+}
+
+// Cartão do topo das Contas do app: quanto eu recebo ou devo na moeda da viagem.
+// Acertos em outra moeda (gasto que não foi convertido) aparecem na linha de baixo.
+function MeuSaldo({ acertos, meuId, moeda, nome, total, pessoas }: {
+  acertos: Acerto[]
+  meuId: string
+  moeda: string
+  nome: (id: string) => string
+  total: number
+  pessoas: number
+}) {
+  const meus = acertos.filter((a) => a.de === meuId || a.para === meuId)
+  const naMoeda = meus.filter((a) => a.moeda === moeda)
+  const saldo = naMoeda.reduce((s, a) => s + (a.para === meuId ? a.valor : -a.valor), 0)
+  const outras = meus.filter((a) => a.moeda !== moeda)
+  const recebo = naMoeda.filter((a) => a.para === meuId)
+  const devo = naMoeda.filter((a) => a.de === meuId)
+
+  const situacao = saldo > 0 ? 'recebe' : saldo < 0 ? 'deve' : 'certo'
+  const rotulo = saldo > 0 ? 'Você recebe' : saldo < 0 ? 'Você deve' : 'Tudo certo por aqui'
+  const detalhe =
+    saldo > 0
+      ? 'de ' + recebo.map((a) => `${nome(a.de)} (${formatarDinheiro(a.valor, moeda)})`).join(' e ')
+      : saldo < 0
+        ? 'para ' + devo.map((a) => `${nome(a.para)} (${formatarDinheiro(a.valor, moeda)})`).join(' e ')
+        : 'Ninguém deve nada a ninguém.'
+
+  const verAcertos = () => document.querySelector('.cartao-acertos')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+  return (
+    <section className={`meu-saldo ${situacao}`} aria-label="Meu saldo">
+      <p className="meu-saldo-rotulo">{rotulo}</p>
+      <p className="meu-saldo-valor">{formatarDinheiro(Math.abs(saldo), moeda)}</p>
+      <p className="meu-saldo-detalhe">{detalhe}</p>
+      {outras.length > 0 && (
+        <p className="meu-saldo-detalhe">
+          Em outra moeda:{' '}
+          {outras
+            .map((a) => (a.para === meuId ? `${nome(a.de)} te paga ${formatarDinheiro(a.valor, a.moeda)}` : `você paga ${formatarDinheiro(a.valor, a.moeda)} pra ${nome(a.para)}`))
+            .join(' · ')}
+        </p>
+      )}
+      {acertos.length > 0 && (
+        <button type="button" className="botao claro compacto meu-saldo-acertar" onClick={verAcertos}>
+          <HandCoins size={18} aria-hidden="true" /> Acertar contas
+        </button>
+      )}
+      <p className="meu-saldo-rodape">
+        <span>
+          Total do grupo <strong>{formatarDinheiro(total, moeda)}</strong>
+        </span>
+        {pessoas > 0 && <span>{formatarDinheiro(Math.round(total / pessoas), moeda)} por pessoa</span>}
+      </p>
+    </section>
+  )
 }

@@ -472,3 +472,123 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ---------- Spec 112: no estilo das Contas do app ---------- */
+/* Meu saldo: verde se recebo, vermelho se devo, areia se está tudo certo */
+.meu-saldo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--cor-comboio-fundo);
+}
+
+.meu-saldo.recebe {
+  background: var(--cor-sucesso-fundo);
+}
+
+.meu-saldo.deve {
+  background: var(--cor-erro-fundo);
+}
+
+.meu-saldo p {
+  margin: 0;
+}
+
+.meu-saldo-rotulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.meu-saldo-valor {
+  font-family: var(--fonte-titulo);
+  font-size: 46px;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--cor-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.meu-saldo.recebe .meu-saldo-rotulo,
+.meu-saldo.recebe .meu-saldo-valor {
+  color: var(--cor-sucesso);
+}
+
+.meu-saldo.deve .meu-saldo-rotulo,
+.meu-saldo.deve .meu-saldo-valor {
+  color: var(--cor-erro);
+}
+
+.meu-saldo-detalhe {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.meu-saldo-acertar {
+  align-self: stretch;
+  margin-top: 12px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+}
+
+.meu-saldo-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px !important;
+  padding-top: 12px;
+  border-top: 1px solid rgb(74 46 20 / 0.1);
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.meu-saldo-rodape strong {
+  color: var(--cor-texto);
+}
+
+@media (min-width: 1000px) {
+  .meu-saldo-acertar {
+    align-self: flex-start;
+  }
+}
+
+/* Gastos por dia: rótulo em caixa alta e cartão branco com sombra, como no app */
+.gastos-dia h3 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gastos-dia h3 span {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.gastos-dia ul {
+  border-color: transparent;
+  box-shadow: var(--sombra-cartao);
+}
+
+html[data-tema='escuro'] .gastos-dia ul {
+  border-color: var(--cor-borda);
+}
+
+.gastos-dia li + li {
+  border-top-color: var(--cor-borda);
+}
+
+.gasto .categoria-icone {
+  width: 40px;
+  height: 40px;
+  background: var(--dourado-claro);
+  color: var(--couro);
+}
+
+html[data-tema='escuro'] .gasto .categoria-icone {
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+}
