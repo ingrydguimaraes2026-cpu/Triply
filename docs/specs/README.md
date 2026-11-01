@@ -114,7 +114,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 099 | [Baixar fotos em .zip](099-baixar-fotos-em-zip.md) | 8 | Pronto pra testar (web) · sem banco |
 | 110 | [Avisos no app do celular](110-avisos-no-app.md) (push do Expo pros lembretes) | 2 | Pronto pra testar (código) · banco aplicado · falta EAS |
 | 111 | [Exigências de entrada automáticas](111-exigencias-automaticas.md) (Wikipédia + Passport Index, por passaporte) | 2 | Pronto pra testar (web e app) · banco aplicado (20261031003430) · função publicada e agendada (seg 6h UTC) |
-| 112 | [Site no estilo do app](112-site-no-estilo-do-app.md) (redesign Malinha no web, tela por tela) | 7 | Em andamento · etapas 0 a 12 feitas |
+| 112 | [Site no estilo do app](112-site-no-estilo-do-app.md) (redesign Malinha no web, tela por tela) | 7 | Em andamento · etapas 0 a 13 feitas |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |

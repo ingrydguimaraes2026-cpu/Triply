@@ -26,6 +26,8 @@ import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import Carregando from '../../components/ui/Carregando'
+import ErroNaTela from '../../components/ui/ErroNaTela'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -361,6 +363,7 @@ export default function Transportes() {
   return (
     <>
       <CabecalhoPagina
+        acima={viagem.nome}
         titulo="Transportes"
         subtitulo="A rota cidade a cidade e os passeios de ida e volta, com o caminho no mapa."
         acao={
@@ -373,14 +376,9 @@ export default function Transportes() {
         }
       />
 
-      {estado.status === 'carregando' && <p className="carregando-texto">Carregando os trajetos…</p>}
+      {estado.status === 'carregando' && <Carregando texto="Carregando os trajetos…" compacto />}
       {estado.status === 'erro' && (
-        <div className="aviso-erro">
-          <p>Não deu pra carregar os trajetos.</p>
-          <button type="button" className="botao secundario pequeno" onClick={recarregar}>
-            Tentar de novo
-          </button>
-        </div>
+        <ErroNaTela titulo="Não deu pra carregar os trajetos" aoTentar={recarregar} />
       )}
 
       {avisos.length > 0 && (
