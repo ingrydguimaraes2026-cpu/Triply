@@ -69,7 +69,7 @@ export default function Perfil() {
             const sairDeVez = async () => {
               await esquecerEsteAparelho().catch((e) => console.error('Erro ao esquecer o aparelho:', e))
               await supabase.auth.signOut()
-              router.replace('/boas-vindas')
+              router.replace('/comecar')
             }
             if (!ehConvidado) return sairDeVez()
             // Convidado sem conta que sai não consegue voltar: avisa antes

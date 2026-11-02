@@ -1,12 +1,30 @@
-# 116. Onboarding e primeira viagem guiada (app)
+# 116. Onboarding: conversa com a Agulha e primeira viagem (app)
 
-**Fase:** 2 · **Tamanho:** M · **Depende de:** 114 (Explorar), 115 v2 (jeito rápido) · **Status:** Pronto pra testar no iPhone (02/11/2026)
+**Fase:** 2 · **Tamanho:** M · **Depende de:** 114 (Explorar), 115 v2 (jeito rápido) · **Status:** v2 pronta pra testar no iPhone (02/11/2026)
 
 ## Objetivo
 Quem acabou de criar a conta não cai numa home vazia: o app leva direto pra montar a primeira viagem e o roteiro. O dashboard só aparece depois, já com roteiro.
 
 ## Por que
 Teste do Victor no iPhone (02/11/2026): depois de criar a conta a pessoa fica perdida, o onboarding é feio, a home vazia não diz o que fazer e o Explorar (a melhor parte) fica escondido dentro da viagem. A spec 115 v2 já descreve o "jeito rápido" (pra onde → quantos dias → deslize → roteiro), mas só existe no site.
+
+## v2 (02/11/2026): conversa com a Agulha, conta só no fim
+O Victor não gostou da v1 (boas-vindas com 3 fotos + formulário). Pesquisa no X de onboardings que convertem:
+**WeWard** (mascote fala num balão em toda tela, pergunta, monta um plano), **Headspace** (deixa provar o produto antes de pedir algo), **Cal AI / Been** (uma pergunta por tela, barra fina de progresso, "preparando…").
+
+**Como ficou (`/comecar`, primeira tela de quem não está logado):**
+1. **Oi:** Agulha grande, "Oi, eu sou a Agulha", "Bora" / "Já tenho conta".
+2. **Pra onde vocês vão?** Balão da Agulha + busca + 6 sugestões. Tocar já avança.
+3. **Quantos dias?** Contador grande ("Não sabe as datas? Dá pra pôr depois").
+4. **Com quem você vai?** (amigos, casal, família, sozinho) + **o que vocês curtem?** (natureza, museus, lugares pra foto). Viram os estilos do Explorar (casal → romântica, família → com crianças).
+5. **Gostinho:** desliza 6 lugares de verdade, ANTES da conta. Pra ler o catálogo, o app entra como convidado (login anônimo) sem a pessoa ver. Se o login anônimo estiver desligado ou a cidade não tiver lugares, pula direto pra conta.
+6. **Prévia:** "Pronto! Olha o começo do roteiro" (Dia 1, Dia 2… com o que curtiu). "Salvar meu roteiro".
+7. **Conta:** "Crie sua conta pra guardar o roteiro e chamar a galera" → login (criar/entrar). As respostas ficam guardadas no aparelho (`src/lib/rascunho.ts`), inclusive se precisar confirmar o e-mail.
+8. **Depois do login:** `/comecar` cria a viagem (destino, dias, moeda pelo país), grava as escolhas do gostinho e abre o **roteiro já montado** (`/explorar?roteiro=1&guiado=1`). Sem gostinho: abre o deslize com os estilos escolhidos. Depois: "Continuar" → "Chamar a galera" → dashboard com "Montem a viagem".
+
+Saiu da v1: as 3 telas de boas-vindas (a rota `/boas-vindas` só redireciona) e a `/primeira-viagem`. Conta logada sem viagem também vai pro `/comecar` (sem o passo da conta).
+
+## v1 (substituída)
 
 ## Decisão do Victor (02/11/2026)
 Aprovou a jornada e pediu pra estruturar o onboarding **inteiro** pelo que a plataforma faz: boas-vindas contando como funciona, criação guiada e, no dashboard, um checklist que apresenta o resto (datas, hospedagem, transporte, contas).

@@ -2,9 +2,9 @@ import { useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type TextInputInstance } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react-native'
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from 'lucide-react-native'
 import Svg, { Path } from 'react-native-svg'
 import { supabase } from '../src/lib/supabase'
 import { entrarComGoogle } from '../src/lib/google'
@@ -19,6 +19,7 @@ type Modo = 'entrar' | 'criar'
 export default function Login() {
   const params = useLocalSearchParams<{ modo?: Modo }>()
   const insets = useSafeAreaInsets()
+  const router = useRouter()
   const [modo, setModo] = useState<Modo>(params.modo === 'criar' ? 'criar' : 'entrar')
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
@@ -87,6 +88,10 @@ export default function Login() {
         showsVerticalScrollIndicator={false}
       >
       <LinearGradient colors={['#B97A22', '#8A5A26', '#4A2E14']} locations={[0, 0.55, 1]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={{ height: 330, paddingTop: insets.top + 64, paddingHorizontal: 28 }}>
+        {/* Volta pra conversa com a Agulha (spec 116); as respostas ficam guardadas */}
+        <Pressable accessibilityLabel="Voltar" onPress={() => router.replace('/comecar')} hitSlop={10} className="absolute left-5 h-10 w-10 items-center justify-center rounded-full bg-black/20" style={{ top: insets.top + 12 }}>
+          <ArrowLeft size={20} color="#fff" />
+        </Pressable>
         <View className="mb-[18px] flex-row items-center gap-2.5">
           <View className="h-[52px] w-[52px] items-center justify-center rounded-2xl bg-fundo">
             <Agulha tamanho={44} sombra={false} />

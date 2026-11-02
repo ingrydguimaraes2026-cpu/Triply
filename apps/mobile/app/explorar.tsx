@@ -59,7 +59,14 @@ const CARTOES_POR_VEZ = 12
 export default function Explorar() {
   const { atual: viagem } = useViagemAtual()
   // `viagem`: a viagem acabou de ser criada/aceita (espera ela chegar). `guiado`: primeira viagem (spec 116)
-  const { destino: destinoPedido, viagem: viagemPedida, guiado } = useLocalSearchParams<{ destino?: string; viagem?: string; guiado?: string }>()
+  // `roteiro=1`: já tem escolhas (gostinho do /comecar), monta o roteiro direto. `estilos`: o que a pessoa curte
+  const { destino: destinoPedido, viagem: viagemPedida, guiado, roteiro, estilos } = useLocalSearchParams<{
+    destino?: string
+    viagem?: string
+    guiado?: string
+    roteiro?: string
+    estilos?: string
+  }>()
   const carga = useCarregar(viagem ? () => buscarDestinos(supabase, viagem.id) : null, [viagem?.id])
   const [escolhido, setEscolhido] = useState<string | null>(destinoPedido ?? null)
 
@@ -78,19 +85,33 @@ export default function Explorar() {
     )
   }
   // `key`: trocar de destino recomeça tudo
-  return <ExplorarDestino key={destino.id} destino={destino} destinos={destinos} aoTrocar={setEscolhido} guiado={guiado === '1'} />
+  return <ExplorarDestino key={destino.id} destino={destino} destinos={destinos} aoTrocar={setEscolhido} guiado={guiado === '1'} direto={roteiro === '1'} estilosIniciais={estilos ? (estilos.split(',') as EstiloId[]) : undefined} />
 }
 
 type Etapa = 'carregando' | 'deck' | 'ajustar' | 'montando' | 'roteiro' | 'erro'
 
-function ExplorarDestino({ destino, destinos, aoTrocar, guiado }: { destino: Destino; destinos: Destino[]; aoTrocar: (id: string) => void; guiado: boolean }) {
+function ExplorarDestino({
+  destino,
+  destinos,
+  aoTrocar,
+  guiado,
+  direto,
+  estilosIniciais,
+}: {
+  destino: Destino
+  destinos: Destino[]
+  aoTrocar: (id: string) => void
+  guiado: boolean
+  direto?: boolean
+  estilosIniciais?: EstiloId[]
+}) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { height } = useWindowDimensions()
   const { atual: viagem, meuId } = useViagemAtual()
 
   const [etapa, setEtapa] = useState<Etapa>('carregando')
-  const [estilos, setEstilos] = useState<EstiloId[]>(['cultura'])
+  const [estilos, setEstilos] = useState<EstiloId[]>(estilosIniciais?.length ? estilosIniciais : ['cultura'])
   const [ritmo, setRitmo] = useState<RitmoId>('equilibrado')
   const [orcamento, setOrcamento] = useState<OrcamentoId>('medio')
   const [preparando, setPreparando] = useState(false)
@@ -122,7 +143,7 @@ function ExplorarDestino({ destino, destinos, aoTrocar, guiado }: { destino: Des
   // Guiado (spec 116): sempre começa pelo deslize; quem já escolheu tudo cai no roteiro sozinho.
   useEffect(() => {
     if (guiado) {
-      void comecar()
+      void (direto ? abrirRoteiro(true) : comecar())
       return
     }
     let vivo = true

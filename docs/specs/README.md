@@ -118,7 +118,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 113 | [Site no design "Together Plataforma"](113-site-no-design-plataforma.md) (16 etapas, tela por tela) | 7 | Pronto pra testar (web) · 16 de 16 etapas |
 | 114 | [Explorar: deslizar lugares e montar o roteiro](114-explorar-deslizar-e-montar-roteiro.md) (catálogo grátis por cidade, web + app) | 2 | Em andamento · banco, core, função e site prontos (testes verdes) · falta: aplicar no Supabase, app mobile e "Começar explorando" na Nova viagem |
 | 115 | [Jornada nova: montar a viagem com o grupo](115-jornada-montar-a-viagem-com-o-grupo.md) (v2: deslize dentro da criação, roteiro editável do grupo, estilo Roameo) | 2 | Pronto pra testar |
-| 116 | [Onboarding e primeira viagem guiada no app](116-primeira-viagem-guiada-no-app.md) (boas-vindas novas; conta nova vai direto pra montar viagem e roteiro; checklist "Montem a viagem" no dashboard) | 2 | Pronto pra testar (iPhone) |
+| 116 | [Onboarding e primeira viagem guiada no app](116-primeira-viagem-guiada-no-app.md) (v2: conversa com a Agulha, gostinho do deslize antes da conta, roteiro pronto ao criar a conta; checklist "Montem a viagem") | 2 | v2 pronta pra testar (iPhone) |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |

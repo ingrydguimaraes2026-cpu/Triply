@@ -38,7 +38,7 @@ export default function MinhasViagens() {
   }
 
   // Spec 116: conta sem nenhuma viagem vai direto montar a primeira (em vez da home vazia)
-  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/primeira-viagem" />
+  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/comecar" />
   if (!destaque) return <Vazio ola={ola} aoCriar={() => router.push('/nova-viagem')} aoEntrar={recarregar} />
 
   return (
