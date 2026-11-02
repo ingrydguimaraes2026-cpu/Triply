@@ -14,7 +14,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | # | Etapa | Tela no design | Onde no site | Status |
 |---|---|---|---|---|
 | 1 | Moldura da viagem: menu claro que recolhe, "Depois da viagem" (Retrospectiva, Imprimir e PDF, Configurações), rodapé com Novidades e perfil | menu lateral | `pages/viagem/ViagemLayout.tsx` | ✅ Buscar e Emergência ficam no rodapé; Nova viagem e Sair seguem em Minhas viagens |
-| 2 | Login | 01 | `pages/Login.tsx` | ⏳ |
+| 2 | Login | 01 | `pages/Login.tsx` | ✅ Frase da foto muda junto com a foto (3 frases do design) |
 | 3 | Convite, convite inválido, 404 (cartão creme sobre o mapa escuro, Agulha em cima) | 02, 02b, 19 | `Convite.tsx`, `Perdido.tsx` | ⏳ |
 | 4 | Nova viagem (cartão sobre o mapa) | 05 | `NovaViagem.tsx` | ⏳ |
 | 5 | Minhas viagens (capa grande + "Próximas" com barra de pronto) | 03 | `MinhasViagens.tsx` | ⏳ |

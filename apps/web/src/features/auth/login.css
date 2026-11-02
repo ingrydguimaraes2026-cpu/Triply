@@ -383,6 +383,10 @@ html[data-tema='escuro'] .login-campo > svg.login-campo-icone-forte {
   .carrossel-foto {
     transition: none;
   }
+
+  .login-foto-texto {
+    animation: none;
+  }
 }
 
 /* Escurece a parte de baixo com o marrom do app pra o texto claro aparecer bem */
@@ -399,30 +403,41 @@ html[data-tema='escuro'] .login-campo > svg.login-campo-icone-forte {
   position: absolute;
   z-index: 2;
   pointer-events: none;
-  left: 48px;
-  right: 48px;
-  bottom: 48px;
+  left: clamp(24px, 4vw, 48px);
+  right: clamp(24px, 4vw, 48px);
+  bottom: clamp(28px, 4vw, 48px);
   color: var(--creme);
+  animation: login-frase 0.5s ease-out;
+}
+
+/* A frase muda junto com a foto (spec 113) */
+@keyframes login-frase {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 
 .login-foto-texto h2 {
   margin: 0;
-  font-size: 68px;
+  font-size: clamp(40px, 4.6vw, 68px);
+  letter-spacing: -0.03em;
   line-height: 1;
   color: #fbf3e6;
 }
 
 .login-foto-texto p {
   margin: 12px 0 0;
-  max-width: 420px;
+  max-width: 440px;
   line-height: 1.5;
-  font-size: 18px;
+  font-size: 17px;
+  color: #f6ead7;
 }
 
 /* ---------- Computador ---------- */
 @media (min-width: 960px) {
   .login {
-    grid-template-columns: minmax(440px, 1fr) 1.15fr;
+    grid-template-columns: minmax(440px, 1fr) 1fr;
     grid-template-rows: 1fr;
   }
 

@@ -24,7 +24,7 @@ const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
   },
   criar: {
     titulo: 'Crie sua conta',
-    sub: 'Leva menos de um minuto. Depois é só chamar o comboio.',
+    sub: 'Leva um minuto. Depois é só chamar o comboio.',
     botao: 'Criar conta',
   },
   recuperar: {
@@ -33,6 +33,13 @@ const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
     botao: 'Enviar link',
   },
 }
+
+// Frases da foto do computador: mudam junto com a foto (design Plataforma, spec 113)
+const FRASES = [
+  { titulo: 'Planejem juntos', texto: 'Roteiro, transportes e reservas do grupo inteiro, organizados num lugar só.' },
+  { titulo: 'Dividam as contas', texto: 'Cada gasto lançado na hora. O Together calcula quem deve quanto, sem planilha.' },
+  { titulo: 'Guardem as memórias', texto: 'As fotos de todo mundo, juntas e separadas por dia, prontas pra rever.' },
+]
 
 // Marca do Together como no app: a Agulha num quadradinho claro + o nome na serifada
 function Marca({ className }: { className: string }) {
@@ -59,6 +66,7 @@ export default function Login() {
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [aviso, setAviso] = useState<string | null>(null)
+  const [foto, setFoto] = useState(0)
 
   if (carregando) return null
   if (sessao) {
@@ -250,10 +258,10 @@ export default function Login() {
       </main>
 
       <aside className="login-foto">
-        <CarrosselFotos />
-        <div className="login-foto-texto">
-          <h2>Viajem juntos.</h2>
-          <p>Roteiro, transportes, contas e fotos do comboio, num lugar só.</p>
+        <CarrosselFotos aoMudar={setFoto} />
+        <div className="login-foto-texto" key={foto} aria-live="polite">
+          <h2>{FRASES[foto % FRASES.length].titulo}</h2>
+          <p>{FRASES[foto % FRASES.length].texto}</p>
         </div>
       </aside>
     </div>

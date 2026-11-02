@@ -18,7 +18,8 @@ const SLIDES = [...FOTOS, FOTOS[0]]
 
 const semAnimacao = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export default function CarrosselFotos() {
+// aoMudar: avisa qual foto está na tela (o Login troca a frase junto, spec 113)
+export default function CarrosselFotos({ aoMudar }: { aoMudar?: (indice: number) => void }) {
   const [atual, setAtual] = useState(0)
   const [comTransicao, setComTransicao] = useState(true)
   const [pausado, setPausado] = useState(false)
@@ -44,6 +45,9 @@ export default function CarrosselFotos() {
   }
 
   const ativa = atual % FOTOS.length
+  useEffect(() => {
+    aoMudar?.(ativa)
+  }, [ativa, aoMudar])
 
   return (
     <div
