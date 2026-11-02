@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { capaDaViagem, encontrarFuros, formatarDinheiro, prontidao, resumoDosTrajetos } from '@together/core'
+import { capaDaViagem, encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -23,6 +23,7 @@ import { useFotos } from '../../features/fotos/hooks'
 import { useDocumentos } from '../../features/documentos/hooks'
 import ChecklistDocumentos from '../../features/documentos/ChecklistDocumentos'
 import { useHospedagem } from '../../features/hospedagem/hooks'
+import { useLugares } from '../../features/lugares/hooks'
 import FaixaAvisos from '../../features/avisos/FaixaAvisos'
 import Checklist from '../../features/tarefas/Checklist'
 import Enquetes from '../../features/enquetes/Enquetes'
@@ -132,6 +133,28 @@ export default function Overview() {
     recarregarHospedagem()
   }, [ativa, recarregarTrajetos, recarregarFotos, recarregarHospedagem])
   const proximaSemHospedagem = hospedagem.itens.find((i) => i.situacao === 'precisa' || i.situacao === 'sem-datas')
+
+  // Spec 115: o cartão "Próximo passo" (uma ação só). Espera os lugares e os trajetos carregarem pra não piscar.
+  const lugaresDaViagem = useLugares(viagem.id, destinos, meuId)
+  const passo = useMemo(() => {
+    if (lugaresDaViagem.estado !== 'pronto' || trajetos.estado.status !== 'pronto') return null
+    const lugaresPorDestino: Record<string, number> = {}
+    for (const l of lugaresDaViagem.lugares) if (l.destinoId) lugaresPorDestino[l.destinoId] = (lugaresPorDestino[l.destinoId] ?? 0) + 1
+    const lista = trajetos.estado.trajetos
+    const semTrajeto = destinos.slice(1).findIndex((d, i) => !lista.some((t) => t.origem_id === destinos[i].id && t.destino_id === d.id))
+    const semHospedagem = hospedagem.itens.find((i) => i.situacao === 'precisa')
+    return proximoPasso({
+      hoje: hojeTexto(),
+      dataInicio: viagem.data_inicio,
+      dataFim: viagem.data_fim,
+      destinos,
+      lugaresPorDestino,
+      pessoas: membros.length,
+      euSouAdm,
+      semHospedagem: semHospedagem ? { nome: semHospedagem.destino.nome } : null,
+      trechoSemTransporte: semTrajeto >= 0 ? { de: destinos[semTrajeto].nome, para: destinos[semTrajeto + 1].nome } : null,
+    })
+  }, [lugaresDaViagem.estado, lugaresDaViagem.lugares, trajetos.estado, destinos, hospedagem.itens, viagem.data_inicio, viagem.data_fim, membros.length, euSouAdm])
 
   // Tem mudança no rascunho que ainda não foi salva?
   const assinatura = (lista: ItemRoteiro[]) => lista.map((i) => `${i.chave}|${i.chegada ?? ''}|${i.saida ?? ''}`).join()
@@ -314,6 +337,16 @@ export default function Overview() {
         </div>
       </section>
 
+      {passo && (
+        <section className="proximo-passo" aria-label="Próximo passo">
+          <span className="proximo-passo-rotulo">Próximo passo</span>
+          <strong>{passo.titulo}</strong>
+          <Link to={passo.link} className="proximo-passo-botao">
+            {passo.botao} <ChevronRight size={16} aria-hidden="true" />
+          </Link>
+        </section>
+      )}
+
       <nav className="overview-atalhos" aria-label="Partes da viagem">
         {atalhos.map(({ para, Icone, titulo, sub }) => (
           <Link key={para} to={para} className="overview-atalho">
@@ -328,12 +361,6 @@ export default function Overview() {
 
       {/* Spec 019: recados do ADM fixados no topo */}
       <FaixaAvisos viagemId={viagem.id} euSouAdm={euSouAdm} />
-      {/* Spec 105: viagem acabou → retrospectiva */}
-      {viagem.data_fim && viagem.data_fim < hojeTexto() && (
-        <Link to="retrospectiva" className="faixa-retrospectiva">
-          <Sparkles size={18} aria-hidden="true" /> A viagem acabou. Ver a retrospectiva →
-        </Link>
-      )}
       {/* Spec 046: viagem ainda sem destino ("sonhando") */}
       {destinos.length === 0 && (
         <section className="faixa-sonhando" aria-label="Modo sonhando">
