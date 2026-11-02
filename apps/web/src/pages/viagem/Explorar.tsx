@@ -26,6 +26,7 @@ import {
   type OrcamentoId,
   type RitmoId,
   type Tables,
+  destinosParaExplorar,
 } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { supabase } from '../../lib/supabase'
@@ -47,7 +48,8 @@ type Etapa = 'estilo' | 'carregando' | 'deck' | 'montando' | 'roteiro' | 'erro'
 const CARTOES_POR_VEZ = 12
 
 export default function Explorar() {
-  const { destinos } = useViagemAtual()
+  // Aeroporto/rodoviária de saída não é cidade pra explorar
+  const destinos = destinosParaExplorar(useViagemAtual().destinos)
   const [params] = useSearchParams()
   const destino = destinos.find((d) => d.id === params.get('destino')) ?? destinos[0]
   if (!destino) {
@@ -62,7 +64,8 @@ export default function Explorar() {
 }
 
 function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
-  const { viagem, destinos, meuId } = useViagemAtual()
+  const { viagem, destinos: todos, meuId } = useViagemAtual()
+  const destinos = destinosParaExplorar(todos)
   const [params, setParams] = useSearchParams()
 
   const [etapa, setEtapa] = useState<Etapa>('carregando')

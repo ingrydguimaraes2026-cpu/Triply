@@ -21,8 +21,13 @@
 ## App mobile (02/11, PC 1) — decisão: MOBILE PRIMEIRO (ver AGENTS.md seção 5)
 - **Pronto e testado na versão web do Expo (porta 8089, celular 375px):** `apps/mobile/app/explorar.tsx`, `src/ui/CartaoDoExplorar.tsx` (arrasto com PanResponder + Animated, sem libs novas), `src/ui/RoteiroDoExplorar.tsx`; atalho "Explorar" na tela da viagem (`app/viagem/[id].tsx`).
 - Funções de banco do Explorar foram pro core: `packages/core/src/explorar-dados.ts` (o site ainda usa `apps/web/src/features/explorar/api.ts`; dá pra trocar depois).
-- Testado: deslize nas 3 direções (toque e mouse) gravando no banco, botões, "Pronto" → roteiro com dias, mapa, estrela e "min a pé", menu "…" abre. **Faltou confirmar** o "Mover pra Dia 2" salvar.
-- **Ajustes pendentes no app:** (1) o 1º destino pode ser o aeroporto de saída ("Galeão") e o Explorar tenta preparar o catálogo dele: pular destino de partida/aeroporto; (2) roteiro não atualiza sozinho quando outra pessoa mexe (o site usa tempo real); (3) criar roteiro de teste Playwright em texto pro fluxo.
+- Testado: deslize nas 3 direções (toque e mouse) gravando no banco, botões, "Pronto" → roteiro com dias, mapa, estrela e "min a pé", menu "…" abre.
+- **Feito em 02/11 (sessão 2):**
+  - "Mover pra Dia 2" **salva**: conferido no banco (tabela `roteiros`) depois de mover no app.
+  - **Aeroporto/ponto de partida é pulado** no app e no site: `ehPontoDePartida` / `destinosParaExplorar` em `packages/core/src/explorar-cidades.ts` (palavras como "aeroporto", "rodoviária" e nomes como Galeão, Guarulhos, Santos Dumont). Teste em `apps/web/tests/explorar.test.mjs`. Se a viagem só tiver partida, mostra tudo.
+  - **Tempo real no app**: `apps/mobile/src/dados/useAoVivo.ts` (escuta tabelas da viagem pelo Realtime, junta mudanças em 600 ms). O Explorar usa `useAoVivo(viagem.id, ['roteiros','lugares'], …)` e recarrega o roteiro sem "Montando…". Conferido: mudança feita direto no banco apareceu na tela sem recarregar.
+  - **Roteiro de teste Playwright** (texto, passou/falhou): `apps/mobile/e2e/explorar.mjs`. Precisa de conta de TESTE: `TRIPWAVE_EMAIL=… TRIPWAVE_SENHA=… VIAGEM_ID=… node apps/mobile/e2e/explorar.mjs` (Expo web na 8089). O Playwright não está no projeto: aponte `PLAYWRIGHT=<caminho>/node_modules/playwright/index.mjs` ou instale. **Ainda não rodou de ponta a ponta** (faltou a conta de teste).
+- **Próximo no app:** criar a conta de teste e rodar o roteiro; levar o tempo real pras outras telas do app (só o Explorar escuta hoje).
 
 ## Falta fazer
 - **"Começar explorando"** na Nova viagem (`apps/web/src/pages/NovaViagem.tsx`, Decisão 5).

@@ -53,3 +53,22 @@ export const CIDADES_DO_EXTERIOR: CidadeDaLista[] = [
 ]
 
 export const CIDADES_DA_PRE_CARGA: CidadeDaLista[] = [...CIDADES_DO_BRASIL, ...CIDADES_DO_EXTERIOR]
+
+// ---------- Ponto de partida (aeroporto, rodoviária) ----------
+// Tem gente que põe o aeroporto de saída como 1º destino ("Galeão"). Não é cidade pra explorar:
+// pular evita gastar um pedido de cidade nova na função `explorar-cidade`.
+const PALAVRAS_DE_PARTIDA = ['aeroporto', 'airport', 'aeropuerto', 'aéroport', 'rodoviaria', 'terminal']
+const AEROPORTOS_CONHECIDOS = ['galeao', 'guarulhos', 'congonhas', 'viracopos', 'confins', 'santos dumont', 'pampulha', 'salgado filho', 'afonso pena', 'jfk', 'heathrow', 'charles de gaulle', 'barajas', 'ezeiza', 'aeroparque']
+
+const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
+
+export function ehPontoDePartida(nome: string): boolean {
+  const n = semAcento(nome)
+  return PALAVRAS_DE_PARTIDA.some((p) => n.includes(semAcento(p))) || AEROPORTOS_CONHECIDOS.some((a) => n === a || n.startsWith(`${a} `) || n.endsWith(` ${a}`))
+}
+
+// Destinos que dá pra explorar (sem os pontos de partida). Se só tiver partida, devolve tudo.
+export function destinosParaExplorar<T extends { nome: string }>(destinos: T[]): T[] {
+  const bons = destinos.filter((d) => !ehPontoDePartida(d.nome))
+  return bons.length ? bons : destinos
+}

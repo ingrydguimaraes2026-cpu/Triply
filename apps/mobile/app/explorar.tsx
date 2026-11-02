@@ -13,6 +13,7 @@ import {
   buscarLugaresComVotos,
   buscarMinhasEscolhas,
   buscarRoteiroDoDestino,
+  destinosParaExplorar,
   carregarCatalogoDaCidade,
   comecarDeslize,
   creditoDaFoto,
@@ -39,6 +40,7 @@ import {
   type OrcamentoId,
   type RitmoId,
 } from '@together/core'
+import { useAoVivo } from '../src/dados/useAoVivo'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
@@ -63,7 +65,8 @@ export default function Explorar() {
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const destinos = carga.dados
+  // Aeroporto/rodoviária de saída não é cidade pra explorar
+  const destinos = destinosParaExplorar(carga.dados)
   const destino = destinos.find((d) => d.id === escolhido) ?? destinos[0]
   if (!destino) {
     return (
@@ -128,6 +131,11 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Outra pessoa arrumou o roteiro ou curtiu algo: recarrega (igual ao site)
+  useAoVivo(viagem?.id, ['roteiros', 'lugares'], () => {
+    if (etapa === 'roteiro') void abrirRoteiro(false, true)
+  })
 
   if (!viagem) return null
 
@@ -218,8 +226,9 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
   }
 
   // `converter`: minhas escolhas viram lugares da viagem antes (depois de deslizar)
-  async function abrirRoteiro(converter: boolean) {
-    setEtapa('montando')
+  // `silencioso`: recarrega sem mostrar "Montando…" (quando outra pessoa mexeu)
+  async function abrirRoteiro(converter: boolean, silencioso = false) {
+    if (!silencioso) setEtapa('montando')
     try {
       if (converter) await criarLugaresDoExplorar(supabase, destino.id)
       const [doGrupo, salvo] = await Promise.all([buscarDoGrupo(), buscarRoteiroDoDestino(supabase, destino.id)])

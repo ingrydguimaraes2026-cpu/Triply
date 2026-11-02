@@ -107,3 +107,11 @@ test('114: lista da pré-carga tem 100 cidades, sem repetir', () => {
   assert.equal(new Set(CIDADES_DA_PRE_CARGA.map((c) => E.chaveDaCidade(c.nome, c.pais))).size, 100)
   for (const tipo of Object.values(E.CLASSES_WIKIDATA)) assert.ok(E.INFO_DO_TIPO[tipo], tipo)
 })
+
+test('115: pula aeroporto/ponto de partida no Explorar', async () => {
+  const { ehPontoDePartida, destinosParaExplorar } = await import(new URL('../../../packages/core/src/explorar-cidades.ts', import.meta.url))
+  for (const n of ['Galeão', 'Aeroporto de Guarulhos', 'GRU Airport', 'Santos Dumont', 'Rodoviária do Tietê']) assert.equal(ehPontoDePartida(n), true, n)
+  for (const n of ['Rio de Janeiro', 'Gramado', 'Paris', 'Belo Horizonte', 'Porto Alegre']) assert.equal(ehPontoDePartida(n), false, n)
+  assert.deepEqual(destinosParaExplorar([{ nome: 'Galeão' }, { nome: 'Lisboa' }]).map((d) => d.nome), ['Lisboa'])
+  assert.deepEqual(destinosParaExplorar([{ nome: 'Galeão' }]).map((d) => d.nome), ['Galeão'])
+})
