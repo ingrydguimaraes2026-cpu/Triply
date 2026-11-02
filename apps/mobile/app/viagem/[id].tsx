@@ -12,7 +12,7 @@ import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { convidarProComboio } from '../../src/lib/convite'
 import { hojeIso, periodo } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
-import { capaDaViagem } from '../../src/ui/fotos'
+import { useCapas } from '../../src/dados/useCapas'
 import { Avisos } from '../../src/ui/Avisos'
 import { PassosDaViagem } from '../../src/ui/PassosDaViagem'
 import { Tarefas } from '../../src/ui/Tarefas'
@@ -33,6 +33,7 @@ export default function DetalheDaViagem() {
   const insets = useSafeAreaInsets()
   const { meuId, escolher } = useViagemAtual()
   const [convite, setConvite] = useState<string | null>(null)
+  const capa = useCapas(id ? [id] : [])
 
   const carga = useCarregar(async () => {
     const [viagem, gastos, trajetos, fotos, lugares, hospedagens] = await Promise.all([
@@ -83,7 +84,7 @@ export default function DetalheDaViagem() {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}>
         <View className="h-[350px] bg-couro">
-          <ImageBackground source={{ uri: capaDaViagem(viagem.id) }} resizeMode="cover" style={StyleSheet.absoluteFill}>
+          <ImageBackground source={capa(viagem.id)} resizeMode="cover" style={StyleSheet.absoluteFill}>
             <LinearGradient
               colors={['rgba(74,46,20,0.35)', 'rgba(74,46,20,0)', 'rgba(185,122,34,0.4)', '#4A2E14']}
               locations={[0, 0.3, 0.6, 1]}

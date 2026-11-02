@@ -58,6 +58,37 @@ export async function carregarCatalogoDaCidade(cli: ClienteTogether, destino: De
   throw new Error('A cidade ainda está sendo preparada. Tente de novo em um minuto.')
 }
 
+// ---------- Capa da viagem ----------
+// Foto do lugar mais famoso do primeiro destino que tem catálogo do Explorar. Viagem sem catálogo fica fora
+// (a tela usa a capa genérica de `capaDaViagem`).
+export async function fotosDasCapas(cli: ClienteTogether, viagemIds: string[]): Promise<Record<string, string>> {
+  if (viagemIds.length === 0) return {}
+  const { data: destinos, error } = await cli.from('destinos').select('viagem_id, nome, pais, ordem').in('viagem_id', viagemIds).order('ordem')
+  if (error) throw error
+  const chavesDe = new Map<string, string[]>() // viagem → chaves das cidades, na ordem dos destinos
+  for (const d of destinos ?? []) chavesDe.set(d.viagem_id, [...(chavesDe.get(d.viagem_id) ?? []), chaveDaCidade(d.nome, codigoDoPais(d.pais))])
+  const todas = [...new Set([...chavesDe.values()].flat())]
+  const { data: cidades } = await cli.from('catalogo_cidades').select('id, chave').in('chave', todas).eq('situacao', 'pronta')
+  if (!cidades?.length) return {}
+  const { data: lugares } = await cli
+    .from('catalogo_lugares')
+    .select('cidade_id, foto_url')
+    .in('cidade_id', cidades.map((c) => c.id))
+    .not('foto_url', 'is', null)
+    .order('fama', { ascending: false })
+    .limit(cidades.length * 60)
+  const fotoDaCidade = new Map<string, string>()
+  for (const l of lugares ?? []) if (l.foto_url && !fotoDaCidade.has(l.cidade_id)) fotoDaCidade.set(l.cidade_id, l.foto_url)
+  const cidadeDaChave = new Map(cidades.map((c) => [c.chave, c.id]))
+  const capas: Record<string, string> = {}
+  // Primeiro destino com foto (pula aeroporto e cidade sem catálogo)
+  for (const [viagem, chaves] of chavesDe) {
+    const foto = chaves.map((c) => fotoDaCidade.get(cidadeDaChave.get(c) ?? '')).find(Boolean)
+    if (foto) capas[viagem] = foto
+  }
+  return capas
+}
+
 // ---------- Minhas escolhas (só eu vejo) ----------
 export async function buscarMinhasEscolhas(cli: ClienteTogether, destinoId: string, meuId: string): Promise<Record<string, Escolha>> {
   const { data, error } = await cli.from('explorar_escolhas').select('catalogo_lugar_id, escolha').eq('destino_id', destinoId).eq('usuario_id', meuId)

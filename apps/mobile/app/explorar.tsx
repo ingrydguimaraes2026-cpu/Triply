@@ -54,7 +54,7 @@ import { cor, sombra } from '../theme'
 // Explorar / Roteiro (specs 114 e 115 v2) no app.
 // Abre no roteiro se o destino já tem um; senão, direto no deslize (12 cartões, estilo no padrão).
 // Acabou a pilha → vira lugares da viagem e o roteiro do grupo aparece, editável.
-const CARTOES_POR_VEZ = 12
+const CARTOES_POR_VEZ = 6
 
 export default function Explorar() {
   const { atual: viagem } = useViagemAtual()
@@ -187,6 +187,8 @@ function ExplorarDestino({
         jaNaViagem: (naViagem.data ?? []).filter((l) => !cat.lugares.some((c) => c.wikidata && c.wikidata === l.wikidata && antigas[c.id])),
         jaEscolhidos: Object.keys(antigas),
       })
+      // Baixa as fotos da pilha já: o cartão aparece com a foto, sem ficar bege esperando
+      for (const l of pilha) if (l.fotoUrl) Image.prefetch(l.fotoUrl).catch(() => {})
       setCatalogo(cat.lugares)
       setDeslize(comecarDeslize(pilha.map((l) => l.id), antigas))
       if (pilha.length === 0 && Object.keys(antigas).length > 0) await abrirRoteiro(true)

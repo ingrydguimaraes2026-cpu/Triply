@@ -11,7 +11,7 @@ import { diasAte, mesEAno, periodo, primeiroNome } from '../../src/lib/formato'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
 import { FaixaConvidado } from '../../src/ui/FaixaConvidado'
-import { capaDaViagem } from '../../src/ui/fotos'
+import { useCapas } from '../../src/dados/useCapas'
 import { Agulha } from '../../src/ui/Agulha'
 import { Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../../src/ui/pecas'
 import { cor, sombra } from '../../theme'
@@ -66,6 +66,7 @@ export default function MinhasViagens() {
 }
 
 function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbrir: () => void }) {
+  const capa = useCapas([viagem.id])
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
   const etiqueta =
     faltam == null ? 'Sem data ainda' : faltam > 1 ? `Faltam ${faltam} dias` : faltam === 1 ? 'É amanhã!' : (viagem.dataFim && diasAte(viagem.dataFim) >= 0) ? 'Acontecendo agora' : 'Já foi'
@@ -75,7 +76,7 @@ function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbri
 
   return (
     <Pressable onPress={aoAbrir} className="h-[470px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
-      <ImageBackground source={{ uri: capaDaViagem(viagem.id) }} resizeMode="cover" style={StyleSheet.absoluteFill}>
+      <ImageBackground source={capa(viagem.id)} resizeMode="cover" style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={['rgba(185,122,34,0)', 'rgba(185,122,34,0.55)', '#4A2E14']}
           locations={[0.38, 0.62, 1]}
@@ -106,13 +107,14 @@ function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbri
 }
 
 function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemComDetalhes[]; aoAbrir: (v: ViagemComDetalhes) => void }) {
+  const capa = useCapas(viagens.map((v) => v.id))
   return (
     <>
       <Text className="mb-3 mt-8 font-display text-[22px] text-texto">{titulo}</Text>
       <View className="gap-2.5">
         {viagens.map((v) => (
           <Pressable key={v.id} onPress={() => aoAbrir(v)} className="flex-row items-center gap-3.5 rounded-2xl bg-cartao p-3 active:opacity-90" style={sombra.cartao}>
-            <Image source={{ uri: capaDaViagem(v.id, 200) }} className="h-16 w-16 rounded-xl bg-tracejado" />
+            <Image source={capa(v.id, 200)} className="h-16 w-16 rounded-xl bg-tracejado" />
             <View className="min-w-0 flex-1">
               <Text className="font-display text-[18px] text-texto" numberOfLines={1}>
                 {v.nome}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { Animated, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Heart, MapPin, Minus, Plus, Search, Star, X } from 'lucide-react-native'
@@ -10,7 +10,9 @@ import {
   carregarCatalogoDaCidade,
   criarViagem,
   moedaDoPais,
+  montarDiasPelosVotos,
   montarPilha,
+  porDiaDoRitmo,
   salvarEscolhaDoExplorar,
   semAcento,
   type Escolha,
@@ -104,6 +106,7 @@ export default function Comecar() {
       const cat = await carregarCatalogoDaCidade(supabase, { id: '', nome: destino!.nome, pais: destino!.pais ? (NOME_EM_PORTUGUES[destino!.pais] ?? null) : null })
       const p = montarPilha(cat.lugares, { estilos, orcamento: 'medio', tamanho: CARTOES_DO_GOSTINHO })
       if (p.length === 0) throw new Error('sem lugares')
+      for (const l of p) if (l.fotoUrl) Image.prefetch(l.fotoUrl).catch(() => {}) // fotos prontas antes do cartão aparecer
       setPilha(p)
       setPosicao(0)
       setEtapa('deslize')
@@ -480,9 +483,14 @@ function BotaoRedondoGrande({ children, rotulo, aoTocar, principal, pequeno }: {
 
 // Prévia do roteiro: o que curtiu, 2 por dia (o roteiro de verdade é montado depois da conta)
 function Previa({ destino, dias, pilha, escolhas }: { destino: string; dias: number; pilha: LugarDoCatalogo[]; escolhas: Record<string, Escolha> }) {
-  // "Não abro mão" primeiro, depois "quero"
-  const curtidos = [...pilha.filter((l) => escolhas[l.id] === 'nao_abro_mao'), ...pilha.filter((l) => escolhas[l.id] === 'quero')]
-  const blocos = Array.from({ length: Math.min(dias, 3) }, (_, i) => curtidos.slice(i * 2, i * 2 + 2))
+  // Mesma conta do roteiro que abre depois (Explorar, ritmo equilibrado): o que a pessoa vê aqui é o que vai ganhar
+  const curtidos = pilha.filter((l) => escolhas[l.id] === 'nao_abro_mao' || escolhas[l.id] === 'quero')
+  const proposta = montarDiasPelosVotos(
+    Array.from({ length: dias }, (_, i) => `Dia ${i + 1}`),
+    curtidos.map((l) => ({ id: l.id, nome: l.nome, tipo: 'passeio', votos: 1, prioridades: escolhas[l.id] === 'nao_abro_mao' ? 1 : 0, latitude: l.latitude, longitude: l.longitude })),
+    porDiaDoRitmo('equilibrado'),
+  )
+  const blocos = Array.from({ length: Math.min(dias, 3) }, (_, i) => proposta.dias.find((d) => d.dia === `Dia ${i + 1}`)?.itens ?? [])
   return (
     <Conversa fala={curtidos.length ? `Pronto! Olha o começo do roteiro de ${destino}:` : `Tudo bem! Eu monto ${destino} com os lugares mais famosos.`} humor="feliz">
       <View className="gap-2.5">
@@ -492,7 +500,7 @@ function Previa({ destino, dias, pilha, escolhas }: { destino: string; dias: num
             <Text className="mt-1 font-body-bold text-[16px] leading-[22px] text-texto">{lugares.length ? lugares.map((l) => l.nome).join(' · ') : 'Vou completar com o que a galera curtir'}</Text>
           </View>
         ))}
-        {dias > 3 ? <Text className="text-center font-body text-[14px] text-suave">+ {dias - 3} dias</Text> : null}
+        {dias > 3 ? <Text className="text-center font-body text-[14px] text-suave">+ {dias - 3} {dias - 3 === 1 ? 'dia' : 'dias'}</Text> : null}
       </View>
     </Conversa>
   )

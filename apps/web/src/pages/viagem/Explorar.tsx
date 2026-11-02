@@ -45,7 +45,7 @@ import '../../features/explorar/explorar.css'
 // Estilo, ritmo e orçamento começam no padrão; "Ajustar" muda.
 type Etapa = 'estilo' | 'carregando' | 'deck' | 'montando' | 'roteiro' | 'erro'
 
-const CARTOES_POR_VEZ = 12
+const CARTOES_POR_VEZ = 6
 
 export default function Explorar() {
   // Aeroporto/rodoviária de saída não é cidade pra explorar

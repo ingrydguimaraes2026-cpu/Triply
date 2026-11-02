@@ -49,6 +49,8 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
     () =>
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, g) => !parado && !voando.current && (Math.abs(g.dx) > 4 || Math.abs(g.dy) > 4),
+        // Já pegou o cartão: não solta pra rolagem nem pra outro gesto no meio do arrasto
+        onPanResponderTerminationRequest: () => false,
         onPanResponderMove: (_, g) => pos.setValue({ x: g.dx, y: Math.min(40, g.dy) }),
         onPanResponderRelease: (_, g) => {
           const e: Escolha | null = g.dx > LIMITE_X ? 'quero' : g.dx < -LIMITE_X ? 'passo' : g.dy < -LIMITE_Y ? 'nao_abro_mao' : null
