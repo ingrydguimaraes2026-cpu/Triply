@@ -140,3 +140,87 @@ html[data-tema='escuro'] .hoje-item.agora {
 .hoje-fora {
   border-radius: 20px;
 }
+
+/* ---------- Design Plataforma (spec 113) ---------- */
+.hoje {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Aviso com a Agulha dormindo */
+.hoje-fora {
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--cor-fundo-suave);
+}
+
+.hoje-fora p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cor-texto);
+}
+
+.hoje-fora .agulha,
+.hoje-fora > :first-child {
+  flex: none;
+}
+
+/* Mosaico de 2 colunas: os cartões do dia e as ferramentas juntos */
+.hoje-mosaico {
+  columns: 2 380px;
+  column-gap: 18px;
+}
+
+.hoje-mosaico .ferramentas {
+  display: contents;
+}
+
+.hoje-mosaico .cartao-ui {
+  break-inside: avoid;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+/* Campos das ferramentas: borda clara, raio 12 */
+.hoje-mosaico .ferramenta-campo {
+  min-height: 46px;
+  border-color: #e3d2b8;
+  border-radius: 12px;
+}
+
+html[data-tema='escuro'] .hoje-mosaico .ferramenta-campo {
+  border-color: var(--cor-borda);
+}
+
+.hoje-mosaico .ferramenta-campo span {
+  font-size: 13px;
+}
+
+.hoje-mosaico .ferramenta-campo input {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hoje-mosaico .ferramenta-resultado {
+  margin: 0;
+}
+
+.hoje-mosaico .ferramenta-resultado strong {
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hoje-mosaico .ferramenta-resultado small {
+  font-size: 12.5px;
+}
+
+.hoje-mosaico .ferramenta-links a {
+  font-size: 14px;
+  text-decoration: none;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, Sun, TrainFront } from 'lucide-react'
+import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, TrainFront } from 'lucide-react'
 import { agoraEProximo, destinoDoDia, diaDePassagem, linkUltimoTrem, voltaPraBase, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -10,6 +10,7 @@ import { hojeTexto } from '../../features/destinos/datas'
 import BotaoIr from '../../components/ui/BotaoIr'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
+import Agulha from '../../components/ui/Agulha'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
 import OndeEstaOComboio from '../../features/hoje/OndeEstaOComboio'
 import './abas.css'
@@ -83,9 +84,10 @@ export default function Hoje() {
       <CabecalhoPagina acima={viagem.nome} titulo={onde ? `Hoje em ${onde.nome}` : 'Hoje'} subtitulo={diaPorExtenso(hoje)} />
 
       {!naViagem && (
-        <p className="hoje-fora">
-          <Sun size={16} aria-hidden="true" /> Hoje não é dia de viagem no roteiro. Esta tela ganha vida nos dias da viagem; as ferramentas abaixo já funcionam.
-        </p>
+        <div className="hoje-fora">
+          <Agulha humor="dormindo" tamanho={52} sombra={false} />
+          <p>Hoje não é dia de viagem no roteiro. Esta tela ganha vida nos dias da viagem; as ferramentas abaixo já funcionam.</p>
+        </div>
       )}
 
       {naViagem && (
@@ -118,107 +120,110 @@ export default function Hoje() {
         </section>
       )}
 
-      {bateEVolta && (
-        <Cartao titulo={`Volta pra ${nomeDo(bateEVolta.ida.origem_id)}`} icone={TrainFront}>
-          {bateEVolta.volta?.partida ? (
-            <p className="hoje-volta">
-              <strong>Saída {horaNoFuso(bateEVolta.volta.partida)}</strong> de {nomeDo(bateEVolta.ida.destino_id)} · {faltaPara(horaNoFuso(bateEVolta.volta.partida), horaAtual)}
-            </p>
-          ) : (
-            <p className="hoje-volta alerta">Sem horário de volta marcado. Confira o último trem antes de sair!</p>
-          )}
-          <a href={linkUltimoTrem(nomeDo(bateEVolta.ida.destino_id), nomeDo(bateEVolta.ida.origem_id))} target="_blank" rel="noreferrer noopener" className="botao-texto alinhar-inicio">
-            Último trem de {nomeDo(bateEVolta.ida.destino_id)} pra {nomeDo(bateEVolta.ida.origem_id)} <ExternalLink size={12} aria-hidden="true" />
-          </a>
-        </Cartao>
-      )}
-
-      {passagem && onde && (
-        <Cartao titulo={passagem.tipo === 'passagem' ? 'Dia de passagem' : 'Dia de trocar de cidade'} icone={Luggage}>
-          <div className="hoje-passagem">
-            {passagem.saida && (
-              <p>
-                <strong>Saída {passagem.saida.hora}</strong> pra {passagem.saida.para} · {faltaPara(passagem.saida.hora, horaAtual)}
+      {/* Cartões do dia e ferramentas em mosaico de 2 colunas (design Plataforma, spec 113) */}
+      <div className="hoje-mosaico">
+        {bateEVolta && (
+          <Cartao titulo={`Volta pra ${nomeDo(bateEVolta.ida.origem_id)}`} icone={TrainFront}>
+            {bateEVolta.volta?.partida ? (
+              <p className="hoje-volta">
+                <strong>Saída {horaNoFuso(bateEVolta.volta.partida)}</strong> de {nomeDo(bateEVolta.ida.destino_id)} · {faltaPara(horaNoFuso(bateEVolta.volta.partida), horaAtual)}
               </p>
+            ) : (
+              <p className="hoje-volta alerta">Sem horário de volta marcado. Confira o último trem antes de sair!</p>
             )}
-            {hospedagemDaqui?.guarda_malas === 'sim' && (
-              <p>
-                {hospedagemDaqui.nome} guarda as malas{hospedagemDaqui.guarda_malas_obs ? ` (${hospedagemDaqui.guarda_malas_obs})` : ''}.
-              </p>
-            )}
-            {guardaDaqui.length > 0 && (
-              <ul>
-                {guardaDaqui.map((g) => (
-                  <li key={g.id}>
-                    {g.link ? (
-                      <a href={g.link} target="_blank" rel="noreferrer noopener">
-                        {g.nome} <ExternalLink size={12} aria-hidden="true" />
-                      </a>
-                    ) : (
-                      g.nome
-                    )}
-                    {g.horario && <small> · {g.horario}</small>}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {guardaDaqui.length === 0 && hospedagemDaqui?.guarda_malas !== 'sim' && (
-              <p className="dica">
-                Onde deixar as malas?{' '}
-                {linksDeGuardaVolumes(onde.nome).map((l, i) => (
-                  <span key={l.url}>
-                    {i > 0 && ' · '}
-                    <a href={l.url} target="_blank" rel="noreferrer noopener">
-                      {l.nome}
-                    </a>
-                  </span>
-                ))}
-              </p>
-            )}
-          </div>
-        </Cartao>
-      )}
+            <a href={linkUltimoTrem(nomeDo(bateEVolta.ida.destino_id), nomeDo(bateEVolta.ida.origem_id))} target="_blank" rel="noreferrer noopener" className="botao-texto alinhar-inicio">
+              Último trem de {nomeDo(bateEVolta.ida.destino_id)} pra {nomeDo(bateEVolta.ida.origem_id)} <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          </Cartao>
+        )}
 
-      {/* Spec 107: localização ao vivo (só com mais gente no comboio) */}
-      {membros.length > 1 && <OndeEstaOComboio viagemId={viagem.id} membros={membros} meuId={meuId} />}
-
-      {encontrosDeHoje.length > 0 && (
-        <Cartao titulo="Encontro" icone={MapPin}>
-          {encontrosDeHoje.map((p) => (
-            <p key={p.id} className="hoje-encontro">
-              <strong>{horaNoFuso(p.quando!)}</strong> {p.local} <BotaoIr alvo={{ nome: p.local, latitude: p.latitude, longitude: p.longitude }} />
-            </p>
-          ))}
-        </Cartao>
-      )}
-
-      {naViagem && (
-        <Cartao titulo="Onde dormimos hoje" icone={BedDouble}>
-          {dormimos ? (
-            <div className="hoje-dormimos">
-              <strong>{dormimos.nome}</strong>
-              {dormimos.endereco && <small>{dormimos.endereco}</small>}
-              <small>
-                {dormimos.checkin === hoje && dormimos.hora_checkin && `Check-in a partir das ${dormimos.hora_checkin.slice(0, 5)} · `}
-                {dormimos.checkout === hoje && dormimos.hora_checkout && `Check-out até ${dormimos.hora_checkout.slice(0, 5)} · `}
-              </small>
-              {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
-              {dormimos.como_chegar && onde?.chegada === hoje && (
-                <p className="hoje-como-chegar">
-                  <strong>Como chegar:</strong> {dormimos.como_chegar}
+        {passagem && onde && (
+          <Cartao titulo={passagem.tipo === 'passagem' ? 'Dia de passagem' : 'Dia de trocar de cidade'} icone={Luggage}>
+            <div className="hoje-passagem">
+              {passagem.saida && (
+                <p>
+                  <strong>Saída {passagem.saida.hora}</strong> pra {passagem.saida.para} · {faltaPara(passagem.saida.hora, horaAtual)}
                 </p>
               )}
-              {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
+              {hospedagemDaqui?.guarda_malas === 'sim' && (
+                <p>
+                  {hospedagemDaqui.nome} guarda as malas{hospedagemDaqui.guarda_malas_obs ? ` (${hospedagemDaqui.guarda_malas_obs})` : ''}.
+                </p>
+              )}
+              {guardaDaqui.length > 0 && (
+                <ul>
+                  {guardaDaqui.map((g) => (
+                    <li key={g.id}>
+                      {g.link ? (
+                        <a href={g.link} target="_blank" rel="noreferrer noopener">
+                          {g.nome} <ExternalLink size={12} aria-hidden="true" />
+                        </a>
+                      ) : (
+                        g.nome
+                      )}
+                      {g.horario && <small> · {g.horario}</small>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {guardaDaqui.length === 0 && hospedagemDaqui?.guarda_malas !== 'sim' && (
+                <p className="dica">
+                  Onde deixar as malas?{' '}
+                  {linksDeGuardaVolumes(onde.nome).map((l, i) => (
+                    <span key={l.url}>
+                      {i > 0 && ' · '}
+                      <a href={l.url} target="_blank" rel="noreferrer noopener">
+                        {l.nome}
+                      </a>
+                    </span>
+                  ))}
+                </p>
+              )}
             </div>
-          ) : (
-            <p className="dica">
-              Nenhuma hospedagem escolhida em {onde?.nome}. <Link to="../hospedagem" relative="path">Abrir Hospedagem</Link>
-            </p>
-          )}
-        </Cartao>
-      )}
+          </Cartao>
+        )}
 
-      <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda_principal} enderecoHospedagem={dormimos?.endereco ?? null} />
+        {/* Spec 107: localização ao vivo (só com mais gente no comboio) */}
+        {membros.length > 1 && <OndeEstaOComboio viagemId={viagem.id} membros={membros} meuId={meuId} />}
+
+        {encontrosDeHoje.length > 0 && (
+          <Cartao titulo="Encontro" icone={MapPin}>
+            {encontrosDeHoje.map((p) => (
+              <p key={p.id} className="hoje-encontro">
+                <strong>{horaNoFuso(p.quando!)}</strong> {p.local} <BotaoIr alvo={{ nome: p.local, latitude: p.latitude, longitude: p.longitude }} />
+              </p>
+            ))}
+          </Cartao>
+        )}
+
+        {naViagem && (
+          <Cartao titulo="Onde dormimos hoje" icone={BedDouble}>
+            {dormimos ? (
+              <div className="hoje-dormimos">
+                <strong>{dormimos.nome}</strong>
+                {dormimos.endereco && <small>{dormimos.endereco}</small>}
+                <small>
+                  {dormimos.checkin === hoje && dormimos.hora_checkin && `Check-in a partir das ${dormimos.hora_checkin.slice(0, 5)} · `}
+                  {dormimos.checkout === hoje && dormimos.hora_checkout && `Check-out até ${dormimos.hora_checkout.slice(0, 5)} · `}
+                </small>
+                {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
+                {dormimos.como_chegar && onde?.chegada === hoje && (
+                  <p className="hoje-como-chegar">
+                    <strong>Como chegar:</strong> {dormimos.como_chegar}
+                  </p>
+                )}
+                {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
+              </div>
+            ) : (
+              <p className="dica">
+                Nenhuma hospedagem escolhida em {onde?.nome}. <Link to="../hospedagem" relative="path">Abrir Hospedagem</Link>
+              </p>
+            )}
+          </Cartao>
+        )}
+
+        <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda_principal} enderecoHospedagem={dormimos?.endereco ?? null} />
+      </div>
     </div>
   )
 }
