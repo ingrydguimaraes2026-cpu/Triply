@@ -64,7 +64,7 @@ export default function Explorar() {
 }
 
 function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
-  const { viagem, destinos, meuId } = useViagemAtual()
+  const { viagem, destinos, meuId, euSouAdm } = useViagemAtual()
   const [params, setParams] = useSearchParams()
 
   const [etapa, setEtapa] = useState<Etapa>('estilo')
@@ -86,6 +86,8 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
   const [diaAberto, setDiaAberto] = useState(0)
   const [salvando, setSalvando] = useState(false)
   const [salvo, setSalvo] = useState(false)
+  // Spec 115, etapa 6: quantos do comboio já escolheram (as escolhas de cada um continuam privadas)
+  const [grupo, setGrupo] = useState<{ escolheram: number; pessoas: number } | null>(null)
   const timers = useRef<number[]>([])
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
   const depois = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms))
@@ -202,6 +204,30 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     return () => window.removeEventListener('keydown', aoApertar)
   }, [etapa, detalhe])
 
+  // Ao chegar no resumo, minhas escolhas viram lugares da viagem (contam pro grupo) e vemos quem já escolheu
+  useEffect(() => {
+    if (etapa !== 'resumo') return
+    let vivo = true
+    ;(async () => {
+      try {
+        if (escolhidos.length > 0) {
+          await api.criarLugaresDoExplorar(destino.id)
+          avisarQueMudou('lugares')
+        }
+        const g = await api.quemEscolheu(destino.id)
+        if (vivo) setGrupo(g)
+      } catch (e) {
+        console.error('Erro ao juntar com o grupo:', e)
+      }
+    })()
+    return () => {
+      vivo = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etapa, destino.id])
+  // Tem escolha de mais alguém além de mim? Então o roteiro é do grupo
+  const deTodos = (grupo?.escolheram ?? 0) > (escolhidos.length > 0 ? 1 : 0)
+
   // ---------- Montar ----------
   async function montar() {
     setEtapa('montando')
@@ -212,7 +238,10 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     try {
       const ids = new Set(await api.criarLugaresDoExplorar(destino.id))
       avisarQueMudou('lugares')
-      const lugares = (await buscarLugares(viagem.id)).filter((l) => ids.has(l.id))
+      // Roteiro do grupo: entra o que eu escolhi e o que alguém do comboio curtiu ou marcou como "não abro mão"
+      const lugares = (await buscarLugares(viagem.id)).filter(
+        (l) => ids.has(l.id) || (l.destinoId === destino.id && (l.votos.length > 0 || (l.prioridades?.length ?? 0) > 0)),
+      )
       const proposta = montarDiasPelosVotos(
         dias,
         lugares.map((l) => ({ id: l.id, nome: l.nome, tipo: l.tipo, votos: l.votos.length, prioridades: l.prioridades?.length ?? 0, latitude: l.latitude, longitude: l.longitude, endereco: l.endereco })),
@@ -565,9 +594,23 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
               </li>
             ))}
           </ul>
+          {grupo && grupo.pessoas > 1 && (
+            <p className="exp-quem-escolheu" role="status">
+              <strong>
+                {grupo.escolheram} de {grupo.pessoas}
+              </strong>{' '}
+              já escolheram em {destino.nome}.
+              {grupo.escolheram < grupo.pessoas && (
+                <>
+                  {' '}
+                  <Link to="../comboio">Lembrar quem falta</Link>
+                </>
+              )}
+            </p>
+          )}
           <div className="exp-rodape">
-            <button type="button" className="botao exp-principal" onClick={montar} disabled={escolhidos.length === 0}>
-              Montar roteiro de {dias.length} {dias.length === 1 ? 'dia' : 'dias'}
+            <button type="button" className="botao exp-principal" onClick={montar} disabled={escolhidos.length === 0 && !deTodos}>
+              {deTodos ? 'Montar com as escolhas de todos' : `Montar roteiro de ${dias.length} ${dias.length === 1 ? 'dia' : 'dias'}`}
             </button>
             {!acabou(deslize) ? (
               <button type="button" className="botao-texto" onClick={() => setEtapa('deck')}>
@@ -709,6 +752,8 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
             <Link to="../agenda" className="botao exp-principal">
               Salvo na agenda · abrir a Agenda
             </Link>
+          ) : temDatas && !euSouAdm ? (
+            <p className="exp-dica">Quem organiza a viagem (ADM) põe o roteiro na agenda. Os lugares já estão na aba Lugares pra todo mundo ver.</p>
           ) : temDatas ? (
             <button type="button" className="botao exp-principal" onClick={porNaAgenda} disabled={salvando || !roteiro?.dias.length}>
               {salvando ? 'Pondo na agenda…' : 'Pôr na agenda da viagem'}

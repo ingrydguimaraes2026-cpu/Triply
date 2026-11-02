@@ -3077,6 +3077,10 @@ export type Database = {
         Args: { p_destino: string }
         Returns: string[]
       }
+      explorar_quem_escolheu: {
+        Args: { p_destino: string }
+        Returns: { escolheram: number; pessoas: number }[]
+      }
       aceitar_convite: {
         Args: { p_codigo: string; p_nome?: string }
         Returns: string

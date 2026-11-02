@@ -99,3 +99,10 @@ export async function criarLugaresDoExplorar(destinoId: string): Promise<string[
   if (error) throw error
   return (data ?? []) as string[]
 }
+
+// Roteiro do grupo (spec 115): quantas pessoas do comboio já escolheram neste destino (só os números)
+export async function quemEscolheu(destinoId: string): Promise<{ escolheram: number; pessoas: number }> {
+  const { data, error } = await supabase.rpc('explorar_quem_escolheu', { p_destino: destinoId })
+  if (error) throw error
+  return data?.[0] ?? { escolheram: 0, pessoas: 1 }
+}

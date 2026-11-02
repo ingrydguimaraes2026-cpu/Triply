@@ -786,3 +786,13 @@
   color: var(--cor-texto);
   line-height: 1.45;
 }
+
+/* Spec 115, etapa 6: quantos do comboio já escolheram */
+.exp-quem-escolheu {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  line-height: 1.45;
+}
