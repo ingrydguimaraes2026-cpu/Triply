@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: caderno de bordo da marca. Faixa couro no topo com a Agulha, índice fixo, seções de leitura com tabelas. */
+/* Layout: caderno de bordo da marca. Faixa couro no topo com a Norti, índice fixo, seções de leitura com tabelas. */
 :root {
   --bg: #fbf3e6;
   --card: #ffffff;
@@ -57,7 +57,13 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--dourado); outli
 .brand-icon { width: 44px; height: 44px; border-radius: 14px; background: #fbf3e6; display: grid; place-items: center; }
 .band-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .pill { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 11px; border-radius: 999px; background: rgba(251,243,230,.16); color: var(--band-fg); }
-.mascote { justify-self: center; }
+.mascote { justify-self: center; width: 200px; height: auto; filter: drop-shadow(0 10px 14px rgba(0,0,0,.25)); }
+.poses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (min-width: 680px) { .poses { grid-template-columns: repeat(5, 1fr); } }
+.pose { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 8px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.pose img { width: 100%; max-width: 120px; height: auto; }
+.pose figcaption { font-size: 12.5px; font-weight: 600; color: var(--fg-soft); text-align: center; }
+.pose.destaque { background: var(--chip); }
 @media (min-width: 760px) { .band .wrap { grid-template-columns: 1fr auto; } }
 
 /* Índice */
@@ -113,8 +119,8 @@ footer { border-top: 1px solid var(--line); }
 footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft); display: flex; flex-direction: column; gap: 6px; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .mascote .braco { transform-origin: 24px 74px; animation: acena 2.4s ease-in-out infinite; }
-  @keyframes acena { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(8deg); } 90% { transform: rotate(-10deg); } }
+  .band .mascote { animation: flutua 3.2s ease-in-out infinite; }
+  @keyframes flutua { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 }
 </style>
 
@@ -122,50 +128,18 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
   <div class="wrap">
     <div>
       <div class="brand">
-        <span class="brand-icon" aria-hidden="true">
-          <svg viewBox="0 0 120 120" width="34" height="34"><circle cx="60" cy="64" r="40" fill="#C08530"/><circle cx="60" cy="64" r="32.5" fill="#FBF0DC"/><path d="M60 38 L66 62 L54 62Z" fill="#E06A4E"/><path d="M60 88 L66 62 L54 62Z" fill="#7B542F"/><ellipse cx="60" cy="30" rx="36" ry="7.5" fill="#7B4E28" transform="rotate(-8 60 28)"/><path d="M40 30 Q41 11 60 11 Q79 11 80 30Z" fill="#A8703F" transform="rotate(-8 60 28)"/></svg>
-        </span>
+        <span class="brand-icon" aria-hidden="true"><img src="norti/norti-idle.png" width="40" height="38" alt=""></span>
         Tripwave
       </div>
       <h1>Caderno de marketing</h1>
-      <p>Tudo o que a dupla decidiu sobre nome, voz, canais e conteúdo. A Agulha é a logo e a cara da marca.</p>
+      <p>Tudo o que a dupla decidiu sobre nome, voz, canais e conteúdo. A Norti é a cara da marca.</p>
       <div class="band-meta">
         <span class="pill">Atualizado 02/11/2026</span>
         <span class="pill">Victor + Ingryd</span>
         <span class="pill">Em breve</span>
       </div>
     </div>
-    <svg class="mascote" viewBox="0 0 120 120" width="170" height="170" role="img" aria-label="A Agulha, mascote do Tripwave: uma bússola de chapéu de safári acenando">
-      <defs>
-        <radialGradient id="ouro" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#E9B866"/><stop offset=".55" stop-color="#C08530"/><stop offset="1" stop-color="#8E5E22"/></radialGradient>
-        <radialGradient id="rosto" cx="45%" cy="38%" r="68%"><stop offset="0" stop-color="#FFFCF5"/><stop offset="1" stop-color="#F0E0C4"/></radialGradient>
-      </defs>
-      <ellipse cx="60" cy="112" rx="30" ry="4" fill="#000" opacity=".18"/>
-      <ellipse cx="46" cy="106" rx="8" ry="4.5" fill="#7B542F"/>
-      <ellipse cx="74" cy="106" rx="8" ry="4.5" fill="#7B542F"/>
-      <g class="braco"><path d="M24 74 Q12 68 11 55" fill="none" stroke="#7B4E28" stroke-width="5.5" stroke-linecap="round"/><circle cx="11" cy="52" r="5.5" fill="#A8703F"/></g>
-      <path d="M96 76 Q106 84 104 94" fill="none" stroke="#7B4E28" stroke-width="5.5" stroke-linecap="round"/><circle cx="104" cy="96" r="5.5" fill="#A8703F"/>
-      <circle cx="60" cy="64" r="40" fill="url(#ouro)"/>
-      <circle cx="60" cy="64" r="35" fill="#8E5E22"/>
-      <circle cx="60" cy="64" r="32.5" fill="url(#rosto)"/>
-      <path d="M29 45 A36 36 0 0 1 45 29" fill="none" stroke="#F6DB9E" stroke-width="3" stroke-linecap="round" opacity=".9"/>
-      <g fill="#C9A473">
-        <rect x="59.3" y="33.5" width="1.4" height="4" rx=".7"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(90 60 64)"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(180 60 64)"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(270 60 64)"/>
-      </g>
-      <path d="M60 38 L60 62 L54 62Z" fill="#E06A4E"/><path d="M60 38 L66 62 L60 62Z" fill="#B5462F"/>
-      <path d="M60 80 L60 62 L54 62Z" fill="#8E6A3E"/><path d="M60 80 L66 62 L60 62Z" fill="#6B4A2A"/>
-      <circle cx="60" cy="62" r="3.2" fill="#C08530"/>
-      <g stroke="#3B2715" stroke-width="2" stroke-linecap="round" fill="none"><path d="M36 50.5 q6 -4 12 -.5"/><path d="M72 50 q6 -3.5 12 .5"/></g>
-      <ellipse cx="39" cy="73" rx="4.5" ry="2.8" fill="#E58C6A" opacity=".55"/><ellipse cx="81" cy="73" rx="4.5" ry="2.8" fill="#E58C6A" opacity=".55"/>
-      <ellipse cx="42" cy="60" rx="5.5" ry="6.5" fill="#FFFDF8"/><ellipse cx="42" cy="61" rx="3.4" ry="4" fill="#2A1A0C"/><circle cx="43.3" cy="59.4" r="1.3" fill="#fff"/>
-      <ellipse cx="78" cy="60" rx="5.5" ry="6.5" fill="#FFFDF8"/><ellipse cx="78" cy="61" rx="3.4" ry="4" fill="#2A1A0C"/><circle cx="79.3" cy="59.4" r="1.3" fill="#fff"/>
-      <path d="M54 85 Q60 91 66 85" fill="none" stroke="#2A1A0C" stroke-width="2.6" stroke-linecap="round"/>
-      <g transform="rotate(-8 60 28)">
-        <ellipse cx="60" cy="30" rx="36" ry="7.5" fill="#7B4E28"/>
-        <path d="M40 30 Q41 11 60 11 Q79 11 80 30Z" fill="#A8703F"/>
-        <path d="M40.6 25 Q60 21 79.4 25 L79.8 29.5 Q60 26 40.2 29.5Z" fill="#5E3D20"/>
-      </g>
-    </svg>
+    <img class="mascote" src="norti/norti-wave.png" width="200" height="190" alt="A Norti, mascote do Tripwave: uma bússola em forma de pino de mapa, de chapéu de safári, acenando">
   </div>
 </header>
 
@@ -174,7 +148,7 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
     <a href="#hoje">Hoje</a>
     <a href="#canais">Canais</a>
     <a href="#ingryd">Ideias da Ingryd</a>
-    <a href="#agulha">A Agulha</a>
+    <a href="#norti">A Norti</a>
     <a href="#tiktok">TikTok e Insta</a>
     <a href="#x">X</a>
     <a href="#nome">Nome e @</a>
@@ -219,7 +193,7 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
           <thead><tr><th>Canal</th><th>Pra quem</th><th>O que postar</th></tr></thead>
           <tbody>
             <tr><td><strong>X</strong></td><td>Devs e fundadores</td><td>Construir em público: bastidores, números, vídeo do app. Aqui entra demonstração.</td></tr>
-            <tr><td><strong>TikTok</strong></td><td>Quem viaja com amigos</td><td>A Agulha nas trends. 5 a 15 segundos, áudio em alta, frase curta. Quiz e humor.</td></tr>
+            <tr><td><strong>TikTok</strong></td><td>Quem viaja com amigos</td><td>A Norti nas trends. 5 a 15 segundos, áudio em alta, frase curta. Quiz e humor.</td></tr>
             <tr><td><strong>Instagram</strong></td><td>Cliente e criadores</td><td>Os mesmos Reels + carrossel explicando a proposta. É a vitrine que o influenciador olha.</td></tr>
             <tr><td><strong>DM e e-mail</strong></td><td>Influenciadores de viagem</td><td>Contato direto, 1 a 1.</td></tr>
           </tbody>
@@ -266,9 +240,22 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
       </div>
     </section>
 
-    <section id="agulha">
-      <span class="eyebrow">O mascote</span>
-      <h2>A Agulha é o maior ativo de marketing</h2>
+    <section id="norti">
+      <span class="eyebrow">A mascote</span>
+      <h2>A Norti é o maior ativo de marketing</h2>
+      <p class="lead">Uma bússola em forma de pino de mapa, de chapéu de safári. "O caminho e o destino da viagem do grupo." A agulha vermelha é o jeito de ela se expressar.</p>
+      <div class="poses">
+        <figure class="pose"><img src="norti/norti-wave.png" width="360" height="342" loading="lazy" alt="Norti: oi"><figcaption>Oi</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-idle.png" width="360" height="342" loading="lazy" alt="Norti: parada"><figcaption>Parada</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-blink.png" width="360" height="342" loading="lazy" alt="Norti: piscando"><figcaption>Piscando</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-think.png" width="360" height="342" loading="lazy" alt="Norti: pensando"><figcaption>Pensando</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-celebrate.png" width="360" height="342" loading="lazy" alt="Norti: comemorando"><figcaption>Comemorando</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-oops.png" width="360" height="342" loading="lazy" alt="Norti: ops"><figcaption>Ops</figcaption></figure>
+        <figure class="pose destaque"><img src="norti/norti-point.png" width="360" height="342" loading="lazy" alt="Norti: apontando"><figcaption>Apontando</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-love.png" width="360" height="342" loading="lazy" alt="Norti: amor"><figcaption>Amor</figcaption></figure>
+        <figure class="pose"><img src="norti/norti-sleep.png" width="360" height="342" loading="lazy" alt="Norti: dormindo"><figcaption>Dormindo</figcaption></figure>
+      </div>
+      <div class="callout ok"><strong>A marca registrada é a agulha:</strong> gira quando ela está confusa, aponta pra cima quando comemora, cai quando está triste e <strong>aponta pro amigo que está devendo o Pix</strong>. As 9 poses têm fundo transparente, prontas pra colocar em cima de vídeo.</div>
       <p>O exemplo que a Ingryd mandou: um vídeo do Duolingo de 6 segundos, o mascote "desfilando" num áudio em alta. <strong>148 mil curtidas e 52 mil compartilhamentos.</strong></p>
       <div class="grid two">
         <div class="card">
@@ -286,7 +273,7 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
             <li>É bússola: sempre acha o caminho, mesmo com o grupo perdido.</li>
             <li>Organizada, mas perde a paciência com quem não paga o Pix.</li>
             <li>Piadas fixas: a rivalidade com a planilha, o pavor do grupo do zap com 300 mensagens, o amigo que some na hora de pagar.</li>
-            <li>Humores do app: feliz, dormindo, pensando.</li>
+            <li>9 poses: oi, parada, piscando, pensando, comemorando, ops, apontando, amor e dormindo.</li>
           </ul>
         </div>
       </div>
@@ -297,9 +284,9 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
       <h2>TikTok e Instagram</h2>
       <h3>Formatos pra testar primeiro</h3>
       <div class="grid two">
-        <div class="card"><h3>Agulha na trend</h3><p>O mascote no áudio do momento, 5 a 10 segundos, uma frase. "A Agulha vendo o grupo decidir a casa do réveillon há 3 semanas."</p></div>
+        <div class="card"><h3>Norti na trend</h3><p>O mascote no áudio do momento, 5 a 10 segundos, uma frase. "A Norti vendo o grupo decidir a casa do réveillon há 3 semanas."</p></div>
         <div class="card"><h3>Quiz do grupo</h3><p>"Quantos pontos seu grupo faz?" Já fecharam a casa? Alguém pagou o Pix? Tem planilha? O formato que mais viralizou no Roameo.</p></div>
-        <div class="card"><h3>"Marca aquele amigo que..."</h3><p>Imagem com frase curta e a Agulha. Feito pra marcar e compartilhar.</p></div>
+        <div class="card"><h3>"Marca aquele amigo que..."</h3><p>Imagem com frase curta e a Norti. Feito pra marcar e compartilhar.</p></div>
         <div class="card"><h3>Carrossel de nicho</h3><p>"Checklist do réveillon com a galera". "Como dividir a casa da despedida de solteira."</p></div>
       </div>
       <h3>As dores que todo mundo já viveu</h3>
@@ -401,7 +388,7 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
       <span class="eyebrow">Sequência</span>
       <h2>Plano dos primeiros 30 dias</h2>
       <div class="week">
-        <div class="card"><span class="when">Semana 1</span><h3>Preparar</h3><ul><li>Registrar domínios e criar os @.</li><li>Lista de espera no ar.</li><li>Definir a personalidade da Agulha.</li><li>Gravar 10 vídeos curtos da tela do app.</li></ul></div>
+        <div class="card"><span class="when">Semana 1</span><h3>Preparar</h3><ul><li>Registrar domínios e criar os @.</li><li>Lista de espera no ar.</li><li>Definir a personalidade da Norti.</li><li>Gravar 10 vídeos curtos da tela do app.</li></ul></div>
         <div class="card"><span class="when">Semana 2</span><h3>Começar no X</h3><ul><li>Post de apresentação da dupla.</li><li>Vídeo "em breve" com o link da lista.</li><li>Responder 20 a 30 posts por dia.</li></ul></div>
         <div class="card"><span class="when">Semana 3</span><h3>TikTok e Instagram</h3><ul><li>2 vídeos por dia testando os formatos.</li><li>Nicho: réveillon com os amigos.</li><li>Primeiras DMs pra criadores de viagem.</li></ul></div>
         <div class="card"><span class="when">Semana 4</span><h3>Dobrar o que funcionou</h3><ul><li>Repetir o formato vencedor todo dia.</li><li>Post no X com os números do mês.</li></ul></div>
@@ -430,7 +417,7 @@ footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft);
 
 <footer class="gutter">
   <div class="wrap">
-    <span>Fonte no repositório: Triply/docs/marketing/ESTRATEGIA-REDES.md e NOME-E-VOZ.md.</span>
+    <span>Fonte no repositório: Triply/docs/marketing/ESTRATEGIA-REDES.md, NOME-E-VOZ.md e MASCOTE.md (poses em norti/png).</span>
     <span>Números de views e seguidores coletados em 02/11/2026.</span>
   </div>
 </footer>
