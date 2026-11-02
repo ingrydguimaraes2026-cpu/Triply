@@ -18,6 +18,7 @@ import { useViagemAtual, type Membro } from '../../features/viagens/hooks'
 import ApagarViagem from '../../features/viagens/ApagarViagem'
 import { formatarData } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
+import Agulha from '../../components/ui/Agulha'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
@@ -168,121 +169,133 @@ export default function Comboio() {
       )}
       {link && <p className="link-convite">{link.replace(/^https?:\/\//, '')}</p>}
 
-      {(proRestaurante.length > 0 || aniversarios.length > 0) && (
-        <Cartao titulo="Bom saber" icone={Utensils}>
-          <ul className="bom-saber">
-            {aniversarios.map((a) => (
-              <li key={a.usuarioId}>
-                <Cake size={15} aria-hidden="true" /> {nomeDoMembro(a.usuarioId)} faz aniversário em {formatarData(a.dia)}, durante a viagem!
-              </li>
-            ))}
-            {proRestaurante.map((r) => (
-              <li key={r}>
-                <Utensils size={15} aria-hidden="true" /> {r}
-              </li>
-            ))}
-          </ul>
-        </Cartao>
-      )}
-
-      <Cartao titulo="Quem vai" icone={Users}>
-        <ul className="membros">
-          {membros.map((m) => {
-            const souEu = m.id === meuId
-            return (
-              <li key={m.id} className="membro">
-                <div className="membro-linha">
-                  <Avatar nome={m.nome} url={m.avatarUrl} tamanho={44} />
-                  <span className="membro-nome">
-                    <strong>
-                      {m.nome}
-                      {souEu && ' (você)'}
-                    </strong>
-                    <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
-                    <FichaResumo ficha={fichas.find((f) => f.usuario_id === m.id)} />
-                  </span>
-                  {m.papel === 'adm' && <span className="selo">ADM</span>}
-                  {convidados.includes(m.id) && (
-                    <span className="selo" title="Entrou pelo link sem criar conta">
-                      Convidado
-                    </span>
-                  )}
-                  {euSouAdm && !sozinho && (
-                    <button
-                      type="button"
-                      className="botao-texto"
-                      aria-expanded={menuAberto === m.id}
-                      aria-label={`Opções de ${m.nome}`}
-                      onClick={() => setMenuAberto(menuAberto === m.id ? null : m.id)}
-                    >
-                      <MoreHorizontal size={20} aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-
-                {menuAberto === m.id && (
-                  <div className="membro-menu">
-                    {m.papel === 'membro' ? (
-                      <button
-                        type="button"
-                        className="botao secundario pequeno"
-                        disabled={ocupado || convidados.includes(m.id)}
-                        title={convidados.includes(m.id) ? 'Convidado precisa criar conta antes de virar ADM' : undefined}
-                        onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'adm'), 'Não deu pra mudar o papel.')}>
-                        Tornar ADM
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="botao secundario pequeno"
-                        disabled={ocupado || adms.length === 1}
-                        title={adms.length === 1 ? 'A viagem precisa de pelo menos um ADM' : undefined}
-                        onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'membro'), 'Não deu pra mudar o papel.')}
-                      >
-                        Tornar membro
-                      </button>
-                    )}
-                    {!souEu && (
-                      <button type="button" className="botao secundario pequeno" disabled={ocupado} onClick={() => setRemovendo(m)}>
-                        Remover
-                      </button>
-                    )}
-                    {adms.length === 1 && m.papel === 'adm' && <p className="form-dica">Único ADM: torne outra pessoa ADM antes.</p>}
-                  </div>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-      </Cartao>
-
-      {euSouAdm && (
-        <Cartao titulo="Convites ativos" icone={Ticket}>
-          {convites.length === 0 ? (
-            <p className="form-dica">Nenhum convite ativo. Toque em "Convidar" pra gerar um link.</p>
-          ) : (
-            <ul className="convites">
-              {convites.map((c) => (
-                <li key={c.codigo}>
-                  <span className="convite-texto">
-                    <code>{c.link.replace(/^https?:\/\//, '')}</code>
-                    <small>Vale até {formatarData(c.expiraEm.slice(0, 10))}</small>
-                  </span>
-                  <button type="button" className="botao-texto" aria-label="Copiar link" onClick={() => navigator.clipboard.writeText(c.link)}>
-                    <Copy size={16} aria-hidden="true" />
-                  </button>
-                  <button type="button" className="botao secundario pequeno" onClick={() => cancelar(c.codigo)}>
-                    Cancelar
-                  </button>
-                </li>
-              ))}
-            </ul>
+      {/* Design Plataforma (spec 113): quem vai à esquerda, histórico e lixeira à direita.
+          No celular as duas colunas viram uma só. */}
+      <div className="comboio-colunas">
+        <div className="comboio-esquerda">
+          {(proRestaurante.length > 0 || aniversarios.length > 0) && (
+            <Cartao titulo="Bom saber" icone={Utensils}>
+              <ul className="bom-saber">
+                {aniversarios.map((a) => (
+                  <li key={a.usuarioId}>
+                    <Cake size={15} aria-hidden="true" /> {nomeDoMembro(a.usuarioId)} faz aniversário em {formatarData(a.dia)}, durante a viagem!
+                  </li>
+                ))}
+                {proRestaurante.map((r) => (
+                  <li key={r}>
+                    <Utensils size={15} aria-hidden="true" /> {r}
+                  </li>
+                ))}
+              </ul>
+            </Cartao>
           )}
-        </Cartao>
-      )}
 
-      {/* Spec 087: histórico e lixeira */}
-      <HistoricoDaViagem />
+          <Cartao titulo="Quem vai" icone={Users}>
+            <ul className="membros">
+              {membros.map((m) => {
+                const souEu = m.id === meuId
+                return (
+                  <li key={m.id} className="membro">
+                    <div className="membro-linha">
+                      <Avatar nome={m.nome} url={m.avatarUrl} tamanho={44} />
+                      <span className="membro-nome">
+                        <strong>
+                          {m.nome}
+                          {souEu && ' (você)'}
+                        </strong>
+                        <small>{m.papel === 'adm' ? 'Organiza a viagem' : 'Membro do comboio'}</small>
+                        <FichaResumo ficha={fichas.find((f) => f.usuario_id === m.id)} />
+                      </span>
+                      {m.papel === 'adm' && <span className="selo">ADM</span>}
+                      {convidados.includes(m.id) && (
+                        <span className="selo" title="Entrou pelo link sem criar conta">
+                          Convidado
+                        </span>
+                      )}
+                      {euSouAdm && !sozinho && (
+                        <button
+                          type="button"
+                          className="botao-texto"
+                          aria-expanded={menuAberto === m.id}
+                          aria-label={`Opções de ${m.nome}`}
+                          onClick={() => setMenuAberto(menuAberto === m.id ? null : m.id)}
+                        >
+                          <MoreHorizontal size={20} aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+
+                    {menuAberto === m.id && (
+                      <div className="membro-menu">
+                        {m.papel === 'membro' ? (
+                          <button
+                            type="button"
+                            className="botao secundario pequeno"
+                            disabled={ocupado || convidados.includes(m.id)}
+                            title={convidados.includes(m.id) ? 'Convidado precisa criar conta antes de virar ADM' : undefined}
+                            onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'adm'), 'Não deu pra mudar o papel.')}>
+                            Tornar ADM
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="botao secundario pequeno"
+                            disabled={ocupado || adms.length === 1}
+                            title={adms.length === 1 ? 'A viagem precisa de pelo menos um ADM' : undefined}
+                            onClick={() => acao(() => mudarPapel(viagem.id, m.id, 'membro'), 'Não deu pra mudar o papel.')}
+                          >
+                            Tornar membro
+                          </button>
+                        )}
+                        {!souEu && (
+                          <button type="button" className="botao secundario pequeno" disabled={ocupado} onClick={() => setRemovendo(m)}>
+                            Remover
+                          </button>
+                        )}
+                        {adms.length === 1 && m.papel === 'adm' && <p className="form-dica">Único ADM: torne outra pessoa ADM antes.</p>}
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="comboio-dica">
+              <Agulha tamanho={40} sombra={false} />
+              <p>Quem recebe o link entra sem criar conta. Dá pra chamar mais gente a qualquer hora.</p>
+            </div>
+          </Cartao>
+
+          {euSouAdm && (
+            <Cartao titulo="Convites ativos" icone={Ticket}>
+              {convites.length === 0 ? (
+                <p className="form-dica">Nenhum convite ativo. Toque em "Convidar" pra gerar um link.</p>
+              ) : (
+                <ul className="convites">
+                  {convites.map((c) => (
+                    <li key={c.codigo}>
+                      <span className="convite-texto">
+                        <code>{c.link.replace(/^https?:\/\//, '')}</code>
+                        <small>Vale até {formatarData(c.expiraEm.slice(0, 10))}</small>
+                      </span>
+                      <button type="button" className="botao-texto" aria-label="Copiar link" onClick={() => navigator.clipboard.writeText(c.link)}>
+                        <Copy size={16} aria-hidden="true" />
+                      </button>
+                      <button type="button" className="botao secundario pequeno" onClick={() => cancelar(c.codigo)}>
+                        Cancelar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Cartao>
+          )}
+        </div>
+
+        <div className="comboio-direita">
+          {/* Spec 087: histórico e lixeira */}
+          <HistoricoDaViagem />
+        </div>
+      </div>
 
       {/* Spec 055: começar outra viagem com as mesmas pessoas · Spec 091: duplicar o planejamento */}
       <div className="comboio-repetir">
@@ -292,9 +305,6 @@ export default function Comboio() {
           </Link>
         )}
         <DuplicarViagem viagem={viagem} comComboio={!sozinho} />
-      </div>
-
-      <div className="comboio-sair">
         <button type="button" className="botao secundario" onClick={() => setSaindo(true)}>
           <LogOut size={18} aria-hidden="true" /> {sozinho ? 'Apagar a viagem' : 'Sair da viagem'}
         </button>

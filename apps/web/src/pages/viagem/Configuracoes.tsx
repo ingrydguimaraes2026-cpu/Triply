@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
-import { Settings, ShieldCheck, Trash2 } from 'lucide-react'
+import { CalendarDays, Coins, Lock, PenLine, Settings, ShieldCheck, Trash2, Users } from 'lucide-react'
 import { useViagemAtual } from '../../features/viagens/hooks'
+import { formatarPeriodo } from '../../lib/datas'
 import { editarViagem } from '../../features/viagens/api'
 import ApagarViagem from '../../features/viagens/ApagarViagem'
 import { moedasDaViagem } from '../../features/financeiro/categorias'
+import Avatar from '../../components/ui/Avatar'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import EstadoVazio from '../../components/ui/EstadoVazio'
@@ -35,11 +37,7 @@ export default function Configuracoes() {
   const [salvando, setSalvando] = useState(false)
   const [mensagem, setMensagem] = useState<{ tipo: 'ok' | 'erro'; texto: string } | null>(null)
 
-  if (!euSouAdm) {
-    return (
-      <EstadoVazio icone={Settings} titulo="Só quem organiza a viagem mexe aqui" texto="Peça pro ADM do comboio mudar o nome, as datas ou a moeda." />
-    )
-  }
+  if (!euSouAdm) return <SoParaVer />
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
@@ -133,5 +131,50 @@ export default function Configuracoes() {
         <ApagarViagem id={viagem.id} nome={viagem.nome} />
       </Cartao>
     </>
+  )
+}
+
+// Quem não é ADM vê como a viagem está, tudo trancado (design Plataforma, spec 113)
+function SoParaVer() {
+  const { viagem, membros } = useViagemAtual()
+  const adms = membros.filter((m) => m.papel === 'adm')
+  const liberadas = PERMISSOES.filter((p) => viagem[p.campo])
+  const quemEdita =
+    liberadas.length === PERMISSOES.length
+      ? 'Todo o comboio'
+      : liberadas.length === 0
+        ? 'Só o ADM'
+        : `Comboio: ${liberadas.map((p) => p.nome.toLowerCase()).join(', ')}`
+  const linhas = [
+    { icone: PenLine, nome: 'Nome', valor: viagem.nome },
+    { icone: CalendarDays, nome: 'Datas', valor: formatarPeriodo(viagem.data_inicio, viagem.data_fim) },
+    { icone: Coins, nome: 'Moeda', valor: viagem.moeda_principal },
+    { icone: Users, nome: 'Quem edita', valor: quemEdita },
+  ]
+
+  return (
+    <div className="config-leitura">
+      <CabecalhoPagina acima={viagem.nome} titulo="Configurações" />
+      <EstadoVazio icone={Settings} titulo="Só quem organiza a viagem mexe aqui" texto="Peça pro ADM do comboio mudar o nome, as datas ou a moeda." />
+      {adms.length > 0 && (
+        <p className="config-adms">
+          {adms.map((a) => (
+            <Avatar key={a.id} nome={a.nome} url={a.avatarUrl} tamanho={26} />
+          ))}
+          {adms.map((a) => a.nome.split(' ')[0]).join(' e ')} {adms.length === 1 ? 'é ADM' : 'são ADM'} desta viagem
+        </p>
+      )}
+      <section className="cartao-ui config-agora">
+        <h2>Como está agora</h2>
+        {linhas.map(({ icone: Icone, nome, valor }) => (
+          <div key={nome} className="config-agora-linha">
+            <Icone size={17} aria-hidden="true" />
+            <span>{nome}</span>
+            <strong>{valor}</strong>
+            <Lock size={15} aria-label="Trancado" />
+          </div>
+        ))}
+      </section>
+    </div>
   )
 }
