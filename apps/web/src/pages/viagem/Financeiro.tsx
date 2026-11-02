@@ -204,244 +204,254 @@ export default function Financeiro() {
 
       {dados && contas && (
         <>
-          {/* Meu saldo em destaque, como o cartão do topo das Contas do app */}
-          <MeuSaldo
-            acertos={contas.acertos}
-            meuId={meuId}
-            moeda={moeda}
-            nome={nome}
-            total={contas.gastoComboio}
-            pessoas={membros.length}
-          />
-          {/* Os 3 números do topo */}
-          <div className="numeros">
-            <Cartao
-              titulo="Orçamento total"
-              icone={Wallet}
-              acao={
-                (euSouAdm || viagem.membro_edita_orcamento) && (
-                  <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'orcamento' })}>
-                    <Settings2 size={16} aria-hidden="true" /> Definir
-                  </button>
-                )
-              }
-            >
-              <p className="numero">{contas.orcamentoTotal ? formatarDinheiro(contas.orcamentoTotal, moeda) : '—'}</p>
-              <p className="numero-legenda">
-                {contas.orcamentoTotal
-                  ? membros.length > 1
-                    ? `${formatarDinheiro(Math.round(contas.orcamentoTotal / membros.length), moeda)} por pessoa`
-                    : 'Do comboio inteiro'
-                  : euSouAdm
-                    ? 'Defina quanto querem gastar por categoria'
-                    : 'O ADM ainda não definiu'}
-              </p>
-            </Cartao>
-            <Cartao titulo="Gasto até agora" icone={Receipt}>
-              <p className="numero">{formatarDinheiro(contas.gastoComboio, moeda)}</p>
-              <p className="numero-legenda">
-                {Object.keys(contas.totaisComboio).length > 1 && `${totaisSeparados(contas.totaisComboio, moeda)} · `}
-                {contas.orcamentoTotal > 0 && `${Math.round((contas.gastoComboio / contas.orcamentoTotal) * 100)}% do orçamento · `}
-                {contas.gastoPessoal > 0 ? `+ ${formatarDinheiro(contas.gastoPessoal, moeda)} seus pessoais` : 'Gastos do comboio'}
-              </p>
-              {contas.semCotacao.length > 0 && (
-                <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
-              )}
-            </Cartao>
-            {/* Spec 083: quanto de dinheiro vivo eu ainda tenho */}
-            {meuDinheiro.length > 0 && (
-              <Cartao titulo="Dinheiro na mão" icone={Banknote}>
-                <p className="numero">{meuDinheiro.map((d) => formatarDinheiro(d.valor, d.moeda)).join(' + ')}</p>
-                <p className="numero-legenda">Compras em espécie menos o que você pagou em dinheiro</p>
-              </Cartao>
-            )}
-            <Cartao titulo="A pagar" icone={CalendarClock}>
-              <APagar viagemId={viagem.id} moeda={moeda} membros={membros} meuId={meuId} euSouAdm={euSouAdm} aoLancar={recarregar} />
-            </Cartao>
-            <Cartao titulo="Meu orçamento" icone={UserRound}>
-              <MeuOrcamento
-                viagemId={viagem.id}
-                meuId={meuId}
-                moeda={moeda}
-                gasto={contas.meuGasto}
-                inicio={viagem.data_inicio}
-                fim={viagem.data_fim}
-              />
-            </Cartao>
-            {moeda === 'EUR' ? (
-              // Quanto de euro eu tenho (saldo da carteira, puxado dos e-mails do Wise/Nomad)
-              <Cartao titulo="Meu euro" icone={Euro}>
-                <p className="numero">{meuEuro != null ? formatarDinheiro(Math.round(meuEuro * 100), 'EUR') : '—'}</p>
-                <p className="numero-legenda">
-                  {meuEuro != null ? 'na sua conta Wise/Nomad · puxado do e-mail' : 'Conecte o Gmail no card abaixo pra puxar sozinho'}
-                </p>
-              </Cartao>
-            ) : (
-              <Cartao
-                titulo="Cotação média"
-                icone={Coins}
-                acao={
-                  <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
-                    <Plus size={16} aria-hidden="true" /> Compra
-                  </button>
-                }
-              >
-                {contas.parPrincipal ? (
-                  <>
-                    <p className="numero">
-                      {contas.parPrincipal.origem} {cotacaoTexto(contas.parPrincipal.media)}
-                    </p>
-                    <p className="numero-legenda">
-                      Quanto vocês pagaram, em média, por 1 {moeda}
-                      <br />
-                      <Comparacao media={contas.parPrincipal.media} hoje={hoje} origem={contas.parPrincipal.origem} />
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="numero">—</p>
-                    <p className="numero-legenda">Registre uma compra de moeda pra ver a média</p>
-                  </>
-                )}
-              </Cartao>
-            )}
-          </div>
-
-          {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? */}
-          {moeda !== 'BRL' && (
-            <TermometroCambio
-              viagemId={viagem.id}
+          {/* Design Plataforma (spec 113): saldo + números em cima, câmbio à esquerda e carteira,
+              categorias e acertos à direita; no celular tudo vira uma coluna */}
+          <div className="fin-topo">
+            {/* Meu saldo em destaque, como o cartão do topo das Contas do app */}
+            <MeuSaldo
+              acertos={contas.acertos}
               meuId={meuId}
               moeda={moeda}
-              minhaMedia={(() => {
-                const minhas = dados.compras.filter((c) => c.usuario_id === meuId && c.moeda_origem === 'BRL' && c.moeda_destino === moeda)
-                const destino = minhas.reduce((s, c) => s + c.valorDestino, 0)
-                return destino ? minhas.reduce((s, c) => s + c.valorOrigem, 0) / destino : null
-              })()}
+              nome={nome}
+              total={contas.gastoComboio}
+              pessoas={membros.length}
             />
-          )}
-
-          {/* Carteira de euro por e-mail (Wise/Nomad) */}
-          {moeda === 'EUR' && (
-            <Carteira
-              viagemId={viagem.id}
-              meuId={meuId}
-              estado={carteira}
-              recarregar={recarregarCarteira}
-              aoVirarGasto={(m) => setJanela({ tipo: 'gasto', movimento: m })}
-            />
-          )}
-
-          {/* Spec 082: relatórios */}
-          {contas.relatorio.porDia.length > 0 && (
-            <Cartao titulo="Relatórios" icone={BarChart3}>
-              <Relatorio relatorio={contas.relatorio} moeda={moeda} nome={nome} />
-            </Cartao>
-          )}
-
-          {/* Orçamento por categoria */}
-          <Cartao titulo="Por categoria">
-            <ul className="categorias">
-              {CATEGORIAS.map(({ chave, nome: nomeCat, icone: Icone }) => {
-                const gasto = contas.porCategoria[chave] ?? 0
-                const meta = dados.orcamentos.find((o) => o.categoria === chave)?.meta ?? 0
-                const pct = meta ? (gasto / meta) * 100 : 0
-                const classe = pct > 100 ? 'estourou' : pct >= 80 ? 'alerta' : ''
-                return (
-                  <li key={chave} className={classe}>
-                    <span className="categoria-icone">
-                      <Icone size={18} aria-hidden="true" />
-                    </span>
-                    <span className="categoria-nome">{nomeCat}</span>
-                    <span
-                      className="categoria-barra"
-                      role={meta ? 'progressbar' : undefined}
-                      aria-valuenow={meta ? Math.round(pct) : undefined}
-                      aria-label={meta ? `${nomeCat}: ${Math.round(pct)}% do orçamento` : undefined}
-                    >
-                      <span style={{ width: `${Math.min(pct, 100)}%` }} />
-                    </span>
-                    <span className="categoria-valor">
-                      {formatarDinheiro(gasto, moeda)}
-                      {meta > 0 && <small> de {formatarDinheiro(meta, moeda)}</small>}
-                      {pct > 100 && <small className="categoria-estourou">estourou {formatarDinheiro(gasto - meta, moeda)}</small>}
-                      {pct >= 80 && pct <= 100 && <small className="categoria-alerta">{Math.round(pct)}% usado</small>}
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
-            <p className="form-dica">Gastos pessoais não entram no orçamento do comboio.</p>
-          </Cartao>
-
-          <div className="financeiro-grade">
-            {/* Acertos: quem deve pra quem */}
-            <Cartao titulo="Acertos" icone={HandCoins} className="cartao-acertos">
-              {contas.acertos.length === 0 ? (
-                <p className="form-dica">Tudo certo: ninguém deve nada pra ninguém.</p>
-              ) : (
-                <ul className="acertos">
-                  {contas.acertos.map((a) => (
-                    <li key={`${a.de}-${a.para}-${a.moeda}`}>
-                      <strong>{nome(a.de)}</strong> deve{' '}
-                      <strong className="acerto-valor">{formatarDinheiro(a.valor, a.moeda)}</strong> pra <strong>{nome(a.para)}</strong>
-                    </li>
-                  ))}
-                </ul>
+            {/* Os 3 números do topo */}
+            <div className="numeros">
+              <Cartao
+                titulo="Orçamento total"
+                icone={Wallet}
+                acao={
+                  (euSouAdm || viagem.membro_edita_orcamento) && (
+                    <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'orcamento' })}>
+                      <Settings2 size={16} aria-hidden="true" /> Definir
+                    </button>
+                  )
+                }
+              >
+                <p className="numero">{contas.orcamentoTotal ? formatarDinheiro(contas.orcamentoTotal, moeda) : '—'}</p>
+                <p className="numero-legenda">
+                  {contas.orcamentoTotal
+                    ? membros.length > 1
+                      ? `${formatarDinheiro(Math.round(contas.orcamentoTotal / membros.length), moeda)} por pessoa`
+                      : 'Do comboio inteiro'
+                    : euSouAdm
+                      ? 'Defina quanto querem gastar por categoria'
+                      : 'O ADM ainda não definiu'}
+                </p>
+              </Cartao>
+              <Cartao titulo="Gasto até agora" icone={Receipt}>
+                <p className="numero">{formatarDinheiro(contas.gastoComboio, moeda)}</p>
+                <p className="numero-legenda">
+                  {Object.keys(contas.totaisComboio).length > 1 && `${totaisSeparados(contas.totaisComboio, moeda)} · `}
+                  {contas.orcamentoTotal > 0 && `${Math.round((contas.gastoComboio / contas.orcamentoTotal) * 100)}% do orçamento · `}
+                  {contas.gastoPessoal > 0 ? `+ ${formatarDinheiro(contas.gastoPessoal, moeda)} seus pessoais` : 'Gastos do comboio'}
+                </p>
+                {contas.semCotacao.length > 0 && (
+                  <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>
+                )}
+              </Cartao>
+              {/* Spec 083: quanto de dinheiro vivo eu ainda tenho */}
+              {meuDinheiro.length > 0 && (
+                <Cartao titulo="Dinheiro na mão" icone={Banknote}>
+                  <p className="numero">{meuDinheiro.map((d) => formatarDinheiro(d.valor, d.moeda)).join(' + ')}</p>
+                  <p className="numero-legenda">Compras em espécie menos o que você pagou em dinheiro</p>
+                </Cartao>
               )}
-            </Cartao>
-
-            {/* Câmbio */}
-            <Cartao
-              titulo="Câmbio"
-              icone={Coins}
-              acao={
-                <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
-                  <Plus size={16} aria-hidden="true" /> Registrar compra
-                </button>
-              }
-            >
-              {dados.compras.length === 0 ? (
-                <p className="form-dica">Comprou euro, dólar…? Registre aqui pra ver a cotação média de cada um.</p>
+              <Cartao titulo="A pagar" icone={CalendarClock}>
+                <APagar viagemId={viagem.id} moeda={moeda} membros={membros} meuId={meuId} euSouAdm={euSouAdm} aoLancar={recarregar} />
+              </Cartao>
+              <Cartao titulo="Meu orçamento" icone={UserRound}>
+                <MeuOrcamento
+                  viagemId={viagem.id}
+                  meuId={meuId}
+                  moeda={moeda}
+                  gasto={contas.meuGasto}
+                  inicio={viagem.data_inicio}
+                  fim={viagem.data_fim}
+                />
+              </Cartao>
+              {moeda === 'EUR' ? (
+                // Quanto de euro eu tenho (saldo da carteira, puxado dos e-mails do Wise/Nomad)
+                <Cartao titulo="Meu euro" icone={Euro}>
+                  <p className="numero">{meuEuro != null ? formatarDinheiro(Math.round(meuEuro * 100), 'EUR') : '—'}</p>
+                  <p className="numero-legenda">
+                    {meuEuro != null ? 'na sua conta Wise/Nomad · puxado do e-mail' : 'Conecte o Gmail no card abaixo pra puxar sozinho'}
+                  </p>
+                </Cartao>
               ) : (
-                <>
-                  <ul className="carteiras">
-                    {Carteiras(dados.compras).map((c) => (
-                      <li key={`${c.usuario}-${c.moeda}`}>
-                        <span>{nome(c.usuario)}</span>
-                        <span>
-                          comprou <strong>{formatarDinheiro(c.total, c.moeda)}</strong>
-                          <small>
-                            {' '}
-                            a {cotacaoTexto(c.media)} {c.origem}
-                          </small>
+                <Cartao
+                  titulo="Cotação média"
+                  icone={Coins}
+                  acao={
+                    <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
+                      <Plus size={16} aria-hidden="true" /> Compra
+                    </button>
+                  }
+                >
+                  {contas.parPrincipal ? (
+                    <>
+                      <p className="numero">
+                        {contas.parPrincipal.origem} {cotacaoTexto(contas.parPrincipal.media)}
+                      </p>
+                      <p className="numero-legenda">
+                        Quanto vocês pagaram, em média, por 1 {moeda}
+                        <br />
+                        <Comparacao media={contas.parPrincipal.media} hoje={hoje} origem={contas.parPrincipal.origem} />
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="numero">—</p>
+                      <p className="numero-legenda">Registre uma compra de moeda pra ver a média</p>
+                    </>
+                  )}
+                </Cartao>
+              )}
+            </div>
+          </div>
+
+          <div className="fin-colunas">
+            <div className="fin-principal">
+              {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? */}
+              {moeda !== 'BRL' && (
+                <TermometroCambio
+                  viagemId={viagem.id}
+                  meuId={meuId}
+                  moeda={moeda}
+                  minhaMedia={(() => {
+                    const minhas = dados.compras.filter((c) => c.usuario_id === meuId && c.moeda_origem === 'BRL' && c.moeda_destino === moeda)
+                    const destino = minhas.reduce((s, c) => s + c.valorDestino, 0)
+                    return destino ? minhas.reduce((s, c) => s + c.valorOrigem, 0) / destino : null
+                  })()}
+                />
+              )}
+
+              {/* Spec 082: relatórios */}
+              {contas.relatorio.porDia.length > 0 && (
+                <Cartao titulo="Relatórios" icone={BarChart3}>
+                  <Relatorio relatorio={contas.relatorio} moeda={moeda} nome={nome} />
+                </Cartao>
+              )}
+            </div>
+
+            <div className="fin-lateral">
+              {/* Carteira de euro por e-mail (Wise/Nomad) */}
+              {moeda === 'EUR' && (
+                <Carteira
+                  viagemId={viagem.id}
+                  meuId={meuId}
+                  estado={carteira}
+                  recarregar={recarregarCarteira}
+                  aoVirarGasto={(m) => setJanela({ tipo: 'gasto', movimento: m })}
+                />
+              )}
+
+              {/* Orçamento por categoria */}
+              <Cartao titulo="Por categoria">
+                <ul className="categorias">
+                  {CATEGORIAS.map(({ chave, nome: nomeCat, icone: Icone }) => {
+                    const gasto = contas.porCategoria[chave] ?? 0
+                    const meta = dados.orcamentos.find((o) => o.categoria === chave)?.meta ?? 0
+                    const pct = meta ? (gasto / meta) * 100 : 0
+                    const classe = pct > 100 ? 'estourou' : pct >= 80 ? 'alerta' : ''
+                    return (
+                      <li key={chave} className={classe}>
+                        <span className="categoria-icone">
+                          <Icone size={18} aria-hidden="true" />
+                        </span>
+                        <span className="categoria-nome">{nomeCat}</span>
+                        <span
+                          className="categoria-barra"
+                          role={meta ? 'progressbar' : undefined}
+                          aria-valuenow={meta ? Math.round(pct) : undefined}
+                          aria-label={meta ? `${nomeCat}: ${Math.round(pct)}% do orçamento` : undefined}
+                        >
+                          <span style={{ width: `${Math.min(pct, 100)}%` }} />
+                        </span>
+                        <span className="categoria-valor">
+                          {formatarDinheiro(gasto, moeda)}
+                          {meta > 0 && <small> de {formatarDinheiro(meta, moeda)}</small>}
+                          {pct > 100 && <small className="categoria-estourou">estourou {formatarDinheiro(gasto - meta, moeda)}</small>}
+                          {pct >= 80 && pct <= 100 && <small className="categoria-alerta">{Math.round(pct)}% usado</small>}
                         </span>
                       </li>
-                    ))}
-                  </ul>
-                  <ul className="compras">
-                    {dados.compras.map((c) => (
-                      <li key={c.id}>
-                        <button
-                          type="button"
-                          disabled={c.usuario_id !== meuId}
-                          onClick={() => setJanela({ tipo: 'cambio', compra: c })}
-                          aria-label={c.usuario_id === meuId ? 'Editar compra' : undefined}
-                        >
-                          <span>
-                            {formatarDinheiro(c.valorOrigem, c.moeda_origem)} <ArrowRight size={14} aria-hidden="true" />{' '}
-                            {formatarDinheiro(c.valorDestino, c.moeda_destino)}
-                          </span>
-                          <small>
-                            {nome(c.usuario_id)} · {formatarData(c.data)} · {cotacaoTexto(c.valorOrigem / c.valorDestino)}
-                          </small>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </Cartao>
+                    )
+                  })}
+                </ul>
+                <p className="form-dica">Gastos pessoais não entram no orçamento do comboio.</p>
+              </Cartao>
+
+              <div className="financeiro-grade">
+                {/* Acertos: quem deve pra quem */}
+                <Cartao titulo="Acertos" icone={HandCoins} className="cartao-acertos">
+                  {contas.acertos.length === 0 ? (
+                    <p className="form-dica">Tudo certo: ninguém deve nada pra ninguém.</p>
+                  ) : (
+                    <ul className="acertos">
+                      {contas.acertos.map((a) => (
+                        <li key={`${a.de}-${a.para}-${a.moeda}`}>
+                          <strong>{nome(a.de)}</strong> deve{' '}
+                          <strong className="acerto-valor">{formatarDinheiro(a.valor, a.moeda)}</strong> pra <strong>{nome(a.para)}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Cartao>
+
+                {/* Câmbio */}
+                <Cartao
+                  titulo="Câmbio"
+                  icone={Coins}
+                  acao={
+                    <button type="button" className="botao-texto" onClick={() => setJanela({ tipo: 'cambio' })}>
+                      <Plus size={16} aria-hidden="true" /> Registrar compra
+                    </button>
+                  }
+                >
+                  {dados.compras.length === 0 ? (
+                    <p className="form-dica">Comprou euro, dólar…? Registre aqui pra ver a cotação média de cada um.</p>
+                  ) : (
+                    <>
+                      <ul className="carteiras">
+                        {Carteiras(dados.compras).map((c) => (
+                          <li key={`${c.usuario}-${c.moeda}`}>
+                            <span>{nome(c.usuario)}</span>
+                            <span>
+                              comprou <strong>{formatarDinheiro(c.total, c.moeda)}</strong>
+                              <small>
+                                {' '}
+                                a {cotacaoTexto(c.media)} {c.origem}
+                              </small>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <ul className="compras">
+                        {dados.compras.map((c) => (
+                          <li key={c.id}>
+                            <button
+                              type="button"
+                              disabled={c.usuario_id !== meuId}
+                              onClick={() => setJanela({ tipo: 'cambio', compra: c })}
+                              aria-label={c.usuario_id === meuId ? 'Editar compra' : undefined}
+                            >
+                              <span>
+                                {formatarDinheiro(c.valorOrigem, c.moeda_origem)} <ArrowRight size={14} aria-hidden="true" />{' '}
+                                {formatarDinheiro(c.valorDestino, c.moeda_destino)}
+                              </span>
+                              <small>
+                                {nome(c.usuario_id)} · {formatarData(c.data)} · {cotacaoTexto(c.valorOrigem / c.valorDestino)}
+                              </small>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </Cartao>
+              </div>
+            </div>
           </div>
 
           {/* Lista de gastos */}

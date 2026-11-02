@@ -592,3 +592,98 @@ html[data-tema='escuro'] .gasto .categoria-icone {
   background: var(--cor-comboio-fundo);
   color: var(--cor-comboio);
 }
+
+/* ---------- Design Plataforma (spec 113) ----------
+   Em cima: saldo (1,4 parte) + números (2 partes). Embaixo: câmbio (2) + carteira, categorias e acertos (1).
+   Tudo quebra sozinho pra uma coluna no celular. */
+.fin-topo,
+.fin-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.fin-colunas {
+  align-items: flex-start;
+}
+
+.fin-topo > .meu-saldo {
+  flex: 1.4 1 340px;
+  min-width: 0;
+  padding: 24px;
+  border-radius: 22px;
+}
+
+.fin-topo > .meu-saldo .meu-saldo-valor {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.fin-topo > .numeros {
+  flex: 2 1 460px;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.fin-topo .numeros .cartao-ui {
+  gap: 6px;
+  padding: 16px;
+}
+
+.fin-topo .numeros .numero {
+  font-size: 26px;
+}
+
+.fin-topo .numeros .numero-legenda {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.fin-principal {
+  flex: 2 1 480px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fin-lateral {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Acertos e câmbio, que eram uma grade de 2, ficam um embaixo do outro na lateral */
+.fin-lateral .financeiro-grade {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fin-colunas .cartao-ui,
+.fin-topo .cartao-ui {
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.fin-principal > .cartao-ui,
+.fin-lateral .cartao-ui {
+  padding: 22px;
+}
+
+/* "Meu orçamento" num cartão estreito: o campo encolhe e o botão desce se não couber */
+.meu-orcamento-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.meu-orcamento-form > div {
+  flex-wrap: wrap;
+}
+
+.meu-orcamento-form input {
+  flex: 1 1 90px;
+}
