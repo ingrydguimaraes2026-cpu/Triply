@@ -65,24 +65,85 @@
   max-width: 560px;
 }
 
-/* ---------- Viagem em destaque (cartão grande com a capa) ---------- */
+/* ---------- Minhas viagens no design Plataforma (spec 113) ---------- */
+.viagens-pagina .pagina-solta-topo,
+.viagens-pagina .pagina-solta-conteudo {
+  max-width: 1240px;
+  padding-left: clamp(20px, 5vw, 64px);
+  padding-right: clamp(20px, 5vw, 64px);
+}
+
+.viagens-pagina .pagina-solta-topo {
+  min-height: 76px;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: 0;
+}
+
+.viagens-pagina .pagina-solta-logo {
+  font-size: 22px;
+}
+
+.viagens-pagina .pagina-solta-topo .botao-texto {
+  color: var(--couro);
+  font-size: 14px;
+}
+
+.viagens-pagina .pagina-solta-conteudo {
+  padding-top: 16px;
+  gap: 24px;
+}
+
+.viagens-pagina .cabecalho-pagina {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.viagens-pagina .cabecalho-pagina-acima {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cor-texto-menu);
+}
+
+.viagens-pagina .cabecalho-pagina h1 {
+  margin-top: 2px;
+  font-size: clamp(34px, 3.4vw, 46px);
+}
+
+.viagens-pagina .cabecalho-pagina .botao {
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+}
+
+/* ---------- Viagem em destaque (capa grande) ---------- */
 .viagem-destaque {
   position: relative;
+  animation: viagens-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes viagens-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
 
 .viagem-destaque-link {
   position: relative;
   display: block;
-  height: 470px;
+  height: clamp(340px, 36vw, 460px);
   overflow: hidden;
-  border-radius: 24px;
-  background: var(--couro);
-  box-shadow: var(--sombra-hero);
-  color: #ffffff;
+  border-radius: 28px;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  box-shadow: 0 24px 50px rgb(74 46 20 / 0.2);
+  color: #fbf3e6;
   text-decoration: none;
 }
 
-.viagem-destaque-link img {
+/* Só a capa (">"): a foto do avatar não pode virar fundo */
+.viagem-destaque-link > img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -91,27 +152,27 @@
   transition: transform 0.6s ease-out;
 }
 
-.viagem-destaque-link:hover img {
+.viagem-destaque-link:hover > img {
   transform: scale(1.03);
 }
 
-/* Degradê caramelo → marrom por cima da foto, igual ao app */
 .viagem-destaque-link::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgb(185 122 34 / 0) 38%, rgb(185 122 34 / 0.55) 62%, #4a2e14 100%);
+  background: linear-gradient(180deg, rgb(30 20 11 / 0.15) 0%, rgb(30 20 11 / 0) 35%, rgb(42 26 12 / 0.88) 100%);
 }
 
 .viagem-destaque-etiqueta {
   position: absolute;
   z-index: 1;
-  top: 16px;
-  left: 16px;
+  top: 20px;
+  left: 20px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 7px;
+  padding: 0 12px;
   border-radius: 999px;
   background: #fbf3e6;
   color: #3b2715;
@@ -126,66 +187,66 @@
 .viagem-destaque-texto {
   position: absolute;
   z-index: 1;
-  left: 24px;
-  right: 24px;
-  bottom: 24px;
+  left: 28px;
+  right: 28px;
+  bottom: 26px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.viagem-destaque-info {
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
 .viagem-destaque-acima {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--creme);
+  color: #e3b572;
 }
 
-.viagem-destaque-texto strong {
-  margin: 8px 0 18px;
+.viagem-destaque-info strong {
+  margin: 6px 0 12px;
   font-family: var(--fonte-titulo);
-  font-size: 40px;
+  font-size: clamp(34px, 4vw, 56px);
   font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
-}
-
-.viagem-destaque-rodape {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
 }
 
 .viagem-destaque-comboio {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--creme);
 }
 
 .viagem-destaque-comboio .avatar {
-  border-color: #5a3818;
+  border: 2px solid #fbf3e6;
 }
 
 .viagem-destaque-seta {
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: #fbf3e6;
-  color: #4a2e14;
+  color: #3b2715;
 }
 
-/* ---------- Lista (miniatura + nome) ---------- */
+/* ---------- Próximas: cartões em grade ---------- */
 .viagens-secao {
-  margin: 12px 0 12px;
-  font-size: 22px;
+  margin: 12px 0 14px;
+  font-size: 24px;
   color: var(--cor-texto);
 }
 
@@ -194,8 +255,8 @@
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
 }
 
 .viagem-linha {
@@ -207,9 +268,9 @@
   align-items: center;
   gap: 14px;
   padding: 12px 92px 12px 12px;
-  border-radius: 16px;
+  border-radius: 20px;
   background: var(--cor-cartao);
-  box-shadow: var(--sombra-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
   color: var(--cor-texto);
   text-decoration: none;
   transition: box-shadow 0.15s;
@@ -220,16 +281,16 @@ html[data-tema='escuro'] .viagem-linha-link {
 }
 
 .viagem-linha-link:hover {
-  box-shadow: var(--sombra-flutuante);
+  box-shadow: 0 12px 28px rgb(74 46 20 / 0.12);
 }
 
-.viagem-linha-link img {
+.viagem-linha-link > img {
   flex: none;
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
   object-fit: cover;
-  background: var(--cor-borda-forte);
+  background: linear-gradient(160deg, #d9b07a, #8e6a3e);
 }
 
 .viagem-linha-texto {
@@ -243,7 +304,7 @@ html[data-tema='escuro'] .viagem-linha-link {
 .viagem-linha-texto strong {
   overflow: hidden;
   font-family: var(--fonte-titulo);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -292,19 +353,46 @@ html[data-tema='escuro'] .viagem-linha-link {
   color: var(--cor-erro);
 }
 
-/* No destaque, em cima da foto */
+/* Com mouse: arquivar/apagar só aparecem ao passar por cima, e o texto usa o cartão todo */
+@media (hover: hover) and (pointer: fine) {
+  .viagem-linha-link {
+    padding-right: 16px;
+  }
+
+  .viagem-linha .viagem-acoes {
+    right: 12px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--cor-cartao);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .viagem-linha:hover .viagem-acoes,
+  .viagem-linha:focus-within .viagem-acoes {
+    opacity: 1;
+  }
+}
+
+/* No destaque: bolinhas creme em cima da foto */
 .viagem-acoes.claro {
-  top: 16px;
-  right: 16px;
+  top: 20px;
+  right: 20px;
   transform: none;
+  gap: 8px;
 }
 
 .viagem-acoes.claro button {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgb(251 243 230 / 0.9);
-  color: #4a2e14;
+  background: rgb(251 243 230 / 0.92);
+  color: #3b2715;
+}
+
+.viagem-acoes.claro button svg {
+  width: 17px;
+  height: 17px;
 }
 
 /* Estado vazio: Agulha dormindo esperando a primeira viagem */
@@ -346,11 +434,24 @@ html[data-tema='escuro'] .viagem-linha-link {
 
 @media (max-width: 480px) {
   .viagem-destaque-link {
-    height: 420px;
+    height: 400px;
   }
 
-  .viagem-destaque-texto strong {
-    font-size: 34px;
+  .viagem-destaque-texto {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .viagem-destaque-seta {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viagem-destaque {
+    animation: none;
   }
 }
 

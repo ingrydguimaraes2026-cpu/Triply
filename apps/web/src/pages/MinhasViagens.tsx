@@ -30,15 +30,8 @@ function etiquetaDaViagem(v: ViagemNaLista) {
   return faltam === 1 ? 'É amanhã!' : 'É hoje!'
 }
 
-function mesEAno(data: string | null) {
-  if (!data) return 'Sem data'
-  const [ano, mes] = data.split('-').map(Number)
-  const nome = new Date(ano, mes - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
-  return `${nome} ${ano}`
-}
-
-// "/viagens" (spec 008), no estilo do app (spec 112): a viagem mais perto em destaque com a capa,
-// e as outras numa lista com miniatura.
+// "/viagens" (spec 008), no design Plataforma (spec 113): a viagem mais perto em destaque com a capa,
+// e as outras em cartões com miniatura.
 export default function MinhasViagens() {
   const [viagens, setViagens] = useState<ResumoDaViagem[] | null | 'erro'>(null)
   const { sessao, ehConvidado } = useSessao()
@@ -116,7 +109,7 @@ export default function MinhasViagens() {
         <span className="viagem-linha-texto">
           <strong>{v.nome}</strong>
           <span>
-            {mesEAno(v.dataInicio)} · {v.membros.length} {v.membros.length === 1 ? 'pessoa' : 'pessoas'}
+            {formatarPeriodo(v.dataInicio, v.dataFim) || 'Sem data'} · {v.membros.length} {v.membros.length === 1 ? 'pessoa' : 'pessoas'}
           </span>
         </span>
         <ChevronRight size={20} aria-hidden="true" className="viagem-linha-seta" />
@@ -126,11 +119,11 @@ export default function MinhasViagens() {
   )
 
   return (
-    <div className="pagina-solta">
+    <div className="pagina-solta viagens-pagina">
       <header className="pagina-solta-topo">
         <Link to="/" className="pagina-solta-logo">
           <span className="pagina-solta-agulha">
-            <Agulha tamanho={30} sombra={false} />
+            <Agulha tamanho={34} sombra={false} />
           </span>
           Together
         </Link>
@@ -159,7 +152,7 @@ export default function MinhasViagens() {
           </div>
           {/* Convidado cria conta antes de criar viagem (spec 018) */}
           {!ehConvidado && (
-            <Link to="/nova-viagem" className="botao compacto">
+            <Link to="/nova-viagem" className="botao">
               <Plus size={18} aria-hidden="true" /> Nova viagem
             </Link>
           )}
@@ -191,20 +184,20 @@ export default function MinhasViagens() {
                 <Clock size={16} aria-hidden="true" /> {etiquetaDaViagem(destaque)}
               </span>
               <span className="viagem-destaque-texto">
-                <span className="viagem-destaque-acima">
-                  {[destaque.destinos.length > 1 ? `${destaque.destinos.length} destinos` : destaque.destinos[0], formatarPeriodo(destaque.dataInicio, destaque.dataFim)]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </span>
-                <strong>{destaque.nome}</strong>
-                <span className="viagem-destaque-rodape">
+                <span className="viagem-destaque-info">
+                  <span className="viagem-destaque-acima">
+                    {[destaque.destinos.length > 1 ? `${destaque.destinos.length} destinos` : destaque.destinos[0], formatarPeriodo(destaque.dataInicio, destaque.dataFim)]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </span>
+                  <strong>{destaque.nome}</strong>
                   <span className="viagem-destaque-comboio">
-                    <PilhaDeAvatares pessoas={destaque.membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} />
+                    <PilhaDeAvatares pessoas={destaque.membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} tamanho={30} />
                     {destaque.membros.length} {destaque.membros.length === 1 ? 'viajante' : 'viajantes'}
                   </span>
-                  <span className="viagem-destaque-seta" aria-hidden="true">
-                    <ArrowRight size={20} />
-                  </span>
+                </span>
+                <span className="viagem-destaque-seta" aria-hidden="true">
+                  <ArrowRight size={22} />
                 </span>
               </span>
             </Link>
