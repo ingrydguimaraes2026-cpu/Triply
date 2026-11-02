@@ -58,10 +58,12 @@ const CARTOES_POR_VEZ = 12
 
 export default function Explorar() {
   const { atual: viagem } = useViagemAtual()
-  const { destino: destinoPedido } = useLocalSearchParams<{ destino?: string }>()
+  // `viagem`: a viagem acabou de ser criada/aceita (espera ela chegar). `guiado`: primeira viagem (spec 116)
+  const { destino: destinoPedido, viagem: viagemPedida, guiado } = useLocalSearchParams<{ destino?: string; viagem?: string; guiado?: string }>()
   const carga = useCarregar(viagem ? () => buscarDestinos(supabase, viagem.id) : null, [viagem?.id])
   const [escolhido, setEscolhido] = useState<string | null>(destinoPedido ?? null)
 
+  if (viagemPedida && viagem?.id !== viagemPedida) return <Carregando texto="Arrumando a viagem…" />
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
@@ -76,12 +78,12 @@ export default function Explorar() {
     )
   }
   // `key`: trocar de destino recomeça tudo
-  return <ExplorarDestino key={destino.id} destino={destino} destinos={destinos} aoTrocar={setEscolhido} />
+  return <ExplorarDestino key={destino.id} destino={destino} destinos={destinos} aoTrocar={setEscolhido} guiado={guiado === '1'} />
 }
 
 type Etapa = 'carregando' | 'deck' | 'ajustar' | 'montando' | 'roteiro' | 'erro'
 
-function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; destinos: Destino[]; aoTrocar: (id: string) => void }) {
+function ExplorarDestino({ destino, destinos, aoTrocar, guiado }: { destino: Destino; destinos: Destino[]; aoTrocar: (id: string) => void; guiado: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { height } = useWindowDimensions()
@@ -116,8 +118,13 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
   const pessoas = viagem?.membros.length ?? 1
   const euSouAdm = !!viagem?.membros.some((m) => m.id === meuId && m.papel === 'adm')
 
-  // Ao abrir: com roteiro, abre nele; sem roteiro, começa a deslizar
+  // Ao abrir: com roteiro, abre nele; sem roteiro, começa a deslizar.
+  // Guiado (spec 116): sempre começa pelo deslize; quem já escolheu tudo cai no roteiro sozinho.
   useEffect(() => {
+    if (guiado) {
+      void comecar()
+      return
+    }
     let vivo = true
     buscarRoteiroDoDestino(supabase, destino.id)
       .then((salvo) => {
@@ -261,7 +268,7 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
   const topo = (
     <View className="gap-3 px-5" style={{ paddingTop: insets.top + 8 }}>
       <View className="flex-row items-center gap-3">
-        <BotaoRedondo aoTocar={() => router.back()}>
+        <BotaoRedondo aoTocar={() => (guiado && viagem ? router.replace(`/viagem/${viagem.id}`) : router.back())}>
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View className="flex-1">
@@ -311,7 +318,7 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
         <StatusBar style="dark" />
         {topo}
         <View className="gap-4 p-5">
-          <View className="rounded-[12px] bg-vermelhoFundo p-3.5">
+          <View className="rounded-[12px] bg-vermelho-fundo p-3.5">
             <Text className="font-body text-[14px] text-vermelho">{erro}</Text>
           </View>
           <Botao titulo="Tentar de novo" aoTocar={comecar} />
@@ -380,6 +387,14 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
             />
           </View>
         </ScrollView>
+        {guiado ? (
+          <View className="border-t border-linha bg-fundo px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+            <Botao
+              titulo="Continuar"
+              aoTocar={() => router.replace(euSouAdm && pessoas <= 1 ? `/chamar-galera?viagem=${viagem.id}` : `/viagem/${viagem.id}`)}
+            />
+          </View>
+        ) : null}
       </View>
     )
   }
@@ -387,6 +402,9 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
   // ---------- Deck ----------
   const total = deslize.pilha.length
   const naoAbroMaoLiberado = podeNaoAbrirMao(deslize, jaTenho)
+  // Primeira viagem (spec 116): dica de como deslizar até o primeiro cartão sair
+  const comDica = guiado && total > 0 && deslize.posicao === 0
+  const altura = comDica ? alturaCartao - 64 : alturaCartao
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
@@ -404,19 +422,27 @@ function ExplorarDestino({ destino, destinos, aoTrocar }: { destino: Destino; de
           </Pressable>
         </View>
 
+        {comDica ? (
+          <View className="mb-3 flex-row items-center justify-around rounded-2xl bg-areia px-3 py-2.5">
+            <Dica Icone={X} cor={cor.vermelho} texto="← passo" />
+            <Dica Icone={Star} cor={cor.caramelo} texto="↑ não abro mão" />
+            <Dica Icone={Heart} cor={cor.verde} texto="quero →" />
+          </View>
+        ) : null}
+
         {total === 0 ? (
           <View className="items-center gap-3 rounded-[20px] border-[1.5px] border-dashed border-tracejado p-8">
             <Text className="text-center font-body text-[15px] text-corpo">Achamos poucos lugares em {destino.nome} ainda.</Text>
             <Botao titulo="Adicionar um lugar" tipo="secundario" aoTocar={() => router.push('/lugares')} />
           </View>
         ) : (
-          <View style={{ height: alturaCartao }}>
-            {proximo ? <CartaoDoExplorar key={`b-${proximo.id}`} lugar={proximo} altura={alturaCartao} parado /> : null}
+          <View style={{ height: altura }}>
+            {proximo ? <CartaoDoExplorar key={`b-${proximo.id}`} lugar={proximo} altura={altura} parado /> : null}
             {atual ? (
               <CartaoDoExplorar
                 key={atual.id}
                 lugar={atual}
-                altura={alturaCartao}
+                altura={altura}
                 comando={comando}
                 podeDecidir={podeDecidir}
                 aoVoar={aoVoar}
@@ -544,6 +570,16 @@ function BotaoDeAcao({ rotulo, tamanho, aoTocar, principal, apagado, children }:
         {children}
       </Pressable>
       <Text className="font-body-semibold text-[12px] text-corpo">{rotulo}</Text>
+    </View>
+  )
+}
+
+// Dica de deslize (primeira viagem): ícone + direção
+function Dica({ Icone, cor: tom, texto }: { Icone: typeof Heart; cor: string; texto: string }) {
+  return (
+    <View className="flex-row items-center gap-1.5">
+      <Icone size={15} color={tom} />
+      <Text className="font-body-semibold text-[13px] text-texto">{texto}</Text>
     </View>
   )
 }

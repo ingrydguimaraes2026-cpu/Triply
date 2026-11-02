@@ -10,10 +10,11 @@ import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { convidarProComboio } from '../../src/lib/convite'
-import { periodo } from '../../src/lib/formato'
+import { hojeIso, periodo } from '../../src/lib/formato'
 import { supabase } from '../../src/lib/supabase'
 import { capaDaViagem } from '../../src/ui/fotos'
 import { Avisos } from '../../src/ui/Avisos'
+import { PassosDaViagem } from '../../src/ui/PassosDaViagem'
 import { Tarefas } from '../../src/ui/Tarefas'
 import { Enquetes } from '../../src/ui/Enquetes'
 import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
@@ -34,19 +35,21 @@ export default function DetalheDaViagem() {
   const [convite, setConvite] = useState<string | null>(null)
 
   const carga = useCarregar(async () => {
-    const [viagem, gastos, trajetos, fotos, lugares] = await Promise.all([
+    const [viagem, gastos, trajetos, fotos, lugares, hospedagens] = await Promise.all([
       buscarViagemComDetalhes(supabase, id),
       buscarGastos(supabase, id),
       buscarTrajetos(supabase, id),
       supabase.from('fotos').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
       supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
+      supabase.from('hospedagens').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
     ])
-    return { viagem, gastos, trajetos, fotos: fotos.count ?? 0, lugares: lugares.count ?? 0 }
+    return { viagem, gastos, trajetos, fotos: fotos.count ?? 0, lugares: lugares.count ?? 0, hospedagens: hospedagens.count ?? 0 }
   }, [id])
 
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro' || !carga.dados.viagem) return <ErroNaTela aoTentar={carga.recarregar} />
-  const { viagem, gastos, trajetos, fotos, lugares } = carga.dados
+  const { viagem, gastos, trajetos, fotos, lugares, hospedagens } = carga.dados
+  const comecou = !!viagem.dataInicio && viagem.dataInicio <= hojeIso()
   const contas = resumoDasContas(gastos, viagem.moeda)
   const meuSaldo = contas.saldos.get(meuId) ?? 0
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
@@ -124,6 +127,14 @@ export default function DetalheDaViagem() {
             </Pressable>
           </View>
           {convite ? <Text selectable className="font-body-medium text-[13px] text-verde">{convite}</Text> : null}
+
+          {/* Spec 116: o que falta pra montar a viagem (some quando a viagem começa) */}
+          {!comecou ? (
+            <PassosDaViagem
+              estado={{ lugares, pessoas: viagem.membros.length, temDatas: !!viagem.dataInicio, hospedagens, trajetos: trajetos.length, gastos: gastos.length, euSouAdm }}
+              ir={(chave) => (chave === 'convidar' ? void convidar() : ir(`/${chave}` as Href))}
+            />
+          ) : null}
 
           {/* Spec 019: recados do ADM fixados no topo da viagem */}
           <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />

@@ -103,6 +103,8 @@ function montarMapa() {
     }
   }
   for (const [nome, codigo] of Object.entries(APELIDOS)) m.set(nome, codigo)
+  // Garante os países da lista de cidades mesmo sem Intl.DisplayNames (Hermes no celular)
+  for (const [codigo, nome] of Object.entries(NOME_EM_PORTUGUES)) if (!m.has(semAcento(nome))) m.set(semAcento(nome), codigo)
   return m
 }
 
@@ -111,6 +113,15 @@ export function codigoDoPais(nome: string | null | undefined): string | null {
   if (!nome) return null
   mapa ??= montarMapa()
   return mapa.get(semAcento(nome)) ?? null
+}
+
+// Nome em português dos países da lista de cidades (explorar-cidades.ts)
+export const NOME_EM_PORTUGUES: Record<string, string> = {
+  BR: 'Brasil', AR: 'Argentina', CL: 'Chile', DO: 'República Dominicana', US: 'Estados Unidos', PT: 'Portugal',
+  FR: 'França', IT: 'Itália', ES: 'Espanha', GB: 'Reino Unido', NL: 'Países Baixos', DE: 'Alemanha',
+  CZ: 'Tchéquia', AT: 'Áustria', HU: 'Hungria', CH: 'Suíça', GR: 'Grécia', TR: 'Turquia', AE: 'Emirados Árabes Unidos',
+  MX: 'México', PE: 'Peru', UY: 'Uruguai', CO: 'Colômbia', CA: 'Canadá', JP: 'Japão', KR: 'Coreia do Sul',
+  TH: 'Tailândia', EG: 'Egito', ZA: 'África do Sul', MA: 'Marrocos',
 }
 
 // Moeda mais provável pelo país

@@ -31,7 +31,8 @@ export default function Convite() {
   const abrirViagem = (id: string) => {
     escolher(id)
     recarregar()
-    router.replace('/')
+    // Spec 116: quem entra pelo convite vai direto deslizar os lugares do destino
+    router.replace({ pathname: '/explorar', params: { viagem: id, guiado: '1' } })
   }
 
   useEffect(() => {

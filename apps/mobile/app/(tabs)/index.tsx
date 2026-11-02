@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useRouter } from 'expo-router'
+import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from 'lucide-react-native'
 import type { ViagemComDetalhes } from '@together/core'
@@ -37,6 +37,8 @@ export default function MinhasViagens() {
     router.push(`/viagem/${v.id}`)
   }
 
+  // Spec 116: conta sem nenhuma viagem vai direto montar a primeira (em vez da home vazia)
+  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/primeira-viagem" />
   if (!destaque) return <Vazio ola={ola} aoCriar={() => router.push('/nova-viagem')} aoEntrar={recarregar} />
 
   return (

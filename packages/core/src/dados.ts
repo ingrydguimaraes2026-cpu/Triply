@@ -215,7 +215,7 @@ export type NovaViagem = {
   dataInicio: string | null // AAAA-MM-DD
   dataFim: string | null
   moeda: string
-  destinos: { nome: string; pais: string | null; latitude: number | null; longitude: number | null }[]
+  destinos: { nome: string; pais: string | null; latitude: number | null; longitude: number | null; dias?: number | null }[]
 }
 
 // Cria a viagem e os destinos (igual à web: quem cria vira ADM pelo banco). Devolve o id.
