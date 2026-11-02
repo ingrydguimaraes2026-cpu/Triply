@@ -1,6 +1,6 @@
 # 115. Jornada nova: montar a viagem com o grupo
 
-**Fase:** 2 · **Tamanho:** G · **Depende de:** 114 (Explorar) · **Status:** Pronto pra testar (as 7 etapas feitas em 2026-11-02; falta o teste do criador e do convidado)
+**Fase:** 2 · **Tamanho:** G · **Depende de:** 114 (Explorar) · **Status:** Pronto pra testar (v2, 2026-11-02: deslize dentro da criação e roteiro editável, inspirado no Roameo)
 
 ## Objetivo
 Quem abre o Tripwave pela primeira vez sai com **um roteiro de verdade, montado com o grupo**, sem se perder. O app não só organiza a viagem que a pessoa já tem na cabeça: ele **ajuda a montar** o roteiro, a partir do destino e do que cada um quer fazer.
@@ -17,7 +17,23 @@ Teste do Victor em 02/11/2026, no site: "eu, que sou o criador, estou me sentind
 5. **Quem é convidado cai no mesmo labirinto** e não sabe o que esperam dele.
 6. **O app parte do pressuposto de que o grupo já sabe o roteiro.** A maioria só tem um "Europa em junho, uns 10 dias".
 
-## A jornada nova (resumo)
+## v2 (2026-11-02): depois do teste do Victor
+A v1 ficou longa e solta: cria a viagem, convite, estilo, ~30 cartões, resumo, "montando", roteiro fechado e "Pôr na agenda" (umas 8 paradas).
+Referência: **Roameo** (deslize estilo Tinder; depois do deslize o roteiro é a tela principal e é editável: dia a dia, mapa, "Unplanned", arrastar entre dias, otimizar rota).
+
+**Como ficou:**
+1. **Nova viagem (jeito rápido):** pra onde → quantos dias (com dias de cada destino e dica de ordem) → **"Escolher os lugares"** cria a viagem e cai direto no deslize. Sem tela de convite no meio.
+2. **Deslize:** abre direto, sem tela de estilo (estilo, ritmo e orçamento no padrão; botão **"Ajustar"** abre a tela antiga). **12 cartões** por vez. Acabou a pilha (ou "Pronto") → vai direto pro roteiro. Sem tela de resumo e sem a animação de "montando".
+3. **Roteiro (a tela principal do destino):** abas Dia 1..N + **"Sem dia"**, mapa, e em cada lugar um botão "…" com "Mais cedo / Mais tarde" e "Mover pra" (outro dia ou Sem dia). Tudo salva na hora (tabela `roteiros`, uma linha por destino) e aparece pros outros pelo tempo real. "Reorganizar tudo pela proximidade" refaz a proposta. "Ver mais lugares" volta pro deslize (12 novos).
+4. **Grupo:** sozinho na viagem, o roteiro mostra "Chame a galera pra deslizar também" (ADM cria e compartilha o link). Com mais gente, cada lugar mostra **"X de Y curtiram"** (verde quando 2+). O que outra pessoa curtir depois entra no **"Sem dia"**.
+5. **Vários destinos:** no fim do roteiro, "Agora, escolher em {próximo}".
+6. Abrir o Roteiro de um destino que já tem roteiro abre direto nele (não no deslize).
+
+**Saiu:** tela de estilo como primeira tela, resumo, "montando", "Pôr na agenda", o aviso "X de Y já escolheram" (a função `explorar_quem_escolheu` continua no banco, sem uso na tela).
+**Quem pode:** qualquer pessoa do comboio arruma o roteiro (é uma lista compartilhada). ADM continua sendo quem cria convite.
+**Fica pra depois:** arrastar e soltar de verdade (hoje é pelo botão "…"), horários no roteiro, a Agenda ler o roteiro (com datas), links de reserva.
+
+## A jornada nova (resumo, v1)
 1. **Desejo:** "Pra onde vocês querem ir?" e "Quantos dias?". Datas, nome e moeda ficam pra depois.
 2. **Galera:** o convite vem logo depois, com a frase "chame quem vai e deixe cada um escolher o que quer fazer".
 3. **Cada um escolhe:** cada pessoa desliza os lugares do destino (o Explorar), no próprio celular.

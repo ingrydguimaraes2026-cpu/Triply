@@ -20,5 +20,8 @@ test('085: filtro só da viagem aberta', () => {
 test('085: a lista do site é a mesma da migration', () => {
   const sql = readFileSync(new URL('../../../supabase/migrations/20261031100000_tempo_real.sql', import.meta.url), 'utf8')
   const lista = sql.match(/foreach t in array array\[(.*?)\]/)[1].match(/'([a-z_]+)'/g).map((s) => s.slice(1, -1))
-  assert.deepEqual(lista, [...TABELAS_AO_VIVO])
+  // Tabelas que entraram depois, em migration própria (spec 115 v2: roteiros)
+  const roteiros = readFileSync(new URL('../../../supabase/migrations/20261102180000_roteiros.sql', import.meta.url), 'utf8')
+  const depois = [...roteiros.matchAll(/add table public\.([a-z_]+)/g)].map((m) => m[1])
+  assert.deepEqual([...lista, ...depois].sort(), [...TABELAS_AO_VIVO].sort())
 })

@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { chaveDaCidade, codigoDoPais, type Escolha, type EstiloId, type LugarDoCatalogo, type Tables, type TipoDoCatalogo } from '@together/core'
+import { chaveDaCidade, lerDiasDoRoteiro, type DiasDoRoteiro, codigoDoPais, type Escolha, type EstiloId, type LugarDoCatalogo, type Tables, type TipoDoCatalogo } from '@together/core'
 
 // Explorar (spec 114): catálogo da cidade, minhas escolhas e "montar".
 // Regra de ouro: o navegador nunca chama Wikidata/Nominatim. Cidade pronta vem direto do banco;
@@ -105,4 +105,16 @@ export async function quemEscolheu(destinoId: string): Promise<{ escolheram: num
   const { data, error } = await supabase.rpc('explorar_quem_escolheu', { p_destino: destinoId })
   if (error) throw error
   return data?.[0] ?? { escolheram: 0, pessoas: 1 }
+}
+
+// Roteiro do destino (spec 115 v2): os dias com os lugares, arrumados pelo grupo. null = ainda não montou
+export async function buscarRoteiro(destinoId: string): Promise<DiasDoRoteiro | null> {
+  const { data, error } = await supabase.from('roteiros').select('dias').eq('destino_id', destinoId).maybeSingle()
+  if (error) throw error
+  return data ? lerDiasDoRoteiro(data.dias) : null
+}
+
+export async function salvarRoteiro(viagemId: string, destinoId: string, dias: DiasDoRoteiro) {
+  const { error } = await supabase.from('roteiros').upsert({ viagem_id: viagemId, destino_id: destinoId, dias })
+  if (error) throw error
 }

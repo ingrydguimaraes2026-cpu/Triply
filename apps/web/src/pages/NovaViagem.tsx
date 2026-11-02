@@ -17,7 +17,7 @@ import './nova-viagem.css'
 type Passo = 'destinos' | 'dias' | 'datas' | 'nome' | 'comboio'
 type Modo = 'rapido' | 'completo'
 const PASSOS: Record<Modo, Passo[]> = {
-  rapido: ['destinos', 'dias', 'comboio'],
+  rapido: ['destinos', 'dias'],
   completo: ['destinos', 'datas', 'nome', 'comboio'],
 }
 
@@ -153,6 +153,11 @@ function CriarViagem() {
       if (comboioDe) {
         // Se falhar, a viagem já existe: segue com o convite normal
         setTrazidos(await trazerComboio(id, comboioDe).catch(() => null))
+      }
+      // Spec 115 v2: o jeito rápido cai direto no deslize; o convite aparece no roteiro
+      if (modo === 'rapido') {
+        navegar(`/viagem/${id}/explorar`)
+        return
       }
       setLink(await criarConvite(id))
       setPasso('comboio')
@@ -404,7 +409,7 @@ function CriarViagem() {
                 Voltar
               </button>
               <button type="button" className="onb-botao" onClick={criar} disabled={salvando || (comDatas && !dias)}>
-                {salvando ? 'Criando…' : 'Continuar'}
+                {salvando ? 'Criando…' : 'Escolher os lugares'}
               </button>
             </div>
           </section>
@@ -483,37 +488,6 @@ function CriarViagem() {
                 {salvando ? 'Criando…' : 'Criar viagem'}
               </button>
             </div>
-          </section>
-        )}
-
-        {passo === 'comboio' && modo === 'rapido' && (
-          <section className="onb-passo">
-            <div>
-              <h1>Chame quem vai.</h1>
-              {trazidos !== null && trazidos > 0 && (
-                <p className="onb-destaque">
-                  {trazidos} {trazidos === 1 ? 'pessoa do comboio já entrou' : 'pessoas do comboio já entraram'} nesta viagem.
-                </p>
-              )}
-              <p className="onb-sub">
-                Cada um escolhe o que quer fazer em {destinos[0]?.nome}, e o Tripwave monta o roteiro com as escolhas de todos.
-              </p>
-            </div>
-            {link && (
-              <div>
-                <div className="onb-link">
-                  <span>{link.replace(/^https?:\/\//, '')}</span>
-                </div>
-                <p className="onb-nota">Este link de convite vale por 7 dias.</p>
-              </div>
-            )}
-            <button type="button" className="onb-voltar" onClick={compartilhar}>
-              {copiado ? 'Link copiado!' : 'Mandar o convite'}
-            </button>
-            <button type="button" className="onb-botao" onClick={() => navegar(`/viagem/${viagemId}/explorar`)}>
-              Começar a escolher em {destinos[0]?.nome}
-            </button>
-            <p className="onb-nota onb-nota-centro">Dá pra chamar a galera a qualquer momento.</p>
           </section>
         )}
 

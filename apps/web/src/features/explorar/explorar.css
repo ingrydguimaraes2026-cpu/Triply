@@ -796,3 +796,73 @@
   color: var(--cor-texto);
   line-height: 1.45;
 }
+
+/* ---------- Spec 115 v2: roteiro que o grupo arruma ---------- */
+.exp-convidar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  line-height: 1.45;
+}
+.exp-convidar p {
+  flex: 1 1 220px;
+  margin: 0;
+}
+.exp-item-nome {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.exp-item-nome small {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+.exp-item-nome small.exp-match {
+  color: var(--cor-sucesso);
+  font-weight: 700;
+}
+.exp-mexer {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+.exp-mover {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.exp-mover-ordem {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.exp-mover-ordem .botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.exp-mover-dias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+.exp-mover-dias .exp-opcao:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

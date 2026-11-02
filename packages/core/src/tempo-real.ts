@@ -11,6 +11,7 @@ export const TABELAS_AO_VIVO = [
   'lugares',
   'hospedagens',
   'eventos_agenda',
+  'roteiros', // spec 115 v2
   'posts',
 ] as const
 

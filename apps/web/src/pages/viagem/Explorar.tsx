@@ -9,7 +9,6 @@ import {
   comecarDeslize,
   contarEscolhas,
   creditoDaFoto,
-  criarEventoDaAgenda,
   decidir,
   desfazer,
   diasDoPeriodo,
@@ -18,11 +17,8 @@ import {
   podeNaoAbrirMao,
   porDiaDoRitmo,
   precoLegivel,
-  regiaoEspalhada,
-  tamanhoDaPilha,
   tempoLegivel,
-  trecho,
-  type DiaProposto,
+  type DiasDoRoteiro,
   type Escolha,
   type EstadoDoDeslize,
   type EstiloId,
@@ -34,19 +30,21 @@ import {
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { supabase } from '../../lib/supabase'
 import { buscarLugares } from '../../features/lugares/api'
-import { avisarQueMudou } from '../../features/tempo-real/avisos'
+import { avisarQueMudou, useAoMudar } from '../../features/tempo-real/avisos'
 import { diaPorExtenso } from '../../features/agenda/hooks'
 import * as api from '../../features/explorar/api'
 import Cartao from '../../features/explorar/Cartao'
+import RoteiroDoDestino from '../../features/explorar/RoteiroDoDestino'
+import type { Lugar } from '../../features/lugares/regras'
 import Gaveta from '../../components/ui/Gaveta'
 import '../../features/explorar/explorar.css'
 
-// Explorar (spec 114): escolher o estilo, deslizar os lugares e montar o roteiro do destino.
-type Etapa = 'estilo' | 'carregando' | 'deck' | 'resumo' | 'montando' | 'roteiro' | 'erro'
-type Ponto = { latitude: number; longitude: number }
-type Roteiro = { dias: DiaProposto[]; sobraram: string[]; pontos: Record<string, Ponto | null>; prioridades: Set<string>; espalhada: boolean }
+// Explorar (spec 114) virou o Roteiro (spec 115 v2): desliza 12 lugares e cai direto no roteiro do grupo,
+// que dá pra arrumar (mudar de dia, ordem, "Sem dia"). Se o destino já tem roteiro, abre nele.
+// Estilo, ritmo e orçamento começam no padrão; "Ajustar" muda.
+type Etapa = 'estilo' | 'carregando' | 'deck' | 'montando' | 'roteiro' | 'erro'
 
-const PASSOS_MONTANDO = ['Juntando o que fica perto', 'Respeitando seus "não abro mão"', 'Encaixando por dia, sem correria']
+const CARTOES_POR_VEZ = 12
 
 export default function Explorar() {
   const { destinos } = useViagemAtual()
@@ -64,10 +62,10 @@ export default function Explorar() {
 }
 
 function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
-  const { viagem, destinos, meuId, euSouAdm } = useViagemAtual()
+  const { viagem, destinos, meuId } = useViagemAtual()
   const [params, setParams] = useSearchParams()
 
-  const [etapa, setEtapa] = useState<Etapa>('estilo')
+  const [etapa, setEtapa] = useState<Etapa>('carregando')
   const [estilos, setEstilos] = useState<EstiloId[]>(['cultura'])
   const [ritmo, setRitmo] = useState<RitmoId>('equilibrado')
   const [orcamento, setOrcamento] = useState<OrcamentoId>('medio')
@@ -81,13 +79,9 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
   const [voando, setVoando] = useState<Escolha | null>(null)
   const [detalhe, setDetalhe] = useState(false)
   const [aviso, setAviso] = useState<string | null>(null)
-  const [passoMontando, setPassoMontando] = useState(0)
-  const [roteiro, setRoteiro] = useState<Roteiro | null>(null)
-  const [diaAberto, setDiaAberto] = useState(0)
-  const [salvando, setSalvando] = useState(false)
-  const [salvo, setSalvo] = useState(false)
-  // Spec 115, etapa 6: quantos do comboio já escolheram (as escolhas de cada um continuam privadas)
-  const [grupo, setGrupo] = useState<{ escolheram: number; pessoas: number } | null>(null)
+  // Roteiro do grupo: o que o comboio curtiu neste destino e como está arrumado nos dias
+  const [lugaresDoGrupo, setLugaresDoGrupo] = useState<Lugar[]>([])
+  const [diasSalvos, setDiasSalvos] = useState<DiasDoRoteiro>([])
   const timers = useRef<number[]>([])
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
   const depois = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms))
@@ -106,7 +100,6 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     .filter(([, e]) => e !== 'passo')
     .map(([id, e]) => ({ lugar: porId.get(id), estrela: e === 'nao_abro_mao' }))
     .filter((x): x is { lugar: LugarDoCatalogo; estrela: boolean } => !!x.lugar)
-  const restantes = catalogo.filter((l) => !deslize.escolhas[l.id] && !deslize.pilha.slice(deslize.posicao).includes(l.id)).length
 
   // ---------- Começar: catálogo + escolhas antigas ----------
   async function comecar() {
@@ -125,24 +118,19 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
       const pilha = montarPilha(cat.lugares, {
         estilos,
         orcamento,
-        tamanho: tamanhoDaPilha(dias.length, porDia),
+        tamanho: CARTOES_POR_VEZ,
         jaNaViagem: (naViagem.data ?? []).filter((l) => !cat.lugares.some((c) => c.wikidata && c.wikidata === l.wikidata && antigas[c.id])),
         jaEscolhidos: Object.keys(antigas),
       })
       setCatalogo(cat.lugares)
       setDeslize(comecarDeslize(pilha.map((l) => l.id), antigas))
-      setEtapa(pilha.length === 0 && Object.keys(antigas).length > 0 ? 'resumo' : 'deck')
+      if (pilha.length === 0 && Object.keys(antigas).length > 0) await abrirRoteiro(true)
+      else setEtapa('deck')
     } catch (e) {
       console.error('Erro ao carregar o Explorar:', e)
       setErro(e instanceof Error ? e.message : 'Não deu pra carregar agora.')
       setEtapa('erro')
     }
-  }
-
-  function maisLugares() {
-    const extra = montarPilha(catalogo, { estilos, orcamento, tamanho: 15, jaEscolhidos: [...Object.keys(deslize.escolhas), ...deslize.pilha] })
-    setDeslize((d) => ({ ...d, pilha: [...d.pilha, ...extra.map((l) => l.id)] }))
-    setEtapa('deck')
   }
 
   // ---------- Deslizar ----------
@@ -158,11 +146,7 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     const id = atual.id
     depois(250, () => {
       setVoando(null)
-      setDeslize((d) => {
-        const novo = decidir(d, escolha, jaTenho)
-        if (acabou(novo)) setEtapa('resumo')
-        return novo
-      })
+      setDeslize((d) => decidir(d, escolha, jaTenho))
     })
     api.salvarEscolha(viagem.id, destino.id, meuId, id, escolha).catch((e) => {
       console.error('Erro ao salvar escolha:', e)
@@ -204,82 +188,91 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     return () => window.removeEventListener('keydown', aoApertar)
   }, [etapa, detalhe])
 
-  // Ao chegar no resumo, minhas escolhas viram lugares da viagem (contam pro grupo) e vemos quem já escolheu
+  // Acabou a pilha: vai direto pro roteiro (sem tela de resumo)
   useEffect(() => {
-    if (etapa !== 'resumo') return
+    if (etapa === 'deck' && deslize.pilha.length > 0 && acabou(deslize)) void abrirRoteiro(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etapa, deslize])
+
+  // Ao abrir: destino com roteiro abre nele; sem roteiro, começa a deslizar
+  useEffect(() => {
     let vivo = true
-    ;(async () => {
-      try {
-        if (escolhidos.length > 0) {
-          await api.criarLugaresDoExplorar(destino.id)
-          avisarQueMudou('lugares')
-        }
-        const g = await api.quemEscolheu(destino.id)
-        if (vivo) setGrupo(g)
-      } catch (e) {
-        console.error('Erro ao juntar com o grupo:', e)
-      }
-    })()
+    api
+      .buscarRoteiro(destino.id)
+      .then((salvo) => {
+        if (!vivo) return
+        if (salvo) void abrirRoteiro(false)
+        else void comecar()
+      })
+      .catch((e) => {
+        console.error('Erro ao abrir o roteiro:', e)
+        if (vivo) void comecar()
+      })
     return () => {
       vivo = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [etapa, destino.id])
-  // Tem escolha de mais alguém além de mim? Então o roteiro é do grupo
-  const deTodos = (grupo?.escolheram ?? 0) > (escolhidos.length > 0 ? 1 : 0)
+  }, [destino.id])
 
-  // ---------- Montar ----------
-  async function montar() {
-    setEtapa('montando')
-    setPassoMontando(0)
-    setSalvo(false)
-    PASSOS_MONTANDO.forEach((_, i) => depois(500 * (i + 1), () => setPassoMontando(i + 1)))
-    const minimo = new Promise((r) => setTimeout(r, 1800))
+  // ---------- Roteiro ----------
+  // O que alguém do comboio curtiu ou marcou como "não abro mão" neste destino; os mais importantes primeiro
+  async function buscarDoGrupo() {
+    const todos = await buscarLugares(viagem.id)
+    return todos
+      .filter((l) => l.destinoId === destino.id && (l.votos.length > 0 || (l.prioridades?.length ?? 0) > 0))
+      .sort((a, b) => (b.prioridades?.length ?? 0) - (a.prioridades?.length ?? 0) || b.votos.length - a.votos.length)
+  }
+
+  // Proposta pela proximidade e pelos votos (um dia = uma lista de ids)
+  function propor(lugares: Lugar[]): DiasDoRoteiro {
+    const proposta = montarDiasPelosVotos(
+      dias,
+      lugares.map((l) => ({ id: l.id, nome: l.nome, tipo: l.tipo, votos: l.votos.length, prioridades: l.prioridades?.length ?? 0, latitude: l.latitude, longitude: l.longitude, endereco: l.endereco })),
+      porDia,
+    )
+    return dias.map((d) => proposta.dias.find((p) => p.dia === d)?.itens.map((i) => i.lugarId) ?? [])
+  }
+
+  // `converter`: minhas escolhas viram lugares da viagem antes (depois de deslizar)
+  // `silencioso`: recarga do tempo real, sem tela de "Montando" e sem tela de erro
+  async function abrirRoteiro(converter: boolean, silencioso = false) {
+    if (!silencioso) setEtapa('montando')
     try {
-      const ids = new Set(await api.criarLugaresDoExplorar(destino.id))
-      avisarQueMudou('lugares')
-      // Roteiro do grupo: entra o que eu escolhi e o que alguém do comboio curtiu ou marcou como "não abro mão"
-      const lugares = (await buscarLugares(viagem.id)).filter(
-        (l) => ids.has(l.id) || (l.destinoId === destino.id && (l.votos.length > 0 || (l.prioridades?.length ?? 0) > 0)),
-      )
-      const proposta = montarDiasPelosVotos(
-        dias,
-        lugares.map((l) => ({ id: l.id, nome: l.nome, tipo: l.tipo, votos: l.votos.length, prioridades: l.prioridades?.length ?? 0, latitude: l.latitude, longitude: l.longitude, endereco: l.endereco })),
-        porDia,
-      )
-      const pontos = Object.fromEntries(lugares.map((l) => [l.id, l.latitude != null && l.longitude != null ? { latitude: l.latitude, longitude: l.longitude } : null]))
-      const comPonto = Object.values(pontos).filter((p): p is Ponto => !!p)
-      await minimo
-      setRoteiro({
-        ...proposta,
-        pontos,
-        prioridades: new Set(lugares.filter((l) => (l.prioridades ?? []).includes(meuId)).map((l) => l.id)),
-        espalhada: regiaoEspalhada(comPonto),
-      })
-      setDiaAberto(0)
+      if (converter) {
+        await api.criarLugaresDoExplorar(destino.id)
+        avisarQueMudou('lugares')
+      }
+      const [doGrupo, salvo] = await Promise.all([buscarDoGrupo(), api.buscarRoteiro(destino.id)])
+      // Primeira vez (ou roteiro vazio): o app monta; depois, o que chega novo fica em "Sem dia"
+      let diasDoRoteiro = salvo ?? []
+      if (diasDoRoteiro.every((d) => d.length === 0)) {
+        diasDoRoteiro = propor(doGrupo)
+        await api.salvarRoteiro(viagem.id, destino.id, diasDoRoteiro)
+      }
+      setLugaresDoGrupo(doGrupo)
+      setDiasSalvos(diasDoRoteiro)
       setEtapa('roteiro')
     } catch (e) {
       console.error('Erro ao montar:', e)
+      if (silencioso) return
       setErro('Não deu pra montar o roteiro agora. Suas escolhas estão salvas: tente de novo.')
       setEtapa('erro')
     }
   }
 
-  async function porNaAgenda() {
-    if (!roteiro || !temDatas) return
-    setSalvando(true)
-    try {
-      for (const d of roteiro.dias)
-        for (const i of d.itens)
-          await criarEventoDaAgenda(supabase, viagem.id, { dia: d.dia, hora: i.hora || null, titulo: i.nome, local: i.local, observacao: 'Montado pelo Explorar' })
-      avisarQueMudou('eventos_agenda')
-      setSalvo(true)
-    } catch (e) {
-      console.error('Erro ao pôr na agenda:', e)
-      setAviso('Não deu pra pôr tudo na agenda. Confira na Agenda o que entrou.')
-    }
-    setSalvando(false)
+  // Mexeu no roteiro: mostra na hora e salva (se falhar, avisa)
+  function mudarRoteiro(novo: DiasDoRoteiro) {
+    setDiasSalvos(novo)
+    api.salvarRoteiro(viagem.id, destino.id, novo).catch((e) => {
+      console.error('Erro ao salvar o roteiro:', e)
+      setAviso('Não deu pra salvar a mudança. Confira a internet.')
+    })
   }
+
+  // Outra pessoa arrumou o roteiro ou curtiu algo: recarrega
+  useAoMudar(['roteiros', 'lugares'], () => {
+    if (etapa === 'roteiro') void abrirRoteiro(false, true)
+  })
 
   const botaoOpcao = (on: boolean) => (on ? 'exp-opcao ativa' : 'exp-opcao')
 
@@ -308,7 +301,41 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     </header>
   )
 
-  if (etapa === 'estilo' || etapa === 'carregando' || etapa === 'erro') {
+  if (etapa === 'carregando' || etapa === 'montando' || etapa === 'erro') {
+    return (
+      <div className="exp">
+        {cabecalho}
+        {etapa === 'erro' ? (
+          <section className="exp-montando">
+            <p className="form-erro" role="alert">
+              {erro}
+            </p>
+            <button type="button" className="botao exp-principal" onClick={() => void comecar()}>
+              Tentar de novo
+            </button>
+          </section>
+        ) : (
+          <section className="exp-montando" role="status" aria-live="polite">
+            <span className="exp-pontinhos" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <h2 className="exp-titulo">
+              {etapa === 'montando'
+                ? `Montando ${destino.nome} em ${dias.length} ${dias.length === 1 ? 'dia' : 'dias'}`
+                : preparando
+                  ? `Preparando os lugares de ${destino.nome}…`
+                  : 'Carregando os lugares…'}
+            </h2>
+            {preparando && etapa === 'carregando' && <p className="exp-dica">Pode levar uns 30 segundos, só na primeira vez.</p>}
+          </section>
+        )}
+      </div>
+    )
+  }
+
+  if (etapa === 'estilo') {
     return (
       <div className="exp">
         {cabecalho}
@@ -379,25 +406,9 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
             </div>
           </div>
 
-          {etapa === 'erro' && (
-            <p className="form-erro" role="alert">
-              {erro}
-            </p>
-          )}
-          {etapa === 'carregando' ? (
-            <div className="exp-carregando" role="status">
-              <span className="exp-pontinhos" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              {preparando ? `Preparando os lugares de ${destino.nome}… (pode levar uns 30 segundos, só na primeira vez)` : 'Carregando os lugares…'}
-            </div>
-          ) : (
-            <button type="button" className="botao exp-principal" onClick={comecar}>
-              {etapa === 'erro' ? 'Tentar de novo' : 'Ver os lugares'}
-            </button>
-          )}
+          <button type="button" className="botao exp-principal" onClick={() => void comecar()}>
+            Ver os lugares
+          </button>
         </section>
         <p className="exp-fonte">Dados: Wikidata, Wikipédia e © OpenStreetMap</p>
       </div>
@@ -416,10 +427,19 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
               <div className="exp-barra">
                 <div style={{ width: `${total ? Math.round((deslize.posicao / total) * 100) : 0}%` }} />
               </div>
-              <button type="button" className="botao-texto" onClick={() => setEtapa('resumo')}>
+              <button type="button" className="botao-texto" onClick={() => setEtapa('estilo')}>
+                Ajustar
+              </button>
+              <button type="button" className="botao-texto" onClick={() => void abrirRoteiro(true)}>
                 Pronto
               </button>
             </div>
+            {/* Spec 115: quem acabou de entrar pelo convite */}
+            {params.get('bemvindo') && (
+              <p className="exp-boas-vindas">
+                Você entrou em <strong>{viagem.nome}</strong>! Deslize o que quer fazer em {destino.nome}: o roteiro sai das escolhas de todo mundo.
+              </p>
+            )}
 
             {total === 0 ? (
               <div className="exp-vazio">
@@ -499,8 +519,8 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
               ))}
             </ul>
             {escolhidos.length === 0 && <p className="exp-dica tracejado">O que você curtir aparece aqui</p>}
-            <button type="button" className="botao" onClick={() => setEtapa('resumo')} disabled={escolhidos.length === 0}>
-              Montar roteiro com {escolhidos.length} {escolhidos.length === 1 ? 'lugar' : 'lugares'}
+            <button type="button" className="botao" onClick={() => void abrirRoteiro(true)} disabled={escolhidos.length === 0}>
+              Ver o roteiro
             </button>
           </aside>
         </div>
@@ -562,209 +582,27 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     )
   }
 
-  if (etapa === 'resumo') {
-    return (
-      <div className="exp">
-        {cabecalho}
-        <section className="exp-resumo" aria-label="Resumo das escolhas">
-          <h2 className="exp-titulo">{escolhidos.length ? `Você escolheu ${escolhidos.length} ${escolhidos.length === 1 ? 'lugar' : 'lugares'}` : 'Nenhum lugar escolhido ainda'}</h2>
-          <div className="exp-grade3 exp-numeros">
-            <div>
-              <strong className="exp-cor-quero">{contagem.quero}</strong>
-              <small>Quero</small>
-            </div>
-            <div>
-              <strong className="exp-cor-estrela">{contagem.naoAbroMao}</strong>
-              <small>Não abro mão</small>
-            </div>
-            <div>
-              <strong>{contagem.passo}</strong>
-              <small>Passei</small>
-            </div>
-          </div>
-          <ul className="exp-lista grande">
-            {escolhidos.map(({ lugar, estrela }) => (
-              <li key={lugar.id}>
-                {lugar.fotoUrl ? <img src={lugar.fotoUrl} alt="" /> : <span className="exp-mini-sem-foto" />}
-                <span>
-                  <strong>{lugar.nome}</strong>
-                  <small>{[lugar.bairro, tempoLegivel(lugar.tempoMin)].filter(Boolean).join(' · ')}</small>
-                </span>
-                {estrela && <span className="exp-selinho">Não abro mão</span>}
-              </li>
-            ))}
-          </ul>
-          {grupo && grupo.pessoas > 1 && (
-            <p className="exp-quem-escolheu" role="status">
-              <strong>
-                {grupo.escolheram} de {grupo.pessoas}
-              </strong>{' '}
-              já escolheram em {destino.nome}.
-              {grupo.escolheram < grupo.pessoas && (
-                <>
-                  {' '}
-                  <Link to="../comboio">Lembrar quem falta</Link>
-                </>
-              )}
-            </p>
-          )}
-          <div className="exp-rodape">
-            <button type="button" className="botao exp-principal" onClick={montar} disabled={escolhidos.length === 0 && !deTodos}>
-              {deTodos ? 'Montar com as escolhas de todos' : `Montar roteiro de ${dias.length} ${dias.length === 1 ? 'dia' : 'dias'}`}
-            </button>
-            {!acabou(deslize) ? (
-              <button type="button" className="botao-texto" onClick={() => setEtapa('deck')}>
-                Continuar vendo os lugares
-              </button>
-            ) : restantes > 0 ? (
-              <button type="button" className="botao-texto" onClick={maisLugares}>
-                Ver mais {Math.min(15, restantes)} lugares
-              </button>
-            ) : null}
-          </div>
-        </section>
-      </div>
-    )
-  }
-
-  if (etapa === 'montando') {
-    return (
-      <div className="exp">
-        <section className="exp-montando" role="status" aria-live="polite">
-          <span className="exp-pontinhos" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <h2 className="exp-titulo">
-            Montando seus {dias.length} {dias.length === 1 ? 'dia' : 'dias'} em {destino.nome}
-          </h2>
-          <ul>
-            {PASSOS_MONTANDO.map((p, i) => (
-              <li key={p} className={passoMontando > i ? 'feito' : undefined}>
-                {p}
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-    )
-  }
-
   // ---------- Roteiro ----------
-  const dia = roteiro?.dias[diaAberto]
-  const pontosDoDia = (dia?.itens ?? []).map((i) => roteiro?.pontos[i.lugarId]).filter((p): p is Ponto => !!p)
-  const todos = Object.values(roteiro?.pontos ?? {}).filter((p): p is Ponto => !!p)
-  const caixa = todos.length
-    ? {
-        n: Math.max(...todos.map((p) => p.latitude)),
-        s: Math.min(...todos.map((p) => p.latitude)),
-        l: Math.max(...todos.map((p) => p.longitude)),
-        o: Math.min(...todos.map((p) => p.longitude)),
-      }
-    : null
-  const noMapa = (p: Ponto) => {
-    if (!caixa) return { x: 50, y: 50 }
-    const w = Math.max(caixa.l - caixa.o, 0.002)
-    const h = Math.max(caixa.n - caixa.s, 0.002)
-    return { x: 6 + ((p.longitude - caixa.o) / w) * 88, y: 8 + ((caixa.n - p.latitude) / h) * 84 }
-  }
-  const idsDoDia = new Set((dia?.itens ?? []).map((i) => i.lugarId))
-
+  const indice = destinos.findIndex((d) => d.id === destino.id)
   return (
     <div className="exp">
       {cabecalho}
-      <section className="exp-roteiro" aria-label="Roteiro proposto">
-        <div className="exp-roteiro-topo">
-          <h2 className="exp-titulo">
-            {destino.nome} em {dias.length} {dias.length === 1 ? 'dia' : 'dias'}
-          </h2>
-          <button type="button" className="botao secundario pequeno" onClick={() => setEtapa('resumo')}>
-            Refazer
-          </button>
-        </div>
-
-        {roteiro && roteiro.dias.length > 0 ? (
-          <>
-            <div className="exp-dias" role="tablist" aria-label="Dias">
-              {roteiro.dias.map((d, i) => (
-                <button key={d.dia} type="button" role="tab" aria-selected={i === diaAberto} className={botaoOpcao(i === diaAberto)} onClick={() => setDiaAberto(i)}>
-                  <strong>Dia {dias.indexOf(d.dia) + 1}</strong>
-                  <small>
-                    {d.itens.length} {d.itens.length === 1 ? 'lugar' : 'lugares'}
-                  </small>
-                </button>
-              ))}
-            </div>
-
-            {caixa && (
-              <svg className="exp-mapa" viewBox="0 0 100 60" preserveAspectRatio="none" role="img" aria-label={`Mapa do dia: ${dia?.itens.map((i) => i.nome).join(', ')}`}>
-                <polyline
-                  points={pontosDoDia.map((p) => `${noMapa(p).x},${noMapa(p).y * 0.6}`).join(' ')}
-                  fill="none"
-                  stroke="var(--couro)"
-                  strokeWidth="0.6"
-                  strokeDasharray="1.5 1.5"
-                  vectorEffect="non-scaling-stroke"
-                />
-                {Object.entries(roteiro.pontos).map(([id, p]) =>
-                  p ? <circle key={id} cx={noMapa(p).x} cy={noMapa(p).y * 0.6} r={idsDoDia.has(id) ? 1.8 : 1.1} className={idsDoDia.has(id) ? 'no-dia' : undefined} /> : null,
-                )}
-              </svg>
-            )}
-
-            {dia && (
-              <ol className="exp-itens">
-                <li className="exp-dia-nome">{temDatas ? diaPorExtenso(dia.dia) : dia.dia}</li>
-                {dia.itens.map((it, k) => {
-                  const antes = k > 0 ? roteiro.pontos[dia.itens[k - 1].lugarId] : null
-                  const aqui = roteiro.pontos[it.lugarId]
-                  return (
-                    <li key={it.lugarId}>
-                      {antes && aqui && <span className="exp-trecho">{trecho(antes, aqui)}</span>}
-                      <div className="exp-item">
-                        <span className="exp-hora">{it.hora || '—'}</span>
-                        <strong>{it.nome}</strong>
-                        {roteiro.prioridades.has(it.lugarId) && (
-                          <Star size={16} aria-label="Não abro mão" className="exp-cor-estrela" fill="currentColor" />
-                        )}
-                      </div>
-                    </li>
-                  )
-                })}
-              </ol>
-            )}
-            {roteiro.dias.length < dias.length && <p className="exp-dica tracejado">Sobrou {dias.length - roteiro.dias.length === 1 ? 'um dia livre' : `${dias.length - roteiro.dias.length} dias livres`}. Quer ver mais lugares?</p>}
-            {roteiro.sobraram.length > 0 && <p className="exp-dica">Ficaram de fora por falta de dia: {roteiro.sobraram.join(', ')}.</p>}
-            {roteiro.espalhada && <p className="exp-aviso">Região grande: vale dormir em 2 lugares diferentes.</p>}
-          </>
-        ) : (
-          <p className="hosp-vazio">Nada pra montar ainda. Volte e escolha alguns lugares.</p>
-        )}
-
-        {aviso && (
-          <p className="exp-aviso" role="status">
-            {aviso}
-          </p>
-        )}
-        <div className="exp-rodape">
-          {salvo ? (
-            <Link to="../agenda" className="botao exp-principal">
-              Salvo na agenda · abrir a Agenda
-            </Link>
-          ) : temDatas && !euSouAdm ? (
-            <p className="exp-dica">Quem organiza a viagem (ADM) põe o roteiro na agenda. Os lugares já estão na aba Lugares pra todo mundo ver.</p>
-          ) : temDatas ? (
-            <button type="button" className="botao exp-principal" onClick={porNaAgenda} disabled={salvando || !roteiro?.dias.length}>
-              {salvando ? 'Pondo na agenda…' : 'Pôr na agenda da viagem'}
-            </button>
-          ) : (
-            <p className="exp-dica">
-              Os lugares já estão na aba Lugares. Pra pôr na agenda, defina as datas de {destino.nome} no <Link to="..">Roteiro</Link>.
-            </p>
-          )}
-        </div>
-      </section>
+      <RoteiroDoDestino
+        destino={destino}
+        rotulos={dias.map((d, k) => (temDatas ? diaPorExtenso(d) : `Dia ${k + 1}`))}
+        lugares={lugaresDoGrupo}
+        salvo={diasSalvos}
+        aoMudar={mudarRoteiro}
+        aoReorganizar={() => mudarRoteiro(propor(lugaresDoGrupo))}
+        aoVerMais={() => void comecar()}
+        proximoDestino={destinos[indice + 1] ?? null}
+        aoIrPara={(id) => setParams({ destino: id })}
+      />
+      {aviso && (
+        <p className="exp-aviso" role="status">
+          {aviso}
+        </p>
+      )}
     </div>
   )
 }

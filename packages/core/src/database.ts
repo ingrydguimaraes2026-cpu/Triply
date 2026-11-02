@@ -2743,6 +2743,45 @@ export type Database = {
           },
         ]
       }
+      roteiros: {
+        Row: {
+          atualizado_em: string
+          atualizado_por: string | null
+          destino_id: string
+          dias: Json
+          viagem_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          destino_id: string
+          dias?: Json
+          viagem_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          destino_id?: string
+          dias?: Json
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiros_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: true
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiros_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seguros_viagem: {
         Row: {
           apolice: string | null
