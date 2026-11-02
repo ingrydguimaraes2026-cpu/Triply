@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, Printer } from 'lucide-react'
+import { ArrowLeft, BookOpen, Printer } from 'lucide-react'
 import { buscarFichasDoComboio, roteiroDiaADia, type FichaNoComboio } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -44,136 +44,140 @@ export default function Imprimir() {
         <Link to={`/viagem/${viagem.id}`} className="botao-texto">
           <ArrowLeft size={16} aria-hidden="true" /> Voltar
         </Link>
-        <Link to={`/viagem/${viagem.id}/livro`} className="botao-texto">
-          Livro com diário e fotos →
-        </Link>
-        <label className="imprimir-opcao">
-          <input type="checkbox" checked={comSegredos} onChange={(e) => setComSegredos(e.target.checked)} /> Incluir Wi-Fi e código da porta
-        </label>
-        <button type="button" className="botao" onClick={() => window.print()}>
-          <Printer size={16} aria-hidden="true" /> Imprimir ou salvar PDF
-        </button>
+        <div className="imprimir-acoes">
+          <label className="imprimir-opcao">
+            <input type="checkbox" checked={comSegredos} onChange={(e) => setComSegredos(e.target.checked)} /> Incluir Wi-Fi e código da porta
+          </label>
+          <Link to={`/viagem/${viagem.id}/livro`} className="imprimir-botao-claro">
+            <BookOpen size={17} aria-hidden="true" /> Livro com diário e fotos
+          </Link>
+          <button type="button" className="botao" onClick={() => window.print()}>
+            <Printer size={16} aria-hidden="true" /> Imprimir ou salvar PDF
+          </button>
+        </div>
       </div>
 
-      <header className="imprimir-topo">
-        <Logo />
-        <h1>{viagem.nome}</h1>
-        <p>
-          {formatarPeriodo(viagem.data_inicio, viagem.data_fim)} · {destinos.map((d) => d.nome).join(' → ')}
-        </p>
-      </header>
+      <div className="imprimir-folha">
+        <header className="imprimir-topo">
+          <Logo />
+          <h1>{viagem.nome}</h1>
+          <p>
+            {formatarPeriodo(viagem.data_inicio, viagem.data_fim)} · {destinos.map((d) => d.nome).join(' → ')}
+          </p>
+        </header>
 
-      <section>
-        <h2>Roteiro dia a dia</h2>
-        {dias.length === 0 ? (
-          <p className="imprimir-vazio">Ainda sem datas ou sem nada na agenda.</p>
-        ) : (
-          dias.map((d) => (
-            <div key={d.dia} className="imprimir-dia">
-              <h3>
-                {diaPorExtenso(d.dia)}
-                {d.onde && <small> · {d.onde.nome}</small>}
-              </h3>
-              <ul>
-                {d.itens.map((i) => (
-                  <li key={i.chave}>
-                    <span className="imprimir-hora">{i.hora || '—'}</span>
-                    <span>
-                      {i.titulo}
-                      {i.detalhe && <small> · {i.detalhe}</small>}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        )}
-      </section>
-
-      {trajetos.length > 0 && (
         <section>
-          <h2>Transportes</h2>
+          <h2>Roteiro dia a dia</h2>
+          {dias.length === 0 ? (
+            <p className="imprimir-vazio">Ainda sem datas ou sem nada na agenda.</p>
+          ) : (
+            dias.map((d) => (
+              <div key={d.dia} className="imprimir-dia">
+                <h3>
+                  {diaPorExtenso(d.dia)}
+                  {d.onde && <small> · {d.onde.nome}</small>}
+                </h3>
+                <ul>
+                  {d.itens.map((i) => (
+                    <li key={i.chave}>
+                      <span className="imprimir-hora">{i.hora || '—'}</span>
+                      <span>
+                        {i.titulo}
+                        {i.detalhe && <small> · {i.detalhe}</small>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
+        </section>
+
+        {trajetos.length > 0 && (
+          <section>
+            <h2>Transportes</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Trecho</th>
+                  <th>Meio</th>
+                  <th>Partida</th>
+                  <th>Chegada</th>
+                  <th>Obs.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trajetos.map((t) => (
+                  <tr key={t.id}>
+                    <td>
+                      {nomeDe(t.origem_id)} → {nomeDe(t.destino_id)}
+                    </td>
+                    <td>{meio(t.meio).nome}</td>
+                    <td>{t.partida ? hora(t.partida) : '—'}</td>
+                    <td>{t.chegada ? hora(t.chegada) : '—'}</td>
+                    <td>{t.observacao ?? ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {escolhidas.length > 0 && (
+          <section>
+            <h2>Hospedagens</h2>
+            {escolhidas.map(({ destino, escolhida }) =>
+              escolhida ? (
+                <div key={destino.id} className="imprimir-casa">
+                  <h3>
+                    {destino.nome}: {escolhida.nome}
+                  </h3>
+                  <p>
+                    {escolhida.checkin && `Check-in ${formatarData(escolhida.checkin)}${escolhida.horaCheckin ? ` a partir das ${escolhida.horaCheckin}` : ''}`}
+                    {escolhida.checkout && ` · Check-out ${formatarData(escolhida.checkout)}${escolhida.horaCheckout ? ` até ${escolhida.horaCheckout}` : ''}`}
+                  </p>
+                  {escolhida.guia?.endereco && <p>Endereço: {escolhida.guia.endereco}</p>}
+                  {escolhida.guia?.comoChegar && <p>Como chegar: {escolhida.guia.comoChegar}</p>}
+                  {comSegredos && escolhida.guia?.wifiRede && (
+                    <p>
+                      Wi-Fi: {escolhida.guia.wifiRede}
+                      {escolhida.guia.wifiSenha && ` · senha ${escolhida.guia.wifiSenha}`}
+                    </p>
+                  )}
+                  {comSegredos && escolhida.guia?.codigoPorta && <p>Código da porta: {escolhida.guia.codigoPorta}</p>}
+                </div>
+              ) : null,
+            )}
+          </section>
+        )}
+
+        <section>
+          <h2>Comboio</h2>
           <table>
             <thead>
               <tr>
-                <th>Trecho</th>
-                <th>Meio</th>
-                <th>Partida</th>
-                <th>Chegada</th>
-                <th>Obs.</th>
+                <th>Pessoa</th>
+                <th>Telefone</th>
+                <th>Emergência</th>
               </tr>
             </thead>
             <tbody>
-              {trajetos.map((t) => (
-                <tr key={t.id}>
-                  <td>
-                    {nomeDe(t.origem_id)} → {nomeDe(t.destino_id)}
-                  </td>
-                  <td>{meio(t.meio).nome}</td>
-                  <td>{t.partida ? hora(t.partida) : '—'}</td>
-                  <td>{t.chegada ? hora(t.chegada) : '—'}</td>
-                  <td>{t.observacao ?? ''}</td>
-                </tr>
-              ))}
+              {membros.map((m) => {
+                const f = fichas.find((x) => x.usuario_id === m.id)
+                return (
+                  <tr key={m.id}>
+                    <td>{m.nome}</td>
+                    <td>{f?.telefone ?? '—'}</td>
+                    <td>{f?.emergencia_nome ? `${f.emergencia_nome}${f.emergencia_telefone ? ` · ${f.emergencia_telefone}` : ''}` : '—'}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </section>
-      )}
 
-      {escolhidas.length > 0 && (
-        <section>
-          <h2>Hospedagens</h2>
-          {escolhidas.map(({ destino, escolhida }) =>
-            escolhida ? (
-              <div key={destino.id} className="imprimir-casa">
-                <h3>
-                  {destino.nome}: {escolhida.nome}
-                </h3>
-                <p>
-                  {escolhida.checkin && `Check-in ${formatarData(escolhida.checkin)}${escolhida.horaCheckin ? ` a partir das ${escolhida.horaCheckin}` : ''}`}
-                  {escolhida.checkout && ` · Check-out ${formatarData(escolhida.checkout)}${escolhida.horaCheckout ? ` até ${escolhida.horaCheckout}` : ''}`}
-                </p>
-                {escolhida.guia?.endereco && <p>Endereço: {escolhida.guia.endereco}</p>}
-                {escolhida.guia?.comoChegar && <p>Como chegar: {escolhida.guia.comoChegar}</p>}
-                {comSegredos && escolhida.guia?.wifiRede && (
-                  <p>
-                    Wi-Fi: {escolhida.guia.wifiRede}
-                    {escolhida.guia.wifiSenha && ` · senha ${escolhida.guia.wifiSenha}`}
-                  </p>
-                )}
-                {comSegredos && escolhida.guia?.codigoPorta && <p>Código da porta: {escolhida.guia.codigoPorta}</p>}
-              </div>
-            ) : null,
-          )}
-        </section>
-      )}
-
-      <section>
-        <h2>Comboio</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Pessoa</th>
-              <th>Telefone</th>
-              <th>Emergência</th>
-            </tr>
-          </thead>
-          <tbody>
-            {membros.map((m) => {
-              const f = fichas.find((x) => x.usuario_id === m.id)
-              return (
-                <tr key={m.id}>
-                  <td>{m.nome}</td>
-                  <td>{f?.telefone ?? '—'}</td>
-                  <td>{f?.emergencia_nome ? `${f.emergencia_nome}${f.emergencia_telefone ? ` · ${f.emergencia_telefone}` : ''}` : '—'}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </section>
-
-      <p className="imprimir-rodape">Gerado pelo Together em {new Date().toLocaleDateString('pt-BR')}.</p>
+        <p className="imprimir-rodape">Gerado pelo Together em {new Date().toLocaleDateString('pt-BR')}.</p>
+      </div>
     </div>
   )
 }

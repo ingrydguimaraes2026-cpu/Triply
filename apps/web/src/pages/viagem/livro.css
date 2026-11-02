@@ -1,20 +1,4 @@
 /* Spec 106: livro da viagem (usa a base do imprimir.css) */
-.livro-capa {
-  text-align: center;
-  padding: 3rem 0 2rem;
-}
-.livro-capa h1 {
-  font-size: 2.2rem;
-  margin: 1rem 0 0.5rem;
-}
-.livro-capa p {
-  margin: 0.2rem 0;
-  color: var(--cor-texto-suave);
-}
-.livro-comboio {
-  margin-top: 1rem !important;
-  font-weight: 600;
-}
 .livro-dia {
   margin-top: 2rem;
 }
@@ -68,12 +52,111 @@
   color: var(--cor-texto-suave);
   margin-top: 2px;
 }
+/* ---------- Design Plataforma (spec 113): folha branca com capa de foto ---------- */
+.livro-folha {
+  padding: 0;
+  overflow: hidden;
+}
+
+.livro-capa {
+  position: relative;
+  height: 340px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 24px 40px;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  color: #fbf3e6;
+  text-align: center;
+}
+
+.livro-capa > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.livro-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(30 20 11 / 0.1), rgb(30 20 11 / 0.75));
+}
+
+.livro-capa-texto {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.livro-capa h1 {
+  margin: 8px 0 0;
+  font-size: clamp(40px, 6vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #fbf3e6;
+}
+
+.livro-capa p {
+  margin: 0;
+  font-size: 14.5px;
+  color: #f6ead7;
+}
+
+.livro-miolo {
+  padding: clamp(28px, 5vw, 56px);
+}
+
+.livro-rota {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+.livro .livro-dia {
+  margin-top: 0;
+  padding-top: 26px;
+  break-inside: avoid;
+}
+
+.livro-dia h2 {
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eadcc6;
+  font-size: 21px;
+}
+
+.livro-dia h2 small {
+  font-family: var(--fonte-titulo);
+  font-size: 15px;
+  color: #b97a22;
+}
+
+.livro-agenda {
+  margin: 0;
+  padding: 12px 0 6px;
+}
+
+.livro-agenda li {
+  font-size: 14.5px;
+}
+
+.livro .imprimir-rodape {
+  margin-top: 32px;
+  text-align: center;
+}
+
 @media print {
   .livro-capa {
-    min-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    height: 90vh;
   }
   .livro-dia {
     break-before: page;

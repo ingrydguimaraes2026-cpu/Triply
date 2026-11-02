@@ -1,6 +1,6 @@
 # 113. Site no design "Together Plataforma"
 
-**Fase:** 7 · **Tamanho:** G · **Depende de:** 112 (site no estilo do app) · **Status:** Em andamento
+**Fase:** 7 · **Tamanho:** G · **Depende de:** 112 (site no estilo do app) · **Status:** Pronto pra testar
 
 ## Objetivo
 O site (`apps/web`) fica igual ao design "Together Plataforma" feito no Claude Design a partir dos prints de 01/11/2026 (`Together Plataforma.dc.html`, no zip "Together App mobile design (2)"). São 20 telas: as mesmas que já existem, redesenhadas.
@@ -28,7 +28,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | 13 | Financeiro (saldo + 4 números, câmbio ao lado de carteira/categorias/acertos, filtros, lista) | 12 | `Financeiro.tsx` | ✅ Só a arrumação mudou (nenhuma conta); relatórios ficam embaixo do câmbio; "Meu orçamento" não vaza mais do cartão estreito |
 | 14 | Fotos (coluna central de 760px) | 13 | `Fotos.tsx` | ✅ coluna de 760px; estado vazio com borda tracejada (o resto já vinha da spec 112) |
 | 15 | Comboio e Configurações (duas colunas; não-ADM vê "como está agora" travado) | 14, 15 | `Comboio.tsx`, `Configuracoes.tsx` | ✅ Comboio: quem vai | histórico, dica da Agulha, botões numa fileira; Configurações pra não-ADM: aviso, quem é ADM e "Como está agora" com cadeados |
-| 16 | Imprimir, Livro e Retrospectiva (folha branca com sombra, capa com foto no livro) | 16, 17, 18 | `Imprimir.tsx`, `Livro.tsx`, `Retrospectiva.tsx` | ⏳ |
+| 16 | Imprimir, Livro e Retrospectiva (folha branca com sombra, capa com foto no livro) | 16, 17, 18 | `Imprimir.tsx`, `Livro.tsx`, `Retrospectiva.tsx` | ✅ Imprimir: barra numa linha, folha branca, dias em duas colunas; Livro: capa com foto e miolo na folha; Retrospectiva já vinha da spec 112 |
 
 ## Não inclui
 - Funcionalidade nova. Onde o design mostra algo que o site não faz (ex.: "Calendário" na Agenda, "Traduzir pela câmera"), fica de fora ou vira o que já existe.

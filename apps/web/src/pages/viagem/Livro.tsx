@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft, Printer } from 'lucide-react'
-import { diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
+import { capaDaViagem, diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -60,51 +60,58 @@ export default function Livro() {
         </button>
       </div>
 
-      <header className="livro-capa">
-        <Logo />
-        <h1>{viagem.nome}</h1>
-        <p>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</p>
-        <p>{destinos.map((d) => d.nome).join(' → ')}</p>
-        <p className="livro-comboio">{membros.map((m) => m.nome.split(' ')[0]).join(' · ')}</p>
-      </header>
+      <div className="imprimir-folha livro-folha">
+        <header className="livro-capa">
+          <img src={capaDaViagem(viagem.id, 1600)} alt="" />
+          <div className="livro-capa-texto">
+            <Logo />
+            <h1>{viagem.nome}</h1>
+            <p>{[formatarPeriodo(viagem.data_inicio, viagem.data_fim), ...membros.map((m) => m.nome.split(' ')[0])].join(' · ')}</p>
+          </div>
+        </header>
 
-      {paginas.length === 0 && <p className="imprimir-vazio">Ainda não tem agenda, diário nem fotos pra montar o livro.</p>}
+        <div className="livro-miolo">
+          {destinos.length > 0 && <p className="livro-rota">{destinos.map((d) => d.nome).join(' → ')}</p>}
 
-      {paginas.map((p) => (
-        <section key={p.dia} className="livro-dia">
-          <h2>
-            {diaPorExtenso(p.dia)}
-            {ondeNoDia(p.dia) && <small> · {ondeNoDia(p.dia)}</small>}
-          </h2>
-          {p.agenda.length > 0 && (
-            <ul className="livro-agenda">
-              {p.agenda.map((a) => (
-                <li key={a.chave}>
-                  <span className="imprimir-hora">{a.hora || '—'}</span> {a.titulo}
-                </li>
+          {paginas.length === 0 && <p className="imprimir-vazio">Ainda não tem agenda, diário nem fotos pra montar o livro.</p>}
+
+          {paginas.map((p) => (
+            <section key={p.dia} className="livro-dia">
+              <h2>
+                {diaPorExtenso(p.dia)}
+                {ondeNoDia(p.dia) && <small> · {ondeNoDia(p.dia)}</small>}
+              </h2>
+              {p.agenda.length > 0 && (
+                <ul className="livro-agenda">
+                  {p.agenda.map((a) => (
+                    <li key={a.chave}>
+                      <span className="imprimir-hora">{a.hora || '—'}</span> {a.titulo}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {p.diario.map((d) => (
+                <blockquote key={d.id} className="livro-diario">
+                  <p>{d.texto}</p>
+                  <cite>{nome(d.autor)}</cite>
+                </blockquote>
               ))}
-            </ul>
-          )}
-          {p.diario.map((d) => (
-            <blockquote key={d.id} className="livro-diario">
-              <p>{d.texto}</p>
-              <cite>{nome(d.autor)}</cite>
-            </blockquote>
+              {p.fotos.length > 0 && (
+                <div className="livro-fotos">
+                  {p.fotos.slice(0, FOTOS_POR_DIA).map((f) => (
+                    <figure key={f.id}>
+                      <img src={f.url} alt={f.legenda ?? ''} />
+                      {f.legenda && <figcaption>{f.legenda}</figcaption>}
+                    </figure>
+                  ))}
+                </div>
+              )}
+            </section>
           ))}
-          {p.fotos.length > 0 && (
-            <div className="livro-fotos">
-              {p.fotos.slice(0, FOTOS_POR_DIA).map((f) => (
-                <figure key={f.id}>
-                  <img src={f.url} alt={f.legenda ?? ''} />
-                  {f.legenda && <figcaption>{f.legenda}</figcaption>}
-                </figure>
-              ))}
-            </div>
-          )}
-        </section>
-      ))}
 
-      <p className="imprimir-rodape">Feito no Together em {new Date().toLocaleDateString('pt-BR')}.</p>
+          <p className="imprimir-rodape">Feito no Together em {new Date().toLocaleDateString('pt-BR')}.</p>
+        </div>
+      </div>
     </div>
   )
 }
