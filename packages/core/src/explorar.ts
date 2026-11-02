@@ -231,6 +231,46 @@ export function regiaoEspalhada(lugares: { latitude: number; longitude: number }
   return false
 }
 
+// ---------- Vários destinos (spec 115, etapa 7) ----------
+// Divide os dias da viagem entre os destinos pelo peso de cada um (ex.: país pesa mais que cidade).
+// Todo destino ganha pelo menos 1 dia; a sobra vai pra quem tem mais peso.
+export function dividirDias(total: number, pesos: number[]): number[] {
+  if (pesos.length === 0) return []
+  const dias = Math.max(total, pesos.length)
+  const soma = pesos.reduce((s, p) => s + Math.max(p, 0.1), 0)
+  const exato = pesos.map((p) => (dias * Math.max(p, 0.1)) / soma)
+  const res = exato.map((x) => Math.max(1, Math.floor(x)))
+  // Acerta a conta: tira de quem tem mais (sem ir abaixo de 1) ou dá pra quem ficou com a maior fração
+  let falta = dias - res.reduce((s, x) => s + x, 0)
+  const porFracao = exato.map((x, i) => ({ i, f: x - Math.floor(x) })).sort((a, b) => b.f - a.f)
+  for (let k = 0; falta > 0; k++, falta--) res[porFracao[k % porFracao.length].i]++
+  while (falta < 0) {
+    const maior = res.indexOf(Math.max(...res))
+    res[maior]--
+    falta++
+  }
+  return res
+}
+
+// Ordem que anda menos: começa no primeiro destino e vai sempre pro mais perto que falta.
+// Só sugere se economizar de verdade (mais de 15% e mais de 100 km). Devolve os índices na nova ordem.
+export function ordemMaisPerto(pontos: ({ latitude: number; longitude: number } | null)[]): { ordem: number[]; economiaKm: number } | null {
+  if (pontos.length < 3 || pontos.some((p) => !p)) return null
+  const ps = pontos as { latitude: number; longitude: number }[]
+  const total = (ordem: number[]) => ordem.slice(1).reduce((s, i, k) => s + distanciaKm(ps[ordem[k]], ps[i]), 0)
+  const ordem = [0]
+  const faltam = new Set(ps.map((_, i) => i).slice(1))
+  while (faltam.size) {
+    const ultimo = ps[ordem[ordem.length - 1]]
+    const perto = [...faltam].reduce((a, b) => (distanciaKm(ultimo, ps[b]) < distanciaKm(ultimo, ps[a]) ? b : a))
+    ordem.push(perto)
+    faltam.delete(perto)
+  }
+  const atual = total(ps.map((_, i) => i))
+  const economiaKm = Math.round(atual - total(ordem))
+  return economiaKm > 100 && economiaKm > atual * 0.15 ? { ordem, economiaKm } : null
+}
+
 // ---------- Cidade ----------
 // Chave única da cidade no catálogo: "paris|fr"
 export const chaveDaCidade = (nome: string, pais: string | null) => `${simplificar(nome)}|${(pais ?? '').toLowerCase()}`

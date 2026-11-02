@@ -1,6 +1,6 @@
 # 115. Jornada nova: montar a viagem com o grupo
 
-**Fase:** 2 · **Tamanho:** G · **Depende de:** 114 (Explorar) · **Status:** Rascunho (pra Victor e Ingryd aprovarem)
+**Fase:** 2 · **Tamanho:** G · **Depende de:** 114 (Explorar) · **Status:** Pronto pra testar (as 7 etapas feitas em 2026-11-02; falta o teste do criador e do convidado)
 
 ## Objetivo
 Quem abre o Tripwave pela primeira vez sai com **um roteiro de verdade, montado com o grupo**, sem se perder. O app não só organiza a viagem que a pessoa já tem na cabeça: ele **ajuda a montar** o roteiro, a partir do destino e do que cada um quer fazer.
@@ -84,13 +84,18 @@ Mostra o primeiro item que ainda falta, nesta ordem:
 ## Critérios de aceite
 - [ ] **Teste do criador:** alguém que nunca viu o app cria uma viagem e chega a um roteiro dia a dia em **menos de 3 minutos, sem ajuda**. Fazer com o Victor e com a Ingryd.
 - [ ] **Teste do convidado:** abrindo o link de convite, a pessoa chega no Explorar do destino sem passar por outra tela, e as escolhas dela aparecem no roteiro do grupo.
-- [ ] O cartão "Próximo passo" sempre mostra uma ação só e muda quando ela é feita.
-- [ ] Antes da viagem, o menu mostra no máximo 6 itens + "Mais".
+- [x] O cartão "Próximo passo" sempre mostra uma ação só e muda quando ela é feita.
+- [x] Antes da viagem, o menu mostra no máximo 6 itens + "Mais".
 - [ ] "Já tenho tudo planejado" continua criando a viagem do jeito de hoje (nada se perde).
-- [ ] Funciona em 360px sem rolar pro lado.
-- [ ] `npm run build` e `npm run lint` passam; testes do core verdes (regra do próximo passo e dos dias por destino).
+- [x] Funciona em 360px sem rolar pro lado.
+- [x] `npm run build` e `npm run lint` passam; testes do core verdes (regra do próximo passo e dos dias por destino).
 
-## Perguntas em aberto
+## Como ficou (2026-11-02)
+- Perguntas em aberto: valeram as propostas (nome "Roteiro", datas opcionais, só ADM põe na agenda, ADM monta sem esperar todo mundo).
+- **Etapa 6:** função `explorar_quem_escolheu` (só números, nunca quem escolheu o quê). Ao chegar no resumo, as escolhas viram lugares da viagem e o "Montar" usa tudo que alguém do comboio curtiu ou marcou como "não abro mão".
+- **Etapa 7:** coluna `destinos.dias` (dias planejados sem datas). Na Nova viagem, com 2+ destinos, o app divide os dias (país pesa 2, cidade 1) e a pessoa ajusta cada um; com 3+ destinos sugere a ordem que anda menos (vizinho mais perto, só se economizar mais de 15% e 100 km). O tamanho do catálogo ainda não entra no peso (o catálogo da cidade pode nem existir na hora de criar).
+
+## Perguntas em aberto (respondidas)
 1. **Nome do item no menu:** "Roteiro", "Montar roteiro" ou "Explorar"? Proposta: **"Roteiro"** (é o que a pessoa quer; Explorar é o jeito).
 2. **Datas:** pedir já no passo 2 (opcional) ou só no cartão "Quando vocês vão?"? Proposta: **opcional no passo 2**, porque quem já sabe não quer voltar depois.
 3. **Quem monta o roteiro do grupo:** só o ADM ou qualquer um? Proposta: **só o ADM põe na agenda**; qualquer um vê a prévia.

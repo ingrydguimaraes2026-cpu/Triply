@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import { dividirDias, ordemMaisPerto } from '@together/core'
 import { useSessao } from '../features/auth/hooks'
 import { CriarContaDoConvidado } from '../features/auth/FaixaConvidado'
 import MapaMundi from '../features/mapa/MapaMundi'
@@ -83,6 +84,8 @@ function CriarViagem() {
   // Jeito rápido: só o número de dias; as datas são opcionais
   const [diasDigitados, setDiasDigitados] = useState(5)
   const [comDatas, setComDatas] = useState(false)
+  // Vários destinos (spec 115, etapa 7): dias de cada um. null = divisão sugerida pelo app
+  const [diasDeCada, setDiasDeCada] = useState<number[] | null>(null)
 
   const [destinos, setDestinos] = useState<Cidade[]>([])
   const [busca, setBusca] = useState('')
@@ -144,6 +147,7 @@ function CriarViagem() {
         dataFim: volta || null,
         moeda,
         destinos,
+        dias: modo === 'rapido' ? repartidos : undefined,
       })
       setViagemId(id)
       if (comboioDe) {
@@ -172,8 +176,18 @@ function CriarViagem() {
   const passos = PASSOS[modo]
   const indice = passos.indexOf(passo)
   const dias = ida && volta ? diasEntre(ida, volta) : null
-  // Explorar recebe os dias de cada destino (divisão simples; a etapa 7 da spec 115 melhora)
-  const diasPorDestino = Math.max(1, Math.round((dias ?? diasDigitados) / Math.max(1, destinos.length)))
+  // Spec 115, etapa 7: país pesa mais que cidade na divisão dos dias; a pessoa pode ajustar cada um
+  const totalDeDias = dias ?? diasDigitados
+  const repartidos =
+    diasDeCada && diasDeCada.length === destinos.length ? diasDeCada : dividirDias(totalDeDias, destinos.map((d) => (d.tipo === 'País' ? 2 : 1)))
+  const somaDosDias = repartidos.reduce((s, x) => s + x, 0)
+  const ordemSugerida = useMemo(() => ordemMaisPerto(destinos), [destinos])
+
+  function mudarDiasDe(indice: number, delta: number) {
+    const novo = repartidos.map((x, i) => (i === indice ? Math.min(30, Math.max(1, x + delta)) : x))
+    setDiasDeCada(novo)
+    if (!comDatas) setDiasDigitados(novo.reduce((s, x) => s + x, 0))
+  }
 
   function jeitoCompleto() {
     setModo('completo')
@@ -275,6 +289,16 @@ function CriarViagem() {
               </ol>
             )}
 
+            {ordemSugerida && (
+              <p className="onb-sugestao-ordem">
+                Dica: indo {ordemSugerida.ordem.map((i) => destinos[i].nome).join(' → ')} vocês andam uns {ordemSugerida.economiaKm.toLocaleString('pt-BR')} km a
+                menos.{' '}
+                <button type="button" onClick={() => setDestinos(ordemSugerida.ordem.map((i) => destinos[i]))}>
+                  Usar essa ordem
+                </button>
+              </p>
+            )}
+
             <button
               type="button"
               className="onb-botao"
@@ -315,13 +339,19 @@ function CriarViagem() {
               </div>
             ) : (
               <div className="onb-contador" role="group" aria-label="Dias de viagem">
-                <button type="button" aria-label="Menos um dia" onClick={() => setDiasDigitados((n) => Math.max(1, n - 1))}>
+                <button type="button" aria-label="Menos um dia" onClick={() => {
+                    setDiasDigitados((n) => Math.max(1, n - 1))
+                    setDiasDeCada(null)
+                  }}>
                   −
                 </button>
                 <span>
                   <strong>{diasDigitados}</strong> {diasDigitados === 1 ? 'dia' : 'dias'}
                 </span>
-                <button type="button" aria-label="Mais um dia" onClick={() => setDiasDigitados((n) => Math.min(30, n + 1))}>
+                <button type="button" aria-label="Mais um dia" onClick={() => {
+                    setDiasDigitados((n) => Math.min(30, n + 1))
+                    setDiasDeCada(null)
+                  }}>
                   +
                 </button>
               </div>
@@ -338,6 +368,32 @@ function CriarViagem() {
             >
               {comDatas ? 'Ainda não sei as datas' : 'Já sei as datas'}
             </button>
+            {destinos.length >= 2 && (
+              <div>
+                <p className="onb-dica">Sugestão de dias em cada lugar</p>
+                <ul className="onb-dias-de-cada">
+                  {destinos.map((d, i) => (
+                    <li key={d.id}>
+                      <span>{d.nome}</span>
+                      <button type="button" aria-label={`Menos um dia em ${d.nome}`} onClick={() => mudarDiasDe(i, -1)} disabled={repartidos[i] <= 1}>
+                        −
+                      </button>
+                      <strong>
+                        {repartidos[i]} {repartidos[i] === 1 ? 'dia' : 'dias'}
+                      </strong>
+                      <button type="button" aria-label={`Mais um dia em ${d.nome}`} onClick={() => mudarDiasDe(i, 1)}>
+                        +
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {comDatas && dias && somaDosDias !== dias && (
+                  <p className="onb-nota">
+                    Somando dá {somaDosDias} {somaDosDias === 1 ? 'dia' : 'dias'}, e a viagem tem {dias}.
+                  </p>
+                )}
+              </div>
+            )}
             {erro && (
               <p role="alert" className="onb-erro">
                 {erro}
@@ -454,7 +510,7 @@ function CriarViagem() {
             <button type="button" className="onb-voltar" onClick={compartilhar}>
               {copiado ? 'Link copiado!' : 'Mandar o convite'}
             </button>
-            <button type="button" className="onb-botao" onClick={() => navegar(`/viagem/${viagemId}/explorar?dias=${diasPorDestino}`)}>
+            <button type="button" className="onb-botao" onClick={() => navegar(`/viagem/${viagemId}/explorar`)}>
               Começar a escolher em {destinos[0]?.nome}
             </button>
             <p className="onb-nota onb-nota-centro">Dá pra chamar a galera a qualquer momento.</p>

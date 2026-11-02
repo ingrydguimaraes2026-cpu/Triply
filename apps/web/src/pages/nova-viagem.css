@@ -420,3 +420,76 @@
   font-size: 32px;
   color: var(--cor-texto);
 }
+
+/* Spec 115, etapa 7: dias em cada destino e dica de ordem */
+.onb-dias-de-cada {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onb-dias-de-cada li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 12px;
+  background: var(--cor-cartao);
+}
+
+.onb-dias-de-cada span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.onb-dias-de-cada strong {
+  min-width: 56px;
+  text-align: center;
+}
+
+.onb-dias-de-cada button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.onb-dias-de-cada button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.onb-sugestao-ordem {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.onb-sugestao-ordem button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-comboio);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}

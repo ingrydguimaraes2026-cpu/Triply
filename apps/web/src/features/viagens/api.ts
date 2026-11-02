@@ -10,6 +10,7 @@ type NovaViagem = {
   dataFim: string | null
   moeda: string
   destinos: Cidade[]
+  dias?: number[] // dias planejados em cada destino, na mesma ordem (spec 115)
 }
 
 // Cria a viagem (quem cria vira ADM sozinho) e salva os destinos na ordem
@@ -37,6 +38,7 @@ export async function criarViagem(dados: NovaViagem) {
       latitude: d.latitude,
       longitude: d.longitude,
       ordem,
+      dias: dados.dias?.[ordem] ?? null,
     })),
   )
   if (erroDestinos) throw erroDestinos

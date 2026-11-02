@@ -782,6 +782,7 @@ export type Database = {
       destinos: {
         Row: {
           chegada: string | null
+          dias: number | null
           id: string
           latitude: number | null
           longitude: number | null
@@ -793,6 +794,7 @@ export type Database = {
         }
         Insert: {
           chegada?: string | null
+          dias?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -804,6 +806,7 @@ export type Database = {
         }
         Update: {
           chegada?: string | null
+          dias?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -3194,6 +3197,7 @@ export type Database = {
         Args: { p_destinos: Json; p_removidos?: string[]; p_viagem: string }
         Returns: {
           chegada: string | null
+          dias: number | null
           id: string
           latitude: number | null
           longitude: number | null

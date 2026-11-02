@@ -71,8 +71,8 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
   const [estilos, setEstilos] = useState<EstiloId[]>(['cultura'])
   const [ritmo, setRitmo] = useState<RitmoId>('equilibrado')
   const [orcamento, setOrcamento] = useState<OrcamentoId>('medio')
-  // Spec 115: a Nova viagem manda os dias (?dias=5) quando o destino ainda não tem datas
-  const [diasManual, setDiasManual] = useState(() => Math.min(14, Math.max(1, Number(params.get('dias')) || 3)))
+  // Spec 115: sem datas, usa os dias planejados do destino (Nova viagem) ou ?dias=5
+  const [diasManual, setDiasManual] = useState(() => Math.min(14, Math.max(1, Number(params.get('dias')) || destino.dias || 3)))
   const [preparando, setPreparando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [catalogo, setCatalogo] = useState<LugarDoCatalogo[]>([])
