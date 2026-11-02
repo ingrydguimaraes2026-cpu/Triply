@@ -23,7 +23,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | 8 | Hoje (aviso com a Agulha, ferramentas em 2 colunas) | 07 | `Hoje.tsx` | ✅ Cartões do dia e ferramentas no mesmo mosaico de 2 colunas |
 | 9 | Agenda (dias em pílulas, dia escolhido + "Neste dia") | 08 | `Agenda.tsx` | ✅ Cidade em cada pílula; "Neste dia" mostra a previsão e a hospedagem escolhida do destino |
 | 10 | Hospedagem (pílulas de destino, mapa + painel do destino) | 09 | `Hospedagem.tsx` | ✅ Botão "Buscar no Hostels" ganhou cor (estava branco no branco) |
-| 11 | Lugares (pílulas, lista + sugestões ao lado) | 10 | `Lugares.tsx` | ⏳ |
+| 11 | Lugares (pílulas, lista + sugestões ao lado) | 10 | `Lugares.tsx` | ✅ Sugestões saíram do painel pra um cartão ao lado (só aparece se o destino tem coordenadas) |
 | 12 | Transportes (pílulas, mapa + painel de trechos) | 11 | `Transportes.tsx` | ⏳ |
 | 13 | Financeiro (saldo + 4 números, câmbio ao lado de carteira/categorias/acertos, filtros, lista) | 12 | `Financeiro.tsx` | ⏳ |
 | 14 | Fotos (coluna central de 760px) | 13 | `Fotos.tsx` | ⏳ |

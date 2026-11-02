@@ -145,95 +145,102 @@ export default function Lugares() {
     const { destino, lugares, passagem, temGuardaVolumes } = item
     const conta = contarPorTipo(lugares)
     const visiveis = filtro ? lugares.filter((x) => x.tipo === filtro) : lugares
+    // Design Plataforma (spec 113): lista do destino + sugestões num cartão ao lado
     return (
-      <section className="hosp-painel lugares-painel" aria-label={`Lugares em ${destino.nome}`}>
-        <header className="hosp-painel-topo">
-          <div>
-            <h2>{destino.nome}</h2>
-            <p>
-              {destino.chegada && destino.chegada === destino.saida
-                ? formatarData(destino.chegada, true) // dia de passagem: "7 jun 2027", não "7 – 7 jun 2027"
-                : destino.chegada || destino.saida
-                  ? formatarPeriodo(destino.chegada, destino.saida)
-                  : 'Datas a definir'}
-            </p>
-          </div>
-          {passagem && <span className="hosp-selo selo-bate-e-volta">De passagem</span>}
-        </header>
+      <div className="lugares-colunas">
+        <section className="hosp-painel lugares-painel" aria-label={`Lugares em ${destino.nome}`}>
+          <header className="hosp-painel-topo">
+            <div>
+              <h2>{destino.nome}</h2>
+              <p>
+                {destino.chegada && destino.chegada === destino.saida
+                  ? formatarData(destino.chegada, true) // dia de passagem: "7 jun 2027", não "7 – 7 jun 2027"
+                  : destino.chegada || destino.saida
+                    ? formatarPeriodo(destino.chegada, destino.saida)
+                    : 'Datas a definir'}
+              </p>
+            </div>
+            {passagem && <span className="hosp-selo selo-bate-e-volta">De passagem</span>}
+          </header>
 
-        {/* Dia de passagem: sugestão de guarda-volumes (some quando já tem um anotado) */}
-        {passagem && !temGuardaVolumes && (
-          <div className="lugares-dica">
-            <p>
-              <Luggage size={15} aria-hidden="true" /> Vai passar por {destino.nome} com malas? Anote um guarda-volumes.
-            </p>
-            <button type="button" className="botao secundario pequeno" onClick={() => setJanela({ destinoId: destino.id, tipo: 'guarda_volumes' })}>
-              Anotar guarda-volumes
-            </button>
-          </div>
-        )}
-
-        {lugares.length > 0 && (
-          <div className="filtros" role="group" aria-label="Filtrar por tipo">
-            <button type="button" className={filtro === null ? 'ativo' : undefined} aria-pressed={filtro === null} onClick={() => setFiltro(null)}>
-              Todos <span>{lugares.length}</span>
-            </button>
-            {TIPOS_DE_LUGAR.filter((t) => conta[t.chave] > 0).map((t) => (
-              <button
-                key={t.chave}
-                type="button"
-                className={filtro === t.chave ? 'ativo' : undefined}
-                aria-pressed={filtro === t.chave}
-                onClick={() => setFiltro(t.chave)}
-              >
-                {t.plural} <span>{conta[t.chave]}</span>
+          {/* Dia de passagem: sugestão de guarda-volumes (some quando já tem um anotado) */}
+          {passagem && !temGuardaVolumes && (
+            <div className="lugares-dica">
+              <p>
+                <Luggage size={15} aria-hidden="true" /> Vai passar por {destino.nome} com malas? Anote um guarda-volumes.
+              </p>
+              <button type="button" className="botao secundario pequeno" onClick={() => setJanela({ destinoId: destino.id, tipo: 'guarda_volumes' })}>
+                Anotar guarda-volumes
               </button>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
 
-        {lugares.length === 0 ? (
-          <p className="hosp-vazio">Nada anotado em {destino.nome} ainda. Passeios, comida ou guarda-volumes?</p>
-        ) : visiveis.length === 0 ? (
-          <p className="hosp-vazio">
-            Nenhum {tipoDeLugar(filtro!).nome.toLowerCase()} em {destino.nome}.{' '}
-            <button type="button" className="botao-texto" onClick={() => setFiltro(null)}>
-              Ver todos
-            </button>
-          </p>
-        ) : (
-          <ul className="lugar-lista">{visiveis.map((x) => cartao(x, destino))}</ul>
-        )}
+          {lugares.length > 0 && (
+            <div className="filtros" role="group" aria-label="Filtrar por tipo">
+              <button type="button" className={filtro === null ? 'ativo' : undefined} aria-pressed={filtro === null} onClick={() => setFiltro(null)}>
+                Todos <span>{lugares.length}</span>
+              </button>
+              {TIPOS_DE_LUGAR.filter((t) => conta[t.chave] > 0).map((t) => (
+                <button
+                  key={t.chave}
+                  type="button"
+                  className={filtro === t.chave ? 'ativo' : undefined}
+                  aria-pressed={filtro === t.chave}
+                  onClick={() => setFiltro(t.chave)}
+                >
+                  {t.plural} <span>{conta[t.chave]}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
-        <button type="button" className="hosp-adicionar" onClick={() => setJanela({ destinoId: destino.id, tipo: filtro ?? undefined })}>
-          <Plus size={16} aria-hidden="true" /> Adicionar lugar
-        </button>
-        {/* Spec 103: indicar pra um amigo */}
-        <IndicarLugares destino={destino.nome} lugares={lugares} />
-        {/* Spec 096: montar os dias pelos votos */}
-        <MontarDias key={`m${destino.id}`} viagemId={viagem.id} destino={destino} lugares={lugares} />
+          {lugares.length === 0 ? (
+            <p className="hosp-vazio">Nada anotado em {destino.nome} ainda. Passeios, comida ou guarda-volumes?</p>
+          ) : visiveis.length === 0 ? (
+            <p className="hosp-vazio">
+              Nenhum {tipoDeLugar(filtro!).nome.toLowerCase()} em {destino.nome}.{' '}
+              <button type="button" className="botao-texto" onClick={() => setFiltro(null)}>
+                Ver todos
+              </button>
+            </p>
+          ) : (
+            <ul className="lugar-lista">{visiveis.map((x) => cartao(x, destino))}</ul>
+          )}
+
+          <button type="button" className="hosp-adicionar" onClick={() => setJanela({ destinoId: destino.id, tipo: filtro ?? undefined })}>
+            <Plus size={16} aria-hidden="true" /> Adicionar lugar
+          </button>
+          {/* Spec 103: indicar pra um amigo */}
+          <IndicarLugares destino={destino.nome} lugares={lugares} />
+          {/* Spec 096: montar os dias pelos votos */}
+          <MontarDias key={`m${destino.id}`} viagemId={viagem.id} destino={destino} lugares={lugares} />
+        </section>
         {/* Spec 094: sugestões do OpenStreetMap */}
-        <SugestoesDoDestino
-          key={destino.id}
-          destino={destino}
-          jaSalvos={lugares.map((x) => x.nome)}
-          aoSalvar={async (s) => {
-            await adicionarLugar(viagem.id, {
-              destinoId: destino.id,
-              tipo: 'passeio',
-              nome: s.nome,
-              link: s.wikipedia,
-              horario: null,
-              preco: null,
-              moeda: viagem.moeda_principal,
-              observacao: null,
-              latitude: s.latitude,
-              longitude: s.longitude,
-            })
-            await l.recarregar()
-          }}
-        />
-      </section>
+        {destino.latitude != null && destino.longitude != null && (
+          <aside className="cartao-ui lugares-sugestoes" aria-label={`Sugestões em ${destino.nome}`}>
+            <SugestoesDoDestino
+              key={destino.id}
+              destino={destino}
+              jaSalvos={lugares.map((x) => x.nome)}
+              aoSalvar={async (s) => {
+                await adicionarLugar(viagem.id, {
+                  destinoId: destino.id,
+                  tipo: 'passeio',
+                  nome: s.nome,
+                  link: s.wikipedia,
+                  horario: null,
+                  preco: null,
+                  moeda: viagem.moeda_principal,
+                  observacao: null,
+                  latitude: s.latitude,
+                  longitude: s.longitude,
+                })
+                await l.recarregar()
+              }}
+            />
+          </aside>
+        )}
+      </div>
     )
   }
 

@@ -313,3 +313,79 @@
 html[data-tema='escuro'] .lugar {
   border-color: var(--cor-borda);
 }
+
+/* ---------- Design Plataforma (spec 113) ----------
+   Lista do destino (2 partes) + sugestões ao lado (1 parte); no celular um embaixo do outro. */
+.lugares-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.lugares-colunas > .lugares-painel {
+  flex: 2 1 460px;
+  min-width: 0;
+  max-width: none;
+}
+
+.lugares-sugestoes {
+  flex: 1 1 280px;
+  min-width: 0;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.lugares-sugestoes .sugestoes {
+  margin: 0;
+}
+
+/* O botão "Sugestões em X" vira o título do cartão */
+.lugares-sugestoes .sugestoes > .botao-texto:first-child {
+  padding: 0;
+  color: var(--cor-texto);
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.lugares-sugestoes .sugestoes svg {
+  color: var(--caramelo);
+}
+
+.lugares-sugestoes .sugestoes-lista li {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-top: 0;
+  border-radius: 12px;
+  background: var(--cor-fundo);
+}
+
+.lugares-sugestoes .sugestoes-texto {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.lugares-sugestoes .sugestoes-texto small {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* Cada lugar: cartão branco com borda clara */
+.lugar {
+  align-items: center;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-cartao);
+  box-shadow: none;
+}
+
+.lugar-icone {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+}
+
+.lugares-dica {
+  background: var(--cor-fundo-suave);
+}
