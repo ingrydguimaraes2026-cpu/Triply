@@ -8,10 +8,13 @@
 - **Testes:** `apps/web/tests/explorar.test.mjs` e `explorar-banco.test.mjs` (verdes). Corrigido `supabase-falso.sql` (faltava `service_role`: TODOS os testes de banco estavam quebrados desde a spec 111).
 - **Site:** `apps/web/src/pages/viagem/Explorar.tsx`, `features/explorar/*`, rota `explorar` no router, botão "Explorar {destino}" na aba Lugares. Build + lint + tsc ok.
 
-## ⚠️ Onde parou
-1. **Função `explorar-cidade`: a versão NO AR está quebrada.** Ela usa o Nominatim, que **bloqueia chamadas do Supabase (403)**. O arquivo local `supabase/functions/explorar-cidade/index.ts` já troca por Open-Meteo (cidade) + busca da Wikidata (região) e foi testado localmente (Paris 60 lugares, Toscana 10, Costa Amalfitana 43, Nova York 54). **Próximo passo: publicar de novo** (`deploy_edge_function`, `verify_jwt: false`, arquivos `index.ts` + `curado.json`) e testar no navegador: Eurotrip → Lugares → Explorar Paris → Ver os lugares.
-2. **Agendamento da pré-carga (pg_cron) ainda não criado.** Copiar o padrão do job `atualizar-exigencias` (chave pública no header), a cada 10 min, `body: {"precarga": true, "quantos": 3}`, `timeout_milliseconds: 150000`.
-3. **Testar o fluxo inteiro no site** (deslizar, desfazer, teclado, resumo, montar, pôr na agenda) com os critérios de aceite da spec.
+## No ar (02/11, PC 2)
+- **Função `explorar-cidade` v2 publicada** (Open-Meteo + Wikidata, `verify_jwt: false`). Paris carregou no navegador com 15 cartões e fotos.
+- **Pré-carga agendada:** job `precarga-explorar` no pg_cron, a cada 10 min, `{"precarga": true, "quantos": 3}`. Primeiro teste preparou o Rio de Janeiro.
+- **Testado no site (Eurotrip → Lugares → Explorar Paris):** estilo/ritmo, deslizar pelo teclado (→ quero, ← passo, ↑ não abro mão, Z desfaz), resumo, montar 1 dia, 360px sem rolar pro lado.
+- Data do dia corrigida ("Sexta-feira, 4 de junho"; antes "4 De Junho").
+- **Não testado ainda:** "Pôr na agenda da viagem" (grava na viagem de verdade).
+- Teclas apertadas muito rápido (sem pausa) só contam a primeira: a animação trava. Ok com ~0,5 s entre elas.
 
 ## Falta fazer
 - Tela no **app mobile** (Expo).

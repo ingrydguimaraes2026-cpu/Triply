@@ -690,7 +690,10 @@
 .exp-dia-nome {
   margin-bottom: 8px;
   font-weight: 700;
-  text-transform: capitalize;
+}
+/* Só a primeira letra ("Sexta-feira, 4 de junho"); capitalize deixava "4 De Junho" */
+.exp-dia-nome::first-letter {
+  text-transform: uppercase;
 }
 .exp-trecho {
   display: block;
