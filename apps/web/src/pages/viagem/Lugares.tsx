@@ -225,7 +225,7 @@ export default function Lugares() {
           {/* Spec 096: montar os dias pelos votos */}
           <MontarDias key={`m${destino.id}`} viagemId={viagem.id} destino={destino} lugares={lugares} />
         </section>
-        {/* Spec 094: sugestões do OpenStreetMap */}
+        {/* Spec 094: sugestões do catálogo do Explorar */}
         {destino.latitude != null && destino.longitude != null && (
           <aside className="cartao-ui lugares-sugestoes" aria-label={`Sugestões em ${destino.nome}`}>
             <SugestoesDoDestino

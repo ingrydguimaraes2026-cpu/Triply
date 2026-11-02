@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { ExternalLink, Plus, Sparkles } from 'lucide-react'
-import { consultaDeSugestoes, sugestoesDaResposta, textoDaDistancia, type Sugestao, type Tables } from '@together/core'
+import { INFO_DO_TIPO, sugestoesDoCatalogo, textoDaDistancia, type Sugestao, type Tables } from '@together/core'
+import { carregarCatalogo } from '../explorar/api'
 
-// Sugestões de lugares por destino (spec 094): atrações conhecidas do OpenStreetMap perto do destino.
+// Sugestões de lugares por destino (spec 094): os mais conhecidos do catálogo do Explorar (spec 114).
+// Cidade pronta vem do banco; cidade nova a função "explorar-cidade" prepara (pode levar até ~30 s).
 // "Salvar" vira um lugar do comboio (tipo passeio), com a coordenada e o link da Wikipédia.
 type Props = {
   destino: Tables<'destinos'>
@@ -11,7 +13,8 @@ type Props = {
 }
 export default function SugestoesDoDestino({ destino, jaSalvos, aoSalvar }: Props) {
   const [lista, setLista] = useState<Sugestao[] | null>(null)
-  const [estado, setEstado] = useState<'parado' | 'buscando' | 'erro'>('parado')
+  const [estado, setEstado] = useState<'parado' | 'buscando' | 'preparando' | 'erro'>('parado')
+  const [erro, setErro] = useState<string | null>(null)
   const [salvando, setSalvando] = useState<string | null>(null)
 
   if (destino.latitude == null || destino.longitude == null) return null
@@ -20,12 +23,13 @@ export default function SugestoesDoDestino({ destino, jaSalvos, aoSalvar }: Prop
   async function buscar() {
     setEstado('buscando')
     try {
-      const r = await fetch(consultaDeSugestoes(latitude, longitude))
-      if (!r.ok) throw new Error(`Overpass ${r.status}`)
-      setLista(sugestoesDaResposta(await r.json(), latitude, longitude, jaSalvos))
+      const { lugares } = await carregarCatalogo(destino, () => setEstado('preparando'))
+      const doCatalogo = lugares.map((l) => ({ ...l, tipoNome: INFO_DO_TIPO[l.tipo]?.nome ?? 'Atração' }))
+      setLista(sugestoesDoCatalogo(doCatalogo, latitude, longitude, jaSalvos))
       setEstado('parado')
     } catch (e) {
       console.error('Erro ao buscar sugestões:', e)
+      setErro(e instanceof Error ? e.message : null)
       setEstado('erro')
     }
   }
@@ -44,17 +48,18 @@ export default function SugestoesDoDestino({ destino, jaSalvos, aoSalvar }: Prop
   if (!lista)
     return (
       <div className="sugestoes">
-        <button type="button" className="botao-texto" onClick={buscar} disabled={estado === 'buscando'}>
-          <Sparkles size={15} aria-hidden="true" /> {estado === 'buscando' ? 'Procurando…' : `Sugestões em ${destino.nome}`}
+        <button type="button" className="botao-texto" onClick={buscar} disabled={estado === 'buscando' || estado === 'preparando'}>
+          <Sparkles size={15} aria-hidden="true" /> {estado === 'buscando' ? 'Procurando…' : estado === 'preparando' ? `Preparando ${destino.nome}…` : `Sugestões em ${destino.nome}`}
         </button>
-        {estado === 'erro' && <p className="form-dica">Não deu pra buscar agora (o serviço do mapa pode estar cheio). Tente de novo daqui a pouco.</p>}
+        {estado === 'preparando' && <p className="form-dica">Primeira vez nessa cidade: juntando os lugares (até 30 segundos).</p>}
+        {estado === 'erro' && <p className="form-dica">{erro ?? 'Não deu pra buscar agora. Tente de novo daqui a pouco.'}</p>}
       </div>
     )
 
   return (
     <div className="sugestoes">
       <p className="form-dica">
-        <Sparkles size={14} aria-hidden="true" /> Conhecidos perto de {destino.nome} (OpenStreetMap)
+        <Sparkles size={14} aria-hidden="true" /> Mais conhecidos em {destino.nome} (Wikidata)
       </p>
       {lista.length === 0 ? (
         <p className="form-dica">Nada de novo por aqui: vocês já salvaram os mais conhecidos.</p>
@@ -65,7 +70,7 @@ export default function SugestoesDoDestino({ destino, jaSalvos, aoSalvar }: Prop
               <span className="sugestoes-texto">
                 {s.nome}
                 <small>
-                  {NOMES[s.tipo]} · {textoDaDistancia(s.metros)} do centro
+                  {s.tipo} · {textoDaDistancia(s.metros)} do centro
                   {s.wikipedia && (
                     <>
                       {' '}
@@ -87,5 +92,3 @@ export default function SugestoesDoDestino({ destino, jaSalvos, aoSalvar }: Prop
     </div>
   )
 }
-
-const NOMES: Record<Sugestao['tipo'], string> = { museu: 'Museu', mirante: 'Mirante', atracao: 'Atração', historico: 'Histórico' }

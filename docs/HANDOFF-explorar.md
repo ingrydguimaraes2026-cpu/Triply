@@ -16,10 +16,11 @@
 - **Não testado ainda:** "Pôr na agenda da viagem" (grava na viagem de verdade).
 - Teclas apertadas muito rápido (sem pausa) só contam a primeira: a animação trava. Ok com ~0,5 s entre elas.
 
+- **Sugestões da aba Lugares (spec 094) leem o catálogo** (`sugestoesDoCatalogo` + `carregarCatalogo`); o Overpass saiu delas. Ainda resta o Overpass no "banheiro grátis" da tela Hoje.
+
 ## Falta fazer
 - Tela no **app mobile** (Expo).
 - **"Começar explorando"** na Nova viagem (`apps/web/src/pages/NovaViagem.tsx`, Decisão 5).
-- Sugestões da spec 094 (`consultaDeSugestoes` em `packages/core/src/ferramentas.ts`) passarem a ler o catálogo. Hoje chamam o Overpass do navegador e já dão 429.
 - **Base curada:** só Jericoacoara e Gramado em `supabase/functions/explorar-cidade/curado.json`. Faltam os outros 18 destinos de natureza da spec (Chapada Diamantina/Lençóis veio com 0 lugares no teste).
 
 ## Cuidados
