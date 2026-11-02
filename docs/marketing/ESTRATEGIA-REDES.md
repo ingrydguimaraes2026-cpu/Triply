@@ -17,9 +17,7 @@ O X traz atenção, parceiros, feedback e primeiros testadores. O TikTok e o Ins
 
 ---
 
-## Ideias da Ingryd (conversa de 02/11/2026)
-
-*As mensagens de voz não vieram na exportação do WhatsApp, então ficaram de fora.*
+## Ideias da Ingryd (02/11/2026)
 
 ### 1. "TikTok é trend: entrou nas trends, viraliza"
 Vídeos e imagens com **frase curta**, porque "a galera tem preguiça de ler". Áudio em alta.
@@ -62,10 +60,10 @@ Proposta de nichos pra testar (um por vez):
 - **Bate-volta e fim de semana na praia.**
 
 ### 4. Influenciadores: "contato direto é melhor"
-O Victor pensou em usar o TikTok pra chegar nos influenciadores. A Ingryd prefere **contato direto**. Concordo com ela: post não abre conversa com criador, **DM e e-mail abrem**. O Instagram vira a **vitrine** que o influenciador olha depois de receber a mensagem: precisa explicar a proposta em 1 carrossel.
+Com influenciador, **contato direto** funciona melhor: post não abre conversa com criador, **DM e e-mail abrem**. O Instagram vira a **vitrine** que o influenciador olha depois de receber a mensagem: precisa explicar a proposta em 1 carrossel.
 
 ### Ponto pra corrigir
-Na conversa saiu que o Roameo "fatura muitos K dólares por mês". **Não existe número público.** Pelo tamanho (10 a 50 mil downloads, 2,3 mil seguidores no TikTok, startup seed com até 10 pessoas), o chute é de US$ 1 a 5 mil por mês. O TikTok deles é pequeno e só viraliza com quiz.
+O faturamento do Roameo **não é público**. Pelo tamanho (10 a 50 mil downloads, 2,3 mil seguidores no TikTok, startup seed com até 10 pessoas), o chute é de US$ 1 a 5 mil por mês. O TikTok deles é pequeno e só viraliza com quiz.
 
 **A regra que todos os perfis de sucesso repetem: volume.** Escolher 1 formato que funciona e postar muito, todo dia, por meses (Ernesto Lopez, Condz).
 
@@ -132,7 +130,7 @@ Todo mundo já viveu isso. E a pesquisa do projeto mostra as dores exatas:
 - Enquete no WhatsApp que **ninguém responde**
 - **Nunca acham uma data** que todo mundo pode
 
-### Formatos novos, depois da conversa com a Ingryd (testar primeiro)
+### Formatos novos, a partir das ideias da Ingryd (testar primeiro)
 
 - **Agulha na trend**: o mascote entra no áudio do momento, 5 a 10s, uma frase na tela. Ex.: "a Agulha vendo o grupo decidir a casa do réveillon há 3 semanas".
 - **Quiz de viagem com os amigos**: "quantos pontos seu grupo faz?" (já fecharam a casa? alguém já pagou o Pix? tem planilha?). É o formato que mais viralizou no Roameo.

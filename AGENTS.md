@@ -73,6 +73,17 @@ Quando o uso da conta do Claude chegar perto do fim (~90%) ou a pessoa avisar qu
 3. **Commit e push de tudo** na branch de trabalho (hoje `monorepo-split`), inclusive o que outras sessões deixaram sem commit (nunca `.env`). Não precisa pedir confirmação pra esse commit/push: a regra já é a autorização.
 4. Avise em uma linha qual é o HANDOFF, pra continuar em outra conta.
 
+### Sessão grande → sessão nova (regra do Victor, 02/11/2026)
+Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais gasta. Então:
+- **Quando trocar:** depois de terminar uma funcionalidade ou etapa grande, quando a conversa já passou por vários assuntos, ou quando a pessoa disser que o uso está alto. Na dúvida, troque.
+- **Como:** faça os passos 2 e 3 acima (HANDOFF + commit e push) e proponha uma **sessão nova** com um resumo curto que manda ler o `AGENTS.md`, o HANDOFF e a spec. Não continue trabalho grande na sessão velha.
+
+### Economia de uso
+- Não leia arquivo grande inteiro: use `grep` e leia só as linhas que importam.
+- Publicar Edge Function: pela CLI a partir do arquivo (`supabase functions deploy`), nunca colando o conteúdo na conversa. Sem CLI, só o que mudou.
+- Teste de tela: prefira um roteiro (Playwright, em texto, "passou/falhou") a clicar passo a passo. Print só pra julgar o visual, e em tamanho pequeno.
+- `npm test` inteiro só uma vez, no fim. No meio, rode só o arquivo de teste da mudança.
+
 ## 4. Como trabalhamos com Git (explique isso pra ela na primeira vez)
 
 - `main` = versão oficial. **Nunca** commitar nem dar push direto na `main`.
@@ -85,6 +96,7 @@ Quando o uso da conta do Claude chegar perto do fim (~90%) ou a pessoa avisar qu
 
 ## 5. Regras do código
 
+- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). Agora a prioridade é levar pro app o que já existe no site (Explorar, jornada da spec 115, roteiro do grupo).
 - Código simples, sem "esperteza". Nomes e comentários em português.
 - Rotas em `src/router.tsx`. Telas em `src/pages/` (só mostram as coisas).
 - Regras e acesso ao banco em `src/features/<módulo>/` (`api.ts`, `hooks.ts`).

@@ -18,8 +18,13 @@
 
 - **Sugestões da aba Lugares (spec 094) leem o catálogo** (`sugestoesDoCatalogo` + `carregarCatalogo`); o Overpass saiu delas. Ainda resta o Overpass no "banheiro grátis" da tela Hoje.
 
+## App mobile (02/11, PC 1) — decisão: MOBILE PRIMEIRO (ver AGENTS.md seção 5)
+- **Pronto e testado na versão web do Expo (porta 8089, celular 375px):** `apps/mobile/app/explorar.tsx`, `src/ui/CartaoDoExplorar.tsx` (arrasto com PanResponder + Animated, sem libs novas), `src/ui/RoteiroDoExplorar.tsx`; atalho "Explorar" na tela da viagem (`app/viagem/[id].tsx`).
+- Funções de banco do Explorar foram pro core: `packages/core/src/explorar-dados.ts` (o site ainda usa `apps/web/src/features/explorar/api.ts`; dá pra trocar depois).
+- Testado: deslize nas 3 direções (toque e mouse) gravando no banco, botões, "Pronto" → roteiro com dias, mapa, estrela e "min a pé", menu "…" abre. **Faltou confirmar** o "Mover pra Dia 2" salvar.
+- **Ajustes pendentes no app:** (1) o 1º destino pode ser o aeroporto de saída ("Galeão") e o Explorar tenta preparar o catálogo dele: pular destino de partida/aeroporto; (2) roteiro não atualiza sozinho quando outra pessoa mexe (o site usa tempo real); (3) criar roteiro de teste Playwright em texto pro fluxo.
+
 ## Falta fazer
-- Tela no **app mobile** (Expo).
 - **"Começar explorando"** na Nova viagem (`apps/web/src/pages/NovaViagem.tsx`, Decisão 5).
 - **Base curada:** só Jericoacoara e Gramado em `supabase/functions/explorar-cidade/curado.json`. Faltam os outros 18 destinos de natureza da spec (Chapada Diamantina/Lençóis veio com 0 lugares no teste).
 

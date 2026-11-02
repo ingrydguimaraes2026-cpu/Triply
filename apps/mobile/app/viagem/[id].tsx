@@ -4,7 +4,7 @@ import { StatusBar } from '../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Car, FileCheck, FileText, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sparkles, Sun } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, Car, Compass, FileCheck, FileText, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sparkles, Sun } from 'lucide-react-native'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
 import { resumoDasContas } from '../../src/dados/contas'
 import { useCarregar } from '../../src/dados/useCarregar'
@@ -58,6 +58,7 @@ export default function DetalheDaViagem() {
   }
 
   const atalhos = [
+    { Icone: Compass, t: 'Explorar', s: 'Deslize e monte o roteiro', rota: '/explorar' as Href }, // specs 114 e 115
     { Icone: Sun, t: 'Hoje', s: 'Agora e próximo', rota: '/hoje' as Href },
     { Icone: Route, t: 'Roteiro', s: `${viagem.destinos.length} ${viagem.destinos.length === 1 ? 'destino' : 'destinos'}`, rota: '/roteiro' as Href },
     { Icone: Car, t: 'Transporte', s: trajetos.length ? `${trajetos.length} ${trajetos.length === 1 ? 'trajeto' : 'trajetos'}` : 'Nada ainda', rota: '/transportes' as Href },

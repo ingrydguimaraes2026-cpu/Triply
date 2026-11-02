@@ -22,3 +22,6 @@ declare class URLSearchParams {
   append(nome: string, valor: string): void
   toString(): string
 }
+
+// Timers também existem igual na web e no app (spec 114: esperar a cidade ficar pronta)
+declare function setTimeout(fn: () => void, ms?: number): unknown

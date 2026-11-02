@@ -221,3 +221,20 @@ O Claude **não consegue confirmar** se um nome está livre. "Sem DNS" só quer 
 6. **Advogado de marca:** antes de gastar com logo e anúncio, uma consulta rápida pra registrar a marca no INPI.
 
 Depois de escolher, lembrar de atualizar o nome no código, no README e no AGENTS.md (hoje dizem "Together, nome provisório").
+
+---
+
+## Rodada 7: nome do app = nome do mascote (ideia da dupla, 02/11/2026)
+
+A ideia: o app ter o nome da bússola, como o Duolingo e o Duo. O mascote vira a marca. Testados uns 50 nomes ligados à bússola (norte, agulha, rosa dos ventos, ponteiro, compass) com o `checar-nome.py` e pesquisa na web.
+
+| Nome | Ideia | Domínio (sem DNS) | Apps com o nome | Observação |
+|---|---|---|---|---|
+| **Norti** | de "norte", pra onde a bússola aponta | norti.app, getnorti.com, norti.travel | 0 | Fala igual em PT e EN ("nór-ti"). **Em inglês britânico soa como "naughty" (levado, safadinho).** Pode ser charme, pode ser problema. |
+| **Northie** | "nortezinho", em inglês | northie.app, northie.com.br, getnorthie.com | 0 | Claro pra quem fala inglês. O "th" atrapalha o brasileiro a escrever. |
+| **Nortinho** | "nortezinho", em português | **nortinho.com** e nortinho.app | 0 | O mais carinhoso pro Brasil. Difícil fora daqui. |
+| Kompi, Pino, Polari, Nordi | compass, ponteiro, polar, nord | .com e .app ocupados | 0 | Dariam com get+nome.com |
+
+**Descartados:** Nori (9 apps, uma marca de viagem com o nome), Navi (6 apps, um de viagem), Compi (app de viagem com o nome), Norte (app de cartão de crédito), TrueNorth, Polo, Rosa, Needle, Sola. **Bussy** e "Bussi": em inglês é gíria vulgar.
+
+**Status:** em discussão. Tripwave continua sendo o nome até a dupla decidir.
