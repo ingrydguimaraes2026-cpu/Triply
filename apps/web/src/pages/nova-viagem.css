@@ -384,3 +384,39 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Spec 115: contador de dias do jeito rápido */
+.onb-contador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 16px;
+  background: var(--cor-cartao);
+}
+
+.onb-contador button {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.onb-contador span {
+  font-size: 16px;
+  color: var(--cor-texto-suave);
+}
+
+.onb-contador strong {
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  color: var(--cor-texto);
+}

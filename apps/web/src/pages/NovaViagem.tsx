@@ -11,8 +11,14 @@ import { criarViagem, trazerComboio } from '../features/viagens/api'
 import { criarConvite } from '../features/comboio/api'
 import './nova-viagem.css'
 
-type Passo = 'destinos' | 'datas' | 'nome' | 'comboio'
-const PASSOS: Passo[] = ['destinos', 'datas', 'nome', 'comboio']
+// Spec 115: o jeito rápido pede só "pra onde" e "quantos dias", chama a galera e cai no Explorar.
+// O jeito completo (datas, nome e moeda) fica pra quem já tem tudo planejado ou ainda está sonhando.
+type Passo = 'destinos' | 'dias' | 'datas' | 'nome' | 'comboio'
+type Modo = 'rapido' | 'completo'
+const PASSOS: Record<Modo, Passo[]> = {
+  rapido: ['destinos', 'dias', 'comboio'],
+  completo: ['destinos', 'datas', 'nome', 'comboio'],
+}
 
 const MOEDAS = [
   ['EUR', 'Euro (€)'],
@@ -50,7 +56,7 @@ function useEhCelular() {
   return celular
 }
 
-// Onboarding: cria a primeira viagem em 4 passos, com o mapa ao fundo.
+// Onboarding: cria a viagem com o mapa ao fundo (jeito rápido da spec 115 ou o completo de antes).
 // Convidado (spec 018) cria conta antes de criar viagem: o banco também recusa
 export default function NovaViagem() {
   const { ehConvidado, carregando } = useSessao()
@@ -73,6 +79,10 @@ function CriarViagem() {
   const navegar = useNavigate()
   const celular = useEhCelular()
   const [passo, setPasso] = useState<Passo>('destinos')
+  const [modo, setModo] = useState<Modo>('rapido')
+  // Jeito rápido: só o número de dias; as datas são opcionais
+  const [diasDigitados, setDiasDigitados] = useState(5)
+  const [comDatas, setComDatas] = useState(false)
 
   const [destinos, setDestinos] = useState<Cidade[]>([])
   const [busca, setBusca] = useState('')
@@ -159,8 +169,16 @@ function CriarViagem() {
     setCopiado(true)
   }
 
-  const indice = PASSOS.indexOf(passo)
+  const passos = PASSOS[modo]
+  const indice = passos.indexOf(passo)
   const dias = ida && volta ? diasEntre(ida, volta) : null
+  // Explorar recebe os dias de cada destino (divisão simples; a etapa 7 da spec 115 melhora)
+  const diasPorDestino = Math.max(1, Math.round((dias ?? diasDigitados) / Math.max(1, destinos.length)))
+
+  function jeitoCompleto() {
+    setModo('completo')
+    setPasso('datas')
+  }
 
   return (
     <div className="onb">
@@ -169,8 +187,8 @@ function CriarViagem() {
       <MarcaSobreOMapa />
 
       <main className="onb-painel">
-        <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${PASSOS.length}`}>
-          {PASSOS.map((p, i) => (
+        <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${passos.length}`}>
+          {passos.map((p, i) => (
             <span key={p} className={i <= indice ? 'feito' : undefined} />
           ))}
         </div>
@@ -178,11 +196,8 @@ function CriarViagem() {
         {passo === 'destinos' && (
           <section className="onb-passo">
             <div>
-              <h1>Vamos montar seu roteiro?</h1>
-              <p className="onb-sub">
-                Adicione todas as cidades e países que deseja visitar, na ordem que preferir. Você poderá reorganizar tudo
-                depois.
-              </p>
+              <h1>Pra onde vocês querem ir?</h1>
+              <p className="onb-sub">Uma cidade, várias ou um país. A gente ajuda a montar o roteiro.</p>
             </div>
 
             <div className="onb-busca">
@@ -260,14 +275,82 @@ function CriarViagem() {
               </ol>
             )}
 
-            <button type="button" className="onb-botao" disabled={destinos.length === 0} onClick={() => setPasso('datas')}>
+            <button
+              type="button"
+              className="onb-botao"
+              disabled={destinos.length === 0}
+              onClick={() => {
+                setModo('rapido')
+                setPasso('dias')
+              }}
+            >
               Continuar
             </button>
-            {destinos.length === 0 && (
-              <button type="button" className="onb-sonhando" onClick={() => setPasso('datas')}>
-                Ainda não sei pra onde: começar sonhando
-              </button>
+            <button type="button" className="onb-sonhando" onClick={jeitoCompleto}>
+              {destinos.length === 0 ? 'Ainda não sei pra onde: começar sonhando' : 'Já tenho tudo planejado (datas, nome e moeda)'}
+            </button>
+          </section>
+        )}
+
+        {passo === 'dias' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Quantos dias?</h1>
+              <p className="onb-sub">Mais ou menos já serve. Dá pra mudar depois.</p>
+            </div>
+            {comDatas ? (
+              <div className="onb-datas">
+                <div className="onb-campo">
+                  <label htmlFor="ida" className="onb-rotulo">
+                    Ida
+                  </label>
+                  <input id="ida" type="date" value={ida} onChange={(e) => setIda(e.target.value)} />
+                </div>
+                <div className="onb-campo">
+                  <label htmlFor="volta" className="onb-rotulo">
+                    Volta
+                  </label>
+                  <input id="volta" type="date" min={ida || undefined} value={volta} onChange={(e) => setVolta(e.target.value)} />
+                </div>
+              </div>
+            ) : (
+              <div className="onb-contador" role="group" aria-label="Dias de viagem">
+                <button type="button" aria-label="Menos um dia" onClick={() => setDiasDigitados((n) => Math.max(1, n - 1))}>
+                  −
+                </button>
+                <span>
+                  <strong>{diasDigitados}</strong> {diasDigitados === 1 ? 'dia' : 'dias'}
+                </span>
+                <button type="button" aria-label="Mais um dia" onClick={() => setDiasDigitados((n) => Math.min(30, n + 1))}>
+                  +
+                </button>
+              </div>
             )}
+            {comDatas && dias && <p className="onb-destaque">{dias} dias de viagem</p>}
+            <button
+              type="button"
+              className="onb-sonhando"
+              onClick={() => {
+                setComDatas(!comDatas)
+                setIda('')
+                setVolta('')
+              }}
+            >
+              {comDatas ? 'Ainda não sei as datas' : 'Já sei as datas'}
+            </button>
+            {erro && (
+              <p role="alert" className="onb-erro">
+                {erro}
+              </p>
+            )}
+            <div className="onb-rodape">
+              <button type="button" className="onb-voltar" onClick={() => setPasso('destinos')}>
+                Voltar
+              </button>
+              <button type="button" className="onb-botao" onClick={criar} disabled={salvando || (comDatas && !dias)}>
+                {salvando ? 'Criando…' : 'Continuar'}
+              </button>
+            </div>
           </section>
         )}
 
@@ -347,7 +430,38 @@ function CriarViagem() {
           </section>
         )}
 
-        {passo === 'comboio' && (
+        {passo === 'comboio' && modo === 'rapido' && (
+          <section className="onb-passo">
+            <div>
+              <h1>Chame quem vai.</h1>
+              {trazidos !== null && trazidos > 0 && (
+                <p className="onb-destaque">
+                  {trazidos} {trazidos === 1 ? 'pessoa do comboio já entrou' : 'pessoas do comboio já entraram'} nesta viagem.
+                </p>
+              )}
+              <p className="onb-sub">
+                Cada um escolhe o que quer fazer em {destinos[0]?.nome}, e o Tripwave monta o roteiro com as escolhas de todos.
+              </p>
+            </div>
+            {link && (
+              <div>
+                <div className="onb-link">
+                  <span>{link.replace(/^https?:\/\//, '')}</span>
+                </div>
+                <p className="onb-nota">Este link de convite vale por 7 dias.</p>
+              </div>
+            )}
+            <button type="button" className="onb-voltar" onClick={compartilhar}>
+              {copiado ? 'Link copiado!' : 'Mandar o convite'}
+            </button>
+            <button type="button" className="onb-botao" onClick={() => navegar(`/viagem/${viagemId}/explorar?dias=${diasPorDestino}`)}>
+              Começar a escolher em {destinos[0]?.nome}
+            </button>
+            <p className="onb-nota onb-nota-centro">Dá pra chamar a galera a qualquer momento.</p>
+          </section>
+        )}
+
+        {passo === 'comboio' && modo === 'completo' && (
           <section className="onb-passo">
             <div>
               <h1>Essa viagem é de vocês.</h1>
