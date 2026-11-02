@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { useSessao } from '../features/auth/hooks'
 import { CriarContaDoConvidado } from '../features/auth/FaixaConvidado'
 import MapaMundi from '../features/mapa/MapaMundi'
-import Logo from '../components/ui/Logo'
+import { MarcaSobreOMapa } from '../components/ui/SobreOMapa'
 import { moedaDoPais, type Cidade } from '../features/destinos/buscarCidades'
 import { useBuscaDeLugares } from '../features/destinos/useBuscaDeLugares'
 import { mover } from '../features/destinos/ordem'
@@ -166,9 +166,7 @@ function CriarViagem() {
     <div className="onb">
       <MapaMundi pontos={pontos} areaLivre={areaLivre} />
 
-      <p className="onb-logo">
-        <Logo />
-      </p>
+      <MarcaSobreOMapa />
 
       <main className="onb-painel">
         <div className="onb-progresso" aria-label={`Passo ${indice + 1} de ${PASSOS.length}`}>
