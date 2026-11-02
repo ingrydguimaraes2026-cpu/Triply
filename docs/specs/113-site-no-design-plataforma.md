@@ -21,7 +21,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | 6 | Perfil (coluna fixa com foto e atalhos, cartões à direita) | 04 | `Perfil.tsx` | ✅ "Onde já fui" entra nos atalhos; no celular os atalhos somem (vira uma coluna só) |
 | 7 | Overview (capa, atalhos, mapa + roteiro + clima, furos e documentos ao lado, cartões em colunas) | 06 | `Overview.tsx` | ✅ Todos os cartões à mostra no mosaico (sai o "Mostrar mais da viagem"); clima na coluna do mapa; candidatos e datas em comum seguem só ao planejar |
 | 8 | Hoje (aviso com a Agulha, ferramentas em 2 colunas) | 07 | `Hoje.tsx` | ✅ Cartões do dia e ferramentas no mesmo mosaico de 2 colunas |
-| 9 | Agenda (dias em pílulas, dia escolhido + "Neste dia") | 08 | `Agenda.tsx` | ⏳ |
+| 9 | Agenda (dias em pílulas, dia escolhido + "Neste dia") | 08 | `Agenda.tsx` | ✅ Cidade em cada pílula; "Neste dia" mostra a previsão e a hospedagem escolhida do destino |
 | 10 | Hospedagem (pílulas de destino, mapa + painel do destino) | 09 | `Hospedagem.tsx` | ⏳ |
 | 11 | Lugares (pílulas, lista + sugestões ao lado) | 10 | `Lugares.tsx` | ⏳ |
 | 12 | Transportes (pílulas, mapa + painel de trechos) | 11 | `Transportes.tsx` | ⏳ |

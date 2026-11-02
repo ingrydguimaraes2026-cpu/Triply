@@ -235,3 +235,192 @@ html[data-tema='escuro'] .agenda-dia {
 .agenda-dias button[aria-pressed='true'] {
   box-shadow: var(--sombra-botao);
 }
+
+/* ---------- Design Plataforma (spec 113) ---------- */
+.agenda {
+  gap: 20px;
+}
+
+/* Pílulas dos dias: dia da semana, número grande e a cidade */
+.agenda-dias button {
+  width: 64px;
+  min-height: 0;
+  gap: 2px;
+  padding: 10px 4px 8px;
+  border-radius: 14px;
+}
+
+.agenda-dias button span {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.agenda-dias button strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.agenda-dias button small {
+  max-width: 100%;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.85;
+}
+
+.agenda-dias button i {
+  top: 6px;
+  right: 6px;
+  bottom: auto;
+}
+
+/* Dia escolhido + "Neste dia" ao lado; no celular um embaixo do outro */
+.agenda-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.agenda-dia {
+  flex: 2 1 440px;
+  min-width: 0;
+  gap: 6px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.agenda-dia header {
+  margin-bottom: 10px;
+}
+
+.agenda-dia header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.agenda-dia header p {
+  font-size: 13px;
+}
+
+.agenda-item {
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.agenda-item:first-child {
+  border-top: 1px solid var(--cor-borda);
+}
+
+.agenda-hora {
+  width: 48px;
+  color: var(--cor-texto);
+  font-size: 13.5px;
+}
+
+.agenda-icone {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+}
+
+.agenda-texto strong {
+  font-size: 14.5px;
+}
+
+.agenda-automatico {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: var(--cor-fundo);
+  color: #9a8268;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.agenda-dia-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.agenda-botao-pequeno {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid #d9c3a2;
+  border-radius: 10px;
+  background: var(--cor-cartao);
+  color: var(--couro);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.agenda-botao-pequeno.sem-borda {
+  border-color: transparent;
+}
+
+.agenda-botao-pequeno:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* Lateral "Neste dia" */
+.agenda-neste-dia {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+html[data-tema='escuro'] .agenda-neste-dia {
+  border: 1px solid var(--cor-borda);
+}
+
+.agenda-neste-dia-titulo {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+}
+
+.agenda-neste-dia-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.agenda-neste-dia-linha > span:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.agenda-neste-dia-linha strong {
+  font-size: 14px;
+}
+
+.agenda-neste-dia-linha small {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}

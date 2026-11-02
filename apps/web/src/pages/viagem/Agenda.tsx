@@ -1,7 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { CalendarDays, CalendarPlus, Clock, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from 'lucide-react'
-import { compromissosApertados, destinoDoDia, diasDoPeriodo, editarEventoDaAgenda, montarAgendaDoDia, type EventoDaAgenda, type ItemDaAgenda } from '@together/core'
+import { BedDouble, CalendarDays, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from 'lucide-react'
+import {
+  buscarClima,
+  compromissosApertados,
+  destinoDoDia,
+  diasDoPeriodo,
+  editarEventoDaAgenda,
+  interpretarTempo,
+  montarAgendaDoDia,
+  type EventoDaAgenda,
+  type ItemDaAgenda,
+} from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -9,6 +19,8 @@ import { meio } from '../../features/transportes/api'
 import { hojeTexto, periodoDosDestinos } from '../../features/destinos/datas'
 import { diaCurtinho, diaPorExtenso, useEventosDaAgenda } from '../../features/agenda/hooks'
 import { useFeriados } from '../../features/agenda/useFeriados'
+import { useHospedagem } from '../../features/hospedagem/hooks'
+import type { Destino } from '../../features/destinos/api'
 import DiarioDoDia from '../../features/diario/DiarioDoDia'
 import FormEvento from '../../features/agenda/FormEvento'
 import { baixarCalendario } from '../../features/agenda/calendario'
@@ -141,57 +153,67 @@ export default function Agenda() {
             >
               <span>{semana}</span>
               <strong>{numero}</strong>
+              {destinoDoDia(d, destinos) && <small>{destinoDoDia(d, destinos)!.nome}</small>}
               {temAlgo.has(d) && <i aria-label="tem coisa marcada" />}
             </button>
           )
         })}
       </nav>
 
-      <section className="agenda-dia">
-        <header>
-          <h2>
-            {diaPorExtenso(dia)}
-            {dia === hoje && <span className="selo-completar">hoje</span>}
-          </h2>
-          {onde && (
-            <p>
-              <MapPin size={14} aria-hidden="true" /> em {onde.nome}
-            </p>
-          )}
-          {feriadosDoDia.map((f) => (
-            <p key={`${f.pais}${f.nome}`} className="agenda-feriado">
-              <PartyPopper size={14} aria-hidden="true" /> Feriado{f.regional ? ' regional' : ''} em {f.destino}: {f.nomeLocal}
-              {f.nomeLocal !== f.nome && <small> ({f.nome})</small>}. Lojas, bancos e alguns museus podem fechar.
-            </p>
-          ))}
-        </header>
-
-        {erro && <p className="form-erro">Não deu pra carregar os eventos agora.</p>}
-        {itens.length === 0 ? (
-          <EstadoVazio icone={CalendarPlus} titulo="Nada marcado nesse dia" texto="Adicione um evento ou um trajeto com horário." />
-        ) : (
-          <ol className="agenda-linha">
-            {itens.map((item) => (
-              <LinhaDaAgenda
-                key={item.chave}
-                item={item}
-                aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })}
-                podeEditar={podeEditar}
-                aoMover={mover}
-                aperto={apertos[item.chave]}
-                nomes={(ids) => ids.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
-              />
+      {/* Design Plataforma (spec 113): o dia escolhido + "Neste dia" ao lado */}
+      <div className="agenda-colunas">
+        <section className="agenda-dia">
+          <header>
+            <h2>
+              {diaPorExtenso(dia)}
+              {dia === hoje && <span className="selo-completar">hoje</span>}
+            </h2>
+            {onde && (
+              <p>
+                <MapPin size={14} aria-hidden="true" /> em {onde.nome}
+              </p>
+            )}
+            {feriadosDoDia.map((f) => (
+              <p key={`${f.pais}${f.nome}`} className="agenda-feriado">
+                <PartyPopper size={14} aria-hidden="true" /> Feriado{f.regional ? ' regional' : ''} em {f.destino}: {f.nomeLocal}
+                {f.nomeLocal !== f.nome && <small> ({f.nome})</small>}. Lojas, bancos e alguns museus podem fechar.
+              </p>
             ))}
-          </ol>
-        )}
-        {onde && (
-          <Link to="../lugares" className="agenda-lugares">
-            Ideias do que fazer em {onde.nome} →
-          </Link>
-        )}
-        {/* Spec 101: diário do dia (só a partir do próprio dia) */}
-        {dia <= hoje && <DiarioDoDia key={dia} viagemId={viagem.id} dia={dia} membros={membros} meuId={meuId} />}
-      </section>
+          </header>
+
+          {erro && <p className="form-erro">Não deu pra carregar os eventos agora.</p>}
+          {itens.length === 0 ? (
+            <EstadoVazio icone={CalendarPlus} titulo="Nada marcado nesse dia" texto="Adicione um evento ou um trajeto com horário." />
+          ) : (
+            <ol className="agenda-linha">
+              {itens.map((item) => (
+                <LinhaDaAgenda
+                  key={item.chave}
+                  item={item}
+                  aoEditar={(e) => setJanela({ tipo: 'editar', evento: e })}
+                  podeEditar={podeEditar}
+                  aoMover={mover}
+                  aperto={apertos[item.chave]}
+                  nomes={(ids) => ids.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
+                />
+              ))}
+            </ol>
+          )}
+          <div className="agenda-dia-acoes">
+            <button type="button" className="agenda-botao-pequeno" onClick={() => setJanela({ tipo: 'novo' })}>
+              <Plus size={14} aria-hidden="true" /> Adicionar neste dia
+            </button>
+            {onde && (
+              <Link to="../lugares" className="agenda-botao-pequeno sem-borda">
+                Ideias do que fazer em {onde.nome} →
+              </Link>
+            )}
+          </div>
+          {/* Spec 101: diário do dia (só a partir do próprio dia) */}
+          {dia <= hoje && <DiarioDoDia key={dia} viagemId={viagem.id} dia={dia} membros={membros} meuId={meuId} />}
+        </section>
+        <NesteDia dia={dia} onde={onde} />
+      </div>
 
       {janela && (
         <Gaveta titulo={janela.tipo === 'novo' ? 'Novo evento' : 'Editar evento'} aoFechar={fechar}>
@@ -249,6 +271,7 @@ function LinhaDaAgenda({
           <small className="agenda-participantes">só {nomes(item.evento.participantes)}</small>
         )}
       </span>
+      {item.tipo !== 'evento' && <span className="agenda-automatico">automático</span>}
       {item.tipo === 'trajeto' && (
         <Link to="../transportes" className="botao-texto" aria-label="Ver em Transportes">
           →
@@ -270,5 +293,56 @@ function LinhaDaAgenda({
         </button>
       )}
     </li>
+  )
+}
+
+// Lateral do dia: previsão do tempo e onde o comboio dorme (spec 113)
+function NesteDia({ dia, onde }: { dia: string; onde: Destino | undefined }) {
+  const { viagem, destinos, membros, meuId } = useViagemAtual()
+  const { itens } = useHospedagem(viagem.id, destinos, meuId, membros.length)
+  const dormimos = onde ? itens.find((i) => i.destino.id === onde.id)?.escolhida?.nome : undefined
+  const [tempo, setTempo] = useState<{ dia: string; texto: string | null } | null>(null)
+
+  const lat = onde?.latitude ?? null
+  const lon = onde?.longitude ?? null
+  useEffect(() => {
+    if (lat == null || lon == null) return
+    let vivo = true
+    buscarClima(lat, lon, dia, dia, hojeTexto())
+      .then((previsao) => {
+        const p = previsao.find((x) => x.data === dia)
+        const texto = p ? `${interpretarTempo(p.codigo).emoji} ${Math.round(p.tempMax ?? 0)}° / ${Math.round(p.tempMin ?? 0)}°` : null
+        if (vivo) setTempo({ dia, texto })
+      })
+      .catch(() => vivo && setTempo({ dia, texto: null }))
+    return () => {
+      vivo = false
+    }
+  }, [lat, lon, dia])
+
+  if (!onde) return null
+  const textoDoTempo = lat == null || lon == null ? null : tempo?.dia === dia ? tempo.texto : undefined
+  return (
+    <aside className="agenda-neste-dia" aria-label="Neste dia">
+      <span className="agenda-neste-dia-titulo">Neste dia</span>
+      <div className="agenda-neste-dia-linha">
+        <span className="agenda-icone">
+          <CloudSun size={18} aria-hidden="true" />
+        </span>
+        <span>
+          <strong>{textoDoTempo === undefined ? 'Buscando…' : (textoDoTempo ?? 'Sem previsão ainda')}</strong>
+          <small>Previsão em {onde.nome}</small>
+        </span>
+      </div>
+      <Link to="../hospedagem" className="agenda-neste-dia-linha">
+        <span className="agenda-icone">
+          <BedDouble size={18} aria-hidden="true" />
+        </span>
+        <span>
+          <strong>{dormimos ?? 'Nenhuma escolhida'}</strong>
+          <small>Hospedagem</small>
+        </span>
+      </Link>
+    </aside>
   )
 }
