@@ -104,17 +104,19 @@ export default function FormFicha({ meuId }: { meuId: string }) {
           <input id="ficha-aniversario" type="date" value={campos.aniversario} onChange={mudar('aniversario')} />
         </div>
       </div>
-      <div className="form-campo">
-        <label className="form-rotulo" htmlFor="ficha-restricoes">
-          Restrições alimentares
-        </label>
-        <input id="ficha-restricoes" maxLength={200} placeholder="Ex.: vegetariana, sem glúten" value={campos.restricoes} onChange={mudar('restricoes')} />
-      </div>
-      <div className="form-campo">
-        <label className="form-rotulo" htmlFor="ficha-alergias">
-          Alergias
-        </label>
-        <input id="ficha-alergias" maxLength={200} placeholder="Ex.: amendoim, dipirona" value={campos.alergias} onChange={mudar('alergias')} />
+      <div className="form-linha">
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="ficha-restricoes">
+            Restrições alimentares
+          </label>
+          <input id="ficha-restricoes" maxLength={200} placeholder="Ex.: vegetariana, sem glúten" value={campos.restricoes} onChange={mudar('restricoes')} />
+        </div>
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="ficha-alergias">
+            Alergias
+          </label>
+          <input id="ficha-alergias" maxLength={200} placeholder="Ex.: amendoim, dipirona" value={campos.alergias} onChange={mudar('alergias')} />
+        </div>
       </div>
       <div className="form-campo">
         <label className="form-rotulo" htmlFor="ficha-mobilidade">
@@ -123,53 +125,56 @@ export default function FormFicha({ meuId }: { meuId: string }) {
         <input id="ficha-mobilidade" maxLength={200} placeholder="Ex.: evito escadas, uso bengala" value={campos.mobilidade} onChange={mudar('mobilidade')} />
       </div>
 
-      <h3 className="perfil-secao">
-        <HeartPulse size={16} aria-hidden="true" /> Emergência e saúde
-      </h3>
-      <div className="form-linha">
-        <div className="form-campo">
-          <label className="form-rotulo" htmlFor="ficha-em-nome">
-            Contato no Brasil
-          </label>
-          <input id="ficha-em-nome" maxLength={80} placeholder="Ex.: Mãe" value={campos.emergencia_nome} onChange={mudar('emergencia_nome')} />
+      {/* Caixa bege separada, como no design (spec 113) */}
+      <div className="ficha-emergencia">
+        <h3 className="perfil-secao">
+          <HeartPulse size={16} aria-hidden="true" /> Emergência e saúde
+        </h3>
+        <div className="form-linha">
+          <div className="form-campo">
+            <label className="form-rotulo" htmlFor="ficha-em-nome">
+              Contato no Brasil
+            </label>
+            <input id="ficha-em-nome" maxLength={80} placeholder="Ex.: Mãe" value={campos.emergencia_nome} onChange={mudar('emergencia_nome')} />
+          </div>
+          <div className="form-campo">
+            <label className="form-rotulo" htmlFor="ficha-em-tel">
+              Telefone dele(a)
+            </label>
+            <input id="ficha-em-tel" inputMode="tel" maxLength={30} value={campos.emergencia_telefone} onChange={mudar('emergencia_telefone')} />
+          </div>
+        </div>
+        <div className="form-linha">
+          <div className="form-campo">
+            <label className="form-rotulo" htmlFor="ficha-sangue">
+              Tipo sanguíneo
+            </label>
+            <select id="ficha-sangue" value={campos.tipo_sanguineo} onChange={mudar('tipo_sanguineo')}>
+              <option value="">Não sei / prefiro não dizer</option>
+              {TIPOS.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-campo">
+            <label className="form-rotulo" htmlFor="ficha-quem-ve">
+              Quem vê esta parte
+            </label>
+            <select id="ficha-quem-ve" value={campos.saude_visivel_para} onChange={mudar('saude_visivel_para')}>
+              {VISIBILIDADE.map((v) => (
+                <option key={v.valor} value={v.valor}>
+                  {v.nome}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="form-campo">
-          <label className="form-rotulo" htmlFor="ficha-em-tel">
-            Telefone dele(a)
+          <label className="form-rotulo" htmlFor="ficha-remedios">
+            Remédios de uso contínuo
           </label>
-          <input id="ficha-em-tel" inputMode="tel" maxLength={30} value={campos.emergencia_telefone} onChange={mudar('emergencia_telefone')} />
+          <input id="ficha-remedios" maxLength={300} value={campos.remedios} onChange={mudar('remedios')} />
         </div>
-      </div>
-      <div className="form-linha">
-        <div className="form-campo">
-          <label className="form-rotulo" htmlFor="ficha-sangue">
-            Tipo sanguíneo
-          </label>
-          <select id="ficha-sangue" value={campos.tipo_sanguineo} onChange={mudar('tipo_sanguineo')}>
-            <option value="">Não sei / prefiro não dizer</option>
-            {TIPOS.map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
-        </div>
-        <div className="form-campo">
-          <label className="form-rotulo" htmlFor="ficha-quem-ve">
-            Quem vê esta parte
-          </label>
-          <select id="ficha-quem-ve" value={campos.saude_visivel_para} onChange={mudar('saude_visivel_para')}>
-            {VISIBILIDADE.map((v) => (
-              <option key={v.valor} value={v.valor}>
-                {v.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="form-campo">
-        <label className="form-rotulo" htmlFor="ficha-remedios">
-          Remédios de uso contínuo
-        </label>
-        <input id="ficha-remedios" maxLength={300} value={campos.remedios} onChange={mudar('remedios')} />
       </div>
 
       <div className="form-rodape">

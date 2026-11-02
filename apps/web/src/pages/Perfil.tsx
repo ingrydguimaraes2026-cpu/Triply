@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, Camera } from 'lucide-react'
+import { Accessibility, ArrowLeft, BookUser, Camera, Globe2, IdCard, ShieldCheck, UserRound } from 'lucide-react'
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
@@ -14,7 +14,18 @@ import FormAcessibilidade from '../features/acessibilidade/FormAcessibilidade'
 import OndeJaFui from '../features/perfil/OndeJaFui'
 import './minhas-viagens.css'
 
-// "/perfil" (spec 008): nome e foto. Aparecem no comboio de todas as viagens. Visual do app (spec 112).
+// Atalhos da coluna da esquerda (pulam pro cartão certo da direita)
+const ATALHOS = [
+  { id: 'perfil-nome', nome: 'Seu nome', Icone: UserRound },
+  { id: 'perfil-onde', nome: 'Onde já fui', Icone: Globe2 },
+  { id: 'perfil-ficha', nome: 'Sua ficha', Icone: IdCard },
+  { id: 'perfil-passaporte', nome: 'Passaporte', Icone: BookUser },
+  { id: 'perfil-leitura', nome: 'Leitura e modo simples', Icone: Accessibility },
+  { id: 'perfil-privacidade', nome: 'Privacidade', Icone: ShieldCheck },
+]
+
+// "/perfil" (spec 008): nome e foto. Aparecem no comboio de todas as viagens.
+// Design Plataforma (spec 113): coluna fixa com foto e atalhos, cartões à direita.
 export default function Perfil() {
   const [perfil, setPerfil] = useState<MeuPerfil | null | 'erro'>(null)
   const [nome, setNome] = useState('')
@@ -91,66 +102,81 @@ export default function Perfil() {
   }
 
   return (
-    <div className="pagina-solta">
-      <header className="pagina-solta-topo">
-        <Link to="/viagens" className="botao-texto">
-          <ArrowLeft size={18} aria-hidden="true" /> Minhas viagens
+    <div className="pagina-solta perfil-pagina">
+      <main className="pagina-solta-conteudo">
+        <Link to="/viagens" className="perfil-voltar">
+          <ArrowLeft size={16} aria-hidden="true" /> Minhas viagens
         </Link>
-      </header>
-      <main className="pagina-solta-conteudo estreita">
-        <div className="cabecalho-pagina">
-          <div>
-            <h1>Perfil</h1>
+        <h1 className="perfil-titulo">Perfil</h1>
+
+        <div className="perfil-colunas">
+          <aside className="perfil-lado">
+            {/* Foto, nome e e-mail */}
+            <section className="cartao-ui perfil-foto">
+              <Avatar nome={eu.nome || '?'} url={eu.avatarUrl} tamanho={96} />
+              <strong className="perfil-nome">{eu.nome || 'Sem nome'}</strong>
+              {eu.email && <span className="perfil-email">{eu.email}</span>}
+              <div className="perfil-foto-acoes">
+                <label className="perfil-botao-pequeno">
+                  <Camera size={15} aria-hidden="true" /> {eu.avatarUrl ? 'Trocar foto' : 'Colocar foto'}
+                  <input type="file" accept="image/*" className="visualmente-oculto" disabled={salvando} onChange={(e) => escolherFoto(e.target.files?.[0])} />
+                </label>
+                {eu.avatarUrl && (
+                  <button type="button" className="perfil-botao-pequeno sem-borda" onClick={removerFoto} disabled={salvando}>
+                    Tirar foto
+                  </button>
+                )}
+              </div>
+            </section>
+
+            <nav className="cartao-ui perfil-atalhos" aria-label="Partes do perfil">
+              {ATALHOS.map(({ id, nome, Icone }) => (
+                <a key={id} href={`#${id}`}>
+                  <Icone size={17} aria-hidden="true" /> {nome}
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          <div className="perfil-cartoes">
+            <form id="perfil-nome" className="cartao-ui form" onSubmit={salvar} noValidate>
+              <label className="perfil-secao" htmlFor="perfil-campo-nome">
+                Seu nome
+              </label>
+              <div className="perfil-nome-linha">
+                <input id="perfil-campo-nome" maxLength={80} value={nome} onChange={(e) => setNome(e.target.value)} />
+                <button type="submit" className="botao" disabled={salvando}>
+                  {salvando ? 'Salvando…' : 'Salvar'}
+                </button>
+              </div>
+              {mensagem && (
+                <p role="status" className={mensagem.tipo === 'ok' ? 'form-aviso' : 'form-erro'}>
+                  {mensagem.texto}
+                </p>
+              )}
+            </form>
+
+            <div id="perfil-onde" className="perfil-ancora">
+              <OndeJaFui />
+            </div>
+            <div id="perfil-ficha" className="perfil-ancora">
+              <FormFicha meuId={eu.id} />
+            </div>
+            <div id="perfil-passaporte" className="perfil-ancora">
+              <FormPassaporte meuId={eu.id} />
+            </div>
+            <div id="perfil-leitura" className="perfil-ancora">
+              <FormAcessibilidade />
+            </div>
+            <div id="perfil-privacidade" className="perfil-ancora">
+              <MinhaPrivacidade />
+            </div>
+
+            <div className="perfil-agulha">
+              <Agulha tamanho={84} />
+              <p>A Agulha aponta o caminho da viagem pra vocês.</p>
+            </div>
           </div>
-        </div>
-
-        {/* Cartão do topo do Perfil do app: foto, nome e e-mail */}
-        <section className="cartao-ui perfil-foto">
-          <Avatar nome={eu.nome || '?'} url={eu.avatarUrl} tamanho={72} />
-          <div className="perfil-foto-acoes">
-            <strong className="perfil-nome">{eu.nome || 'Sem nome'}</strong>
-            {eu.email && <span className="perfil-email">{eu.email}</span>}
-            <label className="botao secundario">
-              <Camera size={18} aria-hidden="true" /> {eu.avatarUrl ? 'Trocar foto' : 'Colocar foto'}
-              <input type="file" accept="image/*" className="visualmente-oculto" disabled={salvando} onChange={(e) => escolherFoto(e.target.files?.[0])} />
-            </label>
-            {eu.avatarUrl && (
-              <button type="button" className="botao-texto" onClick={removerFoto} disabled={salvando}>
-                Tirar foto
-              </button>
-            )}
-          </div>
-        </section>
-
-        <form className="cartao-ui form" onSubmit={salvar} noValidate>
-          <div className="form-campo">
-            <label className="form-rotulo" htmlFor="perfil-nome">
-              Seu nome
-            </label>
-            <input id="perfil-nome" maxLength={80} value={nome} onChange={(e) => setNome(e.target.value)} />
-          </div>
-          <div className="form-rodape">
-            <button type="submit" className="botao" disabled={salvando}>
-              {salvando ? 'Salvando…' : 'Salvar'}
-            </button>
-          </div>
-        </form>
-
-        {mensagem && (
-          <p role="status" className={mensagem.tipo === 'ok' ? 'form-aviso' : 'form-erro'}>
-            {mensagem.texto}
-          </p>
-        )}
-
-        <OndeJaFui />
-        <FormFicha meuId={eu.id} />
-        <FormPassaporte meuId={eu.id} />
-        <FormAcessibilidade />
-        <MinhaPrivacidade />
-
-        <div className="perfil-agulha">
-          <Agulha tamanho={96} />
-          <p>A Agulha aponta o caminho da viagem pra vocês.</p>
         </div>
       </main>
     </div>
