@@ -5,7 +5,8 @@ import { aceitarConvite, entrarComoConvidado, verConvite, type PreviaDoConvite }
 import { supabase } from '../lib/supabase'
 import { useSessao } from '../features/auth/hooks'
 import { formatarPeriodo } from '../lib/datas'
-import Logo from '../components/ui/Logo'
+import Agulha from '../components/ui/Agulha'
+import SobreOMapa from '../components/ui/SobreOMapa'
 import './convite.css'
 
 type Estado = { tipo: 'carregando' } | { tipo: 'invalido' } | { tipo: 'previa'; previa: PreviaDoConvite }
@@ -55,25 +56,27 @@ export default function Convite() {
     navegar('/login')
   }
 
+  // Visual do design Plataforma (spec 113): cartão creme sobre o mapa escuro, Agulha em cima
   if (estado.tipo === 'carregando') {
     return (
-      <main className="convite">
-        <p className="convite-carregando" aria-busy="true">Abrindo o convite…</p>
-      </main>
+      <SobreOMapa opacidade={0.55} centralizado>
+        <p className="sobre-mapa-texto" aria-busy="true">
+          Abrindo o convite…
+        </p>
+      </SobreOMapa>
     )
   }
 
   if (estado.tipo === 'invalido') {
     return (
-      <main className="convite">
-        <div className="cartao convite-cartao">
-          <h1>Convite inválido</h1>
-          <p className="convite-suave">Esse link expirou ou não existe. Peça um novo pra quem te convidou.</p>
-          <Link to="/nova-viagem" className="botao">
-            Criar minha viagem
-          </Link>
-        </div>
-      </main>
+      <SobreOMapa opacidade={0.7} centralizado>
+        <Agulha humor="dormindo" tamanho={110} className="convite-mascote-meio" />
+        <h1>Convite inválido</h1>
+        <p className="sobre-mapa-texto">Esse link expirou ou não existe. Peça um novo pra quem te convidou.</p>
+        <Link to="/nova-viagem" className="sobre-mapa-botao convite-largo">
+          Criar minha viagem
+        </Link>
+      </SobreOMapa>
     )
   }
 
@@ -82,33 +85,33 @@ export default function Convite() {
   const quem = previa.membros.slice(0, 3).join(', ') + (previa.membros.length > 3 ? ` e mais ${previa.membros.length - 3}` : '')
 
   return (
-    <main className="convite">
-      <div className="convite-logo">
-        <Logo />
-      </div>
-      <form className="cartao convite-cartao" onSubmit={entrar}>
+    <SobreOMapa opacidade={0.55}>
+      <Agulha tamanho={96} className="convite-mascote" />
+      <form className="convite-form" onSubmit={entrar}>
         <p className="convite-rotulo">Você foi convidado pra viagem</p>
         <h1>{previa.nome}</h1>
         <ul className="convite-detalhes">
           {periodo && (
             <li>
-              <CalendarDays size={18} aria-hidden="true" /> {periodo}
+              <CalendarDays size={17} aria-hidden="true" /> {periodo}
             </li>
           )}
           {previa.destinos.length > 0 && (
             <li>
-              <MapPin size={18} aria-hidden="true" /> {previa.destinos.join(' → ')}
+              <MapPin size={17} aria-hidden="true" /> {previa.destinos.join(' → ')}
             </li>
           )}
           {previa.membros.length > 0 && (
             <li>
-              <Users size={18} aria-hidden="true" /> {quem} já {previa.membros.length === 1 ? 'está' : 'estão'} no comboio
+              <Users size={17} aria-hidden="true" /> {quem} já {previa.membros.length === 1 ? 'está' : 'estão'} no comboio
             </li>
           )}
         </ul>
 
+        <hr className="convite-linha" />
+
         {!sessao && (
-          <div className="campo">
+          <div className="convite-campo">
             <label htmlFor="convite-nome">Como te chamam?</label>
             <input
               id="convite-nome"
@@ -119,7 +122,7 @@ export default function Convite() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
             />
-            <small className="convite-suave">Sem e-mail e sem senha. Dá pra criar sua conta depois, sem perder nada.</small>
+            <small>Sem e-mail e sem senha. Dá pra criar sua conta depois, sem perder nada.</small>
           </div>
         )}
 
@@ -129,7 +132,7 @@ export default function Convite() {
           </p>
         )}
 
-        <button type="submit" className="botao" disabled={entrando || (!sessao && !nome.trim())}>
+        <button type="submit" className="sobre-mapa-botao" disabled={entrando || (!sessao && !nome.trim())}>
           {entrando ? 'Entrando…' : 'Entrar na viagem'}
         </button>
 
@@ -139,6 +142,6 @@ export default function Convite() {
           </button>
         )}
       </form>
-    </main>
+    </SobreOMapa>
   )
 }

@@ -1,8 +1,6 @@
-import { useMemo } from 'react'
 import { Link, useRouteError } from 'react-router'
-import MapaMundi from '../features/mapa/MapaMundi'
-import Logo from '../components/ui/Logo'
 import Agulha from '../components/ui/Agulha'
+import SobreOMapa from '../components/ui/SobreOMapa'
 import './perdido.css'
 
 // Ponto Nemo: o lugar do oceano mais longe de qualquer terra
@@ -24,35 +22,23 @@ const textos = {
 // Usada pra endereço que não existe (404) e quando alguma tela quebra.
 export default function Perdido({ tipo = 'naoEncontrada' }: { tipo?: keyof typeof textos }) {
   const t = textos[tipo]
-  const areaLivre = useMemo(
-    () => ({ esquerda: 0, topo: 40, direita: 0, baixo: window.innerHeight * 0.5 }),
-    [],
-  )
-
   return (
-    <div className="perdido">
-      <MapaMundi pontos={PONTO_NEMO} areaLivre={areaLivre} zoomMaximo={2.5} numerar={false} />
-      <p className="perdido-logo">
-        <Logo />
-      </p>
-
-      <main className="perdido-cartao">
-        <Agulha humor={tipo === 'erro' ? 'dormindo' : 'pensando'} tamanho={96} className="perdido-mascote" />
-        <p className="perdido-codigo">{t.codigo}</p>
-        <h1>{t.titulo}</h1>
-        <p className="perdido-texto">{t.texto}</p>
-        <div className="perdido-botoes">
-          <Link to="/" className="perdido-botao">
-            Voltar pro início
-          </Link>
-          {tipo === 'erro' && (
-            <button type="button" className="perdido-botao secundario" onClick={() => window.location.reload()}>
-              Tentar de novo
-            </button>
-          )}
-        </div>
-      </main>
-    </div>
+    <SobreOMapa pontos={PONTO_NEMO} zoomMaximo={2.5} centralizado className="perdido">
+      <Agulha humor={tipo === 'erro' ? 'dormindo' : 'pensando'} tamanho={104} className="perdido-mascote" />
+      <p className="perdido-codigo">{t.codigo}</p>
+      <h1>{t.titulo}</h1>
+      <p className="sobre-mapa-texto">{t.texto}</p>
+      <div className="perdido-botoes">
+        <Link to="/" className="sobre-mapa-botao">
+          Voltar pro início
+        </Link>
+        {tipo === 'erro' && (
+          <button type="button" className="sobre-mapa-botao secundario" onClick={() => window.location.reload()}>
+            Tentar de novo
+          </button>
+        )}
+      </div>
+    </SobreOMapa>
   )
 }
 
