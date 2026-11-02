@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, PanelLeft, Plus, Printer, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
+import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, MoreHorizontal, PanelLeft, Plus, Printer, Route, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
@@ -15,7 +15,8 @@ import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis, capaDaViagem } from '@together/core'
+import { abasVisiveis, capaDaViagem, faseDaViagem, separarAbas } from '@together/core'
+import { hojeTexto } from '../../features/destinos/datas'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -32,6 +33,8 @@ import './viagem.css'
 // `curto`: nome menor pro menu de baixo do celular (8 abas em 360px)
 const ABAS = [
   { para: '', rotulo: 'Overview', curto: 'Início', icone: Compass },
+  // Spec 115: o Explorar (escolher lugares e montar os dias) vira o "Roteiro" da viagem
+  { para: 'explorar', rotulo: 'Roteiro', icone: Route },
   { para: 'hoje', rotulo: 'Hoje', icone: Sun },
   { para: 'agenda', rotulo: 'Agenda', icone: CalendarDays },
   { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
@@ -94,6 +97,7 @@ export default function ViagemLayout() {
   const [vendoNovidades, setVendoNovidades] = useState(false)
   const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
   const [buscando, setBuscando] = useState(false) // spec 053
+  const [vendoMais, setVendoMais] = useState(false) // spec 115: "Mais" do menu no celular
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
   const { simples } = useAcessibilidade() // spec 090: modo simples mostra menos abas
   // Spec 085: mudança de outra pessoa aparece na hora (só escuta depois que a viagem carregou)
@@ -142,6 +146,12 @@ export default function ViagemLayout() {
 
   const { viagem, destinos, membros, meuId, euSouAdm } = estado.dados
   const eu = membros.find((m) => m.id === meuId)
+  // Spec 115: o menu mostra o que serve na fase da viagem; o resto fica em "Mais".
+  // Modo simples (spec 090) continua com as 5 abas dele, sem "Mais".
+  const { principais, mais } = simples
+    ? { principais: abasVisiveis(ABAS, true), mais: [] }
+    : separarAbas(ABAS, faseDaViagem(hojeTexto(), viagem.data_inicio, viagem.data_fim))
+  const abaEstaNoMais = mais.some((a) => a.para === aba)
 
   return (
     <div className={recolhido ? 'viagem menu-recolhido' : 'viagem'}>
@@ -193,13 +203,38 @@ export default function ViagemLayout() {
         </Link>
 
         <nav className={simples ? 'viagem-abas simples' : 'viagem-abas'} aria-label="Abas da viagem">
-          {abasVisiveis(ABAS, simples).map(({ para, rotulo, curto, icone: Icone }) => (
+          {principais.map(({ para, rotulo, curto, icone: Icone }) => (
             <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo} title={rotulo}>
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
               {curto && <span className="aba-curto" aria-hidden="true">{curto}</span>}
             </NavLink>
           ))}
+          {mais.length > 0 && (
+            <>
+              {/* Celular: um botão "Mais" abre a lista. Computador: a lista fica embaixo, com título. */}
+              <button
+                type="button"
+                className={abaEstaNoMais ? 'aba-mais so-celular active' : 'aba-mais so-celular'}
+                onClick={() => setVendoMais(true)}
+                aria-label="Mais abas"
+              >
+                <MoreHorizontal size={19} aria-hidden="true" />
+                <span className="aba-nome" aria-hidden="true">
+                  Mais
+                </span>
+              </button>
+              <span className="viagem-abas-titulo so-computador" aria-hidden="true">
+                Mais
+              </span>
+              {mais.map(({ para, rotulo, icone: Icone }) => (
+                <NavLink key={para} to={para} className="so-computador" aria-label={rotulo} title={rotulo}>
+                  <Icone size={19} aria-hidden="true" />
+                  <span className="aba-nome" aria-hidden="true">{rotulo}</span>
+                </NavLink>
+              ))}
+            </>
+          )}
           {/* Modo simples (spec 090) esconde o "Depois da viagem", como no design */}
           {!simples && (
             <>
@@ -267,6 +302,19 @@ export default function ViagemLayout() {
       {buscando && (
         <Gaveta titulo="Buscar na viagem" aoFechar={() => setBuscando(false)}>
           <BuscaNaViagem viagemId={viagem.id} destinos={destinos} aoEscolher={() => setBuscando(false)} />
+        </Gaveta>
+      )}
+
+      {vendoMais && (
+        <Gaveta titulo="Mais da viagem" aoFechar={() => setVendoMais(false)}>
+          <nav className="mais-lista" aria-label="Mais abas da viagem">
+            {[...mais, ...ABAS_DEPOIS].map(({ para, rotulo, icone: Icone }) => (
+              <Link key={para} to={para} onClick={() => setVendoMais(false)}>
+                <Icone size={20} aria-hidden="true" />
+                {rotulo}
+              </Link>
+            ))}
+          </nav>
         </Gaveta>
       )}
 

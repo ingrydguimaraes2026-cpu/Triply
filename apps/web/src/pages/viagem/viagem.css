@@ -34,7 +34,9 @@
 
 .viagem-abas {
   display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr)); /* 9 abas (spec 058 trouxe o Hoje) */
+  /* Spec 115: quantas abas a fase mostrar (até 6 + "Mais"), cada uma com a mesma largura */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
 }
 
 /* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
@@ -42,7 +44,8 @@
   display: none;
 }
 
-.viagem-abas a {
+.viagem-abas a,
+.viagem-abas .aba-mais {
   min-height: 64px;
   display: flex;
   flex-direction: column;
@@ -50,12 +53,13 @@
   justify-content: center;
   gap: 4px;
   color: #8a7058; /* "apagado" do app */
-  font-size: 9.5px; /* 9 abas em 360px: cada uma tem ~40px */
+  font-size: 11px; /* até 7 itens em 360px: cada um tem ~51px */
   font-weight: 500;
   text-decoration: none;
 }
 
-.viagem-abas a.active {
+.viagem-abas a.active,
+.viagem-abas .aba-mais.active {
   color: var(--cor-comboio);
   font-weight: 700;
 }
@@ -69,9 +73,6 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
 }
 
 /* Spec 090: modo simples, 5 abas maiores */
-.viagem-abas.simples {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
 .viagem-abas.simples a {
   font-size: 12px;
 }
@@ -611,4 +612,43 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
   .faixa-offline {
     grid-column: 1 / -1;
   }
+}
+
+/* Spec 115: botão "Mais" (só no celular) e a lista que ele abre */
+.viagem-abas .aba-mais {
+  border: 0;
+  background: none;
+  font: inherit;
+  color: #8a7058;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .viagem-abas .aba-mais.so-celular {
+    display: none;
+  }
+}
+
+.mais-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mais-lista a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: var(--cor-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mais-lista a:hover {
+  background: var(--cor-fundo-suave);
 }

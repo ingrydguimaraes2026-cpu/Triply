@@ -283,7 +283,8 @@ export default function Overview() {
   const qtdTrajetos = trajetos.estado.status === 'pronto' ? trajetos.estado.trajetos.length : null
   const atalhos = [
     { para: 'hoje', Icone: Sun, titulo: 'Hoje', sub: 'Agora e próximo' },
-    { para: 'agenda', Icone: Route, titulo: 'Roteiro', sub: `${destinos.length} ${destinos.length === 1 ? 'destino' : 'destinos'}` },
+    { para: 'explorar', Icone: Route, titulo: 'Roteiro', sub: 'Escolher e montar os dias' },
+    { para: 'agenda', Icone: CalendarRange, titulo: 'Agenda', sub: `${destinos.length} ${destinos.length === 1 ? 'destino' : 'destinos'}` },
     {
       para: 'transportes',
       Icone: Car,

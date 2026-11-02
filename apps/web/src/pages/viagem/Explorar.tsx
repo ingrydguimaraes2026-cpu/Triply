@@ -261,7 +261,7 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
         <ChevronLeft size={20} aria-hidden="true" />
       </Link>
       <div className="exp-topo-titulo">
-        <span className="exp-sobretitulo">Explorar</span>
+        <span className="exp-sobretitulo">Roteiro</span>
         <h1>{destino.nome}</h1>
       </div>
       {destinos.length > 1 && (

@@ -47,3 +47,21 @@ test('115: durante e depois da viagem mudam o cartão, e sem destino não tem ca
   assert.equal(proximoPasso({ ...base, dataInicio: '2026-10-01', dataFim: '2026-10-05' }).chave, 'depois')
   assert.equal(proximoPasso({ ...base, destinos: [] }), null)
 })
+
+const { faseDaViagem, separarAbas } = await import(new URL('../../../packages/core/src/proximo-passo.ts', import.meta.url))
+
+test('115: fase da viagem pelas datas', () => {
+  assert.equal(faseDaViagem('2026-11-02', null, null), 'antes')
+  assert.equal(faseDaViagem('2026-11-02', '2027-06-01', '2027-06-10'), 'antes')
+  assert.equal(faseDaViagem('2026-11-02', '2026-11-01', '2026-11-05'), 'durante')
+  assert.equal(faseDaViagem('2026-11-02', '2026-10-01', '2026-10-05'), 'depois')
+})
+
+test('115: antes da viagem, no máximo 6 abas e o resto em "Mais"', () => {
+  const abas = ['', 'explorar', 'hoje', 'agenda', 'hospedagem', 'lugares', 'transportes', 'financeiro', 'fotos', 'comboio'].map((para) => ({ para }))
+  const { principais, mais } = separarAbas(abas, 'antes')
+  assert.ok(principais.length <= 6)
+  assert.equal(principais[1].para, 'explorar')
+  assert.deepEqual(mais.map((a) => a.para), ['hoje', 'agenda', 'lugares', 'fotos'])
+  assert.equal(separarAbas(abas, 'durante').principais[1].para, 'hoje')
+})

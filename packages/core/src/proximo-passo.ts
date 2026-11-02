@@ -55,3 +55,28 @@ export function proximoPasso(e: EntradaDoProximoPasso): ProximoPasso | null {
   }
   return null
 }
+
+// ---------- Menu por fase (spec 115, etapa 3) ----------
+// Antes da viagem o menu mostra o que serve pra planejar; durante, o dia a dia; depois, as lembranças.
+// O resto fica em "Mais". O Início ('') sempre aparece.
+
+export type FaseDaViagem = 'antes' | 'durante' | 'depois'
+
+export function faseDaViagem(hoje: string, dataInicio: string | null, dataFim: string | null): FaseDaViagem {
+  if (dataFim && dataFim < hoje) return 'depois'
+  if (dataInicio && dataInicio <= hoje) return 'durante'
+  return 'antes'
+}
+
+export const ABAS_DA_FASE: Record<FaseDaViagem, string[]> = {
+  antes: ['', 'explorar', 'hospedagem', 'transportes', 'financeiro', 'comboio'],
+  durante: ['', 'hoje', 'agenda', 'financeiro', 'fotos', 'comboio'],
+  depois: ['', 'fotos', 'financeiro', 'agenda', 'comboio'],
+}
+
+// Separa as abas na ordem da fase (principais) e o resto na ordem original (mais)
+export function separarAbas<A extends { para: string }>(abas: A[], fase: FaseDaViagem): { principais: A[]; mais: A[] } {
+  const ordem = ABAS_DA_FASE[fase]
+  const principais = ordem.map((p) => abas.find((a) => a.para === p)).filter((a): a is A => !!a)
+  return { principais, mais: abas.filter((a) => !ordem.includes(a.para)) }
+}
