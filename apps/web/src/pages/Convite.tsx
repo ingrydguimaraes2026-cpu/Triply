@@ -41,7 +41,9 @@ export default function Convite() {
     setEntrando(true)
     try {
       const viagemId = sessao ? await aceitarConvite(supabase, codigo) : await entrarComoConvidado(supabase, codigo, nome.trim())
-      navegar(`/viagem/${viagemId}`, { replace: true })
+      // Spec 115: quem acabou de entrar cai direto em escolher os lugares (se a viagem já tem destino)
+      const temDestino = estado.tipo === 'previa' && estado.previa.destinos.length > 0
+      navegar(temDestino ? `/viagem/${viagemId}/explorar?bemvindo=1` : `/viagem/${viagemId}`, { replace: true })
     } catch (e) {
       // "anonymous_provider_disabled": falta ligar o login anônimo no painel do Supabase
       const desligado = (e as { code?: string }).code === 'anonymous_provider_disabled'

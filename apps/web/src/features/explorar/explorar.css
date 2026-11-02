@@ -776,3 +776,13 @@
     transition: none !important;
   }
 }
+
+/* Spec 115: boas-vindas de quem entrou pelo convite */
+.exp-boas-vindas {
+  margin: 0 0 4px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+  line-height: 1.45;
+}

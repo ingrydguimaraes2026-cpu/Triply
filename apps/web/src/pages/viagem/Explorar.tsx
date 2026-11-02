@@ -257,7 +257,7 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
   // ---------- Telas ----------
   const cabecalho = (
     <header className="exp-topo">
-      <Link to={`../lugares`} className="exp-voltar" aria-label="Voltar pros lugares">
+      <Link to=".." className="exp-voltar" aria-label="Voltar pra viagem">
         <ChevronLeft size={20} aria-hidden="true" />
       </Link>
       <div className="exp-topo-titulo">
@@ -284,6 +284,12 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
       <div className="exp">
         {cabecalho}
         <section className="exp-estilo" aria-label="Como vai ser a viagem">
+          {/* Spec 115: quem acabou de entrar pelo convite */}
+          {params.get('bemvindo') && (
+            <p className="exp-boas-vindas">
+              Você entrou em <strong>{viagem.nome}</strong>! Escolha o que quer fazer em {destino.nome}: o roteiro sai das escolhas de todo mundo.
+            </p>
+          )}
           <h2 className="exp-titulo">Como vai ser a viagem?</h2>
 
           <div className="exp-grupo">
