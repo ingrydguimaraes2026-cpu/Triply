@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { ActivityIndicator, Pressable, Text, TextInput, View, type TextInputProps } from 'react-native'
+import { useRef, useState, type ReactNode, type Ref } from 'react'
+import { ActivityIndicator, Pressable, Text, TextInput, View, type TextInputInstance, type TextInputProps } from 'react-native'
 import { coresDePessoa, cor, sombra } from '../../theme'
 import { iniciais } from '../lib/formato'
 import { Agulha } from './Agulha'
@@ -96,13 +96,39 @@ export function PilhaDeAvatares({ nomes, tamanho = 32, borda = cor.fundo, max = 
 }
 
 // Campo de texto com ícone; fica com borda couro quando focado
-export function Campo({ icone, direita, ...props }: TextInputProps & { icone?: ReactNode; direita?: ReactNode }) {
+// Tocar em qualquer parte da caixa abre o teclado; a borda fica caramelo enquanto digita.
+// `ref` (React 19) chega no TextInput: dá pra pular pro próximo campo com `.focus()`.
+export function Campo({ icone, direita, ref, onFocus, onBlur, ...props }: TextInputProps & { icone?: ReactNode; direita?: ReactNode; ref?: Ref<TextInputInstance> }) {
+  const entrada = useRef<TextInputInstance | null>(null)
+  const [focado, setFocado] = useState(false)
+  const guardar = (el: TextInputInstance | null) => {
+    entrada.current = el
+    if (typeof ref === 'function') ref(el)
+    else if (ref) (ref as { current: TextInputInstance | null }).current = el
+  }
   return (
-    <View className="h-[52px] flex-row items-center gap-2.5 rounded-2xl border border-borda bg-cartao px-4">
+    <Pressable
+      onPress={() => entrada.current?.focus()}
+      className={`h-[52px] flex-row items-center gap-2.5 rounded-2xl border-[1.5px] bg-cartao px-4 ${focado ? 'border-caramelo' : 'border-borda'}`}
+    >
       {icone}
-      <TextInput placeholderTextColor={cor.suave} className="flex-1 font-body text-[15px] text-texto" style={{ outlineStyle: 'none' } as object} {...props} />
+      <TextInput
+        ref={guardar}
+        placeholderTextColor={cor.suave}
+        className="h-full flex-1 font-body text-[15px] text-texto"
+        style={{ outlineStyle: 'none' } as object}
+        onFocus={(e) => {
+          setFocado(true)
+          onFocus?.(e)
+        }}
+        onBlur={(e) => {
+          setFocado(false)
+          onBlur?.(e)
+        }}
+        {...props}
+      />
       {direita}
-    </View>
+    </Pressable>
   )
 }
 

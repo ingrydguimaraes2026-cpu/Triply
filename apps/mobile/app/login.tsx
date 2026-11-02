@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { useRef, useState } from 'react'
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type TextInputInstance } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams } from 'expo-router'
@@ -26,6 +26,8 @@ export default function Login() {
   const [verSenha, setVerSenha] = useState(false)
   const [aviso, setAviso] = useState<{ tipo: 'erro' | 'ok'; texto: string } | null>(null)
   const [enviando, setEnviando] = useState(false)
+  const campoEmail = useRef<TextInputInstance>(null)
+  const campoSenha = useRef<TextInputInstance>(null)
 
   const entrar = modo === 'entrar'
 
@@ -71,8 +73,19 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 bg-fundo">
+    // Tudo rola junto: com o teclado aberto o topo sobe e o campo fica à vista.
+    // iOS: `automaticallyAdjustKeyboardInsets` faz isso suave; Android: o KeyboardAvoidingView.
+    <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : undefined} className="flex-1 bg-fundo">
       <StatusBar style="light" />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 24 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+      >
       <LinearGradient colors={['#B97A22', '#8A5A26', '#4A2E14']} locations={[0, 0.55, 1]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={{ height: 330, paddingTop: insets.top + 64, paddingHorizontal: 28 }}>
         <View className="mb-[18px] flex-row items-center gap-2.5">
           <View className="h-[52px] w-[52px] items-center justify-center rounded-2xl bg-fundo">
@@ -84,8 +97,7 @@ export default function Login() {
         <Text className="mt-3 max-w-[290px] font-body text-[14px] leading-5 text-creme">Roteiro, transportes, contas e fotos do comboio, num lugar só.</Text>
       </LinearGradient>
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="-mt-[30px] flex-1 rounded-t-[28px] bg-fundo">
-        <ScrollView contentContainerStyle={{ padding: 24, gap: 14, paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
+      <View className="-mt-[30px] flex-1 rounded-t-[28px] bg-fundo" style={{ padding: 24, gap: 14 }}>
           <View className="flex-row rounded-[14px] bg-areia p-1">
             {(['entrar', 'criar'] as const).map((m) => (
               <Pressable
@@ -116,8 +128,9 @@ export default function Login() {
             <View className="h-px flex-1 bg-borda" />
           </View>
 
-          {!entrar ? <Campo icone={<User size={20} color={cor.suave} />} placeholder="Seu nome" value={nome} onChangeText={setNome} autoComplete="name" /> : null}
+          {!entrar ? <Campo icone={<User size={20} color={cor.suave} />} placeholder="Seu nome" value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" returnKeyType="next" submitBehavior="submit" onSubmitEditing={() => campoEmail.current?.focus()} /> : null}
           <Campo
+            ref={campoEmail}
             icone={<Mail size={20} color={cor.couro} />}
             placeholder="voce@email.com"
             value={email}
@@ -125,14 +138,22 @@ export default function Login() {
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
+            textContentType="emailAddress"
+            autoCorrect={false}
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => campoSenha.current?.focus()}
           />
           <Campo
+            ref={campoSenha}
             icone={<Lock size={20} color={cor.suave} />}
             placeholder="Sua senha"
             value={senha}
             onChangeText={setSenha}
             secureTextEntry={!verSenha}
             autoComplete={entrar ? 'current-password' : 'new-password'}
+            textContentType={entrar ? 'password' : 'newPassword'}
+            returnKeyType="go"
             onSubmitEditing={continuar}
             direita={
               <Pressable onPress={() => setVerSenha((v) => !v)} hitSlop={8}>
@@ -156,9 +177,9 @@ export default function Login() {
           <Text className="px-3 text-center font-body text-[12px] leading-[18px] text-suave">
             Ao continuar, você concorda com os Termos de uso e a Política de privacidade.
           </Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
+      </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
