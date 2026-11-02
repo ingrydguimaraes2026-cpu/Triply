@@ -347,3 +347,97 @@
   border-radius: 8px;
   object-fit: cover;
 }
+
+/* ---------- Design Plataforma (spec 113) ----------
+   Mapa (3 partes) + painel do destino (2 partes) lado a lado; no celular um embaixo do outro. */
+@media (min-width: 1024px) {
+  .hosp-palco {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .hosp-palco > .hosp-mapa {
+    flex: 3 1 460px;
+    min-width: 0;
+    height: clamp(440px, 64vh, 640px);
+  }
+
+  .hosp-palco > .hosp-painel {
+    flex: 2 1 320px;
+    min-width: 0;
+  }
+}
+
+.hosp-mapa {
+  border-radius: 22px;
+  background: #eadbc2;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.hosp-painel {
+  gap: 14px;
+  padding: 22px;
+  border-color: transparent;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+html[data-tema='escuro'] .hosp-painel {
+  border-color: var(--cor-borda);
+}
+
+.hosp-painel-topo h2 {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hosp-painel-topo p {
+  font-size: 13px;
+}
+
+.hosp-buscar {
+  font-size: 13.5px;
+}
+
+.hosp-subtitulo {
+  margin-top: 6px;
+  color: var(--cor-texto);
+  font-weight: 700;
+}
+
+/* Opção: cartão branco com borda clara (a escolhida segue com a borda laranja) */
+.hosp-opcao {
+  gap: 10px;
+  padding: 16px;
+  border-color: #eadcc6;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+}
+
+html[data-tema='escuro'] .hosp-opcao {
+  border-color: var(--cor-borda);
+}
+
+.hosp-opcao-nome {
+  font-size: 15px;
+}
+
+.hosp-adicionar {
+  min-height: 48px;
+  border-radius: 14px;
+  font-size: 14.5px;
+}
+
+.hosp-precos strong {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+/* O botão do Hostelworld estava sem cor (texto branco sumia no cartão branco) */
+.hosp-buscar.site-hostelworld {
+  background: #f25621;
+}
