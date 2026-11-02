@@ -22,6 +22,9 @@
   /* Spec 109: tons que estavam fixos nos CSS das telas */
   --cor-borda-forte: #d9c3a2;
   --cor-fundo-suave: #f6ead7;
+  --cor-menu: #fffdf8; /* menu lateral (spec 113) */
+  --cor-borda-menu: #efe3cf;
+  --cor-texto-menu: #6e5540;
   --cor-erro: #a1442b;
   --cor-erro-fundo: #f6e2da;
   --cor-sucesso: #5e6b2e;
@@ -240,6 +243,9 @@ html[data-tema='escuro'] {
   --cor-borda: #45301d;
   --cor-borda-forte: #5c3f27;
   --cor-fundo-suave: #22150a;
+  --cor-menu: var(--cor-cartao);
+  --cor-borda-menu: var(--cor-borda);
+  --cor-texto-menu: var(--cor-texto-suave);
   --cor-comboio: var(--dourado-claro);
   --cor-comboio-fundo: #3d2a14;
   --cor-pessoal: #ffb547;

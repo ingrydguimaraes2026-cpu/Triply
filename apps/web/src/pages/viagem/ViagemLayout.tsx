@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, LogOut, MapPinned, Plus, Search, Settings, Sun, TrainFront, Users, Wallet } from 'lucide-react'
-import { sair, useSessao } from '../../features/auth/hooks'
+import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, PanelLeft, Plus, Printer, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
@@ -43,6 +42,23 @@ const ABAS = [
   { para: 'comboio', rotulo: 'Comboio', icone: Users },
 ]
 
+// "Depois da viagem" (spec 113): só no menu do computador. No celular ficam no Overview e no topo.
+const ABAS_DEPOIS = [
+  { para: 'retrospectiva', rotulo: 'Retrospectiva', icone: Sparkles },
+  { para: 'imprimir', rotulo: 'Imprimir e PDF', icone: Printer },
+  { para: 'configuracoes', rotulo: 'Configurações', icone: Settings },
+]
+
+// Menu recolhido (só ícones) fica lembrado neste navegador
+const CHAVE_MENU = 'together:menu-recolhido'
+function lerRecolhido() {
+  try {
+    return localStorage.getItem(CHAVE_MENU) === '1'
+  } catch {
+    return false
+  }
+}
+
 // Abas com mapa ficam guardadas depois da primeira visita (escondidas, não destruídas):
 // voltar nelas é instantâneo e o mapa não carrega de novo.
 const ABAS_GUARDADAS = [
@@ -61,7 +77,16 @@ const semNada = async () => {}
 export default function ViagemLayout() {
   const { id } = useParams()
   const estado = useViagem(id)
-  const { ehConvidado } = useSessao()
+  const [recolhido, setRecolhido] = useState(lerRecolhido)
+  function alternarMenu() {
+    const novo = !recolhido
+    setRecolhido(novo)
+    try {
+      localStorage.setItem(CHAVE_MENU, novo ? '1' : '0')
+    } catch {
+      // sem armazenamento: só não lembra na próxima vez
+    }
+  }
   const [busca, setBusca] = useSearchParams()
   const [lancamento, setLancamento] = useState<Lancamento>(() => (busca.get('lancar') ? { modo: 'rapido' } : null))
   const [recado, setRecado] = useState<string | null>(null)
@@ -119,7 +144,7 @@ export default function ViagemLayout() {
   const eu = membros.find((m) => m.id === meuId)
 
   return (
-    <div className="viagem">
+    <div className={recolhido ? 'viagem menu-recolhido' : 'viagem'}>
       <FaixaOffline />
       {/* Celular: barra de cima com a viagem (leva pra Minhas viagens) e o perfil */}
       <header className="viagem-topo-celular">
@@ -145,18 +170,23 @@ export default function ViagemLayout() {
       </header>
 
       <aside className="viagem-menu">
-        <Link to="/viagens" className="viagem-logo" aria-label="Together: ver todas as viagens">
-          <span className="viagem-logo-agulha">
-            <Agulha tamanho={30} sombra={false} />
-          </span>
-          Together
-        </Link>
+        <div className="viagem-menu-cabeca">
+          <Link to="/viagens" className="viagem-logo" aria-label="Together: ver todas as viagens">
+            <span className="viagem-logo-agulha">
+              <Agulha tamanho={34} sombra={false} />
+            </span>
+            <span className="viagem-menu-texto">Together</span>
+          </Link>
+          <button type="button" className="viagem-menu-recolher" onClick={alternarMenu} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir' : 'Recolher'}>
+            <PanelLeft size={19} aria-hidden="true" />
+          </button>
+        </div>
 
-        {/* Mini capa da viagem, a mesma foto do app */}
-        <Link to="/viagens" className="viagem-atual" aria-label={`${viagem.nome}: ver todas as viagens`}>
+        {/* Mini capa da viagem, a mesma foto do app. Toque troca de viagem. */}
+        <Link to="/viagens" className="viagem-atual" aria-label={`${viagem.nome}: trocar de viagem`} title="Trocar de viagem">
           <img src={capaDaViagem(viagem.id, 600)} alt="" />
           <span className="viagem-atual-rotulo">
-            Viagem <ChevronRight size={12} aria-hidden="true" />
+            Viagem <ArrowLeftRight size={12} aria-hidden="true" />
           </span>
           <strong>{viagem.nome}</strong>
           <span>{formatarPeriodo(viagem.data_inicio, viagem.data_fim)}</span>
@@ -164,53 +194,48 @@ export default function ViagemLayout() {
 
         <nav className={simples ? 'viagem-abas simples' : 'viagem-abas'} aria-label="Abas da viagem">
           {abasVisiveis(ABAS, simples).map(({ para, rotulo, curto, icone: Icone }) => (
-            <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo}>
-              <Icone size={20} aria-hidden="true" />
+            <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo} title={rotulo}>
+              <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
               {curto && <span className="aba-curto" aria-hidden="true">{curto}</span>}
             </NavLink>
           ))}
-          {euSouAdm && (
-            <NavLink to="configuracoes" className="so-computador">
-              <Settings size={20} aria-hidden="true" />
-              <span>Configurações</span>
-            </NavLink>
+          {/* Modo simples (spec 090) esconde o "Depois da viagem", como no design */}
+          {!simples && (
+            <>
+              <span className="viagem-abas-titulo so-computador" aria-hidden="true">
+                Depois da viagem
+              </span>
+              {ABAS_DEPOIS.map(({ para, rotulo, icone: Icone }) => (
+                <NavLink key={para} to={para} className="so-computador" aria-label={rotulo} title={rotulo}>
+                  <Icone size={19} aria-hidden="true" />
+                  <span className="aba-nome" aria-hidden="true">{rotulo}</span>
+                </NavLink>
+              ))}
+            </>
           )}
         </nav>
 
         <div className="viagem-menu-rodape">
-          <div className="viagem-comboio-mini" aria-label={`${membros.length} pessoas no comboio`}>
-            {membros.slice(0, 4).map((m) => (
-              <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={30} />
-            ))}
-          </div>
           <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />
-          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setBuscando(true)}>
-            <Search size={18} aria-hidden="true" /> Buscar
+          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setBuscando(true)} aria-label="Buscar na viagem" title="Buscar">
+            <Search size={19} aria-hidden="true" /> <span className="viagem-menu-texto">Buscar</span>
           </button>
-          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setVendoEmergencia(true)}>
-            <LifeBuoy size={18} aria-hidden="true" /> Emergência
+          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setVendoEmergencia(true)} aria-label="Emergência" title="Emergência">
+            <LifeBuoy size={19} aria-hidden="true" /> <span className="viagem-menu-texto">Emergência</span>
           </button>
-          <Link to="/perfil" className="viagem-menu-acao">
-            <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={22} /> Seu perfil
+          <Link to="/perfil" className="viagem-menu-perfil" aria-label="Seu perfil">
+            <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={34} />
+            <span className="viagem-menu-perfil-nome viagem-menu-texto">
+              <strong>{eu?.nome ?? 'Você'}</strong>
+              <span>Ver perfil</span>
+            </span>
+            <span className="viagem-comboio-mini viagem-menu-texto" aria-label={`${membros.length} pessoas no comboio`}>
+              {membros.slice(0, 3).map((m) => (
+                <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={26} />
+              ))}
+            </span>
           </Link>
-          {/* Convidado precisa criar conta antes de criar viagem (spec 018) */}
-          {!ehConvidado && (
-            <Link to="/nova-viagem" className="viagem-menu-acao">
-              <Plus size={18} aria-hidden="true" /> Nova viagem
-            </Link>
-          )}
-          <button
-            type="button"
-            className="viagem-menu-acao"
-            onClick={() => {
-              // Convidado sem conta que sai não consegue voltar: avisa antes
-              if (ehConvidado && !window.confirm('Você está como convidado. Se sair, perde o acesso a esta viagem. Sair mesmo assim?')) return
-              sair()
-            }}
-          >
-            <LogOut size={18} aria-hidden="true" /> Sair
-          </button>
         </div>
       </aside>
 

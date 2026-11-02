@@ -17,7 +17,7 @@ export function BotaoSino({ novas, aoAbrir, menu = false }: { novas: number; aoA
         <Bell size={menu ? 18 : 20} aria-hidden="true" />
         {novas > 0 && <span className="sino-numero">{novas > 9 ? '9+' : novas}</span>}
       </span>
-      {menu && 'Novidades'}
+      {menu && <span className="viagem-menu-texto">Novidades</span>}
     </button>
   )
 }
