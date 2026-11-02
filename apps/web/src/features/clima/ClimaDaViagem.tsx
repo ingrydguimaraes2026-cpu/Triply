@@ -62,34 +62,37 @@ export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
   if (estado === 'carregando' && mostrados.length === 0) return null
 
   return (
-    <Cartao titulo="Clima" icone={CloudSun} className="overview-clima">
+    <Cartao titulo="Clima" icone={CloudSun} className="overview-clima" acao={<span className="clima-sub">Previsão dos próximos destinos</span>}>
       {estado === 'carregando' ? (
         <p className="carregando-texto">Carregando…</p>
       ) : estado === 'erro' ? (
         <p className="carregando-texto">Não deu pra buscar a previsão agora.</p>
       ) : (
         <div className="clima-destinos">
-          {resultado.map(({ destino, dias }) => (
-            <div key={destino.id} className="clima-destino">
-              <h4>{destino.nome}</h4>
-              <ul className="clima-dias">
-                {dias.map((p) => {
-                  const t = interpretarTempo(p.codigo)
-                  return (
-                    <li key={p.data} className={p.tipo === 'estimativa' ? 'estimativa' : undefined}>
-                      <span className="clima-data">{diaCurto(p.data)}</span>
-                      <span className="clima-emoji" title={t.rotulo} aria-label={t.rotulo}>
-                        {t.emoji}
-                      </span>
-                      <span className="clima-temp">
-                        <strong>{grau(p.tempMax)}</strong> {grau(p.tempMin)}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          ))}
+          {/* Uma caixinha por destino, lado a lado (rola pro lado se não couber) */}
+          <div className="clima-fileira">
+            {resultado.map(({ destino, dias }) => (
+              <div key={destino.id} className="clima-destino">
+                <h4>{destino.nome}</h4>
+                <ul className="clima-dias">
+                  {dias.map((p) => {
+                    const t = interpretarTempo(p.codigo)
+                    return (
+                      <li key={p.data} className={p.tipo === 'estimativa' ? 'estimativa' : undefined}>
+                        <span className="clima-data">{diaCurto(p.data)}</span>
+                        <span className="clima-emoji" title={t.rotulo} aria-label={t.rotulo}>
+                          {t.emoji}
+                        </span>
+                        <span className="clima-temp">
+                          <strong>{grau(p.tempMax)}</strong> {grau(p.tempMin)}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
           {escondidos > 0 && (
             <p className="clima-nota">
               Mostrando os próximos {MAX_DESTINOS} destinos (+{escondidos} mais pra frente).

@@ -13,33 +13,12 @@
 }
 
 /* ---------- Overview ----------
-   Celular e tablet: uma coluna, na ordem mapa → documentos → roteiro → resumos → fotos.
-   Computador largo: coluna larga (mapa, roteiro, fotos) + coluna estreita (documentos, resumos).
-   Cada cartão tem a altura do próprio conteúdo (nada de cartão esticado e vazio). */
+   Layout no fim do arquivo ("Overview no design Plataforma", spec 113). */
 .overview {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 22px;
 }
-
-.overview-principal,
-.overview-lateral {
-  display: contents;
-}
-
-.overview-mapa { order: 1; }
-.overview-documentos { order: 2; }
-.overview-roteiro { order: 3; }
-.overview-hospedagem { order: 4; }
-.overview-orcamento { order: 4; }
-.overview-trajeto { order: 5; }
-.overview-comboio-cartao { order: 6; }
-.overview-fotos { order: 7; }
-.overview-enquetes { order: 3; }
-.overview-tarefas { order: 8; }
-.overview-cofre { order: 8; }
-.overview-clima { order: 2; }
-.overview-encontro { order: 5; }
 
 /* ---------- Avisos do ADM (spec 019): recados fixados no topo ---------- */
 .faixa-avisos {
@@ -598,7 +577,7 @@
   color: #ffffff;
 }
 
-.overview-capa img {
+.overview-capa > img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -848,32 +827,6 @@ html[data-tema='escuro'] .overview-atalho {
     left: 36px;
     right: 8px;
     border-top: 2px dashed var(--cor-borda-forte);
-  }
-}
-
-@media (min-width: 1200px) {
-  .overview {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-    align-items: start;
-  }
-
-  .overview-principal,
-  .overview-lateral {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 0;
-  }
-
-  .overview-mapa {
-    min-height: 380px;
-  }
-
-  /* Capa e atalhos ocupam as duas colunas */
-  .overview-capa,
-  .overview-atalhos {
-    grid-column: 1 / -1;
   }
 }
 
@@ -1232,7 +1185,6 @@ html[data-tema='escuro'] .overview-atalho {
 }
 
 /* Orçamento combinado (spec 045) */
-.overview-orcamento-combinado { order: 4; }
 
 .orcamento-combinado {
   display: grid;
@@ -1292,8 +1244,6 @@ html[data-tema='escuro'] .overview-atalho {
     grid-column: 1 / -1;
   }
 }
-.overview-ficha-pais { order: 2; }
-.overview-listas { order: 8; }
 
 /* Ficha da pessoa no comboio (spec 050) */
 .membro-ficha {
@@ -1329,7 +1279,6 @@ html[data-tema='escuro'] .overview-atalho {
 }
 
 /* "Cheguei bem" (spec 051) */
-.overview-cheguei { order: 5; }
 
 .cheguei-bem {
   display: grid;
@@ -1373,11 +1322,8 @@ html[data-tema='escuro'] .overview-atalho {
   width: 1.15rem;
   height: 1.15rem;
 }
-.overview-datas-comum { order: 2; }
-.overview-mala { order: 8; }
 
 /* Destinos candidatos (spec 075) */
-.overview-candidatos { order: 1; }
 
 .candidatos-busca {
   display: grid;
@@ -1385,7 +1331,6 @@ html[data-tema='escuro'] .overview-atalho {
 }
 
 /* Spec 092: furos no plano */
-.overview-furos { order: 1; }
 .furos-lista {
   list-style: none;
   margin: 0;
@@ -1485,49 +1430,316 @@ html[data-tema='escuro'] .overview-atalho {
   text-decoration: none;
 }
 
-/* ---------- Overview: ordem dos cartões + "Mostrar mais" (revisão de design) ----------
-   Bloco único e no fim do arquivo de propósito: consolida os `order` que estavam
-   espalhados (e conflitando) e manda em todos eles. Essenciais primeiro; secundários
-   depois do botão "Mostrar mais da viagem". */
-.overview-mapa { order: 1; }
-.overview-roteiro { order: 2; }
-.overview-furos { order: 3; }
-.overview-documentos { order: 4; }
-.overview-hospedagem { order: 5; }
-.overview-orcamento { order: 6; }
-.overview-enquetes { order: 7; }
-.overview-candidatos { order: 7; }
-.overview-datas-comum { order: 7; }
-.overview-trajeto { order: 8; }
-.overview-fotos { order: 9; }
-.overview-comboio-cartao { order: 10; }
-.overview-ver-mais { order: 11; }
-.overview-orcamento-combinado { order: 12; }
-.overview-clima { order: 13; }
-.overview-cheguei { order: 14; }
-.overview-mala { order: 15; }
-.overview-listas { order: 16; }
-.overview-ficha-pais { order: 17; }
-.overview-encontro { order: 18; }
-.overview-tarefas { order: 19; }
-.overview-cofre { order: 20; }
-
-.overview-ver-mais {
+/* ---------- Overview no design Plataforma (spec 113) ----------
+   Capa → atalhos → duas colunas (mapa, roteiro, clima, fotos | furos, documentos) → mosaico com o resto.
+   As colunas quebram sozinhas: no celular tudo vira uma coluna. */
+.overview-colunas {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px;
-  border: 1px dashed var(--cor-borda-forte);
-  border-radius: 14px;
-  background: var(--cor-fundo-suave);
-  color: var(--cor-comboio);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
 }
 
-.overview-ver-mais:hover {
-  background: var(--cor-borda);
+.overview-principal {
+  flex: 2 1 480px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.overview-lateral {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.overview-mapa {
+  height: 400px;
+  min-height: 0;
+  border-radius: 22px;
+  background: #1e140b;
+  box-shadow: none;
+}
+
+/* Mosaico: colunas de 300px, cada cartão com a altura do conteúdo */
+.overview-mosaico {
+  columns: 3 300px;
+  column-gap: 18px;
+}
+
+.overview-mosaico > * {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+.overview .cartao-ui {
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+/* Capa */
+.overview-capa {
+  margin: 0;
+  height: clamp(240px, 24vw, 320px);
+  border-radius: 26px;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  box-shadow: none;
+  animation: overview-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes overview-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.overview-capa::after {
+  background: linear-gradient(180deg, rgb(30 20 11 / 0.1) 0%, rgb(30 20 11 / 0) 30%, rgb(42 26 12 / 0.86) 100%);
+}
+
+.overview-contagem {
+  top: 18px;
+  left: 18px;
+  height: 34px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.overview-contagem-divisoria {
+  width: 1px;
+  height: 14px;
+  background: #e3d2b8;
+}
+
+.overview-capa-texto {
+  left: 28px;
+  right: 28px;
+  bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overview-capa-texto > div {
+  min-width: 0;
+}
+
+.overview-capa-texto p {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e3b572;
+}
+
+.overview-capa-texto h1 {
+  margin: 0;
+  font-size: clamp(40px, 4.4vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #fbf3e6;
+}
+
+.overview-capa-comboio {
+  margin-top: 10px;
+  color: #fbf3e6;
+  font-size: 14px;
+}
+
+.overview-capa-comboio .avatar {
+  border: 2px solid #fbf3e6;
+}
+
+.overview-capa-convidar {
+  height: 42px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #fbf3e6;
+  color: #3b2715;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.overview-capa-convidar:hover {
+  background: #ffffff;
+}
+
+/* Atalhos: quadradinhos que se ajeitam sozinhos */
+.overview-atalhos {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.overview-atalho {
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.overview-atalho:hover {
+  box-shadow: 0 10px 24px rgb(74 46 20 / 0.12);
+}
+
+.overview-atalho .icone-quadrado {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 11px !important;
+  background: var(--cor-fundo-suave);
+}
+
+.overview-atalho .icone-quadrado svg {
+  width: 18px;
+  height: 18px;
+}
+
+.overview-atalho strong {
+  font-size: 14.5px;
+}
+
+.overview-atalho small {
+  font-size: 12.5px;
+}
+
+/* Roteiro: "Editar" e "Abrir" no canto */
+.overview-roteiro-acoes {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roteiro-noites {
+  color: #9a8268 !important;
+  font-size: 12px !important;
+}
+
+@media (min-width: 760px) {
+  .overview-roteiro:not(.editando) .roteiro-lista li {
+    flex: none;
+    width: 112px;
+    padding-right: 0;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li:not(:last-child)::after {
+    left: 34px;
+    right: 6px;
+    border-top-width: 1.5px;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-nome strong {
+    font-size: 14px;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-nome small {
+    font-size: 12px;
+  }
+}
+
+.roteiro-numero {
+  background: #e3a04a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Furos: linhas bege com a barrinha colorida e a setinha */
+.furos-lista {
+  gap: 6px;
+}
+
+.furos-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-left: 0;
+  border-radius: 10px;
+  background: var(--cor-fundo);
+  font-size: 13.5px;
+}
+
+.furos-lista li::before {
+  content: '';
+  flex: none;
+  align-self: stretch;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--cor-borda-forte);
+}
+
+.furos-lista li.furo-alto::before {
+  background: var(--cor-erro);
+}
+
+.furos-lista li > span,
+.furos-lista a {
+  flex: 1;
+  min-width: 0;
+}
+
+.furos-lista a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.furos-lista a span {
+  flex: 1;
+}
+
+.furos-lista a svg {
+  flex: none;
+  color: #9a8268;
+}
+
+.furos-lista li:has(a):hover {
+  background: var(--cor-fundo-suave);
+}
+
+.overview-furos .cartao-ui-topo h2 svg {
+  color: var(--cor-erro);
+}
+
+/* Hospedagem: "0 de 5" com o "de 5" menor */
+.resumo-orcamento .numero small {
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+/* Celular: a capa encosta nas bordas, como no app */
+@media (max-width: 1023px) {
+  .overview-capa {
+    height: 300px;
+    margin: -20px -16px 0;
+    border-radius: 0 0 28px 28px;
+  }
+
+  .overview-capa-texto {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .overview-mapa {
+    height: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-capa {
+    animation: none;
+  }
 }

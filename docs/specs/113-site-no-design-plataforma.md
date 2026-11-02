@@ -19,7 +19,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | 4 | Nova viagem (cartão sobre o mapa) | 05 | `NovaViagem.tsx` | ✅ Logo igual à do Convite; cartão de 500px no computador |
 | 5 | Minhas viagens (capa grande + "Próximas" com barra de pronto) | 03 | `MinhasViagens.tsx` | ✅ Barra de "% pronto" fica de fora (precisaria buscar documentos, hospedagem e trajetos de cada viagem); arquivar/apagar do cartão aparecem ao passar o mouse |
 | 6 | Perfil (coluna fixa com foto e atalhos, cartões à direita) | 04 | `Perfil.tsx` | ✅ "Onde já fui" entra nos atalhos; no celular os atalhos somem (vira uma coluna só) |
-| 7 | Overview (capa, atalhos, mapa + roteiro + clima, furos e documentos ao lado, cartões em colunas) | 06 | `Overview.tsx` | ⏳ |
+| 7 | Overview (capa, atalhos, mapa + roteiro + clima, furos e documentos ao lado, cartões em colunas) | 06 | `Overview.tsx` | ✅ Todos os cartões à mostra no mosaico (sai o "Mostrar mais da viagem"); clima na coluna do mapa; candidatos e datas em comum seguem só ao planejar |
 | 8 | Hoje (aviso com a Agulha, ferramentas em 2 colunas) | 07 | `Hoje.tsx` | ⏳ |
 | 9 | Agenda (dias em pílulas, dia escolhido + "Neste dia") | 08 | `Agenda.tsx` | ⏳ |
 | 10 | Hospedagem (pílulas de destino, mapa + painel do destino) | 09 | `Hospedagem.tsx` | ⏳ |

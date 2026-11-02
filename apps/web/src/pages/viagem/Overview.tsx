@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { AlertTriangle, BarChart3, BedDouble, Car, ChevronDown, ChevronUp, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
+import { AlertTriangle, BarChart3, BedDouble, Car, ChevronRight, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {
@@ -65,13 +65,13 @@ function quando(horario: string) {
   return `${prefixo} ${hora(horario)}`
 }
 
-// "12 – 15 nov · 3 noites", ou o país quando não tem data
-function datasDoDestino(d: ItemRoteiro) {
-  if (!d.chegada) return d.pais && d.pais !== d.nome ? d.pais : null
-  if (!d.saida) return `Chega ${formatarData(d.chegada)}`
+// Duas linhas embaixo do nome: "12 – 15 nov" e "3 noites" (ou o país quando não tem data)
+function datasDoDestino(d: ItemRoteiro): { periodo: string | null; noites: string | null } {
+  if (!d.chegada) return { periodo: d.pais && d.pais !== d.nome ? d.pais : null, noites: null }
+  if (!d.saida) return { periodo: `Chega ${formatarData(d.chegada)}`, noites: null }
   const noites = contarNoites(d.chegada, d.saida)
   const periodo = d.chegada === d.saida ? formatarData(d.chegada) : `${formatarData(d.chegada)} – ${formatarData(d.saida)}`
-  return noites === null ? periodo : `${periodo} · ${textoNoites(noites)}`
+  return { periodo, noites: noites === null ? null : textoNoites(noites) }
 }
 
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
@@ -253,27 +253,8 @@ export default function Overview() {
       : []
   const [vendoTodosFuros, setVendoTodosFuros] = useState(false)
 
-  // A Overview tem muitos cartões. Os essenciais ficam sempre à mostra; os secundários
-  // entram atrás de um "Mostrar mais da viagem" (a escolha fica guardada no aparelho).
-  // Na fase de planejar (sem destino ou sem datas), as ferramentas de decisão aparecem direto.
+  // Na fase de planejar (sem destino ou sem datas), o orçamento combinado sobe pro começo do mosaico
   const planejando = destinos.length === 0 || !viagem.data_inicio
-  const [verMais, setVerMais] = useState(() => {
-    try {
-      return localStorage.getItem('overview-ver-mais') === '1'
-    } catch {
-      return false
-    }
-  })
-  const alternarVerMais = () =>
-    setVerMais((v) => {
-      const novo = !v
-      try {
-        localStorage.setItem('overview-ver-mais', novo ? '1' : '0')
-      } catch {
-        /* sem storage (aba privada): só não lembra */
-      }
-      return novo
-    })
 
   // Atalhos do app (tela "1g" do design): um quadradinho pra cada parte da viagem
   const qtdTrajetos = trajetos.estado.status === 'pronto' ? trajetos.estado.trajetos.length : null
@@ -309,22 +290,27 @@ export default function Overview() {
           <span className="overview-contagem" title={pronto?.faltando.length ? `Falta: ${pronto.faltando.join(', ')}` : undefined}>
             <Clock size={16} aria-hidden="true" />
             {falta}
-            {pronto && ` · ${pronto.porcento}% pronto`}
+            {pronto && (
+              <>
+                <span className="overview-contagem-divisoria" aria-hidden="true" />
+                {pronto.porcento}% pronto
+              </>
+            )}
           </span>
         )}
         <div className="overview-capa-texto">
-          <p>{[formatarPeriodo(viagem.data_inicio, viagem.data_fim), destinos[0]?.nome].filter(Boolean).join(' · ')}</p>
-          <h1>{viagem.nome}</h1>
-          <div className="overview-capa-rodape">
+          <div>
+            <p>{[formatarPeriodo(viagem.data_inicio, viagem.data_fim), destinos[0]?.nome].filter(Boolean).join(' · ')}</p>
+            <h1>{viagem.nome}</h1>
             {/* Spec 007: tocar no comboio abre quem vai, papéis e convites */}
             <Link to="comboio" className="overview-capa-comboio" aria-label="Ver o comboio">
-              <PilhaDeAvatares pessoas={membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} tamanho={34} />
+              <PilhaDeAvatares pessoas={membros.map((m) => ({ nome: m.nome, url: m.avatarUrl }))} tamanho={30} />
               {membros.length} {membros.length === 1 ? 'viajante' : 'viajantes'}
             </Link>
-            <Link to="comboio" className="botao claro compacto">
-              <Plus size={18} aria-hidden="true" /> Convidar
-            </Link>
           </div>
+          <Link to="comboio" className="overview-capa-convidar">
+            <Plus size={17} aria-hidden="true" /> Convidar
+          </Link>
         </div>
       </section>
 
@@ -362,128 +348,150 @@ export default function Overview() {
           </div>
         </section>
       )}
-      {/* Coluna larga: mapa, roteiro e fotos */}
-      <div className="overview-principal">
-        <section className="overview-mapa">
-          <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
-          {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
-        </section>
+      {/* Design Plataforma (spec 113): coluna larga (mapa, roteiro, clima, fotos) + coluna estreita
+          (furos e documentos). No celular as duas viram uma só. */}
+      <div className="overview-colunas">
+        <div className="overview-principal">
+          <section className="overview-mapa">
+            <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
+            {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
+          </section>
 
-        {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
-        <Cartao
-          titulo={rascunho ? 'Editando roteiro' : 'Roteiro'}
-          icone={MapPin}
-          className={rascunho ? 'overview-roteiro editando' : 'overview-roteiro'}
-          acao={
-            podeEditarRoteiro &&
-            !rascunho && (
-              <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
-                <Pencil size={14} aria-hidden="true" /> Editar
-              </button>
-            )
-          }
-        >
-          {rascunho ? (
-            <EditorRoteiro
-              itens={rascunho}
-              aoMudar={setRascunho}
-              aoSalvar={salvar}
-              aoCancelar={cancelar}
-              salvando={salvando}
-              erro={erroAoSalvar}
-              acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
-              abrirBusca={abrirBusca}
-              periodo={{ inicio: viagem.data_inicio, fim: viagem.data_fim }}
-            />
-          ) : (
-            <>
-              <ol className="roteiro-lista">
-                {roteiro.map((d, i) => {
-                  const detalhe = datasDoDestino(d)
-                  return (
-                    <li key={d.chave} className={i === indiceDeHoje ? 'hoje' : undefined}>
-                      <span className="roteiro-numero">{i + 1}</span>
-                      <span className="roteiro-nome">
-                        <strong>
-                          {d.nome}
-                          {i === indiceDeHoje && <span className="selo-completar">hoje</span>}
-                        </strong>
-                        {detalhe && <small>{detalhe}</small>}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ol>
-              {sugerirPeriodo && (
-                <div className="editor-aviso roteiro-periodo">
-                  <span>
-                    As datas dos destinos vão de {formatarPeriodo(periodo.inicio, periodo.fim)}
-                    {viagem.data_inicio ? ', fora do período da viagem.' : '.'}
-                  </span>
-                  <button type="button" className="botao secundario pequeno" onClick={ajustarPeriodo} disabled={ajustando}>
-                    {ajustando ? 'Ajustando…' : 'Usar como período da viagem'}
+          {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
+          <Cartao
+            titulo={rascunho ? 'Editando roteiro' : 'Roteiro'}
+            icone={MapPin}
+            className={rascunho ? 'overview-roteiro editando' : 'overview-roteiro'}
+            acao={
+              !rascunho && (
+                <span className="overview-roteiro-acoes">
+                  {podeEditarRoteiro && (
+                    <button type="button" className="roteiro-editar" onClick={() => editar(false)}>
+                      <Pencil size={14} aria-hidden="true" /> Editar
+                    </button>
+                  )}
+                  <Link to="agenda">Abrir</Link>
+                </span>
+              )
+            }
+          >
+            {rascunho ? (
+              <EditorRoteiro
+                itens={rascunho}
+                aoMudar={setRascunho}
+                aoSalvar={salvar}
+                aoCancelar={cancelar}
+                salvando={salvando}
+                erro={erroAoSalvar}
+                acaoDoErro={conflito ? { rotulo: 'Recarregar roteiro', aoClicar: recarregarRoteiro } : undefined}
+                abrirBusca={abrirBusca}
+                periodo={{ inicio: viagem.data_inicio, fim: viagem.data_fim }}
+              />
+            ) : (
+              <>
+                <ol className="roteiro-lista">
+                  {roteiro.map((d, i) => {
+                    const { periodo: quandoVai, noites } = datasDoDestino(d)
+                    return (
+                      <li key={d.chave} className={i === indiceDeHoje ? 'hoje' : undefined}>
+                        <span className="roteiro-numero">{i + 1}</span>
+                        <span className="roteiro-nome">
+                          <strong>
+                            {d.nome}
+                            {i === indiceDeHoje && <span className="selo-completar">hoje</span>}
+                          </strong>
+                          {quandoVai && <small>{quandoVai}</small>}
+                          {noites && <small className="roteiro-noites">{noites}</small>}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ol>
+                {sugerirPeriodo && (
+                  <div className="editor-aviso roteiro-periodo">
+                    <span>
+                      As datas dos destinos vão de {formatarPeriodo(periodo.inicio, periodo.fim)}
+                      {viagem.data_inicio ? ', fora do período da viagem.' : '.'}
+                    </span>
+                    <button type="button" className="botao secundario pequeno" onClick={ajustarPeriodo} disabled={ajustando}>
+                      {ajustando ? 'Ajustando…' : 'Usar como período da viagem'}
+                    </button>
+                  </div>
+                )}
+                {euSouAdm && (
+                  <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
+                    <Plus size={16} aria-hidden="true" /> Adicionar lugar
                   </button>
-                </div>
-              )}
-              {euSouAdm && (
-                <button type="button" className="editor-adicionar roteiro-adicionar" onClick={() => editar(true)}>
-                  <Plus size={16} aria-hidden="true" /> Adicionar lugar
-                </button>
-              )}
-            </>
-          )}
-        </Cartao>
-
-        {/* Spec 006: as fotos mais recentes */}
-        <Cartao titulo="Fotos" icone={Camera} acao={<Link to="fotos">Abrir</Link>} className="overview-fotos">
-          {ultimasFotos.length > 0 ? (
-            <ul className="resumo-fotos">
-              {ultimasFotos.map((f) => (
-                <li key={f.id}>
-                  <Link to="fotos" aria-label={f.legenda ?? 'Ver fotos'}>
-                    {f.url && <img src={f.url} alt="" loading="lazy" />}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="resumo-vazio">
-              As 5 melhores fotos de cada lugar aparecem aqui. <Link to="fotos">Enviar foto</Link>
-            </p>
-          )}
-        </Cartao>
-      </div>
-
-      {/* Coluna estreita: documentos e resumos */}
-      <div className="overview-lateral">
-        {furos.length > 0 && (
-          <Cartao titulo={furos.length === 1 ? '1 furo no plano' : `${furos.length} furos no plano`} icone={AlertTriangle} className="overview-furos">
-            <ul className="furos-lista">
-              {(vendoTodosFuros ? furos : furos.slice(0, 4)).map((f) => (
-                <li key={f.chave} className={f.gravidade === 'alta' ? 'furo-alto' : undefined}>
-                  {f.aba ? <Link to={f.aba}>{f.texto}</Link> : f.texto}
-                </li>
-              ))}
-            </ul>
-            {furos.length > 4 && (
-              <button type="button" className="botao-texto" onClick={() => setVendoTodosFuros(!vendoTodosFuros)}>
-                {vendoTodosFuros ? 'Ver menos' : `Ver os ${furos.length}`}
-              </button>
+                )}
+              </>
             )}
           </Cartao>
-        )}
-        {/* Spec 010: checklist de documentos */}
-        <ChecklistDocumentos
-          docs={docs}
-          membros={membros}
-          className="overview-documentos"
-          passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
-        />
 
-        {/* Spec 021: enquetes rápidas pra decidir junto */}
-        <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
-          <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
-        </Cartao>
+          {/* Roadmap #8: clima dia a dia de cada destino */}
+          <ClimaDaViagem destinos={destinos} />
+
+          {/* Spec 006: as fotos mais recentes */}
+          <Cartao titulo="Fotos" icone={Camera} acao={<Link to="fotos">Abrir</Link>} className="overview-fotos">
+            {ultimasFotos.length > 0 ? (
+              <ul className="resumo-fotos">
+                {ultimasFotos.map((f) => (
+                  <li key={f.id}>
+                    <Link to="fotos" aria-label={f.legenda ?? 'Ver fotos'}>
+                      {f.url && <img src={f.url} alt="" loading="lazy" />}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="resumo-vazio">
+                As 5 melhores fotos de cada lugar aparecem aqui. <Link to="fotos">Enviar foto</Link>
+              </p>
+            )}
+          </Cartao>
+        </div>
+
+        <div className="overview-lateral">
+          {furos.length > 0 && (
+            <Cartao titulo={furos.length === 1 ? '1 furo no plano' : `${furos.length} furos no plano`} icone={AlertTriangle} className="overview-furos">
+              <ul className="furos-lista">
+                {(vendoTodosFuros ? furos : furos.slice(0, 4)).map((f) => (
+                  <li key={f.chave} className={f.gravidade === 'alta' ? 'furo-alto' : undefined}>
+                    {f.aba ? (
+                      <Link to={f.aba}>
+                        <span>{f.texto}</span>
+                        <ChevronRight size={15} aria-hidden="true" />
+                      </Link>
+                    ) : (
+                      <span>{f.texto}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {furos.length > 4 && (
+                <button type="button" className="botao-texto" onClick={() => setVendoTodosFuros(!vendoTodosFuros)}>
+                  {vendoTodosFuros ? 'Ver menos' : `Ver os ${furos.length}`}
+                </button>
+              )}
+            </Cartao>
+          )}
+          {/* Spec 010: checklist de documentos */}
+          <ChecklistDocumentos
+            docs={docs}
+            membros={membros}
+            className="overview-documentos"
+            passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
+          />
+        </div>
+      </div>
+
+      {/* O resto em mosaico de até 3 colunas (cada cartão com a altura do conteúdo) */}
+      <div className="overview-mosaico">
+        {/* Spec 045: orçamento combinado (ao planejar, o modo sonhando pede ele primeiro) */}
+        {planejando && (
+          <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">
+            <OrcamentoCombinado viagemId={viagem.id} meuId={meuId} moeda={viagem.moeda_principal} />
+          </Cartao>
+        )}
 
         {/* Spec 075: destinos candidatos (no modo sonhando, ou enquanto houver roteiro curto) */}
         {destinos.length <= 1 && (
@@ -510,7 +518,7 @@ export default function Overview() {
           ) : (
             <Link to="hospedagem" className="resumo-orcamento">
               <span className="numero">
-                {hospResumo.resolvidos} de {hospResumo.total}
+                {hospResumo.resolvidos} <small>de {hospResumo.total}</small>
               </span>
               <span className="numero-legenda">
                 {hospResumo.resolvidos === hospResumo.total
@@ -584,67 +592,51 @@ export default function Overview() {
           </ul>
         </Cartao>
 
-        {/* Mais da viagem: os cartões secundários ficam aqui, abertos por este botão */}
-        <button type="button" className="overview-ver-mais" onClick={alternarVerMais} aria-expanded={verMais}>
-          {verMais ? (
-            <>
-              <ChevronUp size={16} aria-hidden="true" /> Ver menos
-            </>
-          ) : (
-            <>
-              <ChevronDown size={16} aria-hidden="true" /> Mostrar mais da viagem
-            </>
-          )}
-        </button>
-
-        {/* Spec 045: orçamento combinado — visível ao planejar (o modo sonhando pede), senão em "mais" */}
-        {(verMais || planejando) && (
+        {!planejando && (
           <Cartao titulo="Orçamento combinado" icone={PiggyBank} className="overview-orcamento-combinado">
             <OrcamentoCombinado viagemId={viagem.id} meuId={meuId} moeda={viagem.moeda_principal} />
           </Cartao>
         )}
 
-        {verMais && (
-          <>
-            {/* Roadmap #8: clima dia a dia de cada destino */}
-            <ClimaDaViagem destinos={destinos} />
+        {/* Spec 021: enquetes rápidas pra decidir junto */}
+        <Cartao titulo="Enquetes" icone={BarChart3} className="overview-enquetes">
+          <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
 
-            {/* Spec 020: tarefas com responsável */}
-            <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
-              <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
-            </Cartao>
+        {/* Spec 051: "cheguei bem" com um toque */}
+        <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
+          <ChegueiBem />
+        </Cartao>
 
-            {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
-            <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
-              <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
-            </Cartao>
+        {/* Spec 069: mala individual (só a pessoa vê) */}
+        <Cartao titulo="Minha mala" icone={Luggage} className="overview-mala">
+          <MinhaMala />
+        </Cartao>
 
-            {/* Spec 051: "cheguei bem" com um toque */}
-            <Cartao titulo="Cheguei bem" icone={CircleCheck} className="overview-cheguei">
-              <ChegueiBem />
-            </Cartao>
+        {/* Spec 048: quem leva o quê + lista de compras */}
+        <Cartao titulo="Listas do comboio" icone={ShoppingBasket} className="overview-listas">
+          <ListasDoComboio />
+        </Cartao>
 
-            {/* Spec 069: mala individual (só a pessoa vê) */}
-            <Cartao titulo="Minha mala" icone={Luggage} className="overview-mala">
-              <MinhaMala />
-            </Cartao>
+        {/* Spec 047: ficha do país + lembrete do eSIM */}
+        <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
+          <FichaDoPais viagem={viagem} destinos={destinos} />
+        </Cartao>
 
-            {/* Spec 048: quem leva o quê + lista de compras */}
-            <Cartao titulo="Listas do comboio" icone={ShoppingBasket} className="overview-listas">
-              <ListasDoComboio />
-            </Cartao>
+        {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
+        <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">
+          <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
 
-            {/* Spec 047: ficha do país + lembrete do eSIM */}
-            <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
-              <FichaDoPais viagem={viagem} destinos={destinos} />
-            </Cartao>
+        {/* Spec 020: tarefas com responsável */}
+        <Cartao titulo="Tarefas" icone={ListChecks} className="overview-tarefas">
+          <Checklist viagemId={viagem.id} membros={membros} meuId={meuId} euSouAdm={euSouAdm} />
+        </Cartao>
 
-            {/* Spec 028: cofre (reservas, ingressos, PDFs) */}
-            <Cartao titulo="Cofre" icone={Lock} className="overview-cofre">
-              <Cofre />
-            </Cartao>
-          </>
-        )}
+        {/* Spec 028: cofre (reservas, ingressos, PDFs) */}
+        <Cartao titulo="Cofre" icone={Lock} className="overview-cofre">
+          <Cofre />
+        </Cartao>
       </div>
     </div>
   )
