@@ -26,7 +26,7 @@ Uma etapa por vez, um commit por etapa (`Site no design Plataforma (spec 113): <
 | 11 | Lugares (pílulas, lista + sugestões ao lado) | 10 | `Lugares.tsx` | ✅ Sugestões saíram do painel pra um cartão ao lado (só aparece se o destino tem coordenadas) |
 | 12 | Transportes (pílulas, mapa + painel de trechos) | 11 | `Transportes.tsx` | ✅ Herda o palco e o painel da Hospedagem (mesmas peças) |
 | 13 | Financeiro (saldo + 4 números, câmbio ao lado de carteira/categorias/acertos, filtros, lista) | 12 | `Financeiro.tsx` | ✅ Só a arrumação mudou (nenhuma conta); relatórios ficam embaixo do câmbio; "Meu orçamento" não vaza mais do cartão estreito |
-| 14 | Fotos (coluna central de 760px) | 13 | `Fotos.tsx` | ⏳ |
+| 14 | Fotos (coluna central de 760px) | 13 | `Fotos.tsx` | ✅ coluna de 760px; estado vazio com borda tracejada (o resto já vinha da spec 112) |
 | 15 | Comboio e Configurações (duas colunas; não-ADM vê "como está agora" travado) | 14, 15 | `Comboio.tsx`, `Configuracoes.tsx` | ⏳ |
 | 16 | Imprimir, Livro e Retrospectiva (folha branca com sombra, capa com foto no livro) | 16, 17, 18 | `Imprimir.tsx`, `Livro.tsx`, `Retrospectiva.tsx` | ⏳ |
 

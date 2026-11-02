@@ -4,9 +4,9 @@
 .feed-pagina {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   width: 100%;
-  max-width: 600px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
@@ -856,4 +856,11 @@ html[data-tema='escuro'] .feed-compor {
   html[data-tema='escuro'] .post {
     border-color: var(--cor-borda);
   }
+}
+
+/* Design Plataforma (spec 113): estado vazio com borda tracejada mais clara */
+.feed-pagina .vazio {
+  padding: 44px 24px;
+  border: 1.5px dashed #e3d2b8;
+  border-radius: 20px;
 }
