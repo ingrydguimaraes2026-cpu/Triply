@@ -308,3 +308,19 @@
   color: var(--cor-pessoal);
   font-weight: 700;
 }
+
+/* ---------- Design Plataforma (spec 113) ----------
+   Usa o palco e o painel da Hospedagem; só o mapa do voo fica escuro e o título um pouco menor. */
+.hosp-mapa.mapa-voo {
+  background: #1e140b;
+}
+
+@media (min-width: 1024px) {
+  .hosp-palco > .hosp-mapa.mapa-voo {
+    height: clamp(460px, 66vh, 640px);
+  }
+}
+
+.hosp-palco .hosp-painel[aria-label='Viagem inteira'] .hosp-painel-topo h2 {
+  font-size: 26px;
+}
