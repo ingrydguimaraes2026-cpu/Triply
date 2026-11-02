@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router'
 import RotaProtegida from './features/auth/RotaProtegida'
 import Convite from './pages/Convite'
 import Inicio from './pages/Inicio'
+import ListaDeEspera from './pages/ListaDeEspera'
 import Login from './pages/Login'
 import NovaSenha from './pages/NovaSenha'
 import NovaViagem from './pages/NovaViagem'
@@ -10,6 +11,7 @@ import ViagemLayout from './pages/viagem/ViagemLayout'
 import Overview from './pages/viagem/Overview'
 import Hospedagem from './pages/viagem/Hospedagem'
 import Lugares from './pages/viagem/Lugares'
+import Explorar from './pages/viagem/Explorar'
 import Agenda from './pages/viagem/Agenda'
 import Transportes from './pages/viagem/Transportes'
 import Financeiro from './pages/viagem/Financeiro'
@@ -31,6 +33,8 @@ export const router = createBrowserRouter([
     errorElement: <ErroNaTela />,
     children: [
       { path: '/login', element: <Login /> },
+      // Lista de espera: página pública, sem login (docs/marketing/ESTRATEGIA-REDES.md)
+      { path: '/espera', element: <ListaDeEspera /> },
       // Convite abre até sem login: dá pra entrar como convidado (spec 018)
       { path: '/convite/:codigo', element: <Convite /> },
       {
@@ -52,6 +56,7 @@ export const router = createBrowserRouter([
               { path: 'hospedagem', element: <Hospedagem /> },
               { path: 'agenda', element: <Agenda /> },
               { path: 'lugares', element: <Lugares /> },
+              { path: 'explorar', element: <Explorar /> }, // spec 114
               { path: 'transportes', element: <Transportes /> },
               { path: 'financeiro', element: <Financeiro /> },
               { path: 'fotos', element: <Fotos /> },

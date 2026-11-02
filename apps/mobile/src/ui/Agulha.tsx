@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, Platform, View } from 'react-native'
 import Svg, { Circle, Defs, Ellipse, G, Path, RadialGradient, Rect, Stop } from 'react-native-svg'
 
-// A Agulha: mascote do Together (uma bússola de chapéu de safári que acena). Desenho
-// vetorial do design "Together Mascote" (variante "chapéu e braços") em react-native-svg.
+// A Agulha: mascote do Tripwave (uma bússola de chapéu de safári que acena). Desenho
+// vetorial do design "Tripwave Mascote" (variante "chapéu e braços") em react-native-svg.
 // Cada humor tem um jeito de se mexer:
 //   parada  → flutua devagar, pisca, a agulha balança e o braço acena
 //   feliz   → pula, olhos fechadinhos de alegria e estrelinhas

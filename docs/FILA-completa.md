@@ -177,6 +177,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | 111 | F8 | Localização ao vivo temporária | G | Pronto pra testar (web) · spec 107 |
 | 112 | M14 | Carteira do celular (Apple/Google Wallet) | M | 🔒 precisa de conta Apple Developer e certificado pra assinar o cartão |
 | 113 | M13 | Widgets e Live Activities | G | 🔒 só no app nativo (Expo); entra junto com a paridade do mobile |
+| 114 | — | **Explorar: deslizar lugares e montar o roteiro** (benchmark Roameo, 02/11/2026) · spec 114 · **prioridade: passa na frente da fila** | G | a fazer · UX aprovada · decisões fechadas (02/11), pronta pra codar |
 
 **Fora da fila de propósito:** G8 Bot de WhatsApp (custo da API oficial; avaliar depois) e tudo da seção "O que NÃO vamos fazer" do `docs/ROADMAP.md`.
 

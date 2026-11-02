@@ -70,7 +70,7 @@ export function gerarIcs(nomeDaViagem: string, itens: ItemDoCalendario[], agora:
   const linhas = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Together//Viagem em grupo//PT-BR',
+    'PRODID:-//Tripwave//Viagem em grupo//PT-BR',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${escapar(nomeDaViagem)}`,

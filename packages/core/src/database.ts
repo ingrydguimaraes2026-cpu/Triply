@@ -302,6 +302,168 @@ export type Database = {
           },
         ]
       }
+      catalogo_cidades: {
+        Row: {
+          atualizado_em: string | null
+          chave: string
+          criado_em: string
+          id: string
+          latitude: number
+          longitude: number
+          nome: string
+          pais: string | null
+          raio_km: number
+          regiao: boolean
+          situacao: string
+        }
+        Insert: {
+          atualizado_em?: string | null
+          chave: string
+          criado_em?: string
+          id?: string
+          latitude: number
+          longitude: number
+          nome: string
+          pais?: string | null
+          raio_km?: number
+          regiao?: boolean
+          situacao?: string
+        }
+        Update: {
+          atualizado_em?: string | null
+          chave?: string
+          criado_em?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          nome?: string
+          pais?: string | null
+          raio_km?: number
+          regiao?: boolean
+          situacao?: string
+        }
+        Relationships: [
+        ]
+      }
+      catalogo_lugares: {
+        Row: {
+          bairro: string | null
+          cidade_id: string
+          criado_em: string
+          estilos: string[]
+          fama: number
+          fonte: string
+          foto_autor: string | null
+          foto_licenca: string | null
+          foto_pagina: string | null
+          foto_url: string | null
+          gratis: boolean | null
+          id: string
+          latitude: number
+          link_wikipedia: string | null
+          longitude: number
+          melhor_hora: string | null
+          nome: string
+          por_que: string | null
+          sobre: string | null
+          tempo_min: number | null
+          tipo: string
+          wikidata: string | null
+        }
+        Insert: {
+          bairro?: string | null
+          cidade_id: string
+          criado_em?: string
+          estilos?: string[]
+          fama?: number
+          fonte?: string
+          foto_autor?: string | null
+          foto_licenca?: string | null
+          foto_pagina?: string | null
+          foto_url?: string | null
+          gratis?: boolean | null
+          id?: string
+          latitude: number
+          link_wikipedia?: string | null
+          longitude: number
+          melhor_hora?: string | null
+          nome: string
+          por_que?: string | null
+          sobre?: string | null
+          tempo_min?: number | null
+          tipo: string
+          wikidata?: string | null
+        }
+        Update: {
+          bairro?: string | null
+          cidade_id?: string
+          criado_em?: string
+          estilos?: string[]
+          fama?: number
+          fonte?: string
+          foto_autor?: string | null
+          foto_licenca?: string | null
+          foto_pagina?: string | null
+          foto_url?: string | null
+          gratis?: boolean | null
+          id?: string
+          latitude?: number
+          link_wikipedia?: string | null
+          longitude?: number
+          melhor_hora?: string | null
+          nome?: string
+          por_que?: string | null
+          sobre?: string | null
+          tempo_min?: number | null
+          tipo?: string
+          wikidata?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogo_lugares_cidade_id_fkey"
+            columns: ["cidade_id"]
+            isOneToOne: false
+            referencedRelation: "catalogo_cidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalogo_pedidos: {
+        Row: {
+          cidade_id: string
+          criado_em: string
+          id: number
+          usuario_id: string
+        }
+        Insert: {
+          cidade_id: string
+          criado_em?: string
+          id?: number
+          usuario_id: string
+        }
+        Update: {
+          cidade_id?: string
+          criado_em?: string
+          id?: number
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogo_pedidos_cidade_id_fkey"
+            columns: ["cidade_id"]
+            isOneToOne: false
+            referencedRelation: "catalogo_cidades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalogo_pedidos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chegadas: {
         Row: {
           criado_em: string
@@ -1059,6 +1221,62 @@ export type Database = {
         }
         Relationships: []
       }
+      explorar_escolhas: {
+        Row: {
+          catalogo_lugar_id: string
+          criado_em: string
+          destino_id: string
+          escolha: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          catalogo_lugar_id: string
+          criado_em?: string
+          destino_id: string
+          escolha: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          catalogo_lugar_id?: string
+          criado_em?: string
+          destino_id?: string
+          escolha?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explorar_escolhas_catalogo_lugar_id_fkey"
+            columns: ["catalogo_lugar_id"]
+            isOneToOne: false
+            referencedRelation: "catalogo_lugares"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explorar_escolhas_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explorar_escolhas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explorar_escolhas_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fichas_pessoais: {
         Row: {
           alergias: string | null
@@ -1780,6 +1998,7 @@ export type Database = {
           tipo: string
           viagem_id: string
           visitado_em: string | null
+          wikidata: string | null
         }
         Insert: {
           criado_em?: string
@@ -1798,6 +2017,7 @@ export type Database = {
           tipo?: string
           viagem_id: string
           visitado_em?: string | null
+          wikidata?: string | null
         }
         Update: {
           criado_em?: string
@@ -1816,6 +2036,7 @@ export type Database = {
           tipo?: string
           viagem_id?: string
           visitado_em?: string | null
+          wikidata?: string | null
         }
         Relationships: [
           {
@@ -2852,6 +3073,10 @@ export type Database = {
       }
     }
     Functions: {
+      explorar_criar_lugares: {
+        Args: { p_destino: string }
+        Returns: string[]
+      }
       aceitar_convite: {
         Args: { p_codigo: string; p_nome?: string }
         Returns: string

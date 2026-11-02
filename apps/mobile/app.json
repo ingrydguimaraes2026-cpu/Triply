@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Together",
+    "name": "Tripwave",
     "slug": "together",
     "scheme": "together",
     "version": "1.0.0",
@@ -37,8 +37,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "O Together usa suas fotos pra você postar no feed da viagem.",
-          "cameraPermission": "O Together usa a câmera pra você tirar fotos e postar no feed da viagem."
+          "photosPermission": "O Tripwave usa suas fotos pra você postar no feed da viagem.",
+          "cameraPermission": "O Tripwave usa a câmera pra você tirar fotos e postar no feed da viagem."
         }
       ]
     ]

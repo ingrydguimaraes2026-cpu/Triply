@@ -109,7 +109,7 @@ export default function Livro() {
             </section>
           ))}
 
-          <p className="imprimir-rodape">Feito no Together em {new Date().toLocaleDateString('pt-BR')}.</p>
+          <p className="imprimir-rodape">Feito no Tripwave em {new Date().toLocaleDateString('pt-BR')}.</p>
         </div>
       </div>
     </div>

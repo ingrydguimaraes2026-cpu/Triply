@@ -1,6 +1,6 @@
 # @together/mobile
 
-App mobile do Together (Expo / React Native), parte do monorepo. Usa a lógica
+App mobile do Tripwave (Expo / React Native), parte do monorepo. Usa a lógica
 compartilhada de `@together/core` (dinheiro, câmbio, client do Supabase).
 
 ## Rodar

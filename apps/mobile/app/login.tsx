@@ -78,7 +78,7 @@ export default function Login() {
           <View className="h-[52px] w-[52px] items-center justify-center rounded-2xl bg-fundo">
             <Agulha tamanho={44} sombra={false} />
           </View>
-          <Text className="font-display text-[24px] text-fundo">Together</Text>
+          <Text className="font-display text-[24px] text-fundo">Tripwave</Text>
         </View>
         <Text className="font-display text-[44px] leading-[46px] text-fundo">Viajem juntos.</Text>
         <Text className="mt-3 max-w-[290px] font-body text-[14px] leading-5 text-creme">Roteiro, transportes, contas e fotos do comboio, num lugar só.</Text>

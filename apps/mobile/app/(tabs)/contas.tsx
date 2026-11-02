@@ -100,7 +100,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
         <View className="flex-1 items-center justify-center gap-3 px-5">
           <Agulha humor="dormindo" tamanho={130} />
           <Text className="mt-1.5 font-display text-[26px] text-texto">Nenhum gasto ainda</Text>
-          <Text className="text-center font-body text-[15px] leading-6 text-corpo">Lance o primeiro gasto e o Together divide entre o grupo na hora.</Text>
+          <Text className="text-center font-body text-[15px] leading-6 text-corpo">Lance o primeiro gasto e o Tripwave divide entre o grupo na hora.</Text>
         </View>
         <Botao titulo="Adicionar gasto" icone={<Plus size={20} color="#fff" />} aoTocar={adicionar} />
       </View>

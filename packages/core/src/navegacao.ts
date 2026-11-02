@@ -102,5 +102,5 @@ export function textoParaIndicar(destino: string, lugares: LugarParaIndicar[]): 
     const dica = l.observacao?.trim() ? ` (${l.observacao.trim().slice(0, 80)})` : ''
     return `${EMOJI[l.tipo] ?? '📍'} ${l.nome}${l.visitado ? ' ✓ fomos e recomendo' : ''}${dica}\n${onde}`
   })
-  return [`Minhas dicas em ${destino}:`, '', ...linhas.flatMap((l) => [l, '']), 'Montado no Together'].join('\n')
+  return [`Minhas dicas em ${destino}:`, '', ...linhas.flatMap((l) => [l, '']), 'Montado no Tripwave'].join('\n')
 }

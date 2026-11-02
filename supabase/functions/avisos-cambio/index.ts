@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
   if (soEsta && linhas.length === 0) {
     const enviados = await enviar(soEsta, {
       titulo: '✅ Notificações ligadas',
-      corpo: 'É assim que o Together vai te mandar o boletim do câmbio, às 12h e às 20h.',
+      corpo: 'É assim que o Tripwave vai te mandar o boletim do câmbio, às 12h e às 20h.',
       url: '/',
       tag: 'teste',
     })

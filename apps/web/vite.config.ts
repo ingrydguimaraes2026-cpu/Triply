@@ -46,8 +46,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'Together',
-        short_name: 'Together',
+        name: 'Tripwave',
+        short_name: 'Tripwave',
         description: 'Planeje a viagem com seu comboio, num lugar só.',
         lang: 'pt-BR',
         theme_color: '#7B542F',

@@ -86,8 +86,8 @@ export function htmlDoResumo(r: ResumoParaPdf): string {
     .join('')}</tbody></table>`
   return pagina(
     r.nome,
-    `<div class="marca">Together</div><h1>${e(r.nome)}</h1><p class="sub">${e([r.periodo, r.rota].filter(Boolean).join(' · '))}</p>` +
-      `<h2>Roteiro dia a dia</h2>${dias}${trajetos}${casas}${comboio}<p class="rodape">Gerado pelo Together em ${e(r.geradoEm)}.</p>`,
+    `<div class="marca">Tripwave</div><h1>${e(r.nome)}</h1><p class="sub">${e([r.periodo, r.rota].filter(Boolean).join(' · '))}</p>` +
+      `<h2>Roteiro dia a dia</h2>${dias}${trajetos}${casas}${comboio}<p class="rodape">Gerado pelo Tripwave em ${e(r.geradoEm)}.</p>`,
   )
 }
 
@@ -109,7 +109,7 @@ export type LivroParaPdf = {
 
 export function htmlDoLivro(l: LivroParaPdf): string {
   const e = escaparHtml
-  const capa = `<section class="capa"><div class="marca">Together</div><h1>${e(l.nome)}</h1><p class="sub">${e(l.periodo)}</p><p class="sub">${e(l.rota)}</p><p class="suave">${e(l.comboio)}</p></section>`
+  const capa = `<section class="capa"><div class="marca">Tripwave</div><h1>${e(l.nome)}</h1><p class="sub">${e(l.periodo)}</p><p class="sub">${e(l.rota)}</p><p class="suave">${e(l.comboio)}</p></section>`
   const paginas = l.paginas.length
     ? l.paginas
         .map(
@@ -126,5 +126,5 @@ export function htmlDoLivro(l: LivroParaPdf): string {
         )
         .join('')
     : '<p class="vazio">Ainda não tem agenda, diário nem fotos pra montar o livro.</p>'
-  return pagina(l.nome, `${capa}${paginas}<p class="rodape">Feito no Together em ${e(l.geradoEm)}.</p>`)
+  return pagina(l.nome, `${capa}${paginas}<p class="rodape">Feito no Tripwave em ${e(l.geradoEm)}.</p>`)
 }

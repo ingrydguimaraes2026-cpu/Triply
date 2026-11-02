@@ -1,0 +1,436 @@
+<title>Tripwave Marketing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: caderno de bordo da marca. Faixa couro no topo com a Agulha, índice fixo, seções de leitura com tabelas. */
+:root {
+  --bg: #fbf3e6;
+  --card: #ffffff;
+  --fg: #3b2715;
+  --fg-soft: #7a5f45;
+  --line: #eadcc6;
+  --chip: #f6ead7;
+  --couro: #7b542f;
+  --caramelo: #b97a22;
+  --dourado: #e3a04a;
+  --ok: #5e6b2e;
+  --ok-bg: #eef0df;
+  --alerta: #a1442b;
+  --alerta-bg: #f6e2da;
+  --band-from: #b97a22;
+  --band-mid: #8a5a26;
+  --band-to: #4a2e14;
+  --band-fg: #fbf3e6;
+  --f-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --f-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1d140c; --card: #2a1d12; --fg: #f5e9d6; --fg-soft: #c9b192; --line: #3d2b1b; --chip: #3a2817;
+    --couro: #e0b27a; --caramelo: #e3a04a; --dourado: #e3a04a; --ok: #c4d08a; --ok-bg: #2c2f1a; --alerta: #f0a58c; --alerta-bg: #3d2017;
+    --band-from: #8a5a26; --band-mid: #5e3d1e; --band-to: #2a1a0c; --band-fg: #fbf3e6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1d140c; --card: #2a1d12; --fg: #f5e9d6; --fg-soft: #c9b192; --line: #3d2b1b; --chip: #3a2817;
+  --couro: #e0b27a; --caramelo: #e3a04a; --dourado: #e3a04a; --ok: #c4d08a; --ok-bg: #2c2f1a; --alerta: #f0a58c; --alerta-bg: #3d2017;
+  --band-from: #8a5a26; --band-mid: #5e3d1e; --band-to: #2a1a0c; --band-fg: #fbf3e6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15.5px; line-height: 1.6; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; margin: 0; }
+a { color: var(--couro); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--dourado); outline-offset: 2px; border-radius: 4px; }
+
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 980px; margin: 0 auto; }
+
+/* Faixa de topo */
+.band { background: linear-gradient(160deg, var(--band-from), var(--band-mid) 55%, var(--band-to)); color: var(--band-fg); }
+.band .wrap { padding-block: 40px 44px; display: grid; grid-template-columns: 1fr; gap: 20px; align-items: center; }
+.band h1 { font-size: clamp(34px, 7vw, 54px); line-height: 1.05; color: var(--band-fg); }
+.band p { margin: 10px 0 0; max-width: 560px; opacity: .92; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-size: 20px; font-weight: 600; margin-bottom: 14px; }
+.brand-icon { width: 44px; height: 44px; border-radius: 14px; background: #fbf3e6; display: grid; place-items: center; }
+.band-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.pill { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 11px; border-radius: 999px; background: rgba(251,243,230,.16); color: var(--band-fg); }
+.mascote { justify-self: center; }
+@media (min-width: 760px) { .band .wrap { grid-template-columns: 1fr auto; } }
+
+/* Índice */
+.toc { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.toc .wrap { display: flex; gap: 6px; overflow-x: auto; padding-block: 10px; scrollbar-width: none; }
+.toc a { flex: none; text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--fg-soft); padding: 7px 12px; border-radius: 10px; }
+.toc a:hover { background: var(--chip); color: var(--fg); }
+
+main .wrap { display: flex; flex-direction: column; gap: 56px; padding-block: 36px 64px; }
+section { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 64px; min-width: 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--caramelo); }
+section > h2 { font-size: clamp(26px, 4.5vw, 34px); line-height: 1.15; }
+h3 { font-size: 20px; margin-top: 8px; }
+p { margin: 0; max-width: 68ch; }
+.lead { font-size: 17px; color: var(--fg-soft); }
+ul, ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+
+.table-box { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-soft); background: var(--chip); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
+.hl td { background: var(--ok-bg); }
+
+.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 680px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card h3 { margin: 0; font-size: 18px; }
+.card p, .card li { font-size: 14.5px; color: var(--fg-soft); }
+
+.callout { border-radius: 14px; padding: 14px 16px; font-size: 14.5px; }
+.callout.ok { background: var(--ok-bg); color: var(--fg); }
+.callout.warn { background: var(--alerta-bg); color: var(--fg); }
+.callout strong { color: inherit; }
+
+.quote { font-family: var(--f-display); font-size: 21px; line-height: 1.35; padding-left: 16px; border-left: 3px solid var(--dourado); max-width: 60ch; }
+.quote small { display: block; font-family: var(--f-body); font-size: 13px; color: var(--fg-soft); margin-top: 6px; }
+
+.handle { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; background: var(--chip); padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+.dodont { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 680px) { .dodont { grid-template-columns: 1fr 1fr; } }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+.tag.ok { background: var(--ok-bg); color: var(--ok); }
+.tag.no { background: var(--alerta-bg); color: var(--alerta); }
+
+.week { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 760px) { .week { grid-template-columns: repeat(2, 1fr); } }
+.week .card .when { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--caramelo); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 24px 40px; font-size: 13px; color: var(--fg-soft); display: flex; flex-direction: column; gap: 6px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mascote .braco { transform-origin: 24px 74px; animation: acena 2.4s ease-in-out infinite; }
+  @keyframes acena { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(8deg); } 90% { transform: rotate(-10deg); } }
+}
+</style>
+
+<header class="band gutter">
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="34" height="34"><circle cx="60" cy="64" r="40" fill="#C08530"/><circle cx="60" cy="64" r="32.5" fill="#FBF0DC"/><path d="M60 38 L66 62 L54 62Z" fill="#E06A4E"/><path d="M60 88 L66 62 L54 62Z" fill="#7B542F"/><ellipse cx="60" cy="30" rx="36" ry="7.5" fill="#7B4E28" transform="rotate(-8 60 28)"/><path d="M40 30 Q41 11 60 11 Q79 11 80 30Z" fill="#A8703F" transform="rotate(-8 60 28)"/></svg>
+        </span>
+        Tripwave
+      </div>
+      <h1>Caderno de marketing</h1>
+      <p>Tudo o que a dupla decidiu sobre nome, voz, canais e conteúdo. A Agulha é a logo e a cara da marca.</p>
+      <div class="band-meta">
+        <span class="pill">Atualizado 02/11/2026</span>
+        <span class="pill">Victor + Ingryd</span>
+        <span class="pill">Em breve</span>
+      </div>
+    </div>
+    <svg class="mascote" viewBox="0 0 120 120" width="170" height="170" role="img" aria-label="A Agulha, mascote do Tripwave: uma bússola de chapéu de safári acenando">
+      <defs>
+        <radialGradient id="ouro" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#E9B866"/><stop offset=".55" stop-color="#C08530"/><stop offset="1" stop-color="#8E5E22"/></radialGradient>
+        <radialGradient id="rosto" cx="45%" cy="38%" r="68%"><stop offset="0" stop-color="#FFFCF5"/><stop offset="1" stop-color="#F0E0C4"/></radialGradient>
+      </defs>
+      <ellipse cx="60" cy="112" rx="30" ry="4" fill="#000" opacity=".18"/>
+      <ellipse cx="46" cy="106" rx="8" ry="4.5" fill="#7B542F"/>
+      <ellipse cx="74" cy="106" rx="8" ry="4.5" fill="#7B542F"/>
+      <g class="braco"><path d="M24 74 Q12 68 11 55" fill="none" stroke="#7B4E28" stroke-width="5.5" stroke-linecap="round"/><circle cx="11" cy="52" r="5.5" fill="#A8703F"/></g>
+      <path d="M96 76 Q106 84 104 94" fill="none" stroke="#7B4E28" stroke-width="5.5" stroke-linecap="round"/><circle cx="104" cy="96" r="5.5" fill="#A8703F"/>
+      <circle cx="60" cy="64" r="40" fill="url(#ouro)"/>
+      <circle cx="60" cy="64" r="35" fill="#8E5E22"/>
+      <circle cx="60" cy="64" r="32.5" fill="url(#rosto)"/>
+      <path d="M29 45 A36 36 0 0 1 45 29" fill="none" stroke="#F6DB9E" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+      <g fill="#C9A473">
+        <rect x="59.3" y="33.5" width="1.4" height="4" rx=".7"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(90 60 64)"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(180 60 64)"/><rect x="59.3" y="33.5" width="1.4" height="4" rx=".7" transform="rotate(270 60 64)"/>
+      </g>
+      <path d="M60 38 L60 62 L54 62Z" fill="#E06A4E"/><path d="M60 38 L66 62 L60 62Z" fill="#B5462F"/>
+      <path d="M60 80 L60 62 L54 62Z" fill="#8E6A3E"/><path d="M60 80 L66 62 L60 62Z" fill="#6B4A2A"/>
+      <circle cx="60" cy="62" r="3.2" fill="#C08530"/>
+      <g stroke="#3B2715" stroke-width="2" stroke-linecap="round" fill="none"><path d="M36 50.5 q6 -4 12 -.5"/><path d="M72 50 q6 -3.5 12 .5"/></g>
+      <ellipse cx="39" cy="73" rx="4.5" ry="2.8" fill="#E58C6A" opacity=".55"/><ellipse cx="81" cy="73" rx="4.5" ry="2.8" fill="#E58C6A" opacity=".55"/>
+      <ellipse cx="42" cy="60" rx="5.5" ry="6.5" fill="#FFFDF8"/><ellipse cx="42" cy="61" rx="3.4" ry="4" fill="#2A1A0C"/><circle cx="43.3" cy="59.4" r="1.3" fill="#fff"/>
+      <ellipse cx="78" cy="60" rx="5.5" ry="6.5" fill="#FFFDF8"/><ellipse cx="78" cy="61" rx="3.4" ry="4" fill="#2A1A0C"/><circle cx="79.3" cy="59.4" r="1.3" fill="#fff"/>
+      <path d="M54 85 Q60 91 66 85" fill="none" stroke="#2A1A0C" stroke-width="2.6" stroke-linecap="round"/>
+      <g transform="rotate(-8 60 28)">
+        <ellipse cx="60" cy="30" rx="36" ry="7.5" fill="#7B4E28"/>
+        <path d="M40 30 Q41 11 60 11 Q79 11 80 30Z" fill="#A8703F"/>
+        <path d="M40.6 25 Q60 21 79.4 25 L79.8 29.5 Q60 26 40.2 29.5Z" fill="#5E3D20"/>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<nav class="toc gutter" aria-label="Seções">
+  <div class="wrap">
+    <a href="#hoje">Hoje</a>
+    <a href="#canais">Canais</a>
+    <a href="#ingryd">Ideias da Ingryd</a>
+    <a href="#agulha">A Agulha</a>
+    <a href="#tiktok">TikTok e Insta</a>
+    <a href="#x">X</a>
+    <a href="#nome">Nome e @</a>
+    <a href="#voz">Tom de voz</a>
+    <a href="#plano">Plano 30 dias</a>
+    <a href="#concorrentes">Concorrentes</a>
+  </div>
+</nav>
+
+<main class="gutter">
+  <div class="wrap">
+
+    <section id="hoje">
+      <span class="eyebrow">Pra fazer agora</span>
+      <h2>Garantir o nome antes de postar</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Domínios</h3>
+          <p>Registrar <span class="handle">tripwave.app</span> (Namecheap ou Cloudflare) e <span class="handle">tripwave.com.br</span> (registro.br). O tripwave.com está ocupado.</p>
+        </div>
+        <div class="card">
+          <h3>Perfis, no mesmo dia</h3>
+          <p><span class="handle">@tripwaveapp</span> no X. <span class="handle">@tripwave.app</span> no Instagram e no TikTok.</p>
+        </div>
+        <div class="card">
+          <h3>Marca no INPI</h3>
+          <p>Buscar "Tripwave" em busca.inpi.gov.br nas classes 9 (app), 39 (viagem) e 42 (tecnologia). Depois, uma consulta com advogado de marca.</p>
+        </div>
+        <div class="card">
+          <h3>Lista de espera</h3>
+          <p>A página <span class="handle">/espera</span> já está pronta no site. Falta uma sessão de dev criar a tabela no Supabase.</p>
+        </div>
+      </div>
+      <div class="callout warn"><strong>Nada disso foi confirmado como livre.</strong> A triagem só olhou se o domínio tem DNS e se a conta parece vazia. Só a tentativa de registro confirma.</div>
+    </section>
+
+    <section id="canais">
+      <span class="eyebrow">Onde e pra quem</span>
+      <h2>Cada canal tem um papel</h2>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Canal</th><th>Pra quem</th><th>O que postar</th></tr></thead>
+          <tbody>
+            <tr><td><strong>X</strong></td><td>Devs e fundadores</td><td>Construir em público: bastidores, números, vídeo do app. Aqui entra demonstração.</td></tr>
+            <tr><td><strong>TikTok</strong></td><td>Quem viaja com amigos</td><td>A Agulha nas trends. 5 a 15 segundos, áudio em alta, frase curta. Quiz e humor.</td></tr>
+            <tr><td><strong>Instagram</strong></td><td>Cliente e criadores</td><td>Os mesmos Reels + carrossel explicando a proposta. É a vitrine que o influenciador olha.</td></tr>
+            <tr><td><strong>DM e e-mail</strong></td><td>Influenciadores de viagem</td><td>Contato direto, 1 a 1.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>A regra que todos repetem é volume:</strong> achar 1 formato que funciona e postar todo dia, por meses.</p>
+    </section>
+
+    <section id="ingryd">
+      <span class="eyebrow">Conversa de 02/11</span>
+      <h2>Ideias da Ingryd</h2>
+      <p class="quote">"TikTok é trend. Entrou nas trends, viraliza. Imagens e vídeos com frases curtas, a galera tem preguiça de ler."<small>Ingryd, no WhatsApp</small></p>
+      <p>Os números do próprio Roameo confirmam. No TikTok deles (2.357 seguidores):</p>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Vídeo</th><th>Tipo</th><th>Views</th></tr></thead>
+          <tbody>
+            <tr class="hl"><td>"How many points did you get?"</td><td>Quiz</td><td class="num">502,9 mil</td></tr>
+            <tr class="hl"><td>"How many of these countries have you been to?"</td><td>Quiz</td><td class="num">52 mil</td></tr>
+            <tr class="hl"><td>"Are you better than 90% of travelers?"</td><td>Quiz</td><td class="num">46,4 mil</td></tr>
+            <tr><td>"Deslize os lugares com os amigos"</td><td>Demonstração</td><td class="num">2 mil</td></tr>
+            <tr><td>"Gere o roteiro em segundos"</td><td>Demonstração</td><td class="num">1,8 mil</td></tr>
+            <tr><td>"Importe lugares do TikTok"</td><td>Demonstração</td><td class="num">1,5 mil</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout ok">Quiz e brincadeira dão de 20 a 250 vezes mais views que mostrar o app. No TikTok, quase nada de demonstração.</div>
+      <div class="grid two">
+        <div class="card">
+          <h3>"A parada é achar o público certo"</h3>
+          <p>Testar um nicho por vez:</p>
+          <ul>
+            <li><strong>Réveillon com os amigos</strong>: é agora, todo mundo fechando casa pra virada.</li>
+            <li>Carnaval 2027: planejamento em dezembro e janeiro.</li>
+            <li>Despedida de solteiro(a).</li>
+            <li>Formatura e viagem de turma.</li>
+            <li>Bate-volta e fim de semana na praia.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>"Contato direto é melhor"</h3>
+          <p>Com influenciador, post não abre conversa. DM e e-mail abrem. O Instagram precisa explicar a proposta em 1 carrossel, porque é o que o criador vai olhar depois de receber a mensagem.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="agulha">
+      <span class="eyebrow">O mascote</span>
+      <h2>A Agulha é o maior ativo de marketing</h2>
+      <p>O exemplo que a Ingryd mandou: um vídeo do Duolingo de 6 segundos, o mascote "desfilando" num áudio em alta. <strong>148 mil curtidas e 52 mil compartilhamentos.</strong></p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Por que o Duolingo funciona</h3>
+          <ul>
+            <li>Personagem com personalidade fixa e piadas que voltam sempre.</li>
+            <li>Rapidez: o próprio time faz, sem agência. Trend dura dias.</li>
+            <li>Mede cadastro, não só view.</li>
+          </ul>
+          <p>Um colunista de marketing defende que o crescimento veio da personalidade da marca, não dos influenciadores.</p>
+        </div>
+        <div class="card">
+          <h3>Personalidade proposta (Ingryd ajusta)</h3>
+          <ul>
+            <li>É bússola: sempre acha o caminho, mesmo com o grupo perdido.</li>
+            <li>Organizada, mas perde a paciência com quem não paga o Pix.</li>
+            <li>Piadas fixas: a rivalidade com a planilha, o pavor do grupo do zap com 300 mensagens, o amigo que some na hora de pagar.</li>
+            <li>Humores do app: feliz, dormindo, pensando.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="tiktok">
+      <span class="eyebrow">Cliente</span>
+      <h2>TikTok e Instagram</h2>
+      <h3>Formatos pra testar primeiro</h3>
+      <div class="grid two">
+        <div class="card"><h3>Agulha na trend</h3><p>O mascote no áudio do momento, 5 a 10 segundos, uma frase. "A Agulha vendo o grupo decidir a casa do réveillon há 3 semanas."</p></div>
+        <div class="card"><h3>Quiz do grupo</h3><p>"Quantos pontos seu grupo faz?" Já fecharam a casa? Alguém pagou o Pix? Tem planilha? O formato que mais viralizou no Roameo.</p></div>
+        <div class="card"><h3>"Marca aquele amigo que..."</h3><p>Imagem com frase curta e a Agulha. Feito pra marcar e compartilhar.</p></div>
+        <div class="card"><h3>Carrossel de nicho</h3><p>"Checklist do réveillon com a galera". "Como dividir a casa da despedida de solteira."</p></div>
+      </div>
+      <h3>As dores que todo mundo já viveu</h3>
+      <ul>
+        <li>O amigo que não paga o Pix.</li>
+        <li>Um pagou o Airbnb, outro o mercado, e ninguém confia na planilha no final.</li>
+        <li>Mil links de Airbnb perdidos no grupo do zap.</li>
+        <li>A enquete que ninguém responde.</li>
+        <li>"Há 8 anos tentando marcar viagem com os amigos e nunca rola."</li>
+      </ul>
+      <h3>Rotina</h3>
+      <ul>
+        <li>1 a 3 vídeos por dia. O mesmo vídeo no TikTok, Reels e Shorts.</li>
+        <li>Gancho nos 2 primeiros segundos, texto grande na tela.</li>
+        <li>Deu certo? Repetir o formato 10 vezes antes de inventar outro.</li>
+      </ul>
+    </section>
+
+    <section id="x">
+      <span class="eyebrow">Bolha dev</span>
+      <h2>X: construir em público</h2>
+      <p>Referência: o post "em breve" da Yayzeka. Uma frase com o benefício, vídeo de 20 segundos bem animado, "Em breve".</p>
+      <p class="quote">"tripwave: você vê o roteiro, quem pagou o quê e o Pix de cada um numa tela, e o grupo do zap para de virar bagunça. Em breve"<small>Nossa versão do post de lançamento</small></p>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Perfil</th><th>Por que seguir</th></tr></thead>
+          <tbody>
+            <tr><td class="num">@magdiel_rb</td><td>Fundador solo BR crescendo rápido no X</td></tr>
+            <tr><td class="num">@gabrielbuzziv</td><td>Histórias com números (Enxovaly)</td></tr>
+            <tr><td class="num">@thallisribeiro</td><td>Desafios públicos de SaaS</td></tr>
+            <tr><td class="num">@condzxyz</td><td>Analisa o que viraliza</td></tr>
+            <tr><td class="num">@yayyzeka</td><td>Vídeo de app "em breve"</td></tr>
+            <tr><td class="num">@brunoclz</td><td>Viralizou pelo design</td></tr>
+            <tr><td class="num">@ErnestoSOFTWARE</td><td>Playbook de apps B2C</td></tr>
+            <tr><td class="num">@tobiadonadon_</td><td>Branding e mascote</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>1 a 3 posts por dia, pelo menos 1 com vídeo ou print.</li>
+        <li>20 a 30 respostas por dia nesses perfis.</li>
+        <li>Toda sexta: resumo da semana com números.</li>
+        <li>A história da dupla (um dev e uma pessoa aprendendo a programar, construindo com IA) é conteúdo.</li>
+      </ul>
+    </section>
+
+    <section id="nome">
+      <span class="eyebrow">Decidido em 02/11</span>
+      <h2>Tripwave</h2>
+      <p class="lead">Trip, viagem, mais wave, onda. O grupo pega a mesma onda e vai junto.</p>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Item</th><th>Situação (não confirmada)</th></tr></thead>
+          <tbody>
+            <tr><td>App Store</td><td>Só um app de música com o nome. Nenhum de viagem.</td></tr>
+            <tr><td>tripwave.com</td><td>Ocupado</td></tr>
+            <tr><td>tripwave.app, .com.br, gettripwave.com</td><td>Parecem livres</td></tr>
+            <tr><td>@tripwave</td><td>Contas paradas nas 3 redes (2 a 12 seguidores)</td></tr>
+            <tr><td>@tripwaveapp</td><td>Livre no X e no TikTok. Ocupado no Instagram (conta vazia).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Descartados no caminho: Viajunto, Zarpy (lembra zap), Trupe (Troupe da JetBlue), Comboio (trem em Portugal), Tropa (já existe o Tropê), Triplyy e Tripals (variações estranhas), Jetcrew (lembra tripulação de avião).</p>
+    </section>
+
+    <section id="voz">
+      <span class="eyebrow">Como a marca fala</span>
+      <h2>Tom de voz</h2>
+      <p class="lead">O Tripwave fala como o amigo que sempre organiza a viagem e não perde a paciência. Informal e rápido, com humor de grupo do zap, mas resolve. A pessoa sai pensando "agora vai, essa viagem sai".</p>
+      <div class="dodont">
+        <div class="card">
+          <span class="tag ok">Faça</span>
+          <ul>
+            <li>Fale como no grupo do zap: "bora", "a galera", "fechou".</li>
+            <li>Brinque com a dor, nunca com a pessoa.</li>
+            <li>Diga o resultado: "ninguém fica devendo".</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="tag no">Não faça</span>
+          <ul>
+            <li>Palavra de startup: "solução", "plataforma inovadora".</li>
+            <li>Inglês sem precisar: "expenses", "itinerary".</li>
+            <li>Formalidade: "Prezado usuário".</li>
+          </ul>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Em vez de</th><th>Escreva</th></tr></thead>
+          <tbody>
+            <tr><td>"Gerencie as despesas compartilhadas da sua viagem de forma eficiente."</td><td><strong>"Quem pagou o quê, e o Pix de cada um. Acabou a planilha."</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="plano">
+      <span class="eyebrow">Sequência</span>
+      <h2>Plano dos primeiros 30 dias</h2>
+      <div class="week">
+        <div class="card"><span class="when">Semana 1</span><h3>Preparar</h3><ul><li>Registrar domínios e criar os @.</li><li>Lista de espera no ar.</li><li>Definir a personalidade da Agulha.</li><li>Gravar 10 vídeos curtos da tela do app.</li></ul></div>
+        <div class="card"><span class="when">Semana 2</span><h3>Começar no X</h3><ul><li>Post de apresentação da dupla.</li><li>Vídeo "em breve" com o link da lista.</li><li>Responder 20 a 30 posts por dia.</li></ul></div>
+        <div class="card"><span class="when">Semana 3</span><h3>TikTok e Instagram</h3><ul><li>2 vídeos por dia testando os formatos.</li><li>Nicho: réveillon com os amigos.</li><li>Primeiras DMs pra criadores de viagem.</li></ul></div>
+        <div class="card"><span class="when">Semana 4</span><h3>Dobrar o que funcionou</h3><ul><li>Repetir o formato vencedor todo dia.</li><li>Post no X com os números do mês.</li></ul></div>
+      </div>
+      <div class="callout ok"><strong>Meta pra medir agora:</strong> pessoas na lista de espera. Use um link por rede: <span class="handle">/espera?origem=tiktok</span>, <span class="handle">?origem=x</span>, <span class="handle">?origem=instagram</span>.</div>
+    </section>
+
+    <section id="concorrentes">
+      <span class="eyebrow">Quem mais está no jogo</span>
+      <h2>Concorrentes</h2>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Quem</th><th>O que é</th><th>Tamanho</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Roameo</strong></td><td>Startup de Hong Kong (2025), swipe de lugares tipo Tinder, ganha com afiliados</td><td>10 a 50 mil downloads, 2,3 mil seguidores no TikTok. Faturamento não é público; chute de US$ 1 a 5 mil por mês.</td></tr>
+            <tr><td><strong>Tropê</strong></td><td>App brasileiro de viagem em grupo, com assistente de IA no WhatsApp (Giquinha)</td><td>Concorrente direto no Brasil</td></tr>
+            <tr><td><strong>Wanderlog, Splitwise, Tricount</strong></td><td>Roteiro colaborativo e divisão de gastos</td><td>Grandes, com público fiel</td></tr>
+            <tr><td><strong>Zap + planilha + Pix</strong></td><td>O que a maioria dos grupos usa hoje</td><td>O rival de verdade</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="gutter">
+  <div class="wrap">
+    <span>Fonte no repositório: Triply/docs/marketing/ESTRATEGIA-REDES.md e NOME-E-VOZ.md.</span>
+    <span>Números de views e seguidores coletados em 02/11/2026.</span>
+  </div>
+</footer>

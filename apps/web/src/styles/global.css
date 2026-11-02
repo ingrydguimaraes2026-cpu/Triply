@@ -129,7 +129,7 @@ a {
   cursor: pointer;
 }
 
-/* Logo do Together (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
+/* Logo do Tripwave (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
 .logo {
   display: inline-flex;
   align-items: center;

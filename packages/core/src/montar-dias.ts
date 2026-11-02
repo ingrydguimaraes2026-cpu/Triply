@@ -17,7 +17,14 @@ export type LugarParaMontar = {
 export type ItemProposto = { lugarId: string; nome: string; hora: string; local: string | null }
 export type DiaProposto = { dia: string; itens: ItemProposto[] }
 
-const HORAS_DOS_PASSEIOS = ['10:00', '15:00', '17:30']
+// Horários de cada passeio no dia, pelo ritmo (spec 114: Tranquilo 2, Equilibrado 3, Intenso 4)
+const HORAS_POR_RITMO: Record<number, string[]> = {
+  1: ['10:00'],
+  2: ['10:00', '15:00'],
+  3: ['10:00', '15:00', '17:30'],
+  4: ['09:30', '11:30', '15:00', '17:30'],
+}
+const horasDosPasseios = (porDia: number) => HORAS_POR_RITMO[porDia] ?? HORAS_POR_RITMO[3]
 const HORA_DA_COMIDA = '13:00'
 
 const comPonto = (l: LugarParaMontar) => l.latitude != null && l.longitude != null
@@ -72,9 +79,10 @@ export function montarDiasPelosVotos(
   })
   comidas.slice(dias.length).forEach((c) => sobraram.push(c.nome))
 
+  const horas = horasDosPasseios(porDia)
   const propostos = dias.map((dia, i) => {
     const ordem = ordenarPorCaminho(grupos[i])
-    const itens: ItemProposto[] = ordem.map((l, k) => ({ lugarId: l.id, nome: l.nome, hora: HORAS_DOS_PASSEIOS[k] ?? '', local: l.endereco ?? null }))
+    const itens: ItemProposto[] = ordem.map((l, k) => ({ lugarId: l.id, nome: l.nome, hora: horas[k] ?? '', local: l.endereco ?? null }))
     const comida = comidas[i]
     if (comida) itens.splice(Math.min(1, itens.length), 0, { lugarId: comida.id, nome: comida.nome, hora: HORA_DA_COMIDA, local: comida.endereco ?? null })
     return { dia, itens }

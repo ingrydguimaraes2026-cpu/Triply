@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { CheckCheck, ExternalLink, Flag, Upload, Heart, Luggage, Map as MapaIcone, Pencil, Plus } from 'lucide-react'
+import { Link } from 'react-router'
+import { CheckCheck, ExternalLink, Flag, Upload, Heart, Luggage, Map as MapaIcone, Pencil, Plus, Sparkles } from 'lucide-react'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'
@@ -162,6 +163,15 @@ export default function Lugares() {
             </div>
             {passagem && <span className="hosp-selo selo-bate-e-volta">De passagem</span>}
           </header>
+
+          {/* Spec 114: deslizar os lugares e montar o roteiro */}
+          <Link to={`../explorar?destino=${destino.id}`} className="lugares-explorar">
+            <Sparkles size={18} aria-hidden="true" />
+            <span>
+              <strong>Explorar {destino.nome}</strong>
+              <small>Deslize os lugares e monte o roteiro em minutos</small>
+            </span>
+          </Link>
 
           {/* Dia de passagem: sugestão de guarda-volumes (some quando já tem um anotado) */}
           {passagem && !temGuardaVolumes && (

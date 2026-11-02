@@ -14,7 +14,7 @@ export async function gerarLinkDeConvite(viagemId: string) {
 // Abre o "compartilhar" do celular. No navegador sem compartilhar, copia o link.
 // Devolve 'copiado' quando só copiou (pra tela avisar).
 export async function compartilharLink(link: string, nomeDaViagem: string): Promise<'compartilhado' | 'copiado'> {
-  const texto = `Bora pra ${nomeDaViagem}? Entra no comboio pelo Together: ${link}`
+  const texto = `Bora pra ${nomeDaViagem}? Entra no comboio pelo Tripwave: ${link}`
   if (Platform.OS === 'web') {
     const nav = globalThis.navigator as Navigator | undefined
     if (nav?.share) {

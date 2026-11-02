@@ -389,3 +389,30 @@ html[data-tema='escuro'] .lugar {
 .lugares-dica {
   background: var(--cor-fundo-suave);
 }
+
+/* Spec 114: entrada do Explorar */
+.lugares-explorar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--couro);
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: var(--sombra-botao);
+}
+.lugares-explorar span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lugares-explorar small {
+  font-size: 12px;
+  opacity: 0.9;
+}
+.lugares-explorar:focus-visible {
+  outline: 3px solid var(--caramelo);
+  outline-offset: 2px;
+}

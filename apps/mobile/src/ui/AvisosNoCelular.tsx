@@ -10,7 +10,7 @@ import { cor } from '../../theme'
 const EXPLICA: Record<EstadoDosAvisos, string> = {
   ligado: 'Este celular recebe os avisos do comboio.',
   pedir: 'Ligue pra receber lembretes 1 hora antes de cada trajeto e encontro.',
-  bloqueado: 'As notificações do Together estão bloqueadas nos ajustes do celular.',
+  bloqueado: 'As notificações do Tripwave estão bloqueadas nos ajustes do celular.',
   'sem-suporte': 'Os avisos chegam só no app instalado no celular. No navegador, use o site.',
   'sem-projeto': 'Os avisos ainda não estão prontos nesta versão do app.',
 }

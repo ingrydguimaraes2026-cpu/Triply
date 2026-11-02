@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Lógica compartilhada do Together (dinheiro, câmbio, regras). Sem React, sem react-dom, sem react-native — só TypeScript puro, pra web e mobile usarem igual.",
+  "description": "Lógica compartilhada do Tripwave (dinheiro, câmbio, regras). Sem React, sem react-dom, sem react-native — só TypeScript puro, pra web e mobile usarem igual.",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

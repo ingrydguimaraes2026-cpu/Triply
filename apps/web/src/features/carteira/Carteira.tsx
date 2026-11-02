@@ -115,7 +115,7 @@ export default function Carteira({ viagemId, meuId, estado, recarregar, aoVirarG
           <span className="carteira-convite-icone">
             <Mail size={26} aria-hidden="true" />
           </span>
-          <p>Conecte seu Gmail e o Together puxa sozinho suas recargas e gastos em euro do Wise e do Nomad.</p>
+          <p>Conecte seu Gmail e o Tripwave puxa sozinho suas recargas e gastos em euro do Wise e do Nomad.</p>
           <a className="botao" href={urlDeConsentimento(viagemId)}>
             <Mail size={18} aria-hidden="true" /> Conectar Gmail
           </a>

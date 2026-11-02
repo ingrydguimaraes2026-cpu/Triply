@@ -356,7 +356,7 @@ function CriarViagem() {
                   {trazidos} {trazidos === 1 ? 'pessoa do comboio já entrou' : 'pessoas do comboio já entraram'} nesta viagem.
                 </p>
               )}
-              <p className="onb-sub">Convide quem vai viajar com você para participar da mesma viagem no Together.</p>
+              <p className="onb-sub">Convide quem vai viajar com você para participar da mesma viagem no Tripwave.</p>
               <p className="onb-sub">
                 Compartilhem o roteiro, organizem os planos, acompanhem os gastos e guardem as memórias juntos. Cada pessoa
                 poderá acessar a viagem pelo convite.

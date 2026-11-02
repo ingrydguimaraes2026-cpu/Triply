@@ -1,4 +1,4 @@
-# AGENTS.md — Together (nome provisório)
+# AGENTS.md — Tripwave
 
 Regras pra qualquer assistente de IA (Claude Code, Cursor, Codex) que trabalhar neste projeto.
 
@@ -65,6 +65,14 @@ O objetivo não é só fazer: é ela **entender o que foi feito e conseguir test
 
 Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que aparecer (celular e computador no mesmo Wi-Fi).
 
+## 3.1 Limite de uso do Claude (regra do Victor, 02/11/2026)
+
+Quando o uso da conta do Claude chegar perto do fim (~90%) ou a pessoa avisar que está acabando:
+1. **Pare de começar coisa nova.** Termine só o passo que está no meio, com calma.
+2. Escreva ou atualize um `docs/HANDOFF-<assunto>.md`: o que está pronto, o que está no ar, onde parou, o próximo passo exato e os cuidados.
+3. **Commit e push de tudo** na branch de trabalho (hoje `monorepo-split`), inclusive o que outras sessões deixaram sem commit (nunca `.env`). Não precisa pedir confirmação pra esse commit/push: a regra já é a autorização.
+4. Avise em uma linha qual é o HANDOFF, pra continuar em outra conta.
+
 ## 4. Como trabalhamos com Git (explique isso pra ela na primeira vez)
 
 - `main` = versão oficial. **Nunca** commitar nem dar push direto na `main`.
@@ -126,4 +134,5 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 - Concorrentes: `docs/benchmark.md`
 - Glossário pra Ingryd: `docs/glossario.md`
 - Guia "como pedir coisas pro Claude": `docs/COMO-TRABALHAR.md`
-- O nome "Together" é provisório (era "Triply", que já existe). O repositório no GitHub continua se chamando Triply.
+- O nome do produto é **Tripwave** (decidido em 02/11/2026; antes foi "Triply" e "Together"). Ver `docs/marketing/NOME-E-VOZ.md`.
+- Nomes internos continuam com "together" de propósito: pacote `@together/core`, chaves `together:*` no navegador, caches, link `together://` do app e o endereço `together-viagem.vercel.app`. Trocar esses quebra login, convites e dados salvos. O repositório no GitHub continua se chamando Triply.

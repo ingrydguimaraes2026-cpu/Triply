@@ -8,7 +8,7 @@ Blocos reutilizáveis pra montar as telas com a mesma cara. Os estilos ficam em 
 | `CabecalhoPagina` | Título grande no topo de cada aba | `<CabecalhoPagina titulo="Fotos" subtitulo="..." />` |
 | `EstadoVazio` | Tela/cartão sem dados ainda, explicando o próximo passo | `<EstadoVazio icone={Camera} titulo="..." texto="..." />` |
 | `Avatar` | Foto ou iniciais da pessoa | `<Avatar nome="Ingryd" url={...} />` |
-| `Logo` | Logo do Together como no app (Agulha no quadradinho bege + nome). Pega a cor e o tamanho do texto em volta | `<Logo />` ou `<Logo comNome={false} />` |
+| `Logo` | Logo do Tripwave como no app (Agulha no quadradinho bege + nome). Pega a cor e o tamanho do texto em volta | `<Logo />` ou `<Logo comNome={false} />` |
 | `Agulha` | Mascote (bússola de chapéu). Humores: `parada`, `feliz`, `dormindo`, `pensando` | `<Agulha humor="dormindo" tamanho={120} />` |
 | `IconeQuadrado` | Quadradinho bege com ícone (atalhos, itens de lista), como no app | `<IconeQuadrado icone={Bed} tamanho={48} />` |
 | `BotaoRedondo` | Botão redondo de 44px (voltar, compartilhar). `claro` pra ficar em cima de foto | `<BotaoRedondo rotulo="Voltar"><ArrowLeft size={20} /></BotaoRedondo>` |

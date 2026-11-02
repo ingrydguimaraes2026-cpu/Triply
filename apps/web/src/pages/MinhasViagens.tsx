@@ -125,7 +125,7 @@ export default function MinhasViagens() {
           <span className="pagina-solta-agulha">
             <Agulha tamanho={34} sombra={false} />
           </span>
-          Together
+          Tripwave
         </Link>
         <nav>
           <Link to="/perfil" className="botao-texto">

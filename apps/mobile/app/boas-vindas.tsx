@@ -13,7 +13,7 @@ const foto = (id: string) => `https://images.unsplash.com/photo-${id}?auto=forma
 
 const SLIDES = [
   { t: 'Planejem juntos', b: 'Roteiro, transportes e reservas do grupo inteiro, organizados num lugar só.', img: foto('1529156069898-49953e39b3ac') },
-  { t: 'Dividam as contas', b: 'Cada gasto lançado na hora. O Together calcula quem deve quanto, sem planilha.', img: foto('1414235077428-338989a2e8c0') },
+  { t: 'Dividam as contas', b: 'Cada gasto lançado na hora. O Tripwave calcula quem deve quanto, sem planilha.', img: foto('1414235077428-338989a2e8c0') },
   { t: 'Guardem as memórias', b: 'As fotos de todo mundo, juntas e separadas por dia, prontas pra rever.', img: foto('1527631746610-bca00a040d60') },
 ]
 

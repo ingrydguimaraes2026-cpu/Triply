@@ -1,7 +1,7 @@
 import { useId } from 'react'
 import './ui.css'
 
-// A Agulha: mascote do Together (uma bússola de chapéu de safári que acena).
+// A Agulha: mascote do Tripwave (uma bússola de chapéu de safári que acena).
 // Mesmo desenho do app (apps/mobile/src/ui/Agulha.tsx), aqui em SVG puro com animação em CSS (ui.css).
 //   parada  → flutua, a agulha balança e o braço acena
 //   feliz   → pula, olhos fechadinhos e estrelinhas

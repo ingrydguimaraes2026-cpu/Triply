@@ -1,6 +1,7 @@
 -- Imitação mínima do que o Supabase já tem antes das nossas migrations
 create role anon nologin;
 create role authenticated nologin;
+create role service_role nologin bypassrls; -- o servidor (Edge Functions); a spec 111 dá permissão pra ele
 create schema extensions;
 create extension pgcrypto schema extensions;
 
