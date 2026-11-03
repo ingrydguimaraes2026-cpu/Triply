@@ -16,6 +16,7 @@
 | Calendário das 2 primeiras semanas (09 a 22/11): vídeo do dia, 2 posts do X, story, teste de formatos, banco de variações e 14 posts novos (X1 a X14) | `docs/marketing/CALENDARIO-2-SEMANAS.md` |
 | Pesquisa: conteúdo sem rosto (slideshow, "2 lados" com a Norti, voz, regras do TikTok, build in public BR, dicas da Apple) | `docs/marketing/PESQUISA-SEM-ROSTO.md` |
 | Gerador de carrossel: planilha (`planilha.csv`, 1 linha por slide) → `node docs/marketing/slides/gerar.mjs S1` → PNGs do TikTok (1080×1920) e Instagram (1080×1350) + legenda em `saida/<post>/`. S1 pronto | `docs/marketing/slides/` |
+| Análise do S1, fontes de benchmark sem login e próximos passos | `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md` |
 | Script de triagem de nome (domínio + App Store) | `docs/marketing/checar-nome.py` |
 | Página de lista de espera `/espera` (código pronto) | `apps/web/src/pages/ListaDeEspera.tsx` |
 
@@ -28,6 +29,8 @@
 - Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP (sem cópia no repo: salvar o HTML em `docs/marketing/` antes de apagar)
 
 ## Pendente
+
+0. **03/11/2026: S1 reprovado pelo Victor. Calendário de 09/11 pausado.** Próximo passo: o benchmark de posts (TikTok, Reels e X) descrito em `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md`, numa sessão nova. Lá estão o porquê do S1 não funcionar, as fontes que abrem sem login (testadas) e a ficha de cada post.
 
 1. **Dupla registra** tripwave.app e tripwave.com.br, cria `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), busca "Tripwave" no INPI (classes 9, 39, 42).
 2. **Nome da Norti como nome do app?** Em discussão (NOME-E-VOZ.md, rodada 7). Hoje: app Tripwave, mascote Norti.
