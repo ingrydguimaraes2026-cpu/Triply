@@ -16,7 +16,7 @@ import { supabase } from '../lib/supabase'
 export type DiaDoCarrossel = { numero: number; titulo: string; foto: string | null; destinoId: string }
 
 export async function carregarAbaViagem(id: string) {
-  const [viagem, gastos, trajetos, lugares, opcoes, atividades, vistoEm, roteiros, alertas, seguros] = await Promise.all([
+  const [viagem, gastos, trajetos, lugares, opcoes, atividades, vistoEm, roteiros, alertas, seguros, fotos, visitados] = await Promise.all([
     buscarViagemComDetalhes(supabase, id),
     buscarGastos(supabase, id),
     buscarTrajetos(supabase, id),
@@ -27,6 +27,9 @@ export async function carregarAbaViagem(id: string) {
     supabase.from('roteiros').select('destino_id, dias, destinos!inner (ordem)').eq('viagem_id', id),
     buscarAlertasDePassaporte(supabase, id).catch(() => []),
     buscarSeguros(supabase, id).catch(() => []),
+    // Pros números das Lembranças (fase "voltou")
+    supabase.from('fotos').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
+    supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id).not('visitado_em', 'is', null),
   ])
   if (!viagem) return null
 
@@ -53,6 +56,8 @@ export async function carregarAbaViagem(id: string) {
     gastos,
     trajetos,
     lugares: lugares.count ?? 0,
+    fotos: fotos.count ?? 0,
+    visitados: visitados.count ?? 0,
     opcoes,
     atividades,
     vistoEm,

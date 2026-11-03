@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from '../src/ui/icones'
+import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from '../src/ui/icones'
 import {
   agoraEProximo,
   buscarDestinos,
@@ -21,6 +21,8 @@ import {
 } from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
+import { Clima } from '../src/ui/Clima'
+import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
 import { diaLongo, hojeIso, lerData } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
@@ -53,10 +55,15 @@ function horaDe(d: Date) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-export default function Hoje() {
+// Tela solta (aberta pelo "Tudo da viagem" ou por aviso). Na viagem, a aba Viagem mostra o mesmo conteúdo (spec 117).
+export default function TelaDoHoje() {
+  return <Hoje />
+}
+
+export function Hoje({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { atual: viagem } = useViagemAtual()
+  const { atual: viagem, meuId } = useViagemAtual()
   // Só em desenvolvimento: /hoje?dia=2027-06-07T10:00 simula outro dia (pra testar fora da viagem)
   const { dia: simulado } = useLocalSearchParams<{ dia?: string }>()
   const carga = useCarregar(viagem ? () => buscarTudo(viagem.id) : null, [viagem?.id])
@@ -89,9 +96,17 @@ export default function Hoje() {
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
-          <ArrowLeft size={20} color={cor.texto} />
-        </BotaoRedondo>
+        <View className="flex-row justify-between">
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+            <ArrowLeft size={20} color={cor.texto} />
+          </BotaoRedondo>
+          {/* Na aba Viagem, o "Tudo da viagem" continua a 1 toque */}
+          {naAba ? (
+            <BotaoRedondo aoTocar={() => router.push('/tudo-da-viagem')}>
+              <MoreHorizontal size={20} color={cor.texto} />
+            </BotaoRedondo>
+          ) : null}
+        </View>
         <View>
           <Text className="font-display text-[32px] text-texto">{onde ? `Hoje em ${onde.nome}` : 'Hoje'}</Text>
           <Text className="mt-0.5 font-body text-[14px] text-suave">{diaLongo(lerData(hoje))}</Text>
@@ -112,7 +127,7 @@ export default function Hoje() {
             ) : (
               <Text className="font-body text-[14px] text-suave">{itens.length ? 'Nada mais com hora marcada hoje.' : 'Nada marcado pra hoje.'}</Text>
             )}
-            <Pressable onPress={() => router.push('/roteiro')} className="flex-row items-center gap-1.5 border-t border-linha pt-3 active:opacity-80">
+            <Pressable onPress={() => router.navigate(`/viagem/${viagem.id}/roteiro` as Href)} className="flex-row items-center gap-1.5 border-t border-linha pt-3 active:opacity-80">
               <CalendarDays size={15} color={cor.couro} />
               <Text className="font-body-bold text-[13px] text-couro">Ver o dia inteiro no Roteiro</Text>
             </Pressable>
@@ -201,6 +216,14 @@ export default function Hoje() {
 
         {/* Spec 059: as ferramentas valem até fora da viagem (o destino é o de hoje ou o primeiro) */}
         <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda} enderecoHospedagem={dormimos?.endereco ?? null} />
+
+        {/* Na aba Viagem (spec 117): clima e ponto de encontro do comboio ficam aqui também */}
+        {naAba ? (
+          <>
+            <Clima viagemId={viagem.id} />
+            <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')} />
+          </>
+        ) : null}
       </ScrollView>
     </View>
   )

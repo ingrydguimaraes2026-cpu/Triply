@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Text, View } from 'react-native'
+import { Alert, Text, View } from 'react-native'
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -12,12 +12,14 @@ import { useCapas } from '../../../../src/dados/useCapas'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { convidarProComboio } from '../../../../src/lib/convite'
 import { compartilharTexto, linkDaViagem } from '../../../../src/lib/compartilhar'
-import { diasAte, periodo } from '../../../../src/lib/formato'
+import { diasAte, diasDaViagem, hojeIso, periodo } from '../../../../src/lib/formato'
 import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '../../../../src/ui/PassosDaViagem'
 import { Passaporte } from '../../../../src/ui/viagem/Passaporte'
 import { ProximoCarimbo } from '../../../../src/ui/viagem/ProximoCarimbo'
 import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
+import { Lembrancas } from '../../../../src/ui/viagem/Lembrancas'
+import { Hoje } from '../../../hoje'
 import { Comemoracao } from '../../../../src/ui/Comemoracao'
 import { Selo } from '../../../../src/ui/Selos'
 import { ErroNaTela } from '../../../../src/ui/pecas'
@@ -25,8 +27,10 @@ import { cor } from '../../../../theme'
 
 // Aba Viagem (spec 117): muda com a fase. Antes da viagem: capa, comboio, próximo carimbo,
 // passaporte e o resumo do roteiro, das contas e da papelada. Nada além disso.
+// Na viagem: o Hoje. Depois da última data: Lembranças.
 export default function AbaViagem() {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  // Só em desenvolvimento: ?fase=durante|voltou simula a fase (pra testar sem mudar as datas)
+  const { id, fase: faseSimulada } = useLocalSearchParams<{ id: string; fase?: 'antes' | 'durante' | 'voltou' }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { meuId } = useViagemAtual()
@@ -76,6 +80,34 @@ export default function AbaViagem() {
 
   async function convidar() {
     setConvite((await convidarProComboio(viagem.id, viagem.nome))?.texto ?? null)
+  }
+
+  // Fase da viagem: antes → na viagem (vira o "Hoje") → voltou (Lembranças)
+  const hoje = hojeIso()
+  const fase: 'antes' | 'durante' | 'voltou' =
+    __DEV__ && faseSimulada ? faseSimulada : viagem.dataFim && viagem.dataFim < hoje ? 'voltou' : viagem.dataInicio && viagem.dataInicio <= hoje ? 'durante' : 'antes'
+
+  if (fase === 'durante') return <Hoje naAba />
+
+  if (fase === 'voltou') {
+    const dias = viagem.dataInicio && viagem.dataFim ? diasDaViagem(viagem.dataInicio, viagem.dataFim).length : 0
+    return (
+      <View className="flex-1 bg-fundo">
+        <StatusBar style="light" />
+        <Animated.ScrollView onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+          <Lembrancas
+            viagem={viagem}
+            foto={capa(viagem.id)}
+            numeros={{ dias, fotos: d.fotos, lugares: d.visitados || d.lugares, gasto: contas.total }}
+            passos={passos}
+            contasEmDia={contas.acertos.length === 0}
+            ir={ir}
+            aoExtra={() => Alert.alert('Em breve', 'Livro impresso e vídeo da viagem chegam logo.')}
+          />
+        </Animated.ScrollView>
+        <Cabecalho nome={viagem.nome} rolagem={rolagem} aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))} aoCompartilhar={convidar} aoMais={() => ir('tudo-da-viagem')} />
+      </View>
+    )
   }
 
   return (
