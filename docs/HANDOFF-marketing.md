@@ -17,10 +17,13 @@
 | Script de triagem de nome (domínio + App Store) | `docs/marketing/checar-nome.py` |
 | Página de lista de espera `/espera` (código pronto) | `apps/web/src/pages/ListaDeEspera.tsx` |
 
-**Páginas no claude.ai (privadas, compartilhar pelo menu Share):**
-- Caderno de marketing: https://claude.ai/artifact/HzBVv7tXWkKLmAqu4x8nom (fonte: `docs/marketing/tripwave-marketing.html`). Já mostra a Norti "Pin" (topo, ícone e galeria das 9 poses). Pra republicar, mandar junto as imagens: `files` com `norti/norti-<pose>.png` → `docs/marketing/norti/web/norti-<pose>.png`.
-- Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP
-- Calendário das 2 semanas: https://claude.ai/artifact/UMJVQ5p61pd4WvQPYQEM7R (fonte: `docs/marketing/calendario-2-semanas.html`; republicar com `files` `norti-point.webp` → `apps/web/public/norti/point.webp`).
+**Páginas em HTML, só no repo (abrir com duplo clique; não publicar na nuvem do Claude):**
+- Calendário das 2 semanas: `docs/marketing/calendario-2-semanas.html`
+- Ícones do Tripwave: `docs/marketing/icones-tripwave.html`
+
+**Páginas antigas no claude.ai (feitas na conta do outro PC; apagar de lá e manter só o HTML do repo):**
+- Caderno de marketing: https://claude.ai/artifact/HzBVv7tXWkKLmAqu4x8nom (fonte: `docs/marketing/tripwave-marketing.html`).
+- Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP (sem cópia no repo: salvar o HTML em `docs/marketing/` antes de apagar)
 
 ## Pendente
 
@@ -32,6 +35,8 @@
 6. Opcional: levar o conteúdo inicial pro caderno na nuvem.
 
 ## Cuidados
+
+- **Nada do Tripwave na nuvem do Claude** (regra do Victor, 02/11/2026): a conta usada é da Humana. Páginas ficam só como HTML no repo, sem publicar Artifact.
 
 - Sessão de marketing **não mexe em código, banco ou migrations**.
 - Ao usar conversas privadas que o Victor mandar (ex.: WhatsApp), **usar só as ideias**, sem citar a conversa nos docs.
