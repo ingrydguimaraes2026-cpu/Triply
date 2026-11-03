@@ -29,7 +29,17 @@ Data: 02/11/2026. Pedido do Victor: "não gosto desses cards... muito texto, mui
 
 **Mapa de todas as telas (juntar/separar) feito: `docs/design/MAPA-DE-TELAS.md`. O Victor pediu: redesenhar TODAS as telas, não só a da viagem.**
 
-## Próximo passo exato (sessão nova)
+## DECIDIDO (02/11/2026, fim da sessão de desenho)
+- Victor aprovou a **UX definitiva**: `docs/design/direcoes-v2/definitiva.html` (9 telas + Explorar com match A/B/C). "Gostamos de UX, gostamos de animação estilo motion. Pode aplicar."
+- Spec escrita: **`docs/specs/117-ux-definitiva-do-app.md`** (o que entra, motion, dados, ordem de implementação em 8 partes). Cobrança de verdade fica pra spec 118.
+- Spec 114 atualizada: o match com o comboio entrou (na 117).
+
+## Próximo passo exato (sessão nova de implementação)
+1. Ler `AGENTS.md`, este HANDOFF e a spec 117. Abrir `docs/design/direcoes-v2/definitiva.html` no navegador pra ver o alvo.
+2. Fazer a **parte 1** da ordem de implementação da 117 (instalar Reanimated, Gesture Handler e Haptics com `npx expo install`; criar `apps/mobile/src/ui/movimento.ts`) e seguir parte por parte, um commit por parte.
+3. A migration do match (`matches_da_viagem`) e a `interesse_no_passe`: mostrar pro Victor antes de aplicar (regra do banco).
+
+## (Histórico) Próximo passo da sessão de desenho
 0. Ler `docs/design/MAPA-DE-TELAS.md` e confirmar com o Victor. Depois, as 3 direções do conceito passaporte com as 5 telas principais (passo 2 do mapa).
 1. Ler `docs/design/referencias/README.md`. Escrever `docs/JORNADA.md` numa página: cada fase, o objetivo dela, a ÚNICA ação principal e o que a pessoa vê. Do login ao "voltou". Mostrar pro Victor antes de desenhar.
 2. (Feito o básico) Se precisar de mais, buscar referências no X (o Victor deixa logado no navegador interno): apps de viagem e de grupo (Polarsteps, Wanderlog, Airbnb Viagens, Splitwise, Partiful, Duolingo pelo caminho/progresso). Guardar os prints em `docs/design/referencias/`.

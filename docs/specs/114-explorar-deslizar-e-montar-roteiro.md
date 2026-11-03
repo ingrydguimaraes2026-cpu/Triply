@@ -95,7 +95,7 @@ A pessoa escolhe a cidade, quantos dias e o estilo da viagem, vê os lugares em 
 - **Sugestões de lugares (spec 094)**, em `consultaDeSugestoes`, no `packages/core/src/ferramentas.ts`: passam a ler o **catálogo** em vez de chamar o Overpass do celular.
 
 ## Não inclui (fica pra depois)
-- **Match com o comboio** (ver o que os outros curtiram). Decisão do Victor: agora é individual.
+- ~~**Match com o comboio**~~ → **entrou na spec 117** (Victor aprovou em 02/11/2026 o match: 3 ou mais "quero" no mesmo lugar).
 - **Restaurantes, vida noturna e compras.** A Wikidata cobre mal. Os estilos "Gastronomia", "Vida noturna" e "Compras" ficam fora até termos uma fonte.
 - **Horário de funcionamento e dias fechados** no roteiro.
 - **Importar do TikTok, Instagram ou Google Maps** dentro do Explorar. Já existem as specs 079 e 097, separadas.
