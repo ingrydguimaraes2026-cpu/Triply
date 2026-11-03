@@ -369,8 +369,8 @@ const D = [
   tel('3 · Roteiro', 'os dias + as ideias do grupo', `
     <div class="pad top">
       <h1 class="serif">Roteiro</h1>
-      <div class="pilulas">${['Ideias', 'Dia 1', 'Dia 2', 'Dia 3', 'Dia 4'].map((d, i) => `<span class="${i === 0 ? 'on' : ''}">${d}</span>`).join('')}</div>
-      <small class="cinza">O comboio sugere, curte, e o mais votado entra no dia.</small>
+      <div class="pilulas">${['Matches', 'Dia 1', 'Dia 2', 'Dia 3', 'Dia 4'].map((d, i) => `<span class="${i === 0 ? 'on' : ''}">${d}</span>`).join('')}</div>
+      <small class="cinza">O que 3 ou mais querem vira match e entra no dia.</small>
       ${[[F.azulejo, 'Museu do Azulejo', 'JU', 4, true], [F.aqueduto, 'Sintra num dia', 'AN', 3, false], [F.carmo, 'Fado no Carmo', 'BE', 5, true]].map(([f, n, k, c, ok]) => `<div class="ideia">${foto(f)}<div><b>${n}</b><small>${av(k, 18)} sugeriu</small><span class="linha" style="justify-content:flex-start;gap:4px">${ic('curtir', '#C0573A', 16, true)}<b class="peq-txt">${c}</b></span></div>${ok ? `<span class="chip verde-c">${ic('ok', '#5E6B2E', 14)} Dia 2</span>` : '<button class="peq">No dia</button>'}</div>`).join('')}
       <div class="parceiro">${ic('ingresso', '#B97A22', 22)}<div><b>Ingresso do Castelo sem fila</b><small>parceiro · R$ 89</small></div>${ic('avancar', '#7B542F', 18)}</div>
       <button class="botao largo fantasma">${ic('explorar', '#7B542F', 18)} Descobrir mais lugares</button>
@@ -458,3 +458,65 @@ const htmlD = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta 
 <div class="telas">${D.join('')}</div></body></html>`
 writeFileSync(new URL('./definitiva.html', import.meta.url), htmlD)
 console.log('definitiva ok')
+
+// ================= EXPLORAR COM MATCH DO COMBOIO =================
+const E = [
+  tel('A · Explorar (deslizar)', 'cada um desliza; o cartão mostra quem já quer', `
+    <div class="pad top">
+      <div class="linha"><span>${ic('fechar', '#3B2715', 22)}</span><b>Explorar Lisboa</b><small class="cinza">12 de 30</small></div>
+      <div class="xp" style="margin:10px 0 12px"><i style="width:40%"></i></div>
+      <div class="pilha">
+        <span class="atras"></span>
+        <div class="carta" style="background-image:linear-gradient(#0000 45%,#1E140Bee),url('${F.azulejo}')">
+          <span class="ja-querem">${rostos(['AN', 'JU'], 24, '#FFF6E8')}<b>Ana e Ju querem</b></span>
+          <div class="rodape"><small>CULTURA · 1,2 KM DA CASA</small><h2 class="serif">Museu do Azulejo</h2><span>Azulejos de 5 séculos num convento.</span></div>
+        </div>
+      </div>
+      <div class="botoes-deslize">
+        <div><span class="bd">${ic('fechar', '#C0573A', 26)}</span><small>Passo</small></div>
+        <div><span class="bd peq-b">${ic('estrela', '#B97A22', 22, true)}</span><small>Não abro mão</small></div>
+        <div><span class="bd quero">${ic('curtir', '#fff', 28, true)}</span><small>Quero</small></div>
+      </div>
+    </div>`),
+  tel('B · Deu match!', 'quando 3 ou mais querem o mesmo lugar', `
+    <div class="festa match">
+      <div class="confete"></div>
+      <div class="foto-match" style="background-image:url('${F.azulejo}')"></div>
+      <div class="rostos-match">${['PV', 'AN', 'JU'].map((k) => av(k, 58)).join('')}</div>
+      <small class="ouro">DEU MATCH NO COMBOIO</small>
+      <h1 class="serif">Museu do Azulejo</h1>
+      <p>Você, Ana e Ju querem ir. Falta o Beto e a Lia opinarem.</p>
+      <div class="parc-escuro">${ic('ingresso', '#E3A04A', 20)}<span>Ingresso sem fila · R$ 25 por pessoa</span></div>
+      <button class="botao largo claro">${ic('datas', '#3B2715', 18)} Pôr no dia 2</button>
+      <button class="botao largo fantasma-c">Continuar deslizando</button>
+    </div>`, 'escura'),
+  tel('C · Matches do comboio', 'Roteiro → aba Matches', `
+    <div class="pad top">
+      <h1 class="serif">Roteiro</h1>
+      <div class="pilulas">${['Matches', 'Dia 1', 'Dia 2', 'Dia 3', 'Dia 4'].map((d, i) => `<span class="${i === 0 ? 'on' : ''}">${d}${i === 0 ? ' <i class="bolinha">3</i>' : ''}</span>`).join('')}</div>
+      <div class="grupo-m"><small class="ouro">TODO MUNDO QUER · 5 DE 5</small></div>
+      ${[[F.castelo, 'Castelo de São Jorge', ['PV', 'AN', 'JU', 'BE', 'LI'], 'Dia 2']].map(([f, n, q, d]) => `<div class="ideia">${foto(f)}<div><b>${n}</b>${rostos(q, 20)}</div><span class="chip verde-c">${ic('ok', '#5E6B2E', 14)} ${d}</span></div>`).join('')}
+      <div class="grupo-m"><small class="ouro">DEU MATCH · 3 OU MAIS</small></div>
+      ${[[F.azulejo, 'Museu do Azulejo', ['PV', 'AN', 'JU'], 'falta Beto e Lia'], [F.carmo, 'Fado no Carmo', ['AN', 'BE', 'LI', 'JU'], 'falta você']].map(([f, n, q, s]) => `<div class="ideia">${foto(f)}<div><b>${n}</b>${rostos(q, 20)}<small>${s}</small></div><button class="peq">No dia</button></div>`).join('')}
+      <div class="grupo-m"><small class="ouro">QUASE · 2 QUEREM</small></div>
+      <div class="ideia apagada">${foto(F.aqueduto)}<div><b>Sintra num dia</b>${rostos(['AN', 'BE'], 20)}</div><button class="peq claro">Opinar</button></div>
+      <button class="botao largo">${ic('magica', '#fff', 18)} Montar os dias com os matches</button>
+    </div>${abas('Roteiro')}`),
+]
+const cssE = `
+.pilha{position:relative;height:420px}.atras{position:absolute;left:14px;right:14px;top:-8px;bottom:14px;background:#E5D2B0;border-radius:28px}
+.carta{position:absolute;inset:0;border-radius:28px;background-size:cover;background-position:center;box-shadow:0 14px 30px #4a2e1440;transform:rotate(-2deg)}.carta .rodape{position:absolute;left:18px;right:18px;bottom:18px;color:#fff;display:grid;gap:4px}.carta small{font-size:10.5px;letter-spacing:.1em;font-weight:700;color:#F5E9D6}.carta h2{color:#fff;font-size:30px;line-height:1.05}.carta span{font-size:13px;color:#F5E9D6}
+.ja-querem{position:absolute;top:14px;left:14px;display:flex;gap:6px;align-items:center;background:#FFF6E8;border-radius:99px;padding:4px 12px 4px 10px}.ja-querem b{font-size:12.5px;color:var(--texto)}
+.botoes-deslize{display:flex;justify-content:center;gap:22px;margin-top:22px}.botoes-deslize div{display:grid;justify-items:center;gap:5px}.botoes-deslize small{font-size:11.5px;font-weight:700;color:var(--suave)}
+.bd{width:62px;height:62px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 6px 14px #4a2e1420}.bd.peq-b{width:50px;height:50px;margin-top:6px}.bd.quero{background:var(--vermelho)}
+.match .foto-match{width:190px;height:190px;border-radius:50%;background-size:cover;background-position:center;border:5px solid #FFF6E8;box-shadow:0 10px 30px #0008}
+.rostos-match{display:flex;margin-top:-34px}.rostos-match .av{margin-left:-10px;border:3px solid #2A1A0C}
+.parc-escuro{display:flex;gap:8px;align-items:center;background:#ffffff14;border:1px solid #ffffff30;border-radius:14px;padding:9px 12px;font-size:12.5px;color:#F5E9D6}
+.grupo-m{margin:14px 0 -2px}.ideia .rostos{margin-left:7px}.ideia.apagada{opacity:.7}
+.bolinha{font-style:normal;background:var(--vermelho);color:#fff;border-radius:99px;padding:0 6px;font-size:11px;margin-left:2px}
+`
+const secaoE = `<h2 class="serif" style="font-size:30px;margin:46px 0 4px 6px">Explorar com match do comboio</h2>
+<p style="margin:0 0 20px 6px;color:#7A5F45;max-width:1000px">Cada um desliza sozinho (como hoje), mas o que <b>3 ou mais</b> querem vira <b>match</b>: comemora na hora, ganha aviso pros outros ("falta você opinar") e cai na aba Matches do Roteiro. O "Montar os dias" usa os matches primeiro. Muda uma decisão da spec 114 (lá o match ficou pra depois).</p>
+<div class="telas">${E.join('')}</div>`
+writeFileSync(new URL('./definitiva.html', import.meta.url), htmlD.replace('</style>', cssE + '</style>').replace('</body>', secaoE + '</body>'))
+console.log('match ok')
