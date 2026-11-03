@@ -227,6 +227,52 @@ export type Database = {
           },
         ]
       }
+      avisos_de_match: {
+        Row: {
+          catalogo_lugar_id: string | null
+          dia: string
+          enviado_em: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          catalogo_lugar_id?: string | null
+          dia?: string
+          enviado_em?: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Update: {
+          catalogo_lugar_id?: string | null
+          dia?: string
+          enviado_em?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_de_match_catalogo_lugar_id_fkey"
+            columns: ["catalogo_lugar_id"]
+            isOneToOne: false
+            referencedRelation: "catalogo_lugares"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_de_match_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_de_match_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidato_votos: {
         Row: {
           candidato_id: string
@@ -342,8 +388,7 @@ export type Database = {
           regiao?: boolean
           situacao?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       catalogo_lugares: {
         Row: {
@@ -438,13 +483,13 @@ export type Database = {
         Insert: {
           cidade_id: string
           criado_em?: string
-          id?: number
+          id?: never
           usuario_id: string
         }
         Update: {
           cidade_id?: string
           criado_em?: string
-          id?: number
+          id?: never
           usuario_id?: string
         }
         Relationships: [
@@ -1675,33 +1720,6 @@ export type Database = {
           },
         ]
       }
-      interesse_no_passe: {
-        Row: {
-          acao: string
-          criado_em: string
-          id: string
-          origem: string
-          usuario_id: string
-          viagem_id: string
-        }
-        Insert: {
-          acao?: string
-          criado_em?: string
-          id?: string
-          origem: string
-          usuario_id?: string
-          viagem_id: string
-        }
-        Update: {
-          acao?: string
-          criado_em?: string
-          id?: string
-          origem?: string
-          usuario_id?: string
-          viagem_id?: string
-        }
-        Relationships: []
-      }
       hospedagens: {
         Row: {
           cancelamento_gratis_ate: string | null
@@ -1813,6 +1831,48 @@ export type Database = {
           },
           {
             foreignKeyName: "hospedagens_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interesse_no_passe: {
+        Row: {
+          acao: string
+          criado_em: string
+          id: string
+          origem: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          acao?: string
+          criado_em?: string
+          id?: string
+          origem: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          acao?: string
+          criado_em?: string
+          id?: string
+          origem?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interesse_no_passe_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interesse_no_passe_viagem_id_fkey"
             columns: ["viagem_id"]
             isOneToOne: false
             referencedRelation: "viagens"
@@ -2815,6 +2875,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "roteiros_atualizado_por_fkey"
+            columns: ["atualizado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "roteiros_destino_id_fkey"
             columns: ["destino_id"]
             isOneToOne: true
@@ -3163,26 +3230,6 @@ export type Database = {
       }
     }
     Functions: {
-      explorar_criar_lugares: {
-        Args: { p_destino: string }
-        Returns: string[]
-      }
-      explorar_quem_escolheu: {
-        Args: { p_destino: string }
-        Returns: { escolheram: number; pessoas: number }[]
-      }
-      matches_da_viagem: {
-        Args: { p_viagem: string }
-        Returns: {
-          catalogo_lugar_id: string
-          destino_id: string
-          foto_url: string | null
-          nome: string
-          no_dia: boolean
-          querem: number
-          quem: string[]
-        }[]
-      }
       aceitar_convite: {
         Args: { p_codigo: string; p_nome?: string }
         Returns: string
@@ -3197,6 +3244,15 @@ export type Database = {
       arquivar_viagem: {
         Args: { p_arquivar: boolean; p_viagem: string }
         Returns: undefined
+      }
+      avisos_de_match_a_enviar: {
+        Args: never
+        Returns: {
+          catalogo_lugar_id: string
+          lugar: string
+          usuario_id: string
+          viagem_id: string
+        }[]
       }
       convidados_da_viagem: { Args: { p_viagem: string }; Returns: string[] }
       criar_enquete: {
@@ -3221,6 +3277,14 @@ export type Database = {
         Returns: undefined
       }
       excluir_meus_dados: { Args: never; Returns: undefined }
+      explorar_criar_lugares: { Args: { p_destino: string }; Returns: string[] }
+      explorar_quem_escolheu: {
+        Args: { p_destino: string }
+        Returns: {
+          escolheram: number
+          pessoas: number
+        }[]
+      }
       faixa_do_comboio: {
         Args: { p_viagem: string }
         Returns: {
@@ -3267,6 +3331,18 @@ export type Database = {
       marcar_visitado: {
         Args: { p_lugar: string; p_visitado: boolean }
         Returns: undefined
+      }
+      matches_da_viagem: {
+        Args: { p_viagem: string }
+        Returns: {
+          catalogo_lugar_id: string
+          destino_id: string
+          foto_url: string
+          no_dia: boolean
+          nome: string
+          quem: string[]
+          querem: number
+        }[]
       }
       meus_dados: { Args: never; Returns: Json }
       minha_conexao_gmail: {
