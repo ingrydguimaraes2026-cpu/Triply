@@ -272,7 +272,7 @@ h1{font-size:30px;line-height:1.08;margin:6px 0 14px}h2{font-size:24px}
 .votos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.voto .foto{height:96px;margin-bottom:6px}.voto b{display:block;font-size:13.5px}.voto small{display:block;font-size:12px;color:var(--suave);margin-bottom:4px}
 .mini-contas{display:flex;justify-content:space-between;background:#fff;border-radius:18px;padding:14px 16px}.mini-contas div{display:grid}.mini-contas .dir{text-align:right}.mini-contas b{font-size:24px}.mini-contas small{font-size:12px}
 .afiliado{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;padding:10px}.afiliado .foto{width:60px;height:60px;border-radius:14px}.afiliado div{flex:1;display:grid;gap:3px}.afiliado b{font-size:14px}.afiliado small{font-size:12px;color:var(--suave);display:flex;gap:3px;align-items:center}
-.lista-ok div{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #EFE2CC;font-size:14px}.lista-ok span{flex:1}.lista-ok small{font-weight:700;color:var(--caramelo);font-size:12px}
+.lista-ok div{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #EFE2CC;font-size:14px}.lista-ok span{flex:1}.lista-ok .ic{flex:none}.lista-ok small{font-weight:700;color:var(--caramelo);font-size:12px}
 .agora-foto{height:300px;border-radius:26px;background-size:cover;background-position:center;position:relative;margin-bottom:6px}.agora-foto .rodape{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:end;gap:8px}.agora-foto h2{color:#fff;font-size:24px;line-height:1.05}
 .ir{border:0;background:#FFF6E8;border-radius:14px;padding:9px 12px;font:700 13px 'Plus Jakarta Sans';display:inline-flex;gap:5px;align-items:center;white-space:nowrap}
 .lt{display:grid;grid-template-columns:50px 1fr;padding:11px 0;border-bottom:1px solid #EFE2CC}.lt small{grid-row:span 2;font-weight:800;color:var(--suave);font-size:13px}.lt b{font-size:15px}.lt span{font-size:12.5px}
@@ -330,3 +330,131 @@ ${modelo('m3', '3 · Jogo do viajante', 'Jeito Duolingo: a Norti guia, nível de
 </body></html>`
 writeFileSync(new URL('./modelos.html', import.meta.url), html)
 console.log('ok', html.length)
+
+// ================= DEFINITIVA: base social (2) + seções (1) + carimbos nos marcos (3) =================
+const passaporteLinha = (feitos) => `<div class="pass-linha">${PASSOS.map(([s, r], i) => `<div class="${i < feitos ? 'ok' : ''}">${selo(s, 38, i < feitos ? '' : 'apagado')}<small>${r}</small></div>`).join('')}</div>`
+const D = [
+  tel('1 · Início', 'a próxima viagem + o grupo', `
+    <div class="pad top">
+      <div class="linha"><div><small class="cinza">Boa noite,</small><h2 class="serif">Paulo</h2></div><span class="linha" style="gap:12px">${ic('avisos', '#3B2715', 24)}${av('PV', 34)}</span></div>
+      <div class="heroi" style="background-image:linear-gradient(#0000 35%,#2A1A0Ce6),url('${F.comercio}')">
+        <span class="etq">FALTAM 34 DIAS</span>
+        <div class="rodape"><small>SUA PRÓXIMA VIAGEM</small><h2 class="serif">Lisboa</h2>
+          <div class="linha"><span class="claro">4 de 6 carimbos</span>${rostos(['PV', 'AN', 'JU', 'BE', 'LI'], 24, '#2A1A0C')}</div>
+          <div class="barra"><i style="width:66%"></i></div></div>
+      </div>
+      ${secaoT('No comboio agora')}
+      <div class="ativ">${av('AN', 28)}<span><b>Ana</b> votou na Casa da Graça</span><small>2 min</small></div>
+      <div class="ativ">${av('JU', 28)}<span><b>Ju</b> sugeriu o Museu do Azulejo</span><small>1 h</small></div>
+      <div class="nova">${ic('mais', '#7B542F', 20)}<b>Nova viagem</b></div>
+    </div>`),
+  tel('2 · Viagem (antes)', 'o próximo carimbo em cima, o resto em seções', `
+    <div class="capa baixa" style="background-image:linear-gradient(#0000 30%,#2A1A0Cdd),url('${F.comercio}')"><div class="botoes">${ic('voltar', '#fff', 22)}<span>${ic('compartilhar', '#fff', 22)}</span></div><div class="rodape"><small>12 – 18 DEZ · faltam 34 dias</small><h1 class="serif">Lisboa</h1></div></div>
+    <div class="pad">
+      <div class="stories">${story('AN', 'Ana')}${story('JU', 'Ju')}${story('BE', 'Beto', false)}${story('LI', 'Lia', false)}<div class="story"><span class="av mais-av">${ic('mais', '#7B542F', 22)}</span><small>Convidar</small></div></div>
+      <div class="decisao destaque">
+        <div class="linha"><small class="ouro">PRÓXIMO CARIMBO · ONDE DORMIR</small>${selo('barraca', 34)}</div>
+        <div class="duelo">${[[F.figueira, 'Casa na Graça', 3, '€ 92/noite'], [F.rossio, 'Apto no Chiado', 1, '€ 110/noite']].map(([f, n, v, p]) => `<div>${foto(f)}<b>${n}</b><small>${p}</small><span class="barra"><i style="width:${v * 20}%"></i></span><small>${v} votos</small></div>`).join('')}</div>
+        <div class="falta">${rostos(['BE', 'LI'], 22)}<span>faltam Beto e Lia</span><button class="peq claro">Cutucar</button></div>
+      </div>
+      <div class="sec"><h3>Passaporte do comboio</h3><small>4 de 6</small></div>
+      ${passaporteLinha(4)}
+      ${secaoT('Roteiro', '6 dias')}
+      <div class="carrossel">${[[F.comercio, 'Dia 1', 'Baixa e Alfama'], [F.castelo, 'Dia 2', 'Castelo e Graça'], [F.azulejo, 'Dia 3', 'Azulejos']].map(([f, d, t]) => `<div class="cartinha larga">${foto(f)}<small class="ouro">${d.toUpperCase()}</small><b>${t}</b></div>`).join('')}</div>
+      ${secaoT('Contas')}
+      <div class="mini-contas"><div><small class="cinza">Gasto do grupo</small><b class="serif">€ 1.240</b></div><div class="dir"><small class="cinza">Você recebe</small><b class="serif verde">€ 48</b></div></div>
+      ${secaoT('Antes de embarcar')}
+      <div class="lista-ok">${[['documento', 'Passaportes', '5 de 5'], ['seguro', 'Seguro viagem (exigido)', 'cotar'], ['wifi', 'Internet lá (eSIM)', 'ver planos']].map(([i, t, a]) => `<div>${ic(i, '#7B542F', 20)}<span>${t}</span><small>${a}</small></div>`).join('')}</div>
+    </div>${abas('Viagem')}`, 'alta'),
+  tel('3 · Roteiro', 'os dias + as ideias do grupo', `
+    <div class="pad top">
+      <h1 class="serif">Roteiro</h1>
+      <div class="pilulas">${['Ideias', 'Dia 1', 'Dia 2', 'Dia 3', 'Dia 4'].map((d, i) => `<span class="${i === 0 ? 'on' : ''}">${d}</span>`).join('')}</div>
+      <small class="cinza">O comboio sugere, curte, e o mais votado entra no dia.</small>
+      ${[[F.azulejo, 'Museu do Azulejo', 'JU', 4, true], [F.aqueduto, 'Sintra num dia', 'AN', 3, false], [F.carmo, 'Fado no Carmo', 'BE', 5, true]].map(([f, n, k, c, ok]) => `<div class="ideia">${foto(f)}<div><b>${n}</b><small>${av(k, 18)} sugeriu</small><span class="linha" style="justify-content:flex-start;gap:4px">${ic('curtir', '#C0573A', 16, true)}<b class="peq-txt">${c}</b></span></div>${ok ? `<span class="chip verde-c">${ic('ok', '#5E6B2E', 14)} Dia 2</span>` : '<button class="peq">No dia</button>'}</div>`).join('')}
+      <div class="parceiro">${ic('ingresso', '#B97A22', 22)}<div><b>Ingresso do Castelo sem fila</b><small>parceiro · R$ 89</small></div>${ic('avancar', '#7B542F', 18)}</div>
+      <button class="botao largo fantasma">${ic('explorar', '#7B542F', 18)} Descobrir mais lugares</button>
+    </div>${abas('Roteiro')}`),
+  tel('4 · Hoje (na viagem)', 'a aba Viagem vira o dia', `
+    <div class="mapinha">
+      <svg viewBox="0 0 330 360"><rect width="330" height="360" fill="#EADBC0"/><path d="M0 250 C80 230 120 300 330 260 L330 360 L0 360Z" fill="#B9CFD6"/><path d="M40 0 L80 120 L60 250 M150 0 L170 140 L260 240 M0 90 L330 130 M120 200 L300 180" stroke="#F8EFDF" stroke-width="9" fill="none"/></svg>
+      <span class="pino" style="left:150px;top:120px">${av('AN', 34)}</span><span class="pino" style="left:180px;top:140px">${av('JU', 34)}</span><span class="pino eu" style="left:90px;top:190px">${av('PV', 34)}</span>
+      <span class="chip flut">${ic('sol', '#B97A22', 16)} 21° · dia 2 de 6</span>
+    </div>
+    <div class="folha">
+      <span class="pega"></span>
+      ${[[F.castelo, 'Castelo de São Jorge', '10:00', 1], [F.vicente, 'São Vicente de Fora', '14:00', 2], [F.carmo, 'Fado no Carmo', '20:30', 0]].map(([f, n, h, e]) => `<div class="checkin ${e === 1 ? 'ok' : ''} ${e === 2 ? 'agora' : ''}">${foto(f)}<div><small>${h}${e === 2 ? ' · AGORA' : ''}</small><b>${n}</b></div>${e === 1 ? ic('feito', '#5E6B2E', 26) : e === 2 ? '<button class="peq">Cheguei</button>' : ic('navegar', '#8A7058', 20)}</div>`).join('')}
+      <div class="ativ">${ic('lugar', '#C0573A', 22)}<span>Encontro às 13:00 no Largo do Chafariz</span></div>
+    </div>${abas('Viagem')}`),
+  tel('5 · Contas', 'um número + a conversa dos gastos', `
+    <div class="pad top">
+      <div class="saldo"><small>VOCÊ RECEBE</small><b class="serif">€ 48,20</b><div class="linha"><span class="claro">Euro hoje R$ 6,12 · barato</span>${ic('descendo', '#FFF6E8', 18)}</div></div>
+      <div class="chat" style="margin-top:14px">
+        <div class="bolha">${av('JU', 28)}<div><b>Ju pagou € 84 · Jantar</b><small>dividido em 5 · € 16,80 cada</small><span class="reacoes">${ic('curtir', '#C0573A', 14, true)} 3</span></div></div>
+        <div class="bolha eu"><div><b>Você pagou € 12,40 · Uber</b><small>dividido em 3</small></div></div>
+        <div class="bolha">${av('AN', 28)}<div><b>Ana pagou € 125 · Fado</b><small>dividido em 5 · recibo lido</small>${foto(F.carmo, 'recibo')}</div></div>
+        <div class="acerto">${ic('tudo-ok', '#5E6B2E', 18)} Beto acertou € 30 com você no Pix</div>
+      </div>
+      <div class="digitar"><span class="scan">${ic('nova-foto', '#7B542F', 22)}<i>${ic('trancado', '#fff', 10)}</i></span><span class="campo">€ 0,00 · o que foi?</span><button class="redondo">${ic('enviar', '#fff', 18)}</button></div>
+    </div>${abas('Contas')}`),
+  tel('6 · O que traz de volta', 'avisos do grupo, não do app', `
+    <div class="bloqueio" style="background-image:linear-gradient(#0006,#0008),url('${F.comercio}')">
+      <div class="hora-bloq">9:41</div><small class="data-bloq">terça-feira, 11 de novembro</small>
+      ${[['Falta só você, Beto', 'Casa na Graça tem 3 votos. Fecha amanhã às 20h.'], ['Ju sugeriu o Museu do Azulejo', '4 pessoas curtiram. Entra no dia 2?'], ['Euro caiu: R$ 6,12', 'Entre os mais baratos dos últimos 90 dias.']].map(([t, c]) => `<div class="notif"><span class="app">${ic('identidade', '#fff', 16)}</span><div><small>TRIPWAVE · agora</small><b>${t}</b><span>${c}</span></div></div>`).join('')}
+    </div>`, 'escura'),
+  tel('7 · Carimbo novo', 'a Norti só aparece nos marcos', `
+    <div class="festa">
+      <div class="confete"></div>
+      ${norti('celebrate', 160)}
+      <small class="ouro">CARIMBO 5 DE 6</small>
+      <h1 class="serif">Onde dormir: resolvido!</h1>
+      ${selo('barraca', 92, 'girado', 'escuro')}
+      <p>Casa na Graça, 6 noites. Falta só <b>como chegar</b>.</p>
+      <button class="botao largo claro">${ic('compartilhar', '#3B2715', 18)} Postar no story</button>
+      <button class="botao largo fantasma-c">Continuar</button>
+    </div>`, 'escura'),
+  tel('8 · Passe da viagem', 'aparece ao tocar num extra (scan, offline...)', `
+    <div class="pad top paywall">
+      <span class="fechar">${ic('fechar', '#3B2715', 20)}</span>
+      <div class="coroas">${['PV', 'AN', 'JU', 'BE', 'LI'].map((k) => `<span>${ic('adm', '#B97A22', 18)}${av(k, 44)}</span>`).join('')}</div>
+      <h1 class="serif centro">Um paga, o comboio todo ganha</h1>
+      <ul class="beneficios">${[['nova-foto', 'Scan de recibo: foto e já divide'], ['wifi-desligado', 'Mapa e roteiro sem internet'], ['documento', 'Reservas lidas do e-mail'], ['fotos', 'Álbum sem limite'], ['baixar', 'Livro da viagem em PDF']].map(([i, t]) => `<li>${ic(i, '#7B542F', 20)}${t}</li>`).join('')}</ul>
+      <div class="plano on"><b>Passe Lisboa</b><span>R$ 39,90</span><small>uma vez · R$ 7,98 por pessoa no Pix</small></div>
+      <div class="plano"><b>Tripwave+ anual</b><span>R$ 99,90</span><small>todas as viagens · 7 dias grátis</small></div>
+      <button class="botao largo">Liberar e dividir no comboio</button>
+      <small class="miuda">Gastos, divisão, votos e fotos seguem grátis. Restaurar compra</small>
+    </div>`),
+  tel('9 · Lembranças (voltou)', 'a história pronta, sozinha', `
+    <div class="capa" style="height:250px;background-image:linear-gradient(#0000 30%,#2A1A0Cee),url('${F.castelo}')"><div class="rodape"><small>VOCÊS VOLTARAM</small><h1 class="serif">Lisboa, do jeito do comboio</h1></div></div>
+    <div class="pad">
+      <div class="stats">${[['6', 'dias'], ['412', 'fotos'], ['14', 'lugares'], ['€ 1.240', 'no total']].map(([n, r]) => `<div><b class="serif">${n}</b><small>${r}</small></div>`).join('')}</div>
+      <div class="sec"><h3>Passaporte completo</h3><small>6 de 6</small></div>
+      ${passaporteLinha(6)}
+      <div class="acerto" style="margin:12px auto 0;width:max-content">${ic('tudo-ok', '#5E6B2E', 18)} Contas em dia, ninguém deve ninguém</div>
+      <div class="livro-imp">${ic('imprimir', '#7B542F', 26)}<div><b>Livro impresso do comboio</b><small>as fotos e o roteiro, em casa · R$ 129</small></div></div>
+      <button class="botao largo">${ic('compartilhar', '#fff', 18)} Ver o vídeo da viagem</button>
+    </div>${abas('Fotos')}`),
+]
+const cssD = `
+.nova{display:flex;gap:8px;align-items:center;justify-content:center;border:1.5px dashed #CDB38E;border-radius:18px;padding:14px;margin-top:16px;color:var(--couro)}
+.decisao.destaque{border:2px solid var(--dourado);margin-top:8px}.duelo small{display:block}
+.pass-linha{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;background:#F6EAD3;border:1px solid #E5D2B0;border-radius:18px;padding:10px 4px}.pass-linha div{display:grid;justify-items:center;gap:2px}.pass-linha small{font-size:9.5px;font-weight:700;color:var(--suave)}.pass-linha .ok .selo{transform:rotate(-8deg)}
+.pilulas{display:flex;gap:6px;margin:0 -18px 8px 0;overflow:hidden}.pilulas span{flex:none;background:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700}.pilulas .on{background:var(--couro);color:#fff}
+.ideia{display:flex;gap:10px;align-items:center;background:#fff;border-radius:18px;padding:8px;margin-top:10px}.ideia .foto{width:74px;height:74px;border-radius:14px}.ideia>div{flex:1;display:grid;gap:3px}.ideia b{font-size:14.5px}.ideia small{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--suave)}.ideia .av{font-size:7px}.peq-txt{font-size:12.5px}
+.parceiro{display:flex;gap:10px;align-items:center;background:#FFF1DA;border-radius:16px;padding:12px;margin-top:12px}.parceiro div{flex:1;display:grid}.parceiro b{font-size:13.5px}.parceiro small{font-size:11.5px;color:var(--suave)}
+.fantasma{background:transparent;color:var(--couro);border:1.5px solid #E5D2B0}
+.folha{overflow:hidden}.falta .rostos,.falta .av{flex:none}.tela.alta{height:1330px}
+.saldo .linha{margin-top:6px}
+.scan{position:relative;display:inline-flex}.scan i{position:absolute;right:-5px;bottom:-4px;width:15px;height:15px;border-radius:50%;background:var(--caramelo);display:grid;place-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-radius:18px;padding:12px 6px;text-align:center;margin-top:-28px;position:relative;box-shadow:0 10px 24px #4a2e1420}.stats div{display:grid}.stats b{font-size:17px;white-space:nowrap}.stats small{font-size:11px;color:var(--suave)}
+.livro-imp{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;padding:14px;margin-top:12px}.livro-imp div{display:grid}.livro-imp b{font-size:14.5px}.livro-imp small{font-size:12px;color:var(--suave)}
+.capa .rodape h1{font-size:34px;line-height:1.05}
+`
+const htmlD = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tripwave definitivo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"><style>${css}${cssD}</style></head><body>
+<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Tripwave · modelo definitivo</h1>
+<p style="margin:0 0 12px 6px;color:#7A5F45;max-width:1150px">A jornada inteira em 9 telas, do início até a volta. <b>Base do Comboio ao vivo</b> (o grupo é o que traz de volta), <b>seções da Revista</b> (rico, mas organizado), <b>carimbos e Norti do Jogo</b> só nos marcos. Grátis: gastos, divisão, votos, fotos. Pago: Passe da viagem (um paga, todos ganham), parceiros na hora certa e livro impresso na volta.</p>
+<div class="tags" style="display:flex;gap:8px;margin:0 0 24px 6px;flex-wrap:wrap"><span><b>Abas da viagem:</b> Viagem · Roteiro · Contas · Fotos</span><span><b>Prende:</b> votos do grupo, "falta você", carimbos</span><span><b>Cobra:</b> Passe R$ 39,90 por viagem · anual R$ 99,90 · livro R$ 129 · parceiros</span></div>
+<div class="telas">${D.join('')}</div></body></html>`
+writeFileSync(new URL('./definitiva.html', import.meta.url), htmlD)
+console.log('definitiva ok')
