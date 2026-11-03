@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, Plus, Trash2 } from 'lucide-react'
+import { Check, Plus, Trash2 } from '../../components/ui/icones'
 import {
   alternarTarefa,
   apagarTarefa,

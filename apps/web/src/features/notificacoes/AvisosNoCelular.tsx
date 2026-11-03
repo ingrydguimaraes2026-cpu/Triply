@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BellRing } from 'lucide-react'
+import { BellRing } from '../../components/ui/icones'
 import { buscarPreferenciasDeAviso, marcarPreferenciaDeAviso, TIPOS_DE_AVISO, type TipoAviso } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { ehIphone, ligarAvisos, situacaoDoAviso, type SituacaoAviso } from '../cambio/avisos'

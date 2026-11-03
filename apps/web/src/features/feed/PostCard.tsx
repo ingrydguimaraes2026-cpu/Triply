@@ -1,5 +1,6 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { Heart, MessageCircle, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Heart, MessageCircle, MoreHorizontal, Trash2 } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import Avatar from '../../components/ui/Avatar'
 import type { Membro } from '../viagens/hooks'
 import type { Post } from './api'
@@ -90,7 +91,7 @@ export default function PostCard({ post, autor, eu, nomeDe, lugar, meuId, podeAp
               target="_blank"
               rel="noreferrer noopener"
             >
-              📍 ver no mapa
+              <Icone nome="lugar" size={14} /> ver no mapa
             </a>
           )}
           {post.marcados.length > 0 && (

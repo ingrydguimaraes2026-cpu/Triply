@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, Megaphone, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { Check, Megaphone, Pencil, Plus, Trash2, X } from '../../components/ui/icones'
 import { apagarAviso, buscarAvisos, criarAviso, editarAviso, type Aviso } from '@together/core'
 import { supabase } from '../../lib/supabase'
 

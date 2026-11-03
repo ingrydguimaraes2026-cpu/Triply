@@ -37,9 +37,9 @@ test('viagem toda no passado, ou sem datas: janela vazia', () => {
   assert.equal(janelaDeClima('', '', HOJE).dias.length, 0)
 })
 
-test('código de tempo vira rótulo e emoji', () => {
-  assert.equal(interpretarTempo(0).emoji, '☀️')
-  assert.equal(interpretarTempo(2).emoji, '⛅')
+test('código de tempo vira rótulo e ícone', () => {
+  assert.equal(interpretarTempo(0).icone, 'sol')
+  assert.equal(interpretarTempo(2).icone, 'clima')
   assert.equal(interpretarTempo(61).rotulo, 'Chuva')
   assert.equal(interpretarTempo(95).rotulo, 'Trovoada')
 })

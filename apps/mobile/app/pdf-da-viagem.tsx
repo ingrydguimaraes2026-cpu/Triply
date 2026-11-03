@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
-import { ArrowLeft, BookOpen, FileText } from 'lucide-react-native'
+import { ArrowLeft, BookOpen, FileText } from '../src/ui/icones'
 import {
   buscarDestinos,
   buscarEventosDaAgenda,

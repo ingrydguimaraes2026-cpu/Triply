@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { Bell } from 'lucide-react-native'
+import { Bell } from './icones'
 import { buscarAtividades, buscarVistoEm, contarNovas, descreverAtividade, marcarAtividadesComoVistas, type Atividade, type Pessoa } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { primeiroNome } from '../lib/formato'

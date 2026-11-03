@@ -57,7 +57,7 @@ export function resumoDeAmanha(
   if (chegando.length) linhas.push(`Chegada em ${chegando.map((d) => d.nome).join(', ')}`)
   const primeiro = itens.find((i) => i.hora)
   return {
-    titulo: `🌙 Amanhã${onde ? ` em ${onde.nome}` : ''}${primeiro ? ` · começa ${primeiro.hora}` : ''}`,
+    titulo: `Amanhã${onde ? ` em ${onde.nome}` : ''}${primeiro ? ` · começa ${primeiro.hora}` : ''}`,
     corpo: linhas.join(' · '),
   }
 }

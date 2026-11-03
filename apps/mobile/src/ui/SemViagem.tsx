@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Plus } from 'lucide-react-native'
+import { Plus } from './icones'
 import { Agulha } from './Agulha'
 import { Botao } from './pecas'
 

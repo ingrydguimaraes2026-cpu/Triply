@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, Check, ChevronDown, ExternalLink, FileCheck, Info } from 'lucide-react'
+import { AlertTriangle, Check, ChevronDown, ExternalLink, FileCheck, Info } from '../../components/ui/icones'
 import type { Membro } from '../viagens/hooks'
 import { hojeTexto } from '../destinos/datas'
 import { formatarData } from '../../lib/datas'

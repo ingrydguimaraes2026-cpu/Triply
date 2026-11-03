@@ -2,7 +2,7 @@ import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from 'lucide-react-native'
+import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../../src/ui/icones'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'

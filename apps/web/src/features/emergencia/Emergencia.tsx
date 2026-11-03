@@ -1,4 +1,4 @@
-import { ExternalLink, Hospital, Landmark, Phone } from 'lucide-react'
+import { ExternalLink, Hospital, Landmark, Phone } from '../../components/ui/icones'
 import { destinoDoDia, linkConsuladoDoBrasil, linkHospitalPerto, numerosDeEmergencia, type Tables } from '@together/core'
 import { codigoDoPais } from '../documentos/paises'
 import { hojeTexto } from '../destinos/datas'

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, View } from 'react-native'
-import { X } from 'lucide-react-native'
+import { X } from './icones'
 import { apagarEventoDaAgenda, criarEventoDaAgenda, editarEventoDaAgenda, type EventoDaAgenda } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { diaLongo, lerData } from '../lib/formato'

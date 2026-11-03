@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Banknote, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from 'lucide-react'
+import { ArrowRight, Banknote, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from '../../components/ui/icones'
 import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'

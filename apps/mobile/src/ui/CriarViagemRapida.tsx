@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } fro
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Calendar, MapPin, Minus, Plus, Search, Ticket, X } from 'lucide-react-native'
+import { ArrowLeft, Calendar, MapPin, Minus, Plus, Search, Ticket, X } from './icones'
 import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, moedaDoPais, semAcento, type CidadeDaLista } from '@together/core'
 import { useViagemAtual } from '../dados/viagemAtual'
 import { paraIso } from '../lib/formato'

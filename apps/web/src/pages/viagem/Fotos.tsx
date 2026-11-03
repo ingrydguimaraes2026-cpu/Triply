@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { BellRing, CalendarDays, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus, Star } from 'lucide-react'
+import { BellRing, CalendarDays, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus, Star } from '../../components/ui/icones'
 import { albumPorDia, melhoresPosts } from '@together/core'
 import { diaPorExtenso } from '../../features/agenda/hooks'
 import BaixarFotos from '../../features/feed/BaixarFotos'

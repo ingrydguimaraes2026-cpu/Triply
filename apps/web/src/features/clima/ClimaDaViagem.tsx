@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { CloudSun } from 'lucide-react'
+import { CloudSun } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import { buscarClima, interpretarTempo, type PrevisaoDia } from '@together/core'
 import { hojeTexto } from '../destinos/datas'
 import type { Destino } from '../destinos/api'
@@ -80,8 +81,8 @@ export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
                     return (
                       <li key={p.data} className={p.tipo === 'estimativa' ? 'estimativa' : undefined}>
                         <span className="clima-data">{diaCurto(p.data)}</span>
-                        <span className="clima-emoji" title={t.rotulo} aria-label={t.rotulo}>
-                          {t.emoji}
+                        <span className="clima-emoji" title={t.rotulo}>
+                          <Icone nome={t.icone} size={26} aria-label={t.rotulo} />
                         </span>
                         <span className="clima-temp">
                           <strong>{grau(p.tempMax)}</strong> {grau(p.tempMin)}

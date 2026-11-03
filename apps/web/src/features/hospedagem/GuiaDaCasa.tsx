@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Bus, Check, Copy, KeyRound, MapPin, Pencil, ScrollText, Wifi } from 'lucide-react'
+import { Bus, Check, Copy, KeyRound, MapPin, Pencil, ScrollText, Wifi } from '../../components/ui/icones'
 import { mensagemDeErro } from '../financeiro/api'
 import { guiaVazio, type GuiaDaCasa as Guia } from './regras'
 import BotaoIr from '../../components/ui/BotaoIr'

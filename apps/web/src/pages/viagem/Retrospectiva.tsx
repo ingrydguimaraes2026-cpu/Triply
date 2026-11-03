@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BookOpen, Download, Share2, Sparkles } from 'lucide-react'
+import { BookOpen, Download, Share2, Sparkles } from '../../components/ui/icones'
 import { cartoesDaRetrospectiva, estatisticasDoViajante, formatarDinheiro, melhoresPosts, type CartaoDaRetrospectiva } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'

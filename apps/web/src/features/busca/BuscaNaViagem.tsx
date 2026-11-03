@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Search } from 'lucide-react'
+import { Search } from '../../components/ui/icones'
 import { buscarNaViagem, NOMES_DOS_TIPOS, type ItemDeBusca, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import './busca.css'

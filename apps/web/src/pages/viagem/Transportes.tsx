@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from 'lucide-react'
+import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from '../../components/ui/icones'
 import { conexoes, formatarDinheiro, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'

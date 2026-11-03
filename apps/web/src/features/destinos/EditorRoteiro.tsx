@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, Plus, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, Plus, X } from '../../components/ui/icones'
 import { buscarCidades, type Cidade } from './buscarCidades'
 import { useBuscaDeLugares } from './useBuscaDeLugares'
 import { contarVinculos, type ItemRoteiro, type Vinculos } from './api'

@@ -27,7 +27,7 @@ export async function itensDoCalendario(viagem: Viagem, destinos: Destino[]): Pr
   // Dias em cada destino (dia inteiro)
   for (const d of destinos) {
     if (!d.chegada) continue
-    itens.push({ uid: `destino-${d.id}`, titulo: `📍 ${d.nome}`, inicio: d.chegada, fim: d.saida ?? d.chegada })
+    itens.push({ uid: `destino-${d.id}`, titulo: d.nome, inicio: d.chegada, fim: d.saida ?? d.chegada })
   }
   for (const t of trajetos.data ?? []) {
     if (!t.partida) continue

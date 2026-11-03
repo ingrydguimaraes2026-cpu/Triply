@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router'
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, User } from '../components/ui/icones'
 import {
   criarConta,
   destinoDepoisDoLogin,

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, TrainFront } from 'lucide-react'
+import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, TrainFront } from '../../components/ui/icones'
 import { agoraEProximo, destinoDoDia, diaDePassagem, linkUltimoTrem, voltaPraBase, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'

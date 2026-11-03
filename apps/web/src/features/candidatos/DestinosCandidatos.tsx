@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Heart, MapPinPlus, Trash2 } from 'lucide-react'
+import { Heart, MapPinPlus, Trash2 } from '../../components/ui/icones'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'
 import { useBuscaDeLugares } from '../destinos/useBuscaDeLugares'

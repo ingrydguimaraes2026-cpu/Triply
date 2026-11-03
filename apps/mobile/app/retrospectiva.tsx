@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sharing from 'expo-sharing'
 import { captureRef } from 'react-native-view-shot'
-import { ArrowLeft, FileText, Share2, Sparkles } from 'lucide-react-native'
+import { ArrowLeft, FileText, Share2, Sparkles } from '../src/ui/icones'
 import {
   buscarDestinos,
   buscarGastos,

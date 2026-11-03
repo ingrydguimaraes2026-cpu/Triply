@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
-import { Accessibility, ArrowLeft, BookUser, Camera, Globe2, IdCard, ShieldCheck, UserRound } from 'lucide-react'
+import { Accessibility, ArrowLeft, BookUser, Camera, Globe2, IdCard, ShieldCheck, UserRound } from '../components/ui/icones'
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'

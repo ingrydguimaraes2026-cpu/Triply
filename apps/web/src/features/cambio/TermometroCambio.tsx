@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ExternalLink, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
+import { ExternalLink, RefreshCw, TrendingDown, TrendingUp } from '../../components/ui/icones'
 import { hojeTexto } from '../destinos/datas'
 import { formatarDinheiro, lerValor } from '@together/core'
 import { formatarData } from '../../lib/datas'

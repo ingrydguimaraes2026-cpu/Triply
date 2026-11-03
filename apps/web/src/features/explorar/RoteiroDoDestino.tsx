@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowDown, ArrowUp, MoreHorizontal, Star } from 'lucide-react'
+import { ArrowDown, ArrowUp, MoreHorizontal, Star } from '../../components/ui/icones'
 import { arrumarRoteiro, moverNaOrdem, moverPraDia, regiaoEspalhada, trecho, type DiasDoRoteiro, type Tables } from '@together/core'
 import { useViagemAtual } from '../viagens/hooks'
 import { criarConvite } from '../comboio/api'

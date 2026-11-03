@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Image, Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Heart, SlidersHorizontal, Star, Undo2, X } from 'lucide-react-native'
+import { ArrowLeft, Heart, SlidersHorizontal, Star, Undo2, X } from '../src/ui/icones'
 import {
   ESTILOS,
   ORCAMENTOS,

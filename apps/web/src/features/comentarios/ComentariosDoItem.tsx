@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { MessageCircle, Trash2 } from 'lucide-react'
+import { MessageCircle, Trash2 } from '../../components/ui/icones'
 import {
   acharMencoes,
   completarMencao,

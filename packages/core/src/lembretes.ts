@@ -15,13 +15,14 @@ export type LembreteDoBanco = {
 
 export type AvisoDoLembrete = { titulo: string; corpo: string; url: string; tag: string }
 
-const EMOJI_DO_MEIO: Record<string, string> = {
-  aviao: '✈️',
-  trem: '🚆',
-  onibus: '🚌',
-  carro: '🚗',
-  barco: '⛴️',
-  a_pe: '🚶',
+// Aviso do celular é só texto: sem emoji (regra dos ícones, docs/design/ICONES.md)
+const NOME_DO_MEIO: Record<string, string> = {
+  aviao: 'do voo',
+  trem: 'do trem',
+  onibus: 'do ônibus',
+  carro: 'de carro',
+  barco: 'do barco',
+  a_pe: 'a pé',
 }
 
 // "em 45 min" · "em 1 h" · "em 1 h 10 min" · "agora"
@@ -54,7 +55,7 @@ export function textoDoLembrete(l: LembreteDoBanco, agora: Date = new Date()): A
   const titulo = l.titulo?.trim() || (l.tipo === 'ponto' ? 'o ponto de encontro' : l.tipo === 'cancelamento' ? 'a hospedagem' : 'o trajeto')
   if (l.tipo === 'cancelamento') {
     return {
-      titulo: '⏳ Cancelamento grátis acabando',
+      titulo: 'Cancelamento grátis acabando',
       corpo: `${titulo}: dá pra cancelar sem pagar só até ${dataCurta(l.horario)}. Ainda vão ficar?`,
       url: `/viagem/${l.viagem_id}/hospedagem`,
       tag: `lembrete-cancelamento-${l.alvo_id}`,
@@ -62,15 +63,15 @@ export function textoDoLembrete(l: LembreteDoBanco, agora: Date = new Date()): A
   }
   if (l.tipo === 'ponto') {
     return {
-      titulo: `📍 Encontro ${falta}`,
+      titulo: `Encontro ${falta}`,
       corpo: `${titulo}. Não se atrase!`,
       url: `/viagem/${l.viagem_id}?foco=${l.alvo_id}`,
       tag: `lembrete-ponto-${l.alvo_id}`,
     }
   }
-  const emoji = (l.meio && EMOJI_DO_MEIO[l.meio]) || '🧳'
+  const meio = l.meio && NOME_DO_MEIO[l.meio]
   return {
-    titulo: `${emoji} Saída ${falta}`,
+    titulo: `Saída${meio ? ` ${meio}` : ''} ${falta}`,
     corpo: `${titulo}. Bilhete e documentos na mão.`,
     url: `/viagem/${l.viagem_id}/transportes`,
     tag: `lembrete-trajeto-${l.alvo_id}`,

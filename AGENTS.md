@@ -104,7 +104,7 @@ Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais 
 - Dados da viagem dentro das abas: `const { viagem, destinos, membros, euSouAdm } = useViagemAtual()`.
 - **Antes de construir uma funcionalidade, leia a spec dela em `docs/specs/`** (o README de lá tem o roteiro em ordem). A spec diz o que entra, o que não entra, quem pode o quê e os critérios de aceite. Se o pedido da pessoa sair da spec, avise e sugira atualizar a spec primeiro.
 - Ao terminar, use os **critérios de aceite** da spec como roteiro de teste e atualize o status no `docs/specs/README.md`.
-- Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: `lucide-react`.
+- Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: só `<Icone nome="...">` e `<Selo nome="...">` (catálogo em `@together/core`, regras em `docs/design/ICONES.md`). **Nada de emoji** em tela ou texto do app (aviso, compartilhar) e nada de importar `lucide-*`: o teste `apps/web/tests/icones.test.mjs` barra.
 - Variáveis de ambiente do navegador começam com `VITE_`. Nunca colocar segredos nelas.
 - Antes de dizer que terminou, confira só o que a mudança pode quebrar (rodar tudo sempre gasta tempo à toa):
   - Mexeu no app (`apps/mobile`) ou no core: `npx tsc --noEmit` na pasta que mudou.

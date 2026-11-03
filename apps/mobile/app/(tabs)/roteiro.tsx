@@ -3,7 +3,8 @@ import { Animated, PanResponder, Pressable, ScrollView, Text, View } from 'react
 import { StatusBar } from '../../src/ui/StatusBar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
-import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from 'lucide-react-native'
+import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../src/ui/icones'
+import { Icone } from '../../src/ui/Icone'
 import {
   buscarClima,
   buscarDestinos,
@@ -171,7 +172,7 @@ function Tela({
         </View>
         {previsaoDoDia ? (
           <View className="flex-row items-center gap-1.5 px-5 pb-1">
-            <Text className="text-[16px]">{interpretarTempo(previsaoDoDia.codigo).emoji}</Text>
+            <Icone nome={interpretarTempo(previsaoDoDia.codigo).icone} tamanho={20} cor={cor.couro} />
             <Text className="font-body-medium text-[13px] text-corpo">
               {interpretarTempo(previsaoDoDia.codigo).rotulo}
               {previsaoDoDia.tempMax != null ? ` · ${Math.round(previsaoDoDia.tempMax)}°` : ''}

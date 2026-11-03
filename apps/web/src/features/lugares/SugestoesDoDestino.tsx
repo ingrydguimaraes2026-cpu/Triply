@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink, Plus, Sparkles } from 'lucide-react'
+import { ExternalLink, Plus, Sparkles } from '../../components/ui/icones'
 import { INFO_DO_TIPO, sugestoesDoCatalogo, textoDaDistancia, type Sugestao, type Tables } from '@together/core'
 import { carregarCatalogo } from '../explorar/api'
 

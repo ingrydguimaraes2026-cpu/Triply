@@ -265,3 +265,10 @@ html[data-tema='escuro'][data-contraste='alto'] {
   --cor-texto-suave: #fff0d9;
   --cor-borda: #8a6a45;
 }
+
+/* Ícones do Tripwave (docs/design/ICONES.md): traço na cor do texto, fundo dourado.
+   Pra mudar o fundo num lugar só: --icone-duo (cor) e --icone-duo-op (opacidade). */
+.icone { flex: none; vertical-align: middle; }
+.icone .duo { fill: var(--icone-duo, var(--laranja)); fill-opacity: var(--icone-duo-op, 1); }
+.selo { display: inline-flex; flex: none; }
+.selo svg { width: 100%; height: 100%; }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Car, ExternalLink, Navigation } from 'lucide-react'
+import { Car, ExternalLink, Navigation } from './icones'
 import { linksDeCorrida, linksDeNavegacao, textoDoAlvo, type Alvo } from '@together/core'
 import Gaveta from './Gaveta'
 

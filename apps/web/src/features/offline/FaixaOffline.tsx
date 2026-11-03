@@ -1,4 +1,4 @@
-import { WifiOff } from 'lucide-react'
+import { WifiOff } from '../../components/ui/icones'
 import { useSemInternet } from './cache'
 
 // Faixa no topo quando o aparelho está sem internet (spec 034)

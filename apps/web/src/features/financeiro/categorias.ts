@@ -1,4 +1,4 @@
-import { Bed, Plane, Receipt, ShoppingBag, Ticket, Utensils, type LucideIcon } from 'lucide-react'
+import { Bed, Plane, Receipt, ShoppingBag, Ticket, Utensils, type LucideIcon } from '../../components/ui/icones'
 
 // Mesmas categorias da tabela "gastos" no banco
 export const CATEGORIAS: { chave: string; nome: string; icone: LucideIcon }[] = [

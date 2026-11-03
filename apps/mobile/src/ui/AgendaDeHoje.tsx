@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
-import { CalendarDays } from 'lucide-react-native'
+import { CalendarDays } from './icones'
 import {
   buscarDestinos,
   buscarEventosDaAgenda,

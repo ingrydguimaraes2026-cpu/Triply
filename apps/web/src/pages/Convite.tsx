@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { CalendarDays, MapPin, Users } from 'lucide-react'
+import { CalendarDays, MapPin, Users } from '../components/ui/icones'
 import { aceitarConvite, entrarComoConvidado, verConvite, type PreviaDoConvite } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { useSessao } from '../features/auth/hooks'

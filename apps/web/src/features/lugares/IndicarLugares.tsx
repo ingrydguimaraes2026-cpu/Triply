@@ -1,4 +1,4 @@
-import { Send } from 'lucide-react'
+import { Send } from '../../components/ui/icones'
 import { textoParaIndicar } from '@together/core'
 import type { Lugar } from './regras'
 

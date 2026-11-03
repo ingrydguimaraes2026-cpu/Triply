@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '../../components/ui/icones'
 import { apagarEventoDaAgenda, criarEventoDaAgenda, editarEventoDaAgenda, type EventoDaAgenda } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { diaPorExtenso } from './hooks'

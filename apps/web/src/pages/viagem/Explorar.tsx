@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { ChevronLeft, Heart, Minus, Plus, Star, Undo2, X } from 'lucide-react'
+import { ChevronLeft, Heart, Minus, Plus, Star, Undo2, X } from '../../components/ui/icones'
 import {
   ESTILOS,
   ORCAMENTOS,

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useBlocker } from 'react-router'
-import { AlertTriangle, BarChart3, BedDouble, Car, ChevronRight, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
+import { AlertTriangle, BarChart3, BedDouble, Car, ChevronRight, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from '../../components/ui/icones'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
 import {

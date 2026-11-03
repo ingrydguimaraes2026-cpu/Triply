@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Globe2 } from 'lucide-react'
+import { Globe2 } from '../../components/ui/icones'
 import { estatisticasDoViajante, type Estatisticas } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { hojeTexto } from '../destinos/datas'

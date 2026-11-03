@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { Cake, Check, Copy, Repeat, HeartPulse, Link2, LogOut, MoreHorizontal, Phone, Ticket, Users, Utensils } from 'lucide-react'
+import { Cake, Check, Copy, Repeat, HeartPulse, Link2, LogOut, MoreHorizontal, Phone, Ticket, Users, Utensils } from '../../components/ui/icones'
 import { aniversariosNaViagem, buscarFichasDoComboio, restricoesDoGrupo, telefoneParaLigar, type FichaNoComboio } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import {

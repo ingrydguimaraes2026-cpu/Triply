@@ -1,4 +1,4 @@
-import { Bookmark, Luggage, MapPin, Utensils, type LucideIcon } from 'lucide-react'
+import { Bookmark, Luggage, MapPin, Utensils, type LucideIcon } from '../../components/ui/icones'
 import type { TipoDeLugar } from './regras'
 
 // Ícone de cada tipo de lugar (spec 016)

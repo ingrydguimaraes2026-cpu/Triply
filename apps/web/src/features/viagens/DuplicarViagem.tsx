@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { CopyPlus } from 'lucide-react'
+import { CopyPlus } from '../../components/ui/icones'
 import type { Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import Gaveta from '../../components/ui/Gaveta'

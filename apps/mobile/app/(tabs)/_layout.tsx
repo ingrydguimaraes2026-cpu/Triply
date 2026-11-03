@@ -1,7 +1,7 @@
 import { Tabs, usePathname, useRouter, type Href } from 'expo-router'
 import { Pressable, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { BriefcaseBusiness, CircleUserRound, Image as ImageIcon, Map, ReceiptText } from 'lucide-react-native'
+import { BriefcaseBusiness, CircleUserRound, Image as ImageIcon, Map, ReceiptText } from '../../src/ui/icones'
 import { cor } from '../../theme'
 
 // Abas do design: Viagens · Roteiro · Contas · Fotos · Perfil.

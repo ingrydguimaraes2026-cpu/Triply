@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Linking, Switch, Text, View } from 'react-native'
-import { Bell } from 'lucide-react-native'
+import { Bell } from './icones'
 import { buscarPreferenciasDeAviso, marcarPreferenciaDeAviso, TIPOS_DE_AVISO, type TipoAviso } from '@together/core'
 import { estadoDosAvisos, ligarAvisos, type EstadoDosAvisos } from '../lib/avisos'
 import { supabase } from '../lib/supabase'

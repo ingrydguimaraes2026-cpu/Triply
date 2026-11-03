@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, Gavel, Lock, Plus, Trash2, Unlock, X } from 'lucide-react'
+import { Check, Gavel, Lock, Plus, Trash2, Unlock, X } from '../../components/ui/icones'
 import {
   apagarEnquete,
   buscarEnquetes,

@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { ArrowDownLeft, ArrowUpRight, Check, FileSearch, Mail, RefreshCw, Users, Wallet } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Check, FileSearch, Mail, RefreshCw, Users, Wallet } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
 import { formatarDinheiro, lerValor, paraCampo } from '@together/core'
@@ -239,14 +240,14 @@ export default function Carteira({ viagemId, meuId, estado, recarregar, aoVirarG
           ) : (
             <>
               <p className="form-dica">
-                O que o Wise/Nomad mandaram pra você. <strong>💶 = achei valor em euro</strong> (dá pra puxar). Sem valor = só aviso (ex.: "extrato
+                O que o Wise/Nomad mandaram pra você. <strong><Icone nome="euro" size={14} /> = achei valor em euro</strong> (dá pra puxar). Sem valor = só aviso (ex.: "extrato
                 disponível").
               </p>
               <ul className="diag-lista">
                 {diag.map((it, i) => (
                   <li key={i} className={it.euro ? 'tem' : undefined}>
                     <span className="diag-topo">
-                      {it.euro ? '💶 ' : ''}
+                      {it.euro && <Icone nome="euro" size={14} />}
                       <strong>{it.provedor}</strong>
                       {it.data ? ` · ${it.data}` : ''}
                       {it.palavra ? ` · ${it.palavra}` : ''}

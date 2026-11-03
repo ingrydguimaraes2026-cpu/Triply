@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { CalendarDays, Coins, Lock, PenLine, Settings, ShieldCheck, Trash2, Users } from 'lucide-react'
+import { CalendarDays, Coins, Lock, PenLine, Settings, ShieldCheck, Trash2, Users } from '../../components/ui/icones'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { formatarPeriodo } from '../../lib/datas'
 import { editarViagem } from '../../features/viagens/api'

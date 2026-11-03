@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Car, Coins, Languages, Plug, Wifi, Zap } from 'lucide-react'
+import { Car, Coins, Languages, Plug, Wifi, Zap } from '../../components/ui/icones'
 import { avisoDeVoltagem, criarTarefa, fichaDoPais, precisaAdaptador, prazoDoEsim, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { codigoDoPais, nomeDoPais } from '../documentos/paises'

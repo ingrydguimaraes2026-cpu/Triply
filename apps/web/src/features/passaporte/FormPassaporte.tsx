@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { BookUser } from 'lucide-react'
+import { BookUser } from '../../components/ui/icones'
 import { buscarMeusDocumentos, salvarMeusDocumentos } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { codigoDoPais, nomeDoPais } from '../documentos/paises'

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BellOff, BellRing, Check, Send } from 'lucide-react'
+import { BellOff, BellRing, Check, Send } from '../../components/ui/icones'
 import { mensagemDeErro } from '../financeiro/api'
 import { buscarBoletim, ehIphone, ligarAvisos, marcarBoletim, situacaoDoAviso, testarAviso, type SituacaoAviso } from './avisos'
 

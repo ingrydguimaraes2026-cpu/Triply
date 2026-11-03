@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react'
-import { FileText, Image, Lock, Ticket, Trash2, Upload } from 'lucide-react'
+import { FileText, Image, Lock, Ticket, Trash2, Upload } from '../../components/ui/icones'
 import { useViagemAtual } from '../viagens/hooks'
 import { ACEITAR_NO_SELETOR, apagarArquivo, enviarArquivo, problemaDoArquivo, textoDoTamanho, type Arquivo } from './api'
 import { useCofre } from './hooks'

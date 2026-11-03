@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
-import { CalendarCheck, Link2, MessageCircle, Vote, Wallet } from 'lucide-react'
+import { CalendarCheck, Link2, MessageCircle, Vote, Wallet } from '../components/ui/icones'
+import { Icone } from '../components/ui/Icone'
 import Agulha from '../components/ui/Agulha'
 import { emailValido, entrarNaLista } from '../features/lista-espera/api'
 import './lista-espera.css'
@@ -69,7 +70,7 @@ export default function ListaDeEspera() {
 
           {estado === 'pronto' ? (
             <div className="espera-pronto" role="status">
-              <p className="espera-pronto-titulo">Tá na lista! 🎉</p>
+              <p className="espera-pronto-titulo">Tá na lista! <Icone nome="festa" size={22} /></p>
               <p>A gente te chama assim que abrir. Viagem boa é com a galera: chama quem vai junto.</p>
               <a className="botao espera-zap" href={linkZap} target="_blank" rel="noreferrer">
                 <MessageCircle size={18} aria-hidden="true" />

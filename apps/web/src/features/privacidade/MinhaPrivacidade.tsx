@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Download, ShieldCheck, Trash2 } from 'lucide-react'
+import { Download, ShieldCheck, Trash2 } from '../../components/ui/icones'
 import { supabase } from '../../lib/supabase'
 import { baixarArquivo } from '../../lib/baixar'
 import { sair } from '../auth/hooks'

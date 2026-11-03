@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from './icones'
 
 // Cartão branco arredondado, o bloco básico do dashboard.
 // Uso:

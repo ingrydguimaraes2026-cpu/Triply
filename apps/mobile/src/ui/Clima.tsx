@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
-import { CloudSun } from 'lucide-react-native'
+import { CloudSun } from './icones'
+import { Icone } from './Icone'
 import { buscarClima, buscarDestinos, interpretarTempo, type PrevisaoDia } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { hojeIso } from '../lib/formato'
@@ -50,7 +51,7 @@ export function Clima({ viagemId }: { viagemId: string }) {
               <Text className="font-body text-[12px] text-suave">
                 {Number(d)}/{m}
               </Text>
-              <Text className="text-[20px]">{t.emoji}</Text>
+              <Icone nome={t.icone} tamanho={26} cor={cor.couro} />
               <Text className="font-body-semibold text-[12px] text-texto">
                 {x.tempMax != null ? Math.round(x.tempMax) : '–'}° / {x.tempMin != null ? Math.round(x.tempMin) : '–'}°
               </Text>

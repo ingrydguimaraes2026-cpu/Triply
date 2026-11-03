@@ -1,6 +1,6 @@
 import { useEffect, useId, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { X } from 'lucide-react'
+import { X } from './icones'
 
 // Janela de formulário. No celular sobe de baixo (gaveta); no computador fica no meio da tela.
 // Uso:

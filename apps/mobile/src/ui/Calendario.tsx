@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import { ChevronLeft, ChevronRight } from 'lucide-react-native'
+import { ChevronLeft, ChevronRight } from './icones'
 import { nomeDoMes } from '../lib/formato'
 import { cor } from '../../theme'
 

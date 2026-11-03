@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, MoreHorizontal, PanelLeft, Plus, Printer, Route, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from 'lucide-react'
+import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, MoreHorizontal, PanelLeft, Plus, Printer, Route, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from '../../components/ui/icones'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'

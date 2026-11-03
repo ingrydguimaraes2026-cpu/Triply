@@ -22,7 +22,7 @@ test('resumo com trajeto, encontro e evento, em ordem de hora', () => {
     pontos: [{ local: 'Recepção', quando: '2026-11-11T07:30:00Z' }],
     eventos: [{ dia: '2026-11-11', hora: '20:00:00', titulo: 'Jantar' }],
   })
-  assert.equal(r.titulo, '🌙 Amanhã em Roma · começa 08:30')
+  assert.equal(r.titulo, 'Amanhã em Roma · começa 08:30')
   assert.equal(r.corpo, '08:30 Encontro: Recepção · 09:10 Trem Nice → Roma · 20:00 Jantar · Chegada em Roma')
 })
 

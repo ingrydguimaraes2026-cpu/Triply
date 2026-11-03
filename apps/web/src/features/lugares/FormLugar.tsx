@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { consultaDeEstabelecimentos, estabelecimentosDaResposta, lugarDoPost, redeDoLink, type Estabelecimento } from '@together/core'
 import { supabase } from '../../lib/supabase'
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import type { Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
 import { moedasDaViagem } from '../financeiro/categorias'
@@ -178,7 +179,7 @@ export default function FormLugar({ destinos, destinoId, tipoInicial, moedaViage
             ))}
           </ul>
         )}
-        {ponto && <p className="form-dica">📍 {ponto.endereco || 'Local no mapa salvo'}</p>}
+        {ponto && <p className="form-dica"><Icone nome="lugar" size={14} /> {ponto.endereco || 'Local no mapa salvo'}</p>}
       </div>
 
       <div className="form-campo">

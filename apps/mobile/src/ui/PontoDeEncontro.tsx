@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, Text, TextInput, View } from 'react-native'
-import { MapPin, Plus, Share2, Trash2 } from 'lucide-react-native'
+import { MapPin, Plus, Share2, Trash2 } from './icones'
 import { apagarPontoDeEncontro, buscarPontosDeEncontro, criarPontoDeEncontro, linkDoMapa, type PontoDeEncontro as Ponto } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { compartilharItem } from '../lib/compartilhar'

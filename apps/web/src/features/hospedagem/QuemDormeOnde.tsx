@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { BedSingle, Dices, Plus, Trash2 } from 'lucide-react'
+import { BedSingle, Dices, Plus, Trash2 } from '../../components/ui/icones'
 import { apagarQuarto, buscarQuartos, criarQuarto, entrarNoQuarto, gravarSorteio, semQuarto, sortearQuartos, type Quarto } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import type { Membro } from '../viagens/hooks'

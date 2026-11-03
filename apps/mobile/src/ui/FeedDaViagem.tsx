@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Heart, MessageCircle, Send, Trash2 } from "lucide-react-native";
+import { Heart, MessageCircle, Send, Trash2 } from "./icones";
 import {
   alternarCurtida,
   apagarComentarioDoPost,

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
-import { Check, ListChecks, Plus, Trash2 } from 'lucide-react-native'
+import { Check, ListChecks, Plus, Trash2 } from './icones'
 import {
   alternarTarefa,
   apagarTarefa,

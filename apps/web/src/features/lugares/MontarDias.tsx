@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { Wand2 } from 'lucide-react'
+import { Wand2 } from '../../components/ui/icones'
 import { criarEventoDaAgenda, diasDoPeriodo, montarDiasPelosVotos, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { avisarQueMudou } from '../tempo-real/avisos'

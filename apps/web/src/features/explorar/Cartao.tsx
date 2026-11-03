@@ -1,5 +1,5 @@
 import { useRef, useState, type PointerEvent } from 'react'
-import { Clock, Sun, Ticket } from 'lucide-react'
+import { Clock, Sun, Ticket } from '../../components/ui/icones'
 import { creditoDaFoto, INFO_DO_TIPO, precoLegivel, tempoLegivel, type Escolha, type LugarDoCatalogo } from '@together/core'
 
 // Cartão do Explorar (spec 114). Igual ao protótipo aprovado:

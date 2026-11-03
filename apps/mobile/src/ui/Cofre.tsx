@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, Text, View } from 'react-native'
-import { FileText, Lock } from 'lucide-react-native'
+import { FileText, Lock } from './icones'
 import type { Tables } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { cor } from '../../theme'

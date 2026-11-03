@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
-import { Camera, ImagePlus, X } from "lucide-react-native";
+import { Camera, ImagePlus, X } from "../src/ui/icones";
 import {
   avisarComboioDoFeed,
   buscarDestinos,

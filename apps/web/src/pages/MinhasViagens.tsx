@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Archive, ArchiveRestore, ArrowRight, ChevronRight, Clock, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
+import { Archive, ArchiveRestore, ArrowRight, ChevronRight, Clock, LogOut, Plus, Trash2, UserRound } from '../components/ui/icones'
 import { arquivarViagem, buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
 import { sair, useSessao } from '../features/auth/hooks'

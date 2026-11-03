@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { Lock } from 'lucide-react'
+import { Lock } from '../../components/ui/icones'
 import { buscarFaixaDoComboio, buscarMinhaFaixa, formatarDinheiro, leituraDaFaixa, salvarMinhaFaixa, type FaixaDoComboio } from '@together/core'
 import { supabase } from '../../lib/supabase'
 

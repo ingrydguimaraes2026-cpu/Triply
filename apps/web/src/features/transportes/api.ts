@@ -1,4 +1,4 @@
-import { Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from 'lucide-react'
+import { Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from '../../components/ui/icones'
 import { supabase } from '../../lib/supabase'
 import type { Tables } from '@together/core'
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, BookUser, Check } from 'lucide-react'
+import { AlertTriangle, BookUser, Check } from '../../components/ui/icones'
 import { buscarAlertasDePassaporte, buscarMeusDocumentos, situacaoDoPassaporte, temPassaporteEuropeu, type MeusDocumentos } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { hojeTexto } from '../destinos/datas'

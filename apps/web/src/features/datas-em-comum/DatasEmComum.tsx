@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from '../../components/ui/icones'
 import { buscarDisponibilidades, contarPorDia, janelasEmComum, marcarDia, type Disponibilidade } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'

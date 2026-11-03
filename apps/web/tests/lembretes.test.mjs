@@ -14,9 +14,9 @@ test('falta quanto: minutos, horas e "agora"', () => {
   assert.equal(faltaQuanto('2026-11-10T08:00:30Z', AGORA), 'agora')
 })
 
-test('trajeto: emoji do meio, rota no corpo e abre Transportes', () => {
+test('trajeto: nome do meio, rota no corpo e abre Transportes', () => {
   const a = textoDoLembrete({ tipo: 'trajeto', alvo_id: 't1', viagem_id: V, titulo: 'Nice → Mônaco', horario: '2026-11-10T08:50:00Z', meio: 'trem' }, AGORA)
-  assert.equal(a.titulo, '🚆 Saída em 50 min')
+  assert.equal(a.titulo, 'Saída do trem em 50 min')
   assert.match(a.corpo, /^Nice → Mônaco\./)
   assert.equal(a.url, `/viagem/${V}/transportes`)
   assert.equal(a.tag, 'lembrete-trajeto-t1')
@@ -24,20 +24,20 @@ test('trajeto: emoji do meio, rota no corpo e abre Transportes', () => {
 
 test('trajeto com meio desconhecido usa a mala', () => {
   const a = textoDoLembrete({ tipo: 'trajeto', alvo_id: 't1', viagem_id: V, titulo: null, horario: '2026-11-10T09:00:00Z', meio: 'outro' }, AGORA)
-  assert.equal(a.titulo, '🧳 Saída em 1 h')
+  assert.equal(a.titulo, 'Saída em 1 h')
   assert.match(a.corpo, /^o trajeto\./)
 })
 
 test('ponto de encontro: local no corpo e abre a Overview com foco', () => {
   const a = textoDoLembrete({ tipo: 'ponto', alvo_id: 'p1', viagem_id: V, titulo: 'Recepção do hotel', horario: '2026-11-10T08:15:00Z', meio: null }, AGORA)
-  assert.equal(a.titulo, '📍 Encontro em 15 min')
+  assert.equal(a.titulo, 'Encontro em 15 min')
   assert.equal(a.corpo, 'Recepção do hotel. Não se atrase!')
   assert.equal(a.url, `/viagem/${V}?foco=p1`)
 })
 
 test('cancelamento: texto com a data do prazo e abre Hospedagem', () => {
   const a = textoDoLembrete({ tipo: 'cancelamento', alvo_id: 'h1', viagem_id: V, titulo: 'Casa da Ana', horario: '2026-11-12T00:00:00+00:00', meio: null }, AGORA)
-  assert.equal(a.titulo, '⏳ Cancelamento grátis acabando')
+  assert.equal(a.titulo, 'Cancelamento grátis acabando')
   assert.equal(a.corpo, 'Casa da Ana: dá pra cancelar sem pagar só até 12/11. Ainda vão ficar?')
   assert.equal(a.url, `/viagem/${V}/hospedagem`)
 })

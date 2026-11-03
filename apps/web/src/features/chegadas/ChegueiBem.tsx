@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { CircleCheck } from 'lucide-react'
+import { CircleCheck } from '../../components/ui/icones'
 import { buscarChegadas, chegadasRecentes, destinoDoDia, registrarChegada, type Chegada } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'

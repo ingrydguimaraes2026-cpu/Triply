@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { ImagePlus, X } from 'lucide-react'
+import { ImagePlus, X } from '../../components/ui/icones'
 import { gpsDoJpeg, type Tables } from '@together/core'
 import { ArquivoInvalido, comprimirFoto } from '../fotos/comprimir'
 import { criarPost, MAX_FOTOS_POR_POST } from './api'

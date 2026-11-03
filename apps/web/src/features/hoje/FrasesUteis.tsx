@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Camera, Languages, Volume2 } from 'lucide-react'
+import { Camera, Languages, Volume2 } from '../../components/ui/icones'
 import { frasesDoIdioma, linkDeTraducaoPelaCamera, NOME_DO_IDIOMA, VOZ, type Idioma } from '@together/core'
 import Cartao from '../../components/ui/Cartao'
 

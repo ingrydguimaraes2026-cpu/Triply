@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Locate, LocateOff } from 'lucide-react'
+import { Locate, LocateOff } from '../../components/ui/icones'
 import { comboioPorPerto, textoDaDistancia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import type { Membro } from '../viagens/hooks'

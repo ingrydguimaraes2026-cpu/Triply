@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { HeartPulse, IdCard } from 'lucide-react'
+import { HeartPulse, IdCard } from '../../components/ui/icones'
 import { buscarMinhaFicha, salvarMinhaFicha } from '@together/core'
 import { supabase } from '../../lib/supabase'
 

@@ -1,4 +1,4 @@
-import { Accessibility } from 'lucide-react'
+import { Accessibility } from '../../components/ui/icones'
 import type { Preferencias } from '@together/core'
 import { salvarAcessibilidade, useAcessibilidade } from '../../lib/acessibilidade'
 import './acessibilidade.css'

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from './icones'
 
 // O que aparece quando ainda não tem nada cadastrado.
 // Sempre explica o que a pessoa ganha e mostra o próximo passo.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { Check, Plus, Trash2, Wallet } from 'lucide-react'
+import { Check, Plus, Trash2, Wallet } from '../../components/ui/icones'
 import {
   apagarItemDaLista,
   buscarItensDaLista,

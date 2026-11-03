@@ -1,5 +1,5 @@
 import { Linking, Pressable, Text, View } from 'react-native'
-import { Car, Navigation } from 'lucide-react-native'
+import { Car, Navigation } from './icones'
 import { linksDeCorrida, linksDeNavegacao, type Alvo } from '@together/core'
 import { cor } from '../../theme'
 

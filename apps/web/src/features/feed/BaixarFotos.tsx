@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { Download } from '../../components/ui/icones'
 import { albumPorDia, montarZip, nomeDaFotoNoZip, type ArquivoDoZip, type Tables } from '@together/core'
 import { baixarBytes } from '../../lib/baixar'
 import type { Post } from './api'

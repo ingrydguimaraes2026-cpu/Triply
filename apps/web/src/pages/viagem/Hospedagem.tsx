@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Hourglass, Luggage, Maximize2, Pencil, Plus, Repeat, Wallet } from 'lucide-react'
+import { AlertTriangle, CalendarDays, Check, Clock, Crown, ExternalLink, Heart, Hourglass, Luggage, Maximize2, Pencil, Plus, Repeat, Wallet } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useHospedagem } from '../../features/hospedagem/hooks'
@@ -171,7 +172,7 @@ export default function Hospedagem() {
         )}
         {((opcao.etiquetas?.length ?? 0) > 0 || opcao.nota != null) && (
           <p className="hosp-etiquetas">
-            {opcao.nota != null && <span className="hosp-nota">★ {String(opcao.nota).replace('.', ',')}</span>}
+            {opcao.nota != null && <span className="hosp-nota"><Icone nome="estrela" cheio size={13} /> {String(opcao.nota).replace('.', ',')}</span>}
             {opcao.etiquetas?.map((e) => (
               <span key={e}>{nomeDaEtiqueta(e)}</span>
             ))}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, BookOpen, Printer } from 'lucide-react'
+import { ArrowLeft, BookOpen, Printer } from '../../components/ui/icones'
 import { buscarFichasDoComboio, roteiroDiaADia, type FichaNoComboio } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'

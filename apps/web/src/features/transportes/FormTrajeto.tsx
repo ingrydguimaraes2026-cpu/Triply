@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '../../components/ui/icones'
 import { lerEscalas, SITUACOES_DO_TRAJETO, type Escala, type Tables } from '@together/core'
 import { mensagemDeErro } from '../financeiro/api'
 import { apagarTrajeto, criarBateEVolta, definirPassageiros, MEIOS, salvarTrajeto, type Trajeto } from './api'

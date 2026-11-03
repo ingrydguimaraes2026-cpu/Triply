@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Check, ExternalLink, Heart, Plus, TriangleAlert } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, Check, ExternalLink, Heart, Plus, TriangleAlert } from '../src/ui/icones'
 import {
   adicionarOpcaoDeHospedagem,
   buscarDestinos,

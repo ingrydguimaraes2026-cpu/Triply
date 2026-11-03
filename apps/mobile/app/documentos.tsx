@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { AlertTriangle, ArrowLeft, Check, ChevronDown, ExternalLink, FileCheck, Info } from 'lucide-react-native'
+import { AlertTriangle, ArrowLeft, Check, ChevronDown, ExternalLink, FileCheck, Info } from '../src/ui/icones'
 import {
   buscarDestinos,
   buscarExigencias,

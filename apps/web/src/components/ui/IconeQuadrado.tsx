@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from './icones'
 
 // Quadradinho bege com ícone (atalhos, itens de lista), igual ao do app.
 // Uso: <IconeQuadrado icone={Wallet} /> ou <IconeQuadrado icone={Bed} tamanho={48} />

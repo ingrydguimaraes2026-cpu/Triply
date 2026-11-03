@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { MessageCircle, Trash2 } from 'lucide-react'
+import { MessageCircle, Trash2 } from '../../components/ui/icones'
 import Avatar from '../../components/ui/Avatar'
 import EstadoVazio from '../../components/ui/EstadoVazio'
 import type { Membro } from '../viagens/hooks'

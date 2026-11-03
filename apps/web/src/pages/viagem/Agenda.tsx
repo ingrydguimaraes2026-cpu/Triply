@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from 'lucide-react'
+import { AlertTriangle, BedDouble, CalendarDays, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from '../../components/ui/icones'
 import {
   buscarClima,
   compromissosApertados,
@@ -263,7 +263,7 @@ function LinhaDaAgenda({
         {item.detalhe && <small>{item.detalhe}</small>}
         {aperto && (
           <small className={`agenda-aperto ${aperto.tipo}`}>
-            {aperto.tipo === 'conflito' ? `⚠ Começa antes de acabar "${aperto.com}"` : `⏱ Só ${aperto.minutos} min depois de "${aperto.com}"`}
+            {aperto.tipo === 'conflito' ? <AlertTriangle size={13} /> : <Clock size={13} />} {aperto.tipo === 'conflito' ? `Começa antes de acabar "${aperto.com}"` : `Só ${aperto.minutos} min depois de "${aperto.com}"`}
           </small>
         )}
         {/* Spec 070: evento só de parte do comboio */}
@@ -311,7 +311,7 @@ function NesteDia({ dia, onde }: { dia: string; onde: Destino | undefined }) {
     buscarClima(lat, lon, dia, dia, hojeTexto())
       .then((previsao) => {
         const p = previsao.find((x) => x.data === dia)
-        const texto = p ? `${interpretarTempo(p.codigo).emoji} ${Math.round(p.tempMax ?? 0)}° / ${Math.round(p.tempMin ?? 0)}°` : null
+        const texto = p ? `${interpretarTempo(p.codigo).rotulo} · ${Math.round(p.tempMax ?? 0)}° / ${Math.round(p.tempMin ?? 0)}°` : null
         if (vivo) setTempo({ dia, texto })
       })
       .catch(() => vivo && setTempo({ dia, texto: null }))

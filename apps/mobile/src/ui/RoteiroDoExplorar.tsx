@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native'
 import Svg, { Circle, Polyline } from 'react-native-svg'
-import { ArrowDown, ArrowUp, MoreHorizontal, Star } from 'lucide-react-native'
+import { ArrowDown, ArrowUp, MoreHorizontal, Star } from './icones'
 import { arrumarRoteiro, moverNaOrdem, moverPraDia, regiaoEspalhada, trecho, type DiasDoRoteiro, type LugarComVotos } from '@together/core'
 import { Botao } from './pecas'
 import { cor, sombra } from '../../theme'

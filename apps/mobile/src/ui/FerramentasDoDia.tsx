@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Linking, Modal, Pressable, Text, View } from 'react-native'
-import { Briefcase, Calculator, Camera, Car, Languages, Percent, Utensils, X, type LucideIcon } from 'lucide-react-native'
+import { Briefcase, Calculator, Camera, Car, Languages, Percent, Utensils, X, type LucideIcon } from './icones'
 import {
   codigoDoPais,
   contaComGorjeta,

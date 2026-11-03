@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { Bell } from 'lucide-react'
+import { Bell } from '../../components/ui/icones'
 import { descreverAtividade, type Atividade } from '@together/core'
 import { tempoAtras } from '../feed/regras'
 import type { Membro } from '../viagens/hooks'

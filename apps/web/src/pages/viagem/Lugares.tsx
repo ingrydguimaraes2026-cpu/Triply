@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { CheckCheck, ExternalLink, Flag, Upload, Heart, Luggage, Map as MapaIcone, Pencil, Plus, Sparkles } from 'lucide-react'
+import { CheckCheck, ExternalLink, Flag, Upload, Heart, Luggage, Map as MapaIcone, Pencil, Plus, Sparkles } from '../../components/ui/icones'
 import type { Tables } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useLugares } from '../../features/lugares/hooks'

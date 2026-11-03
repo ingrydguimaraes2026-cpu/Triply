@@ -17,11 +17,15 @@ Blocos reutilizáveis pra montar as telas com a mesma cara. Os estilos ficam em 
 | `Carregando` | Agulha pensando + texto, enquanto busca os dados | `<Carregando texto="Buscando as viagens…" />` |
 | `ErroNaTela` | Erro amigável com "Tentar de novo" | `<ErroNaTela aoTentar={recarregar} />` |
 
-Ícones: usamos [lucide-react](https://lucide.dev/icons). Procure o ícone no site e importe pelo nome:
+Ícones e selos: catálogo próprio do Tripwave (regras em `docs/design/ICONES.md`). Nada de emoji nem `lucide-react`.
 
 ```tsx
-import { Wallet } from 'lucide-react'
+import { Icone, Selo } from './Icone'
+<Icone nome="contas" size={20} />   // ícone do dia a dia
+<Selo nome="mapa" tamanho={40} />  // ilustração nossa (onboarding, passos)
 ```
+
+Telas antigas importam pelos nomes velhos (`import { Wallet } from './icones'`): continua valendo, é o mesmo desenho.
 
 Botões: use as classes `botao` (marrom, principal), `botao secundario` (branco com contorno), `botao claro` (em cima de foto) e `compacto` (menor).
 

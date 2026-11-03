@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react'
-import { Paperclip, Ticket } from 'lucide-react'
+import { Paperclip, Ticket } from '../../components/ui/icones'
 import { ACEITAR_NO_SELETOR, enviarArquivo, problemaDoArquivo, type Arquivo } from './api'
 import './cofre.css'
 

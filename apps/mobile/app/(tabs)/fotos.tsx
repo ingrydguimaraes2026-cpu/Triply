@@ -3,7 +3,7 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { StatusBar } from "../../src/ui/StatusBar";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Plus } from "lucide-react-native";
+import { Plus } from "../../src/ui/icones";
 import {
   buscarDestinos,
   buscarFotos,

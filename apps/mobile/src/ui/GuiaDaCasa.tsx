@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, Text, View } from 'react-native'
-import { BedDouble, KeyRound, MapPin, Wifi } from 'lucide-react-native'
+import { BedDouble, KeyRound, MapPin, Wifi } from './icones'
 import { buscarDestinos, type Tables } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { hojeIso } from '../lib/formato'

@@ -1,4 +1,4 @@
-import { Share2 } from 'lucide-react'
+import { Share2 } from './icones'
 import type { ItemCompartilhavel } from '@together/core'
 import { compartilharItem } from '../../lib/compartilhar'
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { Animated, Image, PanResponder, Platform, Pressable, Text, View } from 'react-native'
-import { Clock, Sun, Ticket } from 'lucide-react-native'
+import { Clock, Sun, Ticket } from './icones'
 import { creditoDaFoto, INFO_DO_TIPO, precoLegivel, tempoLegivel, type Escolha, type LugarDoCatalogo } from '@together/core'
 import { cor, sombra } from '../../theme'
 

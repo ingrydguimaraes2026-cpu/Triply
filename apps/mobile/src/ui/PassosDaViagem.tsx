@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import { ChevronRight } from 'lucide-react-native'
+import { ChevronRight } from './icones'
 import { Cartao } from './pecas'
 import { Selo, type NomeDoSelo } from './Selos'
 import { cor } from '../../theme'

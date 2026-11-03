@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { History, RotateCcw } from 'lucide-react'
+import { History, RotateCcw } from '../../components/ui/icones'
 import { diasNaLixeira, fraseDoHistorico, podeRestaurar, type ItemDoHistorico } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../viagens/hooks'

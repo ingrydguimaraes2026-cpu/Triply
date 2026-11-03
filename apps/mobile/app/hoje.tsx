@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from 'lucide-react-native'
+import { ArrowLeft, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from '../src/ui/icones'
 import {
   agoraEProximo,
   buscarDestinos,

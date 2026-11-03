@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigation } from 'lucide-react'
+import { Navigation } from '../../components/ui/icones'
 import { consultaDoLugar, maisPerto, pontoDaResposta, textoDaDistancia, type Tables } from '@together/core'
 import type { Lugar } from './regras'
 import BotaoIr from '../../components/ui/BotaoIr'

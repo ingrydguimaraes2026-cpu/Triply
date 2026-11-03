@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
-import { Check, Megaphone, Plus, Trash2, X } from 'lucide-react-native'
+import { Check, Megaphone, Plus, Trash2, X } from './icones'
 import { apagarAviso, buscarAvisos, criarAviso, type Aviso } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { cor } from '../../theme'

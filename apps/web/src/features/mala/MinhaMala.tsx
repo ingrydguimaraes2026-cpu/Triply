@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { Check, Plus, Trash2 } from 'lucide-react'
+import { Check, Plus, Trash2 } from '../../components/ui/icones'
 import {
   buscarMinhaMala,
   marcarNaMala,

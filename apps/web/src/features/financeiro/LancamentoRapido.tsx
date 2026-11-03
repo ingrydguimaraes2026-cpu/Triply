@@ -1,5 +1,5 @@
 import { useCallback, useState, type FormEvent } from 'react'
-import { Mic, MicOff } from 'lucide-react'
+import { Mic, MicOff } from '../../components/ui/icones'
 import { hojeTexto } from '../destinos/datas'
 import type { Membro } from '../viagens/hooks'
 import { dividirIgual } from '@together/core'

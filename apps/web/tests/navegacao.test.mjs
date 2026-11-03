@@ -45,10 +45,10 @@ test('103: texto pra indicar lugares, recomendados primeiro', async () => {
     [
       'Minhas dicas em Nice:',
       '',
-      '🍽️ Pizzaria ✓ fomos e recomendo (peça a de trufa)',
+      '• Pizzaria (fomos e recomendo) (peça a de trufa)',
       'https://www.google.com/maps/search/?api=1&query=43.7,7.26',
       '',
-      '📍 Castelo',
+      '• Castelo',
       'https://www.google.com/maps/search/?api=1&query=Castelo%20Nice',
       '',
       'Montado no Tripwave',

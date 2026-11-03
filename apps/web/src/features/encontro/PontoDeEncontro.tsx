@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MapPin, Plus, Trash2 } from 'lucide-react'
+import { MapPin, Plus, Trash2 } from '../../components/ui/icones'
 import {
   apagarPontoDeEncontro,
   buscarPontosDeEncontro,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
-import { Send, Trash2 } from 'lucide-react-native'
+import { Send, Trash2 } from './icones'
 import { apagarComentarioDoItem, buscarComentariosDoItem, comentarNoItem, type AlvoDoComentario, type ComentarioDeItem, type Pessoa } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { primeiroNome } from '../lib/formato'

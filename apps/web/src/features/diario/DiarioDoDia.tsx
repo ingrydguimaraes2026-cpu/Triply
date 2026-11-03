@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BookOpen, Lock } from 'lucide-react'
+import { BookOpen, Lock } from '../../components/ui/icones'
 import type { Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import type { Membro } from '../viagens/hooks'

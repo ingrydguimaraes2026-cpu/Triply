@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Switch, Text, TextInput, View } from 'react-native'
-import { BarChart3, Check, Lock, Plus, Share2, Trash2, Unlock, X } from 'lucide-react-native'
+import { BarChart3, Check, Lock, Plus, Share2, Trash2, Unlock, X } from './icones'
 import {
   apagarEnquete,
   buscarEnquetes,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { Pencil, Phone, Plus, ShieldCheck, Trash2 } from 'lucide-react'
+import { Pencil, Phone, Plus, ShieldCheck, Trash2 } from '../../components/ui/icones'
 import { apagarSeguro, buscarSeguros, cobreAViagem, salvarSeguro, semSeguro, telefoneParaLigar, type SeguroViagem } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { mensagemDeErro } from '../financeiro/api'

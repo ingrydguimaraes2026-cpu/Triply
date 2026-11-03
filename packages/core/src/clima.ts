@@ -1,3 +1,4 @@
+import type { NomeDoIcone } from './icones'
 // Clima por dia do roteiro (roadmap #8). Dados do Open-Meteo: grátis, sem chave, funciona direto do navegador e do app.
 // - Dias dentro dos próximos ~16 dias: previsão de verdade.
 // - Dias mais longe: estimativa pelo mesmo período do ano passado (média histórica serve de palpite).
@@ -17,23 +18,23 @@ export type PrevisaoDia = {
   tipo: TipoDePrevisao
 }
 
-export type TempoInfo = { rotulo: string; emoji: string }
+export type TempoInfo = { rotulo: string; icone: NomeDoIcone }
 
 // Código de tempo da WMO → um rótulo curto em português e um emoji.
 // Tabela: https://open-meteo.com/en/docs (WMO Weather interpretation codes)
 export function interpretarTempo(codigo: number): TempoInfo {
-  if (codigo <= 0) return { rotulo: 'Céu limpo', emoji: '☀️' }
-  if (codigo === 1) return { rotulo: 'Quase limpo', emoji: '🌤️' }
-  if (codigo === 2) return { rotulo: 'Parcial nublado', emoji: '⛅' }
-  if (codigo === 3) return { rotulo: 'Nublado', emoji: '☁️' }
-  if (codigo === 45 || codigo === 48) return { rotulo: 'Névoa', emoji: '🌫️' }
-  if (codigo >= 51 && codigo <= 57) return { rotulo: 'Garoa', emoji: '🌦️' }
-  if (codigo >= 61 && codigo <= 67) return { rotulo: 'Chuva', emoji: '🌧️' }
-  if (codigo >= 71 && codigo <= 77) return { rotulo: 'Neve', emoji: '🌨️' }
-  if (codigo >= 80 && codigo <= 82) return { rotulo: 'Pancadas de chuva', emoji: '🌦️' }
-  if (codigo === 85 || codigo === 86) return { rotulo: 'Pancadas de neve', emoji: '🌨️' }
-  if (codigo >= 95) return { rotulo: 'Trovoada', emoji: '⛈️' }
-  return { rotulo: 'Tempo variável', emoji: '🌥️' }
+  if (codigo <= 0) return { rotulo: 'Céu limpo', icone: 'sol' }
+  if (codigo === 1) return { rotulo: 'Quase limpo', icone: 'clima' }
+  if (codigo === 2) return { rotulo: 'Parcial nublado', icone: 'clima' }
+  if (codigo === 3) return { rotulo: 'Nublado', icone: 'nublado' }
+  if (codigo === 45 || codigo === 48) return { rotulo: 'Névoa', icone: 'nevoa' }
+  if (codigo >= 51 && codigo <= 57) return { rotulo: 'Garoa', icone: 'chuva' }
+  if (codigo >= 61 && codigo <= 67) return { rotulo: 'Chuva', icone: 'chuva' }
+  if (codigo >= 71 && codigo <= 77) return { rotulo: 'Neve', icone: 'neve' }
+  if (codigo >= 80 && codigo <= 82) return { rotulo: 'Pancadas de chuva', icone: 'chuva' }
+  if (codigo === 85 || codigo === 86) return { rotulo: 'Pancadas de neve', icone: 'neve' }
+  if (codigo >= 95) return { rotulo: 'Trovoada', icone: 'trovoada' }
+  return { rotulo: 'Tempo variável', icone: 'nublado' }
 }
 
 // "2026-11-12" → nº de dias desde 1970 (sem fuso). Mesmo truque do datas.ts.

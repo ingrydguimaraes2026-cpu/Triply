@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Animated, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Heart, MapPin, Minus, Plus, Search, Star, X } from 'lucide-react-native'
+import { ArrowLeft, Heart, MapPin, Minus, Plus, Search, Star, X } from '../src/ui/icones'
 import {
   CIDADES_DA_PRE_CARGA,
   NOME_EM_PORTUGUES,
