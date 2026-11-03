@@ -1,16 +1,13 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
 import { supabase } from '../../lib/supabase'
 
-// Lista de espera (página /espera). A tabela é nova e ainda não está nos tipos gerados
-// (packages/core/src/database.ts), por isso usamos o cliente sem tipos só aqui.
-// Depois de aplicar a migration e gerar os tipos de novo, dá pra tirar esse "sem tipos".
-const cliente = supabase as unknown as SupabaseClient
+// Lista de espera (página /espera). Os e-mails ficam na tabela lista_espera:
+// o site só consegue inserir, ninguém lê pelo app (só no painel do Supabase).
 
 export type Resultado = 'entrou' | 'ja-estava' | 'erro'
 
 // Guarda o e-mail. Se já estava na lista, conta como sucesso (não é erro da pessoa).
 export async function entrarNaLista(email: string, origem: string | null): Promise<Resultado> {
-  const { error } = await cliente
+  const { error } = await supabase
     .from('lista_espera')
     .insert({ email: email.trim().toLowerCase(), origem: origem?.slice(0, 40) || null })
   if (!error) return 'entrou'

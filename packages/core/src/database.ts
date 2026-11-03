@@ -1872,6 +1872,27 @@ export type Database = {
         }
         Relationships: []
       }
+      lista_espera: {
+        Row: {
+          criado_em: string
+          email: string
+          id: string
+          origem: string | null
+        }
+        Insert: {
+          criado_em?: string
+          email: string
+          id?: string
+          origem?: string | null
+        }
+        Update: {
+          criado_em?: string
+          email?: string
+          id?: string
+          origem?: string | null
+        }
+        Relationships: []
+      }
       localizacoes_ao_vivo: {
         Row: {
           ate: string
