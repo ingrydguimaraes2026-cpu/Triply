@@ -13,12 +13,14 @@
 | Poses recortadas e leves (360 px) pra páginas web | `docs/marketing/norti/web/` |
 | Arquivos de animação pro app (web `<mascot-view>`, iOS) e desenhos em SVG | `docs/marketing/norti/app-web`, `app-ios` e `vetor` |
 | Bios dos 3 perfis, 8 roteiros de TikTok/Reels do réveillon, 8 primeiros posts do X (rascunho pra Ingryd revisar) | `docs/marketing/CONTEUDO-INICIAL.md` |
+| Calendário das 2 primeiras semanas (09 a 22/11): vídeo do dia, 2 posts do X, story, teste de formatos, banco de variações e 14 posts novos (X1 a X14) | `docs/marketing/CALENDARIO-2-SEMANAS.md` |
 | Script de triagem de nome (domínio + App Store) | `docs/marketing/checar-nome.py` |
 | Página de lista de espera `/espera` (código pronto) | `apps/web/src/pages/ListaDeEspera.tsx` |
 
 **Páginas no claude.ai (privadas, compartilhar pelo menu Share):**
 - Caderno de marketing: https://claude.ai/artifact/HzBVv7tXWkKLmAqu4x8nom (fonte: `docs/marketing/tripwave-marketing.html`). Já mostra a Norti "Pin" (topo, ícone e galeria das 9 poses). Pra republicar, mandar junto as imagens: `files` com `norti/norti-<pose>.png` → `docs/marketing/norti/web/norti-<pose>.png`.
 - Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP
+- Calendário das 2 semanas: https://claude.ai/artifact/UMJVQ5p61pd4WvQPYQEM7R (fonte: `docs/marketing/calendario-2-semanas.html`; republicar com `files` `norti-point.webp` → `apps/web/public/norti/point.webp`).
 
 ## Pendente
 

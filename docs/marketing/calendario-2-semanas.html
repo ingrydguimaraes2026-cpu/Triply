@@ -1,0 +1,354 @@
+<title>Calendário Tripwave</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: uma coluna de leitura (diário de bordo), dias como fichas com as 4 tarefas do dia. Cores da marca: couro e dourado. */
+:root {
+  --bg: #fbf3e6;
+  --cartao: #ffffff;
+  --suave: #f6ead7;
+  --texto: #3b2715;
+  --texto-2: #7a5f45;
+  --borda: #eadcc6;
+  --couro: #7b542f;
+  --dourado: #e3a04a;
+  --destaque-fundo: #f9e3c0;
+  --ok: #5e6b2e;
+  --ok-fundo: #eef0df;
+  --display: 'Fraunces', Georgia, serif;
+  --corpo: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1d140c; --cartao: #2a1d12; --suave: #33241a; --texto: #f4e6d2; --texto-2: #c9ad8c;
+    --borda: #4a3524; --couro: #d9a66d; --dourado: #f0b65e; --destaque-fundo: #4a331b; --ok: #c3cf8f; --ok-fundo: #2f3320;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1d140c; --cartao: #2a1d12; --suave: #33241a; --texto: #f4e6d2; --texto-2: #c9ad8c;
+  --borda: #4a3524; --couro: #d9a66d; --dourado: #f0b65e; --destaque-fundo: #4a331b; --ok: #c3cf8f; --ok-fundo: #2f3320;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--texto); font: 400 16px/1.55 var(--corpo);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 64px;
+}
+.pagina { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(32px, 7vw, 46px); letter-spacing: -0.02em; }
+h2 { font-size: 26px; }
+h3 { font-size: 19px; }
+p { margin: 0; }
+a { color: var(--couro); }
+:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px; }
+.rotulo { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-2); }
+
+/* Topo */
+.topo { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+.topo img { width: 110px; height: auto; }
+.topo .sub { color: var(--texto-2); margin-top: 10px; max-width: 52ch; }
+@media (max-width: 480px) { .topo { grid-template-columns: 1fr; } .topo img { width: 84px; order: -1; } }
+
+/* Ritmo */
+.ritmo { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.ritmo div { background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.ritmo b { font-family: var(--display); font-size: 24px; color: var(--couro); font-variant-numeric: tabular-nums; }
+.ritmo span { font-size: 13px; color: var(--texto-2); line-height: 1.35; }
+@media (max-width: 600px) { .ritmo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Navegação */
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; gap: 8px; overflow-x: auto; border-bottom: 1px solid var(--borda); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+nav a { flex: none; text-decoration: none; font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 999px; background: var(--suave); color: var(--texto); }
+
+section { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 64px; }
+.intro { color: var(--texto-2); max-width: 60ch; }
+
+/* Semana 0 */
+.tarefas { display: flex; flex-direction: column; border: 1px solid var(--borda); border-radius: 12px; background: var(--cartao); overflow: hidden; }
+.tarefa { display: grid; grid-template-columns: 70px 1fr 74px; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--borda); align-items: baseline; }
+.tarefa:first-child { border-top: 0; }
+.tarefa .quem { font-size: 13px; font-weight: 700; color: var(--couro); }
+.tarefa .ate { font-size: 13px; color: var(--texto-2); text-align: right; font-variant-numeric: tabular-nums; }
+.tarefa > :nth-child(2) { min-width: 0; }
+@media (max-width: 480px) { .tarefa { grid-template-columns: 1fr auto; } .tarefa > :nth-child(2) { grid-column: 1 / -1; order: 3; } }
+
+/* Dias */
+.dias { display: flex; flex-direction: column; gap: 12px; }
+.dia { background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px; padding: 16px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 4px 16px; }
+.dia.vencedor { border-color: var(--dourado); box-shadow: inset 4px 0 0 var(--dourado); }
+.data { grid-row: span 6; display: flex; flex-direction: column; align-items: flex-start; }
+.data .n { font-family: var(--display); font-size: 30px; line-height: 1; color: var(--couro); font-variant-numeric: tabular-nums; }
+.data .d { font-size: 13px; color: var(--texto-2); }
+.linha { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; padding-block: 5px; border-top: 1px dashed var(--borda); }
+.linha:first-of-type { border-top: 0; }
+.linha .k { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--texto-2); padding-top: 2px; }
+.selo { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--destaque-fundo); color: var(--texto); margin-right: 6px; }
+.selo.ok { background: var(--ok-fundo); color: var(--ok); }
+@media (max-width: 480px) {
+  .dia { grid-template-columns: 1fr; }
+  .data { grid-row: auto; flex-direction: row; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .linha { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* Caixas */
+.caixa { background: var(--suave); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+pre { margin: 0; overflow-x: auto; font: 13px/1.5 var(--mono); background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; padding: 12px; }
+ul, ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+
+/* Roteiros e posts */
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 600px) { .grade { grid-template-columns: 1fr; } }
+.bloco { background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.post { white-space: pre-wrap; font-size: 15px; background: var(--suave); border-radius: 10px; padding: 12px; }
+.nota { font-size: 13px; color: var(--texto-2); }
+.cabeca { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+button.copiar { font: 600 13px var(--corpo); border: 1px solid var(--borda); background: var(--cartao); color: var(--couro); border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+button.copiar:hover { background: var(--suave); }
+.lista-poses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 12px; font-size: 14px; }
+.lista-poses code { font: 12px var(--mono); color: var(--texto-2); }
+@media (max-width: 480px) { .lista-poses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+
+<div class="pagina">
+  <header class="topo">
+    <div>
+      <p class="rotulo">Tripwave · marketing · 09 a 22/11/2026</p>
+      <h1>As 2 primeiras semanas de conteúdo</h1>
+      <p class="sub">Banco pra gravar em lote. Semana 1 testa 4 formatos; semana 2 repete o que funcionou. A meta é uma só: gente entrando na lista de espera.</p>
+    </div>
+    <img src="norti-point.webp" alt="Norti apontando">
+  </header>
+
+  <div class="ritmo" aria-label="Ritmo diário">
+    <div><b>1</b><span>vídeo novo por dia, no TikTok, Reels e Shorts</span></div>
+    <div><b>2</b><span>posts no X: 1 do Victor, 1 da Ingryd</span></div>
+    <div><b>20–30</b><span>respostas no X, sem link</span></div>
+    <div><b>1</b><span>story com enquete no Instagram</span></div>
+  </div>
+
+  <nav aria-label="Seções">
+    <a href="#semana0">Semana 0</a>
+    <a href="#semana1">Semana 1</a>
+    <a href="#vencedor">Decidir o vencedor</a>
+    <a href="#semana2">Semana 2</a>
+    <a href="#videos">Vídeos novos</a>
+    <a href="#banco">Banco de variações</a>
+    <a href="#x">Posts do X</a>
+  </nav>
+
+  <section id="semana0">
+    <p class="rotulo">02 a 08/11</p>
+    <h2>Semana 0: preparar</h2>
+    <p class="intro">Nada vai ao ar ainda. Tudo aqui destrava o primeiro post.</p>
+    <div class="tarefas" id="lista-semana0"></div>
+    <div class="caixa">
+      <h3>Gravar em lote</h3>
+      <ul>
+        <li><b>Lote 1, sáb 07/11:</b> vídeos dos dias 1 a 7, mais 2 reservas.</li>
+        <li><b>Lote 2, sáb 14/11:</b> dias 8 a 14, depois de olhar os números da semana 1.</li>
+        <li><b>Lote 3, sáb 21/11:</b> semana 3, com o começo da contagem regressiva (R6, a partir de 01/12).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="semana1">
+    <p class="rotulo">09 a 15/11</p>
+    <h2>Semana 1: testar 4 formatos</h2>
+    <p class="intro">Norti na trend (R1), Tipos de amigo (R2), Marca o amigo (R3) e Quiz (R4). Cada um aparece pelo menos 2 vezes. Os roteiros R1 a R8 e os posts P1 a P8 estão no <code>CONTEUDO-INICIAL.md</code>.</p>
+    <div class="dias" id="dias-semana1"></div>
+  </section>
+
+  <section id="vencedor">
+    <h2>Sexta: decidir o vencedor</h2>
+    <div class="caixa">
+      <p>Anote, 24 h depois de cada vídeo: views no TikTok e no Reels, compartilhamentos, salvamentos e comentários.</p>
+      <p>Entradas na lista por rede (SQL Editor do Supabase):</p>
+      <pre>select coalesce(origem, 'sem origem') as origem, count(*) as pessoas
+from lista_espera
+group by 1
+order by 2 desc;</pre>
+      <p><b>Ganha quem somar mais compartilhamentos + salvamentos</b>, não só views. Na semana 2 o vencedor ocupa 4 dos 7 dias, o segundo colocado ocupa 2 e 1 dia fica pra algo novo.</p>
+    </div>
+  </section>
+
+  <section id="semana2">
+    <p class="rotulo">16 a 22/11</p>
+    <h2>Semana 2: dobrar o que funcionou</h2>
+    <p class="intro">Os dias com borda dourada são <b>do vencedor</b>: troque a sugestão pelo roteiro do formato que ganhou, usando o banco de variações.</p>
+    <div class="dias" id="dias-semana2"></div>
+  </section>
+
+  <section id="videos">
+    <h2>Vídeos novos</h2>
+    <div class="grade" id="lista-videos"></div>
+    <div class="caixa">
+      <h3>Poses da Norti</h3>
+      <p class="nota">Em <code>docs/marketing/norti/png/</code>, com fundo transparente.</p>
+      <div class="lista-poses" id="lista-poses"></div>
+    </div>
+  </section>
+
+  <section id="banco">
+    <h2>Banco de variações</h2>
+    <p class="intro">Material pra 5 dias de qualquer formato que ganhar, sem inventar nada.</p>
+    <div class="grade" id="lista-banco"></div>
+  </section>
+
+  <section id="x">
+    <h2>Posts do X</h2>
+    <p class="intro">Minúsculas, sem exagero. Link só na primeira resposta. Números entre colchetes são preenchidos com o dado real do dia; nunca inventar.</p>
+    <div class="grade" id="lista-x"></div>
+  </section>
+
+  <section>
+    <div class="caixa">
+      <h3>Links da lista de espera</h3>
+      <ul>
+        <li>X: <code>tripwave.app/espera?origem=x</code></li>
+        <li>Instagram: <code>tripwave.app/espera?origem=instagram</code></li>
+        <li>TikTok: <code>tripwave.app/espera?origem=tiktok</code></li>
+        <li>Shorts: <code>tripwave.app/espera?origem=shorts</code></li>
+      </ul>
+      <p class="nota">Enquanto o domínio não existir, use o endereço no ar (hoje <code>together-viagem.vercel.app</code>). A piada é sempre da situação, nunca de uma pessoa real. As falas da Norti são rascunho até a Ingryd fechar a personalidade dela.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+const semana0 = [
+  ['Dupla', 'Criar @tripwaveapp (X) e @tripwave.app (Instagram e TikTok) com as bios prontas', 'qua 04/11'],
+  ['Dupla', 'Registrar tripwave.app e tripwave.com.br', 'qua 04/11'],
+  ['Victor', 'Colocar a /espera no ar (hoje só na branch monorepo-split) e testar um cadastro de cada ?origem=', 'qui 05/11'],
+  ['Ingryd', 'Revisar piadas e bios; escolher 3 falas fixas da Norti', 'qui 05/11'],
+  ['Victor', 'Gravar 10 vídeos curtos de tela do app (acertos, roteiro, Norti comemorando)', 'sex 06/11'],
+  ['Dupla', 'Lote 1: gravar os vídeos dos dias 1 a 7 + 2 reservas', 'sáb 07/11'],
+  ['Dupla', 'Seguir os perfis da estratégia e começar a responder no X, sem postar', 'semana toda'],
+]
+
+// [dia, data, semana, vídeo, X Victor, X Ingryd, story/extra, do vencedor?]
+const dias = [
+  [1, 'seg 09/11', 1, 'R1 · A Norti vendo o grupo decidir a casa', 'P1 · apresentação da dupla (fixar no perfil)', 'Repost do P1: "é verdade. eu sou a que tá aprendendo 🙋‍♀️"', 'Enquete: quem organiza a viagem do seu grupo? "eu 😩" / "nunca sou eu 😌"'],
+  [2, 'ter 10/11', 1, 'R2.1 · O que some na hora do Pix (Apontando)', 'P2 · o problema', 'X1', 'Enquete: já ficou no prejuízo numa viagem com amigos?'],
+  [3, 'qua 11/11', 1, 'R3.1 · marca o amigo do "te faço o Pix amanhã" no dia 2 de janeiro', 'P3 · o "em breve" com vídeo do app (link na 1ª resposta)', 'Repost do P3', 'Adesivo de link da lista de espera: "entra que é de graça"'],
+  [4, 'qui 12/11', 1, 'R4 · Quiz: quantos pontos seu grupo faz?', 'P4 · a mascote (Agulha antiga ao lado da Norti)', 'X2', 'Repost do quiz + caixinha "quantos pontos vocês fizeram?"'],
+  [5, 'sex 13/11', 1, 'R2.2 · O que quer casa com piscina e paga R$ 200 (Ops)', 'P7 · resumo da semana 1, com números reais', 'P6 · semana 1 aprendendo a programar', 'Bastidores do dia. Hoje: decidir o vencedor'],
+  [6, 'sáb 14/11', 1, 'N1 · A Norti vendo o grupo dividir o mercado', 'P5 · o nome', 'X3', 'Lote 2: gravar os dias 8 a 14 com o vencedor'],
+  [7, 'dom 15/11', 1, 'R3.2 · marca o amigo que manda 40 links de Airbnb e não vota', 'P8 · pergunta pra comunidade', 'X4', 'Caixinha: a pior coisa que já rolou numa viagem com amigos'],
+  [8, 'seg 16/11', 2, 'Sugestão: R2.3 · O planilheiro (Amor)', 'X5', 'X6', 'Enquete: planilha ou app?', true],
+  [9, 'ter 17/11', 2, 'R5 · POV: você é quem organiza o réveillon (1 s de tela do app)', 'X7 · com vídeo da tela de acertos', 'Repost do X7', 'Repost + link da lista'],
+  [10, 'qua 18/11', 2, 'Sugestão: R2.4 · O que confirma no dia 30 (Pensando)', 'X8', 'X9', 'Extra no Instagram: carrossel R7 "Checklist do réveillon"', true],
+  [11, 'qui 19/11', 2, 'R8 · Como dividir a casa sem briga (conferir a conta antes)', 'X10 · a mesma conta em texto', 'X11', 'Enquete: divide por quarto ou por cabeça?'],
+  [12, 'sex 20/11', 2, 'Sugestão: R3.3 · marca o amigo da ceia self-service e grátis', 'P7 · resumo da semana 2', 'P6 · semana 2 dela', 'Bastidores', true],
+  [13, 'sáb 21/11', 2, 'N2 · Norti responde comentário (de um comentário real)', 'X12', 'X13', 'Lote 3: gravar a semana 3'],
+  [14, 'dom 22/11', 2, 'Sugestão: R2.5 · O que organiza tudo sozinho (Comemorando)', 'X14', 'Repost do X14', 'Caixinha: que tipo de amigo você é no réveillon?', true],
+]
+
+const videos = [
+  ['N1 · A Norti vendo o grupo dividir o mercado', ['0–2 s: texto "a Norti vendo o grupo dividir o mercado do réveillon". Pose Pensando.', '2–6 s: mensagens fictícias: "quanto deu?", "eu não bebo, não vou pagar a cerveja", "e o gelo?", "quem tem a nota?".', '6–8 s: pose Ops. Texto: "dia 3 de janeiro e ninguém sabe".', 'Legenda: "o mercado é sempre a parte mais difícil"']],
+  ['N2 · Norti responde comentário', ['Usar a resposta a comentário com vídeo do TikTok e do Reels.', '0–2 s: o comentário na tela, pelo recurso nativo da rede.', '2–7 s: a Norti responde em texto, com a pose que combina.', 'Nunca expor ninguém nem mostrar informação pessoal.']],
+]
+
+const poses = [['Parada', 'idle'], ['Piscando', 'blink'], ['Oi', 'wave'], ['Pensando', 'think'], ['Comemorando', 'celebrate'], ['Ops', 'oops'], ['Dormindo', 'sleep'], ['Apontando', 'point'], ['Amor', 'love']]
+
+const banco = [
+  ['Se ganhar R2 · Tipos de amigo', ['6. O que chega dia 31 às 23h50 → Comemorando: "e ainda pergunta o que tem pra comer"', '7. O que leva só gelo → Ops: "e divide igual"', '8. O que quer ir pra 3 praias no mesmo dia → Pensando', '9. O que manda áudio de 4 minutos → Dormindo', '10. O que traz um amigo que ninguém conhece → Oi']],
+  ['Se ganhar R3 · Marca o amigo', ['que diz "depois a gente acerta" e o depois nunca chega', 'que reserva a casa sem perguntar ninguém', 'que some quando chega a conta do mercado', 'que leva caixa de som e só toca a playlist dele', 'que confirma, desconfirma e confirma de novo']],
+  ['Se ganhar R4 · Quiz', ['Quiz 2 "Seu grupo sobrevive ao réveillon?": alguém com carro (+2) · alguém pagou do bolso e não cobrou (−2) · mais de 10 pessoas (−1) · já sabem quem dorme onde (+2) · alguém trouxe um amigo que ninguém conhece (−1)', 'Quiz 3 "Que tipo de organizador você é?": planilha, cobrança e prazo; o final diz o tipo (o calmo, o cobrador, o que faz tudo sozinho)', 'Antes de gravar: conferir que a soma bate com as faixas do final']],
+  ['Se ganhar R1 · Norti na trend', ['a Norti vendo o grupo escolher quem dorme na sala', 'a Norti vendo o grupo combinar o horário de sair', 'a Norti quando alguém fala "depois eu te faço o Pix"', 'Sempre o mesmo esqueleto: situação → mensagens fictícias → pose final + data']],
+]
+
+const posts = [
+  ['X1', 'Ingryd', 'coisa que eu aprendi essa semana: o "banco de dados" do app é tipo uma planilha gigante, só que com regras de quem pode ver cada linha.\n\no seu gasto pessoal da viagem? nem o dono do grupo vê.'],
+  ['X2', 'Ingryd', 'pergunta sincera: no seu grupo, quem pagou a casa recebe tudo de volta?\n\nou sempre fica faltando aquele um'],
+  ['X3', 'Ingryd', 'o Victor me ensinando git: "commit é tipo salvar no videogame"\n\nagora eu salvo tudo. salvei até essa piada'],
+  ['X4', 'Ingryd', 'o que eu mais gosto no Tripwave até agora: a Norti dorme quando a viagem ainda não tem nada.\n\nparece bobo, mas quem fez isso fui eu entendendo cada linha', 'Só se for verdade pra ela. Senão, trocar por algo que ela fez.'],
+  ['X5', 'Victor', 'decisão de produto da semana: o Tripwave vai ser app primeiro, site depois.\n\nmotivo: quem viaja com a galera decide tudo pelo celular, no grupo. ninguém abre o notebook pra ver quanto deve.'],
+  ['X6', 'Ingryd', 'semana 2.\n\nainda não entendo tudo que o código faz. mas já sei achar onde muda o texto de uma tela sem quebrar nada, e isso pra mim é muito'],
+  ['X7', 'Victor', 'a tela que mais deu trabalho até agora: quem deve quanto pra quem no fim da viagem.\n\n8 pessoas, 40 gastos, e no fim sai uma lista curta: fulano manda X pra ciclano, e acabou.', 'Com vídeo da tela de acertos. Conferir que o exemplo do vídeo bate com o texto.'],
+  ['X8', 'Victor', 'a Apple demora pra aprovar app novo. a gente decidiu não esperar pra começar a falar dele.\n\nse der errado, pelo menos vocês viram.'],
+  ['X9', 'Ingryd', 'viagem com amigos tem 3 fases:\n\n1. "vamos!!!"\n2. "quem vai pagar o sinal?"\n3. silêncio no grupo'],
+  ['X10', 'Victor', 'casa de R$ 6.000 no réveillon, 8 pessoas, 2 casais, 1 que só vai 2 noites.\n\npor cabeça: [conta]\npor quarto: [conta]\n\nqual é o justo? (não tem resposta certa, tem briga)', 'Mesmas contas do R8, conferidas.'],
+  ['X11', 'Ingryd', 'meu momento favorito construindo o app: quando o Victor fala "testa aí" e eu acho um erro que ele não viu'],
+  ['X12', 'Victor', '[N] pessoas na lista de espera em 2 semanas, sem anúncio.\n\na rede que mais trouxe gente: [rede]. a que eu achava que ia trazer: [rede].'],
+  ['X13', 'Ingryd', 'pesquisa: vocês dividem o mercado da viagem igual pra todo mundo ou por quem consumiu?\n\n(eu sempre fui a que não bebe e paga a cerveja)', 'A última linha só se for verdade pra ela.'],
+  ['X14', 'Victor', '2 semanas falando do Tripwave em público. o que aprendi:\n\n- [aprendizado 1, com número]\n- [aprendizado 2]\n- [o que vamos mudar]'],
+]
+
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e }
+
+const s0 = document.getElementById('lista-semana0')
+for (const [quem, oque, ate] of semana0) {
+  const linha = el('div', 'tarefa')
+  linha.append(el('span', 'quem', quem), el('span', null, oque), el('span', 'ate', ate))
+  s0.append(linha)
+}
+
+for (const [n, data, semana, video, xv, xi, extra, vencedor] of dias) {
+  const card = el('article', 'dia' + (vencedor ? ' vencedor' : ''))
+  card.id = 'dia' + n
+  const d = el('div', 'data')
+  d.append(el('span', 'n', String(n).padStart(2, '0')), el('span', 'd', data))
+  card.append(d)
+  const linhas = [['Vídeo', video], ['X Victor', xv], ['X Ingryd', xi], ['Story', extra]]
+  for (const [k, v] of linhas) {
+    const l = el('div', 'linha')
+    const valor = el('span')
+    if (k === 'Vídeo' && vencedor) valor.append(el('span', 'selo', 'do vencedor'))
+    valor.append(document.createTextNode(v))
+    l.append(el('span', 'k', k), valor)
+    card.append(l)
+  }
+  document.getElementById('dias-semana' + semana).append(card)
+}
+
+const bloco = (alvo, titulo, itens) => {
+  const b = el('div', 'bloco')
+  b.append(el('h3', null, titulo))
+  const ul = el('ul')
+  for (const i of itens) ul.append(el('li', null, i))
+  b.append(ul)
+  document.getElementById(alvo).append(b)
+}
+for (const [t, i] of videos) bloco('lista-videos', t, i)
+for (const [t, i] of banco) bloco('lista-banco', t, i)
+
+const lp = document.getElementById('lista-poses')
+for (const [nome, arq] of poses) {
+  const p = el('div')
+  p.append(el('b', null, nome + ' '), el('code', null, 'norti-' + arq + '.png'))
+  lp.append(p)
+}
+
+const lx = document.getElementById('lista-x')
+for (const [id, quem, texto, nota] of posts) {
+  const b = el('div', 'bloco')
+  b.id = id.toLowerCase()
+  const cab = el('div', 'cabeca')
+  cab.append(el('h3', null, id + ' · ' + quem))
+  const botao = el('button', 'copiar', 'Copiar')
+  botao.type = 'button'
+  const caixa = el('div', 'post', texto)
+  botao.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(texto)
+      botao.textContent = 'Copiado'
+    } catch {
+      const r = document.createRange(); r.selectNodeContents(caixa)
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r)
+      botao.textContent = 'Selecionado'
+    }
+    setTimeout(() => (botao.textContent = 'Copiar'), 1600)
+  })
+  cab.append(botao)
+  b.append(cab, caixa)
+  if (nota) b.append(el('p', 'nota', nota))
+  lx.append(b)
+}
+</script>
