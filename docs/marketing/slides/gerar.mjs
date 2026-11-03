@@ -36,6 +36,8 @@ const FORMATOS = {
 
 const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const norti = (pose) => pathToFileURL(join(pasta, '..', 'norti', 'png', `norti-${pose === 'think' ? 'think' : pose}.png`)).href
+// Pose sem a borda vazia (pra Norti aparecer grande)
+const nortiRecorte = (pose) => pathToFileURL(join(pasta, '..', 'norti', 'recorte', `norti-${pose}.png`)).href
 const fonte = (arq) => pathToFileURL(join(pasta, 'fontes', arq)).href
 const reais = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 0 })
 
@@ -43,6 +45,16 @@ const reais = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFraction
 const CORES = { Ana: '#B5462F', Bia: '#7B542F', Caio: '#5E6B2E', Duda: '#B97A22', Gabi: '#8A4F7D', Léo: '#2F6B6B', Mari: '#A1442B', Rafa: '#4F5FA1' }
 
 function conteudo(s, f) {
+  // Modelo do benchmark (PADROES.md): frase gigante + Norti grande, nada de tela do app
+  if (s.tipo === 'nome' || s.tipo === 'frase' || s.tipo === 'frase-escura') {
+    return `
+      <div class="frase-slide ${s.tipo}">
+        <h1${s.tipo === 'nome' && s.titulo.length > 8 ? ' class="longo"' : ''}>${esc(s.titulo).split(' | ').join('<br>')}</h1>
+        ${s.texto ? `<p>${esc(s.texto)}</p>` : ''}
+        <img class="norti-grande" src="${nortiRecorte(s.pose)}">
+        <span class="assinatura">@tripwave.app</span>
+      </div>`
+  }
   if (s.tipo === 'capa') {
     return `
       <div class="capa">
@@ -159,6 +171,18 @@ img { display: block; }
 .fim { margin-top: 16px; text-align: center; font-weight: 700; font-size: 30px; color: #5E6B2E; background: #EEF0DF; border-radius: 999px; padding: 12px; }
 .norti-app { position: absolute; right: -70px; top: ${altura > 1500 ? 150 : 110}px; width: ${altura > 1500 ? 230 : 170}px; }
 
+/* Frase gigante (modelo do benchmark) */
+.frase-slide { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; gap: 36px; padding-top: ${altura > 1500 ? 120 : 40}px; }
+.frase-slide h1 { font-family: Jakarta; font-weight: 700; font-size: ${altura > 1500 ? 104 : 88}px; line-height: 1.08; letter-spacing: -0.025em; color: var(--texto); }
+.frase-slide p { font-size: ${altura > 1500 ? 50 : 42}px; line-height: 1.25; font-weight: 500; color: var(--suave); }
+.frase-slide.nome h1.longo { font-size: ${altura > 1500 ? 150 : 124}px; }
+.frase-slide.nome h1 { font-family: Fraunces; font-size: ${altura > 1500 ? 230 : 190}px; line-height: .95; letter-spacing: -0.03em; }
+.norti-grande { position: absolute; left: 50%; bottom: ${altura > 1500 ? 10 : -10}px; transform: translateX(-50%); width: ${altura > 1500 ? 760 : 470}px; }
+.assinatura { position: absolute; left: 0; bottom: ${altura > 1500 ? -200 : -50}px; font-weight: 700; font-size: 26px; color: var(--suave); opacity: .7; }
+.fundo-escuro { background: var(--escuro); }
+.fundo-escuro .frase-slide h1 { color: var(--creme); }
+.fundo-escuro .frase-slide p, .fundo-escuro .assinatura { color: #C9B192; }
+
 /* Fecho */
 .cta-fundo { background: var(--couro); color: var(--creme); }
 .cta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 30px; }
@@ -167,7 +191,7 @@ img { display: block; }
 .cta p { font-size: 42px; line-height: 1.3; max-width: 820px; opacity: .92; }
 .pilula { margin-top: 10px; background: var(--dourado); color: var(--escuro); font-weight: 700; font-size: 34px; padding: 22px 40px; border-radius: 999px; }
 </style></head><body>
-<div class="slide ${s.tipo === 'capa' ? 'capa-fundo' : s.tipo === 'cta' ? 'cta-fundo' : ''}">${conteudo(s, f)}</div>
+<div class="slide ${s.tipo === 'capa' ? 'capa-fundo' : s.tipo === 'cta' ? 'cta-fundo' : s.tipo === 'frase-escura' ? 'fundo-escuro' : ''}">${conteudo(s, f)}</div>
 </body></html>`
 }
 
@@ -181,7 +205,7 @@ function acharChrome() {
       if (existsSync(exe)) return exe
     }
   }
-  for (const exe of ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'])
+  for (const exe of ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'])
     if (existsSync(exe)) return exe
   throw new Error('Não achei o Chrome. Instale o Google Chrome ou rode "npx playwright install chromium".')
 }

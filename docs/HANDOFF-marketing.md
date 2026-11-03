@@ -17,6 +17,7 @@
 | Pesquisa: conteúdo sem rosto (slideshow, "2 lados" com a Norti, voz, regras do TikTok, build in public BR, dicas da Apple) | `docs/marketing/PESQUISA-SEM-ROSTO.md` |
 | Gerador de carrossel: planilha (`planilha.csv`, 1 linha por slide) → `node docs/marketing/slides/gerar.mjs S1` → PNGs do TikTok (1080×1920) e Instagram (1080×1350) + legenda em `saida/<post>/`. S1 pronto | `docs/marketing/slides/` |
 | Análise do S1, fontes de benchmark sem login e próximos passos | `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md` |
+| Exemplos prontos dos 3 formatos novos (F1 "E o pix, Lucas?", F2 "A amiga que deu a ideia", F3 "Esse ano a gente decide cedo") em TikTok e Instagram, com o modelo novo do gerador (tipos `nome`, `frase` e `frase-escura`: frase gigante + Norti grande). Prévia em `previa-tiktok.png` de cada pasta | `docs/marketing/slides/saida/F1`, `F2`, `F3` |
 | Script de triagem de nome (domínio + App Store) | `docs/marketing/checar-nome.py` |
 | Página de lista de espera `/espera` (código pronto) | `apps/web/src/pages/ListaDeEspera.tsx` |
 
@@ -30,7 +31,8 @@
 
 ## Pendente
 
-0. **03/11/2026: S1 reprovado pelo Victor. Calendário de 09/11 pausado.** O porquê está em `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md`.
+0. **03/11/2026: a dupla escolhe entre F1, F2 e F3** (exemplos em `slides/saida/`). A página do benchmark (`benchmark/index.html`) abre com fotos no Chrome ou no Firefox, com duplo clique; no navegador do app, as imagens não carregam.
+   **S1 reprovado pelo Victor. Calendário de 09/11 pausado.** O porquê está em `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md`.
    - ✅ **Benchmark dos grupos A, B e C feito** (03/11): `docs/marketing/benchmark/` tem `posts.csv` (108 posts: TikTok, YouTube Shorts e X), `PADROES.md` (4 padrões + 1 anti-padrão, o que muda no calendário e **3 rascunhos de formato: F1 "E o pix, [NOME]?", F2 "O amigo que...", F3 "Expectativa x 3º dia"**) e `index.html` (prints + rascunhos com a Norti; abrir com duplo clique).
    - Resumo: post que mostra o app tem mediana de 3,5 mil views, contra 220 mil a 1,2 mi dos padrões de humor. Pix é o tema que mais gera compartilhamento. Na Meta, ninguém anuncia "dividir gastos" no Brasil.
    - **Próximo passo:** Victor e Ingryd escolhem entre F1, F2 e F3 → refazer o calendário e o modelo do gerador de slides (frase gigante + Norti grande, sem tela do app).
