@@ -1675,6 +1675,33 @@ export type Database = {
           },
         ]
       }
+      interesse_no_passe: {
+        Row: {
+          acao: string
+          criado_em: string
+          id: string
+          origem: string
+          usuario_id: string
+          viagem_id: string
+        }
+        Insert: {
+          acao?: string
+          criado_em?: string
+          id?: string
+          origem: string
+          usuario_id?: string
+          viagem_id: string
+        }
+        Update: {
+          acao?: string
+          criado_em?: string
+          id?: string
+          origem?: string
+          usuario_id?: string
+          viagem_id?: string
+        }
+        Relationships: []
+      }
       hospedagens: {
         Row: {
           cancelamento_gratis_ate: string | null
@@ -3143,6 +3170,18 @@ export type Database = {
       explorar_quem_escolheu: {
         Args: { p_destino: string }
         Returns: { escolheram: number; pessoas: number }[]
+      }
+      matches_da_viagem: {
+        Args: { p_viagem: string }
+        Returns: {
+          catalogo_lugar_id: string
+          destino_id: string
+          foto_url: string | null
+          nome: string
+          no_dia: boolean
+          querem: number
+          quem: string[]
+        }[]
       }
       aceitar_convite: {
         Args: { p_codigo: string; p_nome?: string }

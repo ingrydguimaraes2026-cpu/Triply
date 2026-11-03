@@ -4,6 +4,7 @@
 // o banco (`lembretes_a_enviar`) só devolve cada lembrete uma vez.
 // Quem recebe: todo mundo do comboio da viagem que ligou os avisos no aparelho.
 // Segredos: VAPID_PRIVATE_KEY (o mesmo das funções avisos-cambio e avisos-feed).
+// Spec 117: e o aviso "falta você opinar" de quem ainda não deslizou um lugar que deu match.
 // Spec 110: além do site (Web Push), manda pro app do celular pelo serviço de push do Expo (sem segredo).
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
 import webpush from 'npm:web-push@3.6.7'
@@ -13,6 +14,7 @@ const CONTATO = 'https://github.com/ingrydguimaraes2026-cpu/Triply'
 
 type Inscricao = { id: string; usuario_id: string; endpoint: string; p256dh: string; auth: string }
 type AparelhoDoApp = { id: string; token: string }
+type AvisoDeMatch = { viagem_id: string; usuario_id: string; catalogo_lugar_id: string; lugar: string }
 type Lembrete = { tipo: 'trajeto' | 'ponto' | 'cancelamento'; alvo_id: string; viagem_id: string; titulo: string | null; horario: string; meio: string | null }
 
 const json = (dados: unknown, status = 200) =>
@@ -53,10 +55,9 @@ Deno.serve(async () => {
 
   const { data: lembretes, error } = await admin.rpc('lembretes_a_enviar')
   if (error) return json({ erro: error.message }, 500)
-  if (!lembretes?.length) return json({ lembretes: 0, enviados: 0 })
 
   let enviados = 0
-  for (const l of lembretes as Lembrete[]) {
+  for (const l of (lembretes ?? []) as Lembrete[]) {
     const { data: membros } = await admin.from('comboio_membros').select('usuario_id').eq('viagem_id', l.viagem_id)
     let pessoas = (membros ?? []).map((m) => m.usuario_id)
     // Spec 067: trajeto com lista de passageiros avisa só quem vai
@@ -100,7 +101,33 @@ Deno.serve(async () => {
       }
     }
   }
-  return json({ lembretes: lembretes.length, enviados })
+  // Spec 117: "falta você opinar" num match do comboio. O banco já devolve no máximo 1 por dia
+  // por viagem pra cada pessoa e marca como enviado (pode rodar de novo sem repetir).
+  const { data: matches, error: erroDoMatch } = await admin.rpc('avisos_de_match_a_enviar')
+  if (erroDoMatch) console.error('Avisos de match:', erroDoMatch.message)
+  for (const m of (matches ?? []) as AvisoDeMatch[]) {
+    const { data: desligado } = await admin.from('preferencias_aviso').select('usuario_id').eq('tipo', 'lembretes').eq('ligado', false).eq('usuario_id', m.usuario_id)
+    if (desligado?.length) continue
+    const texto = { titulo: `Falta você opinar no ${m.lugar}`, corpo: 'Deu match no comboio. Você topa ir?', url: `/viagem/${m.viagem_id}/roteiro`, tag: `match-${m.viagem_id}` }
+    const { data: doApp } = await admin.from('push_expo').select('id, token').eq('usuario_id', m.usuario_id)
+    enviados += await mandarPeloExpo((id) => admin.from('push_expo').delete().eq('id', id), (doApp ?? []) as AparelhoDoApp[], {
+      title: texto.titulo,
+      body: texto.corpo,
+      data: { tipo: 'match', viagemId: m.viagem_id, url: texto.url },
+    })
+    const { data: aparelhos } = await admin.from('push_inscricoes').select('id, usuario_id, endpoint, p256dh, auth').eq('usuario_id', m.usuario_id)
+    for (const a of (aparelhos ?? []) as Inscricao[]) {
+      try {
+        await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(texto), { TTL: 60 * 60 * 6 })
+        enviados++
+      } catch (erro) {
+        const status = (erro as { statusCode?: number }).statusCode
+        if (status === 404 || status === 410) await admin.from('push_inscricoes').delete().eq('id', a.id)
+      }
+    }
+  }
+
+  return json({ lembretes: lembretes?.length ?? 0, matches: matches?.length ?? 0, enviados })
 })
 
 // Serviço de push do Expo: até 100 avisos por chamada; a resposta vem na mesma ordem.

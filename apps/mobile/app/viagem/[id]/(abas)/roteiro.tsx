@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, PanResponder, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../../../../src/ui/StatusBar'
+import { useFocusEffect, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
 import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../../../src/ui/icones'
@@ -26,6 +27,8 @@ import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/f
 import { supabase } from '../../../../src/lib/supabase'
 import { Carregando, ErroNaTela, IconeQuadrado } from '../../../../src/ui/pecas'
 import { SemViagem } from '../../../../src/ui/SemViagem'
+import { Matches } from '../../../../src/ui/Matches'
+import { buscarMatches, ehMatch } from '../../../../src/dados/matches'
 import { FormEvento } from '../../../../src/ui/FormEvento'
 import { useTamanhoDaTela } from '../../../../src/ui/Moldura'
 import { cor } from '../../../../theme'
@@ -35,15 +38,70 @@ import { cor } from '../../../../theme'
 const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, onibus: Bus, trem: TrainFront, barco: Ship, a_pe: Footprints }
 const ICONE_DO_LUGAR: Record<string, LucideIcon> = { passeio: Mountain, comida: Utensils }
 
+// Spec 117: a aba abre em Matches (o que o comboio quer); tocar num dia mostra o mapa e o dia.
 export default function Roteiro() {
   const { atual } = useViagemAtual()
+  const [dia, setDia] = useState<number | null>(null) // null = Matches
   if (!atual) return <SemViagem titulo="Roteiro" />
-  return <RoteiroDaViagem viagem={atual} />
+  if (dia === null) return <AbaMatches viagem={atual} aoDia={setDia} />
+  return <RoteiroDaViagem viagem={atual} diaInicial={dia} aoMatches={() => setDia(null)} />
+}
+
+function AbaMatches({ viagem, aoDia }: { viagem: ViagemComDetalhes; aoDia: (i: number) => void }) {
+  const insets = useSafeAreaInsets()
+  const router = useRouter()
+  const { meuId } = useViagemAtual()
+  // Antes da migration do match (ou sem internet) a lista fica vazia, sem quebrar a aba
+  const carga = useCarregar(() => buscarMatches(viagem.id).catch(() => []), [viagem.id])
+  useFocusEffect(useCallback(() => carga.recarregar(), [carga.recarregar]))
+  const matches = carga.status === 'pronto' ? carga.dados : []
+  const novos = matches.filter((m) => ehMatch(m.querem, viagem.membros.length) && !m.noDia).length
+  const dias = diasDaViagem(viagem.dataInicio, viagem.dataFim)
+  const principal = matches.find((m) => ehMatch(m.querem, viagem.membros.length))?.destinoId
+
+  return (
+    <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
+      <StatusBar style="dark" />
+      <Text className="px-5 font-display text-[32px] leading-[36px] text-texto">Roteiro</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingVertical: 12 }} style={{ flexGrow: 0 }}>
+        <View className="h-10 flex-row items-center gap-1.5 rounded-full bg-couro px-4">
+          <Text className="font-body-bold text-[14px] text-white">Matches</Text>
+          {novos ? (
+            <View className="h-5 min-w-5 items-center justify-center rounded-full bg-dourado px-1">
+              <Text className="font-body-bold text-[11px] text-escuro">{novos}</Text>
+            </View>
+          ) : null}
+        </View>
+        {(dias.length ? dias : [new Date()]).map((d, i) => (
+          <Pressable key={i} onPress={() => aoDia(i)} className="h-10 justify-center rounded-full border border-borda bg-cartao px-4 active:opacity-80">
+            <Text className="font-body-bold text-[14px] text-texto">Dia {i + 1}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+      <Text className="mb-3 px-5 font-body text-[13px] text-suave">O que 3 ou mais querem vira match e entra no dia.</Text>
+      {carga.status === 'carregando' ? (
+        <View className="gap-2.5 px-5">
+          {[0, 1, 2].map((i) => (
+            <View key={i} className="h-[84px] rounded-2xl bg-areia" />
+          ))}
+        </View>
+      ) : (
+        <Matches
+          matches={matches}
+          membros={viagem.membros}
+          meuId={meuId}
+          aoAbrirLugar={(m) => router.push(`/explorar?destino=${m.destinoId}` as Href)}
+          aoMontar={() => router.push((principal ? `/explorar?destino=${principal}&roteiro=1` : '/explorar') as Href)}
+          aoDescobrir={() => router.push('/explorar')}
+        />
+      )}
+    </View>
+  )
 }
 
 type Item = { chave: string; hora: string; Icone: LucideIcon; titulo: string; detalhe: string; evento?: EventoDaAgenda }
 
-function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
+function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComDetalhes; diaInicial: number; aoMatches: () => void }) {
   const carga = useCarregar(
     () =>
       Promise.all([
@@ -57,7 +115,7 @@ function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const [destinos, lugares, trajetos, eventos] = carga.dados
-  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} aoMudar={carga.recarregar} />
+  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} aoMudar={carga.recarregar} diaInicial={diaInicial} aoMatches={aoMatches} />
 }
 
 function Tela({
@@ -67,7 +125,11 @@ function Tela({
   trajetos,
   eventos,
   aoMudar,
+  diaInicial,
+  aoMatches,
 }: {
+  diaInicial: number
+  aoMatches: () => void
   viagem: ViagemComDetalhes
   destinos: Destino[]
   lugares: Lugar[]
@@ -88,7 +150,7 @@ function Tela({
     const d = diasDaViagem(viagem.dataInicio, viagem.dataFim)
     return d.length ? d : [new Date()]
   }, [viagem.dataInicio, viagem.dataFim])
-  const [diaEscolhido, setDiaEscolhido] = useState(0)
+  const [diaEscolhido, setDiaEscolhido] = useState(diaInicial)
   const dia = dias[Math.min(diaEscolhido, dias.length - 1)]
   const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos, eventos), [dia, destinos, lugares, trajetos, eventos])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
@@ -149,6 +211,11 @@ function Tela({
           <View className="h-[5px] w-10 rounded-full bg-tracejado" />
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 }} style={{ flexGrow: 0 }}>
+          {/* Spec 117: volta pros Matches do comboio */}
+          <Pressable onPress={aoMatches} className="items-center justify-center rounded-xl border border-borda bg-cartao px-3.5 py-2">
+            <Text className="font-body-bold text-[13px] text-texto">Matches</Text>
+            <Text className="font-body text-[11px] text-texto/85">do grupo</Text>
+          </Pressable>
           {dias.map((d, i) => {
             const ativo = i === diaEscolhido
             return (

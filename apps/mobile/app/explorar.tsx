@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Image, Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, Heart, SlidersHorizontal, Star, Undo2, X } from '../src/ui/icones'
+import { ArrowLeft, CalendarPlus, Heart, SlidersHorizontal, Star, Undo2, X } from '../src/ui/icones'
 import {
   ESTILOS,
   ORCAMENTOS,
@@ -46,7 +46,10 @@ import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
 import { convidarProComboio } from '../src/lib/convite'
 import { StatusBar } from '../src/ui/StatusBar'
-import { Botao, BotaoRedondo, Carregando, ErroNaTela } from '../src/ui/pecas'
+import { Avatar, Botao, BotaoRedondo, Carregando, ErroNaTela } from '../src/ui/pecas'
+import { Comemoracao } from '../src/ui/Comemoracao'
+import { buscarMatches, ehMatch } from '../src/dados/matches'
+import { primeiroNome } from '../src/lib/formato'
 import { CartaoDoExplorar } from '../src/ui/CartaoDoExplorar'
 import { RoteiroDoExplorar } from '../src/ui/RoteiroDoExplorar'
 import { cor, sombra } from '../theme'
@@ -125,6 +128,9 @@ function ExplorarDestino({
   const [lugaresDoGrupo, setLugaresDoGrupo] = useState<LugarComVotos[]>([])
   const [diasSalvos, setDiasSalvos] = useState<DiasDoRoteiro>([])
   const vez = useRef(0)
+  // Spec 117: quem do comboio já quer cada lugar (id do catálogo → ids) e o "Deu match!" da vez
+  const [querem, setQuerem] = useState<Record<string, string[]>>({})
+  const [deuMatch, setDeuMatch] = useState<LugarDoCatalogo | null>(null)
 
   const dias = useMemo(
     () => (destino.chegada ? diasDoPeriodo(destino.chegada, destino.saida ?? destino.chegada) : Array.from({ length: Math.max(1, destino.dias ?? 3) }, (_, i) => `Dia ${i + 1}`)),
@@ -159,6 +165,11 @@ function ExplorarDestino({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (viagem) void atualizarQuemQuer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viagem?.id, destino.id])
 
   // Outra pessoa arrumou o roteiro ou curtiu algo: recarrega (igual ao site)
   useAoVivo(viagem?.id, ['roteiros', 'lugares'], () => {
@@ -224,11 +235,22 @@ function ExplorarDestino({
     const novo = decidir(deslize, e, jaTenho)
     setComando(null)
     setDeslize(novo)
-    salvarEscolhaDoExplorar(supabase, viagem!.id, destino.id, meuId, id, e).catch((erroAoSalvar) => {
-      console.error('Erro ao salvar escolha:', erroAoSalvar)
-      setAviso('Não deu pra salvar a última escolha. Confira a internet.')
-    })
-    if (acabou(novo)) void abrirRoteiro(true)
+    // Fui eu quem completou o match? (3 "quero", ou todo mundo se o comboio é menor)
+    const outros = (querem[id] ?? []).filter((q) => q !== meuId).length
+    const fizMatch = e !== 'passo' && ehMatch(outros + 1, pessoas) && !ehMatch(outros, pessoas)
+    salvarEscolhaDoExplorar(supabase, viagem!.id, destino.id, meuId, id, e)
+      .then(() => atualizarQuemQuer())
+      .catch((erroAoSalvar) => {
+        console.error('Erro ao salvar escolha:', erroAoSalvar)
+        setAviso('Não deu pra salvar a última escolha. Confira a internet.')
+      })
+    if (fizMatch) setDeuMatch(porId.get(id) ?? null)
+    else if (acabou(novo)) void abrirRoteiro(true)
+  }
+
+  async function atualizarQuemQuer() {
+    const lista = await buscarMatches(viagem!.id).catch(() => [])
+    setQuerem(Object.fromEntries(lista.filter((m) => m.destinoId === destino.id).map((m) => [m.catalogoId, m.quem])))
   }
 
   function voltarUm() {
@@ -424,6 +446,12 @@ function ExplorarDestino({
 
   // ---------- Deck ----------
   const total = deslize.pilha.length
+  const membros = viagem.membros
+  const quemQuer = (catalogoId: string) =>
+    (querem[catalogoId] ?? [])
+      .filter((q) => q !== meuId)
+      .map((q) => ({ nome: primeiroNome(membros.find((m) => m.id === q)?.nome ?? 'Alguém'), indice: Math.max(0, membros.findIndex((m) => m.id === q)) }))
+  const faltamNoMatch = deuMatch ? membros.filter((m) => m.id !== meuId && !(querem[deuMatch.id] ?? []).includes(m.id)) : []
   const naoAbroMaoLiberado = podeNaoAbrirMao(deslize, jaTenho)
   // Primeira viagem (spec 116): dica de como deslizar até o primeiro cartão sair
   const comDica = guiado && total > 0 && deslize.posicao === 0
@@ -470,6 +498,7 @@ function ExplorarDestino({
                 podeDecidir={podeDecidir}
                 aoVoar={aoVoar}
                 aoVerMais={() => setDetalhe(true)}
+                querem={quemQuer(atual.id)}
               />
             ) : null}
           </View>
@@ -494,6 +523,42 @@ function ExplorarDestino({
           </View>
         ) : null}
       </View>
+
+      {/* Deu match! (spec 117, tela B): eu dei o "quero" que fechou o match */}
+      <Comemoracao
+        visivel={!!deuMatch}
+        acima="Deu match no comboio"
+        titulo={deuMatch?.nome ?? ''}
+        topo={
+          deuMatch ? (
+            <View className="items-center">
+              <View className="h-[150px] w-[150px] overflow-hidden rounded-full border-4 border-dourado bg-couro">
+                {deuMatch.fotoUrl ? <Image source={{ uri: deuMatch.fotoUrl }} style={{ width: '100%', height: '100%' }} /> : null}
+              </View>
+              <View className="-mt-5 flex-row" style={{ paddingLeft: 8 }}>
+                {[meuId, ...(querem[deuMatch.id] ?? []).filter((q) => q !== meuId)].slice(0, 5).map((q) => {
+                  const i = Math.max(0, membros.findIndex((m) => m.id === q))
+                  return (
+                    <View key={q} style={{ marginLeft: -8 }}>
+                      <Avatar nome={membros[i]?.nome ?? '?'} indice={i} tamanho={40} borda="#3B2715" />
+                    </View>
+                  )
+                })}
+              </View>
+            </View>
+          ) : null
+        }
+        texto={
+          deuMatch
+            ? `${['Você', ...quemQuer(deuMatch.id).map((q) => q.nome)].join(', ').replace(/, ([^,]*)$/, ' e $1')} querem ir.${faltamNoMatch.length ? ` Falta ${faltamNoMatch.map((m) => primeiroNome(m.nome)).join(', ').replace(/, ([^,]*)$/, ' e $1')} ${faltamNoMatch.length === 1 ? 'opinar' : 'opinarem'}.` : ''}`
+            : undefined
+        }
+        botoes={[
+          { titulo: 'Pôr num dia', icone: <CalendarPlus size={18} color={cor.escuro} />, principal: true, aoTocar: () => { setDeuMatch(null); void abrirRoteiro(true) } },
+          { titulo: 'Continuar deslizando', aoTocar: () => { setDeuMatch(null); if (acabou(deslize)) void abrirRoteiro(true) } },
+        ]}
+        aoFechar={() => setDeuMatch(null)}
+      />
 
       {/* Ver mais */}
       <Modal visible={detalhe && !!atual} transparent animationType="slide" onRequestClose={() => setDetalhe(false)}>

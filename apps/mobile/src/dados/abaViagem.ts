@@ -38,10 +38,12 @@ export async function carregarAbaViagem(id: string) {
     .map((r) => ({ destinoId: r.destino_id, ordem: (r.destinos as unknown as { ordem: number }).ordem, dias: lerDiasDoRoteiro(r.dias) }))
     .sort((a, b) => a.ordem - b.ordem)
   const ids = [...new Set(porDestino.flatMap((r) => r.dias.flatMap((d) => d.slice(0, 2))))]
-  const { data: catalogo } = ids.length
-    ? await supabase.from('catalogo_lugares').select('id, nome, foto_url').in('id', ids)
-    : { data: [] as { id: string; nome: string; foto_url: string | null }[] }
-  const doCatalogo = new Map((catalogo ?? []).map((c) => [c.id, c]))
+  // Os dias guardam ids de `lugares`; a foto vem do catálogo do Explorar (mesmo item da Wikidata)
+  const { data: doRoteiro } = ids.length ? await supabase.from('lugares').select('id, nome, wikidata').in('id', ids) : { data: [] }
+  const qids = [...new Set((doRoteiro ?? []).map((l) => l.wikidata).filter((q): q is string => !!q))]
+  const { data: fotosDoCatalogo } = qids.length ? await supabase.from('catalogo_lugares').select('wikidata, foto_url').in('wikidata', qids).not('foto_url', 'is', null) : { data: [] }
+  const fotoDo = new Map((fotosDoCatalogo ?? []).map((f) => [f.wikidata as string, f.foto_url as string]))
+  const doCatalogo = new Map((doRoteiro ?? []).map((l) => [l.id, { nome: l.nome, foto_url: (l.wikidata && fotoDo.get(l.wikidata)) || null }]))
   const dias: DiaDoCarrossel[] = []
   for (const r of porDestino)
     for (const d of r.dias) {

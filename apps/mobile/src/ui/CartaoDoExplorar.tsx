@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Animated, Image, PanResponder, Platform, Pressable, Text, View } from 'react-native'
 import { Clock, Sun, Ticket } from './icones'
 import { creditoDaFoto, INFO_DO_TIPO, precoLegivel, tempoLegivel, type Escolha, type LugarDoCatalogo } from '@together/core'
+import { Avatar } from './pecas'
 import { cor, sombra } from '../../theme'
 
 // Cartão do Explorar (spec 114) no app. Igual ao protótipo aprovado:
@@ -27,9 +28,10 @@ type Props = {
   podeDecidir?: (e: Escolha) => boolean // false = não aceita (ex.: já tem 3 "não abro mão"): volta pro centro
   aoVoar?: (e: Escolha) => void // terminou de voar: a tela troca de cartão
   aoVerMais?: () => void
+  querem?: { nome: string; indice: number }[] // spec 117: quem do comboio já deu "quero" (fora eu)
 }
 
-export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, aoVoar, aoVerMais }: Props) {
+export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, aoVoar, aoVerMais, querem }: Props) {
   const pos = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current
   const voando = useRef(false)
 
@@ -90,9 +92,23 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
             <Text className="font-display text-[22px] text-suave">{info.nome}</Text>
           </View>
         )}
-        <View className="absolute left-3.5 top-3.5 rounded-full bg-white/90 px-2.5 py-1.5">
-          <Text className="font-body-bold text-[12px] text-texto">{info.nome}</Text>
-        </View>
+        {querem?.length ? (
+          // Match do comboio: "Ana e Ju querem"
+          <View className="absolute left-3.5 top-3.5 flex-row items-center gap-1.5 rounded-full bg-white/95 py-1 pl-1 pr-3">
+            <View className="flex-row" style={{ paddingLeft: 6 }}>
+              {querem.slice(0, 3).map((q) => (
+                <View key={q.indice} style={{ marginLeft: -6 }}>
+                  <Avatar nome={q.nome} indice={q.indice} tamanho={22} borda="#fff" />
+                </View>
+              ))}
+            </View>
+            <Text className="font-body-bold text-[12px] text-texto">{textoDeQuemQuer(querem.map((q) => q.nome))}</Text>
+          </View>
+        ) : (
+          <View className="absolute left-3.5 top-3.5 rounded-full bg-white/90 px-2.5 py-1.5">
+            <Text className="font-body-bold text-[12px] text-texto">{info.nome}</Text>
+          </View>
+        )}
         {lugar.fotoUrl ? (
           <Text numberOfLines={1} className="absolute bottom-2.5 right-3 max-w-[70%] font-body text-[10px] text-white" style={{ textShadowColor: 'rgba(0,0,0,0.75)', textShadowRadius: 3 }}>
             {creditoDaFoto(lugar.fotoAutor, lugar.fotoLicenca)}
@@ -144,6 +160,12 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
       </View>
     </Animated.View>
   )
+}
+
+function textoDeQuemQuer(nomes: string[]) {
+  if (nomes.length === 1) return `${nomes[0]} quer`
+  if (nomes.length <= 3) return `${nomes.slice(0, -1).join(', ')} e ${nomes[nomes.length - 1]} querem`
+  return `${nomes.slice(0, 2).join(', ')} e mais ${nomes.length - 2} querem`
 }
 
 function Chip({ Icone, texto }: { Icone: typeof Clock; texto: string }) {
