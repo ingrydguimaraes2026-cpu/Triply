@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Check, X } from '../src/ui/icones'
-import { dividirIgual, formatarDinheiro, lerValor, salvarGasto } from '@together/core'
+import { dividirIgual, formatarDinheiro, lerFraseDeGasto, lerValor, salvarGasto } from '@together/core'
 import { CATEGORIAS } from '../src/dados/contas'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { hojeIso, primeiroNome } from '../src/lib/formato'
@@ -18,13 +18,16 @@ export default function NovoGasto() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
-  const [descricao, setDescricao] = useState('')
-  const [valorTexto, setValorTexto] = useState('')
-  const [categoria, setCategoria] = useState('alimentacao')
+  // Spec 117: a barra das Contas manda a frase ("uber 12,40") e a tela já abre preenchida
+  const { frase } = useLocalSearchParams<{ frase?: string }>()
+  const [lida] = useState(() => (frase && viagem ? lerFraseDeGasto(frase, { pessoas: viagem.membros, meuId }) : null))
+  const [descricao, setDescricao] = useState(lida?.descricao ?? '')
+  const [valorTexto, setValorTexto] = useState(lida?.valor ? (lida.valor / 100).toFixed(2).replace('.', ',') : '')
+  const [categoria, setCategoria] = useState(lida?.categoria ?? 'alimentacao')
   // A viagem pode chegar depois da tela abrir: enquanto a pessoa não mexer, vale "eu" e "todo mundo"
-  const [pagoPorEscolhido, setPagoPor] = useState<string | null>(null)
+  const [pagoPorEscolhido, setPagoPor] = useState<string | null>(lida?.pagoPor ?? null)
   const [entreEscolhido, setEntre] = useState<string[] | null>(null)
-  const [pessoal, setPessoal] = useState(false)
+  const [pessoal, setPessoal] = useState(lida?.pessoal ?? false)
   const [erro, setErro] = useState<string | null>(null)
   const [salvando, setSalvando] = useState(false)
 
