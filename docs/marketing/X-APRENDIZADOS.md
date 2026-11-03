@@ -80,15 +80,3 @@ O próprio processo vira conteúdo. Posts no perfil do Victor e da Ingryd, com n
 - Pensar em lançar o Android antes ou junto do iOS, porque a busca do Google Play rendeu mais pro Nayan.
 - Trocar print e ícone a cada 2 a 4 semanas e ver o que converte.
 
----
-
-## Comentários pra mandar (rascunho, esperando o ok do Victor)
-
-Perguntas curtas, de quem está fazendo a mesma coisa, sem pedir número privado:
-
-1. **No post do primeiro dia do [@gabrielbuzziv](https://x.com/gabrielbuzziv/status/2117546820087791855):**
-   > curti demais o formato de animação. vocês montam cena por cena ou sai pronto de um prompt? to testando algo parecido com a mascote do nosso app de viagem em grupo
-2. **No post do formato novo do [@binhara](https://x.com/binhara/status/2117582793903370449):**
-   > "vídeo longo" é quanto tempo mais ou menos? e o CTA do meio é falado ou texto na tela?
-3. **No AMA do [@ndhabarde11](https://x.com/ndhabarde11/status/2117527205089526165) (em inglês):**
-   > for a brand new app with 0 downloads, would you launch on Android first again, or both stores on the same day?
