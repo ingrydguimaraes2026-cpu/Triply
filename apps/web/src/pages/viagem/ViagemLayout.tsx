@@ -20,7 +20,7 @@ import { hojeTexto } from '../../features/destinos/datas'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
-import Agulha from '../../components/ui/Agulha'
+import Norti from '../../components/ui/Norti'
 import Gaveta from '../../components/ui/Gaveta'
 import Perdido from '../Perdido'
 import Overview from './Overview'
@@ -184,8 +184,8 @@ export default function ViagemLayout() {
       <aside className="viagem-menu">
         <div className="viagem-menu-cabeca">
           <Link to="/viagens" className="viagem-logo" aria-label="Tripwave: ver todas as viagens">
-            <span className="viagem-logo-agulha">
-              <Agulha tamanho={34} sombra={false} />
+            <span className="viagem-logo-norti">
+              <Norti tamanho={34} sombra={false} />
             </span>
             <span className="viagem-menu-texto">Tripwave</span>
           </Link>

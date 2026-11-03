@@ -1,5 +1,5 @@
 /* Página pública de lista de espera (/espera). Mesma paleta do app (global.css).
-   Celular: tudo numa coluna. Computador: texto e formulário à esquerda, Agulha à direita. */
+   Celular: tudo numa coluna. Computador: texto e formulário à esquerda, Norti à direita. */
 
 .espera {
   min-height: 100vh;
@@ -41,7 +41,7 @@
   letter-spacing: -0.02em;
 }
 
-.espera-marca-agulha {
+.espera-marca-norti {
   width: 44px;
   height: 44px;
   display: grid;
@@ -163,7 +163,7 @@
   width: 100%;
 }
 
-/* ---------- Ilustração (Agulha + pedacinhos do app) ---------- */
+/* ---------- Ilustração (Norti + pedacinhos do app) ---------- */
 .espera-ilustracao {
   position: relative;
   height: 340px;
@@ -179,7 +179,7 @@
   background: radial-gradient(circle at 40% 35%, var(--dourado-claro), var(--cor-comboio-fundo));
 }
 
-.espera-ilustracao .agulha {
+.espera-ilustracao .norti {
   position: relative;
 }
 

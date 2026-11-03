@@ -5,7 +5,7 @@ import { aceitarConvite, entrarComoConvidado, verConvite, type PreviaDoConvite }
 import { supabase } from '../lib/supabase'
 import { useSessao } from '../features/auth/hooks'
 import { formatarPeriodo } from '../lib/datas'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import SobreOMapa from '../components/ui/SobreOMapa'
 import './convite.css'
 
@@ -58,7 +58,7 @@ export default function Convite() {
     navegar('/login')
   }
 
-  // Visual do design Plataforma (spec 113): cartão creme sobre o mapa escuro, Agulha em cima
+  // Visual do design Plataforma (spec 113): cartão creme sobre o mapa escuro, Norti em cima
   if (estado.tipo === 'carregando') {
     return (
       <SobreOMapa opacidade={0.55} centralizado>
@@ -72,7 +72,7 @@ export default function Convite() {
   if (estado.tipo === 'invalido') {
     return (
       <SobreOMapa opacidade={0.7} centralizado>
-        <Agulha humor="dormindo" tamanho={110} className="convite-mascote-meio" />
+        <Norti humor="dormindo" tamanho={110} className="convite-mascote-meio" />
         <h1>Convite inválido</h1>
         <p className="sobre-mapa-texto">Esse link expirou ou não existe. Peça um novo pra quem te convidou.</p>
         <Link to="/nova-viagem" className="sobre-mapa-botao convite-largo">
@@ -88,7 +88,7 @@ export default function Convite() {
 
   return (
     <SobreOMapa opacidade={0.55}>
-      <Agulha tamanho={96} className="convite-mascote" />
+      <Norti tamanho={96} className="convite-mascote" />
       <form className="convite-form" onSubmit={entrar}>
         <p className="convite-rotulo">Você foi convidado pra viagem</p>
         <h1>{previa.nome}</h1>

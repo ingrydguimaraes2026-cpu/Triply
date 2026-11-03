@@ -10,7 +10,7 @@ import { hojeTexto } from '../../features/destinos/datas'
 import BotaoIr from '../../components/ui/BotaoIr'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
-import Agulha from '../../components/ui/Agulha'
+import Norti from '../../components/ui/Norti'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
 import OndeEstaOComboio from '../../features/hoje/OndeEstaOComboio'
 import './abas.css'
@@ -85,7 +85,7 @@ export default function Hoje() {
 
       {!naViagem && (
         <div className="hoje-fora">
-          <Agulha humor="dormindo" tamanho={52} sombra={false} />
+          <Norti humor="dormindo" tamanho={52} sombra={false} />
           <p>Hoje não é dia de viagem no roteiro. Esta tela ganha vida nos dias da viagem; as ferramentas abaixo já funcionam.</p>
         </div>
       )}

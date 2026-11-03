@@ -18,7 +18,7 @@ import { useViagemAtual, type Membro } from '../../features/viagens/hooks'
 import ApagarViagem from '../../features/viagens/ApagarViagem'
 import { formatarData } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
-import Agulha from '../../components/ui/Agulha'
+import Norti from '../../components/ui/Norti'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
@@ -260,7 +260,7 @@ export default function Comboio() {
               })}
             </ul>
             <div className="comboio-dica">
-              <Agulha tamanho={40} sombra={false} />
+              <Norti tamanho={40} sombra={false} />
               <p>Quem recebe o link entra sem criar conta. Dá pra chamar mais gente a qualquer hora.</p>
             </div>
           </Cartao>

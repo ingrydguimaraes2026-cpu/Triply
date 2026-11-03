@@ -151,8 +151,8 @@ a {
   letter-spacing: -0.02em;
 }
 
-/* Quadradinho bege da Agulha (marca do app, spec 112) */
-.logo-agulha {
+/* Quadradinho bege da Norti (marca do app, spec 112) */
+.logo-norti {
   flex: none;
   width: 1.6em;
   height: 1.6em;
@@ -163,7 +163,7 @@ a {
   background: #f6ead7;
 }
 
-.logo-agulha svg {
+.logo-norti mascot-view {
   width: 1.25em !important;
   height: 1.25em !important;
 }

@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import MapaMundi from '../../features/mapa/MapaMundi'
-import Agulha from './Agulha'
+import Norti from './Norti'
 import './sobre-o-mapa.css'
 
 // Tela "cartão creme sobre o mapa escuro" do design Plataforma (spec 113):
@@ -19,8 +19,8 @@ type Props = {
 export function MarcaSobreOMapa() {
   return (
     <Link to="/" className="sobre-mapa-marca" aria-label="Tripwave: ir pro início">
-      <span className="sobre-mapa-agulha">
-        <Agulha tamanho={36} sombra={false} />
+      <span className="sobre-mapa-norti">
+        <Norti tamanho={36} sombra={false} />
       </span>
       Tripwave
     </Link>

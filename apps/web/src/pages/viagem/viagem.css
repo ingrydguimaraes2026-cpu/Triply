@@ -147,7 +147,7 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
     white-space: nowrap;
   }
 
-  .viagem-logo-agulha {
+  .viagem-logo-norti {
     width: 42px;
     height: 42px;
     flex: none;

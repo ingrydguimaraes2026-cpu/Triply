@@ -1,5 +1,5 @@
 /* Tela de login no estilo do app (spec 112, tela "1d" do design).
-   Celular: faixa caramelo com a Agulha e uma folha clara que sobe por cima.
+   Celular: faixa caramelo com a Norti e uma folha clara que sobe por cima.
    Computador: formulário de um lado, foto grande do outro. */
 
 .login {
@@ -11,7 +11,7 @@
   background: var(--cor-fundo);
 }
 
-/* ---------- Marca (Agulha + nome) ---------- */
+/* ---------- Marca (Norti + nome) ---------- */
 .login-marca {
   display: flex;
   align-items: center;
@@ -23,7 +23,7 @@
   letter-spacing: -0.02em;
 }
 
-.login-marca-agulha {
+.login-marca-norti {
   width: 52px;
   height: 52px;
   display: grid;

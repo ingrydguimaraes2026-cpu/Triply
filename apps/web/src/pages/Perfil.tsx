@@ -4,7 +4,7 @@ import { Accessibility, ArrowLeft, BookUser, Camera, Globe2, IdCard, ShieldCheck
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import Carregando from '../components/ui/Carregando'
 import ErroNaTela from '../components/ui/ErroNaTela'
 import FormPassaporte from '../features/passaporte/FormPassaporte'
@@ -172,9 +172,9 @@ export default function Perfil() {
               <MinhaPrivacidade />
             </div>
 
-            <div className="perfil-agulha">
-              <Agulha tamanho={84} />
-              <p>A Agulha aponta o caminho da viagem pra vocês.</p>
+            <div className="perfil-norti">
+              <Norti tamanho={84} />
+              <p>A Norti aponta o caminho da viagem pra vocês.</p>
             </div>
           </div>
         </div>

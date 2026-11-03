@@ -148,7 +148,7 @@ html[data-tema='escuro'] .hoje-item.agora {
   gap: 20px;
 }
 
-/* Aviso com a Agulha dormindo */
+/* Aviso com a Norti dormindo */
 .hoje-fora {
   align-items: center;
   gap: 14px;
@@ -164,7 +164,7 @@ html[data-tema='escuro'] .hoje-item.agora {
   color: var(--cor-texto);
 }
 
-.hoje-fora .agulha,
+.hoje-fora .norti,
 .hoje-fora > :first-child {
   flex: none;
 }

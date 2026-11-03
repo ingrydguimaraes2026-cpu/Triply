@@ -12,6 +12,12 @@
       "port": 5173
     },
     {
+      "name": "web-2",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@together/web", "exec", "vite", "--port", "5174", "--strictPort"],
+      "port": 5174
+    },
+    {
       "name": "mobile",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [

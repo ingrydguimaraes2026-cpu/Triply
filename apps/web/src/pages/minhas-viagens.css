@@ -43,7 +43,7 @@
   text-decoration: none;
 }
 
-.pagina-solta-agulha {
+.pagina-solta-norti {
   width: 38px;
   height: 38px;
   display: grid;
@@ -395,7 +395,7 @@ html[data-tema='escuro'] .viagem-linha-link {
   height: 17px;
 }
 
-/* Estado vazio: Agulha dormindo esperando a primeira viagem */
+/* Estado vazio: Norti dormindo esperando a primeira viagem */
 .viagens-vazio {
   display: flex;
   flex-direction: column;
@@ -685,7 +685,7 @@ html[data-tema='escuro'] .viagem-linha-link {
   overflow-wrap: anywhere;
 }
 
-.perfil-agulha {
+.perfil-norti {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -694,7 +694,7 @@ html[data-tema='escuro'] .viagem-linha-link {
   text-align: center;
 }
 
-.perfil-agulha p {
+.perfil-norti p {
   margin: 0;
   font-size: 14px;
   color: var(--cor-texto-suave);

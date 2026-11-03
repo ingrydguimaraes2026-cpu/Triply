@@ -1,5 +1,5 @@
 import { Link, useRouteError } from 'react-router'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import SobreOMapa from '../components/ui/SobreOMapa'
 import './perdido.css'
 
@@ -24,7 +24,7 @@ export default function Perdido({ tipo = 'naoEncontrada' }: { tipo?: keyof typeo
   const t = textos[tipo]
   return (
     <SobreOMapa pontos={PONTO_NEMO} zoomMaximo={2.5} centralizado className="perdido">
-      <Agulha humor={tipo === 'erro' ? 'dormindo' : 'pensando'} tamanho={104} className="perdido-mascote" />
+      <Norti humor={tipo === 'erro' ? 'dormindo' : 'pensando'} tamanho={104} className="perdido-mascote" />
       <p className="perdido-codigo">{t.codigo}</p>
       <h1>{t.titulo}</h1>
       <p className="sobre-mapa-texto">{t.texto}</p>

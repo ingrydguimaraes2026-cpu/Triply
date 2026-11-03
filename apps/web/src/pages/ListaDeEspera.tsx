@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
 import { CalendarCheck, Link2, MessageCircle, Vote, Wallet } from '../components/ui/icones'
 import { Icone } from '../components/ui/Icone'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import { emailValido, entrarNaLista } from '../features/lista-espera/api'
 import './lista-espera.css'
 
@@ -53,8 +53,8 @@ export default function ListaDeEspera() {
     <main className="espera">
       <header className="espera-topo">
         <p className="espera-marca">
-          <span className="espera-marca-agulha">
-            <Agulha tamanho={34} sombra={false} />
+          <span className="espera-marca-norti">
+            <Norti tamanho={34} sombra={false} />
           </span>
           Tripwave
         </p>
@@ -104,10 +104,10 @@ export default function ListaDeEspera() {
           )}
         </div>
 
-        {/* Ilustração: a Agulha com "pedacinhos" do app em volta */}
+        {/* Ilustração: a Norti com "pedacinhos" do app em volta */}
         <div className="espera-ilustracao" aria-hidden="true">
           <div className="espera-circulo" />
-          <Agulha humor={estado === 'pronto' ? 'feliz' : 'parada'} tamanho={210} />
+          <Norti humor={estado === 'pronto' ? 'feliz' : 'parada'} tamanho={210} />
           <div className="espera-bolha espera-bolha-1">
             <strong>Ana pagou o Airbnb</strong>
             <span>R$ 1.240 · dividido por 6</span>

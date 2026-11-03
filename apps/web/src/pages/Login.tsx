@@ -11,7 +11,7 @@ import {
   useSessao,
 } from '../features/auth/hooks'
 import CarrosselFotos from '../features/auth/CarrosselFotos'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import '../features/auth/login.css'
 
 type Modo = 'entrar' | 'criar' | 'recuperar'
@@ -41,19 +41,19 @@ const FRASES = [
   { titulo: 'Guardem as memórias', texto: 'As fotos de todo mundo, juntas e separadas por dia, prontas pra rever.' },
 ]
 
-// Marca do Tripwave como no app: a Agulha num quadradinho claro + o nome na serifada
+// Marca do Tripwave como no app: a Norti num quadradinho claro + o nome na serifada
 function Marca({ className }: { className: string }) {
   return (
     <p className={`login-marca ${className}`}>
-      <span className="login-marca-agulha">
-        <Agulha tamanho={44} sombra={false} />
+      <span className="login-marca-norti">
+        <Norti tamanho={44} sombra={false} />
       </span>
       Tripwave
     </p>
   )
 }
 
-// Tela de login no estilo do app (spec 112): no celular, faixa caramelo com a Agulha e uma folha
+// Tela de login no estilo do app (spec 112): no celular, faixa caramelo com a Norti e uma folha
 // clara com as abas Entrar | Criar conta. No computador, formulário de um lado e foto do outro.
 // Google em primeiro (mais rápido) e e-mail/senha como alternativa.
 export default function Login() {

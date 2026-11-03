@@ -8,7 +8,7 @@ import FaixaConvidado from '../features/auth/FaixaConvidado'
 import { diasAte, formatarPeriodo } from '../lib/datas'
 import ApagarViagem from '../features/viagens/ApagarViagem'
 import Gaveta from '../components/ui/Gaveta'
-import Agulha from '../components/ui/Agulha'
+import Norti from '../components/ui/Norti'
 import Carregando from '../components/ui/Carregando'
 import ErroNaTela from '../components/ui/ErroNaTela'
 import PilhaDeAvatares from '../components/ui/PilhaDeAvatares'
@@ -123,8 +123,8 @@ export default function MinhasViagens() {
     <div className="pagina-solta viagens-pagina">
       <header className="pagina-solta-topo">
         <Link to="/" className="pagina-solta-logo">
-          <span className="pagina-solta-agulha">
-            <Agulha tamanho={34} sombra={false} />
+          <span className="pagina-solta-norti">
+            <Norti tamanho={34} sombra={false} />
           </span>
           Tripwave
         </Link>
@@ -166,7 +166,7 @@ export default function MinhasViagens() {
 
         {Array.isArray(viagens) && ativas.length === 0 && arquivadas.length === 0 && (
           <div className="viagens-vazio">
-            <Agulha humor="dormindo" tamanho={140} />
+            <Norti humor="dormindo" tamanho={140} />
             <h2>A primeira viagem do grupo começa aqui</h2>
             <p>Crie a viagem, convide a turma e montem o roteiro juntos.</p>
             {!ehConvidado && (
