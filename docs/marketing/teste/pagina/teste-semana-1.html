@@ -1,0 +1,246 @@
+<title>Teste da Semana 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: folha de produção da semana. Faixa couro no topo, semana em 7 casas, um bloco por dia com a tira de slides que rola de lado. */
+:root {
+  --bg: #fbf3e6; --card: #ffffff; --fg: #3b2715; --soft: #7a5f45; --line: #eadcc6; --chip: #f6ead7;
+  --couro: #7b542f; --dourado: #e3a04a;
+  --f1: #b5462f; --f2: #5e6b2e; --f3: #2f6b6b;
+  --band-a: #8a5a26; --band-b: #4a2e14; --band-fg: #fbf3e6;
+  --f-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --f-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1d140c; --card: #2a1d12; --fg: #f5e9d6; --soft: #c9b192; --line: #3d2b1b; --chip: #3a2817;
+  --couro: #e0b27a; --dourado: #e3a04a; --f1: #f0a58c; --f2: #c4d08a; --f3: #8fd0cf;
+  --band-a: #5e3d1e; --band-b: #2a1a0c; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #1d140c; --card: #2a1d12; --fg: #f5e9d6; --soft: #c9b192; --line: #3d2b1b; --chip: #3a2817;
+  --couro: #e0b27a; --dourado: #e3a04a; --f1: #f0a58c; --f2: #c4d08a; --f3: #8fd0cf;
+  --band-a: #5e3d1e; --band-b: #2a1a0c; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15.5px; line-height: 1.55; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; margin: 0; }
+p { margin: 0; max-width: 66ch; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1040px; margin: 0 auto; }
+button:focus-visible, .tira:focus-visible, a:focus-visible { outline: 3px solid var(--dourado); outline-offset: 2px; border-radius: 6px; }
+
+.band { background: linear-gradient(160deg, var(--band-a), var(--band-b)); color: var(--band-fg); }
+.band .wrap { padding-block: 36px 34px; display: flex; flex-direction: column; gap: 12px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.band h1 { font-size: clamp(32px, 6.5vw, 50px); line-height: 1.05; }
+.band p { opacity: .92; }
+
+main .wrap { display: flex; flex-direction: column; gap: 44px; padding-block: 28px 56px; }
+section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+section > h2 { font-size: clamp(22px, 4vw, 28px); }
+
+.regra { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 720px) { .regra { grid-template-columns: 1.3fr 1fr; } }
+.regra .principal { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+.regra .principal b { font-family: var(--f-display); font-size: 22px; line-height: 1.2; }
+.regra ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: var(--soft); }
+
+.semana { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.semana li { border-radius: 12px; padding: 10px 4px; text-align: center; background: var(--chip); display: flex; flex-direction: column; gap: 2px; border-top: 4px solid var(--c, var(--soft)); }
+.semana b { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--soft); }
+.semana span { font-weight: 700; font-variant-numeric: tabular-nums; }
+.semana .dom { --c: var(--dourado); }
+.f1 { --c: var(--f1); } .f2 { --c: var(--f2); } .f3 { --c: var(--f3); }
+.legenda-cores { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--soft); }
+.legenda-cores i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-right: 6px; vertical-align: 0; }
+
+.posts { display: flex; flex-direction: column; gap: 18px; }
+.post { background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.post-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dia { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--soft); }
+.chip { font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--chip); color: var(--c); }
+.post h3 { font-size: 21px; }
+.tira { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+.tira img { flex: none; width: clamp(140px, 22vw, 200px); height: auto; aspect-ratio: 9 / 16; border-radius: 12px; scroll-snap-align: start; border: 1px solid var(--line); }
+.legenda { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+.legenda pre { flex: 1 1 260px; min-width: 0; margin: 0; white-space: pre-wrap; font-family: var(--f-mono); font-size: 13.5px; background: var(--chip); border-radius: 10px; padding: 10px 12px; }
+.copiar { font: inherit; font-weight: 700; font-size: 14px; color: var(--bg); background: var(--couro); border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+.copiar:hover { filter: brightness(1.08); }
+
+.duas { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 720px) { .duas { grid-template-columns: 1fr 1fr; } }
+.bloco { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.bloco h3 { font-size: 18px; }
+.bloco ol, .bloco ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+code { font-family: var(--f-mono); font-size: 13px; background: var(--chip); padding: 1px 6px; border-radius: 6px; }
+footer .wrap { padding-block: 0 40px; font-size: 13px; color: var(--soft); }
+@media (max-width: 420px) { .semana { gap: 4px; } .semana span { font-size: 13px; } }
+</style>
+
+<header class="band gutter">
+  <div class="wrap">
+    <span class="eyebrow">Tripwave · TikTok e Instagram · 09 a 15/11/2026</span>
+    <h1>Teste da semana 1</h1>
+    <p>3 formatos tirados do benchmark, 2 posts de cada. Um post por dia, sempre no mesmo horário. No domingo, os números dizem qual vira série.</p>
+  </div>
+</header>
+
+<main class="gutter">
+  <div class="wrap">
+
+    <section aria-labelledby="t-regra">
+      <h2 id="t-regra">Quem vence</h2>
+      <div class="regra">
+        <div class="principal">
+          <b>Mais compartilhamentos a cada 1.000 views, em 72 horas, somando os 2 posts do formato.</b>
+          <p>É o post sendo mandado no grupo de amigos. No benchmark, foi o que separou os vídeos de humor do grupo (220 mil a 1,2 mi de views) dos que mostravam o app (3,5 mil).</p>
+        </div>
+        <ul>
+          <li>Anotar 24 h e 72 h depois: views, curtidas, comentários, compartilhamentos e salvos.</li>
+          <li>Contar os comentários que marcam alguém.</li>
+          <li>Não apagar post que flopou: ele também é resultado.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-semana">
+      <h2 id="t-semana">A semana</h2>
+      <ol class="semana"><li class="f1"><b>seg</b><span>F1</span></li><li class="f2"><b>ter</b><span>F2</span></li><li class="f3"><b>qua</b><span>F3</span></li><li class="f1"><b>qui</b><span>F1b</span></li><li class="f2"><b>sex</b><span>F2b</span></li><li class="f3"><b>sáb</b><span>F3b</span></li><li class="dom"><b>dom</b><span>decidir</span></li></ol>
+      <div class="legenda-cores">
+        <span class="f1"><i></i>F1 · E o pix, [nome]?</span>
+        <span class="f2"><i></i>F2 · O amigo que...</span>
+        <span class="f3"><i></i>F3 · Expectativa x realidade</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-posts">
+      <h2 id="t-posts">Os 6 posts</h2>
+      <p>Arraste os slides para o lado. No TikTok, poste como carrossel de fotos e escolha um áudio em alta do dia. A legenda vai sem link.</p>
+      <div class="posts">
+    <article class="post f1" id="f1">
+      <header class="post-head">
+        <span class="dia">seg 09/11</span>
+        <span class="chip">F1 · E o pix, [nome]?</span>
+      </header>
+      <h3>LUCAS e o pix da casa</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F1"><img src="img/F1-1.jpg" width="540" height="960" loading="lazy" alt="LUCAS e o pix da casa: slide 1 de 4"><img src="img/F1-2.jpg" width="540" height="960" loading="lazy" alt="LUCAS e o pix da casa: slide 2 de 4"><img src="img/F1-3.jpg" width="540" height="960" loading="lazy" alt="LUCAS e o pix da casa: slide 3 de 4"><img src="img/F1-4.jpg" width="540" height="960" loading="lazy" alt="LUCAS e o pix da casa: slide 4 de 4"></div>
+      <div class="legenda">
+        <pre id="leg-F1">marca o Lucas que ainda não pagou a casa do réveillon 🙃
+
+#reveillon #pix #amigos #viagemcomamigos</pre>
+        <button type="button" class="copiar" data-alvo="leg-F1">Copiar legenda</button>
+      </div>
+    </article>
+    <article class="post f2" id="f2">
+      <header class="post-head">
+        <span class="dia">ter 10/11</span>
+        <span class="chip">F2 · O amigo que...</span>
+      </header>
+      <h3>A amiga que deu a ideia da viagem</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F2"><img src="img/F2-1.jpg" width="540" height="960" loading="lazy" alt="A amiga que deu a ideia da viagem: slide 1 de 3"><img src="img/F2-2.jpg" width="540" height="960" loading="lazy" alt="A amiga que deu a ideia da viagem: slide 2 de 3"><img src="img/F2-3.jpg" width="540" height="960" loading="lazy" alt="A amiga que deu a ideia da viagem: slide 3 de 3"></div>
+      <div class="legenda">
+        <pre id="leg-F2">marca ela 👀
+
+#viagemcomamigos #reveillon #amigas</pre>
+        <button type="button" class="copiar" data-alvo="leg-F2">Copiar legenda</button>
+      </div>
+    </article>
+    <article class="post f3" id="f3">
+      <header class="post-head">
+        <span class="dia">qua 11/11</span>
+        <span class="chip">F3 · Expectativa x realidade</span>
+      </header>
+      <h3>&quot;Esse ano a gente decide cedo&quot;</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F3"><img src="img/F3-1.jpg" width="540" height="960" loading="lazy" alt="&quot;Esse ano a gente decide cedo&quot;: slide 1 de 4"><img src="img/F3-2.jpg" width="540" height="960" loading="lazy" alt="&quot;Esse ano a gente decide cedo&quot;: slide 2 de 4"><img src="img/F3-3.jpg" width="540" height="960" loading="lazy" alt="&quot;Esse ano a gente decide cedo&quot;: slide 3 de 4"><img src="img/F3-4.jpg" width="540" height="960" loading="lazy" alt="&quot;Esse ano a gente decide cedo&quot;: slide 4 de 4"></div>
+      <div class="legenda">
+        <pre id="leg-F3">sim, é o seu grupo 🙃 marca quem ainda tá vendo com a mãe
+
+#reveillon #reveillon2027 #viagemcomamigos</pre>
+        <button type="button" class="copiar" data-alvo="leg-F3">Copiar legenda</button>
+      </div>
+    </article>
+    <article class="post f1" id="f1b">
+      <header class="post-head">
+        <span class="dia">qui 12/11</span>
+        <span class="chip">F1b · E o pix, [nome]?</span>
+      </header>
+      <h3>GABRIEL e o pix do mercado</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F1b"><img src="img/F1b-1.jpg" width="540" height="960" loading="lazy" alt="GABRIEL e o pix do mercado: slide 1 de 4"><img src="img/F1b-2.jpg" width="540" height="960" loading="lazy" alt="GABRIEL e o pix do mercado: slide 2 de 4"><img src="img/F1b-3.jpg" width="540" height="960" loading="lazy" alt="GABRIEL e o pix do mercado: slide 3 de 4"><img src="img/F1b-4.jpg" width="540" height="960" loading="lazy" alt="GABRIEL e o pix do mercado: slide 4 de 4"></div>
+      <div class="legenda">
+        <pre id="leg-F1b">marca o Gabriel que ainda não pagou o mercado 🙃
+
+#reveillon #pix #amigos #viagemcomamigos</pre>
+        <button type="button" class="copiar" data-alvo="leg-F1b">Copiar legenda</button>
+      </div>
+    </article>
+    <article class="post f2" id="f2b">
+      <header class="post-head">
+        <span class="dia">sex 13/11</span>
+        <span class="chip">F2b · O amigo que...</span>
+      </header>
+      <h3>O amigo que diz que vai acordar cedo</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F2b"><img src="img/F2b-1.jpg" width="540" height="960" loading="lazy" alt="O amigo que diz que vai acordar cedo: slide 1 de 3"><img src="img/F2b-2.jpg" width="540" height="960" loading="lazy" alt="O amigo que diz que vai acordar cedo: slide 2 de 3"><img src="img/F2b-3.jpg" width="540" height="960" loading="lazy" alt="O amigo que diz que vai acordar cedo: slide 3 de 3"></div>
+      <div class="legenda">
+        <pre id="leg-F2b">marca ele
+
+#viagemcomamigos #reveillon #amigos</pre>
+        <button type="button" class="copiar" data-alvo="leg-F2b">Copiar legenda</button>
+      </div>
+    </article>
+    <article class="post f3" id="f3b">
+      <header class="post-head">
+        <span class="dia">sáb 14/11</span>
+        <span class="chip">F3b · Expectativa x realidade</span>
+      </header>
+      <h3>&quot;Vai caber todo mundo na casa&quot;</h3>
+      <div class="tira" tabindex="0" aria-label="Slides do F3b"><img src="img/F3b-1.jpg" width="540" height="960" loading="lazy" alt="&quot;Vai caber todo mundo na casa&quot;: slide 1 de 3"><img src="img/F3b-2.jpg" width="540" height="960" loading="lazy" alt="&quot;Vai caber todo mundo na casa&quot;: slide 2 de 3"><img src="img/F3b-3.jpg" width="540" height="960" loading="lazy" alt="&quot;Vai caber todo mundo na casa&quot;: slide 3 de 3"></div>
+      <div class="legenda">
+        <pre id="leg-F3b">marca quem vai dormir no colchão da sala
+
+#reveillon #reveillon2027 #casadepraia #viagemcomamigos</pre>
+        <button type="button" class="copiar" data-alvo="leg-F3b">Copiar legenda</button>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="t-antes">
+      <h2 id="t-antes">Antes e depois</h2>
+      <div class="duas">
+        <div class="bloco">
+          <h3>Até domingo, 08/11</h3>
+          <ul>
+            <li>Criar <code>@tripwave.app</code> no TikTok e no Instagram, como conta comercial.</li>
+            <li>Aquecer as contas: 15 a 20 minutos por dia rolando viagem e réveillon, curtindo e comentando, sem postar.</li>
+            <li>A Ingryd revisa as frases. Pra trocar uma, é editar <code>planilha.csv</code> e gerar o post de novo.</li>
+          </ul>
+        </div>
+        <div class="bloco">
+          <h3>Domingo, 15/11</h3>
+          <ol>
+            <li>Passar os números pra <code>teste/resultados.csv</code> e ler junto numa sessão de marketing.</li>
+            <li>O vencedor vira série de 10 posts na semana 2.</li>
+            <li>O 2º colocado segue 2 vezes por semana. O 3º sai.</li>
+            <li>Se nenhum passar de 1.000 views, o problema deve ser a conta nova ou o áudio: repetir mais uma semana antes de mudar o formato.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="gutter">
+  <div class="wrap">Fonte no repositório: <code>docs/marketing/teste/TESTE-SEMANA-1.md</code>; slides em <code>docs/marketing/slides/saida/</code>.</div>
+</footer>
+
+<script>
+document.querySelectorAll('.copiar').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var pre = document.getElementById(b.dataset.alvo);
+    var ok = function () { b.textContent = 'Copiada'; setTimeout(function () { b.textContent = 'Copiar legenda'; }, 1600); };
+    var selecionar = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selecionada: Ctrl+C'; };
+    try { navigator.clipboard.writeText(pre.textContent).then(ok, selecionar); } catch (e) { selecionar(); }
+  });
+});
+</script>
