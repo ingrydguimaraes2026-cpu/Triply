@@ -126,37 +126,53 @@ button.copiar:hover { background: var(--suave); }
     <div>
       <p class="rotulo">Tripwave · marketing · 09 a 22/11/2026</p>
       <h1>As 2 primeiras semanas de conteúdo</h1>
-      <p class="sub">Banco pra gravar em lote. Semana 1 testa 4 formatos; semana 2 repete o que funcionou. A meta é uma só: gente entrando na lista de espera.</p>
+      <p class="sub">Tudo sem rosto e sem voz: carrossel, texto e a Norti. A semana 1 testa 4 formatos e a semana 2 repete o que funcionou. A meta é uma só: gente entrando na lista de espera.</p>
     </div>
     <img src="norti/app-web/norti/point.webp" alt="Norti apontando">
   </header>
 
   <div class="ritmo" aria-label="Ritmo diário">
-    <div><b>1</b><span>vídeo novo por dia, no TikTok, Reels e Shorts</span></div>
-    <div><b>2</b><span>posts no X: 1 do Victor, 1 da Ingryd</span></div>
+    <div><b>1 → 2</b><span>posts por dia no TikTok e no Instagram (semana 1 → semana 2)</span></div>
+    <div><b>2</b><span>posts no X: 1 do Victor, 1 da Ingryd, sem foto da dupla</span></div>
     <div><b>20–30</b><span>respostas no X, sem link</span></div>
     <div><b>1</b><span>story com enquete no Instagram</span></div>
   </div>
 
   <nav aria-label="Seções">
+    <a href="#formatos">Formatos</a>
     <a href="#semana0">Semana 0</a>
     <a href="#semana1">Semana 1</a>
     <a href="#vencedor">Decidir o vencedor</a>
     <a href="#semana2">Semana 2</a>
-    <a href="#videos">Vídeos novos</a>
+    <a href="#videos">Roteiros</a>
     <a href="#banco">Banco de variações</a>
     <a href="#x">Posts do X</a>
   </nav>
 
+  <section id="formatos">
+    <h2>Os formatos</h2>
+    <p class="intro">Todos sem rosto e sem voz: só texto, prints e a Norti, com a música em alta escolhida na hora de postar.</p>
+    <div class="grade" id="lista-formatos"></div>
+    <div class="caixa">
+      <h3>Como os posts são montados, sem gravar nada</h3>
+      <ol>
+        <li>Uma planilha com 1 linha por post: código, gancho, texto de cada slide, pose da Norti e legenda.</li>
+        <li>Uma sessão do Claude monta os slides num modelo HTML (1080×1920) e exporta em PNG.</li>
+        <li>A dupla aprova, posta pelo app da rede e escolhe a música. Nada de postagem automática.</li>
+      </ol>
+      <p class="nota">Imagens: prints do app e a Norti são nossos. Fotos de fundo vêm de bancos livres (Unsplash, Pexels), sem rosto em destaque. Pessoa realista feita por IA só com o rótulo de IA ligado. Nunca foto de celebridade ou de outra conta. Cada conta posta uma versão diferente: o TikTok tira do "Pra Você" o post copiado.</p>
+    </div>
+  </section>
+
   <section id="semana0">
-    <p class="rotulo">02 a 08/11</p>
+    <p class="rotulo">03 a 08/11</p>
     <h2>Semana 0: preparar</h2>
     <p class="intro">Nada vai ao ar ainda. Tudo aqui destrava o primeiro post.</p>
     <div class="tarefas" id="lista-semana0"></div>
     <div class="caixa">
-      <h3>Gravar em lote</h3>
+      <h3>Montar em lote</h3>
       <ul>
-        <li><b>Lote 1, sáb 07/11:</b> vídeos dos dias 1 a 7, mais 2 reservas.</li>
+        <li><b>Lote 1, sáb 07/11:</b> posts dos dias 1 a 7, mais 2 reservas.</li>
         <li><b>Lote 2, sáb 14/11:</b> dias 8 a 14, depois de olhar os números da semana 1.</li>
         <li><b>Lote 3, sáb 21/11:</b> semana 3, com o começo da contagem regressiva (R6, a partir de 01/12).</li>
       </ul>
@@ -166,32 +182,32 @@ button.copiar:hover { background: var(--suave); }
   <section id="semana1">
     <p class="rotulo">09 a 15/11</p>
     <h2>Semana 1: testar 4 formatos</h2>
-    <p class="intro">Norti na trend (R1), Tipos de amigo (R2), Marca o amigo (R3) e Quiz (R4). Cada um aparece pelo menos 2 vezes. Os roteiros R1 a R8 e os posts P1 a P8 estão no <code>CONTEUDO-INICIAL.md</code>.</p>
+    <p class="intro">Slideshow da dor (S), Tipos de amigo (T), Quiz (Q) e 2 lados (D), cada um pelo menos 2 vezes, mais 1 vídeo da Norti (N). 1 post por dia, o mesmo no TikTok e no Instagram. Os roteiros R1 a R8 e os posts P1 a P8 estão no <code>CONTEUDO-INICIAL.md</code>.</p>
     <div class="dias" id="dias-semana1"></div>
   </section>
 
   <section id="vencedor">
     <h2>Sexta: decidir o vencedor</h2>
     <div class="caixa">
-      <p>Anote, 24 h depois de cada vídeo: views no TikTok e no Reels, compartilhamentos, salvamentos e comentários.</p>
+      <p>Anote, 24 h depois de cada post: views no TikTok e no Instagram, compartilhamentos, salvamentos, comentários e quantos perguntaram "que app é esse?".</p>
       <p>Entradas na lista por rede (SQL Editor do Supabase):</p>
       <pre>select coalesce(origem, 'sem origem') as origem, count(*) as pessoas
 from lista_espera
 group by 1
 order by 2 desc;</pre>
-      <p><b>Ganha quem somar mais compartilhamentos + salvamentos</b>, não só views. Na semana 2 o vencedor ocupa 4 dos 7 dias, o segundo colocado ocupa 2 e 1 dia fica pra algo novo.</p>
+      <p><b>Ganha quem somar mais compartilhamentos + salvamentos</b>, não só views. Na semana 2 o vencedor fica com a manhã dos 7 dias; o 2º colocado e as novidades ficam com a noite.</p>
     </div>
   </section>
 
   <section id="semana2">
     <p class="rotulo">16 a 22/11</p>
     <h2>Semana 2: dobrar o que funcionou</h2>
-    <p class="intro">Os dias com borda dourada são <b>do vencedor</b>: troque a sugestão pelo roteiro do formato que ganhou, usando o banco de variações.</p>
+    <p class="intro">2 posts por dia. A <b>manhã é do vencedor</b>: troque a sugestão pela variação do formato que ganhou, no banco de variações. A noite fica com o 2º colocado e as novidades.</p>
     <div class="dias" id="dias-semana2"></div>
   </section>
 
   <section id="videos">
-    <h2>Vídeos novos</h2>
+    <h2>Roteiros</h2>
     <div class="grade" id="lista-videos"></div>
     <div class="caixa">
       <h3>Poses da Norti</h3>
@@ -208,7 +224,7 @@ order by 2 desc;</pre>
 
   <section id="x">
     <h2>Posts do X</h2>
-    <p class="intro">Minúsculas, sem exagero. Link só na primeira resposta. Números entre colchetes são preenchidos com o dado real do dia; nunca inventar.</p>
+    <p class="intro">Minúsculas, sem exagero. Link só na primeira resposta. Nenhuma foto da dupla: print, Norti ou gravação de tela. Números entre colchetes são preenchidos com o dado real do dia; nunca inventar.</p>
     <div class="grade" id="lista-x"></div>
   </section>
 
@@ -227,63 +243,76 @@ order by 2 desc;</pre>
 </div>
 
 <script>
-const semana0 = [
-  ['Dupla', 'Criar @tripwaveapp (X) e @tripwave.app (Instagram e TikTok) com as bios prontas', 'qua 04/11'],
-  ['Dupla', 'Registrar tripwave.app e tripwave.com.br', 'qua 04/11'],
-  ['Victor', 'Colocar a /espera no ar (hoje só na branch monorepo-split) e testar um cadastro de cada ?origem=', 'qui 05/11'],
-  ['Ingryd', 'Revisar piadas e bios; escolher 3 falas fixas da Norti', 'qui 05/11'],
-  ['Victor', 'Gravar 10 vídeos curtos de tela do app (acertos, roteiro, Norti comemorando)', 'sex 06/11'],
-  ['Dupla', 'Lote 1: gravar os vídeos dos dias 1 a 7 + 2 reservas', 'sáb 07/11'],
-  ['Dupla', 'Seguir os perfis da estratégia e começar a responder no X, sem postar', 'semana toda'],
+const formatos = [
+  ['S · Slideshow da dor', ['Carrossel de 6 slides: a dor no slide 1, prints de conversa fictícia, 1 print real do app, Norti no fim.']],
+  ['T · Tipos de amigo', ['1 slide por tipo de amigo, com a pose da Norti que combina. Legenda: "marca o seu".']],
+  ['Q · Quiz', ['1 pergunta por slide com a pontuação; o último dá o resultado. Legenda: "comenta seus pontos".']],
+  ['D · 2 lados', ['Tela dividida: "grupo do zap" (caos) x "grupo com a Norti" (calmo). Semana 1 como imagem; vira vídeo só se ganhar.']],
+  ['N · Norti em vídeo', ['A Norti + texto em cima de um áudio em alta. Também vai pro Shorts (carrossel não existe lá).']],
 ]
 
-// [dia, data, semana, vídeo, X Victor, X Ingryd, story/extra, do vencedor?]
+const semana0 = [
+  ['Dupla', 'Criar @tripwaveapp (X) e @tripwave.app (Instagram e TikTok, conta comercial) com as bios prontas', 'qua 04/11'],
+  ['Dupla', 'Registrar tripwave.app e tripwave.com.br', 'qua 04/11'],
+  ['Victor', 'Colocar a /espera no ar e testar um cadastro de cada ?origem=', 'qui 05/11'],
+  ['Dupla', 'Aquecer as contas novas: 15 a 20 min por dia no "Pra Você" de viagem e réveillon, curtindo e comentando, sem postar', 'qua a dom'],
+  ['Ingryd', 'Revisar piadas e bios; escolher 3 falas fixas da Norti', 'qui 05/11'],
+  ['Victor', 'Tirar os prints do app que entram nos slides (acertos, roteiro, gastos, convite)', 'qui 05/11'],
+  ['Claude', 'Montar o modelo de slide em HTML (1080×1920) e a planilha de posts', 'sex 06/11'],
+  ['Dupla', 'Lote 1: gerar e aprovar os posts dos dias 1 a 7 + 2 reservas', 'sáb 07/11'],
+  ['Dupla', 'Começar as 20 a 30 respostas por dia no X', 'semana toda'],
+]
+
+// [dia, data, semana, post (manhã), X Victor, X Ingryd, story, do vencedor?, noite]
 const dias = [
-  [1, 'seg 09/11', 1, 'R1 · A Norti vendo o grupo decidir a casa', 'P1 · apresentação da dupla (fixar no perfil)', 'Repost do P1: "é verdade. eu sou a que tá aprendendo 🙋‍♀️"', 'Enquete: quem organiza a viagem do seu grupo? "eu 😩" / "nunca sou eu 😌"'],
-  [2, 'ter 10/11', 1, 'R2.1 · O que some na hora do Pix (Apontando)', 'P2 · o problema', 'X1', 'Enquete: já ficou no prejuízo numa viagem com amigos?'],
-  [3, 'qua 11/11', 1, 'R3.1 · marca o amigo do "te faço o Pix amanhã" no dia 2 de janeiro', 'P3 · o "em breve" com vídeo do app (link na 1ª resposta)', 'Repost do P3', 'Adesivo de link da lista de espera: "entra que é de graça"'],
-  [4, 'qui 12/11', 1, 'R4 · Quiz: quantos pontos seu grupo faz?', 'P4 · a mascote (Agulha antiga ao lado da Norti)', 'X2', 'Repost do quiz + caixinha "quantos pontos vocês fizeram?"'],
-  [5, 'sex 13/11', 1, 'R2.2 · O que quer casa com piscina e paga R$ 200 (Ops)', 'P7 · resumo da semana 1, com números reais', 'P6 · semana 1 aprendendo a programar', 'Bastidores do dia. Hoje: decidir o vencedor'],
-  [6, 'sáb 14/11', 1, 'N1 · A Norti vendo o grupo dividir o mercado', 'P5 · o nome', 'X3', 'Lote 2: gravar os dias 8 a 14 com o vencedor'],
-  [7, 'dom 15/11', 1, 'R3.2 · marca o amigo que manda 40 links de Airbnb e não vota', 'P8 · pergunta pra comunidade', 'X4', 'Caixinha: a pior coisa que já rolou numa viagem com amigos'],
-  [8, 'seg 16/11', 2, 'Sugestão: R2.3 · O planilheiro (Amor)', 'X5', 'X6', 'Enquete: planilha ou app?', true],
-  [9, 'ter 17/11', 2, 'R5 · POV: você é quem organiza o réveillon (1 s de tela do app)', 'X7 · com vídeo da tela de acertos', 'Repost do X7', 'Repost + link da lista'],
-  [10, 'qua 18/11', 2, 'Sugestão: R2.4 · O que confirma no dia 30 (Pensando)', 'X8', 'X9', 'Extra no Instagram: carrossel R7 "Checklist do réveillon"', true],
-  [11, 'qui 19/11', 2, 'R8 · Como dividir a casa sem briga (conferir a conta antes)', 'X10 · a mesma conta em texto', 'X11', 'Enquete: divide por quarto ou por cabeça?'],
-  [12, 'sex 20/11', 2, 'Sugestão: R3.3 · marca o amigo da ceia self-service e grátis', 'P7 · resumo da semana 2', 'P6 · semana 2 dela', 'Bastidores', true],
-  [13, 'sáb 21/11', 2, 'N2 · Norti responde comentário (de um comentário real)', 'X12', 'X13', 'Lote 3: gravar a semana 3'],
-  [14, 'dom 22/11', 2, 'Sugestão: R2.5 · O que organiza tudo sozinho (Comemorando)', 'X14', 'Repost do X14', 'Caixinha: que tipo de amigo você é no réveillon?', true],
+  [1, 'seg 09/11', 1, 'S1 · A dor do Pix', 'P1 · apresentação da dupla (fixar; com print do app, sem foto da dupla)', 'Repost do P1: "é verdade. eu sou a que tá aprendendo 🙋‍♀️"', 'Enquete: quem organiza a viagem do seu grupo?'],
+  [2, 'ter 10/11', 1, 'T1 · Tipos de amigo no réveillon (os 5 do R2)', 'P2 · o problema', 'X1', 'Enquete: já ficou no prejuízo numa viagem com amigos?'],
+  [3, 'qua 11/11', 1, 'D1 · 2 lados: dividir a casa', 'P3 · o "em breve" com gravação de tela (link na 1ª resposta)', 'Repost do P3', 'Adesivo de link da lista: "entra que é de graça"'],
+  [4, 'qui 12/11', 1, 'Q1 · Quantos pontos seu grupo faz? (o R4)', 'P4 · a mascote (Agulha antiga ao lado da Norti)', 'X2', 'Caixinha: quantos pontos vocês fizeram?'],
+  [5, 'sex 13/11', 1, 'S2 · Checklist do réveillon (o R7, post de salvar)', 'P7 · resumo da semana 1, com números reais', 'P6 · semana 1 aprendendo a programar', 'Bastidores. Hoje: decidir o vencedor'],
+  [6, 'sáb 14/11', 1, 'N1 · A Norti vendo o grupo decidir a casa (vídeo, também no Shorts)', 'P5 · o nome', 'X15 · 1ª votação do "build in group"', 'Lote 2: gerar os dias 8 a 14 com o vencedor'],
+  [7, 'dom 15/11', 1, 'D2 · 2 lados: cobrar o Pix', 'P8 · pergunta pra comunidade', 'X4', 'Caixinha: a pior coisa que já rolou numa viagem com amigos'],
+  [8, 'seg 16/11', 2, 'Sugestão: S3 · Quanto custa o réveillon com a galera', 'X5', 'X6', 'Enquete: planilha ou app?', true, 'T2 · Tipos de amigo (6 a 10)'],
+  [9, 'ter 17/11', 2, 'Sugestão: D3 · 2 lados: decidir o roteiro', 'X7 · com gravação da tela de acertos', 'Repost do X7', 'Repost + link da lista', true, 'R5 · POV: você organiza o réveillon (carrossel)'],
+  [10, 'qua 18/11', 2, 'Sugestão: Q2 · Seu grupo sobrevive ao réveillon?', 'X8', 'X9', 'Enquete: divide por quarto ou por cabeça?', true, 'S1b · A dor do mercado'],
+  [11, 'qui 19/11', 2, 'Sugestão: R8 · Como dividir a casa sem briga (conferir a conta)', 'X10 · a mesma conta em texto', 'X11', 'Caixinha: dúvidas de divisão', true, 'D4 · 2 lados: alguém desiste na véspera'],
+  [12, 'sex 20/11', 2, 'Sugestão: T3 · Marca o amigo', 'P7 · resumo da semana 2', 'P6 · semana 2 dela', 'Bastidores', true, 'N2 · Norti responde comentário'],
+  [13, 'sáb 21/11', 2, 'Sugestão: S4 · O grupo do zap em 5 prints', 'X12', 'X16 · 2ª votação', 'Lote 3: gerar a semana 3', true, 'Variação livre do 2º colocado'],
+  [14, 'dom 22/11', 2, 'Sugestão: D5 · 2 lados: a ceia', 'X14', 'Repost do X14', 'Caixinha: que tipo de amigo você é?', true, 'T4 · Que tipo de amigo você é?'],
 ]
 
 const videos = [
-  ['N1 · A Norti vendo o grupo dividir o mercado', ['0–2 s: texto "a Norti vendo o grupo dividir o mercado do réveillon". Pose Pensando.', '2–6 s: mensagens fictícias: "quanto deu?", "eu não bebo, não vou pagar a cerveja", "e o gelo?", "quem tem a nota?".', '6–8 s: pose Ops. Texto: "dia 3 de janeiro e ninguém sabe".', 'Legenda: "o mercado é sempre a parte mais difícil"']],
-  ['N2 · Norti responde comentário', ['Usar a resposta a comentário com vídeo do TikTok e do Reels.', '0–2 s: o comentário na tela, pelo recurso nativo da rede.', '2–7 s: a Norti responde em texto, com a pose que combina.', 'Nunca expor ninguém nem mostrar informação pessoal.']],
+  ['S · Slideshows', ['S1 "A dor do Pix": 1 "dia 2 de janeiro no grupo do réveillon:" · 2 a 4 prints fictícios ("alguém lembra quanto deu o mercado?", "eu te faço o Pix amanhã", "quem pagou a casa mesmo?") · 5 print real dos acertos + Norti Apontando · 6 Norti Oi + "lista de espera no perfil"', 'S1b "A dor do mercado": "quanto deu?", "eu não bebo, não vou pagar a cerveja", "quem tem a nota?" · print real dos gastos + "anota na hora, divide no fim"', 'S2 "Checklist do réveillon": os 8 slides do R7', 'S3 "Quanto custa o réveillon com a galera": casa, mercado, transporte, total por pessoa + print do resumo. Números de exemplo conferidos', 'S4 "O grupo do zap em 5 prints": 40 links de Airbnb, enquete sem resposta, "quem vai mesmo?", "alguém fez a planilha?", "te faço o Pix amanhã" + app no fim']],
+  ['T · Tipos de amigo', ['T1: os 5 tipos do R2', 'T2: os tipos 6 a 10 do banco', 'T3 "Marca o amigo": 1 frase por slide', 'T4 "Que tipo de amigo você é?": 6 tipos, "comenta o número do seu"']],
+  ['Q · Quiz', ['Q1: o R4', 'Q2: "Seu grupo sobrevive ao réveillon?" (banco)', 'Conferir que a soma dos pontos bate com as faixas do resultado']],
+  ['D · 2 lados', ['Esquerda "grupo do zap": bonequinhos em caos, mensagens voando. Direita "grupo com a Norti": tudo em ordem, Norti Comemorando', 'D1 dividir a casa · D2 cobrar o Pix · D3 decidir o roteiro · D4 alguém desiste na véspera · D5 a ceia (quem leva o quê)', 'Estilo sempre igual; muda só a situação']],
+  ['N · Norti em vídeo', ['N1: o R1, "a Norti vendo o grupo decidir a casa"', 'N2 "Norti responde comentário": resposta com vídeo a um comentário real, a Norti responde em texto. Nunca expor ninguém']],
 ]
 
 const poses = [['Parada', 'idle'], ['Piscando', 'blink'], ['Oi', 'wave'], ['Pensando', 'think'], ['Comemorando', 'celebrate'], ['Ops', 'oops'], ['Dormindo', 'sleep'], ['Apontando', 'point'], ['Amor', 'love']]
 
 const banco = [
-  ['Se ganhar R2 · Tipos de amigo', ['6. O que chega dia 31 às 23h50 → Comemorando: "e ainda pergunta o que tem pra comer"', '7. O que leva só gelo → Ops: "e divide igual"', '8. O que quer ir pra 3 praias no mesmo dia → Pensando', '9. O que manda áudio de 4 minutos → Dormindo', '10. O que traz um amigo que ninguém conhece → Oi']],
-  ['Se ganhar R3 · Marca o amigo', ['que diz "depois a gente acerta" e o depois nunca chega', 'que reserva a casa sem perguntar ninguém', 'que some quando chega a conta do mercado', 'que leva caixa de som e só toca a playlist dele', 'que confirma, desconfirma e confirma de novo']],
-  ['Se ganhar R4 · Quiz', ['Quiz 2 "Seu grupo sobrevive ao réveillon?": alguém com carro (+2) · alguém pagou do bolso e não cobrou (−2) · mais de 10 pessoas (−1) · já sabem quem dorme onde (+2) · alguém trouxe um amigo que ninguém conhece (−1)', 'Quiz 3 "Que tipo de organizador você é?": planilha, cobrança e prazo; o final diz o tipo (o calmo, o cobrador, o que faz tudo sozinho)', 'Antes de gravar: conferir que a soma bate com as faixas do final']],
-  ['Se ganhar R1 · Norti na trend', ['a Norti vendo o grupo escolher quem dorme na sala', 'a Norti vendo o grupo combinar o horário de sair', 'a Norti quando alguém fala "depois eu te faço o Pix"', 'Sempre o mesmo esqueleto: situação → mensagens fictícias → pose final + data']],
+  ['Tipos de amigo, 6 a 10', ['6. O que chega dia 31 às 23h50 → Comemorando: "e ainda pergunta o que tem pra comer"', '7. O que leva só gelo → Ops: "e divide igual"', '8. O que quer ir pra 3 praias no mesmo dia → Pensando', '9. O que manda áudio de 4 minutos → Dormindo', '10. O que traz um amigo que ninguém conhece → Oi']],
+  ['Marca o amigo', ['que diz "depois a gente acerta" e o depois nunca chega', 'que reserva a casa sem perguntar ninguém', 'que some quando chega a conta do mercado', 'que leva caixa de som e só toca a playlist dele', 'que confirma, desconfirma e confirma de novo']],
+  ['Quiz', ['Q2 "Seu grupo sobrevive ao réveillon?": alguém com carro (+2) · alguém pagou do bolso e não cobrou (−2) · mais de 10 pessoas (−1) · já sabem quem dorme onde (+2) · alguém trouxe um amigo que ninguém conhece (−1)', 'Q3 "Que tipo de organizador você é?": planilha, cobrança e prazo; o resultado diz o tipo']],
+  ['2 lados e slideshow', ['2 lados: quem dorme na sala · o horário de sair · o carro que não cabe todo mundo · a foto do grupo', 'Slideshow: "o que ninguém te conta sobre alugar casa no réveillon" · "5 combinados antes de fechar a casa" · "quanto cada um deve, sem planilha"']],
 ]
 
 const posts = [
   ['X1', 'Ingryd', 'coisa que eu aprendi essa semana: o "banco de dados" do app é tipo uma planilha gigante, só que com regras de quem pode ver cada linha.\n\no seu gasto pessoal da viagem? nem o dono do grupo vê.'],
   ['X2', 'Ingryd', 'pergunta sincera: no seu grupo, quem pagou a casa recebe tudo de volta?\n\nou sempre fica faltando aquele um'],
-  ['X3', 'Ingryd', 'o Victor me ensinando git: "commit é tipo salvar no videogame"\n\nagora eu salvo tudo. salvei até essa piada'],
   ['X4', 'Ingryd', 'o que eu mais gosto no Tripwave até agora: a Norti dorme quando a viagem ainda não tem nada.\n\nparece bobo, mas quem fez isso fui eu entendendo cada linha', 'Só se for verdade pra ela. Senão, trocar por algo que ela fez.'],
   ['X5', 'Victor', 'decisão de produto da semana: o Tripwave vai ser app primeiro, site depois.\n\nmotivo: quem viaja com a galera decide tudo pelo celular, no grupo. ninguém abre o notebook pra ver quanto deve.'],
   ['X6', 'Ingryd', 'semana 2.\n\nainda não entendo tudo que o código faz. mas já sei achar onde muda o texto de uma tela sem quebrar nada, e isso pra mim é muito'],
-  ['X7', 'Victor', 'a tela que mais deu trabalho até agora: quem deve quanto pra quem no fim da viagem.\n\n8 pessoas, 40 gastos, e no fim sai uma lista curta: fulano manda X pra ciclano, e acabou.', 'Com vídeo da tela de acertos. Conferir que o exemplo do vídeo bate com o texto.'],
+  ['X7', 'Victor', 'a tela que mais deu trabalho até agora: quem deve quanto pra quem no fim da viagem.\n\n8 pessoas, 40 gastos, e no fim sai uma lista curta: fulano manda X pra ciclano, e acabou.', 'Com gravação da tela de acertos. Conferir que o exemplo bate com o texto.'],
   ['X8', 'Victor', 'a Apple demora pra aprovar app novo. a gente decidiu não esperar pra começar a falar dele.\n\nse der errado, pelo menos vocês viram.'],
   ['X9', 'Ingryd', 'viagem com amigos tem 3 fases:\n\n1. "vamos!!!"\n2. "quem vai pagar o sinal?"\n3. silêncio no grupo'],
   ['X10', 'Victor', 'casa de R$ 6.000 no réveillon, 8 pessoas, 2 casais, 1 que só vai 2 noites.\n\npor cabeça: [conta]\npor quarto: [conta]\n\nqual é o justo? (não tem resposta certa, tem briga)', 'Mesmas contas do R8, conferidas.'],
   ['X11', 'Ingryd', 'meu momento favorito construindo o app: quando o Victor fala "testa aí" e eu acho um erro que ele não viu'],
-  ['X12', 'Victor', '[N] pessoas na lista de espera em 2 semanas, sem anúncio.\n\na rede que mais trouxe gente: [rede]. a que eu achava que ia trazer: [rede].'],
-  ['X13', 'Ingryd', 'pesquisa: vocês dividem o mercado da viagem igual pra todo mundo ou por quem consumiu?\n\n(eu sempre fui a que não bebe e paga a cerveja)', 'A última linha só se for verdade pra ela.'],
+  ['X12', 'Victor', '[N] pessoas na lista de espera em 2 semanas, sem anúncio e sem aparecer a cara de ninguém.\n\na rede que mais trouxe gente: [rede]. a que eu achava que ia trazer: [rede].'],
   ['X14', 'Victor', '2 semanas falando do Tripwave em público. o que aprendi:\n\n- [aprendizado 1, com número]\n- [aprendizado 2]\n- [o que vamos mudar]'],
+  ['X15', 'Ingryd', 'vocês decidem uma coisa do app essa semana.\n\nquando alguém do grupo ainda não pagou a parte dele, a Norti deveria:', 'Enquete: avisar só ele · avisar o grupo todo · ficar quieta · mandar meme'],
+  ['X16', 'Ingryd', '2ª votação do grupo: qual destino a gente usa no exemplo do app?', 'Enquete: Rio no réveillon · Jericoacoara · Gramado · Lisboa. Depois postar o resultado com o print do app.'],
 ]
 
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e }
@@ -295,17 +324,17 @@ for (const [quem, oque, ate] of semana0) {
   s0.append(linha)
 }
 
-for (const [n, data, semana, video, xv, xi, extra, vencedor] of dias) {
+for (const [n, data, semana, video, xv, xi, extra, vencedor, noite] of dias) {
   const card = el('article', 'dia' + (vencedor ? ' vencedor' : ''))
   card.id = 'dia' + n
   const d = el('div', 'data')
   d.append(el('span', 'n', String(n).padStart(2, '0')), el('span', 'd', data))
   card.append(d)
-  const linhas = [['Vídeo', video], ['X Victor', xv], ['X Ingryd', xi], ['Story', extra]]
+  const linhas = [[noite ? 'Manhã' : 'Post', video], ...(noite ? [['Noite', noite]] : []), ['X Victor', xv], ['X Ingryd', xi], ['Story', extra]]
   for (const [k, v] of linhas) {
     const l = el('div', 'linha')
     const valor = el('span')
-    if (k === 'Vídeo' && vencedor) valor.append(el('span', 'selo', 'do vencedor'))
+    if (k === 'Manhã' && vencedor) valor.append(el('span', 'selo', 'do vencedor'))
     valor.append(document.createTextNode(v))
     l.append(el('span', 'k', k), valor)
     card.append(l)
@@ -321,6 +350,7 @@ const bloco = (alvo, titulo, itens) => {
   b.append(ul)
   document.getElementById(alvo).append(b)
 }
+for (const [t, i] of formatos) bloco('lista-formatos', t, i)
 for (const [t, i] of videos) bloco('lista-videos', t, i)
 for (const [t, i] of banco) bloco('lista-banco', t, i)
 

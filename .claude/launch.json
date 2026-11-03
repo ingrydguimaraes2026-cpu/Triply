@@ -18,6 +18,12 @@
       "port": 5174
     },
     {
+      "name": "marketing",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5180", "--directory", "docs/marketing"],
+      "port": 5180
+    },
+    {
       "name": "mobile",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [

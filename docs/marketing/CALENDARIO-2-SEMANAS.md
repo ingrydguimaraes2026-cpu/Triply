@@ -1,126 +1,134 @@
-# Calendário: as 2 primeiras semanas de conteúdo
+# Calendário: as 2 primeiras semanas de conteúdo (sem rosto)
 
-*02/11/2026. Banco de conteúdo pra gravar em lote. Usa os roteiros de `CONTEUDO-INICIAL.md` (R1 a R8, P1 a P8) e acrescenta os que faltavam pra fechar 14 dias. Tom de voz: `NOME-E-VOZ.md`.*
-
-> **Atualização 03/11/2026:** a dupla não mostra o rosto. A pesquisa (`PESQUISA-SEM-ROSTO.md`) mostrou que o formato principal deve ser o **slideshow** (carrossel com texto + Norti, sem voz) e o **"2 lados" com a Norti**. Os roteiros abaixo continuam valendo, mas podem ser entregues como carrossel. Ainda falta encaixar os novos (S1 a S3 e D1) nos dias.
+*03/11/2026. Refeito depois da decisão da dupla: **ninguém mostra o rosto**. Base: `PESQUISA-SEM-ROSTO.md` (o que funciona sem aparecer), `CONTEUDO-INICIAL.md` (roteiros R1 a R8 e posts P1 a P8) e o tom de `NOME-E-VOZ.md`. Versão pra abrir no navegador: `calendario-2-semanas.html`.*
 
 ## Como funciona
 
-**O ritmo ("3 por dia")**
-- **1 vídeo novo por dia**, o mesmo no TikTok, no Reels e no Shorts. Já são 3 publicações.
-- **2 posts no X por dia**: 1 no perfil do Victor e 1 no da Ingryd. O `@tripwaveapp` reposta e responde.
-- **20 a 30 respostas no X por dia** (regras em `CONTEUDO-INICIAL.md`, "Como responder").
-- **Story no Instagram todo dia**: repostar o vídeo + 1 enquete (sugestão em cada dia). Leva 1 minuto.
+**Os formatos (todos sem rosto e sem voz)**
+| Código | Formato | Como é |
+|---|---|---|
+| **S** | Slideshow da dor | Carrossel de 6 slides: dor no slide 1, prints de conversa fictícia, **1 print real do app**, Norti no fim. Música em alta. |
+| **T** | Tipos de amigo (carrossel) | 1 slide por tipo de amigo, Norti com a pose que combina. "Marca o seu" na legenda. |
+| **Q** | Quiz (carrossel) | 1 pergunta por slide com a pontuação; o último dá o resultado. "Comenta seus pontos". |
+| **D** | 2 lados | Tela dividida: "grupo do zap" (caos) x "grupo com a Norti" (calmo). Na semana 1 sai como imagem; vira vídeo animado só se ganhar. |
+| **N** | Norti na trend (vídeo) | A Norti + texto em cima de um áudio em alta (R1). Único vídeo da semana 1. |
 
-**Gravar em lote, não todo dia**
-- **Lote 1 (sábado 07/11):** os vídeos dos dias 1 a 7.
-- **Lote 2 (sábado 14/11):** os vídeos dos dias 8 a 14, **depois** de olhar os números da semana 1 (ver "Sexta: decidir o vencedor").
-- Gravar sempre 2 vídeos a mais que o necessário: se um flopar, tem reserva.
+**Onde posta**
+- **TikTok e Instagram:** o mesmo post nas duas redes, 1 conta em cada. Carrossel no TikTok é o "modo foto"; no Instagram, carrossel normal.
+- **Shorts (YouTube):** só os vídeos (N e D animado). Carrossel não existe lá.
+- **X:** 2 posts por dia nos perfis pessoais (texto e print, sem rosto). O `@tripwaveapp` reposta e responde.
+- **Story no Instagram:** repost do dia + 1 enquete. Leva 1 minuto.
+
+**Volume**
+- **Semana 1:** 1 post por dia (TikTok + Instagram).
+- **Semana 2:** 2 posts por dia: o formato vencedor de manhã e uma variação à noite.
+- **X:** 2 por dia + 20 a 30 respostas, sempre.
+- A 2ª conta de cada rede só abre quando um formato passar de 1.000 views com frequência. Cada conta posta uma **versão diferente** (outra ordem, outro gancho, outra imagem): o TikTok derruba do "Pra Você" o post copiado.
+
+**Como os posts são montados (sem gravar nada)**
+1. Uma planilha com 1 linha por post: código, gancho, texto de cada slide, pose da Norti, legenda.
+2. Uma sessão do Claude monta os slides num modelo HTML (1080×1920, cores da marca, Norti em `norti/png/`) e exporta em PNG.
+3. A dupla aprova, posta pelo próprio app da rede e escolhe a música em alta na hora. **Nada de postagem automática** (risco de perder a conta).
+
+**Imagens**
+- Prints do Tripwave e a Norti: são nossos, use à vontade.
+- Fotos de fundo: bancos com licença livre (Unsplash, Pexels), sem rosto em destaque, ou fotos de viagem da própria dupla sem gente.
+- Foto realista de pessoa gerada por IA: só com o rótulo de IA ligado no TikTok.
+- **Nunca** foto de celebridade ou de outra conta.
 
 **Datas**
-- **Semana 0 (02 a 08/11): preparar.** Nada vai ao ar ainda.
-- **Semana 1 (09 a 15/11): testar 4 formatos.**
+- **Semana 0 (03 a 08/11): preparar.**
+- **Semana 1 (09 a 15/11): testar 4 formatos** (S, T, Q e D) + 1 vídeo N.
 - **Semana 2 (16 a 22/11): dobrar o que funcionou.**
-- O réveillon segura o tema até uns 10 dias antes do Natal. A contagem regressiva (R6) começa em 01/12 e entra no próximo calendário.
+- A contagem regressiva do réveillon (R6) começa em 01/12, no próximo calendário.
 
 **Poses da Norti** (`norti/png/`, fundo transparente)
-| Nome no roteiro | Arquivo |
-|---|---|
-| Parada | `norti-idle.png` |
-| Piscando | `norti-blink.png` |
-| Oi | `norti-wave.png` |
-| Pensando | `norti-think.png` |
-| Comemorando | `norti-celebrate.png` |
-| Ops | `norti-oops.png` |
-| Dormindo | `norti-sleep.png` |
-| Apontando | `norti-point.png` |
-| Amor | `norti-love.png` |
+| Nome | Arquivo | Nome | Arquivo |
+|---|---|---|---|
+| Parada | `norti-idle.png` | Ops | `norti-oops.png` |
+| Piscando | `norti-blink.png` | Dormindo | `norti-sleep.png` |
+| Oi | `norti-wave.png` | Apontando | `norti-point.png` |
+| Pensando | `norti-think.png` | Amor | `norti-love.png` |
+| Comemorando | `norti-celebrate.png` | | |
 
-**Links da lista de espera** (sempre com `?origem=`, pra saber qual rede traz gente)
-| Rede | Link |
-|---|---|
-| X | `tripwave.app/espera?origem=x` |
-| Instagram | `tripwave.app/espera?origem=instagram` |
-| TikTok | `tripwave.app/espera?origem=tiktok` |
-| Shorts | `tripwave.app/espera?origem=shorts` |
+**Links da lista de espera** (sempre com `?origem=`)
+- TikTok: `tripwave.app/espera?origem=tiktok` · Instagram: `?origem=instagram` · X: `?origem=x` · Shorts: `?origem=shorts`
+- Enquanto o domínio não existir, use o endereço no ar (hoje `together-viagem.vercel.app`).
 
-Enquanto o domínio não existir, trocar `tripwave.app` pelo endereço no ar (hoje `together-viagem.vercel.app`).
-
-**Regras que valem pra tudo**
-- Números entre colchetes, como `[N]`, são preenchidos com o dado real do dia. Nunca inventar número.
-- A piada é sempre da situação, nunca de uma pessoa real nem de conversa real.
-- As falas da Norti são rascunho até a Ingryd fechar a personalidade dela (HANDOFF, pendente 5).
+**Regras de sempre**
+- Números entre colchetes, como `[N]`, são o dado real do dia. Nunca inventar número.
+- A piada é da situação, nunca de uma pessoa ou conversa real. Prints de conversa são fictícios.
+- As falas da Norti são rascunho até a Ingryd fechar a personalidade dela.
 
 ---
 
-## Semana 0 (02 a 08/11): preparar
+## Semana 0 (03 a 08/11): preparar
 
 | Quem | O quê | Até |
 |---|---|---|
-| Dupla | Criar `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), com as bios de `CONTEUDO-INICIAL.md` | qua 04/11 |
+| Dupla | Criar `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), com as bios de `CONTEUDO-INICIAL.md`. No TikTok, conta comercial (libera link na bio mais cedo) | qua 04/11 |
 | Dupla | Registrar tripwave.app e tripwave.com.br | qua 04/11 |
-| Victor | Colocar a `/espera` no ar (hoje ela só está na branch `monorepo-split`) e testar um cadastro de cada `?origem=` | qui 05/11 |
+| Victor | Colocar a `/espera` no ar e testar um cadastro de cada `?origem=` | qui 05/11 |
+| Dupla | **Aquecer as contas novas**: 15 a 20 min por dia rolando o "Pra Você" de viagem e réveillon, curtindo e comentando. Ainda sem postar | qua a dom |
 | Ingryd | Revisar piadas e bios; escolher 3 falas fixas da Norti | qui 05/11 |
-| Victor | Gravar 10 vídeos curtos de tela do app (acertos, roteiro, Norti comemorando) pra usar no último segundo dos vídeos | sex 06/11 |
-| Dupla | **Lote 1:** gravar os vídeos dos dias 1 a 7 + 2 reservas | sáb 07/11 |
-| Dupla | Seguir os perfis de `ESTRATEGIA-REDES.md` e começar as respostas no X (sem postar ainda) | a semana toda |
+| Victor | Tirar os prints do app que entram nos slides: acertos, roteiro, gastos, convite, Norti comemorando | qui 05/11 |
+| Sessão do Claude | Montar o modelo de slide em HTML (1080×1920) e a planilha de posts | sex 06/11 |
+| Dupla | **Lote 1:** gerar e aprovar os posts dos dias 1 a 7 + 2 reservas | sáb 07/11 |
+| Dupla | Começar as 20 a 30 respostas por dia no X | a semana toda |
 
 ---
 
 ## Semana 1 (09 a 15/11): testar 4 formatos
 
-A ideia é testar **Norti na trend (R1)**, **Tipos de amigo (R2)**, **Marca o amigo (R3)** e **Quiz (R4)**, e cada um aparece pelo menos duas vezes. Na sexta, os números dizem qual deles ganha.
+Cada formato (S, T, Q, D) sai **pelo menos 2 vezes**. Na sexta, os números dizem qual ganha.
 
 ### Dia 1 · seg 09/11
-- **Vídeo:** R1 "A Norti vendo o grupo decidir a casa" (`CONTEUDO-INICIAL.md`).
-- **X (Victor):** P1, a apresentação da dupla. **Fixar no perfil.**
-- **X (Ingryd):** repostar o P1 com uma linha dela: `é verdade. eu sou a que tá aprendendo 🙋‍♀️`
+- **Post:** S1 "A dor do Pix" (roteiro em `PESQUISA-SEM-ROSTO.md`).
+- **X (Victor):** P1, apresentação da dupla. **Fixar.** Trocar a imagem por um print do app ou a ficha da Norti (sem foto da dupla).
+- **X (Ingryd):** repost do P1: `é verdade. eu sou a que tá aprendendo 🙋‍♀️`
 - **Story:** enquete "quem organiza a viagem do seu grupo?" → "eu 😩" / "nunca sou eu 😌".
 
 ### Dia 2 · ter 10/11
-- **Vídeo:** R2.1 "O que some na hora do Pix" (Apontando).
+- **Post:** T1 "Tipos de amigo no réveillon" (carrossel com os 5 tipos do R2).
 - **X (Victor):** P2, o problema.
-- **X (Ingryd):** X1 (abaixo).
-- **Story:** enquete "já ficou no prejuízo numa viagem com amigos?" → "sim 💸" / "eu que deixei alguém 👀".
+- **X (Ingryd):** X1.
+- **Story:** enquete "já ficou no prejuízo numa viagem com amigos?".
 
 ### Dia 3 · qua 11/11
-- **Vídeo:** R3.1 "marca o amigo que vai dizer 'te faço o Pix amanhã' no dia 2 de janeiro".
-- **X (Victor):** P3, o "em breve" com o vídeo do app. Link da lista **só na primeira resposta**.
-- **X (Ingryd):** repostar o P3.
-- **Story:** link da lista de espera (adesivo de link) + "entra que é de graça".
+- **Post:** D1 "2 lados: dividir a casa" (imagem dividida, ver abaixo).
+- **X (Victor):** P3, o "em breve", com vídeo de tela do app (gravação da tela, sem rosto). Link na 1ª resposta.
+- **X (Ingryd):** repost do P3.
+- **Story:** adesivo de link da lista: "entra que é de graça".
 
 ### Dia 4 · qui 12/11
-- **Vídeo:** R4, o quiz "Quantos pontos seu grupo faz?".
-- **X (Victor):** P4, a mascote, com a imagem da Agulha antiga ao lado da Norti Apontando.
+- **Post:** Q1 "Quantos pontos seu grupo faz?" (o R4 em carrossel).
+- **X (Victor):** P4, a mascote (Agulha antiga ao lado da Norti).
 - **X (Ingryd):** X2.
-- **Story:** repostar o quiz + caixinha "quantos pontos vocês fizeram?".
+- **Story:** caixinha "quantos pontos vocês fizeram?".
 
 ### Dia 5 · sex 13/11
-- **Vídeo:** R2.2 "O que quer casa com piscina e paga R$ 200" (Ops).
-- **X (Victor):** P7, o resumo da semana 1, com os números reais.
-- **X (Ingryd):** P6, "semana 1 aprendendo a programar", com as palavras dela.
-- **Story:** os bastidores do dia (print do código ou da Norti).
-- **Sexta: decidir o vencedor** (ver abaixo).
+- **Post:** S2 "Checklist do réveillon com a galera" (o R7; é o post de salvar).
+- **X (Victor):** P7, resumo da semana 1 com os números reais.
+- **X (Ingryd):** P6, semana 1 aprendendo a programar.
+- **Story:** bastidores (print do código ou da Norti).
+- **Hoje:** decidir o vencedor (ver abaixo).
 
 ### Dia 6 · sáb 14/11
-- **Vídeo:** R1b "a Norti vendo o grupo dividir o mercado" (N1, abaixo).
+- **Post:** N1 "A Norti vendo o grupo decidir a casa" (o R1, vídeo; também no Shorts).
 - **X (Victor):** P5, o nome.
-- **X (Ingryd):** X3.
-- **Lote 2:** gravar os dias 8 a 14 com o formato vencedor.
+- **X (Ingryd):** X15, a 1ª votação do "build in group".
+- **Lote 2:** gerar os posts dos dias 8 a 14 com o vencedor.
 
 ### Dia 7 · dom 15/11
-- **Vídeo:** R3.2 "marca o amigo que manda 40 links de Airbnb e não vota em nenhum".
-- **X (Victor):** P8, a pergunta pra comunidade. As respostas viram roteiro.
+- **Post:** D2 "2 lados: cobrar o Pix".
+- **X (Victor):** P8, pergunta pra comunidade (as respostas viram post).
 - **X (Ingryd):** X4.
-- **Story:** caixinha "conta a pior coisa que já rolou numa viagem com amigos" (vira roteiro também).
+- **Story:** caixinha "a pior coisa que já rolou numa viagem com amigos".
 
 ### Sexta: decidir o vencedor
-Anotar numa planilha, 24 h depois de cada vídeo:
+Anotar 24 h depois de cada post: views (TikTok e Instagram), compartilhamentos, salvamentos, comentários e **quantos perguntaram "que app é esse?"**.
 
-| Vídeo | Views (TikTok) | Views (Reels) | Compartilhamentos | Salvamentos | Comentários |
-|---|---|---|---|---|---|
-
-E as entradas na lista por rede (no SQL Editor do Supabase):
+Entradas na lista por rede (SQL Editor do Supabase):
 ```sql
 select coalesce(origem, 'sem origem') as origem, count(*) as pessoas
 from lista_espera
@@ -128,109 +136,85 @@ group by 1
 order by 2 desc;
 ```
 
-**Como decidir:** o formato que teve mais **compartilhamentos + salvamentos** (não só views) ganha. Na semana 2 ele ocupa **4 dos 7 dias**; o segundo colocado ocupa 2; 1 dia fica pra algo novo.
+**Ganha** o formato com mais compartilhamentos + salvamentos. Na semana 2 ele ocupa a manhã dos 7 dias; o 2º colocado e as novidades ficam com a noite.
 
 ---
 
 ## Semana 2 (16 a 22/11): dobrar o que funcionou
 
-Os dias abaixo já têm vídeo, mas **4 deles são "do vencedor"**: troque pelo roteiro do formato que ganhou, usando o banco de variações no fim do documento. O X segue como está.
+Manhã = **do vencedor** (troque pela variação do formato que ganhou, no banco abaixo). A sugestão de cada dia vale se ninguém ganhar com folga.
 
-### Dia 8 · seg 16/11
-- **Vídeo:** **do vencedor** (sugestão, se não houver um claro: R2.3 "O planilheiro").
-- **X (Victor):** X5.
-- **X (Ingryd):** X6.
-- **Story:** enquete "planilha ou app?" → "planilha 📊" / "já desisti da planilha 🫠".
-
-### Dia 9 · ter 17/11
-- **Vídeo:** R5, POV "você é o amigo que organiza o réveillon" (único com 1 segundo de tela do app).
-- **X (Victor):** X7, com vídeo de tela.
-- **X (Ingryd):** repostar o X7.
-- **Story:** repostar + link da lista.
-
-### Dia 10 · qua 18/11
-- **Vídeo:** **do vencedor** (sugestão: R2.4 "O que confirma no dia 30").
-- **X (Victor):** X8.
-- **X (Ingryd):** X9.
-- **Instagram (extra):** R7, o carrossel "Checklist do réveillon com a galera". É o post de salvar.
-
-### Dia 11 · qui 19/11
-- **Vídeo:** R8 "Como dividir a casa do réveillon sem briga" (dica útil). **Conferir a conta antes de gravar.**
-- **X (Victor):** X10, a versão em texto da mesma conta.
-- **X (Ingryd):** X11.
-- **Story:** enquete "na casa de vocês: divide por quarto ou por cabeça?".
-
-### Dia 12 · sex 20/11
-- **Vídeo:** **do vencedor** (sugestão: R3.3 "marca o amigo que acha que a ceia é self-service e grátis").
-- **X (Victor):** P7, o resumo da semana 2.
-- **X (Ingryd):** P6, a semana 2 dela.
-- **Story:** bastidores.
-
-### Dia 13 · sáb 21/11
-- **Vídeo:** N2 "Norti responde comentário" (abaixo), usando um comentário real da semana.
-- **X (Victor):** X12.
-- **X (Ingryd):** X13.
-- **Lote 3:** gravar a semana 3 (o próximo calendário, com o começo da contagem regressiva).
-
-### Dia 14 · dom 22/11
-- **Vídeo:** **do vencedor** (sugestão: R2.5 "O que organiza tudo sozinho").
-- **X (Victor):** X14.
-- **X (Ingryd):** repostar o X14.
-- **Story:** caixinha "que tipo de amigo você é no réveillon?" (vira roteiro).
+| Dia | Manhã (vencedor) | Noite | X Victor | X Ingryd | Story |
+|---|---|---|---|---|---|
+| 8 · seg 16/11 | sugestão: S3 "Quanto custa o réveillon com a galera" | T2 "Tipos de amigo" (6 a 10) | X5 | X6 | enquete: planilha ou app? |
+| 9 · ter 17/11 | sugestão: D3 "2 lados: decidir o roteiro" | R5 "POV: você organiza o réveillon" em carrossel | X7 (vídeo de tela dos acertos) | repost do X7 | repost + link da lista |
+| 10 · qua 18/11 | sugestão: Q2 "Seu grupo sobrevive ao réveillon?" | S1b "A dor do mercado" | X8 | X9 | enquete: divide por quarto ou por cabeça? |
+| 11 · qui 19/11 | sugestão: R8 "Como dividir a casa sem briga" em carrossel (**conferir a conta**) | D4 "2 lados: alguém desiste na véspera" | X10 (a mesma conta em texto) | X11 | caixinha: dúvidas de divisão |
+| 12 · sex 20/11 | sugestão: T3 "Marca o amigo" (carrossel de frases) | N2 "Norti responde comentário" | P7, resumo da semana 2 | P6, semana 2 dela | bastidores |
+| 13 · sáb 21/11 | sugestão: S4 "O grupo do zap em 5 prints" | variação livre do 2º colocado | X12 | X16, 2ª votação | gerar o lote 3 |
+| 14 · dom 22/11 | sugestão: D5 "2 lados: a ceia" | T4 "Que tipo de amigo você é?" | X14 | repost do X14 | caixinha: que tipo de amigo você é? |
 
 ---
 
-## Vídeos novos (além dos R1 a R8)
+## Roteiros
 
-### N1. "A Norti vendo o grupo dividir o mercado" (variação do R1)
-- **0–2 s:** texto "a Norti vendo o grupo dividir o mercado do réveillon". Pose **Pensando**.
-- **2–6 s:** mensagens fictícias passando: "quanto deu?", "eu não bebo, não vou pagar a cerveja", "e o gelo?", "quem tem a nota?".
-- **6–8 s:** pose **Ops**. Texto: "dia 3 de janeiro e ninguém sabe".
-- **Legenda:** "o mercado é sempre a parte mais difícil"
+### S. Slideshows (6 slides)
+- **S1 "A dor do Pix":** em `PESQUISA-SEM-ROSTO.md`.
+- **S1b "A dor do mercado":** 1 "o mercado do réveillon, dia 3 de janeiro:" · 2 print fictício "quanto deu?" · 3 "eu não bebo, não vou pagar a cerveja" · 4 "quem tem a nota?" · 5 **print real** da tela de gastos + Norti Apontando "anota na hora, divide no fim" · 6 Norti Oi + "lista de espera no perfil".
+- **S2 "Checklist do réveillon":** os 8 slides do R7 em `CONTEUDO-INICIAL.md`.
+- **S3 "Quanto custa o réveillon com a galera":** 1 "quanto custa o réveillon com 8 amigos?" · 2 casa · 3 mercado e bebida · 4 transporte · 5 total por pessoa + **print real** do resumo · 6 Norti Pensando "e quem pagou o quê?". **Usar números de exemplo e conferir as contas antes.**
+- **S4 "O grupo do zap em 5 prints":** 5 prints fictícios do caos (40 links de Airbnb, enquete sem resposta, "quem vai mesmo?", "alguém fez a planilha?", "te faço o Pix amanhã") + slide final com o app e a Norti Comemorando.
 
-### N2. "Norti responde comentário" (a partir do dia 8)
-- Usar o recurso de responder comentário com vídeo (TikTok e Reels).
-- **0–2 s:** o comentário na tela (de uma pessoa real, com o recurso nativo da rede).
-- **2–7 s:** a Norti responde em texto, com a pose que combina.
-- Bom pra comentários tipo "meu grupo é assim" ou "fiz 2 pontos no quiz".
-- **Nunca** responder comentário expondo alguém nem com informação pessoal.
+### T. Tipos de amigo (carrossel)
+- **T1:** os 5 tipos do R2.
+- **T2:** os tipos 6 a 10 (banco abaixo).
+- **T3 "Marca o amigo":** 1 frase por slide (as do R3 + banco).
+- **T4 "Que tipo de amigo você é?":** 6 tipos, 1 por slide, "comenta o número do seu".
+
+### Q. Quiz (carrossel)
+- **Q1:** o R4. **Q2:** "Seu grupo sobrevive ao réveillon?" (banco). **Conferir que a soma dos pontos bate com as faixas do resultado.**
+
+### D. 2 lados (imagem dividida; vídeo só se ganhar)
+Esquerda "grupo do zap": bonequinhos em caos, mensagens voando. Direita "grupo com a Norti": tudo em ordem, Norti Comemorando. Estilo sempre igual; muda só a situação.
+- **D1:** dividir a casa · **D2:** cobrar o Pix · **D3:** decidir o roteiro · **D4:** alguém desiste na véspera · **D5:** a ceia (quem leva o quê).
+
+### N. Norti em vídeo
+- **N1:** o R1 ("a Norti vendo o grupo decidir a casa").
+- **N2 "Norti responde comentário":** resposta com vídeo a um comentário real (recurso nativo da rede): o comentário na tela, a Norti responde em texto com a pose que combina. Nunca expor ninguém.
 
 ---
 
 ## Banco de variações (pra repetir o vencedor)
 
-Se um formato ganhar, há material pronto pra 5 dias sem inventar nada.
+**Tipos de amigo, 6 a 10**
+6. O que chega dia 31 às 23h50 → Comemorando: "e ainda pergunta o que tem pra comer"
+7. O que leva só gelo → Ops: "e divide igual"
+8. O que quer ir pra 3 praias no mesmo dia → Pensando
+9. O que manda áudio de 4 minutos → Dormindo
+10. O que traz um amigo que ninguém conhece → Oi
 
-**Se ganhar R2 "Tipos de amigo" (continua a série)**
-6. "O que chega dia 31 às 23h50" → **Comemorando**. Texto: "e ainda pergunta o que tem pra comer".
-7. "O que leva só gelo" → **Ops**. Texto: "e divide igual".
-8. "O que quer ir pra 3 praias no mesmo dia" → **Pensando**.
-9. "O que manda áudio de 4 minutos" → **Dormindo**.
-10. "O que traz um amigo que ninguém conhece" → **Oi**.
+**Marca o amigo**
+- que diz "depois a gente acerta" e o depois nunca chega
+- que reserva a casa sem perguntar ninguém
+- que some quando chega a conta do mercado
+- que leva caixa de som e só toca a playlist dele
+- que confirma, desconfirma e confirma de novo
 
-**Se ganhar R3 "Marca o amigo"**
-4. "marca o amigo que diz 'depois a gente acerta' e o depois nunca chega"
-5. "marca o amigo que reserva a casa sem perguntar ninguém"
-6. "marca o amigo que some quando chega a conta do mercado"
-7. "marca o amigo que leva caixa de som e só toca a playlist dele"
-8. "marca o amigo que confirma, desconfirma e confirma de novo"
+**Quiz**
+- Q2 "Seu grupo sobrevive ao réveillon?": alguém com carro (+2) · alguém pagou do bolso e não cobrou (−2) · mais de 10 pessoas (−1) · já sabem quem dorme onde (+2) · alguém trouxe um amigo que ninguém conhece (−1).
+- Q3 "Que tipo de organizador você é?": planilha, cobrança e prazo; o resultado diz o tipo (o calmo, o cobrador, o que faz tudo sozinho).
 
-**Se ganhar R4 "Quiz"**
-- Quiz 2, "Seu grupo sobrevive ao réveillon?": tem alguém com carro (+2) · alguém já pagou do bolso e não cobrou (−2) · o grupo tem mais de 10 pessoas (−1) · já sabem quem dorme onde (+2) · alguém trouxe um amigo que ninguém conhece (−1).
-- Quiz 3, "Que tipo de organizador você é?": perguntas sobre planilha, cobrança e prazo; o final diz o "tipo" (o calmo, o cobrador, o que faz tudo sozinho).
-- **Antes de gravar:** conferir que a soma dos pontos bate com as faixas do final.
+**2 lados**
+- escolher quem dorme na sala · combinar o horário de sair · o carro que não cabe todo mundo · a foto do grupo (ninguém manda)
 
-**Se ganhar R1 "Norti na trend"**
-- "a Norti vendo o grupo escolher quem dorme na sala"
-- "a Norti vendo o grupo combinar o horário de sair"
-- "a Norti quando alguém fala 'depois eu te faço o Pix'"
-- Regra: sempre o mesmo esqueleto (situação → mensagens fictícias → pose final + data).
+**Slideshow**
+- "o que ninguém te conta sobre alugar casa no réveillon" · "5 combinados antes de fechar a casa" · "quanto cada um deve, sem planilha"
 
 ---
 
-## Posts do X (X1 a X14)
+## Posts do X
 
-Mesmo jeito dos P1 a P8: minúsculas, sem exagero, sem link no post (link só na primeira resposta).
+Mesmo jeito dos P1 a P8: minúsculas, sem exagero, link só na 1ª resposta. **Nenhuma foto da dupla:** print, Norti ou gravação de tela.
 
 ### X1 (Ingryd)
 ```
@@ -246,20 +230,13 @@ pergunta sincera: no seu grupo, quem pagou a casa recebe tudo de volta?
 ou sempre fica faltando aquele um
 ```
 
-### X3 (Ingryd)
-```
-o Victor me ensinando git: "commit é tipo salvar no videogame"
-
-agora eu salvo tudo. salvei até essa piada
-```
-
 ### X4 (Ingryd)
 ```
 o que eu mais gosto no Tripwave até agora: a Norti dorme quando a viagem ainda não tem nada.
 
 parece bobo, mas quem fez isso fui eu entendendo cada linha
 ```
-(Só postar se for verdade pra ela. Senão, trocar por algo que ela fez.)
+(Só se for verdade pra ela. Senão, trocar por algo que ela fez.)
 
 ### X5 (Victor)
 ```
@@ -275,13 +252,13 @@ semana 2.
 ainda não entendo tudo que o código faz. mas já sei achar onde muda o texto de uma tela sem quebrar nada, e isso pra mim é muito
 ```
 
-### X7 (Victor, com vídeo da tela de acertos)
+### X7 (Victor, com gravação da tela de acertos)
 ```
 a tela que mais deu trabalho até agora: quem deve quanto pra quem no fim da viagem.
 
 8 pessoas, 40 gastos, e no fim sai uma lista curta: fulano manda X pra ciclano, e acabou.
 ```
-(Antes de postar: conferir o exemplo do vídeo e trocar os números pelo que aparece nele.)
+(Conferir que o exemplo do vídeo bate com o texto.)
 
 ### X8 (Victor)
 ```
@@ -308,7 +285,7 @@ por quarto: [conta]
 
 qual é o justo? (não tem resposta certa, tem briga)
 ```
-(Preencher com as mesmas contas do R8, conferidas.)
+(Mesmas contas do R8, conferidas.)
 
 ### X11 (Ingryd)
 ```
@@ -317,18 +294,10 @@ meu momento favorito construindo o app: quando o Victor fala "testa aí" e eu ac
 
 ### X12 (Victor)
 ```
-[N] pessoas na lista de espera em 2 semanas, sem anúncio.
+[N] pessoas na lista de espera em 2 semanas, sem anúncio e sem aparecer a cara de ninguém.
 
 a rede que mais trouxe gente: [rede]. a que eu achava que ia trazer: [rede].
 ```
-
-### X13 (Ingryd)
-```
-pesquisa: vocês dividem o mercado da viagem igual pra todo mundo ou por quem consumiu?
-
-(eu sempre fui a que não bebe e paga a cerveja)
-```
-(Só a última linha se for verdade pra ela.)
 
 ### X14 (Victor)
 ```
@@ -339,10 +308,26 @@ pesquisa: vocês dividem o mercado da viagem igual pra todo mundo ou por quem co
 - [o que vamos mudar]
 ```
 
+### X15 (Ingryd, enquete: "build in group")
+```
+vocês decidem uma coisa do app essa semana.
+
+quando alguém do grupo ainda não pagou a parte dele, a Norti deveria:
+```
+Opções da enquete: `avisar só ele` · `avisar o grupo todo` · `ficar quieta` · `mandar meme`
+
+### X16 (Ingryd, enquete)
+```
+2ª votação do grupo: qual destino a gente usa no exemplo do app?
+```
+Opções: `Rio no réveillon` · `Jericoacoara` · `Gramado` · `Lisboa`
+(Depois postar o resultado com o print do app usando o destino vencedor.)
+
 ---
 
 ## Depois das 2 semanas
 
 1. Ler os números da semana 2 do mesmo jeito da sexta.
-2. Montar o próximo calendário (semanas 3 e 4) com o formato vencedor + a contagem regressiva (R6) a partir de 01/12.
-3. Se algum vídeo passar de 10x a média: fazer mais 5 parecidos naquela semana, antes de qualquer coisa nova.
+2. Se um formato passou de 1.000 views com frequência: abrir a 2ª conta de cada rede, com versões diferentes.
+3. Se o D (2 lados) ganhou: fazer a versão em vídeo animado com a Norti (ferramentas em `PESQUISA-SEM-ROSTO.md`).
+4. Montar o próximo calendário (semanas 3 e 4) com o vencedor + a contagem regressiva (R6) a partir de 01/12.
