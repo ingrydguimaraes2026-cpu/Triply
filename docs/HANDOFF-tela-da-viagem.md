@@ -27,7 +27,10 @@ Data: 02/11/2026. Pedido do Victor: "não gosto desses cards... muito texto, mui
 
 **Rodada completa de referências feita: `docs/design/referencias/README.md` (11 prints + 6 regras).**
 
+**Mapa de todas as telas (juntar/separar) feito: `docs/design/MAPA-DE-TELAS.md`. O Victor pediu: redesenhar TODAS as telas, não só a da viagem.**
+
 ## Próximo passo exato (sessão nova)
+0. Ler `docs/design/MAPA-DE-TELAS.md` e confirmar com o Victor. Depois, as 3 direções do conceito passaporte com as 5 telas principais (passo 2 do mapa).
 1. Ler `docs/design/referencias/README.md`. Escrever `docs/JORNADA.md` numa página: cada fase, o objetivo dela, a ÚNICA ação principal e o que a pessoa vê. Do login ao "voltou". Mostrar pro Victor antes de desenhar.
 2. (Feito o básico) Se precisar de mais, buscar referências no X (o Victor deixa logado no navegador interno): apps de viagem e de grupo (Polarsteps, Wanderlog, Airbnb Viagens, Splitwise, Partiful, Duolingo pelo caminho/progresso). Guardar os prints em `docs/design/referencias/`.
 3. Fazer 3 direções da tela da viagem **com foto e tela de celular de verdade** (o Victor não escolhe sem ver; ver `fotos-icones` no HANDOFF anterior: HTML + Chrome headless → PNG). Ele escolhe uma.
