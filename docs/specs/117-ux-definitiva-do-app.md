@@ -1,6 +1,6 @@
 # 117. UX definitiva do app: viagem em 4 abas, carimbos, match do comboio e motion
 
-**Fase:** 2 · **Tamanho:** G (em partes) · **Depende de:** 114, 115, 116 · **Status:** A fazer
+**Fase:** 2 · **Tamanho:** G (em partes) · **Depende de:** 114, 115, 116 · **Status:** Pronta pra testar (migrations esperando aprovação)
 
 ## Objetivo
 O app deixa de ser um menu de 11 cartões e vira uma jornada: a pessoa sempre vê **a próxima coisa a fazer**, o **grupo** puxando ela de volta e um **passaporte de carimbos** que enche até a viagem acabar. Tudo com animação no estilo motion (mola, transição compartilhada, comemoração nos marcos).

@@ -119,7 +119,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 114 | [Explorar: deslizar lugares e montar o roteiro](114-explorar-deslizar-e-montar-roteiro.md) (catálogo grátis por cidade, web + app) | 2 | Em andamento · banco, core, função e site prontos (testes verdes) · falta: aplicar no Supabase, app mobile e "Começar explorando" na Nova viagem |
 | 115 | [Jornada nova: montar a viagem com o grupo](115-jornada-montar-a-viagem-com-o-grupo.md) (v2: deslize dentro da criação, roteiro editável do grupo, estilo Roameo) | 2 | Pronto pra testar |
 | 116 | [Onboarding e primeira viagem guiada no app](116-primeira-viagem-guiada-no-app.md) (v2: conversa com a Agulha, gostinho do deslize antes da conta, roteiro pronto ao criar a conta; checklist "Montem a viagem") | 2 | v2 pronta pra testar (iPhone) |
-| 117 | [UX definitiva do app](117-ux-definitiva-do-app.md) (viagem em 4 abas, carimbos, match do comboio, motion, tela do Passe sem cobrar) | 2 | A fazer · desenho aprovado em docs/design/direcoes-v2/definitiva.html |
+| 117 | [UX definitiva do app](117-ux-definitiva-do-app.md) (viagem em 4 abas, carimbos, match do comboio, motion, tela do Passe sem cobrar) | 2 | Pronta pra testar no app (web 360px ok) · falta aplicar as 2 migrations (match e Passe), regerar tipos, deploy de lembretes e testar no iPhone |
 | 118 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | A escrever |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
