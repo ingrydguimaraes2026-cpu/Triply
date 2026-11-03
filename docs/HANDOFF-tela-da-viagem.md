@@ -25,9 +25,11 @@ Data: 02/11/2026. Pedido do Victor: "não gosto desses cards... muito texto, mui
 - Lição comum: foto manda, texto é 1 linha, **uma ação por tela**, barra de baixo curta. Nosso "Montem a viagem" deveria ser um cartão de foto com a próxima ação, não uma lista de 6.
 - O X tem muito mais (ex.: animações bonitas no feed): vale uma rodada só de referências na sessão nova, salvando os prints em `docs/design/referencias/`.
 
+**Rodada completa de referências feita: `docs/design/referencias/README.md` (11 prints + 6 regras).**
+
 ## Próximo passo exato (sessão nova)
-1. Escrever `docs/JORNADA.md` numa página: cada fase, o objetivo dela, a ÚNICA ação principal e o que a pessoa vê. Do login ao "voltou". Mostrar pro Victor antes de desenhar.
-2. Buscar referências no X (o Victor deixa logado no navegador interno): apps de viagem e de grupo (Polarsteps, Wanderlog, Airbnb Viagens, Splitwise, Partiful, Duolingo pelo caminho/progresso). Guardar os prints em `docs/design/referencias/`.
+1. Ler `docs/design/referencias/README.md`. Escrever `docs/JORNADA.md` numa página: cada fase, o objetivo dela, a ÚNICA ação principal e o que a pessoa vê. Do login ao "voltou". Mostrar pro Victor antes de desenhar.
+2. (Feito o básico) Se precisar de mais, buscar referências no X (o Victor deixa logado no navegador interno): apps de viagem e de grupo (Polarsteps, Wanderlog, Airbnb Viagens, Splitwise, Partiful, Duolingo pelo caminho/progresso). Guardar os prints em `docs/design/referencias/`.
 3. Fazer 3 direções da tela da viagem **com foto e tela de celular de verdade** (o Victor não escolhe sem ver; ver `fotos-icones` no HANDOFF anterior: HTML + Chrome headless → PNG). Ele escolhe uma.
 4. Implementar no app primeiro (`apps/mobile`, regra "mobile primeiro"), depois o essencial no site. Escrever/atualizar spec antes (`docs/specs/`).
 
