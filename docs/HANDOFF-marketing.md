@@ -31,6 +31,8 @@
 
 ## Pendente
 
+00. **03/11/2026 (mais recente): os 6 posts do teste (F1 a F3b) também foram reprovados pelo Victor** (vazios, só pix). Foco agora no **X**: lições dos posts salvos dele, temas novos e posts X-A a X-D em `docs/marketing/X-APRENDIZADOS.md`. O teste da semana 1 está **suspenso**. Próximo formato de vídeo: cena animada com a Norti e amigos desenhados, com voz, partindo de um vídeo de referência que a dupla escolher.
+
 0. **03/11/2026: decidido testar os 3 formatos (F1, F2, F3), 2 posts de cada, de 09 a 14/11.** Plano, ordem dos dias e regra de quem vence: `docs/marketing/teste/TESTE-SEMANA-1.md`. Os 6 posts estão prontos em `slides/saida/F1`, `F1b`, `F2`, `F2b`, `F3`, `F3b`. Página na nuvem (conta pessoal do Victor): https://claude.ai/artifact/VT4aesHUCoP3YDNBShLq2L (fonte em `docs/marketing/teste/pagina/`; pra atualizar de outra conversa, publicar com essa `url` e `files` mapeando `img/*.jpg`). Resultados vão em `teste/resultados.csv`; no dom 15/11, ler os números numa sessão de marketing. A página do benchmark (`benchmark/index.html`) abre com fotos no Chrome ou no Firefox; no navegador do app, as imagens não carregam.
    **S1 reprovado pelo Victor. Calendário de 09/11 pausado.** O porquê está em `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md`.
    - ✅ **Benchmark dos grupos A, B e C feito** (03/11): `docs/marketing/benchmark/` tem `posts.csv` (108 posts: TikTok, YouTube Shorts e X), `PADROES.md` (4 padrões + 1 anti-padrão, o que muda no calendário e **3 rascunhos de formato: F1 "E o pix, [NOME]?", F2 "O amigo que...", F3 "Expectativa x 3º dia"**) e `index.html` (prints + rascunhos com a Norti; abrir com duplo clique).
