@@ -37,4 +37,4 @@ Decidido em 02/11/2026 com o Victor: **selos (desenho nosso) + Phosphor Duotone*
 
 ## Guarda
 
-`apps/web/tests/icones.test.mjs` falha se aparecer emoji ou `lucide-*` no código das telas (web, app e core). A única exceção é ler o "📍" de posts do Instagram (`previa.ts`).
+`apps/web/tests/icones.test.mjs` falha se aparecer emoji ou `lucide-*` no código das telas (web, app, core e funções do Supabase). A única exceção é ler o "📍" de posts do Instagram (`previa.ts`).

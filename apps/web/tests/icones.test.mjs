@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { test } from 'node:test'
 
 const raiz = new URL('../../../', import.meta.url).pathname.replace(/^\/(\w:)/, '$1')
-const PASTAS = ['apps/web/src', 'apps/mobile/app', 'apps/mobile/src', 'packages/core/src']
+const PASTAS = ['apps/web/src', 'apps/mobile/app', 'apps/mobile/src', 'packages/core/src', 'supabase/functions']
 // previa.ts lê o "📍" que vem nos posts do Instagram: é entrada, não tela
 const PODE_TER_EMOJI = new Set(['previa.ts', 'FormLugar.tsx'])
 const EMOJI = /\p{Extended_Pictographic}/u

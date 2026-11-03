@@ -41,7 +41,6 @@ export function nivelDoCambio(historico90: number[], comercial: number): Nivel |
 const reais = (v: number) => `R$ ${v.toFixed(2).replace('.', ',')}`
 
 const NOMES: Record<string, string> = { EUR: 'Euro', USD: 'Dólar', GBP: 'Libra' }
-const SIMBOLOS: Record<string, string> = { EUR: '💶', USD: '💵', GBP: '💷' }
 
 export type DadosDoBoletim = {
   moeda: string
@@ -51,12 +50,12 @@ export type DadosDoBoletim = {
   metaBatida: number | null // a meta, se acabou de bater
 }
 
-// Texto da notificação. Ex.: "💶 Euro hoje: R$ 6,12 com IOF" / "▼ Caiu R$ 0,08 desde o último aviso. Está barato…"
+// Texto da notificação. Ex.: "Euro hoje: R$ 6,12 com IOF" / "▼ Caiu R$ 0,08 desde o último aviso. Está barato…"
 export function boletim(d: DadosDoBoletim) {
   const nome = NOMES[d.moeda] ?? d.moeda
   const partes: string[] = []
 
-  if (d.metaBatida !== null) partes.push(`🎯 Bateu sua meta de ${reais(d.metaBatida)}.`)
+  if (d.metaBatida !== null) partes.push(`Bateu sua meta de ${reais(d.metaBatida)}.`)
 
   if (d.anterior === null) partes.push('Primeiro boletim.')
   else {
@@ -71,7 +70,7 @@ export function boletim(d: DadosDoBoletim) {
   else if (d.nivel === 'medio') partes.push('Está na média dos últimos 90 dias.')
 
   return {
-    titulo: `${SIMBOLOS[d.moeda] ?? '💱'} ${nome} hoje: ${reais(d.comIOF)} com IOF`,
+    titulo: `${nome} hoje: ${reais(d.comIOF)} com IOF`,
     corpo: partes.join(' '),
   }
 }

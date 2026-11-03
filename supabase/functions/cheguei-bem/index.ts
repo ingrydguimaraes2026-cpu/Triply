@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   if (outros.length === 0) return json({ enviados: 0 })
 
   const dados = JSON.stringify({
-    titulo: `✅ ${nome} chegou bem`,
+    titulo: `${nome} chegou bem`,
     corpo: c.onde ? `Em ${c.onde}.` : 'Pode ficar tranquilo(a).',
     url: `/viagem/${c.viagem_id}`,
     tag: `chegada-${c.usuario_id}`,

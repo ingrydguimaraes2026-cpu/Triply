@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
   // Teste de quem ainda não pediu boletim nenhum: notificação simples
   if (soEsta && linhas.length === 0) {
     const enviados = await enviar(soEsta, {
-      titulo: '✅ Notificações ligadas',
+      titulo: 'Notificações ligadas',
       corpo: 'É assim que o Tripwave vai te mandar o boletim do câmbio, às 12h e às 20h.',
       url: '/',
       tag: 'teste',

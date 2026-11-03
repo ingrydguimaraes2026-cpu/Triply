@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     const lugar = (post.destinos as unknown as { nome: string } | null)?.nome
     const quantas = (post.fotos as unknown as { id: string }[] | null)?.length ?? 1
     aviso = {
-      titulo: `📸 ${await nomeDe(eu)} postou em ${viagem}`,
+      titulo: `${await nomeDe(eu)} postou em ${viagem}`,
       corpo: post.legenda
         ? curto(post.legenda)
         : `${quantas === 1 ? 'Uma foto nova' : `${quantas} fotos novas`}${lugar ? ` de ${lugar}` : ''}. Toque pra ver.`,
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
     const { data: membros } = await admin.from('comboio_membros').select('usuario_id').eq('viagem_id', post.viagem_id)
     const noComboio = new Set((membros ?? []).map((m) => m.usuario_id))
     destinatarios = destinatarios.filter((id) => noComboio.has(id))
-    aviso = { titulo: `💬 ${await nomeDe(eu)} comentou`, corpo: curto(comentario.texto) }
+    aviso = { titulo: `${await nomeDe(eu)} comentou`, corpo: curto(comentario.texto) }
     corpo.viagem_id = post.viagem_id
   } else {
     return json({ erro: 'Mande post_id ou comentario_id.' }, 400)

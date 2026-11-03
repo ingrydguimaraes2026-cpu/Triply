@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
     : c.lugar_id
       ? `/viagem/${c.viagem_id}/lugares?foco=${c.lugar_id}`
       : `/viagem/${c.viagem_id}/hospedagem`
-  const dados = JSON.stringify({ titulo: `💬 ${autor} te chamou`, corpo: curto(c.texto), url: caminho, tag: `mencao-${c.id}` })
+  const dados = JSON.stringify({ titulo: `${autor} te chamou`, corpo: curto(c.texto), url: caminho, tag: `mencao-${c.id}` })
 
   const { data: aparelhos } = await admin.from('push_inscricoes').select('id, endpoint, p256dh, auth').in('usuario_id', destinatarios)
   let enviados = 0

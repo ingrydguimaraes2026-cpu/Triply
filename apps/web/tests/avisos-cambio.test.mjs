@@ -26,7 +26,7 @@ test('barato, médio ou caro em relação aos 90 dias', () => {
 
 test('boletim: caiu e está barato', () => {
   const b = boletim({ moeda: 'EUR', comIOF: 6.12, anterior: 6.2, nivel: 'barato', metaBatida: null })
-  assert.equal(b.titulo, '💶 Euro hoje: R$ 6,12 com IOF')
+  assert.equal(b.titulo, 'Euro hoje: R$ 6,12 com IOF')
   assert.match(b.corpo, /^▼ Caiu R\$ 0,08 desde o último aviso\. Está barato/)
 })
 
@@ -34,5 +34,5 @@ test('boletim: subiu, igual, primeiro e meta batida', () => {
   assert.match(boletim({ moeda: 'EUR', comIOF: 6.25, anterior: 6.2, nivel: 'medio', metaBatida: null }).corpo, /▲ Subiu R\$ 0,05.*na média/)
   assert.match(boletim({ moeda: 'EUR', comIOF: 6.2, anterior: 6.202, nivel: null, metaBatida: null }).corpo, /^Igual ao último aviso\.$/)
   assert.match(boletim({ moeda: 'USD', comIOF: 5.5, anterior: null, nivel: 'caro', metaBatida: null }).corpo, /^Primeiro boletim\. Está caro/)
-  assert.match(boletim({ moeda: 'EUR', comIOF: 5.79, anterior: 5.9, nivel: 'barato', metaBatida: 5.8 }).corpo, /^🎯 Bateu sua meta de R\$ 5,80\. ▼ Caiu/)
+  assert.match(boletim({ moeda: 'EUR', comIOF: 5.79, anterior: 5.9, nivel: 'barato', metaBatida: 5.8 }).corpo, /^Bateu sua meta de R\$ 5,80\. ▼ Caiu/)
 })

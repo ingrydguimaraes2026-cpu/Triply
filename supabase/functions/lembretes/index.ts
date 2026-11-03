@@ -19,7 +19,7 @@ const json = (dados: unknown, status = 200) =>
   new Response(JSON.stringify(dados), { status, headers: { 'Content-Type': 'application/json' } })
 
 // ---- Cópia de packages/core/src/lembretes.ts (o Deno não importa do pacote). Mudou lá, muda aqui. ----
-const EMOJI_DO_MEIO: Record<string, string> = { aviao: '✈️', trem: '🚆', onibus: '🚌', carro: '🚗', barco: '⛴️', a_pe: '🚶' }
+const NOME_DO_MEIO: Record<string, string> = { aviao: 'do voo', trem: 'do trem', onibus: 'do ônibus', carro: 'de carro', barco: 'do barco', a_pe: 'a pé' }
 
 function faltaQuanto(horario: string, agora = new Date()) {
   const minutos = Math.round((new Date(horario).getTime() - agora.getTime()) / 60000)
@@ -35,13 +35,13 @@ function textoDoLembrete(l: Lembrete) {
   const titulo = l.titulo?.trim() || (l.tipo === 'ponto' ? 'o ponto de encontro' : l.tipo === 'cancelamento' ? 'a hospedagem' : 'o trajeto')
   if (l.tipo === 'cancelamento') {
     const [, m, d] = l.horario.slice(0, 10).split('-')
-    return { titulo: '⏳ Cancelamento grátis acabando', corpo: `${titulo}: dá pra cancelar sem pagar só até ${d}/${m}. Ainda vão ficar?`, url: `/viagem/${l.viagem_id}/hospedagem`, tag: `lembrete-cancelamento-${l.alvo_id}` }
+    return { titulo: 'Cancelamento grátis acabando', corpo: `${titulo}: dá pra cancelar sem pagar só até ${d}/${m}. Ainda vão ficar?`, url: `/viagem/${l.viagem_id}/hospedagem`, tag: `lembrete-cancelamento-${l.alvo_id}` }
   }
   if (l.tipo === 'ponto') {
-    return { titulo: `📍 Encontro ${falta}`, corpo: `${titulo}. Não se atrase!`, url: `/viagem/${l.viagem_id}?foco=${l.alvo_id}`, tag: `lembrete-ponto-${l.alvo_id}` }
+    return { titulo: `Encontro ${falta}`, corpo: `${titulo}. Não se atrase!`, url: `/viagem/${l.viagem_id}?foco=${l.alvo_id}`, tag: `lembrete-ponto-${l.alvo_id}` }
   }
-  const emoji = (l.meio && EMOJI_DO_MEIO[l.meio]) || '🧳'
-  return { titulo: `${emoji} Saída ${falta}`, corpo: `${titulo}. Bilhete e documentos na mão.`, url: `/viagem/${l.viagem_id}/transportes`, tag: `lembrete-trajeto-${l.alvo_id}` }
+  const meio = l.meio && NOME_DO_MEIO[l.meio]
+  return { titulo: `Saída${meio ? ` ${meio}` : ''} ${falta}`, corpo: `${titulo}. Bilhete e documentos na mão.`, url: `/viagem/${l.viagem_id}/transportes`, tag: `lembrete-trajeto-${l.alvo_id}` }
 }
 // ---- fim da cópia ----
 
