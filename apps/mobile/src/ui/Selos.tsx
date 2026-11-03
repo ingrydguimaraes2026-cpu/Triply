@@ -1,0 +1,199 @@
+import type { ReactNode } from 'react'
+import Svg, { Circle, Ellipse, G, Path, Rect } from 'react-native-svg'
+
+// Selos do Tripwave: ícones desenhados no estilo da Agulha (traço couro grosso, cores da mala:
+// caramelo, dourado, creme, vermelho tijolo e verde oliva), como adesivos de mala de viagem.
+// Usar no lugar dos ícones genéricos onde a pessoa está conhecendo o app (onboarding, passos da viagem).
+// Ex.: <Selo nome="mapa" tamanho={40} />
+
+const TRACO = '#4A2E14'
+const CARAMELO = '#B97A22'
+const DOURADO = '#E3A04A'
+const CREME = '#FFF6E8'
+const AREIA = '#F1E4CF'
+const COURO = '#7B542F'
+const VERMELHO = '#C0573A'
+const VERDE = '#6E7D36'
+
+export type NomeDoSelo =
+  | 'mapa'
+  | 'galera'
+  | 'calendario'
+  | 'barraca'
+  | 'passagem'
+  | 'moedas'
+  | 'feito'
+  | 'cartas'
+  | 'coracoes'
+  | 'caminho'
+  | 'mala'
+  | 'casal'
+  | 'familia'
+  | 'mochila'
+  | 'montanha'
+  | 'museu'
+  | 'camera'
+
+// `tom="escuro"`: em cima de fundo marrom o traço fica creme
+export function Selo({ nome, tamanho = 36, tom = 'claro' }: { nome: NomeDoSelo; tamanho?: number; tom?: 'claro' | 'escuro' }) {
+  const t = tom === 'escuro' ? CREME : TRACO
+  const s = { stroke: t, strokeWidth: 2.4, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const }
+  return (
+    <Svg width={tamanho} height={tamanho} viewBox="0 0 48 48">
+      {DESENHOS[nome](s)}
+    </Svg>
+  )
+}
+
+type Traco = { stroke: string; strokeWidth: number; strokeLinejoin: 'round'; strokeLinecap: 'round' }
+
+const DESENHOS: Record<NomeDoSelo, (s: Traco) => ReactNode> = {
+  // Mapa dobrado com o caminho tracejado até o alfinete
+  mapa: (s) => (
+    <G>
+      <Path d="M7 13 L18 9 L30 13 L41 9 V35 L30 39 L18 35 L7 39 Z" fill={CREME} {...s} />
+      <Path d="M18 9 V35 L30 39 V13 Z" fill={AREIA} {...s} />
+      <Path d="M12 31 C15 23 22 30 26 22" fill="none" {...s} stroke={VERMELHO} strokeDasharray="2.5 3.5" />
+      <Path d="M32 26 C28 21 28 15 32 14 C36 15 36 21 32 26 Z" fill={VERMELHO} {...s} />
+      <Circle cx={32} cy={18.5} r={1.8} fill={CREME} />
+    </G>
+  ),
+  // Três amigos, o da frente de chapéu (igual à Agulha)
+  galera: (s) => (
+    <G>
+      <Circle cx={9} cy={25} r={5} fill={DOURADO} {...s} />
+      <Circle cx={39} cy={25} r={5} fill={CARAMELO} {...s} />
+      <Path d="M1 42 C1.5 33 16.5 33 17 42 Z" fill={DOURADO} {...s} />
+      <Path d="M31 42 C31.5 33 46.5 33 47 42 Z" fill={CARAMELO} {...s} />
+      <Path d="M12 43 C13 31 35 31 36 43 Z" fill={COURO} {...s} />
+      <Circle cx={24} cy={23} r={7} fill={CREME} {...s} />
+      <Path d="M14.5 16.5 H33.5" fill="none" {...s} />
+      <Path d="M18.5 16.5 C19 9 29 9 29.5 16.5 Z" fill={COURO} {...s} />
+    </G>
+  ),
+  // Calendário com o dia da viagem marcado
+  calendario: (s) => (
+    <G>
+      <Rect x={7} y={11} width={34} height={30} rx={6} fill={CREME} {...s} />
+      <Path d="M7 20 V17 C7 13.7 9.7 11 13 11 H35 C38.3 11 41 13.7 41 17 V20 Z" fill={VERMELHO} {...s} />
+      <Path d="M16 7 V14 M32 7 V14" fill="none" {...s} />
+      <Circle cx={15} cy={27} r={1.6} fill={COURO} />
+      <Circle cx={22} cy={27} r={1.6} fill={COURO} />
+      <Circle cx={15} cy={34} r={1.6} fill={COURO} />
+      <Circle cx={22} cy={34} r={1.6} fill={COURO} />
+      <Circle cx={31.5} cy={31} r={5.5} fill={DOURADO} {...s} />
+    </G>
+  ),
+  // Barraca com lua: "onde dormir"
+  barraca: (s) => (
+    <G>
+      <Path d="M39 6 C34 7 32 13 35 17 C37.5 20 42 20 44 17 C40 17 37 13 39 6 Z" fill={DOURADO} {...s} />
+      <Path d="M4 41 L21 13 L38 41 Z" fill={CARAMELO} {...s} />
+      <Path d="M21 41 V24 L29 41" fill={TRACO} {...s} />
+      <Path d="M2 41 H44" fill="none" {...s} />
+    </G>
+  ),
+  // Passagem com picote e o trajeto
+  passagem: (s) => (
+    <G>
+      <Path d="M5 14 H43 V20 C40.5 20 39 22 39 24 C39 26 40.5 28 43 28 V34 H5 V28 C7.5 28 9 26 9 24 C9 22 7.5 20 5 20 Z" fill={DOURADO} {...s} />
+      <Path d="M32 15 V33" fill="none" {...s} strokeDasharray="2 3" />
+      <Circle cx={13} cy={24} r={2.4} fill={CREME} {...s} />
+      <Path d="M17 24 H25 M22 20.5 L25.5 24 L22 27.5" fill="none" {...s} />
+    </G>
+  ),
+  // Duas moedas: dividir as contas
+  moedas: (s) => (
+    <G>
+      <Circle cx={31} cy={19} r={10} fill={CARAMELO} {...s} />
+      <Circle cx={19} cy={28} r={12} fill={DOURADO} {...s} />
+      <Circle cx={19} cy={28} r={7} fill="none" {...s} />
+      <Path d="M19 24 V32" fill="none" {...s} />
+    </G>
+  ),
+  feito: (s) => (
+    <G>
+      <Circle cx={24} cy={24} r={17} fill={VERDE} {...s} />
+      <Path d="M16 24.5 L21.5 30 L32 18.5" fill="none" {...s} stroke={CREME} strokeWidth={3.4} />
+    </G>
+  ),
+  // Dois cartões do deslize, o da frente com coração
+  cartas: (s) => (
+    <G>
+      <Rect x={8} y={9} width={22} height={30} rx={5} fill={CARAMELO} {...s} transform="rotate(-12 19 24)" />
+      <Rect x={18} y={9} width={22} height={30} rx={5} fill={CREME} {...s} transform="rotate(8 29 24)" />
+      <Path d="M29 31 C23 27 23 21.5 26.5 21 C28 20.8 29 22 29 22 C29 22 30 20.8 31.5 21 C35 21.5 35 27 29 31 Z" fill={VERMELHO} {...s} strokeWidth={2} />
+    </G>
+  ),
+  // Coração grande na frente de um menor: "mais gente curtiu"
+  coracoes: (s) => (
+    <G>
+      <Path d="M33 25 C26 20 25 13 29.5 12 C31.5 11.6 33 13.5 33 13.5 C33 13.5 34.5 11.6 36.5 12 C41 13 40 20 33 25 Z" fill={DOURADO} {...s} />
+      <Path d="M20 40 C8 32 7 21 14 19.5 C17 19 20 22 20 22 C20 22 23 19 26 19.5 C33 21 32 32 20 40 Z" fill={VERMELHO} {...s} />
+    </G>
+  ),
+  // Caminho do ponto de partida ao alfinete: "todo mundo arruma o mesmo roteiro"
+  caminho: (s) => (
+    <G>
+      <Path d="M11 36 C11 26 30 30 32 20" fill="none" {...s} strokeDasharray="2.5 3.5" />
+      <Circle cx={11} cy={37} r={4.5} fill={VERDE} {...s} />
+      <Path d="M33 21 C27 15 27 8 33 6.5 C39 8 39 15 33 21 Z" fill={VERMELHO} {...s} />
+      <Circle cx={33} cy={12.5} r={2} fill={CREME} />
+    </G>
+  ),
+  // Mala com adesivo
+  mala: (s) => (
+    <G>
+      <Path d="M18 15 V10 C18 8.9 18.9 8 20 8 H28 C29.1 8 30 8.9 30 10 V15" fill="none" {...s} />
+      <Rect x={6} y={15} width={36} height={25} rx={6} fill={CARAMELO} {...s} />
+      <Path d="M15 15 V40 M33 15 V40" fill="none" {...s} />
+      <Circle cx={24} cy={27.5} r={4.5} fill={CREME} {...s} />
+    </G>
+  ),
+  casal: (s) => (
+    <G>
+      <Path d="M17 37 C6 30 5 19 11.5 17.5 C14.5 17 17 20 17 20 C17 20 19.5 17 22.5 17.5 C29 19 28 30 17 37 Z" fill={VERMELHO} {...s} />
+      <Path d="M31 33 C22 27 21 18 26.5 16.8 C29 16.4 31 18.8 31 18.8 C31 18.8 33 16.4 35.5 16.8 C41 18 40 27 31 33 Z" fill={DOURADO} {...s} />
+    </G>
+  ),
+  // Adulto e criança
+  familia: (s) => (
+    <G>
+      <Path d="M5 42 C6 27 30 27 31 42 Z" fill={CARAMELO} {...s} />
+      <Circle cx={18} cy={20} r={7} fill={CREME} {...s} />
+      <Path d="M28 42 C28.5 33 43.5 33 44 42 Z" fill={DOURADO} {...s} />
+      <Circle cx={36} cy={29} r={4.8} fill={CREME} {...s} />
+    </G>
+  ),
+  mochila: (s) => (
+    <G>
+      <Path d="M18 12 C18 8 30 8 30 12" fill="none" {...s} />
+      <Rect x={10} y={12} width={28} height={30} rx={9} fill={COURO} {...s} />
+      <Rect x={15} y={27} width={18} height={11} rx={4} fill={DOURADO} {...s} />
+      <Path d="M15 21 H33" fill="none" {...s} />
+    </G>
+  ),
+  montanha: (s) => (
+    <G>
+      <Circle cx={36} cy={13} r={5} fill={DOURADO} {...s} />
+      <Path d="M3 40 L18 15 L26 28 L31 21 L45 40 Z" fill={VERDE} {...s} />
+      <Path d="M13.5 22.5 L18 15 L22.5 22.5 L19.5 21 L17 23 Z" fill={CREME} {...s} strokeWidth={1.8} />
+    </G>
+  ),
+  museu: (s) => (
+    <G>
+      <Path d="M5 17 L24 6 L43 17 Z" fill={CARAMELO} {...s} />
+      <Path d="M11 20 V35 M19 20 V35 M29 20 V35 M37 20 V35" fill="none" {...s} strokeWidth={3.4} />
+      <Rect x={5} y={36} width={38} height={5} rx={2} fill={DOURADO} {...s} />
+    </G>
+  ),
+  camera: (s) => (
+    <G>
+      <Path d="M17 13 L19.5 9 H28.5 L31 13" fill={COURO} {...s} />
+      <Rect x={5} y={13} width={38} height={27} rx={7} fill={CARAMELO} {...s} />
+      <Circle cx={24} cy={27} r={8} fill={CREME} {...s} />
+      <Circle cx={24} cy={27} r={3.5} fill={COURO} />
+      <Ellipse cx={36} cy={19} rx={2} ry={1.6} fill={DOURADO} />
+    </G>
+  ),
+}

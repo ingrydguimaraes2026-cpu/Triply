@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft, Printer } from 'lucide-react'
-import { capaDaViagem, diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
+import { diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -11,6 +11,7 @@ import { formatarPeriodo } from '../../lib/datas'
 import Logo from '../../components/ui/Logo'
 import './imprimir.css'
 import './livro.css'
+import { useCapas } from '../../features/viagens/capas'
 
 const FOTOS_POR_DIA = 6
 
@@ -18,6 +19,7 @@ const FOTOS_POR_DIA = 6
 // "Imprimir" → "Salvar como PDF" no navegador.
 export default function Livro() {
   const { viagem, destinos, membros } = useViagemAtual()
+  const capa = useCapas([viagem.id])
   const { estado: trajetosEstado } = useTrajetos(viagem.id)
   const { eventos } = useEventosDaAgenda(viagem.id)
   const { estado: postsEstado } = usePosts(viagem.id)
@@ -62,7 +64,7 @@ export default function Livro() {
 
       <div className="imprimir-folha livro-folha">
         <header className="livro-capa">
-          <img src={capaDaViagem(viagem.id, 1600)} alt="" />
+          <img src={capa(viagem.id, 1600)} alt="" />
           <div className="livro-capa-texto">
             <Logo />
             <h1>{viagem.nome}</h1>

@@ -15,7 +15,7 @@ import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis, capaDaViagem, faseDaViagem, separarAbas } from '@together/core'
+import { abasVisiveis, faseDaViagem, separarAbas } from '@together/core'
 import { hojeTexto } from '../../features/destinos/datas'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
@@ -28,6 +28,7 @@ import Hospedagem from './Hospedagem'
 import Transportes from './Transportes'
 import '../../components/ui/ui.css'
 import './viagem.css'
+import { useCapas } from '../../features/viagens/capas'
 
 // Abas da viagem. Pra criar uma aba nova: adicione aqui e no src/router.tsx
 // `curto`: nome menor pro menu de baixo do celular (8 abas em 360px)
@@ -79,6 +80,7 @@ const semNada = async () => {}
 
 export default function ViagemLayout() {
   const { id } = useParams()
+  const capa = useCapas(id ? [id] : [])
   const estado = useViagem(id)
   const [recolhido, setRecolhido] = useState(lerRecolhido)
   function alternarMenu() {
@@ -194,7 +196,7 @@ export default function ViagemLayout() {
 
         {/* Mini capa da viagem, a mesma foto do app. Toque troca de viagem. */}
         <Link to="/viagens" className="viagem-atual" aria-label={`${viagem.nome}: trocar de viagem`} title="Trocar de viagem">
-          <img src={capaDaViagem(viagem.id, 600)} alt="" />
+          <img src={capa(viagem.id, 600)} alt="" />
           <span className="viagem-atual-rotulo">
             Viagem <ArrowLeftRight size={12} aria-hidden="true" />
           </span>

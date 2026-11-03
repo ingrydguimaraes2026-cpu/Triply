@@ -24,6 +24,7 @@ import { guardarRascunho, lerRascunho, type RascunhoDaViagem } from '../src/lib/
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { Agulha, type Humor } from '../src/ui/Agulha'
+import { Selo, type NomeDoSelo } from '../src/ui/Selos'
 import { CartaoDoExplorar } from '../src/ui/CartaoDoExplorar'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Botao, Campo } from '../src/ui/pecas'
@@ -46,16 +47,16 @@ const SUGESTOES: { nome: string; pais: string }[] = [
   { nome: 'Paris', pais: 'FR' },
   { nome: 'Buenos Aires', pais: 'AR' },
 ]
-const GRUPOS: { id: string; nome: string; estilo?: EstiloId }[] = [
-  { id: 'amigos', nome: 'Amigos' },
-  { id: 'casal', nome: 'Casal', estilo: 'romantica' },
-  { id: 'familia', nome: 'Família', estilo: 'criancas' },
-  { id: 'sozinho', nome: 'Sozinho' },
+const GRUPOS: { id: string; nome: string; selo: NomeDoSelo; estilo?: EstiloId }[] = [
+  { id: 'amigos', nome: 'Amigos', selo: 'galera' },
+  { id: 'casal', nome: 'Casal', selo: 'casal', estilo: 'romantica' },
+  { id: 'familia', nome: 'Família', selo: 'familia', estilo: 'criancas' },
+  { id: 'sozinho', nome: 'Sozinho', selo: 'mochila' },
 ]
-const GOSTOS: { id: EstiloId; nome: string }[] = [
-  { id: 'ar_livre', nome: 'Natureza e trilhas' },
-  { id: 'cultura', nome: 'Museus e história' },
-  { id: 'fotogenica', nome: 'Lugares pra foto' },
+const GOSTOS: { id: EstiloId; nome: string; selo: NomeDoSelo }[] = [
+  { id: 'ar_livre', nome: 'Natureza e trilhas', selo: 'montanha' },
+  { id: 'cultura', nome: 'Museus e história', selo: 'museu' },
+  { id: 'fotogenica', nome: 'Lugares pra foto', selo: 'camera' },
 ]
 
 export default function Comecar() {
@@ -306,9 +307,9 @@ export default function Comecar() {
         <>
           <Conversa fala="Crie sua conta pra guardar o roteiro e chamar a galera. Leva 20 segundos." humor="feliz">
             <View className="mt-4 gap-3 rounded-3xl bg-cartao p-5" style={sombra.cartao}>
-              <Vantagem texto="O roteiro fica salvo no seu celular e no de quem for" />
-              <Vantagem texto="A galera desliza também e o roteiro se ajusta" />
-              <Vantagem texto="Contas, hospedagem e fotos do grupo num lugar só" />
+              <Vantagem selo="mapa" texto="O roteiro fica salvo no seu celular e no de quem for" />
+              <Vantagem selo="cartas" texto="A galera desliza também e o roteiro se ajusta" />
+              <Vantagem selo="mala" texto="Contas, hospedagem e fotos do grupo num lugar só" />
             </View>
           </Conversa>
           <Rodape>
@@ -367,7 +368,7 @@ function Rodape({ children }: { children: ReactNode }) {
   )
 }
 
-function Chips({ opcoes, marcadas, aoTocar }: { opcoes: { id: string; nome: string }[]; marcadas: string[]; aoTocar: (id: string) => void }) {
+function Chips({ opcoes, marcadas, aoTocar }: { opcoes: { id: string; nome: string; selo: NomeDoSelo }[]; marcadas: string[]; aoTocar: (id: string) => void }) {
   return (
     <View className="flex-row flex-wrap gap-2">
       {opcoes.map((o) => {
@@ -378,8 +379,9 @@ function Chips({ opcoes, marcadas, aoTocar }: { opcoes: { id: string; nome: stri
             accessibilityRole="button"
             accessibilityState={{ selected: on }}
             onPress={() => aoTocar(o.id)}
-            className={`min-h-[48px] justify-center rounded-2xl border-[1.5px] px-4 ${on ? 'border-couro bg-couro' : 'border-borda bg-cartao'}`}
+            className={`min-h-[52px] flex-row items-center gap-2 rounded-2xl border-[1.5px] py-1.5 pl-2 pr-4 ${on ? 'border-couro bg-couro' : 'border-borda bg-cartao'}`}
           >
+            <Selo nome={o.selo} tamanho={34} tom={on ? 'escuro' : 'claro'} />
             <Text className={`font-body-bold text-[15px] ${on ? 'text-white' : 'text-texto'}`}>{o.nome}</Text>
           </Pressable>
         )
@@ -506,12 +508,10 @@ function Previa({ destino, dias, pilha, escolhas }: { destino: string; dias: num
   )
 }
 
-function Vantagem({ texto }: { texto: string }) {
+function Vantagem({ selo, texto }: { selo: NomeDoSelo; texto: string }) {
   return (
     <View className="flex-row items-center gap-3">
-      <View className="h-7 w-7 items-center justify-center rounded-full bg-verde-fundo">
-        <Heart size={14} color={cor.verde} fill={cor.verde} />
-      </View>
+      <Selo nome={selo} tamanho={36} />
       <Text className="flex-1 font-body-semibold text-[15px] leading-[21px] text-texto">{texto}</Text>
     </View>
   )

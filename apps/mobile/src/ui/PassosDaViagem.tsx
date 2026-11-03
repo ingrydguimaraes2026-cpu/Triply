@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native'
-import { BedDouble, Calendar, Car, Check, ChevronRight, Compass, ReceiptText, Users } from 'lucide-react-native'
+import { ChevronRight } from 'lucide-react-native'
 import { Cartao } from './pecas'
+import { Selo, type NomeDoSelo } from './Selos'
 import { cor } from '../../theme'
 
 // "Montem a viagem" (spec 116): checklist no topo da viagem que apresenta o que o app faz,
@@ -16,19 +17,19 @@ export type EstadoDosPassos = {
   euSouAdm: boolean
 }
 
-type Passo = { chave: string; Icone: typeof Compass; titulo: string; sub: string; feito: boolean; aoTocar: () => void }
+type Passo = { chave: string; selo: NomeDoSelo; titulo: string; sub: string; feito: boolean; aoTocar: () => void }
 
 export function PassosDaViagem({ estado, ir }: { estado: EstadoDosPassos; ir: (chave: 'explorar' | 'convidar' | 'configuracoes' | 'hospedagem' | 'transportes' | 'contas') => void }) {
   const passos: Passo[] = [
-    { chave: 'roteiro', Icone: Compass, titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, aoTocar: () => ir('explorar') },
-    { chave: 'galera', Icone: Users, titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, aoTocar: () => ir('convidar') },
+    { chave: 'roteiro', selo: 'mapa', titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, aoTocar: () => ir('explorar') },
+    { chave: 'galera', selo: 'galera', titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, aoTocar: () => ir('convidar') },
     // Só o ADM muda as datas: pra quem não é ADM o passo nem aparece
     ...(estado.euSouAdm || estado.temDatas
-      ? [{ chave: 'datas', Icone: Calendar, titulo: 'Pôr as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, aoTocar: () => ir('configuracoes') }]
+      ? [{ chave: 'datas', selo: 'calendario' as NomeDoSelo, titulo: 'Pôr as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, aoTocar: () => ir('configuracoes') }]
       : []),
-    { chave: 'hospedagem', Icone: BedDouble, titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, aoTocar: () => ir('hospedagem') },
-    { chave: 'transporte', Icone: Car, titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, aoTocar: () => ir('transportes') },
-    { chave: 'gastos', Icone: ReceiptText, titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, aoTocar: () => ir('contas') },
+    { chave: 'hospedagem', selo: 'barraca', titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, aoTocar: () => ir('hospedagem') },
+    { chave: 'transporte', selo: 'passagem', titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, aoTocar: () => ir('transportes') },
+    { chave: 'gastos', selo: 'moedas', titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, aoTocar: () => ir('contas') },
   ]
   const feitos = passos.filter((p) => p.feito).length
   if (feitos === passos.length) return null
@@ -49,8 +50,8 @@ export function PassosDaViagem({ estado, ir }: { estado: EstadoDosPassos; ir: (c
         const ehProximo = p === proximo
         return (
           <Pressable key={p.chave} onPress={p.aoTocar} className="min-h-[56px] flex-row items-center gap-3 border-b border-linha py-2.5 active:opacity-80">
-            <View className={`h-9 w-9 items-center justify-center rounded-full ${p.feito ? 'bg-verde-fundo' : ehProximo ? 'bg-couro' : 'bg-chip'}`}>
-              {p.feito ? <Check size={18} color={cor.verde} strokeWidth={2.6} /> : <p.Icone size={18} color={ehProximo ? '#fff' : cor.couro} />}
+            <View className={`h-11 w-11 items-center justify-center rounded-2xl ${ehProximo ? 'bg-chip' : ''}`} style={{ opacity: p.feito ? 0.9 : ehProximo ? 1 : 0.75 }}>
+              <Selo nome={p.feito ? 'feito' : p.selo} tamanho={p.feito ? 30 : 36} />
             </View>
             <View className="flex-1">
               <Text className={`font-body-bold text-[15px] ${p.feito ? 'text-suave line-through' : 'text-texto'}`}>{p.titulo}</Text>

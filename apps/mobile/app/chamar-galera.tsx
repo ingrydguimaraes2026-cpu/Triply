@@ -3,10 +3,11 @@ import { Pressable, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Heart, Link, Route, Users } from 'lucide-react-native'
+import { Link } from 'lucide-react-native'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { convidarProComboio } from '../src/lib/convite'
 import { Agulha } from '../src/ui/Agulha'
+import { Selo, type NomeDoSelo } from '../src/ui/Selos'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Botao } from '../src/ui/pecas'
 import { cor } from '../theme'
@@ -40,9 +41,9 @@ export default function ChamarGalera() {
         <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">Roteiro de {viagem?.nome ?? 'viagem'} montado</Text>
         <Text className="font-display text-[40px] leading-[43px] text-fundo">Agora, chame a galera</Text>
         <View className="mt-2 gap-3">
-          <Item Icone={Users}>Cada um desliza os lugares no próprio celular.</Item>
-          <Item Icone={Heart}>O que mais gente curtir entra primeiro no roteiro.</Item>
-          <Item Icone={Route}>Todo mundo vê e arruma o mesmo roteiro, ao vivo.</Item>
+          <Item selo="cartas">Cada um desliza os lugares no próprio celular.</Item>
+          <Item selo="coracoes">O que mais gente curtir entra primeiro no roteiro.</Item>
+          <Item selo="caminho">Todo mundo vê e arruma o mesmo roteiro, ao vivo.</Item>
         </View>
         {aviso ? <Text className="font-body-semibold text-[14px] text-dourado">{aviso}</Text> : null}
       </View>
@@ -60,11 +61,11 @@ export default function ChamarGalera() {
   )
 }
 
-function Item({ Icone, children }: { Icone: typeof Users; children: string }) {
+function Item({ selo, children }: { selo: NomeDoSelo; children: string }) {
   return (
     <View className="flex-row items-center gap-3">
-      <View className="h-9 w-9 items-center justify-center rounded-full bg-white/15">
-        <Icone size={18} color={cor.creme} />
+      <View className="h-12 w-12 items-center justify-center rounded-2xl bg-fundo">
+        <Selo nome={selo} tamanho={36} />
       </View>
       <Text className="flex-1 font-body text-[15px] leading-[21px] text-creme">{children}</Text>
     </View>

@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { capaDaViagem, encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
+import { encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -46,6 +46,7 @@ import Cartao from '../../components/ui/Cartao'
 import IconeQuadrado from '../../components/ui/IconeQuadrado'
 import PilhaDeAvatares from '../../components/ui/PilhaDeAvatares'
 import './abas.css'
+import { useCapas } from '../../features/viagens/capas'
 
 // Frase da contagem regressiva no topo do mapa
 function contagem(inicio: string | null, fim: string | null) {
@@ -78,6 +79,7 @@ function datasDoDestino(d: ItemRoteiro): { periodo: string | null; noites: strin
 // Overview: resumo de tudo. Cada cartão leva pra aba dele.
 export default function Overview() {
   const { viagem, destinos, membros, meuId, euSouAdm, atualizarDestinos, atualizarViagem } = useViagemAtual()
+  const capa = useCapas([viagem.id])
   const podeEditarRoteiro = euSouAdm || viagem.membro_edita_roteiro // spec 078
   useFocoDeItem() // destaca a enquete/ponto quando se chega por um link de compartilhar
 
@@ -309,7 +311,7 @@ export default function Overview() {
     <div className="overview">
       {/* Capa da viagem, igual à do app (mesma foto): datas, nome e o comboio */}
       <section className="overview-capa">
-        <img src={capaDaViagem(viagem.id, 1600)} alt="" />
+        <img src={capa(viagem.id, 1600)} alt="" />
         {falta && (
           <span className="overview-contagem" title={pronto?.faltando.length ? `Falta: ${pronto.faltando.join(', ')}` : undefined}>
             <Clock size={16} aria-hidden="true" />

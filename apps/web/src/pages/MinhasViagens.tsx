@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Archive, ArchiveRestore, ArrowRight, ChevronRight, Clock, LogOut, Plus, Trash2, UserRound } from 'lucide-react'
-import { capaDaViagem } from '@together/core'
 import { arquivarViagem, buscarMinhasViagens, situacaoDaViagem, type ResumoDaViagem, type Situacao } from '../features/viagens/api'
 import { hojeTexto } from '../features/destinos/datas'
 import { sair, useSessao } from '../features/auth/hooks'
@@ -14,6 +13,7 @@ import Carregando from '../components/ui/Carregando'
 import ErroNaTela from '../components/ui/ErroNaTela'
 import PilhaDeAvatares from '../components/ui/PilhaDeAvatares'
 import './minhas-viagens.css'
+import { useCapas } from '../features/viagens/capas'
 
 type ViagemNaLista = ResumoDaViagem & { situacao: Situacao }
 
@@ -79,6 +79,7 @@ export default function MinhasViagens() {
   const destaque = ativas[0] && ativas[0].situacao !== 'concluida' ? ativas[0] : null
   const proximas = ativas.filter((v) => v !== destaque && v.situacao !== 'concluida')
   const passadas = ativas.filter((v) => v.situacao === 'concluida')
+  const capa = useCapas(todas.map((v) => v.id))
 
   const meuNome = Array.isArray(viagens) ? viagens.flatMap((v) => v.membros).find((m) => m.id === sessao?.user.id)?.nome : undefined
   const ola = meuNome ? `Olá, ${meuNome.trim().split(/\s+/)[0]}` : 'Olá'
@@ -105,7 +106,7 @@ export default function MinhasViagens() {
   const linha = (v: ViagemNaLista) => (
     <li key={v.id} className="viagem-linha">
       <Link to={`/viagem/${v.id}`} className="viagem-linha-link">
-        <img src={capaDaViagem(v.id, 200)} alt="" loading="lazy" />
+        <img src={capa(v.id, 200)} alt="" loading="lazy" />
         <span className="viagem-linha-texto">
           <strong>{v.nome}</strong>
           <span>
@@ -179,7 +180,7 @@ export default function MinhasViagens() {
         {destaque && (
           <div className="viagem-destaque">
             <Link to={`/viagem/${destaque.id}`} className="viagem-destaque-link">
-              <img src={capaDaViagem(destaque.id, 1400)} alt="" />
+              <img src={capa(destaque.id, 1400)} alt="" />
               <span className="viagem-destaque-etiqueta">
                 <Clock size={16} aria-hidden="true" /> {etiquetaDaViagem(destaque)}
               </span>

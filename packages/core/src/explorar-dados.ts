@@ -4,6 +4,7 @@
 import type { ClienteTogether } from './supabase'
 import type { Tables } from './database'
 import { chaveDaCidade, type Escolha, type EstiloId, type LugarDoCatalogo, type TipoDoCatalogo } from './explorar'
+import { ehPontoDePartida } from './explorar-cidades'
 import { codigoDoPais } from './paises'
 import { lerDiasDoRoteiro, type DiasDoRoteiro } from './roteiro'
 
@@ -66,7 +67,7 @@ export async function fotosDasCapas(cli: ClienteTogether, viagemIds: string[]): 
   const { data: destinos, error } = await cli.from('destinos').select('viagem_id, nome, pais, ordem').in('viagem_id', viagemIds).order('ordem')
   if (error) throw error
   const chavesDe = new Map<string, string[]>() // viagem → chaves das cidades, na ordem dos destinos
-  for (const d of destinos ?? []) chavesDe.set(d.viagem_id, [...(chavesDe.get(d.viagem_id) ?? []), chaveDaCidade(d.nome, codigoDoPais(d.pais))])
+  for (const d of (destinos ?? []).filter((d) => !ehPontoDePartida(d.nome))) chavesDe.set(d.viagem_id, [...(chavesDe.get(d.viagem_id) ?? []), chaveDaCidade(d.nome, codigoDoPais(d.pais))])
   const todas = [...new Set([...chavesDe.values()].flat())]
   const { data: cidades } = await cli.from('catalogo_cidades').select('id, chave').in('chave', todas).eq('situacao', 'pronta')
   if (!cidades?.length) return {}
