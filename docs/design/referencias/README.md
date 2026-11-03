@@ -22,3 +22,16 @@ Também vale: o post do Polarsteps que viralizou (50 mil views) elogia que o app
 4. **Selos viram coleção**: cada etapa resolvida dá um selo no passaporte da viagem (e do perfil).
 5. **O grupo é o placar**: quem já votou, quem falta. É o que faz voltar.
 6. **Animação com propósito**: um objeto que se mexe por tela (Reanimated já está no projeto).
+
+## Menos conteúdo, mais conceito (2ª rodada, 02/11)
+
+| Print | De onde | O que aprender |
+|---|---|---|
+| `12`, `13` | [@tobiadonadon_, artigo com 590 mil views](https://x.com/tobiadonadon_/status/2106430529113301163) | O defeito de app feito com IA: "os mesmos cartões arredondados, o mesmo layout de painel, nenhuma ideia por trás". **É a nossa grade de 11 cartões.** Remédio: começar de um **conceito** (app de corrida = pista de atletismo; app de sono = vila adormecendo) e tirar dele tipografia, layout, cor e movimento. Processo: conceito → 3 direções → desenho → ver no tamanho do iPhone → crítica (cartões repetidos, hierarquia fraca, espaçamento torto) → refazer. No antes e depois dele: **um número gigante, um cartão escuro de destaque, o resto discreto**. |
+| `14` | [@3xProduct_D (25 mil views)](https://x.com/search?q=%22progressive%20disclosure%22%20ux) | **Complexidade em camadas.** "Antes" põe tudo no mesmo nível e obriga a pessoa a descobrir o que vai junto; "depois" agrupa e mostra o resto só quando ela pede. |
+| `15` | [@askwhykartik (41 mil views)](https://x.com/askwhykartik/status/2069041508121186685) | Apps com mascote: a pessoa esquece a tela, lembra do personagem. **Um mascote só** (a Agulha), poucas poses (acenando, apontando, comemorando), **movimento sutil**, e só onde importa: onboarding, tela vazia, progresso, conquista, marco. Nunca em toda tela. Os "baratos" têm cor demais, animação demais, coisa demais na tela. |
+
+Comentário que resume (resposta ao Theo, 48 mil views): o que a IA ainda faz mal em código é **UX: hierarquia, camadas, navegação, rótulos**. Foi exatamente o que aconteceu com a gente: cada funcionalidade ganhou um lugar na tela, ninguém decidiu a hierarquia.
+
+### Nosso conceito (proposta)
+**O passaporte do comboio.** A viagem é um passaporte: cada etapa resolvida carimba um selo; a capa é a foto do destino; a página de hoje mostra só o próximo carimbo; a Agulha aparece só nos marcos. Tipografia, cores (couro e dourado) e os selos que já temos saem daí.
