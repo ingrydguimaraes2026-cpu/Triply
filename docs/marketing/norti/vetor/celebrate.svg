@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -12 228 228" width="1024" height="1024"><defs>
+  <radialGradient id="ouro" cx="36%" cy="28%" r="80%"><stop offset="0" stop-color="#F1C77A"/><stop offset=".5" stop-color="#C98E36"/><stop offset="1" stop-color="#8A5A22"/></radialGradient>
+  <radialGradient id="rosto" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#FFFDF7"/><stop offset="1" stop-color="#F2E2C6"/></radialGradient>
+  <radialGradient id="coracao" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#F28A72"/><stop offset=".6" stop-color="#D9533A"/><stop offset="1" stop-color="#A83A26"/></radialGradient>
+</defs><g transform="translate(0 -8) rotate(0 100 200)">
+    <path d="M40 108 Q20 90 27 63" fill="none" stroke="#7B4E28" stroke-width="10" stroke-linecap="round"/><circle cx="27" cy="59" r="9" fill="#A8703F"/><g transform="translate(200 0) scale(-1 1)"><path d="M40 108 Q20 90 27 63" fill="none" stroke="#7B4E28" stroke-width="10" stroke-linecap="round"/><circle cx="27" cy="59" r="9" fill="#A8703F"/></g>
+  <path d="M100 200 C76 168 32 146 32 104 A68 68 0 1 1 168 104 C168 146 124 168 100 200Z" fill="url(#ouro)"/>
+  <circle cx="100" cy="104" r="58" fill="#8A5A22"/>
+  <circle cx="100" cy="104" r="54" fill="url(#rosto)"/>
+  <path d="M48 74 A60 60 0 0 1 74 48" fill="none" stroke="#FBE3AE" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+  <path d="M94 176 Q100 186 106 176" fill="none" stroke="#F1C77A" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+  <circle cx="100" cy="56" r="3" fill="#C9A473"/><circle cx="148" cy="104" r="3" fill="#C9A473"/><circle cx="100" cy="152" r="3" fill="#C9A473"/><circle cx="52" cy="104" r="3" fill="#C9A473"/><g transform="rotate(0 100 84)">
+  <path d="M100 58 L106 84 L94 84Z" fill="#E0613F"/><path d="M100 96 L106 84 L94 84Z" fill="#7A5634"/>
+  <circle cx="100" cy="84" r="4.5" fill="#C98E36"/><circle cx="99" cy="83" r="1.5" fill="#FFF3D6"/></g><g stroke="#3B2715" stroke-width="3.4" stroke-linecap="round" fill="none"><path d="M64 84 q9 -7 18 -2"/><path d="M118 83 q9 -6 18 2"/></g><path d="M65 108 Q74 96 83 108" fill="none" stroke="#2A1A0C" stroke-width="4.2" stroke-linecap="round"/><path d="M117 108 Q126 96 135 108" fill="none" stroke="#2A1A0C" stroke-width="4.2" stroke-linecap="round"/><ellipse cx="60" cy="124" rx="9" ry="5.5" fill="#E58C6A" opacity=".5"/><ellipse cx="140" cy="124" rx="9" ry="5.5" fill="#E58C6A" opacity=".5"/><path d="M85 125 Q100 148 115 125Z" fill="#2A1A0C"/><ellipse cx="100" cy="137" rx="6" ry="3" fill="#E07A5F"/><g transform="rotate(-9 100 44)">
+  <ellipse cx="100" cy="44" rx="60" ry="12" fill="#7B4E28"/>
+  <path d="M68 44 Q70 12 100 12 Q130 12 132 44Z" fill="#A8703F"/>
+  <path d="M69 37 Q100 30 131 37 L131.6 43 Q100 37 68.4 43Z" fill="#5E3D20"/>
+  <path d="M80 24 Q87 18 96 18" stroke="#CF9A5E" stroke-width="3.5" stroke-linecap="round" fill="none"/></g></g></svg>

@@ -84,7 +84,11 @@ A bússola em forma de pino de mapa, com chapéu de safári e a agulha vermelha 
 - `norti/Norti character sheet.png`: a ficha do personagem.
 - `norti/Norti.mp4`: vídeo de 32 s da Norti dentro de um app de iPhone e de Mac, fazendo todos os movimentos.
 
-**Arquivos pro app** (ficam em `~/Mascots/Norti/`, pra uma **sessão de dev** colocar no código): `web/` (componente `<mascot-view>` com as animações), `ios/` (Xcode e SwiftUI) e `HOW TO USE.md`.
+**Arquivos pro app** (cópia no repo, pra uma **sessão de dev** colocar no código):
+- `norti/app-web/`: componente `<mascot-view>` com as animações (`mascot.js`, poses em `.webp`, exemplo em `index.html`).
+- `norti/app-ios/`: `Norti.xcassets` e `NortiView.swift` (Xcode e SwiftUI).
+- `norti/vetor/`: as 9 poses originais em SVG, pra redesenhar ou fazer figurino.
+- `norti/mascot.json` e `norti/brief.json`: configuração e significado da mascote. `norti/HOW TO USE.md`: onde usar cada movimento.
 
 **Como foi feito:** as poses foram desenhadas pelo Claude em vetor (script em scratchpad, a partir do desenho do quadro "Norti Redesign"), e a skill Mascot Designer limpou, alinhou, animou e gerou a ficha e o vídeo. Sem conta da OpenAI.
 

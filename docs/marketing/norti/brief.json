@@ -1,0 +1,34 @@
+{
+  "name": "Norti",
+  "app": "Tripwave",
+  "style": "line",
+  "character": "a golden compass shaped like a map pin, with a cream compass face, big glossy bean eyes, rosy cheeks, a red compass needle above the eyes, short brown arms and a brown safari hat",
+  "colour": "warm gold case, cream face, red needle, leather-brown hat and arms",
+  "feature": "the red compass needle, which points where the group is going",
+  "personality": "the organized friend who always finds the way, cheerful but loses patience with whoever hasn't paid their Pix",
+  "represents": [
+    "A trip with friends that finally happens, with no fights about money"
+  ],
+  "role": "Uma bússola em forma de pino de mapa: o caminho e o destino da viagem do grupo.",
+  "brand": "#7b542f",
+  "lines": {
+    "hello": "Bora planejar essa viagem?",
+    "empty": "Nenhuma viagem ainda. Chama a galera!",
+    "think": "Achando o melhor caminho…",
+    "success": "Fechou! Viagem criada.",
+    "toast": "Todo mundo pagou. Ninguém deve nada!",
+    "oops": "Ops, sem internet. Já tento de novo.",
+    "tip": "Toque num lugar pra votar com o grupo.",
+    "loveTitle": "Curtiu o Tripwave?",
+    "love": "Conta pra galera da próxima viagem.",
+    "items": [
+      "Roteiro no mapa",
+      "Quem pagou o quê",
+      "Votos do grupo"
+    ],
+    "macTitle": "Viagem com a galera",
+    "macSub": "Roteiro, votos e contas num lugar só",
+    "sync": "Sincronizando o comboio…",
+    "synced": "Tudo em dia com o grupo"
+  }
+}
