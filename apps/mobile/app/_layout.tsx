@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useFonts, Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces'
 import {
   PlusJakartaSans_400Regular,
@@ -67,28 +68,30 @@ export default function RootLayout() {
   }, [sessao, pronto, segments, router])
 
   return (
-    <SafeAreaProvider>
-      <Moldura>
-        {pronto ? (
-          <ProvedorViagemAtual>
-            {/* Spec 110: avisos do app (no navegador não tem push do Expo) */}
-            {/* Fora do /comecar: lá a sessão é de convidado-relâmpago e não deve pedir permissão de aviso */}
-            {Platform.OS !== 'web' && sessao && segments[0] !== 'comecar' ? <AbrirAvisos /> : null}
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
-              <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="comecar" options={{ gestureEnabled: false, animation: 'fade' }} />
-              <Stack.Screen name="chamar-galera" options={{ gestureEnabled: false, animation: 'fade' }} />
-              {/* Deslize: arrastar o cartão pro lado não pode virar "voltar" (iPhone) */}
-              <Stack.Screen name="explorar" options={{ gestureEnabled: false, fullScreenGestureEnabled: false }} />
-              <Stack.Screen name="novo-gasto" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="novo-post" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="criar-conta" options={{ presentation: 'modal' }} />
-            </Stack>
-          </ProvedorViagemAtual>
-        ) : (
-          <Splash />
-        )}
-      </Moldura>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <Moldura>
+          {pronto ? (
+            <ProvedorViagemAtual>
+              {/* Spec 110: avisos do app (no navegador não tem push do Expo) */}
+              {/* Fora do /comecar: lá a sessão é de convidado-relâmpago e não deve pedir permissão de aviso */}
+              {Platform.OS !== 'web' && sessao && segments[0] !== 'comecar' ? <AbrirAvisos /> : null}
+              <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
+                <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="comecar" options={{ gestureEnabled: false, animation: 'fade' }} />
+                <Stack.Screen name="chamar-galera" options={{ gestureEnabled: false, animation: 'fade' }} />
+                {/* Deslize: arrastar o cartão pro lado não pode virar "voltar" (iPhone) */}
+                <Stack.Screen name="explorar" options={{ gestureEnabled: false, fullScreenGestureEnabled: false }} />
+                <Stack.Screen name="novo-gasto" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="novo-post" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="criar-conta" options={{ presentation: 'modal' }} />
+              </Stack>
+            </ProvedorViagemAtual>
+          ) : (
+            <Splash />
+          )}
+        </Moldura>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }
