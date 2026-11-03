@@ -44,12 +44,20 @@ const reais = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFraction
 // Cor fixa pro nome de cada pessoa na conversa
 const CORES = { Ana: '#B5462F', Bia: '#7B542F', Caio: '#5E6B2E', Duda: '#B97A22', Gabi: '#8A4F7D', Léo: '#2F6B6B', Mari: '#A1442B', Rafa: '#4F5FA1' }
 
+// Nome sozinho (ex.: "GABRIEL,") ocupa a largura toda sem estourar; frase com espaço quebra em linhas
+function tamanhoDoNome(titulo, f) {
+  if (titulo.includes(' ')) return ' class="longo"'
+  const largura = f.largura - f.folga.esq - f.folga.dir
+  const max = f.altura > 1500 ? 230 : 190
+  return ` style="font-size:${Math.min(max, Math.floor(largura / (0.74 * titulo.length)))}px"`
+}
+
 function conteudo(s, f) {
   // Modelo do benchmark (PADROES.md): frase gigante + Norti grande, nada de tela do app
   if (s.tipo === 'nome' || s.tipo === 'frase' || s.tipo === 'frase-escura') {
     return `
       <div class="frase-slide ${s.tipo}">
-        <h1${s.tipo === 'nome' && s.titulo.length > 8 ? ' class="longo"' : ''}>${esc(s.titulo).split(' | ').join('<br>')}</h1>
+        <h1${s.tipo === 'nome' ? tamanhoDoNome(s.titulo, f) : ''}>${esc(s.titulo).split(' | ').join('<br>')}</h1>
         ${s.texto ? `<p>${esc(s.texto)}</p>` : ''}
         <img class="norti-grande" src="${nortiRecorte(s.pose)}">
         <span class="assinatura">@tripwave.app</span>
