@@ -4,8 +4,12 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
-import type { ViagemComDetalhes } from '@together/core'
+import { ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import { descreverAtividade, type ViagemComDetalhes } from '@together/core'
+import { carregarResumoDoInicio } from '../src/dados/resumoDoInicio'
+import { useCarregar } from '../src/dados/useCarregar'
+import { mola, useReducedMotion } from '../src/ui/movimento'
 import { proximaViagem, useViagemAtual, viagensPassadas } from '../src/dados/viagemAtual'
 import { diasAte, mesEAno, periodo, primeiroNome } from '../src/lib/formato'
 import { useSessao } from '../src/lib/sessao'
@@ -16,7 +20,8 @@ import { Norti } from '../src/ui/Norti'
 import { Avatar, Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
 import { cor, sombra } from '../theme'
 
-// Home · Minhas viagens (telas "1e" e "1f" do design)
+// Início (spec 117, tela 1): sem barra de abas. Próxima viagem com os carimbos,
+// o que o comboio fez agora e Nova viagem. O Perfil abre pelo avatar.
 export default function MinhasViagens() {
   const { status, viagens, meuId, escolher, recarregar } = useViagemAtual()
   const router = useRouter()
@@ -28,6 +33,8 @@ export default function MinhasViagens() {
 
   const eu = viagens.flatMap((v) => v.membros).find((m) => m.id === meuId)
   const ola = eu ? `Olá, ${primeiroNome(eu.nome)}` : 'Olá'
+  const hora = new Date().getHours()
+  const saudacao = hora < 5 || hora >= 18 ? 'Boa noite' : hora < 12 ? 'Bom dia' : 'Boa tarde'
   const destaque = proximaViagem(viagens)
   const passadas = viagensPassadas(viagens).filter((v) => v.id !== destaque?.id)
   const outras = viagens.filter((v) => v.id !== destaque?.id && !passadas.includes(v))
@@ -47,8 +54,8 @@ export default function MinhasViagens() {
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 40 }}>
         <View className="mb-5 flex-row items-end justify-between gap-2">
           <View className="min-w-0 flex-1">
-            <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
-            <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>Minhas viagens</Text>
+            <Text className="font-body-medium text-[14px] text-suave">{saudacao},</Text>
+            <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>{eu ? primeiroNome(eu.nome) : 'Minhas viagens'}</Text>
           </View>
           {/* Spec 117: o Perfil abre pelo avatar (saiu da barra de abas) */}
           <Pressable onPress={() => router.push('/perfil')} accessibilityLabel="Abrir o perfil" className="active:opacity-80">
@@ -58,7 +65,7 @@ export default function MinhasViagens() {
 
         <FaixaConvidado />
 
-        <CartaoDestaque viagem={destaque} aoAbrir={() => abrir(destaque)} />
+        <Destaque viagem={destaque} meuId={meuId} aoAbrir={() => abrir(destaque)} />
 
         {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
         {passadas.length ? <Lista titulo="Viagens passadas" viagens={passadas} aoAbrir={abrir} /> : null}
@@ -75,7 +82,44 @@ export default function MinhasViagens() {
   )
 }
 
-function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbrir: () => void }) {
+// Cartão da próxima viagem + "No comboio agora" (spec 117, tela 1)
+function Destaque({ viagem, meuId, aoAbrir }: { viagem: ViagemComDetalhes; meuId: string; aoAbrir: () => void }) {
+  const carga = useCarregar(() => carregarResumoDoInicio(viagem, meuId), [viagem.id, meuId])
+  const resumo = carga.status === 'pronto' ? carga.dados : null
+  const nome = (id: string | null) => primeiroNome(viagem.membros.find((m) => m.id === id)?.nome ?? 'Alguém')
+  const indice = (id: string | null) => Math.max(0, viagem.membros.findIndex((m) => m.id === id))
+  return (
+    <>
+      <CartaoDestaque viagem={viagem} carimbos={resumo ? { feitos: resumo.carimbos, total: resumo.total } : null} aoAbrir={aoAbrir} />
+      {resumo?.agora.length ? (
+        <>
+          <Text className="mb-2 mt-7 font-display text-[20px] text-texto">No comboio agora</Text>
+          {resumo.agora.map((a) => {
+            const d = descreverAtividade(a)
+            return (
+              <Pressable key={a.id} onPress={aoAbrir} className="min-h-[48px] flex-row items-center gap-3 border-b border-linha py-2 active:opacity-80">
+                <Avatar nome={nome(a.autor)} indice={indice(a.autor)} tamanho={30} />
+                <Text className="flex-1 font-body text-[14px] text-corpo" numberOfLines={1}>
+                  <Text className="font-body-semibold text-texto">{nome(a.autor)}</Text> {d.verbo}
+                  {d.titulo ? ` ${d.titulo}` : ''}
+                </Text>
+                <Text className="font-body text-[12px] text-suave">{haQuanto(a.criado_em)}</Text>
+              </Pressable>
+            )
+          })}
+        </>
+      ) : null}
+    </>
+  )
+}
+
+// "2 min", "1 h", "3 d"
+function haQuanto(iso: string) {
+  const min = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000))
+  return min < 60 ? `${min} min` : min < 1440 ? `${Math.round(min / 60)} h` : `${Math.round(min / 1440)} d`
+}
+
+function CartaoDestaque({ viagem, carimbos, aoAbrir }: { viagem: ViagemComDetalhes; carimbos: { feitos: number; total: number } | null; aoAbrir: () => void }) {
   const capa = useCapas([viagem.id])
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
   const etiqueta =
@@ -85,7 +129,7 @@ function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbri
     .join(' · ')
 
   return (
-    <Pressable onPress={aoAbrir} className="h-[470px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
+    <Pressable onPress={aoAbrir} className="h-[400px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
       <ImageBackground source={capa(viagem.id)} resizeMode="cover" style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={['rgba(185,122,34,0)', 'rgba(185,122,34,0.55)', '#4A2E14']}
@@ -101,19 +145,24 @@ function CartaoDestaque({ viagem, aoAbrir }: { viagem: ViagemComDetalhes; aoAbri
         <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">{linhaDeCima}</Text>
         <Text className="mb-[18px] mt-2 font-display text-[40px] leading-[42px] text-white">{viagem.nome}</Text>
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-2.5">
-            <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} borda="#5A3818" />
-            <Text className="font-body-semibold text-[13px] text-creme">
-              {viagem.membros.length} {viagem.membros.length === 1 ? 'viajante' : 'viajantes'}
-            </Text>
-          </View>
-          <View className="h-11 w-11 items-center justify-center rounded-full bg-fundo">
-            <ArrowRight size={20} color={cor.escuro} />
-          </View>
+          <Text className="font-body-semibold text-[13px] text-creme">
+            {carimbos ? `${carimbos.feitos} de ${carimbos.total} carimbos` : `${viagem.membros.length} ${viagem.membros.length === 1 ? 'viajante' : 'viajantes'}`}
+          </Text>
+          <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={28} borda="#5A3818" />
+        </View>
+        {/* Barra de carimbos do passaporte (spec 117) */}
+        <View className="mt-2.5 h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: 'rgba(245,233,214,0.25)' }}>
+          <BarraQueEnche fracao={carimbos ? carimbos.feitos / carimbos.total : 0} />
         </View>
       </View>
     </Pressable>
   )
+}
+
+function BarraQueEnche({ fracao }: { fracao: number }) {
+  const reduzir = useReducedMotion()
+  const estilo = useAnimatedStyle(() => ({ transform: [{ scaleX: reduzir ? fracao : withSpring(fracao, mola.solta) }] }))
+  return <Animated.View className="h-full w-full rounded-full" style={[{ backgroundColor: cor.dourado, transformOrigin: 'left' }, estilo]} />
 }
 
 function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemComDetalhes[]; aoAbrir: (v: ViagemComDetalhes) => void }) {
