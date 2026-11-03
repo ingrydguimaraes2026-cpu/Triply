@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, PanResponder, Pressable, ScrollView, Text, View } from 'react-native'
-import { StatusBar } from '../../src/ui/StatusBar'
+import { StatusBar } from '../../../../src/ui/StatusBar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
-import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../src/ui/icones'
-import { Icone } from '../../src/ui/Icone'
+import { Bed, Bus, CalendarDays, Car, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../../../src/ui/icones'
+import { Icone } from '../../../../src/ui/Icone'
 import {
   buscarClima,
   buscarDestinos,
@@ -20,15 +20,15 @@ import {
   type Trajeto,
   type ViagemComDetalhes,
 } from '@together/core'
-import { useCarregar } from '../../src/dados/useCarregar'
-import { useViagemAtual } from '../../src/dados/viagemAtual'
-import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../src/lib/formato'
-import { supabase } from '../../src/lib/supabase'
-import { Carregando, ErroNaTela, IconeQuadrado } from '../../src/ui/pecas'
-import { SemViagem } from '../../src/ui/SemViagem'
-import { FormEvento } from '../../src/ui/FormEvento'
-import { useTamanhoDaTela } from '../../src/ui/Moldura'
-import { cor } from '../../theme'
+import { useCarregar } from '../../../../src/dados/useCarregar'
+import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/formato'
+import { supabase } from '../../../../src/lib/supabase'
+import { Carregando, ErroNaTela, IconeQuadrado } from '../../../../src/ui/pecas'
+import { SemViagem } from '../../../../src/ui/SemViagem'
+import { FormEvento } from '../../../../src/ui/FormEvento'
+import { useTamanhoDaTela } from '../../../../src/ui/Moldura'
+import { cor } from '../../../../theme'
 
 // Roteiro (tela "1h" do design): mapa ilustrado com os destinos numerados e uma
 // folha que sobe por cima (arraste a alça) com a linha do tempo de cada dia.

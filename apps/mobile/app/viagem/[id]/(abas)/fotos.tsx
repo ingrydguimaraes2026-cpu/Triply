@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { StatusBar } from "../../src/ui/StatusBar";
+import { StatusBar } from "../../../../src/ui/StatusBar";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Plus } from "../../src/ui/icones";
+import { Plus } from "../../../../src/ui/icones";
 import {
   buscarDestinos,
   buscarFotos,
@@ -11,24 +11,24 @@ import {
   type FotoDaViagem,
   type ViagemComDetalhes,
 } from "@together/core";
-import { useCarregar } from "../../src/dados/useCarregar";
-import { useViagemAtual } from "../../src/dados/viagemAtual";
+import { useCarregar } from "../../../../src/dados/useCarregar";
+import { useViagemAtual } from "../../../../src/dados/viagemAtual";
 import {
   diaCurto,
   diasDaViagem,
   paraIso,
   primeiroNome,
-} from "../../src/lib/formato";
-import { supabase } from "../../src/lib/supabase";
-import { Norti } from "../../src/ui/Norti";
-import { FeedDaViagem } from "../../src/ui/FeedDaViagem";
+} from "../../../../src/lib/formato";
+import { supabase } from "../../../../src/lib/supabase";
+import { Norti } from "../../../../src/ui/Norti";
+import { FeedDaViagem } from "../../../../src/ui/FeedDaViagem";
 import {
   Avatar,
   Carregando,
   ErroNaTela,
   TituloDaTela,
-} from "../../src/ui/pecas";
-import { SemViagem } from "../../src/ui/SemViagem";
+} from "../../../../src/ui/pecas";
+import { SemViagem } from "../../../../src/ui/SemViagem";
 
 // Fotos (spec 014 no mobile): "Feed" com posts, curtidas e comentários, e "Por dia" (tela "1l" do design)
 // com filtro por pessoa e grade em 2 colunas de alturas diferentes. O "+" abre o post novo.

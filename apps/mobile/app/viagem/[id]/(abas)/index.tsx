@@ -1,30 +1,30 @@
 import { useState } from 'react'
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { StatusBar } from '../../src/ui/StatusBar'
+import { StatusBar } from '../../../../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Car, Compass, FileCheck, FileText, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sparkles, Sun } from '../../src/ui/icones'
+import { ArrowLeft, BedDouble, Car, Compass, FileCheck, FileText, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sparkles, Sun } from '../../../../src/ui/icones'
 import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
-import { resumoDasContas } from '../../src/dados/contas'
-import { useCarregar } from '../../src/dados/useCarregar'
-import { useViagemAtual } from '../../src/dados/viagemAtual'
-import { convidarProComboio } from '../../src/lib/convite'
-import { hojeIso, periodo } from '../../src/lib/formato'
-import { supabase } from '../../src/lib/supabase'
-import { useCapas } from '../../src/dados/useCapas'
-import { Avisos } from '../../src/ui/Avisos'
-import { PassosDaViagem } from '../../src/ui/PassosDaViagem'
-import { Tarefas } from '../../src/ui/Tarefas'
-import { Enquetes } from '../../src/ui/Enquetes'
-import { PontoDeEncontro } from '../../src/ui/PontoDeEncontro'
-import { AgendaDeHoje } from '../../src/ui/AgendaDeHoje'
-import { Clima } from '../../src/ui/Clima'
-import { Novidades } from '../../src/ui/Novidades'
-import { GuiaDaCasa } from '../../src/ui/GuiaDaCasa'
-import { Cofre } from '../../src/ui/Cofre'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../src/ui/pecas'
-import { cor } from '../../theme'
+import { resumoDasContas } from '../../../../src/dados/contas'
+import { useCarregar } from '../../../../src/dados/useCarregar'
+import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { convidarProComboio } from '../../../../src/lib/convite'
+import { hojeIso, periodo } from '../../../../src/lib/formato'
+import { supabase } from '../../../../src/lib/supabase'
+import { useCapas } from '../../../../src/dados/useCapas'
+import { Avisos } from '../../../../src/ui/Avisos'
+import { PassosDaViagem } from '../../../../src/ui/PassosDaViagem'
+import { Tarefas } from '../../../../src/ui/Tarefas'
+import { Enquetes } from '../../../../src/ui/Enquetes'
+import { PontoDeEncontro } from '../../../../src/ui/PontoDeEncontro'
+import { AgendaDeHoje } from '../../../../src/ui/AgendaDeHoje'
+import { Clima } from '../../../../src/ui/Clima'
+import { Novidades } from '../../../../src/ui/Novidades'
+import { GuiaDaCasa } from '../../../../src/ui/GuiaDaCasa'
+import { Cofre } from '../../../../src/ui/Cofre'
+import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../../../src/ui/pecas'
+import { cor } from '../../../../theme'
 
 // Detalhe da viagem (tela "1g" do design): capa, comboio, atalhos e resumo dos gastos.
 export default function DetalheDaViagem() {
@@ -56,9 +56,12 @@ export default function DetalheDaViagem() {
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
 
   // Os atalhos abrem as abas já nesta viagem
+  // Roteiro, Contas e Fotos agora são abas desta viagem (spec 117)
+  const ABAS = ['/roteiro', '/contas', '/fotos']
   const ir = (rota: Href) => {
     escolher(viagem.id)
-    router.push(rota)
+    if (ABAS.includes(rota as string)) router.navigate(`/viagem/${viagem.id}${rota as string}` as Href)
+    else router.push(rota)
   }
 
   const atalhos = [

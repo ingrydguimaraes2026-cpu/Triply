@@ -1,16 +1,16 @@
 import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native'
-import { StatusBar } from '../../src/ui/StatusBar'
+import { StatusBar } from '../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../../src/ui/icones'
-import { useViagemAtual } from '../../src/dados/viagemAtual'
-import { useSessao } from '../../src/lib/sessao'
-import { supabase } from '../../src/lib/supabase'
-import { Norti } from '../../src/ui/Norti'
-import { AvisosNoCelular } from '../../src/ui/AvisosNoCelular'
-import { esquecerEsteAparelho } from '../../src/lib/avisos'
-import { Avatar, Cartao, IconeQuadrado, TituloDaTela } from '../../src/ui/pecas'
-import { cor } from '../../theme'
+import { ArrowLeft, BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../src/ui/icones'
+import { useViagemAtual } from '../src/dados/viagemAtual'
+import { useSessao } from '../src/lib/sessao'
+import { supabase } from '../src/lib/supabase'
+import { Norti } from '../src/ui/Norti'
+import { AvisosNoCelular } from '../src/ui/AvisosNoCelular'
+import { esquecerEsteAparelho } from '../src/lib/avisos'
+import { Avatar, BotaoRedondo, Cartao, IconeQuadrado, TituloDaTela } from '../src/ui/pecas'
+import { cor } from '../theme'
 
 // Perfil: quem sou, quantas viagens e com quantas pessoas, e o botão de sair.
 export default function Perfil() {
@@ -26,6 +26,12 @@ export default function Perfil() {
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: 40, gap: 16 }}>
+        {/* Spec 117: o Perfil saiu da barra de abas e abre pelo avatar do Início */}
+        <View className="flex-row">
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+            <ArrowLeft size={20} color={cor.texto} />
+          </BotaoRedondo>
+        </View>
         <TituloDaTela titulo="Perfil" />
 
         <Cartao className="flex-row items-center gap-4 p-5">

@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { StatusBar } from '../../src/ui/StatusBar'
+import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from '../../src/ui/icones'
+import { ArrowRight, ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
 import type { ViagemComDetalhes } from '@together/core'
-import { proximaViagem, useViagemAtual, viagensPassadas } from '../../src/dados/viagemAtual'
-import { diasAte, mesEAno, periodo, primeiroNome } from '../../src/lib/formato'
-import { useSessao } from '../../src/lib/sessao'
-import { supabase } from '../../src/lib/supabase'
-import { FaixaConvidado } from '../../src/ui/FaixaConvidado'
-import { useCapas } from '../../src/dados/useCapas'
-import { Norti } from '../../src/ui/Norti'
-import { Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../../src/ui/pecas'
-import { cor, sombra } from '../../theme'
+import { proximaViagem, useViagemAtual, viagensPassadas } from '../src/dados/viagemAtual'
+import { diasAte, mesEAno, periodo, primeiroNome } from '../src/lib/formato'
+import { useSessao } from '../src/lib/sessao'
+import { supabase } from '../src/lib/supabase'
+import { FaixaConvidado } from '../src/ui/FaixaConvidado'
+import { useCapas } from '../src/dados/useCapas'
+import { Norti } from '../src/ui/Norti'
+import { Avatar, Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
+import { cor, sombra } from '../theme'
 
 // Home · Minhas viagens (telas "1e" e "1f" do design)
 export default function MinhasViagens() {
@@ -50,8 +50,10 @@ export default function MinhasViagens() {
             <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
             <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>Minhas viagens</Text>
           </View>
-          {/* Convidado cria conta antes de criar viagem (spec 018) */}
-          {!ehConvidado ? <Botao compacto titulo="Nova viagem" icone={<Plus size={18} color="#fff" />} aoTocar={() => router.push('/nova-viagem')} /> : null}
+          {/* Spec 117: o Perfil abre pelo avatar (saiu da barra de abas) */}
+          <Pressable onPress={() => router.push('/perfil')} accessibilityLabel="Abrir o perfil" className="active:opacity-80">
+            <Avatar nome={eu?.nome ?? 'Eu'} indice={5} tamanho={40} />
+          </Pressable>
         </View>
 
         <FaixaConvidado />
@@ -60,6 +62,14 @@ export default function MinhasViagens() {
 
         {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
         {passadas.length ? <Lista titulo="Viagens passadas" viagens={passadas} aoAbrir={abrir} /> : null}
+
+        {/* Convidado cria conta antes de criar viagem (spec 018) */}
+        {!ehConvidado ? (
+          <Pressable onPress={() => router.push('/nova-viagem')} className="mt-8 h-14 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-tracejado active:opacity-80">
+            <Plus size={20} color={cor.couro} />
+            <Text className="font-body-bold text-[15px] text-couro">Nova viagem</Text>
+          </Pressable>
+        ) : null}
       </ScrollView>
     </View>
   )
