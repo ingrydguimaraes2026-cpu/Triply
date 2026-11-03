@@ -1,7 +1,7 @@
 {
   "voz": "en-US-AndrewMultilingualNeural",
   "velocidade": "+4%",
-  "nota": "Narração em inglês com voz masculina, no estilo do vídeo do HPM (Humana). Os títulos na tela ficam em português e servem de legenda pro público do Brasil. As cenas do app são gravadas no modo demonstração (demo/).",
+  "nota": "Narração em inglês com voz masculina, no estilo do vídeo do HPM (Humana). Vídeo horizontal 1920x1080. Os títulos na tela ficam em português e servem de legenda pro público do Brasil. As cenas do app são gravadas no modo demonstração (demo/). lado = de que lado da tela fica o iPhone.",
   "cenas": [
     {
       "id": "gancho",
@@ -13,25 +13,33 @@
       "id": "explorar",
       "fala": "With Tripwave, everyone swipes the places they want. When the crew agrees, it's a match.",
       "texto": "Deslizou, deu *match*",
-      "gravacao": "explorar"
+      "gravacao": "explorar",
+      "rotulo": "01 · Explorar",
+      "lado": "dir"
     },
     {
       "id": "duelo",
       "fala": "Can't decide where to stay? Everyone votes, and nobody gets left out.",
       "texto": "Onde dormir? *Vota* aí",
-      "gravacao": "duelo"
+      "gravacao": "duelo",
+      "rotulo": "02 · Onde dormir",
+      "lado": "esq"
     },
     {
       "id": "contas",
       "fala": "Paid for dinner? Just type it. Tripwave splits it and shows who owes who.",
       "texto": "\"jantar 84\" e *pronto*",
-      "gravacao": "contas"
+      "gravacao": "contas",
+      "rotulo": "03 · Contas",
+      "lado": "dir"
     },
     {
       "id": "carimbo",
       "fala": "Every step you lock in earns a stamp on your crew's passport.",
       "texto": "Cada passo vira *carimbo*",
-      "gravacao": "carimbo"
+      "gravacao": "carimbo",
+      "rotulo": "04 · Passaporte",
+      "lado": "esq"
     },
     {
       "id": "fim",

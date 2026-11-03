@@ -3,7 +3,7 @@
 Data: 03/11/2026. Branch `monorepo-split`. Pasta: `docs/marketing/video/`.
 
 ## O pedido do Victor
-Um vídeo curto, em pé (1080x1920, TikTok/Reels/Shorts), mostrando o Tripwave de verdade dentro de um iPhone.
+Um vídeo curto (v1 em pé 1080x1920; **v2 horizontal 1920x1080, no estilo do vídeo do HPM**, pedido do Victor em 03/11), mostrando o Tripwave de verdade dentro de um iPhone.
 Precisa de animações caprichadas e narração. O Victor quer **fazer tudo sem precisar dele**: nada de pedir pra ele entrar na conta.
 Precisa de um comboio com várias pessoas e conteúdo bonito (dá pra copiar da Eurotrip).
 
@@ -23,11 +23,16 @@ Precisa de um comboio com várias pessoas e conteúdo bonito (dá pra copiar da 
   - `dados.mjs` tem a "Eurotrip" de mentira: 4 pessoas (Você, Ana Clara, Juliana, Beto), Paris/Nice/Roma, catálogo de Paris e Roma com fotos da Wikimedia, quem quer o quê, roteiro de Roma, 2 hospedagens em Paris (duelo), 3 gastos, saldo do euro.
   - `salvar_gasto` guarda na memória, então o "jantar 84" entra na conversa.
   - `descobrir.mjs` lista o que o app pede e tira print (rodar com `MSYS_NO_PATHCONV=1` no Git Bash).
-- `gravar.mjs` grava 4 cenas (`explorar` com "Deu match", `duelo`, `contas`, `carimbo`) em `gravacoes/` + `marcas.json`.
+- `gravar.mjs` grava 4 cenas (`explorar` com "Deu match", `duelo`, `contas`, `carimbo`) **quadro a quadro** (screencast do Chrome) em 1170x2532, nitidez de iPhone de verdade. Precisa do `--force-device-scale-factor=3`: sem isso o screencast sai em 390 px.
+  - Cada cena grava o início (`marcar`) e os momentos-chave (`evento('match')`, `voto`, `digita`, `salvo`...) em `gravacoes/marcas.json`. A montagem sincroniza os efeitos com esses tempos.
 - `roteiro.json` + `narrar.py`: 6 falas em inglês (`en-US-AndrewMultilingualNeural`) e títulos em pt-BR.
-- `montar.mjs` monta e renderiza `saida/tripwave-app.mp4` (cerca de 29 s, 1080x1920).
-  - O Playwright grava 390x844 no canto de um quadro maior: o ffmpeg recorta e amplia.
-  - `npx hyperframes lint saida/projeto` deve dar 0 erros. As falas precisam de `id`, senão o vídeo sai mudo.
+- `montar.mjs` monta e renderiza `saida/tripwave-app.mp4` (cerca de 31 s, 1920x1080).
+  - Fundo escuro de couro com mapa de nós (Paris → Nice → Roma) e granulado; iPhone em 3D que troca de lado a cada cena.
+  - Balões ligados ao celular por fios (como os nós do HPM), zoom de câmera no match e nas contas, tremida no carimbo.
+  - Placar de votos, "jantar 84" digitado, € 84 que vira 4 × € 21, passaporte 5 → 6 carimbos e fim claro com a rota desenhada e confete.
+- `trilha.py` faz a música (acordes + batida leve, abaixa quando a voz fala) e os efeitos (whoosh, pop, baque, brilho, teclas), tudo sintetizado: sem direito autoral. Lê `saida/deixas.json`, que o `montar.mjs` escreve.
+- `npx hyperframes lint saida/projeto` deve dar 0 erros. As falas precisam de `id`, senão o vídeo sai mudo.
+  - Muitos elementos com `filter: blur` deixam quadros pretos (aviso do lint): por isso as palavras sobem sem desfoque.
 - `apps/mobile/src/ui/Icone.tsx`: sem o aviso `accessible` no web.
 
 ## Refazer o vídeo
@@ -35,10 +40,10 @@ Precisa de um comboio com várias pessoas e conteúdo bonito (dá pra copiar da 
 cd docs/marketing/video
 node gravar.mjs          # com o Expo web no ar na porta 8089
 python narrar.py         # se mudou alguma fala
+# a trilha (python trilha.py) roda sozinha dentro do montar
 node montar.mjs
 ```
 
 ## Ideias pra próxima versão
-- Música de fundo livre de direitos, baixinha (o vídeo do HPM tem).
 - Outra cena: Matches no Roteiro, Lembranças, Fotos.
 - Versão em pt-BR da narração (`pt-BR-ThalitaMultilingualNeural`) pra testar contra a de inglês.
