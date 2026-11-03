@@ -34,6 +34,13 @@ type Props = {
 export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, aoVoar, aoVerMais, querem }: Props) {
   const pos = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current
   const voando = useRef(false)
+  // Spec 117: o de baixo espera um pouco menor; quando vira o de cima, sobe com mola
+  const subida = useRef(new Animated.Value(parado ? 0 : 0.6)).current
+  useEffect(() => {
+    if (!parado) Animated.spring(subida, { toValue: 1, useNativeDriver: NATIVO, friction: 7, tension: 80 }).start()
+  }, [parado, subida])
+  const escala = subida.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] })
+  const descida = subida.interpolate({ inputRange: [0, 1], outputRange: [14, 0] })
 
   function voar(e: Escolha) {
     if (voando.current) return
@@ -80,7 +87,9 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
       style={[
         { position: 'absolute', left: 0, right: 0, top: 0, height: altura, borderRadius: 26, overflow: 'hidden', backgroundColor: cor.cartao },
         sombra.hero,
-        parado ? null : { transform: [{ translateX: pos.x }, { translateY: pos.y }, { rotate: giro }] },
+        parado
+          ? { transform: [{ translateY: descida }, { scale: escala }] }
+          : { transform: [{ translateX: pos.x }, { translateY: Animated.add(pos.y, descida) }, { rotate: giro }, { scale: escala }] },
       ]}
     >
       <View style={{ height: alturaFoto, backgroundColor: cor.areia }}>

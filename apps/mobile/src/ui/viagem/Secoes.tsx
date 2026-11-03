@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import Animated, { interpolate, useAnimatedStyle, type SharedValue } from 'react-native-reanimated'
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, type SharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { formatarDinheiro, type Atividade, type Pessoa } from '@together/core'
 import { ArrowLeft, ChevronRight, FileCheck, MoreHorizontal, Plus, ShieldCheck, Share2 } from '../icones'
 import { Selo } from '../Selos'
 import { Avatar, BotaoRedondo } from '../pecas'
-import { useCascata, useNumeroAnimado } from '../movimento'
+import { mola, useCascata, useNumeroAnimado, useReducedMotion } from '../movimento'
 import { primeiroNome } from '../../lib/formato'
 import type { DiaDoCarrossel } from '../../dados/abaViagem'
 import { cor, sombra } from '../../../theme'
@@ -34,10 +34,16 @@ export function Secao({ indice, titulo, direita, children }: { indice: number; t
 
 // Capa com parallax: a foto anda mais devagar que a tela e cresce se puxar pra baixo
 export function Capa({ foto, nome, linha, rolagem }: { foto: { uri: string } | undefined; nome: string; linha: string; rolagem: SharedValue<number> }) {
+  // Entrada: a foto do cartão do Início "chega" crescendo e assenta com mola (sem quique)
+  const reduzir = useReducedMotion()
+  const chegada = useSharedValue(reduzir ? 1 : 0)
+  useEffect(() => {
+    chegada.value = reduzir ? 1 : withSpring(1, mola.solta)
+  }, [chegada, reduzir])
   const estiloDaFoto = useAnimatedStyle(() => ({
     transform: [
       { translateY: interpolate(rolagem.value, [-200, 0, ALTURA_DA_CAPA], [-100, 0, ALTURA_DA_CAPA * 0.45]) },
-      { scale: interpolate(rolagem.value, [-200, 0], [1.6, 1], 'clamp') },
+      { scale: interpolate(rolagem.value, [-200, 0], [1.6, 1], 'clamp') * (1.12 - chegada.value * 0.12) },
     ],
   }))
   const estiloDoTitulo = useAnimatedStyle(() => ({ opacity: interpolate(rolagem.value, [0, ALTURA_DA_CAPA * 0.6], [1, 0], 'clamp') }))
