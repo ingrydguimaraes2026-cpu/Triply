@@ -87,6 +87,7 @@ export default function RootLayout() {
                 <Stack.Screen name="novo-gasto" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="novo-post" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="criar-conta" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="passe" options={{ presentation: 'modal' }} />
               </Stack>
             </ProvedorViagemAtual>
           ) : (

@@ -2,7 +2,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../src/ui/StatusBar'
-import { ArrowLeft, BedDouble, Car, ChevronRight, Compass, FileCheck, FileText, MapPin, Settings, Sparkles, Sun, Users } from '../src/ui/icones'
+import { ArrowLeft, BedDouble, Car, ChevronRight, Compass, FileCheck, FileText, Lock, Mail, Map, MapPin, ReceiptText, Settings, Sparkles, Sun, Users } from '../src/ui/icones'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Avisos } from '../src/ui/Avisos'
 import { Novidades } from '../src/ui/Novidades'
@@ -61,6 +61,27 @@ export default function TudoDaViagem() {
                 <Text className="font-body text-[12px] text-suave">{s}</Text>
               </View>
               <ChevronRight size={18} color={cor.apagado} />
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Spec 117: extras do Passe da viagem (cadeado abre a tela do Passe) */}
+        <RotuloDeSecao>Extras do Passe</RotuloDeSecao>
+        <View className="rounded-2xl bg-cartao px-4" style={sombra.cartao}>
+          {[
+            { Icone: ReceiptText, t: 'Scan de recibo', s: 'Foto do recibo e já divide', de: 'scan_recibo' },
+            { Icone: Map, t: 'Mapa sem internet', s: 'Roteiro e mapa offline', de: 'mapa_offline' },
+            { Icone: Mail, t: 'Reservas do e-mail', s: 'Voos e hotéis lidos sozinhos', de: 'reservas_email' },
+          ].map(({ Icone, t, s, de }, i) => (
+            <Pressable key={de} onPress={() => router.push(`/passe?de=${de}` as Href)} className={`min-h-[60px] flex-row items-center gap-3 py-2 active:opacity-80 ${i ? 'border-t border-linha' : ''}`}>
+              <IconeQuadrado tamanho={36}>
+                <Icone size={20} color={cor.couro} />
+              </IconeQuadrado>
+              <View className="flex-1">
+                <Text className="font-body-bold text-[15px] text-texto">{t}</Text>
+                <Text className="font-body text-[12px] text-suave">{s}</Text>
+              </View>
+              <Lock size={16} color={cor.caramelo} />
             </Pressable>
           ))}
         </View>

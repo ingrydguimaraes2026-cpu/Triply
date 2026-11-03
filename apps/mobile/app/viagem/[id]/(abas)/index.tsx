@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Alert, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -102,7 +102,7 @@ export default function AbaViagem() {
             passos={passos}
             contasEmDia={contas.acertos.length === 0}
             ir={ir}
-            aoExtra={() => Alert.alert('Em breve', 'Livro impresso e vídeo da viagem chegam logo.')}
+            aoExtra={(origem) => ir(`passe?de=${origem}`)}
           />
         </Animated.ScrollView>
         <Cabecalho nome={viagem.nome} rolagem={rolagem} aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))} aoCompartilhar={convidar} aoMais={() => ir('tudo-da-viagem')} />
