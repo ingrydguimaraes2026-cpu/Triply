@@ -28,7 +28,7 @@ import { supabase } from '../../../../src/lib/supabase'
 import { Carregando, ErroNaTela, IconeQuadrado } from '../../../../src/ui/pecas'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { Matches } from '../../../../src/ui/Matches'
-import { buscarMatches, ehMatch } from '../../../../src/dados/matches'
+import { buscarMatches, ehMatch, quemFazMatch } from '../../../../src/dados/matches'
 import { FormEvento } from '../../../../src/ui/FormEvento'
 import { useTamanhoDaTela } from '../../../../src/ui/Moldura'
 import { cor } from '../../../../theme'
@@ -78,7 +78,7 @@ function AbaMatches({ viagem, aoDia }: { viagem: ViagemComDetalhes; aoDia: (i: n
           </Pressable>
         ))}
       </ScrollView>
-      <Text className="mb-3 px-5 font-body text-[13px] text-suave">O que 3 ou mais querem vira match e entra no dia.</Text>
+      <Text className="mb-3 px-5 font-body text-[13px] text-suave">{`O que ${quemFazMatch(viagem.membros.length)} vira match e entra no dia.`}</Text>
       {carga.status === 'carregando' ? (
         <View className="gap-2.5 px-5">
           {[0, 1, 2].map((i) => (

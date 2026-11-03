@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -37,9 +37,12 @@ export default function Passe() {
   const [plano, setPlano] = useState<'passe' | 'anual'>('passe')
   const [quis, setQuis] = useState(false)
 
-  // Abriu a tela: conta como "viu" (uma vez por abertura)
+  // Abriu a tela: conta como "viu" (uma vez por abertura; a trava evita contar 2 vezes no modo dev)
+  const contado = useRef('')
   useEffect(() => {
-    if (viagem) void registrar(viagem.id, origem, 'viu')
+    if (!viagem || contado.current === viagem.id + origem) return
+    contado.current = viagem.id + origem
+    void registrar(viagem.id, origem, 'viu')
   }, [viagem?.id, origem])
 
   if (!viagem) return null

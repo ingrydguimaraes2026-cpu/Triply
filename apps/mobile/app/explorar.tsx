@@ -313,7 +313,7 @@ function ExplorarDestino({
   const topo = (
     <View className="gap-3 px-5" style={{ paddingTop: insets.top + 8 }}>
       <View className="flex-row items-center gap-3">
-        <BotaoRedondo aoTocar={() => (guiado && viagem ? router.replace(`/viagem/${viagem.id}`) : router.back())}>
+        <BotaoRedondo aoTocar={() => (guiado && viagem ? router.replace(`/viagem/${viagem.id}`) : router.canGoBack() ? router.back() : router.replace(viagem ? `/viagem/${viagem.id}` : '/'))}>
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View className="flex-1">

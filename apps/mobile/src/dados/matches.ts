@@ -14,6 +14,8 @@ export type Match = {
 // Quantos "quero" fazem um match: 3, ou todo mundo se o comboio tem menos de 3
 export const limiteDoMatch = (pessoas: number) => Math.min(3, pessoas)
 export const ehMatch = (querem: number, pessoas: number) => pessoas >= 2 && querem >= limiteDoMatch(pessoas)
+// "3 ou mais querem" ou, em comboio pequeno, "todo mundo quer"
+export const quemFazMatch = (pessoas: number) => (limiteDoMatch(pessoas) >= pessoas ? 'todo mundo quer' : `${limiteDoMatch(pessoas)} ou mais querem`)
 
 export async function buscarMatches(viagemId: string): Promise<Match[]> {
   const { data, error } = await supabase.rpc('matches_da_viagem', { p_viagem: viagemId })

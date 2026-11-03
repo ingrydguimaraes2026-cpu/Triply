@@ -13,12 +13,18 @@ Data: 02/11/2026. Branch `monorepo-split`, só commits locais (sem push).
 7. Tela `/passe?de=<origem>` (sem cobrar, "Em breve", grava interesse). Cadeados em Lembranças e no "Tudo da viagem".
 8. Polimento: cartão de baixo do deslize sobe com mola; capa assenta com mola na entrada.
 
-## Falta (nessa ordem)
-1. **Victor aprovar e aplicar** `supabase/migrations/20261102190000_matches_do_comboio.sql` e `20261102191000_interesse_no_passe.sql`. Sem elas: Matches fica vazio e o Passe não grava (nada quebra).
-2. Regerar `packages/core/src/database.ts` (os tipos de `matches_da_viagem` e `interesse_no_passe` foram postos à mão).
-3. Deploy: `supabase functions deploy lembretes --no-verify-jwt`.
-4. Testar no iPhone de verdade (rolagem, deslize, haptic, "Reduzir movimento"). No web 360px já conferido.
-5. Testar com comboio de 3 pessoas: duelo de hospedagem, Cutucar e Deu match (todas as viagens de teste são de 1 pessoa).
+## Feito em 02/11 (depois da aprovação do Victor)
+- Migrations `matches_do_comboio` e `interesse_no_passe` aplicadas no banco; tipos regerados em `packages/core/src/database.ts`.
+- `lembretes` publicada (`--no-verify-jwt`).
+- Regras do match conferidas no banco numa transação desfeita no fim: 3 querem = match, 2 = quase, "passo" não aparece, aviso só pra quem não opinou e 1 por dia, quem não é do comboio é barrado.
+- Roteiro de teste no web 360px: Início (avatar, destaque, próximas, nova viagem), aba Viagem (cabeçalho voltar/compartilhar/"...", rostos, chamar a galera, carrossel, contas, antes de embarcar, rolagem da capa e do cabeçalho), comemoração (aparece 1 vez só), os 10 atalhos e os 3 cadeados do "Tudo da viagem", Passe (grava viu/quis), Roteiro (Matches, Descobrir), Explorar (Passo + Desfazer), Contas ("taxi 20" vira € 20 Transporte), Fotos, fases durante/voltou, rotas antigas /roteiro /contas /fotos.
+- Consertos: o Passe contava "viu" 2 vezes; o voltar do Explorar não fazia nada quando aberto por link; textos do match diziam "3 pessoas" mesmo em comboio de 2.
+
+## Falta
+1. Testar no iPhone de verdade (deslize com o dedo, haptic, "Reduzir movimento").
+2. Ver na tela o duelo de hospedagem, o Cutucar e o "Deu match!": só a Eurotrip (da Ingryd) tem 2 pessoas, e eu não mexi nela.
+3. Roteiro sem datas mostra só "Dia 1" nas pílulas, mas o carrossel da aba Viagem conta os dias montados pelo Explorar (Lisboa: 4). São dois jeitos de contar que já existiam antes; vale juntar.
+4. Linhas de teste em `interesse_no_passe` (do usuário 34991f24…): apagar antes de medir.
 
 ## Fora desta entrega (anotado)
 - Mapa com os rostos na fase "na viagem" (tela 4 do desenho): hoje mostra a agenda do Hoje. Precisa de localização compartilhada.

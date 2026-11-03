@@ -5,7 +5,7 @@ import { Check, Compass, Wand2 } from './icones'
 import { Selo } from './Selos'
 import { Avatar } from './pecas'
 import { useCascata } from './movimento'
-import { agruparMatches, type Match } from '../dados/matches'
+import { agruparMatches, limiteDoMatch, type Match } from '../dados/matches'
 import { primeiroNome } from '../lib/formato'
 import { cor, sombra } from '../../theme'
 
@@ -24,7 +24,7 @@ export function Matches({ matches, membros, meuId, aoAbrirLugar, aoMontar, aoDes
   const { todos, match, quase } = agruparMatches(matches, pessoas)
   const grupos = [
     { titulo: `Todo mundo quer · ${pessoas} de ${pessoas}`, lista: todos },
-    { titulo: 'Deu match · 3 ou mais', lista: match },
+    { titulo: `Deu match · ${limiteDoMatch(pessoas)} ou mais`, lista: match },
     { titulo: 'Quase · 2 querem', lista: quase, opinar: true },
   ].filter((g) => g.lista.length)
 
@@ -33,7 +33,7 @@ export function Matches({ matches, membros, meuId, aoAbrirLugar, aoMontar, aoDes
       {pessoas < 2 ? (
         <Vazio texto="Match é coisa de grupo: chame a galera e cada um desliza do seu jeito." />
       ) : !grupos.length ? (
-        <Vazio texto={'Ainda nada em comum. Quando 3 pessoas derem "quero" no mesmo lugar, ele aparece aqui.'} />
+        <Vazio texto={`Ainda nada em comum. Quando ${limiteDoMatch(pessoas) >= pessoas ? 'todo mundo der' : `${limiteDoMatch(pessoas)} pessoas derem`} "quero" no mesmo lugar, ele aparece aqui.`} />
       ) : (
         grupos.map((g, i) => (
           <Grupo key={g.titulo} indice={i} titulo={g.titulo}>
