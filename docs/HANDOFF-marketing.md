@@ -15,6 +15,7 @@
 | Bios dos 3 perfis, 8 roteiros de TikTok/Reels do réveillon, 8 primeiros posts do X (rascunho pra Ingryd revisar) | `docs/marketing/CONTEUDO-INICIAL.md` |
 | Calendário das 2 primeiras semanas (09 a 22/11): vídeo do dia, 2 posts do X, story, teste de formatos, banco de variações e 14 posts novos (X1 a X14) | `docs/marketing/CALENDARIO-2-SEMANAS.md` |
 | Pesquisa: conteúdo sem rosto (slideshow, "2 lados" com a Norti, voz, regras do TikTok, build in public BR, dicas da Apple) | `docs/marketing/PESQUISA-SEM-ROSTO.md` |
+| Gerador de carrossel: planilha (`planilha.csv`, 1 linha por slide) → `node docs/marketing/slides/gerar.mjs S1` → PNGs do TikTok (1080×1920) e Instagram (1080×1350) + legenda em `saida/<post>/`. S1 pronto | `docs/marketing/slides/` |
 | Script de triagem de nome (domínio + App Store) | `docs/marketing/checar-nome.py` |
 | Página de lista de espera `/espera` (código pronto) | `apps/web/src/pages/ListaDeEspera.tsx` |
 

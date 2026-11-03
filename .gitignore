@@ -31,3 +31,4 @@ expo-env.d.ts
 
 # Lixo do Supabase CLI
 supabase/.temp/
+docs/marketing/slides/saida/*/html/
