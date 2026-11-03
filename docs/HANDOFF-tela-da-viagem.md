@@ -19,6 +19,12 @@ Data: 02/11/2026. Pedido do Victor: "não gosto desses cards... muito texto, mui
 - **Progresso visual, não lista.** Ex.: passaporte que vai ganhando os selos conforme o grupo resolve (roteiro, datas, onde dormir, como chegar, contas). Pouco texto, muito desenho.
 - **O grupo à vista.** Rostos de quem já entrou e do que falta cada um fazer (é o que traz a pessoa de volta).
 
+## Primeiras referências do X (02/11, busca "travel app design mobile", aba Mídia)
+- https://x.com/ThominoDesign/status/2115805863352897674 : criar viagem **uma pergunta por cartão** ("How many days?" com número grande que desliza, 3 tracinhos de progresso, botão de voz), tela "Creating your trip" e no fim **um cartão com foto cheia**: "YOUR TRIP IS READY / 7 days in Bali / VIEW TRIP" e uma seta. Zero lista.
+- https://x.com/rakibulism/status/2092705893242814564 : home com **foto grande no topo** e 2 cartões de foto lado a lado ("Must-see today"), filtros em pílula, barra de baixo com só 3 ícones.
+- Lição comum: foto manda, texto é 1 linha, **uma ação por tela**, barra de baixo curta. Nosso "Montem a viagem" deveria ser um cartão de foto com a próxima ação, não uma lista de 6.
+- O X tem muito mais (ex.: animações bonitas no feed): vale uma rodada só de referências na sessão nova, salvando os prints em `docs/design/referencias/`.
+
 ## Próximo passo exato (sessão nova)
 1. Escrever `docs/JORNADA.md` numa página: cada fase, o objetivo dela, a ÚNICA ação principal e o que a pessoa vê. Do login ao "voltou". Mostrar pro Victor antes de desenhar.
 2. Buscar referências no X (o Victor deixa logado no navegador interno): apps de viagem e de grupo (Polarsteps, Wanderlog, Airbnb Viagens, Splitwise, Partiful, Duolingo pelo caminho/progresso). Guardar os prints em `docs/design/referencias/`.
