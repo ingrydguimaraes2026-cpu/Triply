@@ -17,20 +17,34 @@ export type EstadoDosPassos = {
   euSouAdm: boolean
 }
 
-type Passo = { chave: string; selo: NomeDoSelo; titulo: string; sub: string; feito: boolean; aoTocar: () => void }
+export type ChaveDoPasso = 'roteiro' | 'galera' | 'datas' | 'hospedagem' | 'transporte' | 'gastos'
+export type DestinoDoPasso = 'explorar' | 'convidar' | 'configuracoes' | 'hospedagem' | 'transportes' | 'contas'
+export type Passo = { chave: ChaveDoPasso; selo: NomeDoSelo; rotulo: string; titulo: string; sub: string; feito: boolean; destino: DestinoDoPasso; soAdm?: boolean }
 
-export function PassosDaViagem({ estado, ir }: { estado: EstadoDosPassos; ir: (chave: 'explorar' | 'convidar' | 'configuracoes' | 'hospedagem' | 'transportes' | 'contas') => void }) {
-  const passos: Passo[] = [
-    { chave: 'roteiro', selo: 'mapa', titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, aoTocar: () => ir('explorar') },
-    { chave: 'galera', selo: 'galera', titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, aoTocar: () => ir('convidar') },
-    // Só o ADM muda as datas: pra quem não é ADM o passo nem aparece
-    ...(estado.euSouAdm || estado.temDatas
-      ? [{ chave: 'datas', selo: 'calendario' as NomeDoSelo, titulo: 'Pôr as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, aoTocar: () => ir('configuracoes') }]
-      : []),
-    { chave: 'hospedagem', selo: 'barraca', titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, aoTocar: () => ir('hospedagem') },
-    { chave: 'transporte', selo: 'passagem', titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, aoTocar: () => ir('transportes') },
-    { chave: 'gastos', selo: 'moedas', titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, aoTocar: () => ir('contas') },
+// Os 6 passos (= os 6 carimbos do passaporte da spec 117), na ordem certa.
+// `soAdm`: só o ADM resolve (datas); pra quem não é ADM ele não vira o "próximo".
+export function montarPassos(estado: EstadoDosPassos): Passo[] {
+  return [
+    { chave: 'roteiro', selo: 'mapa', rotulo: 'Roteiro', titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, destino: 'explorar' },
+    { chave: 'galera', selo: 'galera', rotulo: 'Galera', titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, destino: 'convidar' },
+    { chave: 'datas', selo: 'calendario', rotulo: 'Datas', titulo: 'Pôr as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, destino: 'configuracoes', soAdm: true },
+    { chave: 'hospedagem', selo: 'barraca', rotulo: 'Dormir', titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, destino: 'hospedagem' },
+    { chave: 'transporte', selo: 'passagem', rotulo: 'Chegar', titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, destino: 'transportes' },
+    { chave: 'gastos', selo: 'moedas', rotulo: 'Contas', titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, destino: 'contas' },
   ]
+}
+
+// O próximo carimbo a conquistar. Comboio de 1 pessoa: chamar a galera vem primeiro (spec 117).
+export function proximoCarimbo(estado: EstadoDosPassos): Passo | null {
+  const abertos = montarPassos(estado).filter((p) => !p.feito && (!p.soAdm || estado.euSouAdm))
+  return abertos.find((p) => p.chave === 'galera') ?? abertos[0] ?? null
+}
+
+export function PassosDaViagem({ estado, ir }: { estado: EstadoDosPassos; ir: (chave: DestinoDoPasso) => void }) {
+  // Só o ADM muda as datas: pra quem não é ADM o passo nem aparece
+  const passos = montarPassos(estado)
+    .filter((p) => !p.soAdm || estado.euSouAdm || p.feito)
+    .map((p) => ({ ...p, aoTocar: () => ir(p.destino) }))
   const feitos = passos.filter((p) => p.feito).length
   if (feitos === passos.length) return null
   const proximo = passos.find((p) => !p.feito)

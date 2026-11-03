@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Platform } from 'react-native'
 import * as Haptics from 'expo-haptics'
-import {
+import { cssInterop } from 'nativewind'
+import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -31,6 +32,11 @@ export const CASCATA_MS = 40
 export const SUBIDA_PX = 12
 
 export { useReducedMotion }
+
+// Deixa usar className (Tailwind) nos componentes animados, como nos normais
+cssInterop(Animated.View, { className: 'style' })
+cssInterop(Animated.Text, { className: 'style' })
+cssInterop(Animated.ScrollView, { className: 'style', contentContainerClassName: 'contentContainerStyle' })
 
 // Estilo de entrada em cascata. Ex.: <Animated.View style={useCascata(2)}>…
 export function useCascata(indice: number) {

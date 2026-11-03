@@ -1,216 +1,147 @@
-import { useState } from 'react'
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { StatusBar } from '../../../../src/ui/StatusBar'
-import { LinearGradient } from 'expo-linear-gradient'
-import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
+import { useCallback, useState } from 'react'
+import { Text, View } from 'react-native'
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
+import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BedDouble, Car, Compass, FileCheck, FileText, Image as ImageIcon, MapPin, Plus, ReceiptText, Route, Settings, Share2, Sparkles, Sun } from '../../../../src/ui/icones'
-import { buscarGastos, buscarTrajetos, buscarViagemComDetalhes, formatarDinheiro } from '@together/core'
+import { StatusBar } from '../../../../src/ui/StatusBar'
+import { Share2 } from '../../../../src/ui/icones'
+import { carregarAbaViagem } from '../../../../src/dados/abaViagem'
 import { resumoDasContas } from '../../../../src/dados/contas'
 import { useCarregar } from '../../../../src/dados/useCarregar'
+import { useCapas } from '../../../../src/dados/useCapas'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { convidarProComboio } from '../../../../src/lib/convite'
-import { hojeIso, periodo } from '../../../../src/lib/formato'
-import { supabase } from '../../../../src/lib/supabase'
-import { useCapas } from '../../../../src/dados/useCapas'
-import { Avisos } from '../../../../src/ui/Avisos'
-import { PassosDaViagem } from '../../../../src/ui/PassosDaViagem'
-import { Tarefas } from '../../../../src/ui/Tarefas'
-import { Enquetes } from '../../../../src/ui/Enquetes'
-import { PontoDeEncontro } from '../../../../src/ui/PontoDeEncontro'
-import { AgendaDeHoje } from '../../../../src/ui/AgendaDeHoje'
-import { Clima } from '../../../../src/ui/Clima'
-import { Novidades } from '../../../../src/ui/Novidades'
-import { GuiaDaCasa } from '../../../../src/ui/GuiaDaCasa'
-import { Cofre } from '../../../../src/ui/Cofre'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado, PilhaDeAvatares } from '../../../../src/ui/pecas'
+import { compartilharTexto, linkDaViagem } from '../../../../src/lib/compartilhar'
+import { diasAte, periodo } from '../../../../src/lib/formato'
+import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '../../../../src/ui/PassosDaViagem'
+import { Passaporte } from '../../../../src/ui/viagem/Passaporte'
+import { ProximoCarimbo } from '../../../../src/ui/viagem/ProximoCarimbo'
+import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
+import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
+import { Comemoracao } from '../../../../src/ui/Comemoracao'
+import { Selo } from '../../../../src/ui/Selos'
+import { ErroNaTela } from '../../../../src/ui/pecas'
 import { cor } from '../../../../theme'
 
-// Detalhe da viagem (tela "1g" do design): capa, comboio, atalhos e resumo dos gastos.
-export default function DetalheDaViagem() {
+// Aba Viagem (spec 117): muda com a fase. Antes da viagem: capa, comboio, próximo carimbo,
+// passaporte e o resumo do roteiro, das contas e da papelada. Nada além disso.
+export default function AbaViagem() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { meuId, escolher } = useViagemAtual()
+  const { meuId } = useViagemAtual()
   const [convite, setConvite] = useState<string | null>(null)
+  const [carimbo, setCarimbo] = useState<Passo | null>(null)
   const capa = useCapas(id ? [id] : [])
+  const rolagem = useSharedValue(0)
+  const aoRolar = useAnimatedScrollHandler((e) => {
+    rolagem.value = e.contentOffset.y
+  })
 
-  const carga = useCarregar(async () => {
-    const [viagem, gastos, trajetos, fotos, lugares, hospedagens] = await Promise.all([
-      buscarViagemComDetalhes(supabase, id),
-      buscarGastos(supabase, id),
-      buscarTrajetos(supabase, id),
-      supabase.from('fotos').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
-      supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
-      supabase.from('hospedagens').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
-    ])
-    return { viagem, gastos, trajetos, fotos: fotos.count ?? 0, lugares: lugares.count ?? 0, hospedagens: hospedagens.count ?? 0 }
-  }, [id])
+  const carga = useCarregar(() => carregarAbaViagem(id), [id])
+  // Volta de outra tela (votou, lançou gasto, pôs datas): busca de novo pra o carimbo cair
+  const { recarregar } = carga
+  const [primeiraVez, setPrimeiraVez] = useState(true)
+  useFocusEffect(
+    useCallback(() => {
+      if (primeiraVez) setPrimeiraVez(false)
+      else recarregar()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [recarregar]),
+  )
 
-  if (carga.status === 'carregando') return <Carregando />
-  if (carga.status === 'erro' || !carga.dados.viagem) return <ErroNaTela aoTentar={carga.recarregar} />
-  const { viagem, gastos, trajetos, fotos, lugares, hospedagens } = carga.dados
-  const comecou = !!viagem.dataInicio && viagem.dataInicio <= hojeIso()
-  const contas = resumoDasContas(gastos, viagem.moeda)
-  const meuSaldo = contas.saldos.get(meuId) ?? 0
+  if (carga.status === 'carregando') return <EsqueletoDaViagem />
+  if (carga.status === 'erro' || !carga.dados) return <ErroNaTela aoTentar={carga.recarregar} />
+  const d = carga.dados
+  const { viagem } = d
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
-
-  // Os atalhos abrem as abas já nesta viagem
-  // Roteiro, Contas e Fotos agora são abas desta viagem (spec 117)
-  const ABAS = ['/roteiro', '/contas', '/fotos']
-  const ir = (rota: Href) => {
-    escolher(viagem.id)
-    if (ABAS.includes(rota as string)) router.navigate(`/viagem/${viagem.id}${rota as string}` as Href)
-    else router.push(rota)
+  const contas = resumoDasContas(d.gastos, viagem.moeda)
+  const estado = {
+    lugares: d.lugares,
+    pessoas: viagem.membros.length,
+    temDatas: !!viagem.dataInicio,
+    // O carimbo "Dormir" só cai quando o lugar foi escolhido (a decisão foi resolvida)
+    hospedagens: d.opcoes.some((o) => o.escolhida) ? 1 : 0,
+    trajetos: d.trajetos.length,
+    gastos: d.gastos.length,
+    euSouAdm,
   }
+  const passos = montarPassos(estado)
+  const proximo = proximoCarimbo(estado)
+  const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
+  const linha = [periodo(viagem.dataInicio, viagem.dataFim), faltam != null && faltam > 0 ? `faltam ${faltam} ${faltam === 1 ? 'dia' : 'dias'}` : null].filter(Boolean).join(' · ') || 'Sem data ainda'
 
-  const atalhos = [
-    { Icone: Compass, t: 'Explorar', s: 'Deslize e monte o roteiro', rota: '/explorar' as Href }, // specs 114 e 115
-    { Icone: Sun, t: 'Hoje', s: 'Agora e próximo', rota: '/hoje' as Href },
-    { Icone: Route, t: 'Roteiro', s: `${viagem.destinos.length} ${viagem.destinos.length === 1 ? 'destino' : 'destinos'}`, rota: '/roteiro' as Href },
-    { Icone: Car, t: 'Transporte', s: trajetos.length ? `${trajetos.length} ${trajetos.length === 1 ? 'trajeto' : 'trajetos'}` : 'Nada ainda', rota: '/transportes' as Href },
-    { Icone: BedDouble, t: 'Hospedagem', s: 'Opções e votos', rota: '/hospedagem' as Href },
-    { Icone: MapPin, t: 'Lugares', s: lugares ? `${lugares} ${lugares === 1 ? 'ideia' : 'ideias'}` : 'Nada ainda', rota: '/lugares' as Href },
-    { Icone: ReceiptText, t: 'Contas', s: `${contas.quantidade} ${contas.quantidade === 1 ? 'gasto' : 'gastos'}`, rota: '/contas' as Href },
-    { Icone: ImageIcon, t: 'Fotos', s: `${fotos} ${fotos === 1 ? 'foto' : 'fotos'}`, rota: '/fotos' as Href },
-    { Icone: FileCheck, t: 'Documentos', s: 'Visto e passaporte', rota: '/documentos' as Href },
-    { Icone: Sparkles, t: 'Retrospectiva', s: 'A viagem em números', rota: '/retrospectiva' as Href },
-    { Icone: FileText, t: 'PDF', s: 'Roteiro e livro', rota: '/pdf-da-viagem' as Href },
-  ]
+  const ir = (rota: string) => router.push((['roteiro', 'contas', 'fotos'].includes(rota) ? `/viagem/${id}/${rota}` : `/${rota}`) as Href)
+  const irProPasso = (destino: DestinoDoPasso) => (destino === 'convidar' ? void convidar() : ir(destino === 'explorar' ? `explorar` : destino))
 
   async function convidar() {
-    setConvite((await convidarProComboio(viagem!.id, viagem!.nome))?.texto ?? null)
+    setConvite((await convidarProComboio(viagem.id, viagem.nome))?.texto ?? null)
   }
 
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="light" />
-      <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}>
-        <View className="h-[350px] bg-couro">
-          <ImageBackground source={capa(viagem.id)} resizeMode="cover" style={StyleSheet.absoluteFill}>
-            <LinearGradient
-              colors={['rgba(74,46,20,0.35)', 'rgba(74,46,20,0)', 'rgba(185,122,34,0.4)', '#4A2E14']}
-              locations={[0, 0.3, 0.6, 1]}
-              style={StyleSheet.absoluteFill}
-            />
-          </ImageBackground>
-          <View className="absolute bottom-7 left-6 right-6">
-            <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">
-              {[periodo(viagem.dataInicio, viagem.dataFim), viagem.destinos[0]].filter(Boolean).join(' · ')}
-            </Text>
-            <Text className="mt-2 font-display text-[38px] leading-[40px] text-white">{viagem.nome}</Text>
-          </View>
-          {/* Botões sobre a capa: rolam junto com ela, então não cobrem os cartões brancos */}
-          <View className="absolute left-5 right-5 flex-row justify-between" style={{ top: insets.top + 8 }}>
-            <BotaoRedondo claro aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
-              <ArrowLeft size={20} color={cor.texto} />
-            </BotaoRedondo>
-            <View className="flex-row gap-2.5">
-              {/* Spec 008: nome, datas, moeda e permissões (só o ADM) */}
-              {euSouAdm ? (
-                <BotaoRedondo claro aoTocar={() => ir('/configuracoes' as Href)}>
-                  <Settings size={20} color={cor.texto} />
-                </BotaoRedondo>
-              ) : null}
-              <BotaoRedondo claro aoTocar={convidar}>
-                <Share2 size={20} color={cor.texto} />
-              </BotaoRedondo>
-            </View>
-          </View>
-        </View>
+      <Animated.ScrollView onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+        <Capa foto={capa(viagem.id)} nome={viagem.nome} linha={linha} rolagem={rolagem} />
 
-        <View className="gap-4 px-5 pt-5">
-          <View className="flex-row items-center justify-between">
-            {/* Spec 007: tocar no comboio abre quem vai, papéis e sair */}
-            <Pressable onPress={() => ir('/comboio' as Href)} accessibilityLabel="Ver o comboio" className="active:opacity-80">
-              <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={36} />
-            </Pressable>
-            <Pressable onPress={convidar} className="h-10 flex-row items-center gap-1.5 rounded-xl border border-tracejado px-3.5 active:opacity-80">
-              <Plus size={18} color={cor.couro} />
-              <Text className="font-body-semibold text-[14px] text-couro">Convidar</Text>
-            </Pressable>
-          </View>
-          {convite ? <Text selectable className="font-body-medium text-[13px] text-verde">{convite}</Text> : null}
+        <View className="gap-6 bg-fundo px-5 pt-5">
+          <Secao indice={0}>
+            <Rostos membros={viagem.membros} atividades={d.atividades} vistoEm={d.vistoEm} meuId={meuId} aoTocar={() => ir('comboio')} aoConvidar={convidar} />
+            {convite ? <Text selectable className="mt-2 font-body-medium text-[13px] text-verde">{convite}</Text> : null}
+          </Secao>
 
-          {/* Spec 116: o que falta pra montar a viagem (some quando a viagem começa) */}
-          {!comecou ? (
-            <PassosDaViagem
-              estado={{ lugares, pessoas: viagem.membros.length, temDatas: !!viagem.dataInicio, hospedagens, trajetos: trajetos.length, gastos: gastos.length, euSouAdm }}
-              ir={(chave) => (chave === 'convidar' ? void convidar() : ir(`/${chave}` as Href))}
-            />
+          {proximo ? (
+            <Secao indice={1}>
+              <ProximoCarimbo
+                passo={proximo}
+                viagem={viagem}
+                opcoes={d.opcoes}
+                meuId={meuId}
+                aoAbrir={() => irProPasso(proximo.destino)}
+                aoMudar={carga.recarregar}
+              />
+            </Secao>
           ) : null}
 
-          {/* Spec 019: recados do ADM fixados no topo da viagem */}
-          <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />
+          <Secao indice={2}>
+            <Passaporte viagemId={viagem.id} passos={passos} aoCarimbar={setCarimbo} />
+          </Secao>
 
-          {/* Spec 031: o que mudou desde a última vez */}
-          <Novidades viagemId={viagem.id} meuId={meuId} membros={viagem.membros} />
+          <Secao indice={3} titulo="Roteiro" direita={d.dias.length ? <Text className="font-body-bold text-[13px] text-caramelo">{d.dias.length} {d.dias.length === 1 ? 'dia' : 'dias'}</Text> : null}>
+            <CarrosselDoRoteiro dias={d.dias} aoAbrir={() => ir('roteiro')} aoMontar={() => ir('explorar')} />
+          </Secao>
 
-          <View className="flex-row flex-wrap gap-2.5">
-            {atalhos.map(({ Icone, t, s, rota }) => (
-              <Pressable key={t} onPress={() => ir(rota)} className="gap-3 rounded-2xl bg-cartao p-4 active:opacity-90" style={{ width: '48.5%', boxShadow: '0 4px 14px rgba(74,46,20,0.06)' }}>
-                <IconeQuadrado>
-                  <Icone size={22} color={cor.couro} />
-                </IconeQuadrado>
-                <View>
-                  <Text className="font-body-bold text-[15px] text-texto">{t}</Text>
-                  <Text className="mt-0.5 font-body text-[13px] text-suave">{s}</Text>
-                </View>
-              </Pressable>
-            ))}
-          </View>
+          <Secao indice={4} titulo="Contas">
+            <ResumoDasContas total={contas.total} meuSaldo={contas.saldos.get(meuId) ?? 0} moeda={viagem.moeda} aoAbrir={() => ir('contas')} />
+          </Secao>
 
-          <Pressable onPress={() => ir('/contas')}>
-            <Cartao className="p-6">
-              <View className="flex-row items-baseline justify-between">
-                <Text className="font-body-semibold text-[13px] text-suave">Gastos do grupo</Text>
-                {meuSaldo !== 0 ? (
-                  <Text className={`font-body-bold text-[13px] ${meuSaldo > 0 ? 'text-verde' : 'text-vermelho'}`}>
-                    {meuSaldo > 0 ? 'Você recebe' : 'Você deve'} {formatarDinheiro(Math.abs(meuSaldo), viagem.moeda)}
-                  </Text>
-                ) : null}
-              </View>
-              <Text className="mb-4 mt-1.5 font-display text-[32px] text-texto">{formatarDinheiro(contas.total, viagem.moeda)}</Text>
-              {contas.total > 0 ? (
-                <>
-                  <View className="h-2.5 flex-row gap-0.5 overflow-hidden rounded-[5px]">
-                    {contas.porCategoria.map((c) => (
-                      <View key={c.chave} style={{ flex: c.valor, backgroundColor: c.cor }} />
-                    ))}
-                  </View>
-                  <View className="mt-3.5 flex-row flex-wrap gap-y-2">
-                    {contas.porCategoria.map((c) => (
-                      <View key={c.chave} className="w-1/2 flex-row items-center gap-2">
-                        <View className="h-2 w-2 rounded-sm" style={{ backgroundColor: c.cor }} />
-                        <Text className="font-body text-[13px] text-corpo">{c.nome}</Text>
-                      </View>
-                    ))}
-                  </View>
-                </>
-              ) : (
-                <Text className="font-body text-[13px] text-corpo">Nenhum gasto lançado ainda.</Text>
-              )}
-            </Cartao>
-          </Pressable>
-
-          {/* Spec 029 e 022: agenda do dia e tempo (paridade com o site) */}
-          <AgendaDeHoje viagemId={viagem.id} inicio={viagem.dataInicio} fim={viagem.dataFim} />
-          <Clima viagemId={viagem.id} />
-          {/* Spec 026: guia da casa de onde dormimos */}
-          <GuiaDaCasa viagemId={viagem.id} />
-          {/* Spec 028: cofre (reservas, ingressos, bilhetes) */}
-          <Cofre viagemId={viagem.id} />
-
-          {/* Spec 020: tarefas com responsável */}
-          <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
-
-          {/* Spec 021: enquetes rápidas */}
-          <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
-
-          {/* Roadmap #7: ponto de encontro */}
-          <PontoDeEncontro viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
+          <Secao indice={5} titulo="Antes de embarcar">
+            <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />
+          </Secao>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
+
+      <Cabecalho
+        nome={viagem.nome}
+        rolagem={rolagem}
+        aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+        aoCompartilhar={convidar}
+        aoMais={() => ir('tudo-da-viagem')}
+      />
+
+      {/* Carimbo novo (tela 7): a Norti comemora o marco */}
+      <Comemoracao
+        visivel={!!carimbo}
+        acima={`Carimbo ${passos.filter((p) => p.feito).length} de ${passos.length}`}
+        titulo={carimbo ? `${carimbo.titulo}: resolvido!` : ''}
+        desenho={carimbo ? <Selo nome={carimbo.selo} tamanho={96} tom="escuro" /> : null}
+        texto={!proximo ? 'Passaporte completo. Boa viagem!' : `${passos.filter((p) => !p.feito).length === 1 ? 'Falta só' : 'Próximo:'} ${proximo.titulo.toLowerCase()}.`}
+        botoes={[
+          { titulo: 'Contar pro comboio', icone: <Share2 size={18} color={cor.escuro} />, principal: true, aoTocar: () => void compartilharTexto(`Carimbo novo em ${viagem.nome}: ${carimbo?.titulo.toLowerCase()} resolvido! ${linkDaViagem(viagem.id)}`).finally(() => setCarimbo(null)) },
+          { titulo: 'Continuar', aoTocar: () => setCarimbo(null) },
+        ]}
+        aoFechar={() => setCarimbo(null)}
+      />
     </View>
   )
 }

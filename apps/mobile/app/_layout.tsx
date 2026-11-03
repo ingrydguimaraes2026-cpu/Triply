@@ -1,4 +1,6 @@
 import '../global.css'
+// className nos componentes animados (registra antes de qualquer tela)
+import '../src/ui/movimento'
 import { useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import { Stack, useRouter, useSegments } from 'expo-router'
