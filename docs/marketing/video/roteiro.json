@@ -1,0 +1,37 @@
+{
+  "voz": "en-US-AndrewMultilingualNeural",
+  "velocidade": "+4%",
+  "nota": "Narração em inglês com voz masculina, no estilo do vídeo do HPM (Humana). Os títulos na tela ficam em português e servem de legenda pro público do Brasil.",
+  "cenas": [
+    {
+      "id": "gancho",
+      "fala": "Planning a trip with friends? The group chat turns into chaos.",
+      "texto": "Viagem com a galera vira bagunça?",
+      "norti": "oops"
+    },
+    {
+      "id": "explorar",
+      "fala": "With Tripwave, everyone swipes the places they want. When the whole crew wants the same spot, it's a match.",
+      "texto": "Deslizou, deu match",
+      "gravacao": "explorar"
+    },
+    {
+      "id": "contas",
+      "fala": "Paid for dinner? Just type it, and Tripwave splits it for everyone.",
+      "texto": "\"jantar 84\" e pronto",
+      "gravacao": "contas"
+    },
+    {
+      "id": "carimbo",
+      "fala": "Every step you lock in earns a stamp on your crew's passport.",
+      "texto": "Passaporte do comboio",
+      "gravacao": "carimbo"
+    },
+    {
+      "id": "fim",
+      "fala": "This is Tripwave. Grab your crew and go.",
+      "texto": "Chama a galera e vai junto",
+      "norti": "celebrate"
+    }
+  ]
+}

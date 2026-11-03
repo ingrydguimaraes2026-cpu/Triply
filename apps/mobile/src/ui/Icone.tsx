@@ -1,5 +1,5 @@
 import { memo, useMemo, type ComponentType } from 'react'
-import type { StyleProp, ViewStyle } from 'react-native'
+import { Platform, type StyleProp, type ViewStyle } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 import { svgDoIcone, svgDoSelo, type NomeDoIcone, type NomeDoSelo } from '@together/core'
 import { cor as paleta } from '../../theme'
@@ -35,9 +35,15 @@ function desenhar(nome: NomeDoIcone, p: PropsDoIcone) {
       width={tamanho}
       height={tamanho}
       style={p.style}
-      {...(p.accessibilityLabel ? { accessible: true, accessibilityLabel: p.accessibilityLabel } : {})}
+      {...rotulo(p.accessibilityLabel)}
     />
   )
+}
+
+// No web o SVG vai direto pro navegador: `accessible` vira atributo inválido (aviso vermelho no modo dev)
+function rotulo(texto?: string): object {
+  if (!texto) return {}
+  return Platform.OS === 'web' ? { role: 'img', 'aria-label': texto } : { accessible: true, accessibilityLabel: texto }
 }
 
 export const Icone = memo(function Icone({ nome, ...p }: PropsDoIcone & { nome: NomeDoIcone }) {
