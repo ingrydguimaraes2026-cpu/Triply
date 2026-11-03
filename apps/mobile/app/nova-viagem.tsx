@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { X } from '../src/ui/icones'
 import { useSessao } from '../src/lib/sessao'
-import { Agulha } from '../src/ui/Agulha'
+import { Norti } from '../src/ui/Norti'
 import { CriarViagemRapida } from '../src/ui/CriarViagemRapida'
 import { Botao, BotaoRedondo } from '../src/ui/pecas'
 import { cor } from '../theme'
@@ -28,7 +28,7 @@ function ConvidadoSemConta() {
         </BotaoRedondo>
       </View>
       <View className="flex-1 items-center justify-center gap-4 px-8">
-        <Agulha tamanho={120} humor="pensando" />
+        <Norti tamanho={120} humor="pensando" />
         <Text className="text-center font-display text-[26px] text-texto">Crie sua conta primeiro</Text>
         <Text className="text-center font-body text-[14px] leading-5 text-corpo">Pra criar uma viagem sua, transforme o acesso de convidado numa conta. Nada do que você já fez se perde.</Text>
         <View className="self-stretch">

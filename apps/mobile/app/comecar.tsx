@@ -23,7 +23,7 @@ import { useViagemAtual } from '../src/dados/viagemAtual'
 import { guardarRascunho, lerRascunho, type RascunhoDaViagem } from '../src/lib/rascunho'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
-import { Agulha, type Humor } from '../src/ui/Agulha'
+import { Norti, type Humor } from '../src/ui/Norti'
 import { Selo, type NomeDoSelo } from '../src/ui/Selos'
 import { CartaoDoExplorar } from '../src/ui/CartaoDoExplorar'
 import { StatusBar } from '../src/ui/StatusBar'
@@ -31,7 +31,7 @@ import { Botao, Campo } from '../src/ui/pecas'
 import { useTamanhoDaTela } from '../src/ui/Moldura'
 import { cor, sombra } from '../theme'
 
-// Começo do app (spec 116 v2): a Agulha conversa com a pessoa, uma pergunta por tela,
+// Começo do app (spec 116 v2): a Norti conversa com a pessoa, uma pergunta por tela,
 // deixa provar o deslize ANTES da conta (padrão WeWard/Headspace) e só pede a conta
 // pra salvar o roteiro. Depois do login, esta mesma tela cria a viagem e abre o roteiro.
 
@@ -194,8 +194,8 @@ export default function Comecar() {
       <View className="flex-1 bg-fundo px-7" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }}>
         <StatusBar style="dark" />
         <View className="flex-1 items-center justify-center gap-4">
-          <Agulha humor="feliz" tamanho={170} />
-          <Text className="mt-2 text-center font-display text-[36px] leading-[40px] text-texto">Oi, eu sou a Agulha</Text>
+          <Norti humor="oi" tamanho={170} />
+          <Text className="mt-2 text-center font-display text-[36px] leading-[40px] text-texto">Oi, eu sou a Norti</Text>
           <Text className="text-center font-body text-[17px] leading-[25px] text-corpo">Em 1 minuto eu monto o roteiro da sua viagem com a galera. Bora?</Text>
         </View>
         <Botao titulo="Bora" aoTocar={() => setEtapa('destino')} />
@@ -212,7 +212,7 @@ export default function Comecar() {
     return (
       <View className="flex-1 items-center justify-center gap-5 bg-fundo px-8">
         <StatusBar style="dark" />
-        <Agulha humor="pensando" tamanho={140} />
+        <Norti humor="pensando" tamanho={140} />
         <Text className="text-center font-display text-[26px] leading-[30px] text-texto">
           {etapa === 'criando' ? 'Montando a sua viagem…' : `Separando os lugares de ${destino?.nome ?? 'lá'}…`}
         </Text>
@@ -326,13 +326,13 @@ export default function Comecar() {
 
 // ---------- Peças da conversa ----------
 
-// A Agulha fala num balão (entra deslizando) e o conteúdo vem embaixo
+// A Norti fala num balão (entra deslizando) e o conteúdo vem embaixo
 function Conversa({ fala, humor = 'parada', children }: { fala: string; humor?: Humor; children: ReactNode }) {
   return (
     <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 14, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
       <View className="mb-5 flex-row items-end gap-1">
         <View className="-ml-2">
-          <Agulha humor={humor} tamanho={78} sombra={false} />
+          <Norti humor={humor} tamanho={78} sombra={false} />
         </View>
         <Bolha texto={fala} grande />
       </View>
@@ -451,7 +451,7 @@ function Deslize({
     <View className="flex-1 px-4 pt-3">
       <View className="mb-3 flex-row items-end gap-1 px-1">
         <View className="-ml-2">
-          <Agulha humor="feliz" tamanho={60} sombra={false} />
+          <Norti humor="feliz" tamanho={60} sombra={false} />
         </View>
         <Bolha texto={posicao === 0 ? 'Curte ou passa? Arrasta pro lado.' : `Mais ${pilha.length - posicao}!`} grande />
       </View>

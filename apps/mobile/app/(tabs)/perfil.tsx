@@ -6,7 +6,7 @@ import { BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../../
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
-import { Agulha } from '../../src/ui/Agulha'
+import { Norti } from '../../src/ui/Norti'
 import { AvisosNoCelular } from '../../src/ui/AvisosNoCelular'
 import { esquecerEsteAparelho } from '../../src/lib/avisos'
 import { Avatar, Cartao, IconeQuadrado, TituloDaTela } from '../../src/ui/pecas'
@@ -45,8 +45,8 @@ export default function Perfil() {
         {sessao ? <AvisosNoCelular meuId={meuId} /> : null}
 
         <View className="items-center gap-2 py-4">
-          <Agulha tamanho={96} />
-          <Text className="text-center font-body text-[14px] text-corpo">A Agulha aponta o caminho da viagem pra vocês.</Text>
+          <Norti tamanho={96} />
+          <Text className="text-center font-body text-[14px] text-corpo">A Norti aponta o caminho da viagem pra vocês.</Text>
         </View>
 
         {ehConvidado ? (

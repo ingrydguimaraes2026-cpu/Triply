@@ -8,7 +8,7 @@ import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, m
 import { useViagemAtual } from '../dados/viagemAtual'
 import { paraIso } from '../lib/formato'
 import { supabase } from '../lib/supabase'
-import { Agulha } from './Agulha'
+import { Norti } from './Norti'
 import { Calendario } from './Calendario'
 import { StatusBar } from './StatusBar'
 import { Botao, BotaoRedondo, Campo } from './pecas'
@@ -246,7 +246,7 @@ function EtapaDestino({
       {primeira ? (
         <View className="mb-2 flex-row items-end gap-3">
           <View className="-ml-2">
-            <Agulha humor="feliz" tamanho={84} sombra={false} />
+            <Norti humor="feliz" tamanho={84} sombra={false} />
           </View>
           <View className="mb-3 flex-1 rounded-2xl rounded-bl-sm bg-cartao px-4 py-3" style={{ boxShadow: '0 4px 14px rgba(74,46,20,0.08)' }}>
             <Text className="font-body-semibold text-[14px] leading-5 text-texto">Oi! Vamos montar a primeira viagem. Leva 1 minuto.</Text>

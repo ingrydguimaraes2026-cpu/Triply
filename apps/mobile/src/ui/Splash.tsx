@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { Animated, Easing, Platform, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Agulha } from './Agulha'
+import { Norti } from './Norti'
 
-// Abertura (tela "1o" do design): a Agulha entra com mola, depois "Tripwave" e
+// Abertura (tela "1o" do design): a Norti entra com mola, depois "Tripwave" e
 // "Viajem juntos.", com três pontinhos pulando embaixo.
 const nativo = Platform.OS !== 'web'
 
@@ -29,7 +29,7 @@ export function Splash() {
     <LinearGradient colors={['#F6E4C6', '#FBF3E6']} start={{ x: 0.5, y: 0.4 }} end={{ x: 0.5, y: 1 }} style={{ flex: 1 }}>
       <View className="flex-1 items-center justify-center gap-[18px] pb-10">
         <Animated.View style={subir(mascote)}>
-          <Agulha tamanho={190} />
+          <Norti tamanho={190} />
         </Animated.View>
         <Animated.Text style={[{ fontFamily: 'Fraunces_600SemiBold', fontSize: 48, letterSpacing: -1, color: '#3B2715' }, subir(nome)]}>
           Tripwave

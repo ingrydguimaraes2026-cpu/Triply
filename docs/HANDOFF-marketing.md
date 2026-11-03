@@ -24,7 +24,7 @@
 
 1. **Dupla registra** tripwave.app e tripwave.com.br, cria `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), busca "Tripwave" no INPI (classes 9, 39, 42).
 2. **Nome da Norti como nome do app?** Em discussão (NOME-E-VOZ.md, rodada 7). Hoje: app Tripwave, mascote Norti.
-3. **Sessão de dev:** aplicar a migration `supabase/migrations/20261102130000_lista_espera.sql`; trocar a Agulha pela Norti no app usando `docs/marketing/norti/app-web` (e `app-ios`).
+3. ~~**Sessão de dev:** migration da lista de espera e troca da Agulha pela Norti~~ ✅ 02/11/2026: tabela no ar e testada; Norti no site (`<mascot-view>`, `apps/web/src/components/ui/Norti.tsx`, poses em `apps/web/public/norti`) e no app (`apps/mobile/src/ui/Norti.tsx`, poses em `apps/mobile/assets/norti`). Falta: ícone do app e splash nativo (ainda com o desenho antigo), e versão nativa com `app-ios` se um dia tiver.
 4. **Ingryd revisa** `CONTEUDO-INICIAL.md` (piadas e bios). Post "em breve" do X só depois que a lista de espera funcionar.
 5. **Personalidade da Norti** com a Ingryd (piadas fixas), antes de gravar a série "tipos de amigo".
 6. Opcional: levar o conteúdo inicial pro caderno na nuvem.

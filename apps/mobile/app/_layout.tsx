@@ -24,7 +24,7 @@ const PUBLICAS = ['boas-vindas', 'login', 'convite', 'comecar']
 // Telas só de quem não está logado: quem já entrou é mandado pro início
 const SO_DESLOGADO = ['boas-vindas', 'login']
 
-// Raiz: carrega as fontes de marca, mostra a abertura com a Agulha, faz o porteiro
+// Raiz: carrega as fontes de marca, mostra a abertura com a Norti, faz o porteiro
 // do login e enquadra o app numa largura de celular no navegador.
 export default function RootLayout() {
   const { sessao, carregando } = useSessao()
@@ -38,7 +38,7 @@ export default function RootLayout() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
   })
-  // Segura a abertura um instante pra animação da Agulha aparecer
+  // Segura a abertura um instante pra animação da Norti aparecer
   const [aberturaVista, setAberturaVista] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setAberturaVista(true), 1400)
@@ -56,7 +56,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!pronto) return
     const tela = segments[0] ?? ''
-    // Spec 116 v2: quem não está logado começa pela conversa com a Agulha
+    // Spec 116 v2: quem não está logado começa pela conversa com a Norti
     if (!sessao && !PUBLICAS.includes(tela)) router.replace('/comecar')
     else if (sessao && SO_DESLOGADO.includes(tela)) {
       const codigo = conviteDepoisDoLogin.codigo

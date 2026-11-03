@@ -20,7 +20,7 @@ import {
   primeiroNome,
 } from "../../src/lib/formato";
 import { supabase } from "../../src/lib/supabase";
-import { Agulha } from "../../src/ui/Agulha";
+import { Norti } from "../../src/ui/Norti";
 import { FeedDaViagem } from "../../src/ui/FeedDaViagem";
 import {
   Avatar,
@@ -130,7 +130,7 @@ function FotosDaViagem({
         {modo === "feed" ? (
           carga.dados.posts.length === 0 ? (
             <View className="mt-16 items-center gap-3 px-6">
-              <Agulha humor="dormindo" tamanho={120} />
+              <Norti humor="dormindo" tamanho={120} />
               <Text className="font-display text-[24px] text-texto">
                 Nenhum post ainda
               </Text>
@@ -190,7 +190,7 @@ function FotosDaViagem({
 
             {fotos.length === 0 ? (
               <View className="mt-16 items-center gap-3 px-6">
-                <Agulha humor="dormindo" tamanho={120} />
+                <Norti humor="dormindo" tamanho={120} />
                 <Text className="font-display text-[24px] text-texto">
                   Nenhuma foto ainda
                 </Text>

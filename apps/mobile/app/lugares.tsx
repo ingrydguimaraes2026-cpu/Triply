@@ -19,7 +19,7 @@ import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
-import { Agulha } from '../src/ui/Agulha'
+import { Norti } from '../src/ui/Norti'
 import { Botao, BotaoRedondo, Campo, Cartao, Carregando, ErroNaTela, IconeQuadrado, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
 
@@ -98,7 +98,7 @@ export default function Lugares() {
 
         {grupos.length === 0 && !novo ? (
           <View className="mt-10 items-center gap-3 px-6">
-            <Agulha humor="dormindo" tamanho={120} />
+            <Norti humor="dormindo" tamanho={120} />
             <Text className="font-display text-[24px] text-texto">Nenhum lugar ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Anote um passeio ou um restaurante e o comboio vota no que topa.</Text>
           </View>

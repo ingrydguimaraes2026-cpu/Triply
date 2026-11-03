@@ -6,7 +6,7 @@ import { Mail, X } from '../src/ui/icones'
 import Svg, { Path } from 'react-native-svg'
 import { ligarGoogle } from '../src/lib/google'
 import { supabase } from '../src/lib/supabase'
-import { Agulha } from '../src/ui/Agulha'
+import { Norti } from '../src/ui/Norti'
 import { Botao, BotaoRedondo, Campo } from '../src/ui/pecas'
 import { StatusBar } from '../src/ui/StatusBar'
 import { cor } from '../theme'
@@ -61,7 +61,7 @@ export default function CriarConta() {
       </View>
       <ScrollView contentContainerStyle={{ padding: 24, gap: 16, paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
         <View className="items-center">
-          <Agulha tamanho={100} />
+          <Norti tamanho={100} />
         </View>
         <Text className="font-display text-[30px] leading-[34px] text-texto">Criar sua conta</Text>
         <Text className="font-body text-[14px] leading-5 text-corpo">Seus gastos, votos e fotos continuam no seu nome. Assim você não perde o acesso se trocar de celular.</Text>

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Link } from '../src/ui/icones'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { convidarProComboio } from '../src/lib/convite'
-import { Agulha } from '../src/ui/Agulha'
+import { Norti } from '../src/ui/Norti'
 import { Selo, type NomeDoSelo } from '../src/ui/Selos'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Botao } from '../src/ui/pecas'
@@ -36,7 +36,7 @@ export default function ChamarGalera() {
       <StatusBar style="light" />
       <View className="flex-1 justify-center gap-4">
         <View className="-ml-1.5">
-          <Agulha humor="feliz" tamanho={120} />
+          <Norti humor="feliz" tamanho={120} />
         </View>
         <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">Roteiro de {viagem?.nome ?? 'viagem'} montado</Text>
         <Text className="font-display text-[40px] leading-[43px] text-fundo">Agora, chame a galera</Text>
