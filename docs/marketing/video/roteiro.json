@@ -1,30 +1,36 @@
 {
   "voz": "en-US-AndrewMultilingualNeural",
   "velocidade": "+4%",
-  "nota": "Narração em inglês com voz masculina, no estilo do vídeo do HPM (Humana). Os títulos na tela ficam em português e servem de legenda pro público do Brasil.",
+  "nota": "Narração em inglês com voz masculina, no estilo do vídeo do HPM (Humana). Os títulos na tela ficam em português e servem de legenda pro público do Brasil. As cenas do app são gravadas no modo demonstração (demo/).",
   "cenas": [
     {
       "id": "gancho",
       "fala": "Planning a trip with friends? The group chat turns into chaos.",
-      "texto": "Viagem com a galera vira bagunça?",
+      "texto": "Viagem com a galera vira *bagunça*?",
       "norti": "oops"
     },
     {
       "id": "explorar",
-      "fala": "With Tripwave, everyone swipes the places they want. When the whole crew wants the same spot, it's a match.",
-      "texto": "Deslizou, deu match",
+      "fala": "With Tripwave, everyone swipes the places they want. When the crew agrees, it's a match.",
+      "texto": "Deslizou, deu *match*",
       "gravacao": "explorar"
     },
     {
+      "id": "duelo",
+      "fala": "Can't decide where to stay? Everyone votes, and nobody gets left out.",
+      "texto": "Onde dormir? *Vota* aí",
+      "gravacao": "duelo"
+    },
+    {
       "id": "contas",
-      "fala": "Paid for dinner? Just type it, and Tripwave splits it for everyone.",
-      "texto": "\"jantar 84\" e pronto",
+      "fala": "Paid for dinner? Just type it. Tripwave splits it and shows who owes who.",
+      "texto": "\"jantar 84\" e *pronto*",
       "gravacao": "contas"
     },
     {
       "id": "carimbo",
       "fala": "Every step you lock in earns a stamp on your crew's passport.",
-      "texto": "Passaporte do comboio",
+      "texto": "Cada passo vira *carimbo*",
       "gravacao": "carimbo"
     },
     {

@@ -17,32 +17,28 @@ Precisa de um comboio com várias pessoas e conteúdo bonito (dá pra copiar da 
   - Também põe uma sessão falsa no `localStorage` antes do app abrir. Ela não vale em lugar nenhum, porque nenhuma chamada sai do PC.
   - Resultado: nada vai pro banco, e a gente controla cada cena.
 
-## Pronto
-- `roteiro.json`: 5 cenas (gancho, explorar, contas, carimbo, fim), cada uma com a fala em inglês e o título em pt-BR.
-- `narrar.py`: gera `audio/<cena>.mp3` e `audio/duracoes.json`. Já rodado: cerca de 21 s de fala.
-- `montar.mjs`: monta `saida/projeto/index.html` e renderiza `saida/tripwave-app.mp4`.
-  - Inclui: iPhone desenhado (moldura, ilha, barra das 9:41), mensagens do grupo pipocando com a Norti assustada no gancho, o celular entrando e saindo, a Norti apontando, e no fim a marca com confete e a Norti comemorando.
-  - Usa as fontes do app (Fraunces, Plus Jakarta Sans) e as Nortis de `docs/marketing/norti/recorte/`.
-  - **Ainda não foi renderizado** (falta a gravação).
-- `gravar.mjs`: grava as cenas com Playwright (390x844, DPR 2) em `gravacoes/<cena>.webm` + `gravacoes/marcas.json` (o segundo em que a ação começa).
-  - Usa a viagem "Lisboa" e um perfil logado: o modo `entrar` foi **abandonado** e deve ser trocado pelo modo demonstração.
-- `node_modules` instalado na pasta (npm, fora do pnpm). O Chromium do Playwright 1.64 também.
-- Conserto no app: `apps/mobile/src/ui/Icone.tsx` não passa mais `accessible` pro SVG no web. Era o aviso vermelho do modo dev que ia aparecer na gravação.
+## Pronto (03/11)
+- **Modo demonstração** em `demo/`:
+  - `servidor.mjs` responde ao Supabase com sessão falsa e filtros/ordem simples do PostgREST. Escritas viram "ok" sem guardar.
+  - `dados.mjs` tem a "Eurotrip" de mentira: 4 pessoas (Você, Ana Clara, Juliana, Beto), Paris/Nice/Roma, catálogo de Paris e Roma com fotos da Wikimedia, quem quer o quê, roteiro de Roma, 2 hospedagens em Paris (duelo), 3 gastos, saldo do euro.
+  - `salvar_gasto` guarda na memória, então o "jantar 84" entra na conversa.
+  - `descobrir.mjs` lista o que o app pede e tira print (rodar com `MSYS_NO_PATHCONV=1` no Git Bash).
+- `gravar.mjs` grava 4 cenas (`explorar` com "Deu match", `duelo`, `contas`, `carimbo`) em `gravacoes/` + `marcas.json`.
+- `roteiro.json` + `narrar.py`: 6 falas em inglês (`en-US-AndrewMultilingualNeural`) e títulos em pt-BR.
+- `montar.mjs` monta e renderiza `saida/tripwave-app.mp4` (cerca de 29 s, 1080x1920).
+  - O Playwright grava 390x844 no canto de um quadro maior: o ffmpeg recorta e amplia.
+  - `npx hyperframes lint saida/projeto` deve dar 0 erros. As falas precisam de `id`, senão o vídeo sai mudo.
+- `apps/mobile/src/ui/Icone.tsx`: sem o aviso `accessible` no web.
 
-## Próximo passo exato
-1. Ler o conteúdo da Eurotrip (`f5763559-f032-4ed3-9195-fd84b11088b4`) com SQL só de leitura: destinos, lugares, catálogo com foto, roteiros, gastos, hospedagens.
-   - Montar fixtures em `docs/marketing/video/demo/`: comboio de 4 (Você, Ana, Ju, Beto), viagem com datas futuras, 2 hospedagens votadas (duelo), lugares com "quero" de 2 pessoas (o swipe fecha o match → "Deu match!"), gastos variados.
-2. Em `gravar.mjs`, trocar o perfil logado por:
-   - `context.route('https://ltygqabtdbphtjscvuit.supabase.co/**', responder)`;
-   - `addInitScript` com a sessão falsa (chave `sb-ltygqabtdbphtjscvuit-auth-token`).
-   - Primeiro logar as URLs pedidas (responder `[]` por padrão) e ir preenchendo as que as cenas usam: auth/user, viagens + membros, `carregarAbaViagem`, `rpc/matches_da_viagem`, explorar, gastos, cotação.
-   - As fotos do catálogo (Wikimedia) podem continuar vindo da internet.
-3. Cenas novas pro roteiro: "Deu match no comboio" (o swipe que fecha o match) e o duelo de hospedagem com a barra enchendo. Ajustar as falas e rodar `python narrar.py`.
-4. `node gravar.mjs` → `node montar.mjs` → assistir `saida/tripwave-app.mp4` (conferir com `npx hyperframes snapshot` ou quadros com ffmpeg).
-5. Opcional: música de fundo livre de direitos, baixinha, como no vídeo do HPM.
+## Refazer o vídeo
+```bash
+cd docs/marketing/video
+node gravar.mjs          # com o Expo web no ar na porta 8089
+python narrar.py         # se mudou alguma fala
+node montar.mjs
+```
 
-## Cuidados
-- O servidor Expo web tem que estar no ar na porta 8089 (`preview_start` "mobile" ou `npx expo start --web --port 8089` em `apps/mobile`).
-- Não gravar com a conta de ninguém e não escrever no banco.
-- `gravacoes/`, `audio/`, `saida/` e `node_modules/` estão no `.gitignore` da pasta.
-- Exportar `HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_SKIP_SKILLS=1` ao usar o CLI do HyperFrames.
+## Ideias pra próxima versão
+- Música de fundo livre de direitos, baixinha (o vídeo do HPM tem).
+- Outra cena: Matches no Roteiro, Lembranças, Fotos.
+- Versão em pt-BR da narração (`pt-BR-ThalitaMultilingualNeural`) pra testar contra a de inglês.

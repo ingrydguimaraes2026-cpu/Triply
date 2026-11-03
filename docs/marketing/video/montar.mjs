@@ -47,7 +47,7 @@ for (const c of cenas) await copyFile(`audio/${c.id}.mp3`, path.join(PROJETO, `a
 for (const c of comCelular) {
   execFileSync('ffmpeg', [
     '-y', '-v', 'error', '-ss', String(marcas[c.gravacao].inicio), '-i', `gravacoes/${c.gravacao}.webm`,
-    '-vf', `tpad=stop_mode=clone:stop_duration=${Math.ceil(c.dur) + 1},fps=30`, '-t', String(c.dur + 0.5),
+    '-vf', `crop=390:844:0:0,scale=1200:-2:flags=lanczos,tpad=stop_mode=clone:stop_duration=${Math.ceil(c.dur) + 1},fps=30`, '-t', String(c.dur + 0.5),
     '-an', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '16', path.join(PROJETO, `assets/${c.gravacao}.mp4`),
   ])
 }
@@ -107,7 +107,7 @@ const html = `<!doctype html>
   <img id="norti-oops" class="norti clip" src="assets/norti-oops.png" data-start="0" data-duration="${cenas[0].dur}" style="width:440px; left:${(W - 440) / 2}px; top:1420px" />
 
   <!-- O app no iPhone -->
-  <div id="celular" class="clip" data-start="${celularDe - 0.4}" data-duration="${celularAte - celularDe + 0.9}">
+  <div id="celular">
     <div id="tela">
       <div id="ilha"></div>
       <div id="barra"><span>9:41</span><span class="bateria"><i></i></span></div>
@@ -124,7 +124,7 @@ const html = `<!doctype html>
   ${Array.from({ length: 28 }, (_, i) => `<div class="confete clip" data-start="${c.inicio}" data-duration="${c.dur}" style="left:${(i * 37 + 13) % W}px; background:${['#E3A04A', '#B97A22', '#7B542F', '#F5E9D6', '#C9492A'][i % 5]}"></div>`).join('\n  ')}`).join('')}
 
   <!-- Narração -->
-  ${cenas.map((c) => `<audio class="clip" src="assets/${c.id}.mp3" data-start="${c.inicio + 0.15}" data-duration="${duracoes[c.id]}"></audio>`).join('\n  ')}
+  ${cenas.map((c) => `<audio id="fala-${c.id}" class="clip" src="assets/${c.id}.mp3" data-start="${c.inicio + 0.15}" data-duration="${duracoes[c.id]}"></audio>`).join('\n  ')}
 </div>
 <script>
   const tl = gsap.timeline({ paused: true });
@@ -143,7 +143,8 @@ const html = `<!doctype html>
   tl.to('#norti-oops', { y: -18, duration: 0.18, yoyo: true, repeat: 5, ease: 'sine.inOut' }, 1.4);
   tl.to(['#bolha-0', '#bolha-1', '#bolha-2', '#bolha-3', '#bolha-4', '#norti-oops'], { opacity: 0, scale: 0.8, duration: 0.3, stagger: 0.03 }, ${cenas[0].dur - 0.35});
 
-  // O iPhone entra por baixo, inclina de leve e sai no fim
+  // O iPhone entra por baixo, inclina de leve e sai no fim (fora disso fica escondido abaixo da tela)
+  tl.set('#celular', { y: ${H} }, 0);
   tl.fromTo('#celular', { y: ${H}, rotation: 4 }, { y: 0, rotation: 0, duration: 0.75, ease: 'power3.out' }, ${celularDe - 0.4});
   for (const c of cenas.slice(2)) {
     if (c.id === 'fim') break;
