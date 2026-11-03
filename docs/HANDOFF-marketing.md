@@ -31,10 +31,10 @@
 ## Pendente
 
 0. **03/11/2026: S1 reprovado pelo Victor. Calendário de 09/11 pausado.** O porquê está em `docs/marketing/ANALISE-E-PROXIMOS-PASSOS.md`.
-   - ✅ **Benchmark dos grupos A, B e C feito** (03/11): `docs/marketing/benchmark/` tem `posts.csv` (78 posts, TikTok e YouTube Shorts), `PADROES.md` (4 padrões + 1 anti-padrão, o que muda no calendário e **3 rascunhos de formato: F1 "E o pix, [NOME]?", F2 "O amigo que...", F3 "Expectativa x 3º dia"**) e `index.html` (prints + rascunhos com a Norti; abrir com duplo clique).
+   - ✅ **Benchmark dos grupos A, B e C feito** (03/11): `docs/marketing/benchmark/` tem `posts.csv` (108 posts: TikTok, YouTube Shorts e X), `PADROES.md` (4 padrões + 1 anti-padrão, o que muda no calendário e **3 rascunhos de formato: F1 "E o pix, [NOME]?", F2 "O amigo que...", F3 "Expectativa x 3º dia"**) e `index.html` (prints + rascunhos com a Norti; abrir com duplo clique).
    - Resumo: post que mostra o app tem mediana de 3,5 mil views, contra 220 mil a 1,2 mi dos padrões de humor. Pix é o tema que mais gera compartilhamento. Na Meta, ninguém anuncia "dividir gastos" no Brasil.
    - **Próximo passo:** Victor e Ingryd escolhem entre F1, F2 e F3 → refazer o calendário e o modelo do gerador de slides (frase gigante + Norti grande, sem tela do app).
-   - **Falta o grupo D (X):** o X pede login. O Victor manda os ~30 links (os 5 posts mais engajados de cada perfil da bolha dev) ou autoriza ler com o Claude no Chrome, só lendo. As linhas entram na mesma `posts.csv` com `grupo = D`.
+   - ✅ **Grupo D (X) feito** (03/11): 30 posts da bolha dev na mesma `posts.csv` e 4 padrões no fim do `PADROES.md` (processo copiável, número real, puxar conversa, surfar o assunto do dia). Lido com a conta do Victor no navegador do app, só leitura. Ideia pronta pro 1º post do X: o próprio resultado do benchmark.
    - **Atenção:** o navegador do app do Claude está **logado numa conta do TikTok**. O benchmark só leu páginas, mas confira de quem é a conta e saia dela se for a pessoal.
 
 1. **Dupla registra** tripwave.app e tripwave.com.br, cria `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), busca "Tripwave" no INPI (classes 9, 39, 42).

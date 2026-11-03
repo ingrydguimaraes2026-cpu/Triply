@@ -1,6 +1,6 @@
 # Benchmark: o que roda em "viagem com amigos" (TikTok e Shorts)
 
-*03/11/2026. 78 posts na `posts.csv` (72 do TikTok, 6 do YouTube Shorts), mais a busca na Biblioteca de Anúncios da Meta. Os prints estão em `index.html` (abrir com duplo clique). O grupo D (X) ainda está pendente: veja o fim do arquivo.*
+*03/11/2026. 108 posts na `posts.csv`: 72 do TikTok, 6 do YouTube Shorts e 30 do X (grupo D, no fim do arquivo), mais a busca na Biblioteca de Anúncios da Meta. Os prints estão em `index.html` (abrir com duplo clique).*
 
 **Como os números foram coletados:** pelo navegador do app, só lendo, sem curtir, seguir nem comentar. Views, curtidas, comentários, compartilhamentos e salvos são os que o TikTok mostrava em 03/11/2026. Nos perfis de marca e na busca de apps só aparece um número na tela (views no perfil, curtidas na busca), e as outras colunas ficaram vazias. O gancho é o texto da capa. Quando a capa não tinha texto legível, uso a legenda e aviso entre parênteses.
 
@@ -116,9 +116,38 @@ Os 3 estão desenhados em `index.html`, na seção "Rascunhos".
 
 ---
 
-## Pendente: grupo D (X, bolha dev)
+## Grupo D: X (bolha dev)
 
-O X pede login. Pedi ao Victor (via sessão principal) os ~30 links (os 5 posts mais engajados de @magdiel_rb, @gabrielbuzziv, @thallisribeiro, @condzxyz, @yayyzeka e @brunoclz) ou a autorização pra ler com o Claude no Chrome já logado. Assim que chegar, as linhas entram na mesma `posts.csv` com `grupo = D`.
+*30 posts, os 5 com mais visualizações de cada perfil (@magdiel_rb, @gabrielbuzziv, @thallisribeiro, @condzxyz, @yayyzeka e @brunoclz), na busca "Principais" do X. Foi lido no navegador do app, com a conta do Victor e o aval dele, só lendo. Na planilha, "comentários" são as respostas e "compartilhamentos" são os reposts.*
+
+### D1. Processo copiável (o post é salvo, não só curtido)
+O post ensina um fluxo que dá pra repetir. Esse tipo é **salvo tanto quanto ou mais do que é curtido**.
+- @gabrielbuzziv: *eu apresento o meu time que ta fazendo isso / NINA -> pesquisa 2x por dia no insta e tiktok por virais...*. Teve 38 mil views, **1.056 salvos e 937 curtidas**.
+- @condzxyz: *em outubro eu testei um jeito simples de fazer dinheiro com IA...* (fluxo numerado). Teve 26 mil views, 664 salvos e 619 curtidas.
+
+### D2. Número real + jornada
+A 1ª linha tem um número pequeno e verdadeiro, ou uma história em lista com ">".
+- @gabrielbuzziv: *> sou casado / > sou cristão / > minha filha tem 15 dias / > fui demitido...*. Teve **229 mil** views (é o post fixado).
+- @magdiel_rb: *ONTEM EU TINHA 80 SEGUIDORES / Hoje ja estamos atingindo o dobro.*. Teve 4,3 mil views, num perfil pequeno.
+
+### D3. Puxar conversa
+Uma pergunta, um convite pra grupo ou marcar alguém da bolha.
+- @thallisribeiro: *É normal por ai o povo gerar tanto pix e não pagar? kkk*. Teve **27 mil** views. **A dor do Tripwave (pix não pago) já roda na bolha dev.**
+- @gabrielbuzziv: *esse cara aqui que ta me dando o passo a passo...*. Teve 19 mil views.
+
+### D4. Surfar o assunto do dia com o próprio produto
+- @brunoclz: *vou ver apuração aqui só por causa do design / seuimposto.com*. Teve **2,3 mi** views no dia da eleição. O post do mesmo perfil sobre bases de dados e CPF de políticos teve **5 mi**.
+- @brunoclz: *Pra quem tiver curiosidade, esse foi o custo total pra manter 500k pessoas simultâneas...*. Teve 91 mil views (bastidor técnico com número).
+
+### O que NÃO fazer no X
+"Bom dia, atualizei o app" com tela do app. @yayyzeka: *Atualizações / consegui colocar minhas informações no app de forma automática :)* teve **1 curtida**. A mesma pessoa, num diário com número na 1ª linha (*GM, DAY 20*), teve 53.
+
+### O que muda nos posts do X (X1 a X14 do calendário)
+1. **A 1ª linha tem número ou história**, nunca "lançamos uma funcionalidade". Exemplo pronto: *"olhei 78 posts de viagem com amigos no TikTok. os que mostram o app: 3,5 mil views. os que não mostram: 400 mil."* É o próprio benchmark virando um post D1/D2.
+2. **Bastidor salvável:** como o gerador de slides funciona, como montamos a Norti sem ilustrador. Fluxo numerado.
+3. **Pix como gancho também no X:** responder ou citar posts como o do @thallisribeiro (pix não pago) com a conta real do grupo.
+4. **Surfar datas:** réveillon e "a conta do dia 2 de janeiro" são o nosso "dia da apuração".
+5. **Número real e pequeno vale:** "ontem 80 seguidores" funcionou. Os primeiros números da lista de espera servem.
 
 ## Limites deste benchmark
 
