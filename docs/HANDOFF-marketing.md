@@ -25,7 +25,7 @@
 - Calendário das 2 semanas: `docs/marketing/calendario-2-semanas.html`
 - Ícones do Tripwave: `docs/marketing/icones-tripwave.html`
 
-**Páginas antigas no claude.ai (feitas na conta do outro PC; apagar de lá e manter só o HTML do repo):**
+**Páginas no claude.ai:** se foram feitas na conta da Humana, apagar de lá e manter só o HTML do repo. As da conta pessoal do Victor podem ficar.
 - Caderno de marketing: https://claude.ai/artifact/HzBVv7tXWkKLmAqu4x8nom (fonte: `docs/marketing/tripwave-marketing.html`).
 - Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP (sem cópia no repo: salvar o HTML em `docs/marketing/` antes de apagar)
 
@@ -48,7 +48,7 @@
 
 ## Cuidados
 
-- **Nada do Tripwave na nuvem do Claude** (regra do Victor, 02/11/2026): a conta usada é da Humana. Páginas ficam só como HTML no repo, sem publicar Artifact.
+- **Nuvem do Claude (Artifacts), regra do Victor (esclarecida em 03/11/2026):** na conta da **Humana**, **nada** do Tripwave: lá as páginas ficam só como HTML no repo. Na conta **pessoal do Victor** (este PC, `victuribdev@gmail.com`), **pode** publicar Artifacts. Na dúvida sobre qual conta está em uso, pergunte antes de publicar.
 
 - Sessão de marketing **não mexe em código, banco ou migrations**.
 - Ao usar conversas privadas que o Victor mandar (ex.: WhatsApp), **usar só as ideias**, sem citar a conversa nos docs.
