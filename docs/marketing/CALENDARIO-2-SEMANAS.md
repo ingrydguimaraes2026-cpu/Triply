@@ -2,6 +2,8 @@
 
 *02/11/2026. Banco de conteúdo pra gravar em lote. Usa os roteiros de `CONTEUDO-INICIAL.md` (R1 a R8, P1 a P8) e acrescenta os que faltavam pra fechar 14 dias. Tom de voz: `NOME-E-VOZ.md`.*
 
+> **Atualização 03/11/2026:** a dupla não mostra o rosto. A pesquisa (`PESQUISA-SEM-ROSTO.md`) mostrou que o formato principal deve ser o **slideshow** (carrossel com texto + Norti, sem voz) e o **"2 lados" com a Norti**. Os roteiros abaixo continuam valendo, mas podem ser entregues como carrossel. Ainda falta encaixar os novos (S1 a S3 e D1) nos dias.
+
 ## Como funciona
 
 **O ritmo ("3 por dia")**
