@@ -1,6 +1,12 @@
 # HANDOFF: rumo novo com âncora (03/11/2026)
 
 > **Atualização (03/11, mais tarde):** os passos 1 a 3 do "Próximo passo exato" estão **feitos**: `docs/RUMO.md` reescrito, spec 118 virou [`118-passaporte-da-galera.md`](specs/118-passaporte-da-galera.md), spec nova [`120-hoje-com-reservas-do-grupo.md`](specs/120-hoje-com-reservas-do-grupo.md), FILA (Fase 0 nova), ROADMAP, `specs/README.md` e AGENTS.md seção 5 ajustados. Próximo: task 0.1 da FILA (3 telas falsas pra 10 organizadores).
+>
+> **Atualização 2 (03/11, noite):**
+> - 0.1: as telas, o roteiro e a planilha estão em `docs/marketing/teste/ancora/`. A tela 1 virou o **passaporte literal** (`passaporte.html`: capa de couro, página de dados, carimbos, luz UV), aprovado pelo Victor ("ficou ótimo, detalhes depois"). Faltam as 10 conversas.
+> - 0.2: feita (032db07). A chave fica em `packages/core/src/congelados.ts`.
+> - Referências de UI: `docs/design/REFERENCIAS-PASSAPORTE.md` (blocos do Native Cook).
+> - **Próximo: 0.4, o "Hoje" com reservas do grupo (spec 120a).** Não depende do resultado do teste. Na hora de construir a 118, o visual do carimbo e do passaporte segue o `passaporte.html`.
 
 ## Onde estamos
 - O benchmark de 11/2026 está completo em `docs/benchmark-2026-11/`, partes 00 a 09. A **09-ancora-opcoes.md** é a conclusão.

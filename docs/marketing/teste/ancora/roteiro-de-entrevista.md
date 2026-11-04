@@ -6,6 +6,8 @@
 
 Abrir [`telas-falsas.html`](telas-falsas.html) no celular ou no computador. Pra mandar por WhatsApp, use um print da página.
 
+**Atualização (03/11):** a tela 1 agora é o **passaporte literal**, [`passaporte.html`](passaporte.html), aprovado pelo Victor ("ficou ótimo"). Mostre ele no lugar da tela 1 de `telas-falsas.html`, deixando a pessoa abrir a capa, virar as páginas, carimbar e acender a luz UV. As telas 2 e 3 continuam as de `telas-falsas.html`.
+
 - **Tela 1:** passaporte da galera, a opção A.
 - **Tela 2:** copiar a viagem de outro grupo, a opção B.
 - **Tela 3:** convite que todo mundo topa, com a contagem no widget, a opção C.
