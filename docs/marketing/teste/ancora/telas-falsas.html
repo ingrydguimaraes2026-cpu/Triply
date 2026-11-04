@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste da âncora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Teste da âncora (FILA 0.1): 3 telas falsas pra mostrar a 10 organizadores.
+     Cores = paleta Couro e laranja de apps/web/src/styles/global.css. Nada aqui é funcional. */
+  :root {
+    --couro: #7b542f; --caramelo: #b97a22; --laranja: #e3a04a; --chip: #f6ead7; --creme: #f5e9d6; --escuro: #4a2e14;
+    --fundo: #fbf3e6; --cartao: #ffffff; --texto: #3b2715; --suave: #7a5f45; --borda: #eadcc6; --verde: #5e6b2e;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #efe3cf; color: var(--texto); font-family: Inter, system-ui, sans-serif; padding: 24px 16px 60px; }
+  h1 { font-family: Fraunces, Georgia, serif; font-size: 26px; text-align: center; }
+  .intro { text-align: center; color: var(--suave); font-size: 14px; max-width: 560px; margin: 8px auto 28px; line-height: 1.5; }
+  .telas { display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; }
+  .rotulo { text-align: center; font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 20px; margin-bottom: 10px; color: var(--couro); }
+  .celular { width: 330px; height: 690px; border-radius: 46px; background: #1b120a; padding: 12px; box-shadow: 0 24px 50px rgba(74,46,20,.3); }
+  .tela { position: relative; width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: var(--fundo); }
+  .barra { height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font-size: 13px; font-weight: 700; }
+  .ilha { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 96px; height: 26px; border-radius: 20px; background: #1b120a; }
+  .conteudo { padding: 6px 18px 18px; }
+  .acima { font-size: 12px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .titulo { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 26px; line-height: 1.1; margin: 2px 0 4px; }
+  .sub { font-size: 13px; color: var(--suave); }
+  .cartao { background: var(--cartao); border-radius: 18px; box-shadow: 0 4px 14px rgba(74,46,20,.06); padding: 14px; margin-top: 12px; }
+  .botao { display: block; width: 100%; border: 0; border-radius: 16px; padding: 14px; font: 700 15px Inter, sans-serif; background: var(--couro); color: #fff; margin-top: 12px; }
+  .botao.claro { background: var(--chip); color: var(--couro); }
+  .linha { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; border: 2px solid #fff; }
+  .avatares { display: flex; } .avatares .avatar + .avatar { margin-left: -9px; }
+  .pequeno { font-size: 12px; color: var(--suave); }
+
+  /* A · passaporte */
+  .mapa { position: relative; height: 210px; border-radius: 18px; background: radial-gradient(circle at 30% 40%, #f1e4cf, #e9d6b8); overflow: hidden; margin-top: 12px; }
+  .mapa svg { position: absolute; inset: 0; }
+  .carimbos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .carimbo { aspect-ratio: 1; border-radius: 50%; border: 2.5px dashed var(--c); color: var(--c); display: grid; place-items: center; text-align: center; font-size: 10px; font-weight: 700; line-height: 1.15; transform: rotate(var(--g)); padding: 6px; background: #fff; }
+  .carimbo b { display: block; font-family: Fraunces, Georgia, serif; font-size: 13px; }
+  .numeros { display: flex; justify-content: space-between; margin-top: 10px; }
+  .numeros div { text-align: center; } .numeros b { display: block; font-family: Fraunces, Georgia, serif; font-size: 22px; color: var(--couro); }
+
+  /* B · copiar */
+  .capa { height: 150px; border-radius: 18px; margin-top: 12px; background: linear-gradient(160deg, #2e7d8c, #e3a04a); position: relative; color: #fff; padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .capa .selo { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.35); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+  .capa b { font-family: Fraunces, Georgia, serif; font-size: 20px; }
+  .fichas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+  .ficha { background: var(--chip); border-radius: 12px; padding: 8px 4px; text-align: center; font-size: 11px; color: var(--suave); }
+  .ficha b { display: block; font-size: 15px; color: var(--texto); }
+  .dia { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid var(--borda); font-size: 13px; }
+  .dia:first-child { border-top: 0; }
+  .dia span { font-weight: 700; color: var(--caramelo); min-width: 40px; }
+
+  /* C · convite + widget */
+  .convite { background: var(--couro); color: var(--creme); border-radius: 22px; padding: 18px; margin-top: 12px; }
+  .convite .titulo { color: #fff; font-size: 24px; }
+  .progresso { height: 8px; border-radius: 8px; background: rgba(255,255,255,.2); margin: 12px 0 6px; overflow: hidden; }
+  .progresso i { display: block; height: 100%; width: 75%; background: var(--laranja); }
+  .escolhas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .escolhas button { border: 0; border-radius: 14px; padding: 12px; font: 700 14px Inter, sans-serif; }
+  .home { margin-top: 16px; border-radius: 22px; padding: 14px; background: linear-gradient(160deg, #5d7fa6, #c58c6b); }
+  .home .pequeno { color: #fff; opacity: .9; margin-bottom: 8px; }
+  .widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .widget { aspect-ratio: 1; border-radius: 20px; background: var(--fundo); padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .widget .num { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 40px; color: var(--couro); line-height: 1; }
+  .app { aspect-ratio: 1; border-radius: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px; }
+  .app i { border-radius: 12px; background: rgba(255,255,255,.55); }
+
+  .rodape { max-width: 640px; margin: 36px auto 0; font-size: 13px; color: var(--suave); line-height: 1.6; }
+  @media (max-width: 400px) { .celular { width: 300px; height: 630px; } .titulo { font-size: 22px; } }
+</style>
+</head>
+<body>
+<h1>Qual destas você postaria?</h1>
+<p class="intro">São 3 ideias de app pra viagem com amigos. Nenhuma existe ainda. Olha cada uma por uns segundos e me diz qual você postaria e qual faria seus amigos baixarem.</p>
+
+<div class="telas">
+
+  <!-- Tela 1 = opção A da parte 09: passaporte da galera -->
+  <section>
+    <div class="rotulo">1</div>
+    <div class="celular"><div class="tela">
+      <div class="ilha"></div>
+      <div class="barra"><span>9:41</span><span>5G</span></div>
+      <div class="conteudo">
+        <div class="acima">Passaporte da galera</div>
+        <div class="titulo">Os do Fundão</div>
+        <div class="linha"><div class="avatares">
+          <div class="avatar" style="background:#b97a22">A</div><div class="avatar" style="background:#7b542f">L</div><div class="avatar" style="background:#2e7d8c">G</div><div class="avatar" style="background:#a1442b">M</div><div class="avatar" style="background:#5e6b2e">+4</div>
+        </div><span class="pequeno">8 amigos · desde 2023</span></div>
+
+        <div class="mapa">
+          <svg viewBox="0 0 290 210" aria-hidden="true">
+            <path d="M70 30 C110 10 170 20 200 45 C235 70 250 110 230 145 C210 185 160 200 125 190 C90 180 60 150 55 115 C50 80 45 45 70 30Z" fill="#e2cba6" />
+            <path d="M175 70 L150 120 L140 150 L120 165" stroke="#b97a22" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+            <g fill="#e3a04a" stroke="#fff" stroke-width="2">
+              <circle cx="175" cy="70" r="8" /><circle cx="150" cy="120" r="8" /><circle cx="140" cy="150" r="8" /><circle cx="120" cy="165" r="8" /><circle cx="100" cy="95" r="8" />
+            </g>
+            <circle cx="120" cy="165" r="15" fill="none" stroke="#e3a04a" stroke-width="2" opacity=".6" />
+            <g fill="#3b2715" font-family="Inter" font-size="10" font-weight="700">
+              <text x="186" y="66">Salvador</text><text x="160" y="118">BH</text><text x="152" y="150">Paraty</text><text x="68" y="182">Floripa</text><text x="58" y="92">Bonito</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="numeros">
+          <div><b>14</b><span class="pequeno">lugares</span></div>
+          <div><b>5</b><span class="pequeno">viagens</span></div>
+          <div><b>3</b><span class="pequeno">estados</span></div>
+        </div>
+
+        <div class="carimbos">
+          <div class="carimbo" style="--c:#a1442b;--g:-8deg"><span><b>Floripa</b>Réveillon<br>2025</span></div>
+          <div class="carimbo" style="--c:#2e7d8c;--g:6deg"><span><b>Paraty</b>Feriado<br>abr 2026</span></div>
+          <div class="carimbo" style="--c:#5e6b2e;--g:-3deg"><span><b>Bonito</b>Julho<br>2025</span></div>
+        </div>
+
+        <div class="cartao linha" style="justify-content:space-between">
+          <span style="font-size:13px"><b>Ana</b> carimbou mais: 12</span><span class="pequeno">Léo: 9</span>
+        </div>
+        <button class="botao">Postar o mapa da galera</button>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- Tela 2 = opção B: copiar a viagem de um grupo real -->
+  <section>
+    <div class="rotulo">2</div>
+    <div class="celular"><div class="tela">
+      <div class="ilha"></div>
+      <div class="barra"><span>9:41</span><span>5G</span></div>
+      <div class="conteudo">
+        <div class="acima">Viagens de outros grupos</div>
+        <div class="titulo">Réveillon em Floripa</div>
+        <div class="sub">40 grupos foram. Veja o que eles fizeram.</div>
+
+        <div class="capa">
+          <span class="selo">A mais copiada</span>
+          <b>8 amigos no Campeche</b>
+          <span style="font-size:12px">28/12 a 02/01 · casa com piscina</span>
+        </div>
+
+        <div class="fichas">
+          <div class="ficha"><b>R$ 1.850</b>por pessoa</div>
+          <div class="ficha"><b>5 dias</b>de viagem</div>
+          <div class="ficha"><b>4,8</b>nota do grupo</div>
+        </div>
+
+        <div class="cartao">
+          <div class="dia"><span>Dia 1</span>Chegada, mercado e churrasco na casa</div>
+          <div class="dia"><span>Dia 2</span>Trilha da Lagoinha do Leste</div>
+          <div class="dia"><span>Dia 3</span>Ilha do Campeche de barco</div>
+          <div class="dia"><span>31/12</span>Virada na praia do Campeche</div>
+        </div>
+
+        <button class="botao">Copiar essa viagem pro meu grupo</button>
+        <button class="botao claro">Ver os outros 39 grupos</button>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- Tela 3 = opção C: convite que todo mundo topa + contagem no widget -->
+  <section>
+    <div class="rotulo">3</div>
+    <div class="celular"><div class="tela">
+      <div class="ilha"></div>
+      <div class="barra"><span>9:41</span><span>5G</span></div>
+      <div class="conteudo">
+        <div class="acima">Convite do Léo</div>
+        <div class="convite">
+          <div class="pequeno" style="color:var(--creme)">Você foi chamado pra</div>
+          <div class="titulo">Réveillon em Floripa</div>
+          <div style="font-size:13px">28/12 a 02/01 · casa no Campeche · cerca de R$ 1.850</div>
+          <div class="progresso"><i></i></div>
+          <div class="linha" style="justify-content:space-between">
+            <div class="avatares"><div class="avatar" style="background:#b97a22">A</div><div class="avatar" style="background:#2e7d8c">G</div><div class="avatar" style="background:#a1442b">M</div><div class="avatar" style="background:#5e6b2e">+3</div></div>
+            <span style="font-size:12px">6 toparam · faltam 2</span>
+          </div>
+          <div class="escolhas">
+            <button style="background:var(--laranja);color:var(--escuro)">Tô dentro</button>
+            <button style="background:rgba(255,255,255,.15);color:#fff">Talvez</button>
+          </div>
+          <div style="font-size:11px;margin-top:10px;opacity:.85">Sem baixar app e sem senha.</div>
+        </div>
+
+        <div class="home">
+          <div class="pequeno">Na tela do seu celular</div>
+          <div class="widgets">
+            <div class="widget">
+              <span class="pequeno" style="color:var(--suave);margin:0">Floripa em</span>
+              <span class="num">54</span>
+              <span class="pequeno" style="color:var(--suave);margin:0">dias · 8 amigos</span>
+            </div>
+            <div class="app"><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+</div>
+
+<p class="rodape">Pra quem aplica o teste: mostre as telas nesta ordem pra metade das pessoas e na ordem 3, 2, 1 pra outra metade. Não explique as telas antes de a pessoa olhar. O roteiro está em <code>roteiro-de-entrevista.md</code>, na mesma pasta.</p>
+</body>
+</html>
