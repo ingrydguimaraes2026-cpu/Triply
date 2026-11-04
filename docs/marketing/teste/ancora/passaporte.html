@@ -268,7 +268,7 @@
     ;[...pontos.children].forEach((p, i) => p.classList.toggle('ativo', i === atual))
     document.getElementById('volta').disabled = atual === 0
     document.getElementById('vai').disabled = atual === paginas.length - 1
-    acao.textContent = atual === 0 ? 'Abrir' : atual === 3 && !carimbou ? 'Carimbar Paraty' : atual === 1 ? 'Postar o passaporte' : 'Postar esta página'
+    acao.textContent = atual === 0 ? 'Abrir' : atual === 3 && !carimbou ? 'Carimbar Paraty' : 'Postar'
   }
   function vira(n) { atual = Math.max(0, Math.min(paginas.length - 1, atual + n)); mostra() }
 
