@@ -77,3 +77,18 @@ A timeline é quase toda de dev, IA e gente construindo app em público. O que s
 1. O mercado brasileiro **quer** um app de viagem com os amigos: o Roameo prova isso, mesmo sendo pago e estrangeiro.
 2. O que o Roameo vende é **um fluxo só** (importa, desliza, roteiro), não 50 funcionalidades.
 3. As brechas dele são **preço, IA genérica e nada de Brasil** (Pix, casa de praia, réveillon, carnaval, divisão de gasto). É por aí que dá pra passar na frente.
+
+## Adendo (03/11/2026): tripbff, 23º em Viagens no Brasil
+
+- **O que é:** "Tinder de amigo de viagem" pra quem viaja sozinho. Mostra gente que vai pro mesmo lugar, tem chat de grupo e encontros. Também repete "Travel Wrapped" (retrospectiva) várias vezes na descrição, que é tática de palavra-chave na loja.
+- **Números:** nota 4,9 com 1,2 mil avaliações, app só em inglês, versão 7.7.2. Assinatura de US$ 4,99 por semana, US$ 9,99 por mês ou US$ 79,99 por ano.
+- **Reclamações em português:**
+  - "deu 3 dias de teste porém no mesmo dia descontou do cartão";
+  - "muitos fakes";
+  - "não tem muitos usuários e ainda cobram".
+- **Concorrente?** Não diretamente. É pra conhecer estranhos; o Tripwave é pra viajar com quem você já conhece.
+- **Lições:**
+  - O viajante solo quer **conhecer gente**. É outro produto, e mais um motivo pra não mirar no solo.
+  - "Wrapped" de viagem já é palavra de loja: confirma a retrospectiva como peça forte.
+  - Mesmo erro do Roameo: cobrar antes de mostrar valor gera nota 1 em português.
+  - Um app só em inglês chegou ao top 25 BR, o que mostra que **a concorrência brasileira é fraca**.
