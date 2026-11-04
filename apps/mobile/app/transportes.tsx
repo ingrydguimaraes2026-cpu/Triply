@@ -4,7 +4,8 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from '../src/ui/icones'
-import { apagarTrajeto, buscarDestinos, buscarTrajetos, type Destino, type Trajeto } from '@together/core'
+import { aeroportosDoVoo, antecedenciaDoEmbarque, apagarTrajeto, buscarDestinos, chegadasPerto, horaDeSair, trechosSemTrajeto, type Destino, type Trajeto } from '@together/core'
+import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs, useTemposAteOEmbarque } from '../src/ui/AjudaDoTrajeto'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { diaCurto, hora } from '../src/lib/formato'
@@ -32,12 +33,15 @@ export default function Transportes() {
   const { atual: viagem } = useViagemAtual()
   const [aba, setAba] = useState<'todos' | 'ida' | 'volta'>('todos')
   const [novo, setNovo] = useState(false)
-  const carga = useCarregar(viagem ? () => Promise.all([buscarTrajetos(supabase, viagem.id), buscarDestinos(supabase, viagem.id)]) : null, [viagem?.id])
+  const carga = useCarregar(viagem ? () => buscarTudo(viagem.id) : null, [viagem?.id])
+  const { tempos, escolher } = useTemposAteOEmbarque()
 
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const [trajetos, destinos] = carga.dados
+  const { trajetos, destinos, casas } = carga.dados
+  const membros = viagem.membros
+  const faltam = trechosSemTrajeto(destinos, trajetos)
   const destino = destinos[0]?.nome ?? viagem.nome
 
   // Ida = trajetos antes do meio da viagem; Volta = depois
@@ -84,8 +88,37 @@ export default function Transportes() {
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Cadastre o voo, o ônibus ou o carro de cada um. Todo mundo vê aqui e no "Hoje".</Text>
           </View>
         ) : (
-          lista.map((t) => <Passagem key={t.id} trajeto={t} destinos={destinos} aoApagar={() => apagar(t)} />)
+          lista.map((t) => {
+            const casa = casas.find((c) => c.destino_id === t.destino_id) ?? null
+            const chegaEm = aeroportosDoVoo(t, destinos).chegada
+            const perto = chegadasPerto(t, trajetos, destinos)
+            const nomeDe = (ids: string[]) => ids.map((id) => membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? 'Alguém')
+            return (
+              <Passagem key={t.id} trajeto={t} destinos={destinos} aoApagar={() => apagar(t)}>
+                {t.partida && antecedenciaDoEmbarque(t.meio, true) !== null ? <SaiaAs saida={horaDeSair(t, destinos, tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(m) => escolher(t.id, m)} /> : null}
+                {perto[0] ? (
+                  <DividirTransfer
+                    nomes={nomeDe(perto[0].pessoas)}
+                    minutos={perto[0].minutos}
+                    aeroporto={chegaEm}
+                    pessoas={t.passageiros.length + perto[0].pessoas.length}
+                  />
+                ) : null}
+                {chegaEm ? (
+                  <DoAeroporto
+                    aeroporto={chegaEm}
+                    nomeDaCasa={casa?.nome ?? null}
+                    ate={casa?.endereco || destinos.find((d) => d.id === t.destino_id)?.nome || chegaEm.cidades[0]}
+                  />
+                ) : null}
+              </Passagem>
+            )
+          })
         )}
+        {/* Spec 121 (T4): trechos do roteiro ainda sem trajeto, com links pra descobrir como ir */}
+        {aba === 'todos'
+          ? faltam.map(({ de, para }) => <ComoIrNoTrecho key={`${de.id}-${para.id}`} de={de.nome} para={para.nome} data={de.saida ?? null} />)
+          : null}
         <View className="mt-2">
           <Botao titulo="Adicionar trajeto" tipo={lista.length ? 'secundario' : 'primario'} aoTocar={() => setNovo(true)} />
         </View>
@@ -107,7 +140,22 @@ export default function Transportes() {
   )
 }
 
-function Passagem({ trajeto: t, destinos, aoApagar }: { trajeto: Trajeto; destinos: Destino[]; aoApagar: () => void }) {
+// Trajetos com quem vai em cada um (spec 067) e a casa escolhida de cada destino (pra "do aeroporto até a casa")
+async function buscarTudo(viagemId: string) {
+  const [trajetos, destinos, casas] = await Promise.all([
+    supabase.from('trajetos').select('*, trajeto_passageiros (usuario_id)').eq('viagem_id', viagemId).order('partida', { ascending: true, nullsFirst: false }),
+    buscarDestinos(supabase, viagemId),
+    supabase.from('hospedagens').select('destino_id, nome, endereco').eq('viagem_id', viagemId).eq('escolhida', true),
+  ])
+  if (trajetos.error) throw trajetos.error
+  return {
+    trajetos: (trajetos.data ?? []).map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) })),
+    destinos,
+    casas: casas.data ?? [],
+  }
+}
+
+function Passagem({ trajeto: t, destinos, aoApagar, children }: { trajeto: Trajeto; destinos: Destino[]; aoApagar: () => void; children?: React.ReactNode }) {
   const { nome, Icone } = MEIOS[t.meio] ?? MEIOS.outro
   const origem = destinos.find((d) => d.id === t.origem_id)?.nome ?? 'Casa'
   const chegada = destinos.find((d) => d.id === t.destino_id)?.nome ?? 'Casa'
@@ -157,6 +205,7 @@ function Passagem({ trajeto: t, destinos, aoApagar }: { trajeto: Trajeto; destin
           <Text className="font-body text-[12.5px] text-suave">{hora(t.chegada)}</Text>
         </View>
       </View>
+      {children}
     </Cartao>
     </Pressable>
   )

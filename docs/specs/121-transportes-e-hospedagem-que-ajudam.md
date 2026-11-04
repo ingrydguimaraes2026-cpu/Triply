@@ -1,6 +1,6 @@
 # 121. Transportes e Hospedagem que ajudam (não só organizam)
 
-**Fase:** 0/2 · **Tamanho:** M por etapa (3 etapas) · **Depende de:** 004, 011, 067, 120a · **Status:** A fazer · falta o Victor escolher a etapa 1
+**Fase:** 0/2 · **Tamanho:** M por etapa (3 etapas) · **Depende de:** 004, 011, 067, 120a · **Status:** Etapa 1 pronta pra testar (app, 04/11/2026) · etapas 2 e 3 a fazer
 
 ## Objetivo
 Hoje as telas de Transportes e Hospedagem só guardam o que a pessoa já resolveu fora do app. A ideia é que elas ajudem a resolver: **como ir do aeroporto até a casa, que horas sair pra não perder o voo, com quem dividir o transfer, em que região ficar e até quanto pagar.** Tudo com regra simples no `@together/core`, links prontos e uma tabela feita à mão, **sem API paga**.
@@ -109,8 +109,20 @@ Esforço: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma 
 **Etapa 3**
 - [ ] Destino com 11 lugares, 8 perto do centro → a frase cita os 2 lugares mais perto do ponto do meio; o link do Airbnb abre nessa área.
 
+## Como ficou a etapa 1 (04/11/2026)
+- **Core:** `packages/core/src/aeroportos.ts` (tabela com 20 aeroportos, `acharAeroporto`, `aeroportoDaCidade`) e `packages/core/src/como-ir.ts` (`horaDeSair`, `chegadasPerto`, `transferDividido`, `linksDoTrecho`, `trechosSemTrajeto`). Testes: `apps/web/tests/como-ir.test.mjs`.
+- **App:** `apps/mobile/src/ui/AjudaDoTrajeto.tsx`, usado em `transportes.tsx` (dentro de cada passagem + trechos sem trajeto no fim da lista "Todos") e em `hoje.tsx` (dentro do bilhete de quem sai/chega hoje).
+- **Qual aeroporto:** o que estiver escrito na estação de partida/chegada do trajeto; senão, o principal da cidade do roteiro (Paris → CDG, Buenos Aires → EZE). Casa ≈ centro: o tempo até o embarque da tabela é o do táxi/corrida.
+- **Diferenças da proposta:**
+  - T4 usa Google Maps (transporte e carro), Rome2Rio e Google Flights. Trainline, Omio e FlixBus ficaram de fora: o link de busca deles precisa do código interno da cidade.
+  - T3 só avisa; o botão "A gente vai junto" ficou pra depois (dá pra usar o "quem vai buscar" que já existe).
+  - A tabela só tem aeroportos (sem estações de trem). Trem e ônibus pedem o tempo até o embarque.
+  - No "Hoje", a tabela do aeroporto só aparece quando o guia da casa não tem o "Como chegar" escrito (062).
+- **Sem banco.** O tempo escolhido à mão fica no aparelho (`tempos_ate_embarque`).
+- **Testado:** `npx tsc --noEmit` (mobile e core), testes de lógica e o Transportes no navegador a 375 px (trechos e links). Os blocos dentro da passagem não foram vistos na tela porque a viagem de teste não tem trajeto: falta conferir no iPhone com um voo cadastrado.
+
 ## Perguntas em aberto
-1. **Qual etapa vem primeiro?** (sugestão: a 1, porque serve ao "Hoje" e não precisa de banco.)
+1. ~~Qual etapa vem primeiro?~~ Etapa 1 (Victor, 04/11/2026).
 2. Etapas 2 e 3 abrem coisa nova na hospedagem, que o RUMO mandou segurar. Libera?
 3. A H3 pode usar o Photon (já usado na 064, uma vez ao salvar) ou também entra na proibição do "OSM público ao vivo"? Se entrar, fica Google Geocoding (cota grátis) ou a H3 sai.
 4. A tabela de aeroportos fica com quem pra conferir os preços a cada ~6 meses?
