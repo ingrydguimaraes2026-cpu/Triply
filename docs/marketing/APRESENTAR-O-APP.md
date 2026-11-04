@@ -2,6 +2,9 @@
 
 *04/11/2026. Pedido do Victor: além dos vídeos do passaporte, posts que **apresentem e expliquem o app inteiro**, como faz o Instagram da Loopou (@loopou.ig), outro projeto da dupla. O passaporte entra como **uma** das funções, não como o centro. Segue o `docs/RUMO.md` e o tom de voz de `NOME-E-VOZ.md`. **Rascunho pra aprovar antes de produzir qualquer arte.***
 
+
+> **Formato agora (Victor, 04/11/2026): só foto e carrossel.** Vídeo fica pra depois. Os Reels (R1 a R4) estão guardados no fim deste arquivo; a história de origem virou o carrossel **C0**.
+
 ## 1. O que a Loopou faz, traduzido pro Tripwave
 
 | Padrão da Loopou | Exemplo dela | No Tripwave |
@@ -40,9 +43,97 @@ Na ordem em que a galera vive a viagem:
 
 ---
 
-## 3. Os 12 posts
+## 3. Os 8 carrosséis
 
-### Reels sem rosto (15 a 30 s: voz, telas do app e Norti)
+### Carrosséis explicativos (Instagram e TikTok)
+
+**C0. "A história" (a origem, o post fixado)** (7 slides)
+1. Capa: "A gente criou um app porque sempre um da galera organiza a viagem sozinho" + Norti.
+2. "Acha a casa. Faz a planilha. Cobra a confirmação. Faz a conta no fim."
+3. "Aí a gente fez o Tripwave."
+4. "Manda um link no grupo. Cada um vota onde ficar e o que fazer, sem instalar nada." + print do convite e do duelo de casas.
+5. "O roteiro sai dos votos. Os gastos se dividem sozinhos." + print do roteiro do dia.
+6. "E cada lugar vira carimbo no passaporte da galera." + passaporte com carimbos.
+7. "Em breve. Lista de espera no perfil." + Norti acenando.
+
+**C1. "O que é o Tripwave?"** (7 slides)
+1. Capa: "O que é o Tripwave?" + Norti acenando.
+2. "O app da viagem com a galera: do 'bora?' até o carimbo no passaporte."
+3. "1. Manda um link. Todo mundo topa sem instalar."
+4. "2. Cada um desliza os lugares. Deu match, entra no roteiro."
+5. "3. Casa no voto. Gastos sem planilha."
+6. "4. Cada lugar vira carimbo no passaporte da galera."
+7. "Em breve. Lista de espera no perfil." + Norti comemorando.
+
+**C2. "Sua galera ainda decide a viagem num grupo com 300 mensagens?"** (5 slides)
+1. A pergunta, grande.
+2. "O link da casa se perde. A enquete ninguém responde."
+3. "No Tripwave cada um vota em 1 toque, e o grupo vê o placar."
+4. Print do duelo de casas com os votos.
+5. "Em breve. Lista de espera no perfil."
+
+**C3. "Você não precisa de planilha pra viagem com os amigos"** (5 slides)
+1. A frase, grande.
+2. "Quem vai, onde dorme, o que fazer, quanto deu."
+3. "Tudo isso já fica num app só, e quem não instalou vota pelo link."
+4. Print do roteiro do dia e da tela de contas.
+5. Fecho com a Norti.
+
+**C4. "Se você é quem sempre organiza a viagem, precisa ler isso"** (6 slides)
+1. A frase.
+2. "Você acha a casa."
+3. "Você cobra a confirmação."
+4. "Você faz a conta no fim."
+5. "No Tripwave a galera vota, o roteiro sai dos votos e a conta se faz sozinha."
+6. "E você ganha o passaporte de todas as viagens de vocês." + passaporte.
+
+### Comparação
+
+**K1. "Grupo do zap x Tripwave"** (carrossel: cada slide é uma linha da tabela, com o caos à esquerda e o app à direita)
+| Grupo do zap | Tripwave |
+|---|---|
+| 40 links de casa perdidos | As casas lado a lado, com votos |
+| Enquete que ninguém responde | Voto em 1 toque, até sem instalar |
+| Planilha no fim | "jantar 84" e pronto |
+| As fotos espalhadas | Fotos e passaporte do grupo |
+
+**K2. "Planilha, Splitwise e Tripwave"** (carrossel)
+- "Planilha: dá trabalho e só uma pessoa mexe."
+- "Splitwise: divide a conta, mas não decide a viagem. E o grátis limita quantos gastos por dia." *(Conferir o limite atual antes de postar: na pesquisa as fontes dão de 3 a 4 por dia.)*
+- "Tripwave: decide, organiza, divide e guarda a viagem no passaporte da galera."
+- **Cuidado:** não usar a logo do Splitwise. Só o nome e um fato que dá pra conferir.
+
+### Série com número real
+
+**E1. "Do 0 ao primeiro grupo viajando, episódio 1"** (carrossel de 4 slides, toda semana)
+- **Slide 1:** "Do 0 ao primeiro grupo viajando com o nosso app · episódio 1"
+- **Slides 2 a 4:**
+  > Hoje o Tripwave tem [N] pessoas na lista de espera e [N] grupos testando.
+  > Essa semana a gente [1 coisa que fez] e [1 coisa que deu errado].
+  > Semana que vem: [1 meta].
+- **Regra:** só número verdadeiro, mesmo se for pequeno. A Loopou começou com "13 clientes ativos".
+- O mesmo episódio vira post no X (a parte de build in public de `X-APRENDIZADOS.md`).
+
+---
+
+## 4. Por onde começar (sugestão)
+
+1. **C0 ("A história")** fixado no perfil e **C1 ("O que é o Tripwave?")** como o 2º post. São os dois que explicam o app pra quem chega no perfil.
+2. **E1, episódio 1** no mesmo dia, no Instagram e no X.
+3. Depois, 1 carrossel de dor (C2, C3, C4) e 1 comparação (K1, K2) por semana.
+
+**Como vai ser a arte (pra não repetir o erro do F1 a F3):** cada slide tem **uma tela de verdade do app** (gravada no modo demonstração do vídeo, `docs/marketing/video/demo/`) ou o passaporte, a Norti com pose que combina com a frase e o texto grande. Nada de slide só com frase em fundo liso.
+
+**Decisões que só a dupla pode tomar:**
+- ~~Aparecer de rosto~~ Decidido: **sem rosto**.
+- A relação real da dupla, se quiserem usar no C0 (hoje está "a gente", que já funciona).
+- Os números do E1.
+
+---
+
+## Pra depois: Reels (quando voltar o vídeo)
+
+*Sem rosto: voz, telas do app e Norti. De 15 a 30 s.*
 
 **R1. A origem (o post fixado)**
 - **Texto na tela (0 a 2 s):** "[relação] criou um app porque eu sempre organizo a viagem da galera sozinha"
@@ -80,75 +171,3 @@ Na ordem em que a galera vive a viagem:
   > [Só se for verdade no dia:] Hoje a gente tá testando com a nossa galera pro réveillon.
 - **Imagem:** a tela do código virando a tela do app, com a voz do Victor.
 
-### Carrosséis explicativos (Instagram e TikTok)
-
-**C1. "O que é o Tripwave?"** (7 slides)
-1. Capa: "O que é o Tripwave?" + Norti acenando.
-2. "O app da viagem com a galera: do 'bora?' até o carimbo no passaporte."
-3. "1. Manda um link. Todo mundo topa sem instalar."
-4. "2. Cada um desliza os lugares. Deu match, entra no roteiro."
-5. "3. Casa no voto. Gastos sem planilha."
-6. "4. Cada lugar vira carimbo no passaporte da galera."
-7. "Em breve. Lista de espera no perfil." + Norti comemorando.
-
-**C2. "Sua galera ainda decide a viagem num grupo com 300 mensagens?"** (5 slides)
-1. A pergunta, grande.
-2. "O link da casa se perde. A enquete ninguém responde."
-3. "No Tripwave cada um vota em 1 toque, e o grupo vê o placar."
-4. Print do duelo de casas com os votos.
-5. "Em breve. Lista de espera no perfil."
-
-**C3. "Você não precisa de planilha pra viagem com os amigos"** (5 slides)
-1. A frase, grande.
-2. "Quem vai, onde dorme, o que fazer, quanto deu."
-3. "Tudo isso já fica num app só, e quem não instalou vota pelo link."
-4. Print do roteiro do dia e da tela de contas.
-5. Fecho com a Norti.
-
-**C4. "Se você é quem sempre organiza a viagem, precisa ler isso"** (6 slides)
-1. A frase.
-2. "Você acha a casa."
-3. "Você cobra a confirmação."
-4. "Você faz a conta no fim."
-5. "No Tripwave a galera vota, o roteiro sai dos votos e a conta se faz sozinha."
-6. "E você ganha o passaporte de todas as viagens de vocês." + passaporte.
-
-### Comparação
-
-**K1. "Grupo do zap x Tripwave"** (Reels ou carrossel em tela dividida)
-| Grupo do zap | Tripwave |
-|---|---|
-| 40 links de casa perdidos | As casas lado a lado, com votos |
-| Enquete que ninguém responde | Voto em 1 toque, até sem instalar |
-| Planilha no fim | "jantar 84" e pronto |
-| As fotos espalhadas | Fotos e passaporte do grupo |
-
-**K2. "Planilha, Splitwise e Tripwave"** (carrossel)
-- "Planilha: dá trabalho e só uma pessoa mexe."
-- "Splitwise: divide a conta, mas não decide a viagem. E o grátis limita quantos gastos por dia." *(Conferir o limite atual antes de postar: na pesquisa as fontes dão de 3 a 4 por dia.)*
-- "Tripwave: decide, organiza, divide e guarda a viagem no passaporte da galera."
-- **Cuidado:** não usar a logo do Splitwise. Só o nome e um fato que dá pra conferir.
-
-### Série com número real
-
-**E1. "Do 0 ao primeiro grupo viajando, episódio 1"** (Reels, toda semana)
-- **Texto na tela:** "Do 0 ao primeiro grupo viajando com o nosso app · episódio 1"
-- **Falas:**
-  > Hoje o Tripwave tem [N] pessoas na lista de espera e [N] grupos testando.
-  > Essa semana a gente [1 coisa que fez] e [1 coisa que deu errado].
-  > Semana que vem: [1 meta].
-- **Regra:** só número verdadeiro, mesmo se for pequeno. A Loopou começou com "13 clientes ativos".
-- O mesmo episódio vira post no X (a parte de build in public de `X-APRENDIZADOS.md`).
-
----
-
-## 4. Por onde começar (sugestão)
-
-1. **R1 (a origem)** fixado no perfil, e **C1 ("O que é o Tripwave?")** como o 2º post. São os dois que explicam o app pra quem chega no perfil.
-2. **E1, episódio 1** no mesmo dia, no Instagram e no X.
-3. Depois, alternar 1 Reels de gancho (R2, R3, R4), 1 carrossel de dor (C2, C3, C4) e 1 comparação (K1, K2) por semana, junto dos vídeos do passaporte (`CONTEUDO-PASSAPORTE.md`).
-
-**Decisões que só a dupla pode tomar:**
-- ~~Aparecer de rosto~~ Decidido: **sem rosto**.
-- De quem é a voz no R1 (Ingryd, Victor ou IA) e qual é a relação real da dupla, pra trocar o "[relação]" (ou falar só "a gente").
-- Os números do E1.
