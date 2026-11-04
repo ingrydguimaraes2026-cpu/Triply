@@ -40,7 +40,7 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 | # | Task | Spec | Tam. | Status |
 |---|---|---|---|---|
 | 0.1 | Validação: 3 telas falsas (A passaporte, B copiar viagem, C convite + widget) pra 10 organizadores: "qual você postaria?". Se a A não ganhar com folga, voltar pro Victor | [RUMO](RUMO.md) · [09](benchmark-2026-11/09-ancora-opcoes.md) · [telas e roteiro](marketing/teste/ancora/roteiro-de-entrevista.md) | P | telas e roteiro prontos · **faltam as 10 conversas (Victor e Ingryd)** |
-| 0.2 | Esconder do menu o que está congelado (câmbio avançado, documentos, exigências, ficha do país, frases, guia da casa, calendário, central de avisos, comentários, Passe) | RUMO | P | a fazer |
+| 0.2 | Esconder do menu o que está congelado (câmbio avançado, documentos, exigências, ficha do país, frases, guia da casa, calendário, central de avisos, comentários, Passe) | RUMO | P | feito (032db07) · chave única em `packages/core/src/congelados.ts` |
 | 0.3 | Carimbo de lugar: liberado por localização, foto ou "Cheguei"; "a gente esteve aqui"; postar carimbo (migration nova) | [118a](specs/118-passaporte-da-galera.md) | M | a fazer 🔒 (confirmar migration) |
 | 0.4 | "Hoje" com as reservas do grupo: casa, check-in, quem chega, plano do dia; abre sozinho na viagem | [120a](specs/120-hoje-com-reservas-do-grupo.md) | M | a fazer |
 | 0.5 | "Cheguei" vira carimbo | [120c](specs/120-hoje-com-reservas-do-grupo.md) | P | a fazer (depois da 0.3) |
