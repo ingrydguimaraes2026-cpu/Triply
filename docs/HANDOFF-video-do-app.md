@@ -47,3 +47,6 @@ node montar.mjs
 ## Ideias pra próxima versão
 - Outra cena: Matches no Roteiro, Lembranças, Fotos.
 - Versão em pt-BR da narração (`pt-BR-ThalitaMultilingualNeural`) pra testar contra a de inglês.
+
+## Cuidado antes da main
+- `docs/marketing/video/saida/tripwave-app.mp4` (27 MB) está no repositório **só por enquanto** (commit `844d3a3`, pedido do Victor). Antes do PR pra `main`: `git rm --cached docs/marketing/video/saida/tripwave-app.mp4` e commit.
