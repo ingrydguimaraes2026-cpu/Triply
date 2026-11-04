@@ -7,6 +7,7 @@ Este arquivo junta as 4 partes. Os detalhes e as fontes estão nelas:
 - [02 · Apps de grupo](02-apps-de-grupo.md): 21 apps, o que cresceu, o que morreu e por quê.
 - [03 · Mercado brasileiro](03-mercado-brasil.md): como o grupo brasileiro planeja e paga, dores, calendário.
 - [04 · X e App Store](04-x-e-lojas.md): ranking da loja, posts que viralizaram, timeline e salvos do Victor.
+- [05 · Enxovaly destrinchado](05-enxovaly.md): como um "app de lista" fatura R$ 80 mil por mês, e o que copiar.
 
 **Cuidado com os números:** vários vêm das próprias empresas ou de painéis de estimativa. Estão marcados nas partes.
 
