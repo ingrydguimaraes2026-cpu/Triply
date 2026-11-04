@@ -20,11 +20,11 @@ Agora o produto **é um objeto que dá vontade de postar**: o passaporte com os 
 
 | Rede | Bio | Caracteres |
 |---|---|---|
-| X `@tripwaveapp` | `O passaporte da sua galera: cada viagem e rolê vira carimbo e o mapa do grupo acende. Feito por uma dupla, em público. Em breve 🧭` | 129/160 |
-| Instagram `@tripwave.app` | `O mapa das viagens e rolês da sua galera 🧭` / `Cada lugar vira carimbo no passaporte do grupo.` / `Entra na lista 👇` | 107/150 |
-| TikTok `@tripwave.app` | `Quantos lugares sua galera já carimbou? 🧭` | 41/80 |
+| X `@nortiapp` | `O passaporte da sua galera: cada viagem e rolê vira carimbo e o mapa do grupo acende. Feito por uma dupla, em público. Em breve 🧭` | 129/160 |
+| Instagram `@norti.app` | `O mapa das viagens e rolês da sua galera 🧭` / `Cada lugar vira carimbo no passaporte do grupo.` / `Entra na lista 👇` | 107/150 |
+| TikTok `@norti.app` | `Quantos lugares sua galera já carimbou? 🧭` | 41/80 |
 
-**Nome no Instagram:** Tripwave | passaporte da galera.
+**Nome no Instagram:** Norti | passaporte da galera.
 
 ---
 
@@ -49,7 +49,7 @@ Feitos por código, com a mesma máquina do vídeo do app (`docs/marketing/video
 
 ## 3. X (build in public)
 
-Valem as lições do X: número verdadeiro na 1ª linha, bastidor que dá pra salvar, o processo virando post. Do Victor e da Ingryd, com o `@tripwaveapp` repostando.
+Valem as lições do X: número verdadeiro na 1ª linha, bastidor que dá pra salvar, o processo virando post. Do Victor e da Ingryd, com o `@nortiapp` repostando.
 
 **X1 (a virada, o melhor post que temos):**
 > ontem a gente mudou o app inteiro

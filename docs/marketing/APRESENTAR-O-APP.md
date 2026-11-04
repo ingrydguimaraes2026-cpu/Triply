@@ -1,13 +1,13 @@
-# Posts que apresentam o Tripwave (estilo Loopou)
+# Posts que apresentam a Norti (estilo Loopou)
 
 *04/11/2026. Pedido do Victor: além dos vídeos do passaporte, posts que **apresentem e expliquem o app inteiro**, como faz o Instagram da Loopou (@loopou.ig), outro projeto da dupla. O passaporte entra como **uma** das funções, não como o centro. Segue o `docs/RUMO.md` e o tom de voz de `NOME-E-VOZ.md`. **Rascunho pra aprovar antes de produzir qualquer arte.***
 
 
 > **Formato agora (Victor, 04/11/2026): só foto e carrossel.** Vídeo fica pra depois. Os Reels (R1 a R4) estão guardados no fim deste arquivo; a história de origem virou o carrossel **C0**.
 
-## 1. O que a Loopou faz, traduzido pro Tripwave
+## 1. O que a Loopou faz, traduzido pra Norti
 
-| Padrão da Loopou | Exemplo dela | No Tripwave |
+| Padrão da Loopou | Exemplo dela | Na Norti |
 |---|---|---|
 | **Fundadores contando a história de origem** (sem rosto: voz + tela) | "Meu marido criou uma ferramenta que resolve uma parte chata de vender pelo Instagram" | "[relação] criou um app porque eu cansei de organizar a viagem da galera sozinha." A história real da dupla: quem organiza sempre, e o dev que resolveu. |
 | **Gancho de descoberta ou segredo (UGC)** | "Parei de pagar Manychat depois que descobri esse site" | "Parei de fazer planilha de viagem depois que descobri esse app." "Ninguém tá falando desse app de viagem com os amigos." |
@@ -26,7 +26,7 @@
 
 ---
 
-## 2. O que o Tripwave faz (a lista pra usar nos posts)
+## 2. O que a Norti faz (a lista pra usar nos posts)
 
 Na ordem em que a galera vive a viagem:
 
@@ -39,7 +39,7 @@ Na ordem em que a galera vive a viagem:
 7. **Fotos do grupo** num lugar só.
 8. **Passaporte da galera:** cada lugar vira carimbo, o mapa do grupo acende e a retrospectiva sai pronta pra postar.
 
-**Frase de apresentação (curta):** "O Tripwave é o app da viagem com a galera: do 'bora?' até o carimbo no passaporte do grupo."
+**Frase de apresentação (curta):** "A Norti é o app da viagem com a galera: do 'bora?' até o carimbo no passaporte do grupo."
 
 ---
 
@@ -50,14 +50,14 @@ Na ordem em que a galera vive a viagem:
 **C0. "A história" (a origem, o post fixado)** (7 slides)
 1. Capa: "A gente criou um app porque sempre um da galera organiza a viagem sozinho" + Norti.
 2. "Acha a casa. Faz a planilha. Cobra a confirmação. Faz a conta no fim."
-3. "Aí a gente fez o Tripwave."
+3. "Aí a gente fez a Norti."
 4. "Manda um link no grupo. Cada um vota onde ficar e o que fazer, sem instalar nada." + print do convite e do duelo de casas.
 5. "O roteiro sai dos votos. Os gastos se dividem sozinhos." + print do roteiro do dia.
 6. "E cada lugar vira carimbo no passaporte da galera." + passaporte com carimbos.
 7. "Em breve. Lista de espera no perfil." + Norti acenando.
 
-**C1. "O que é o Tripwave?"** (7 slides)
-1. Capa: "O que é o Tripwave?" + Norti acenando.
+**C1. "O que é a Norti?"** (7 slides)
+1. Capa: "O que é a Norti?" + Norti acenando.
 2. "O app da viagem com a galera: do 'bora?' até o carimbo no passaporte."
 3. "1. Manda um link. Todo mundo topa sem instalar."
 4. "2. Cada um desliza os lugares. Deu match, entra no roteiro."
@@ -68,7 +68,7 @@ Na ordem em que a galera vive a viagem:
 **C2. "Sua galera ainda decide a viagem num grupo com 300 mensagens?"** (5 slides)
 1. A pergunta, grande.
 2. "O link da casa se perde. A enquete ninguém responde."
-3. "No Tripwave cada um vota em 1 toque, e o grupo vê o placar."
+3. "Na Norti cada um vota em 1 toque, e o grupo vê o placar."
 4. Print do duelo de casas com os votos.
 5. "Em breve. Lista de espera no perfil."
 
@@ -84,23 +84,23 @@ Na ordem em que a galera vive a viagem:
 2. "Você acha a casa."
 3. "Você cobra a confirmação."
 4. "Você faz a conta no fim."
-5. "No Tripwave a galera vota, o roteiro sai dos votos e a conta se faz sozinha."
+5. "Na Norti a galera vota, o roteiro sai dos votos e a conta se faz sozinha."
 6. "E você ganha o passaporte de todas as viagens de vocês." + passaporte.
 
 ### Comparação
 
-**K1. "Grupo do zap x Tripwave"** (carrossel: cada slide é uma linha da tabela, com o caos à esquerda e o app à direita)
-| Grupo do zap | Tripwave |
+**K1. "Grupo do zap x Norti"** (carrossel: cada slide é uma linha da tabela, com o caos à esquerda e o app à direita)
+| Grupo do zap | Norti |
 |---|---|
 | 40 links de casa perdidos | As casas lado a lado, com votos |
 | Enquete que ninguém responde | Voto em 1 toque, até sem instalar |
 | Planilha no fim | "jantar 84" e pronto |
 | As fotos espalhadas | Fotos e passaporte do grupo |
 
-**K2. "Planilha, Splitwise e Tripwave"** (carrossel)
+**K2. "Planilha, Splitwise e Norti"** (carrossel)
 - "Planilha: dá trabalho e só uma pessoa mexe."
 - "Splitwise: divide a conta, mas não decide a viagem. E o grátis limita quantos gastos por dia." *(Conferir o limite atual antes de postar: na pesquisa as fontes dão de 3 a 4 por dia.)*
-- "Tripwave: decide, organiza, divide e guarda a viagem no passaporte da galera."
+- "Norti: decide, organiza, divide e guarda a viagem no passaporte da galera."
 - **Cuidado:** não usar a logo do Splitwise. Só o nome e um fato que dá pra conferir.
 
 ### Série com número real
@@ -108,7 +108,7 @@ Na ordem em que a galera vive a viagem:
 **E1. "Do 0 ao primeiro grupo viajando, episódio 1"** (carrossel de 4 slides, toda semana)
 - **Slide 1:** "Do 0 ao primeiro grupo viajando com o nosso app · episódio 1"
 - **Slides 2 a 4:**
-  > Hoje o Tripwave tem [N] pessoas na lista de espera e [N] grupos testando.
+  > Hoje a Norti tem [N] pessoas na lista de espera e [N] grupos testando.
   > Essa semana a gente [1 coisa que fez] e [1 coisa que deu errado].
   > Semana que vem: [1 meta].
 - **Regra:** só número verdadeiro, mesmo se for pequeno. A Loopou começou com "13 clientes ativos".
@@ -118,7 +118,7 @@ Na ordem em que a galera vive a viagem:
 
 ## 4. Por onde começar (sugestão)
 
-1. **C0 ("A história")** fixado no perfil e **C1 ("O que é o Tripwave?")** como o 2º post. São os dois que explicam o app pra quem chega no perfil.
+1. **C0 ("A história")** fixado no perfil e **C1 ("O que é a Norti?")** como o 2º post. São os dois que explicam o app pra quem chega no perfil.
 2. **E1, episódio 1** no mesmo dia, no Instagram e no X.
 3. Depois, 1 carrossel de dor (C2, C3, C4) e 1 comparação (K1, K2) por semana.
 
@@ -142,7 +142,7 @@ Na ordem em que a galera vive a viagem:
   > Aí [ele/ela] fez isso aqui. *(a tela do app aparece)*
   > Eu mando um link no grupo, cada um vota onde quer ficar e o que quer fazer, e no fim tá tudo num lugar só.
   > E ainda fica um passaporte da galera com todas as viagens que a gente fez.
-  > Chama Tripwave. Tá saindo. Lista de espera no perfil.
+  > Chama Norti. Tá saindo. Lista de espera no perfil.
 - **Imagem:** o grupo do zap explodindo de mensagens → a mão segurando o celular com o app organizado (só a mão ou a tela gravada) → o passaporte abrindo com os carimbos. A Norti aparece no canto reagindo e acena no fim.
 
 **R2. "Parei de fazer planilha de viagem"**

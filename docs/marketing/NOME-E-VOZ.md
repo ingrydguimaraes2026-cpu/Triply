@@ -1,8 +1,31 @@
 # Nome e tom de voz
 
-*02/11/2026. Triagem inicial feita pelo Claude. **Nada aqui confirma que um nome está livre**: veja "Checagens obrigatórias" no fim.*
+*02/11/2026, atualizado em 04/11/2026 (nome novo: Norti). Triagem inicial feita pelo Claude. **Nada aqui confirma que um nome está livre**: veja "Checagens obrigatórias" no fim.*
 
-## ✅ Decisão: **Tripwave**
+## ✅ Decisão: **Norti** (04/11/2026)
+
+O app passa a ter **o nome da mascote**, como o Duolingo e o Duo. Decidido pelo Victor em 04/11/2026, depois que o rumo do produto virou o **Passaporte da galera** (`docs/RUMO.md`): uma bússola chamada Norti, de "norte", combina com passaporte, mapa e carimbo. O Tripwave valeu de 02 a 04/11 e ainda aparece nos docs antigos.
+
+**Como escrever:** "a Norti", no feminino, tanto pra mascote quanto pro app (a personagem *é* o app). Ex.: "baixa a Norti", "a Norti carimbou Paraty".
+
+**Triagem do Norti (NÃO CONFIRMADA, checada em 04/11/2026):**
+
+| Item | Situação |
+|---|---|
+| App Store | Nenhum app com o nome |
+| norti.com, norti.com.br | **têm DNS (provavelmente ocupados)** |
+| norti.app, getnorti.com, nortiapp.com, norti.travel | sem DNS (podem estar livres) |
+| @ nas redes | **não conferido** |
+| INPI | **não conferido** (classes 9, 39, 42) |
+| Inglês britânico | soa como "naughty" (levado). Pro Brasil não pesa |
+
+**@ sugeridos:** `@nortiapp` no X (o X não aceita ponto) e `@norti.app` no Instagram e no TikTok, batendo com o domínio **norti.app**. Ficar de olho no norti.com.br pra comprar quando der.
+
+**O que fica igual:** os nomes internos "together" (pacote, chaves, link do app, endereço da Vercel) e o repositório Triply. Trocar o nome que aparece no app e no site (título, ícone, loja) é tarefa de uma sessão de dev.
+
+---
+
+## Antes: **Tripwave** (02 a 04/11/2026)
 
 Escolhido pela dupla em 02/11/2026, depois de 6 rodadas (histórico abaixo).
 
@@ -237,4 +260,4 @@ A ideia: o app ter o nome da bússola, como o Duolingo e o Duo. O mascote vira a
 
 **Descartados:** Nori (9 apps, uma marca de viagem com o nome), Navi (6 apps, um de viagem), Compi (app de viagem com o nome), Norte (app de cartão de crédito), TrueNorth, Polo, Rosa, Needle, Sola. **Bussy** e "Bussi": em inglês é gíria vulgar.
 
-**Status:** em discussão. Tripwave continua sendo o nome até a dupla decidir.
+**Status:** ✅ **decidido em 04/11/2026: Norti** (ver o topo deste arquivo).

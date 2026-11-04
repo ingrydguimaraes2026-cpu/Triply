@@ -23,20 +23,20 @@ const POSTS = {
   C0: [
     { tipo: 'capa', olho: 'a história', titulo: 'A gente criou um app porque sempre *um da galera* organiza a viagem sozinho', pose: 'think' },
     { tipo: 'lista', olho: 'toda viagem é igual', titulo: 'O organizador:', itens: ['acha a casa', 'faz a planilha', 'cobra quem não confirmou', 'faz a conta no fim'], pose: 'oops' },
-    { tipo: 'tela', olho: 'aí a gente fez', titulo: 'O *Tripwave*: a viagem da galera num lugar só', telas: ['inicio'], pose: 'celebrate' },
+    { tipo: 'tela', olho: 'aí a gente fez', titulo: 'A *Norti*: a viagem da galera num lugar só', telas: ['inicio'], pose: 'celebrate' },
     { tipo: 'tela', olho: 'decidir junto', titulo: 'Manda um link no grupo. Cada um *vota* onde ficar', sub: 'quem não quiser instalar vota pelo navegador', telas: ['viagem'], pose: 'point' },
     { tipo: 'duas', olho: 'o roteiro', titulo: 'Cada um desliza os lugares. *Deu match*, entra no roteiro', telas: ['explorar', 'match'], pose: 'love' },
     { tipo: 'tela', olho: 'a memória', titulo: 'E cada lugar vira *carimbo* no passaporte da galera', telas: ['pass-2'], pose: 'celebrate', escuro: true },
-    { tipo: 'fim', titulo: 'Tripwave', sub: 'o app da viagem com a galera', pose: 'wave' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'o app da viagem com a galera', pose: 'wave' },
   ],
   C1: [
-    { tipo: 'capa', olho: 'tripwave', titulo: 'O que é o *Tripwave*?', sub: 'arrasta pro lado →', pose: 'wave' },
+    { tipo: 'capa', olho: 'norti', titulo: 'O que é a *Norti*?', sub: 'arrasta pro lado →', pose: 'wave' },
     { tipo: 'tela', olho: 'em uma frase', titulo: 'O app da viagem com a galera: do *"bora?"* ao carimbo no passaporte', telas: ['inicio'], pose: 'idle' },
     { tipo: 'tela', olho: '1 · o convite', titulo: 'Um link no grupo e *todo mundo topa*, sem instalar', telas: ['viagem'], pose: 'wave' },
     { tipo: 'duas', olho: '2 · os lugares', titulo: 'Cada um desliza. Quando a galera quer o mesmo, *deu match*', telas: ['explorar', 'match'], pose: 'love' },
     { tipo: 'duas', olho: '3 · casa e contas', titulo: 'Casa no *voto*. Gastos sem planilha', telas: ['passaporte', 'contas'], pose: 'point' },
     { tipo: 'duas', olho: '4 · o passaporte', titulo: 'Cada lugar vira *carimbo*. O mapa da galera acende', telas: ['pass-1', 'pass-carimbou'], pose: 'celebrate' },
-    { tipo: 'fim', titulo: 'Tripwave', sub: 'do "bora?" ao carimbo', pose: 'celebrate' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'do "bora?" ao carimbo', pose: 'celebrate' },
   ],
 }
 
@@ -55,7 +55,7 @@ function conteudo(s, i, total) {
   const sub = s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''
   // com celular, o @ ficaria atrás do aparelho: só o número da página
   const comCelular = s.tipo === 'tela' || s.tipo === 'duas'
-  const rodape = `${comCelular ? '' : '<span class="arroba">@tripwave.app</span>'}<span class="conta">${i}/${total}</span>`
+  const rodape = `${comCelular ? '' : '<span class="arroba">@norti.app</span>'}<span class="conta">${i}/${total}</span>`
   if (s.tipo === 'capa') return `
     <div class="capa">${olho}<h1${s.titulo.length < 30 ? ' class="curto"' : ''}>${rico(s.titulo)}</h1>${sub}</div>
     <img class="norti n-capa" src="${norti(s.pose)}">${rodape}`
@@ -77,7 +77,7 @@ function conteudo(s, i, total) {
       <img class="norti n-fim" src="${norti(s.pose)}">
       <h1>${esc(s.titulo)}</h1><p>${esc(s.sub)}</p>
       <span class="pilula">em breve · lista de espera no perfil</span>
-    </div><span class="arroba">@tripwave.app</span>`
+    </div><span class="arroba">@norti.app</span>`
 }
 
 function pagina(s, i, total) {

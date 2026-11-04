@@ -1,4 +1,4 @@
-# HANDOFF: marketing do Tripwave
+# HANDOFF: marketing da Norti (antes Tripwave)
 
 *02/11/2026. Sessão de marketing (sem código: código e banco ficam com as sessões de dev).*
 
@@ -30,6 +30,8 @@
 - Quadro de design da Norti: https://claude.ai/artifact/GU32RoWEYJWRyuM8t1hCoP (sem cópia no repo: salvar o HTML em `docs/marketing/` antes de apagar)
 
 ## Pendente
+
+000000. **04/11/2026: o app se chama NORTI** (igual à mascote; decisão do Victor, registrada no topo de `NOME-E-VOZ.md`). Escrever "a Norti" no feminino pro app também. Já trocados: bios e posts (`CONTEUDO-PASSAPORTE.md`, `APRESENTAR-O-APP.md`), carrosséis C0 e C1 (gerados de novo) e AGENTS.md. Docs antigos ainda dizem Tripwave (histórico). **A fazer:** a dupla registra **norti.app** (+ getnorti.com), confere e cria **@nortiapp** (X) e **@norti.app** (Instagram e TikTok) e busca "Norti" no INPI; **sessão de dev** troca o nome que aparece no app e no site (título, ícone, loja, texto "Tripwave" nas telas e no protótipo `teste/ancora/passaporte.html`), sem mexer nos nomes internos "together".
 
 00000. **04/11/2026: C0 ("A história") e C1 ("O que é o Tripwave?") prontos pra aprovar**, 7 slides cada, 1080×1350, em `slides/saida/C0` e `C1` (prévia em `previa.png`). Visual do vídeo do app: fundo de couro com mapa de rota, título com palavra em destaque, celular com tela real e Norti. Gerador: `node docs/marketing/slides/apresentar.mjs C0` (os textos ficam no próprio arquivo). As telas vêm de `docs/marketing/video/gravacoes/telas/`, que não vai pro git: pra gerar de novo, subir o Expo web na 8089 e rodar `node telas.mjs` dentro de `docs/marketing/video` (modo demonstração, sem banco). As páginas do passaporte são do protótipo `teste/ancora/passaporte.html`.
 
