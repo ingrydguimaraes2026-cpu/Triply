@@ -444,7 +444,7 @@ function Deslize({
 }) {
   const { height } = useTamanhoDaTela()
   const insets = useSafeAreaInsets()
-  const altura = Math.round(Math.min(520, Math.max(340, height - insets.top - insets.bottom - 300)))
+  const altura = Math.round(Math.min(520, Math.max(340, height - insets.top - insets.bottom - 250)))
   const atual = pilha[posicao]
   const proximo = pilha[posicao + 1]
   return (
@@ -453,33 +453,28 @@ function Deslize({
         <View className="-ml-2">
           <Norti humor="feliz" tamanho={60} sombra={false} />
         </View>
-        <Bolha texto={posicao === 0 ? 'Curte ou passa? Arrasta pro lado.' : `Mais ${pilha.length - posicao}!`} grande />
+        <Bolha texto={posicao === 0 ? 'Arrasta: pra direita se curte, pra esquerda se passa.' : `Mais ${pilha.length - posicao}!`} grande />
       </View>
       <View style={{ height: altura }}>
         {proximo ? <CartaoDoExplorar key={`b-${proximo.id}`} lugar={proximo} altura={altura} parado /> : null}
         {atual ? <CartaoDoExplorar key={atual.id} lugar={atual} altura={altura} comando={comando} aoVoar={aoVoar} /> : null}
       </View>
+      {/* Sem botões: o gesto decide. Só a dica das direções */}
       <View className="mt-4 flex-row items-center justify-center gap-5">
-        <BotaoRedondoGrande rotulo="Passo" aoTocar={() => aoPedir('passo')}>
-          <X size={26} color={cor.vermelho} strokeWidth={2.6} />
-        </BotaoRedondoGrande>
-        <BotaoRedondoGrande rotulo="Não abro mão" pequeno aoTocar={() => aoPedir('nao_abro_mao')}>
-          <Star size={22} color={cor.caramelo} fill={cor.dourado} />
-        </BotaoRedondoGrande>
-        <BotaoRedondoGrande rotulo="Quero" principal aoTocar={() => aoPedir('quero')}>
-          <Heart size={26} color="#fff" fill="#fff" />
-        </BotaoRedondoGrande>
+        <Direcao Icone={X} tom={cor.vermelho} texto="passo" />
+        <Direcao Icone={Star} tom={cor.caramelo} texto="não abro mão" />
+        <Direcao Icone={Heart} tom={cor.verde} texto="quero" />
       </View>
     </View>
   )
 }
 
-function BotaoRedondoGrande({ children, rotulo, aoTocar, principal, pequeno }: { children: ReactNode; rotulo: string; aoTocar: () => void; principal?: boolean; pequeno?: boolean }) {
-  const t = pequeno ? 52 : 62
+function Direcao({ Icone, tom, texto }: { Icone: typeof Heart; tom: string; texto: string }) {
   return (
-    <Pressable accessibilityLabel={rotulo} onPress={aoTocar} className={`items-center justify-center rounded-full active:opacity-80 ${principal ? 'bg-couro' : 'bg-cartao'}`} style={[{ width: t, height: t }, sombra.flutuante]}>
-      {children}
-    </Pressable>
+    <View className="flex-row items-center gap-1.5">
+      <Icone size={15} color={tom} />
+      <Text className="font-body-semibold text-[13px] text-suave">{texto}</Text>
+    </View>
   )
 }
 

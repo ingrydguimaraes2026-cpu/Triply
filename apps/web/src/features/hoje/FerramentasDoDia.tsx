@@ -39,7 +39,7 @@ export default function FerramentasDoDia({ destino, moedaViagem, enderecoHospeda
     <div className="ferramentas">
       <Conversor moeda={moedaLocal === 'BRL' ? moedaViagem : moedaLocal} />
       <Gorjeta pais={pais} moeda={moedaLocal} />
-      {/* Frases úteis. ❄ congelado pelo RUMO (03/11/2026) */}
+      {/* Frases úteis. Congelado pelo RUMO (03/11/2026) */}
       {idiomaDoPais(pais) && !CONGELADO.frasesUteis && <FrasesUteis idioma={idiomaDoPais(pais)!} />}
       {enderecoHospedagem && <MostrarProMotorista endereco={enderecoHospedagem} />}
       {destino && <Banheiros destino={destino} />}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Foto, FotoDeFundo } from '../src/ui/Foto'
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Redirect, useRouter } from 'expo-router'
@@ -143,13 +144,13 @@ function CartaoDestaque({ viagem, carimbos, aoAbrir }: { viagem: ViagemComDetalh
 
   return (
     <Pressable onPress={aoAbrir} className="h-[400px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
-      <ImageBackground source={capa(viagem.id)} resizeMode="cover" style={StyleSheet.absoluteFill}>
+      <FotoDeFundo source={capa(viagem.id)} style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={['rgba(185,122,34,0)', 'rgba(185,122,34,0.55)', '#4A2E14']}
           locations={[0.38, 0.62, 1]}
           style={StyleSheet.absoluteFill}
         />
-      </ImageBackground>
+      </FotoDeFundo>
       <View className="absolute left-4 top-4 flex-row items-center gap-1.5 rounded-full bg-fundo px-3 py-2">
         <Clock size={16} color={cor.caramelo} />
         <Text className="font-body-bold text-[13px] text-texto">{etiqueta}</Text>
@@ -186,7 +187,7 @@ function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemCo
       <View className="gap-2.5">
         {viagens.map((v) => (
           <Pressable key={v.id} onPress={() => aoAbrir(v)} className="flex-row items-center gap-3.5 rounded-2xl bg-cartao p-3 active:opacity-90" style={sombra.cartao}>
-            <Image source={capa(v.id, 200)} className="h-16 w-16 rounded-xl bg-tracejado" />
+            <Foto source={capa(v.id, 200)} className="h-16 w-16 rounded-xl bg-tracejado" />
             <View className="min-w-0 flex-1">
               <Text className="font-display text-[18px] text-texto" numberOfLines={1}>
                 {v.nome}

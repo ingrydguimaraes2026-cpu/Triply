@@ -127,7 +127,7 @@ export default function Lugares() {
               <Heart size={13} aria-hidden="true" fill={euVotei ? 'currentColor' : 'none'} />
               {lugar.votos.length > 0 && <span>{lugar.votos.length}</span>}
             </button>
-            {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+            {/* Congelado pelo RUMO (03/11/2026): comentários soltos */}
             {!CONGELADO.comentarios && (
               <ComentariosDoItem
                 alvo={{ tipo: 'lugar', id: lugar.id }}

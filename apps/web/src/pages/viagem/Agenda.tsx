@@ -125,7 +125,7 @@ export default function Agenda() {
             <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
               <Printer size={16} aria-hidden="true" /> PDF
             </Link>
-            {/* Baixar o .ics (spec 036). ❄ congelado pelo RUMO (03/11/2026) */}
+            {/* Baixar o .ics (spec 036). Congelado pelo RUMO (03/11/2026) */}
             {!CONGELADO.calendario && (
               <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
                 <CalendarPlus size={16} aria-hidden="true" /> Calendário

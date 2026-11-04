@@ -313,7 +313,7 @@ export default function Financeiro() {
 
           <div className="fin-colunas">
             <div className="fin-principal">
-              {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? (e o boletim). ❄ congelado pelo RUMO (03/11/2026) */}
+              {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? (e o boletim). Congelado pelo RUMO (03/11/2026) */}
               {moeda !== 'BRL' && !CONGELADO.cambioAvancado && (
                 <TermometroCambio
                   viagemId={viagem.id}
@@ -514,7 +514,7 @@ export default function Financeiro() {
                             </span>
                             <span className="gasto-valor">{formatarDinheiro(g.valor, g.moeda)}</span>
                           </button>
-                          {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+                          {/* Congelado pelo RUMO (03/11/2026): comentários soltos */}
                           {!CONGELADO.comentarios && (
                             <ComentariosDoItem
                               alvo={{ tipo: 'gasto', id: g.id }}

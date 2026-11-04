@@ -1,5 +1,6 @@
 import { useRef, useState, type ComponentRef } from 'react'
 import { Image, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { Foto } from '../src/ui/Foto'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sharing from 'expo-sharing'

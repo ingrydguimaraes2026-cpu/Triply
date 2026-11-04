@@ -59,7 +59,7 @@ export function Lembrancas({ viagem, foto, numeros, passos, contasEmDia, ir, aoE
           <View className="rounded-2xl bg-cartao px-4" style={sombra.cartao}>
             <Linha Icone={Sparkles} titulo="Retrospectiva" sub="A viagem em cartões pro story" aoTocar={() => ir('retrospectiva')} />
             <Linha Icone={FileText} titulo="Livro da viagem em PDF" sub="Roteiro, fotos e contas" aoTocar={() => ir('pdf-da-viagem')} borda />
-            {/* Extras do Passe. ❄ congelado pelo RUMO (03/11/2026) */}
+            {/* Extras do Passe. Congelado pelo RUMO (03/11/2026) */}
             {CONGELADO.passe ? null : (
               <>
                 <Linha Icone={Printer} titulo="Livro impresso do comboio" sub="As fotos e o roteiro, em casa" aoTocar={() => aoExtra('livro_impresso')} borda trancado />

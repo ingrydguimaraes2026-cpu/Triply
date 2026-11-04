@@ -170,7 +170,7 @@ export default function ViagemLayout() {
         <button type="button" className="viagem-topo-icone botao-sos" onClick={() => setVendoEmergencia(true)} aria-label="Emergência">
           <LifeBuoy size={20} aria-hidden="true" />
         </button>
-        {/* Sino de novidades (spec 031). ❄ congelado pelo RUMO (03/11/2026) */}
+        {/* Sino de novidades (spec 031). Congelado pelo RUMO (03/11/2026) */}
         {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} />}
         {euSouAdm && (
           <Link to="configuracoes" className="viagem-topo-icone" aria-label="Configurações da viagem">
@@ -255,7 +255,7 @@ export default function ViagemLayout() {
         </nav>
 
         <div className="viagem-menu-rodape">
-          {/* ❄ congelado pelo RUMO (03/11/2026) */}
+          {/* Congelado pelo RUMO (03/11/2026) */}
           {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />}
           <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setBuscando(true)} aria-label="Buscar na viagem" title="Buscar">
             <Search size={19} aria-hidden="true" /> <span className="viagem-menu-texto">Buscar</span>

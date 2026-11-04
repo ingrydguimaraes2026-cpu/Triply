@@ -186,7 +186,7 @@ export default function Hospedagem() {
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}
-        {/* Guia da casa. ❄ congelado pelo RUMO (03/11/2026) */}
+        {/* Guia da casa. Congelado pelo RUMO (03/11/2026) */}
         {destaque && !CONGELADO.guiaDaCasa && <GuiaDaCasa guia={opcao.guia} podeEditar={podeEditar} aoEditar={() => setJanela({ tipo: 'guia', opcao })} />}
         {destaque && <QuemDormeOnde viagemId={viagem.id} hospedagemId={opcao.id} membros={membros} meuId={meuId} podeEditar={podeEditar} />}
 
@@ -201,7 +201,7 @@ export default function Hospedagem() {
             <Heart size={16} aria-hidden="true" fill={votei ? 'currentColor' : 'none'} />
             {opcao.votos.length > 0 ? opcao.votos.length : 'Curti'}
           </button>
-          {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+          {/* Congelado pelo RUMO (03/11/2026): comentários soltos */}
           {!CONGELADO.comentarios && (
             <ComentariosDoItem
               alvo={{ tipo: 'hospedagem', id: opcao.id }}

@@ -5,7 +5,7 @@ import { mkdir } from 'node:fs/promises'
 import { instalarDemo, pedidos } from './servidor.mjs'
 import { VIAGEM } from './dados.mjs'
 
-const APP = 'http://localhost:8089'
+const APP = process.env.APP ?? 'http://localhost:8089'
 const caminhos = process.argv.slice(2).length ? process.argv.slice(2) : ['/', `/viagem/${VIAGEM}`, `/viagem/${VIAGEM}/roteiro`, `/viagem/${VIAGEM}/contas`]
 await mkdir('gravacoes', { recursive: true })
 const navegador = await chromium.launch()

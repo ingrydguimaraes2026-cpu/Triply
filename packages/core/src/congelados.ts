@@ -1,4 +1,4 @@
-// ❄ Congelado pelo RUMO (03/11/2026, docs/RUMO.md, "O que congelar").
+// Congelado pelo RUMO (03/11/2026, docs/RUMO.md, "O que congelar").
 // Congelar não é apagar: o código, as rotas e os dados continuam. Só os atalhos
 // saem dos menus e das telas principais (o link direto pela URL segue abrindo).
 // Pra descongelar uma parte, troque o `true` dela por `false`. Web e app leem daqui.

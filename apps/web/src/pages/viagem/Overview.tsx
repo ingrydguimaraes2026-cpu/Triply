@@ -273,7 +273,7 @@ export default function Overview() {
   const pronto =
     viagem.data_inicio && viagem.data_inicio > hojeTexto()
       ? prontidao([
-          // ❄ congelado pelo RUMO (03/11/2026): documentos de entrada saem da conta
+          // Congelado pelo RUMO (03/11/2026): documentos de entrada saem da conta
           ...(CONGELADO.documentos ? [] : [{ nome: 'documentos', feitas: docsProgresso.feitas, total: docsProgresso.total }]),
           { nome: 'hospedagem', feitas: hospResumo.resolvidos, total: hospResumo.total },
           { nome: 'trajetos comprados', feitas: comprados?.comprados ?? 0, total: comprados?.total ?? 0 },
@@ -519,7 +519,7 @@ export default function Overview() {
               )}
             </Cartao>
           )}
-          {/* Spec 010: checklist de documentos. ❄ congelado pelo RUMO (03/11/2026) */}
+          {/* Spec 010: checklist de documentos. Congelado pelo RUMO (03/11/2026) */}
           {!CONGELADO.documentos && (
             <ChecklistDocumentos
               docs={docs}
@@ -665,7 +665,7 @@ export default function Overview() {
           <ListasDoComboio />
         </Cartao>
 
-        {/* Spec 047: ficha do país + lembrete do eSIM. ❄ congelado pelo RUMO (03/11/2026) */}
+        {/* Spec 047: ficha do país + lembrete do eSIM. Congelado pelo RUMO (03/11/2026) */}
         {!CONGELADO.fichaDoPais && (
           <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
             <FichaDoPais viagem={viagem} destinos={destinos} />

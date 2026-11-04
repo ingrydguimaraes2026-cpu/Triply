@@ -1,4 +1,5 @@
 import { Image, Pressable, ScrollView, Text, View } from 'react-native'
+import { Foto } from './Foto'
 import Animated from 'react-native-reanimated'
 import type { Pessoa } from '@together/core'
 import { Check, Compass, Wand2 } from './icones'
@@ -74,7 +75,7 @@ function Linha({ m, membros, meuId, opinar, aoTocar }: { m: Match; membros: Pess
   const falta = faltam.length ? `falta ${faltam.map((p) => (p.id === meuId ? 'você' : primeiroNome(p.nome))).join(', ').replace(/, ([^,]*)$/, ' e $1')}` : 'todo mundo quer'
   return (
     <Pressable onPress={aoTocar} className="flex-row items-center gap-3 rounded-2xl bg-cartao p-2.5 active:opacity-90" style={sombra.cartao}>
-      {m.foto ? <Image source={{ uri: m.foto }} className="h-16 w-16 rounded-xl bg-areia" /> : <View className="h-16 w-16 items-center justify-center rounded-xl bg-areia"><Selo nome="museu" tamanho={34} /></View>}
+      {m.foto ? <Foto source={{ uri: m.foto }} className="h-16 w-16 rounded-xl bg-areia" /> : <View className="h-16 w-16 items-center justify-center rounded-xl bg-areia"><Selo nome="museu" tamanho={34} /></View>}
       <View className="min-w-0 flex-1 gap-1">
         <Text className="font-body-bold text-[15px] text-texto" numberOfLines={2}>
           {m.nome}

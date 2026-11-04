@@ -1,16 +1,17 @@
 import { useState } from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from '../src/ui/icones'
-import { buscarDestinos, buscarTrajetos, type Destino, type Trajeto } from '@together/core'
+import { apagarTrajeto, buscarDestinos, buscarTrajetos, type Destino, type Trajeto } from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { diaCurto, hora } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { Norti } from '../src/ui/Norti'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { Botao, BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { NovoTrajeto } from '../src/ui/NovoTrajeto'
 import { cor } from '../theme'
 
 // Transportes (tela "1i" do design): os trajetos do comboio como cartões de "passagem",
@@ -30,6 +31,7 @@ export default function Transportes() {
   const insets = useSafeAreaInsets()
   const { atual: viagem } = useViagemAtual()
   const [aba, setAba] = useState<'todos' | 'ida' | 'volta'>('todos')
+  const [novo, setNovo] = useState(false)
   const carga = useCarregar(viagem ? () => Promise.all([buscarTrajetos(supabase, viagem.id), buscarDestinos(supabase, viagem.id)]) : null, [viagem?.id])
 
   if (!viagem) return null
@@ -41,6 +43,17 @@ export default function Transportes() {
   // Ida = trajetos antes do meio da viagem; Volta = depois
   const meio = viagem.dataInicio && viagem.dataFim ? (new Date(viagem.dataInicio).getTime() + new Date(viagem.dataFim).getTime()) / 2 : null
   const ehIda = (t: Trajeto) => !meio || !t.partida || new Date(t.partida).getTime() <= meio
+  // Apagar: confirma antes (no navegador o Alert com botões não funciona)
+  function apagar(t: Trajeto) {
+    const fazer = () =>
+      apagarTrajeto(supabase, t.id)
+        .then(carga.recarregar)
+        .catch(() => Alert.alert('Não deu pra apagar', 'Só o ADM (ou quem ele liberar) apaga trajetos.'))
+    if (Platform.OS === 'web') {
+      if (globalThis.confirm?.('Apagar este trajeto?')) void fazer()
+    } else Alert.alert('Apagar este trajeto?', undefined, [{ text: 'Cancelar', style: 'cancel' }, { text: 'Apagar', style: 'destructive', onPress: () => void fazer() }])
+  }
+
   const lista = aba === 'todos' ? trajetos : trajetos.filter((t) => (aba === 'ida' ? ehIda(t) : !ehIda(t)))
 
   return (
@@ -68,26 +81,43 @@ export default function Transportes() {
           <View className="mt-10 items-center gap-3 px-6">
             <Norti humor="dormindo" tamanho={120} />
             <Text className="font-display text-[24px] text-texto">Nenhum trajeto ainda</Text>
-            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Voos, carros e trens que o comboio cadastrar aparecem aqui.</Text>
+            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Cadastre o voo, o ônibus ou o carro de cada um. Todo mundo vê aqui e no "Hoje".</Text>
           </View>
         ) : (
-          lista.map((t) => <Passagem key={t.id} trajeto={t} destinos={destinos} />)
+          lista.map((t) => <Passagem key={t.id} trajeto={t} destinos={destinos} aoApagar={() => apagar(t)} />)
         )}
+        <View className="mt-2">
+          <Botao titulo="Adicionar trajeto" tipo={lista.length ? 'secundario' : 'primario'} aoTocar={() => setNovo(true)} />
+        </View>
+        {lista.length ? <Text className="text-center font-body text-[12px] text-suave">Segure um trajeto pra apagar.</Text> : null}
       </ScrollView>
+      {novo ? (
+        <NovoTrajeto
+          visivel
+          viagemId={viagem.id}
+          moeda={viagem.moeda}
+          dataInicio={viagem.dataInicio}
+          dataFim={viagem.dataFim}
+          destinos={destinos}
+          aoFechar={() => setNovo(false)}
+          aoSalvar={carga.recarregar}
+        />
+      ) : null}
     </View>
   )
 }
 
-function Passagem({ trajeto: t, destinos }: { trajeto: Trajeto; destinos: Destino[] }) {
+function Passagem({ trajeto: t, destinos, aoApagar }: { trajeto: Trajeto; destinos: Destino[]; aoApagar: () => void }) {
   const { nome, Icone } = MEIOS[t.meio] ?? MEIOS.outro
-  const origem = destinos.find((d) => d.id === t.origem_id)?.nome ?? 'Origem'
-  const chegada = destinos.find((d) => d.id === t.destino_id)?.nome ?? 'Destino'
+  const origem = destinos.find((d) => d.id === t.origem_id)?.nome ?? 'Casa'
+  const chegada = destinos.find((d) => d.id === t.destino_id)?.nome ?? 'Casa'
   const duracao = t.partida && t.chegada ? Math.round((new Date(t.chegada).getTime() - new Date(t.partida).getTime()) / 60000) : null
   const subtitulo = [t.partida ? diaCurto(new Date(t.partida)) : null, duracao && duracao > 0 ? `${Math.floor(duracao / 60)}h${String(duracao % 60).padStart(2, '0')}` : null]
     .filter(Boolean)
     .join(' · ')
 
   return (
+    <Pressable onLongPress={aoApagar} delayLongPress={450} accessibilityHint="Segure pra apagar">
     <Cartao className="gap-4 p-5">
       <View className="flex-row items-center gap-2.5">
         <IconeQuadrado tamanho={36}>
@@ -128,5 +158,6 @@ function Passagem({ trajeto: t, destinos }: { trajeto: Trajeto; destinos: Destin
         </View>
       </View>
     </Cartao>
+    </Pressable>
   )
 }
