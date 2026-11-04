@@ -1,5 +1,7 @@
 # Estratégia de redes: X, TikTok e Instagram
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. Os canais e os papéis de cada rede continuam valendo.
+
 *Escrito em 02/11/2026. Base: seus salvos no X, o feed de hoje e a pesquisa em `research_notes/`.*
 
 ## A ideia central

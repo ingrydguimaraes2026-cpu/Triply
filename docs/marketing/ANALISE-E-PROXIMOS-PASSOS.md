@@ -1,5 +1,7 @@
 # Análise do S1 e próximos passos
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. As lições sobre o S1 e as fontes sem login continuam valendo.
+
 *03/11/2026. Depois do pull do outro PC. O Victor não gostou do S1 ("A dor do Pix"). Conclusão: **pausar a produção e fazer benchmark de verdade antes do próximo post.***
 
 ## 1. Por que o S1 não funciona

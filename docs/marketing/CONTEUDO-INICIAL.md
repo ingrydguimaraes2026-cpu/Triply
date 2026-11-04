@@ -1,5 +1,7 @@
 # Conteúdo inicial: bios, TikTok do réveillon e primeiros posts do X
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. Daqui ainda valem o tom (sem palavra de startup) e as regras de link; as bios e os roteiros foram trocados.
+
 *02/11/2026. Rascunho pra dupla ajustar. Segue o tom de voz de `NOME-E-VOZ.md` e os formatos de `ESTRATEGIA-REDES.md`.*
 
 **Antes de postar qualquer coisa:**

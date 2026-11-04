@@ -1,5 +1,7 @@
 # O que a galera do X ensina (e o que muda nos nossos posts)
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. As lições do X continuam valendo; os temas de vídeo e os posts foram atualizados lá.
+
 *03/11/2026. Lido nos 42 posts salvos do Victor no X (navegador do app, conta dele, só leitura), abrindo as respostas dos que mais interessam. TikTok fica de lado por enquanto, a pedido do Victor.*
 
 ## Os 6 posts que mais ensinam

@@ -1,5 +1,7 @@
 # Preço: hipótese pro Tripwave
 
+> **Superado pelo RUMO (04/11/2026).** Este doc propõe o dinheiro ("ninguém fica devendo") como aposta central e o Passe por viagem. O Victor rejeitou os dois em `docs/RUMO.md`: a âncora é o **Passaporte da galera**, o Pix é só um detalhe do acerto e a cobrança é a **assinatura do organizador**. Use este arquivo só como histórico.
+
 *03/11/2026. Sessão de produto, só documento.*
 
 > **Isto é uma hipótese pra testar, não conselho financeiro nem projeção de receita.** Os números de mercado vêm de `reports/Mercado de apps de viagem em grupo.md` (com a fonte de lá). Todo número sem fonte é **hipótese nossa** e está marcado assim. Nada aqui foi testado com usuário: nenhum grupo real usou o app ainda.
