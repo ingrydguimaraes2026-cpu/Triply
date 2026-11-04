@@ -31,7 +31,7 @@ Data: 02/11/2026. Pedido do Victor: "não gosto desses cards... muito texto, mui
 
 ## DECIDIDO (02/11/2026, fim da sessão de desenho)
 - Victor aprovou a **UX definitiva**: `docs/design/direcoes-v2/definitiva.html` (9 telas + Explorar com match A/B/C). "Gostamos de UX, gostamos de animação estilo motion. Pode aplicar."
-- Spec escrita: **`docs/specs/117-ux-definitiva-do-app.md`** (o que entra, motion, dados, ordem de implementação em 8 partes). Cobrança de verdade fica pra spec 118.
+- Spec escrita: **`docs/specs/117-ux-definitiva-do-app.md`** (o que entra, motion, dados, ordem de implementação em 8 partes). Cobrança de verdade fica pra spec 119.
 - Spec 114 atualizada: o match com o comboio entrou (na 117).
 
 ## Próximo passo exato (sessão nova de implementação)

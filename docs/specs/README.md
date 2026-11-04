@@ -6,7 +6,9 @@ Cada arquivo aqui é um "envelope" de uma funcionalidade: o que é, por que exis
 
 **O plano das próximas funcionalidades (em ondas) está no [`docs/ROADMAP.md`](../ROADMAP.md).** Cada item de lá vira uma spec aqui antes de codar.
 
-Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na internet, testes automáticos no GitHub, e-mail próprio) fica pra depois.
+**Rumo novo (03/11/2026): leia o [`docs/RUMO.md`](../RUMO.md).** Prioridade 1 é a spec [118](118-ciclo-viagem-sem-climao.md). Spec nova fora dos 6 passos do ciclo não se abre agora; as funcionalidades fora do ciclo ficam congeladas (❄).
+
+Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na internet, testes automáticos no GitHub, e-mail próprio) fica pra depois. (O convidado age pela web leve: ver RUMO.)
 
 ## Roteiro
 
@@ -120,7 +122,8 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 115 | [Jornada nova: montar a viagem com o grupo](115-jornada-montar-a-viagem-com-o-grupo.md) (v2: deslize dentro da criação, roteiro editável do grupo, estilo Roameo) | 2 | Pronto pra testar |
 | 116 | [Onboarding e primeira viagem guiada no app](116-primeira-viagem-guiada-no-app.md) (v2: conversa com a Agulha, gostinho do deslize antes da conta, roteiro pronto ao criar a conta; checklist "Montem a viagem") | 2 | v2 pronta pra testar (iPhone) |
 | 117 | [UX definitiva do app](117-ux-definitiva-do-app.md) (viagem em 4 abas, carimbos, match do comboio, motion, tela do Passe sem cobrar) | 2 | Pronta pra testar no app (web 360px ok) · falta aplicar as 2 migrations (match e Passe), regerar tipos, deploy de lembretes e testar no iPhone |
-| 118 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | A escrever |
+| 118 | [O ciclo "viagem sem climão"](118-ciclo-viagem-sem-climao.md) (da frase ao Pix pago: rascunho por IA, link sem instalar, cobrança com Pix e parcelas, contagem, retrospectiva) | 0 | A fazer · **prioridade 1** (ver [RUMO](../RUMO.md)) |
+| 119 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | ❄ Congelada pelo RUMO (vira assinatura do organizador) |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |

@@ -1,6 +1,6 @@
 # Fila completa: tudo que falta, uma task atrás da outra
 
-**Atualizado:** 30/10/2026 · **Base:** `reports/Catálogo de funcionalidades da plataforma.md` (141 itens) + `docs/ideias-de-outros-apps.md` (ideias novas)
+**Atualizado:** 03/11/2026 (Fase 0 nova, rumo do [`docs/RUMO.md`](RUMO.md)) · **Base:** `reports/Catálogo de funcionalidades da plataforma.md` (141 itens) + `docs/ideias-de-outros-apps.md` (ideias novas)
 
 Este é o **roteiro de execução**. Ele substitui a ordem das ondas na hora de escolher a próxima task: pega a **primeira linha não feita** e vai. O `docs/FILA-onda-1.md` continua valendo para o detalhe das tasks da Onda 1.
 
@@ -32,6 +32,21 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 - **Fase 8:** IA, memórias e o que é grande ou caro (APIs pagas, nativo).
 
 ---
+
+## Fase 0 · O ciclo "viagem sem climão" (vem antes de tudo)
+
+**Rumo novo (03/11/2026):** a fila abaixo da Fase 0 fica **congelada (❄)**, exceto o que serve a um dos 6 passos do ciclo (convite, convidado sem conta, votos, Contas, contagem, retrospectiva). Leia o [`docs/RUMO.md`](RUMO.md).
+
+| # | Task | Spec | Tam. | Status |
+|---|---|---|---|---|
+| 0.1 | Conversar com 10 grupos fechando réveillon/carnaval (roteiro de perguntas no RUMO) | — | P | a fazer |
+| 0.2 | Link do convidado `/v/<código>`: topar e votar sem instalar | [118b](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
+| 0.3 | Fechar a casa e cobrar: Pix copia-e-cola, sinal, parcelas, "já paguei" (migration nova) | [118c](specs/118-ciclo-viagem-sem-climao.md) | G | a fazer 🔒 (confirmar migration) |
+| 0.4 | Começar em 30 s: frase/print/link vira rascunho e mensagem pro grupo | [118a](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
+| 0.5 | Tela principal do organizador: contagem, "nesta semana", quem não pagou, postar contagem | [118d](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
+| 0.6 | Na viagem: gasto por frase no fluxo e placar no link | [118e](specs/118-ciclo-viagem-sem-climao.md) | P | a fazer |
+| 0.7 | Depois: acerto final com Pix e retrospectiva com "bora a próxima?" | [118f](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
+| 0.8 | Esconder do menu o que está congelado (câmbio avançado, documentos, clima, cofre, guia da casa, calendário, avisos, comentários, ficha do país, frases) | RUMO | P | a fazer |
 
 ## Fase 1 · Fechar a Onda 1
 | Nº | Cód. | Task | Tam. | Status |

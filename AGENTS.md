@@ -96,7 +96,8 @@ Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais 
 
 ## 5. Regras do código
 
-- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). Agora a prioridade é levar pro app o que já existe no site (Explorar, jornada da spec 115, roteiro do grupo).
+- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). **Atualização do rumo (03/11/2026):** o app é do **organizador**; o **convidado** age pela **web leve** (`/v/<código>`: topar, votar, pagar o Pix), sem instalar.
+- **Rumo do produto: [`docs/RUMO.md`](docs/RUMO.md) manda.** Prioridade 1 é a spec 118 (o ciclo "viagem sem climão"). Antes de pegar qualquer task, pergunte "isso serve a um dos 6 passos do ciclo?". Se não serve, está congelado (❄): não abra spec nova pra isso.
 - Código simples, sem "esperteza". Nomes e comentários em português.
 - Rotas em `src/router.tsx`. Telas em `src/pages/` (só mostram as coisas).
 - Regras e acesso ao banco em `src/features/<módulo>/` (`api.ts`, `hooks.ts`).
@@ -139,6 +140,7 @@ Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais 
 
 ## 8. Referências
 
+- **Rumo do produto (manda em tudo): `docs/RUMO.md`**
 - Plano das próximas funcionalidades (ondas): `docs/ROADMAP.md`
 - Specs de cada funcionalidade: `docs/specs/README.md`
 - Pesquisa de mercado e catálogo completo: `reports/`

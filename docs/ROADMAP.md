@@ -1,9 +1,13 @@
 # Roadmap: o que vamos construir
 
-**Atualizado em:** 29/10/2026 · **Base:** pesquisa de mercado e catálogo de funcionalidades (veja "De onde veio" no fim)
+**Atualizado em:** 03/11/2026 (rumo novo) · **Base:** pesquisa de mercado e catálogo de funcionalidades (veja "De onde veio" no fim)
 
-## A meta
-O comboio planeja, decide, paga, se encontra e guarda as memórias da viagem **sem sair do Together**. O WhatsApp continua sendo o lugar da conversa; o Together é onde as coisas ficam resolvidas.
+## A meta (trocada em 03/11/2026)
+**Viagem sem climão:** o organizador só organiza; o Tripwave leva o grupo do "bora?" até o Pix pago, e o grupo age pelo link sem instalar. O documento que manda agora é o [`docs/RUMO.md`](RUMO.md), e a prioridade 1 é a spec [118](specs/118-ciclo-viagem-sem-climao.md).
+
+As ondas abaixo continuam como histórico e catálogo. **Item de onda que não serve a um dos 6 passos do ciclo está congelado** (não se abre spec nova pra ele).
+
+> Meta antiga (29/10): "o comboio planeja, decide, paga, se encontra e guarda as memórias sem sair do Together". Trocada porque o grupo vive no WhatsApp; o Tripwave abastece o grupo em vez de tentar substituir.
 
 > **Ordem de execução de tudo:** `docs/FILA-completa.md` (uma task atrás da outra). Ideias vindas de outros apps: `docs/ideias-de-outros-apps.md`.
 

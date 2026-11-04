@@ -58,11 +58,11 @@ Um número grande (meu saldo) + câmbio de hoje numa linha + os gastos como **co
 
 ### 7. Passe da viagem (só a tela, sem cobrar ainda)
 - Tela do Passe (tela 8) aparece quando a pessoa toca num extra marcado com cadeado (scan de recibo, mapa sem internet, reservas do e-mail, livro em PDF).
-- **Nesta spec, o botão não cobra**: mostra "Em breve" e grava o interesse (pra medir). A compra de verdade (RevenueCat, App Store) é a **spec 118**.
+- **Nesta spec, o botão não cobra**: mostra "Em breve" e grava o interesse (pra medir). A compra de verdade (RevenueCat, App Store) é a **spec 119** (congelada pelo [RUMO](../RUMO.md): a cobrança agora é a assinatura do organizador).
 - Gastos, divisão, votos, fotos, Explorar e match: **sempre grátis**.
 
 ## Não inclui (fica pra depois)
-- Cobrança de verdade e parceiros com link afiliado (spec 118).
+- Cobrança de verdade e parceiros com link afiliado (spec 119).
 - Nível de viajante, XP, sequência de dias e ranking (testados no modelo "Jogo"; ficaram de fora pra não poluir).
 - Livro impresso e vídeo da viagem de verdade (Lembranças mostra o botão "Em breve").
 - Mapa offline.
