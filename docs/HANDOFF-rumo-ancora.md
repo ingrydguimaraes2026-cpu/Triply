@@ -1,5 +1,7 @@
 # HANDOFF: rumo novo com âncora (03/11/2026)
 
+> **Atualização (03/11, mais tarde):** os passos 1 a 3 do "Próximo passo exato" estão **feitos**: `docs/RUMO.md` reescrito, spec 118 virou [`118-passaporte-da-galera.md`](specs/118-passaporte-da-galera.md), spec nova [`120-hoje-com-reservas-do-grupo.md`](specs/120-hoje-com-reservas-do-grupo.md), FILA (Fase 0 nova), ROADMAP, `specs/README.md` e AGENTS.md seção 5 ajustados. Próximo: task 0.1 da FILA (3 telas falsas pra 10 organizadores).
+
 ## Onde estamos
 - O benchmark de 11/2026 está completo em `docs/benchmark-2026-11/`, partes 00 a 09. A **09-ancora-opcoes.md** é a conclusão.
 - Os arquivos `docs/RUMO.md` e `docs/specs/118-ciclo-viagem-sem-climao.md` foram escritos **antes** da decisão final. Eles põem a **cobrança de Pix como âncora**, e o Victor **rejeitou** isso ("não faz sentido nenhum"). **Precisam ser reescritos.**

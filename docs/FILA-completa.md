@@ -33,20 +33,25 @@ Legenda: **Tam.** P/M/G como no catálogo · 🔒 = decisão do Victor antes de 
 
 ---
 
-## Fase 0 · O ciclo "viagem sem climão" (vem antes de tudo)
+## Fase 0 · Passaporte da galera e "Hoje" (vem antes de tudo)
 
-**Rumo novo (03/11/2026):** a fila abaixo da Fase 0 fica **congelada (❄)**, exceto o que serve a um dos 6 passos do ciclo (convite, convidado sem conta, votos, Contas, contagem, retrospectiva). Leia o [`docs/RUMO.md`](RUMO.md).
+**Rumo novo (03/11/2026, revisto):** âncora = **passaporte da galera**; na viagem, o **"Hoje" com as reservas do grupo**; a base de planejar fica como está. A fila abaixo da Fase 0 fica **congelada (❄)**, exceto o que serve à âncora, ao "Hoje" ou é conserto da base (roteiro do dia e transportes **não** congelam). Leia o [`docs/RUMO.md`](RUMO.md).
 
 | # | Task | Spec | Tam. | Status |
 |---|---|---|---|---|
-| 0.1 | Conversar com 10 grupos fechando réveillon/carnaval (roteiro de perguntas no RUMO) | — | P | a fazer |
-| 0.2 | Link do convidado `/v/<código>`: topar e votar sem instalar | [118b](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
-| 0.3 | Fechar a casa e cobrar: Pix copia-e-cola, sinal, parcelas, "já paguei" (migration nova) | [118c](specs/118-ciclo-viagem-sem-climao.md) | G | a fazer 🔒 (confirmar migration) |
-| 0.4 | Começar em 30 s: frase/print/link vira rascunho e mensagem pro grupo | [118a](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
-| 0.5 | Tela principal do organizador: contagem, "nesta semana", quem não pagou, postar contagem | [118d](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
-| 0.6 | Na viagem: gasto por frase no fluxo e placar no link | [118e](specs/118-ciclo-viagem-sem-climao.md) | P | a fazer |
-| 0.7 | Depois: acerto final com Pix e retrospectiva com "bora a próxima?" | [118f](specs/118-ciclo-viagem-sem-climao.md) | M | a fazer |
-| 0.8 | Esconder do menu o que está congelado (câmbio avançado, documentos, clima, cofre, guia da casa, calendário, avisos, comentários, ficha do país, frases) | RUMO | P | a fazer |
+| 0.1 | Validação: 3 telas falsas (A passaporte, B copiar viagem, C convite + widget) pra 10 organizadores: "qual você postaria?". Se a A não ganhar com folga, voltar pro Victor | [RUMO](RUMO.md) · [09](benchmark-2026-11/09-ancora-opcoes.md) | P | a fazer |
+| 0.2 | Esconder do menu o que está congelado (câmbio avançado, documentos, exigências, ficha do país, frases, guia da casa, calendário, central de avisos, comentários, Passe) | RUMO | P | a fazer |
+| 0.3 | Carimbo de lugar: liberado por localização, foto ou "Cheguei"; "a gente esteve aqui"; postar carimbo (migration nova) | [118a](specs/118-passaporte-da-galera.md) | M | a fazer 🔒 (confirmar migration) |
+| 0.4 | "Hoje" com as reservas do grupo: casa, check-in, quem chega, plano do dia; abre sozinho na viagem | [120a](specs/120-hoje-com-reservas-do-grupo.md) | M | a fazer |
+| 0.5 | "Cheguei" vira carimbo | [120c](specs/120-hoje-com-reservas-do-grupo.md) | P | a fazer (depois da 0.3) |
+| 0.6 | Mapa da galera no Início: lugares acesos, números, quem carimbou mais, postar mapa | [118b](specs/118-passaporte-da-galera.md) | M | a fazer |
+| 0.7 | Retrospectiva que monta sozinha: moldura de Réveillon/Carnaval, legenda pronta, caderno em PDF | [118c](specs/118-passaporte-da-galera.md) | M | a fazer |
+| 0.8 | Convite que todo mundo topa sem instalar (web leve `/v/<código>`: topar, votar, ver o plano, vitrine do passaporte) | [018](specs/018-convidado-sem-conta.md) · RUMO | M | a fazer |
+| 0.9 | Viagens antigas e rolê em 2 toques | [118f](specs/118-passaporte-da-galera.md) | M | a fazer |
+| 0.10 | Reserva entra sem digitar: print, PDF ou texto vira trajeto, casa ou agenda (Edge Function de leitura) | [120b](specs/120-hoje-com-reservas-do-grupo.md) | M | a fazer |
+| 0.11 | "Há 1 ano vocês estavam em..." (aviso e cartão "neste dia") | [118d](specs/118-passaporte-da-galera.md) | P | a fazer |
+| 0.12 | Widget da contagem (iPhone e Android, build EAS) | [118e](specs/118-passaporte-da-galera.md) | M | a fazer 🔒 (build nativo) |
+| — | Fase 2 da âncora: copiar a viagem de outro grupo (cada passaporte terminado vira modelo) | — (sem spec ainda) | G | ❄ depois da âncora |
 
 ## Fase 1 · Fechar a Onda 1
 | Nº | Cód. | Task | Tam. | Status |

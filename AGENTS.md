@@ -96,8 +96,8 @@ Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais 
 
 ## 5. Regras do código
 
-- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). **Atualização do rumo (03/11/2026):** o app é do **organizador**; o **convidado** age pela **web leve** (`/v/<código>`: topar, votar, pagar o Pix), sem instalar.
-- **Rumo do produto: [`docs/RUMO.md`](docs/RUMO.md) manda.** Prioridade 1 é a spec 118 (o ciclo "viagem sem climão"). Antes de pegar qualquer task, pergunte "isso serve a um dos 6 passos do ciclo?". Se não serve, está congelado (❄): não abra spec nova pra isso.
+- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). **Atualização do rumo (03/11/2026):** o app é do **organizador**; o **convidado** age pela **web leve** (`/v/<código>`: topar, votar, ver o plano), sem instalar.
+- **Rumo do produto: [`docs/RUMO.md`](docs/RUMO.md) manda.** Âncora = **passaporte da galera** (spec 118); na viagem, o **"Hoje" com as reservas do grupo** (spec 120); a base de planejar fica sem coisa nova. IA só invisível, pra tirar digitação. Antes de pegar qualquer task, pergunte "isso serve à âncora, ao 'Hoje' ou é conserto da base?". Se não serve, está congelado (❄): não abra spec nova pra isso.
 - Código simples, sem "esperteza". Nomes e comentários em português.
 - Rotas em `src/router.tsx`. Telas em `src/pages/` (só mostram as coisas).
 - Regras e acesso ao banco em `src/features/<módulo>/` (`api.ts`, `hooks.ts`).
