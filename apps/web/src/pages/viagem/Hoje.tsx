@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { BedDouble, CalendarDays, Clock, ExternalLink, KeyRound, Luggage, MapPin, TrainFront, Wifi } from '../../components/ui/icones'
 import {
   agoraEProximo,
-  arquivoDeCadaTrajeto,
+  arquivoDeCada,
   destinoDoDia,
   diaDePassagem,
   lerDiasDoRoteiro,
@@ -23,6 +23,7 @@ import { useViagemAtual } from '../../features/viagens/hooks'
 import { useSessao } from '../../features/auth/hooks'
 import { buscarArquivos, type Arquivo } from '../../features/cofre/api'
 import { PlanoDoDia, QuemChegaESai } from '../../features/hoje/ReservasDoDia'
+import BilheteDoTrajeto from '../../features/cofre/BilheteDoTrajeto'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { useEventosDaAgenda, diaPorExtenso } from '../../features/agenda/hooks'
 import { hojeTexto } from '../../features/destinos/datas'
@@ -51,6 +52,7 @@ type Hospedagem = Pick<
   | 'codigo_porta'
   | 'wifi_rede'
   | 'wifi_senha'
+  | 'contato_anfitriao'
 >
 type LugarDoRoteiro = Pick<Tables<'lugares'>, 'id' | 'nome' | 'endereco' | 'latitude' | 'longitude' | 'visitado_em'>
 type GuardaVolumes = Pick<Tables<'lugares'>, 'id' | 'nome' | 'destino_id' | 'link' | 'horario'>
@@ -67,6 +69,7 @@ export default function Hoje() {
   const [roteiros, setRoteiros] = useState<{ destino_id: string; dias: string[][] }[]>([])
   const [lugares, setLugares] = useState<LugarDoRoteiro[]>([])
   const [arquivos, setArquivos] = useState<Arquivo[]>([])
+  const [versaoDoCofre, setVersaoDoCofre] = useState(0) // sobe quando alguém anexa uma reserva
   const [agora, setAgora] = useState(() => new Date())
   // Convidado pelo link vê o plano do dia, mas não o endereço, o código nem as reservas (spec 120a)
   const { ehConvidado } = useSessao()
@@ -82,7 +85,7 @@ export default function Hoje() {
     Promise.all([
       supabase
         .from('hospedagens')
-        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha')
+        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha, contato_anfitriao')
         .eq('viagem_id', viagem.id)
         .eq('escolhida', true),
       supabase.from('pontos_de_encontro').select('id, local, quando, latitude, longitude').eq('viagem_id', viagem.id),
@@ -106,7 +109,7 @@ export default function Hoje() {
     return () => {
       ativo = false
     }
-  }, [viagem.id])
+  }, [viagem.id, versaoDoCofre])
 
   const hoje = hojeTexto(agora)
   const horaAtual = `${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`
@@ -127,7 +130,9 @@ export default function Hoje() {
   // Spec 120a: bilhetes de quem chega e sai hoje, e o plano do dia (roteiro + agenda)
   const movimentos = quemChegaESaiHoje(hoje, trajetos, destinos, membros, diaNoFuso, horaNoFuso)
   const plano = planoDoDia(hoje, { destinos, eventos: eventos ?? [], roteiros, lugares })
-  const cofrePorTrajeto = arquivoDeCadaTrajeto(arquivos)
+  const cofrePorTrajeto = arquivoDeCada(arquivos, 'trajeto_id')
+  const cofrePorEvento = arquivoDeCada(arquivos, 'evento_id')
+  const recarregarCofre = () => setVersaoDoCofre((v) => v + 1)
 
   return (
     <div className="hoje">
@@ -194,6 +199,7 @@ export default function Hoje() {
                     <strong>Como chegar:</strong> {dormimos.como_chegar}
                   </p>
                 )}
+                {dormimos.contato_anfitriao && <small>Anfitrião: {dormimos.contato_anfitriao}</small>}
                 {dormimos.codigo_porta && (
                   <small className="hoje-dormimos-extra">
                     <KeyRound size={14} aria-hidden="true" /> Código de acesso: <strong>{dormimos.codigo_porta}</strong>
@@ -206,6 +212,13 @@ export default function Hoje() {
                   </small>
                 )}
                 {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
+                {/* Spec 120a: ver (ou anexar) a reserva da casa */}
+                <BilheteDoTrajeto
+                  viagemId={viagem.id}
+                  ligacao={{ hospedagem_id: dormimos.id }}
+                  bilhete={arquivoDeCada(arquivos, 'hospedagem_id').get(dormimos.id)}
+                  aoMudar={recarregarCofre}
+                />
               </div>
             ) : (
               <p className="dica">
@@ -217,7 +230,13 @@ export default function Hoje() {
 
         {naViagem && !ehConvidado && <QuemChegaESai movimentos={movimentos} linkDoCofre={(id) => cofrePorTrajeto.get(id)?.url ?? null} />}
 
-        {naViagem && <PlanoDoDia viagemId={viagem.id} plano={plano} podeChegar={!ehConvidado} />}
+        {naViagem && <PlanoDoDia
+            viagemId={viagem.id}
+            plano={plano}
+            podeChegar={!ehConvidado}
+            reservaDoEvento={(id) => cofrePorEvento.get(id)}
+            aoMudarCofre={recarregarCofre}
+          />}
 
         {bateEVolta && (
           <Cartao titulo={`Volta pra ${nomeDo(bateEVolta.ida.origem_id)}`} icone={TrainFront}>

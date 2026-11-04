@@ -10,21 +10,32 @@ import { cor, sombra } from '../../theme'
 // docs/design/REFERENCIAS-PASSAPORTE.md). Picote tracejado com dois recortes redondos nas pontas.
 const ICONE_DO_MEIO = { aviao: Plane, onibus: Bus, carro: Car, trem: TrainFront } as Record<string, typeof Plane>
 
-export function BilheteDoTrajeto({ m, caminhoNoCofre }: { m: Movimento; caminhoNoCofre: string | null }) {
-  const Icone = ICONE_DO_MEIO[m.meio] ?? Ticket
-  const chega = m.tipo === 'chega'
-  const temReserva = !!caminhoNoCofre || !!m.linkReserva
+// "Ver reserva": abre o arquivo do cofre; sem arquivo (ou se falhar), o link da reserva
+export function VerReserva({ caminho, link }: { caminho: string | null; link?: string | null }) {
   const [abrindo, setAbrindo] = useState(false)
+  if (!caminho && !link) return null
 
-  async function verReserva() {
-    if (caminhoNoCofre) {
+  async function abrir() {
+    if (caminho) {
       setAbrindo(true)
-      const abriu = await abrirDoCofre(caminhoNoCofre)
+      const abriu = await abrirDoCofre(caminho)
       setAbrindo(false)
       if (abriu) return
     }
-    if (m.linkReserva) Linking.openURL(m.linkReserva)
+    if (link) Linking.openURL(link)
   }
+
+  return (
+    <Pressable onPress={abrir} className="flex-row items-center gap-1.5 rounded-xl bg-chip px-3 py-2 active:opacity-80" accessibilityLabel="Ver a reserva">
+      <FileText size={15} color={cor.couro} />
+      <Text className="font-body-bold text-[13px] text-couro">{abrindo ? 'Abrindo…' : 'Ver reserva'}</Text>
+    </Pressable>
+  )
+}
+
+export function BilheteDoTrajeto({ m, caminhoNoCofre }: { m: Movimento; caminhoNoCofre: string | null }) {
+  const Icone = ICONE_DO_MEIO[m.meio] ?? Ticket
+  const chega = m.tipo === 'chega'
 
   return (
     <View className="overflow-hidden rounded-2xl bg-cartao" style={sombra.cartao}>
@@ -56,20 +67,28 @@ export function BilheteDoTrajeto({ m, caminhoNoCofre }: { m: Movimento; caminhoN
           <Text className="font-body-semibold text-[13px] text-corpo" numberOfLines={2}>
             {m.pessoas.length ? m.pessoas.join(', ') : 'O comboio inteiro'}
           </Text>
+          {m.quemBusca ? <Text className="font-body text-[12px] text-caramelo">{m.quemBusca} vai buscar</Text> : null}
         </View>
-        {temReserva ? (
-          <Pressable onPress={verReserva} className="flex-row items-center gap-1.5 rounded-xl bg-chip px-3 py-2 active:opacity-80" accessibilityLabel="Ver a reserva">
-            <FileText size={15} color={cor.couro} />
-            <Text className="font-body-bold text-[13px] text-couro">{abrindo ? 'Abrindo…' : 'Ver reserva'}</Text>
-          </Pressable>
-        ) : null}
+        <VerReserva caminho={caminhoNoCofre} link={m.linkReserva} />
       </View>
     </View>
   )
 }
 
 // Um lugar ou compromisso do plano do dia, com "Ir" e "Cheguei"
-export function ItemDoPlanoDoDia({ item, chegou, aoChegar, podeChegar }: { item: ItemDoPlano; chegou: boolean; aoChegar: () => void; podeChegar: boolean }) {
+export function ItemDoPlanoDoDia({
+  item,
+  chegou,
+  aoChegar,
+  podeChegar,
+  caminhoNoCofre,
+}: {
+  item: ItemDoPlano
+  chegou: boolean
+  aoChegar: () => void
+  podeChegar: boolean
+  caminhoNoCofre: string | null
+}) {
   return (
     <View className="gap-2 border-t border-linha pt-3">
       <View className="flex-row gap-3">
@@ -81,6 +100,7 @@ export function ItemDoPlanoDoDia({ item, chegou, aoChegar, podeChegar }: { item:
       </View>
       <View className="ml-[60px] flex-row flex-wrap items-center gap-2">
         <BotaoIr alvo={item.alvo} corrida={false} />
+        <VerReserva caminho={caminhoNoCofre} />
         {chegou ? (
           <View className="flex-row items-center gap-1.5 px-1 py-2">
             <CircleCheck size={15} color={cor.verde} />

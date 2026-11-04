@@ -32,6 +32,7 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
   const [checkout, setCheckout] = useState(opcao ? (opcao.checkout ?? '') : (destinoInicial?.saida ?? ''))
   const [horaCheckin, setHoraCheckin] = useState(opcao?.horaCheckin ?? '')
   const [horaCheckout, setHoraCheckout] = useState(opcao?.horaCheckout ?? '')
+  const [contato, setContato] = useState(opcao?.contatoAnfitriao ?? '')
   const [cancelamento, setCancelamento] = useState(opcao?.cancelamentoGratisAte ?? '')
   const [guardaMalas, setGuardaMalas] = useState(opcao?.guardaMalas ?? '')
   const [guardaMalasObs, setGuardaMalasObs] = useState(opcao?.guardaMalasObs ?? '')
@@ -93,6 +94,7 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
         checkout: checkout || null,
         horaCheckin: horaCheckin || null,
         horaCheckout: horaCheckout || null,
+        contatoAnfitriao: contato.trim() || null,
         cancelamentoGratisAte: cancelamento || null,
         fotoUrl: foto,
         guardaMalas: guardaMalas || null,
@@ -206,6 +208,14 @@ export default function FormOpcao({ destinos, destinoId, moedaViagem, opcao, pod
           </label>
           <input id="hosp-hora-checkout" type="time" value={horaCheckout} onChange={(e) => setHoraCheckout(e.target.value)} />
         </div>
+      </div>
+
+      {/* Spec 120a: aparece no "Onde dormimos" do Hoje */}
+      <div className="form-campo">
+        <label className="form-rotulo" htmlFor="hosp-contato">
+          Contato do anfitrião (opcional)
+        </label>
+        <input id="hosp-contato" maxLength={120} placeholder="Ex.: Marta, +351 912 345 678" value={contato} onChange={(e) => setContato(e.target.value)} />
       </div>
 
       <div className="form-campo">

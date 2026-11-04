@@ -182,3 +182,9 @@
   font-size: 13px;
   color: var(--cor-sucesso);
 }
+
+.bilhete-busca {
+  display: block;
+  color: var(--caramelo) !important;
+  font-weight: 700;
+}

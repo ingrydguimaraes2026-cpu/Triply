@@ -1,6 +1,6 @@
 # 120. "Hoje" com as reservas do grupo
 
-**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco da 120a não aplicado · 120b e 120c a fazer
+**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco aplicado · 120b e 120c a fazer
 
 > Camada 2 do [`docs/RUMO.md`](../RUMO.md): o que faz abrir o app todo dia durante a viagem. Alimenta o [passaporte da galera (118)](118-passaporte-da-galera.md).
 
@@ -70,7 +70,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 ## Critérios de aceite
 - [ ] Mando o print da reserva do Airbnb e, em até 15 s, vejo o rascunho com endereço, check-in e check-out; confirmo e a casa aparece no "Hoje" de todo mundo.
 - [ ] Mando o PDF de um voo e ele vira trajeto com horário e a pessoa certa; aparece em "quem chega hoje" no dia.
-- [x] "Ver reserva" abre o arquivo original. (120a: no bilhete do trajeto, pelo cofre ou pelo link da reserva. Casa e agenda esperam a migration `20261103120000_reservas_no_hoje.sql`.)
+- [x] "Ver reserva" abre o arquivo original. (120a: no bilhete do trajeto, no "Onde dormimos" e nos itens da agenda, pelo cofre. No site dá pra anexar a reserva ali mesmo; no app só abre.)
 - [ ] Leitura que falha abre o formulário com o que deu pra ler, sem perder o arquivo.
 - [x] Num dia da viagem, o app abre direto no "Hoje". (120a: no app, o Início leva pra viagem, uma vez por abertura; no site, abrir a viagem leva pro Hoje, uma vez por aba.)
 - [ ] "Cheguei" num lugar do roteiro avisa o grupo e libera o carimbo (118a).
@@ -82,7 +82,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 - App: `apps/mobile/app/hoje.tsx` + `src/ui/BilheteDoDia.tsx`; abre sozinho em `app/index.tsx`.
 - Site: `apps/web/src/pages/viagem/Hoje.tsx` + `src/features/hoje/ReservasDoDia.tsx` (o pedido foi fazer no site também, apesar do "não inclui").
 - "Cheguei" hoje avisa o grupo (chegadas, 051) e marca o lugar como visitado. O carimbo é a 120c.
-- "Quem vai buscar", contato do anfitrião e "ver reserva" da casa e da agenda dependem da migration `20261103120000_reservas_no_hoje.sql` (não aplicada).
+- Banco (`20261103120000_reservas_no_hoje.sql`, aplicado 03/11): arquivo do cofre amarra em hospedagem e agenda, `hospedagens.contato_anfitriao`, `trajetos.quem_busca_id`. Onde preencher (site): contato no formulário da hospedagem, "quem vai buscar" no do trajeto, reserva anexada no Hoje.
 
 ## Perguntas em aberto
 - O endereço da casa e o código de acesso podem aparecer pro convidado pelo link? (proposta: não, só pra quem está no comboio com conta)

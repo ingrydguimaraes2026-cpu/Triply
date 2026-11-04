@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const { quemChegaESaiHoje, planoDoDia, indiceDoDia, arquivoDeCadaTrajeto, viagemAcontecendo } = await import(
+const { quemChegaESaiHoje, planoDoDia, indiceDoDia, arquivoDeCada, viagemAcontecendo } = await import(
   new URL('../../../packages/core/src/hoje-do-grupo.ts', import.meta.url)
 )
 
@@ -91,14 +91,27 @@ test('plano do dia junta roteiro e agenda', () => {
   assert.deepEqual(planoDoDia('2026-12-10', { destinos: [LISBOA], eventos: [], roteiros, lugares }), [])
 })
 
-test('arquivo do cofre de cada trajeto', () => {
-  const m = arquivoDeCadaTrajeto([
-    { id: 1, trajeto_id: 't', criado_em: '2026-11-01' },
-    { id: 2, trajeto_id: 't', criado_em: '2026-11-05' },
-    { id: 3, trajeto_id: null, criado_em: '2026-11-09' },
-  ])
+test('arquivo do cofre de cada trajeto, casa e agenda', () => {
+  const arquivos = [
+    { id: 1, trajeto_id: 't', hospedagem_id: null, criado_em: '2026-11-01' },
+    { id: 2, trajeto_id: 't', hospedagem_id: null, criado_em: '2026-11-05' },
+    { id: 3, trajeto_id: null, hospedagem_id: 'h', criado_em: '2026-11-09' },
+  ]
+  const m = arquivoDeCada(arquivos, 'trajeto_id')
   assert.equal(m.get('t').id, 2)
   assert.equal(m.size, 1)
+  assert.equal(arquivoDeCada(arquivos, 'hospedagem_id').get('h').id, 3)
+  assert.equal(arquivoDeCada(arquivos, 'evento_id').size, 0)
+})
+
+test('quem vai buscar só aparece em quem chega', () => {
+  const t = [
+    { id: 'c', origem_id: 's', destino_id: 'l', meio: 'aviao', partida: null, chegada: '2026-12-01T11:00', link_reserva: null, quem_busca_id: 'a', passageiros: ['b'] },
+    { id: 's', origem_id: 'l', destino_id: 's', meio: 'aviao', partida: '2026-12-01T20:00', chegada: null, link_reserva: null, quem_busca_id: 'a' },
+  ]
+  const [chega, sai] = quemChegaESaiHoje('2026-12-01', t, [LISBOA, SP], MEMBROS, dia, hora)
+  assert.equal(chega.quemBusca, 'Ana')
+  assert.equal(sai.quemBusca, null)
 })
 
 test('viagem acontecendo hoje', () => {

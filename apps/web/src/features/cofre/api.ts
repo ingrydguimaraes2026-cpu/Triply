@@ -49,7 +49,10 @@ export async function buscarArquivos(viagemId: string): Promise<Arquivo[]> {
 }
 
 // Envia o arquivo e grava na tabela. Se a gravação falhar, apaga o arquivo enviado (não sobra lixo).
-export async function enviarArquivo(viagemId: string, arquivo: File, trajetoId: string | null = null) {
+// `ligacao`: o id do trajeto (bilhete) ou { hospedagem_id } / { evento_id } (reserva da casa ou da agenda, spec 120a)
+export type LigacaoDoArquivo = { trajeto_id?: string; hospedagem_id?: string; evento_id?: string }
+export async function enviarArquivo(viagemId: string, arquivo: File, ligacao: string | LigacaoDoArquivo | null = null) {
+  const ligado = typeof ligacao === 'string' ? { trajeto_id: ligacao } : (ligacao ?? {})
   const extensao = { 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[arquivo.type] ?? 'bin'
   const caminho = `${viagemId}/${crypto.randomUUID()}.${extensao}`
   const { error: erroEnvio } = await supabase.storage.from(BUCKET).upload(caminho, arquivo, { contentType: arquivo.type })
@@ -58,7 +61,7 @@ export async function enviarArquivo(viagemId: string, arquivo: File, trajetoId: 
     .from('arquivos_viagem')
     .insert({
       viagem_id: viagemId,
-      trajeto_id: trajetoId,
+      ...ligado,
       nome: nomeSemExtensao(arquivo.name),
       caminho,
       tipo: arquivo.type,

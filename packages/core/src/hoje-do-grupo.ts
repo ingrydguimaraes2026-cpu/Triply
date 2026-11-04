@@ -11,6 +11,7 @@ type TrajetoH = {
   partida: string | null
   chegada: string | null
   link_reserva: string | null
+  quem_busca_id?: string | null
   passageiros?: string[]
 }
 
@@ -25,6 +26,7 @@ export type Movimento = {
   saiAs: string | null
   chegaAs: string | null
   pessoas: string[] // nomes; vazio = o comboio inteiro (spec 067)
+  quemBusca: string | null // nome de quem vai buscar (só quando chega hoje)
   linkReserva: string | null
 }
 
@@ -58,6 +60,7 @@ export function quemChegaESaiHoje(
       saiAs: t.partida ? horaDe(t.partida) : null,
       chegaAs: t.chegada ? horaDe(t.chegada) : null,
       pessoas: todos ? [] : membros.filter((m) => passageiros.includes(m.id)).map((m) => m.nome),
+      quemBusca: chegaHoje ? (membros.find((m) => m.id === t.quem_busca_id)?.nome ?? null) : null,
       linkReserva: t.link_reserva,
     })
   }
@@ -75,6 +78,7 @@ export type ItemDoPlano = {
   titulo: string
   detalhe: string
   lugarId: string | null // quando é um lugar do roteiro (pro "Cheguei")
+  eventoId: string | null // quando veio da agenda (pro "ver reserva")
   visitado: boolean
   alvo: { nome: string; endereco?: string | null; latitude?: number | null; longitude?: number | null }
 }
@@ -110,6 +114,7 @@ export function planoDoDia(
     titulo: l.nome,
     detalhe: l.endereco ?? '',
     lugarId: l.id,
+    eventoId: null,
     visitado: !!l.visitado_em,
     alvo: { nome: l.nome, endereco: l.endereco, latitude: l.latitude, longitude: l.longitude },
   })
@@ -122,13 +127,14 @@ export function planoDoDia(
     const lugar = doRoteiro.find((l) => !usados.has(l.id) && normalizar(l.nome) === normalizar(e.titulo))
     if (lugar) usados.add(lugar.id)
     const item: ItemDoPlano = lugar
-      ? { ...itemDoLugar(lugar), chave: `e${e.id}`, hora: e.hora ? e.hora.slice(0, 5) : '', detalhe: [e.local, e.observacao].filter(Boolean).join(' · ') || (lugar.endereco ?? '') }
+      ? { ...itemDoLugar(lugar), chave: `e${e.id}`, eventoId: e.id, hora: e.hora ? e.hora.slice(0, 5) : '', detalhe: [e.local, e.observacao].filter(Boolean).join(' · ') || (lugar.endereco ?? '') }
       : {
           chave: `e${e.id}`,
           hora: e.hora ? e.hora.slice(0, 5) : '',
           titulo: e.titulo,
           detalhe: [e.local, e.observacao].filter(Boolean).join(' · '),
           lugarId: null,
+          eventoId: e.id,
           visitado: false,
           alvo: { nome: e.local || e.titulo },
         }
@@ -139,13 +145,15 @@ export function planoDoDia(
 }
 
 // ---------- Reserva no cofre ----------
-// O arquivo do cofre (spec 028) de cada trajeto: o mais novo, se tiver mais de um
-export function arquivoDeCadaTrajeto<A extends { trajeto_id: string | null; criado_em: string }>(arquivos: A[]): Map<string, A> {
+// O arquivo do cofre (spec 028) de cada trajeto, hospedagem ou item da agenda: o mais novo, se tiver mais de um
+type CampoDoCofre = 'trajeto_id' | 'hospedagem_id' | 'evento_id'
+export function arquivoDeCada<A extends { [C in CampoDoCofre]?: string | null } & { criado_em: string }>(arquivos: A[], campo: CampoDoCofre): Map<string, A> {
   const mapa = new Map<string, A>()
   for (const a of arquivos) {
-    if (!a.trajeto_id) continue
-    const atual = mapa.get(a.trajeto_id)
-    if (!atual || a.criado_em > atual.criado_em) mapa.set(a.trajeto_id, a)
+    const id = a[campo]
+    if (!id) continue
+    const atual = mapa.get(id)
+    if (!atual || a.criado_em > atual.criado_em) mapa.set(id, a)
   }
   return mapa
 }

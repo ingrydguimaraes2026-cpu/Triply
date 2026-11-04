@@ -60,6 +60,7 @@ export type DadosDoTrajeto = {
   preco: number | null
   moeda: string | null
   motorista_id?: string | null // spec 073
+  quem_busca_id?: string | null // spec 120a: quem vai buscar na chegada
   estacao_partida?: string | null // spec 074
   estacao_chegada?: string | null
   escalas?: { local: string; chegada: string | null; partida: string | null }[]

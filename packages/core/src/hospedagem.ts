@@ -39,6 +39,7 @@ export type Opcao = {
   checkout: string | null
   horaCheckin?: string | null // "15:00" (a partir de)
   horaCheckout?: string | null // "10:00" (até)
+  contatoAnfitriao?: string | null // spec 120a
   observacao: string | null
   cancelamentoGratisAte?: string | null // spec 041
   guardaMalas?: string | null // spec 060
@@ -370,6 +371,7 @@ export type DadosDaOpcao = {
   checkout: string | null
   horaCheckin: string | null // "22:00"
   horaCheckout: string | null
+  contatoAnfitriao?: string | null // spec 120a
   observacao: string | null
   cancelamentoGratisAte: string | null // spec 041
   guardaMalas: string | null // spec 060: 'sim' | 'nao' | 'perguntar'
@@ -395,6 +397,7 @@ export async function buscarOpcoesDeHospedagem(cli: ClienteTogether, viagemId: s
     // O banco devolve "22:00:00": a tela usa "22:00"
     horaCheckin: h.hora_checkin?.slice(0, 5) ?? null,
     horaCheckout: h.hora_checkout?.slice(0, 5) ?? null,
+    contatoAnfitriao: h.contato_anfitriao,
     observacao: h.observacao,
     cancelamentoGratisAte: h.cancelamento_gratis_ate,
     guardaMalas: h.guarda_malas,
@@ -433,6 +436,7 @@ export function linhaDaOpcao(d: DadosDaOpcao) {
     guarda_malas_obs: d.guardaMalasObs?.trim() || null,
     etiquetas: d.etiquetas,
     ...(d.fotoUrl !== undefined ? { foto_url: d.fotoUrl } : {}),
+    ...(d.contatoAnfitriao !== undefined ? { contato_anfitriao: d.contatoAnfitriao?.trim() || null } : {}),
     nota: d.nota,
   }
 }

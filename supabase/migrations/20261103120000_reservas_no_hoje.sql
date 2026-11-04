@@ -1,4 +1,4 @@
--- Spec 120a: "Hoje" com as reservas do grupo. NÃO APLICADA: esperando o Victor confirmar.
+-- Spec 120a: "Hoje" com as reservas do grupo. Aplicada em 03/11/2026 (confirmada pelo Victor).
 -- O que muda, em português simples:
 -- 1. O arquivo do cofre pode ficar "amarrado" à hospedagem ou a um item da agenda
 --    (hoje só amarra a trajeto). É o que faz o "ver reserva" da casa e do ingresso.

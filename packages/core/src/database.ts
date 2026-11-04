@@ -54,6 +54,8 @@ export type Database = {
           caminho: string
           criado_em: string
           enviado_por: string
+          evento_id: string | null
+          hospedagem_id: string | null
           id: string
           nome: string
           tamanho: number
@@ -65,6 +67,8 @@ export type Database = {
           caminho: string
           criado_em?: string
           enviado_por?: string
+          evento_id?: string | null
+          hospedagem_id?: string | null
           id?: string
           nome: string
           tamanho: number
@@ -76,6 +80,8 @@ export type Database = {
           caminho?: string
           criado_em?: string
           enviado_por?: string
+          evento_id?: string | null
+          hospedagem_id?: string | null
           id?: string
           nome?: string
           tamanho?: number
@@ -1727,6 +1733,7 @@ export type Database = {
           checkout: string | null
           codigo_porta: string | null
           como_chegar: string | null
+          contato_anfitriao: string | null
           criado_em: string
           criado_por: string
           destino_id: string | null
@@ -1758,6 +1765,7 @@ export type Database = {
           checkout?: string | null
           codigo_porta?: string | null
           como_chegar?: string | null
+          contato_anfitriao?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
@@ -1789,6 +1797,7 @@ export type Database = {
           checkout?: string | null
           codigo_porta?: string | null
           como_chegar?: string | null
+          contato_anfitriao?: string | null
           criado_em?: string
           criado_por?: string
           destino_id?: string | null
@@ -3059,6 +3068,7 @@ export type Database = {
           origem_id: string | null
           partida: string | null
           preco: number | null
+          quem_busca_id: string | null
           situacao: string
           viagem_id: string
         }
@@ -3078,6 +3088,7 @@ export type Database = {
           origem_id?: string | null
           partida?: string | null
           preco?: number | null
+          quem_busca_id?: string | null
           situacao?: string
           viagem_id: string
         }
@@ -3097,6 +3108,7 @@ export type Database = {
           origem_id?: string | null
           partida?: string | null
           preco?: number | null
+          quem_busca_id?: string | null
           situacao?: string
           viagem_id?: string
         }

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
+import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
 import {
   agoraEProximo,
-  arquivoDeCadaTrajeto,
+  arquivoDeCada,
   buscarDestinos,
   buscarEventosDaAgenda,
   buscarPontosDeEncontro,
@@ -30,7 +30,7 @@ import { Clima } from '../src/ui/Clima'
 import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
 import { useSessao } from '../src/lib/sessao'
-import { BilheteDoTrajeto, ItemDoPlanoDoDia } from '../src/ui/BilheteDoDia'
+import { BilheteDoTrajeto, ItemDoPlanoDoDia, VerReserva } from '../src/ui/BilheteDoDia'
 import { diaLongo, hojeIso, lerData } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
 import { BotaoIr } from '../src/ui/BotaoIr'
@@ -49,12 +49,12 @@ async function buscarTudo(viagemId: string) {
     buscarPontosDeEncontro(supabase, viagemId),
     supabase
       .from('hospedagens')
-      .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha')
+      .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha, contato_anfitriao')
       .eq('viagem_id', viagemId)
       .eq('escolhida', true),
     supabase.from('lugares').select('id, nome, destino_id, link, horario').eq('viagem_id', viagemId).eq('tipo', 'guarda_volumes'),
     supabase.from('roteiros').select('destino_id, dias').eq('viagem_id', viagemId),
-    supabase.from('arquivos_viagem').select('id, caminho, trajeto_id, criado_em').eq('viagem_id', viagemId),
+    supabase.from('arquivos_viagem').select('id, caminho, trajeto_id, hospedagem_id, evento_id, criado_em').eq('viagem_id', viagemId),
   ])
   for (const r of [trajetos, hospedagens, guarda, roteiros, arquivos]) if (r.error) throw r.error
   const dosRoteiros = (roteiros.data ?? []).map((r) => ({ destino_id: r.destino_id, dias: lerDiasDoRoteiro(r.dias) }))
@@ -72,7 +72,11 @@ async function buscarTudo(viagemId: string) {
     guarda: guarda.data ?? [],
     roteiros: dosRoteiros,
     lugares: (lugares.data ?? []) as Pick<Tables<'lugares'>, 'id' | 'nome' | 'endereco' | 'latitude' | 'longitude' | 'visitado_em'>[],
-    arquivos: arquivoDeCadaTrajeto(arquivos.data ?? []),
+    arquivos: {
+      trajeto: arquivoDeCada(arquivos.data ?? [], 'trajeto_id'),
+      hospedagem: arquivoDeCada(arquivos.data ?? [], 'hospedagem_id'),
+      evento: arquivoDeCada(arquivos.data ?? [], 'evento_id'),
+    },
   }
 }
 
@@ -205,6 +209,14 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
                     <Text className="font-body-bold">Como chegar:</Text> {dormimos.como_chegar}
                   </Text>
                 ) : null}
+                {dormimos.contato_anfitriao ? (
+                  <View className="flex-row items-center gap-1.5">
+                    <Phone size={14} color={cor.couro} />
+                    <Text selectable className="min-w-0 flex-1 font-body text-[13px] text-corpo">
+                      Anfitrião: <Text className="font-body-bold text-texto">{dormimos.contato_anfitriao}</Text>
+                    </Text>
+                  </View>
+                ) : null}
                 {dormimos.codigo_porta ? (
                   <View className="flex-row items-center gap-1.5">
                     <KeyRound size={14} color={cor.couro} />
@@ -222,7 +234,10 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
                     </Text>
                   </View>
                 ) : null}
-                {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
+                <View className="flex-row flex-wrap gap-2">
+                  {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
+                  <VerReserva caminho={arquivos.hospedagem.get(dormimos.id)?.caminho ?? null} />
+                </View>
               </>
             ) : (
               <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
@@ -238,7 +253,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
               <Text className="font-body-bold text-[15px] text-texto">Quem chega e quem sai hoje</Text>
             </View>
             {movimentos.map((m) => (
-              <BilheteDoTrajeto key={m.chave} m={m} caminhoNoCofre={arquivos.get(m.trajetoId)?.caminho ?? null} />
+              <BilheteDoTrajeto key={m.chave} m={m} caminhoNoCofre={arquivos.trajeto.get(m.trajetoId)?.caminho ?? null} />
             ))}
           </View>
         ) : null}
@@ -249,6 +264,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
             {plano.length ? (
               plano.map((item) => (
                 <ItemDoPlanoDoDia
+                  caminhoNoCofre={item.eventoId ? (arquivos.evento.get(item.eventoId)?.caminho ?? null) : null}
                   key={item.chave}
                   item={item}
                   chegou={item.visitado || chegamos.has(item.chave)}

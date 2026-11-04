@@ -4,6 +4,8 @@ import { registrarChegada, type ItemDoPlano, type Movimento } from '@together/co
 import { supabase } from '../../lib/supabase'
 import { marcarVisitado } from '../lugares/api'
 import BotaoIr from '../../components/ui/BotaoIr'
+import BilheteDoTrajeto from '../cofre/BilheteDoTrajeto'
+import type { Arquivo } from '../cofre/api'
 import Cartao from '../../components/ui/Cartao'
 import './reservas.css'
 
@@ -40,6 +42,7 @@ export function QuemChegaESai({ movimentos, linkDoCofre }: { movimentos: Movimen
               <div>
                 <small>{[m.saiAs ? `sai ${m.saiAs}` : null, m.chegaAs ? `chega ${m.chegaAs}` : null].filter(Boolean).join(' · ')}</small>
                 <p>{m.pessoas.length ? m.pessoas.join(', ') : 'O comboio inteiro'}</p>
+                {m.quemBusca && <small className="bilhete-busca">{m.quemBusca} vai buscar</small>}
               </div>
               {reserva && (
                 <a href={reserva} target="_blank" rel="noreferrer noopener" className="botao secundario bilhete-reserva">
@@ -55,7 +58,15 @@ export function QuemChegaESai({ movimentos, linkDoCofre }: { movimentos: Movimen
 }
 
 // Plano do dia: os lugares do roteiro de hoje e a agenda, cada um com "Ir" e "Cheguei"
-export function PlanoDoDia({ viagemId, plano, podeChegar }: { viagemId: string; plano: ItemDoPlano[]; podeChegar: boolean }) {
+type PropsDoPlano = {
+  viagemId: string
+  plano: ItemDoPlano[]
+  podeChegar: boolean // convidado pelo link só vê
+  reservaDoEvento: (eventoId: string) => Arquivo | undefined
+  aoMudarCofre: () => void
+}
+
+export function PlanoDoDia({ viagemId, plano, podeChegar, reservaDoEvento, aoMudarCofre }: PropsDoPlano) {
   const [chegamos, setChegamos] = useState<Set<string>>(() => new Set())
 
   // Avisa o grupo (chegadas, spec 051) e marca o lugar como visitado. O carimbo (118a) entra na 120c.
@@ -90,6 +101,10 @@ export function PlanoDoDia({ viagemId, plano, podeChegar }: { viagemId: string; 
                   {item.detalhe && <small>{item.detalhe}</small>}
                   <div className="hoje-plano-acoes">
                     <BotaoIr alvo={item.alvo} />
+                    {/* Reserva do ingresso ou restaurante: abre a que tem; quem é do comboio pode anexar */}
+                    {item.eventoId && (reservaDoEvento(item.eventoId) || podeChegar) && (
+                      <BilheteDoTrajeto viagemId={viagemId} ligacao={{ evento_id: item.eventoId }} bilhete={reservaDoEvento(item.eventoId)} aoMudar={aoMudarCofre} />
+                    )}
                     {chegou ? (
                       <span className="hoje-plano-chegou">
                         <CircleCheck size={15} aria-hidden="true" /> Chegamos

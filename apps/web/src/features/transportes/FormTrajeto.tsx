@@ -32,6 +32,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
   const [situacao, setSituacao] = useState(trajeto?.situacao ?? 'sugestao')
   const [passageiros, setPassageiros] = useState<string[]>(trajeto?.passageiros ?? [])
   const [motorista, setMotorista] = useState(trajeto?.motorista_id ?? '')
+  const [quemBusca, setQuemBusca] = useState(trajeto?.quem_busca_id ?? '')
   // Spec 074: estação/terminal e escalas (horários no campo do celular, como partida/chegada)
   const [estacaoPartida, setEstacaoPartida] = useState(trajeto?.estacao_partida ?? '')
   const [estacaoChegada, setEstacaoChegada] = useState(trajeto?.estacao_chegada ?? '')
@@ -75,6 +76,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
       preco: precoNumero,
       moeda: precoNumero === null ? null : moedaLimpa,
       motorista_id: meioEscolhido === 'carro' ? motorista || null : null,
+      quem_busca_id: quemBusca || null,
       estacao_partida: estacaoPartida.trim() || null,
       estacao_chegada: estacaoChegada.trim() || null,
       escalas: escalas
@@ -235,6 +237,23 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
           </label>
           <select id="trajeto-motorista" value={motorista} onChange={(e) => setMotorista(e.target.value)}>
             <option value="">A combinar</option>
+            {membros.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Spec 120a: aparece no bilhete de "quem chega hoje" */}
+      {membros.length > 1 && (
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-quem-busca">
+            Quem vai buscar na chegada (opcional)
+          </label>
+          <select id="trajeto-quem-busca" value={quemBusca} onChange={(e) => setQuemBusca(e.target.value)}>
+            <option value="">Ninguém</option>
             {membros.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.nome}
