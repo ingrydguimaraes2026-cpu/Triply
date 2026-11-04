@@ -6,7 +6,7 @@
 
 | Padrão da Loopou | Exemplo dela | No Tripwave |
 |---|---|---|
-| **Fundadores na câmera, história de origem** | "Meu marido criou uma ferramenta que resolve uma parte chata de vender pelo Instagram" | "[relação] criou um app porque eu cansei de organizar a viagem da galera sozinha." A história real da dupla: quem organiza sempre, e o dev que resolveu. |
+| **Fundadores contando a história de origem** (sem rosto: voz + tela) | "Meu marido criou uma ferramenta que resolve uma parte chata de vender pelo Instagram" | "[relação] criou um app porque eu cansei de organizar a viagem da galera sozinha." A história real da dupla: quem organiza sempre, e o dev que resolveu. |
 | **Gancho de descoberta ou segredo (UGC)** | "Parei de pagar Manychat depois que descobri esse site" | "Parei de fazer planilha de viagem depois que descobri esse app." "Ninguém tá falando desse app de viagem com os amigos." |
 | **Comparação com o concorrente** | "eu pago 150 de manychat 🤮", com print | O rival de verdade é **grupo do zap + planilha + nota no celular**. E o Splitwise, que desde 2023 limita o plano grátis a poucos lançamentos por dia (`docs/benchmark-2026-11/02-apps-de-grupo.md`). |
 | **Carrossel explicativo com a dor em pergunta** | "Você ainda paga mais porque sua lista de contatos cresceu?" | "Sua galera ainda decide a viagem num grupo com 300 mensagens?" Visual limpo, na paleta couro e caramelo, com a Norti. |
@@ -14,7 +14,7 @@
 
 **O que muda em relação ao que a gente vinha fazendo:**
 - Aqui **pode mostrar o app**. O benchmark mostrou que demonstração sozinha flopa no TikTok, mas a Loopou prova que, com **uma pessoa de verdade contando a história**, o print da ferramenta vira prova. O app entra como prova, não como o post inteiro.
-- **Rosto:** antes a dupla decidiu não aparecer. O formato da Loopou depende de rosto. Cada Reels abaixo tem uma **versão sem rosto** (só voz + tela + Norti), pra vocês decidirem.
+- **Rosto: decidido em 04/11/2026, ninguém aparece.** No lugar do fundador na câmera entram a **voz** (da dupla, gravada no celular, ou de IA como teste), as **telas do app** como prova e a **Norti** como a cara da marca. O texto grande na tela segura o gancho, como na Loopou.
 
 **Regras que continuam:**
 - Pix aparece no máximo como detalhe ("e ainda mostra o Pix de cada um"), nunca como tema.
@@ -42,17 +42,17 @@ Na ordem em que a galera vive a viagem:
 
 ## 3. Os 12 posts
 
-### Reels com rosto (15 a 30 s)
+### Reels sem rosto (15 a 30 s: voz, telas do app e Norti)
 
 **R1. A origem (o post fixado)**
 - **Texto na tela (0 a 2 s):** "[relação] criou um app porque eu sempre organizo a viagem da galera sozinha"
 - **Falas:**
   > Toda viagem com os amigos é a mesma coisa: eu acho a casa, eu faço a planilha, eu cobro todo mundo.
-  > Aí [ele/ela] fez isso aqui. *(mostra o celular)*
+  > Aí [ele/ela] fez isso aqui. *(a tela do app aparece)*
   > Eu mando um link no grupo, cada um vota onde quer ficar e o que quer fazer, e no fim tá tudo num lugar só.
   > E ainda fica um passaporte da galera com todas as viagens que a gente fez.
   > Chama Tripwave. Tá saindo. Lista de espera no perfil.
-- **Sem rosto:** a mesma fala em voz, sobre o grupo do zap explodindo → o app organizado → o passaporte com os carimbos.
+- **Imagem:** o grupo do zap explodindo de mensagens → a mão segurando o celular com o app organizado (só a mão ou a tela gravada) → o passaporte abrindo com os carimbos. A Norti aparece no canto reagindo e acena no fim.
 
 **R2. "Parei de fazer planilha de viagem"**
 - **Texto na tela:** "Parei de fazer planilha de viagem depois que descobri esse app"
@@ -62,7 +62,7 @@ Na ordem em que a galera vive a viagem:
   > Cada um vota a casa. *(print do duelo de casas)*
   > Gasto eu só escrevo "mercado 320" e ele divide. *(print)*
   > Ninguém precisou baixar nada pra votar.
-- **Sem rosto:** a planilha na tela sendo arrastada pra lixeira, e as 3 telas do app.
+- **Imagem:** a planilha na tela sendo arrastada pra lixeira, depois as 3 telas do app, uma por fala.
 
 **R3. "Ninguém tá falando desse app"**
 - **Texto na tela:** "Como ninguém tá falando desse app de viagem com os amigos?"
@@ -70,7 +70,7 @@ Na ordem em que a galera vive a viagem:
   > Vocês deslizam os lugares tipo Tinder. Quando 3 da galera querem o mesmo, dá match.
   > Aí ele monta o roteiro com os matches.
   > E no fim de cada lugar que vocês vão, sai um carimbo no passaporte do grupo.
-- **Prova:** a tela do "Deu match" e o passaporte abrindo.
+- **Imagem:** o deslize dos lugares, a tela do "Deu match" e o passaporte abrindo.
 
 **R4. O dev que resolveu (ponto de vista do Victor)**
 - **Texto na tela:** "Minha galera nunca conseguia decidir a viagem. Então eu programei um app"
@@ -78,7 +78,7 @@ Na ordem em que a galera vive a viagem:
   > Todo ano o mesmo grupo: 300 mensagens, 40 links de casa, ninguém decide.
   > Fiz um app onde cada um vota e o grupo vê o resultado na hora.
   > [Só se for verdade no dia:] Hoje a gente tá testando com a nossa galera pro réveillon.
-- **Sem rosto:** a tela do código virando a tela do app, com a voz do Victor.
+- **Imagem:** a tela do código virando a tela do app, com a voz do Victor.
 
 ### Carrosséis explicativos (Instagram e TikTok)
 
@@ -149,6 +149,6 @@ Na ordem em que a galera vive a viagem:
 3. Depois, alternar 1 Reels de gancho (R2, R3, R4), 1 carrossel de dor (C2, C3, C4) e 1 comparação (K1, K2) por semana, junto dos vídeos do passaporte (`CONTEUDO-PASSAPORTE.md`).
 
 **Decisões que só a dupla pode tomar:**
-- Aparecer de rosto ou ir pela versão sem rosto.
-- Quem fala no R1 e qual é a relação real da dupla, pra trocar o "[relação]".
+- ~~Aparecer de rosto~~ Decidido: **sem rosto**.
+- De quem é a voz no R1 (Ingryd, Victor ou IA) e qual é a relação real da dupla, pra trocar o "[relação]" (ou falar só "a gente").
 - Os números do E1.

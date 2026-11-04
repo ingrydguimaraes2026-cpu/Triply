@@ -31,7 +31,7 @@
 
 ## Pendente
 
-0000. **04/11/2026: posts que APRESENTAM o app inteiro, estilo Loopou** (pedido do Victor): `docs/marketing/APRESENTAR-O-APP.md`, com os padrões da Loopou traduzidos, 12 posts (4 Reels de rosto com versão sem rosto, 4 carrosséis, 2 comparações, série "do 0 ao primeiro grupo") e o passaporte como uma das funções. **Esperando o Victor aprovar** antes de produzir arte. Decisões abertas: aparecer de rosto ou não, a relação real da dupla no R1 e os números do E1.
+0000. **04/11/2026: posts que APRESENTAM o app inteiro, estilo Loopou** (pedido do Victor): `docs/marketing/APRESENTAR-O-APP.md`, com os padrões da Loopou traduzidos, 12 posts (4 Reels de rosto com versão sem rosto, 4 carrosséis, 2 comparações, série "do 0 ao primeiro grupo") e o passaporte como uma das funções. **Esperando o Victor aprovar** antes de produzir arte. **Decidido 04/11: sem rosto** (voz + telas + Norti). Abertas: de quem é a voz, a relação real da dupla no R1 e os números do E1.
 
 000. **04/11/2026 (o que vale agora): rumo novo do app = Passaporte da galera** (`docs/RUMO.md`, que manda em tudo). O conteúdo novo está em **`docs/marketing/CONTEUDO-PASSAPORTE.md`**: bios novas, 6 vídeos (V1 a V6: mapa acendendo, "Carimbou", contador, "há 1 ano", retrospectiva, luz UV) e 6 posts do X (X1 a X6). Pix e "organizar a viagem" saem do centro. Os docs antigos de marketing ganharam um aviso no topo dizendo o que ainda vale. Os docs de `docs/produto/` (aposta do dinheiro e Passe) estão marcados como superados. **Próximo:** postar X1 a X3; fazer V2 e V6 por código a partir de `teste/ancora/passaporte.html`.
 
