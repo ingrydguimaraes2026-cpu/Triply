@@ -7,6 +7,13 @@ import { cor } from '../../theme'
 
 type Arquivo = Tables<'arquivos_viagem'>
 
+// Abre um arquivo do cofre (link assinado de 1 hora). Também usado pelo "ver reserva" do Hoje (spec 120a).
+export async function abrirDoCofre(caminho: string): Promise<boolean> {
+  const { data } = await supabase.storage.from('cofre').createSignedUrl(caminho, 60 * 60)
+  if (data?.signedUrl) await Linking.openURL(data.signedUrl)
+  return !!data?.signedUrl
+}
+
 // Spec 028 no mobile: abrir as reservas, ingressos e bilhetes guardados no cofre.
 // Só leitura (guardar arquivo novo continua no site). O link vale 1 hora (bucket privado).
 export function Cofre({ viagemId }: { viagemId: string }) {
@@ -30,9 +37,8 @@ export function Cofre({ viagemId }: { viagemId: string }) {
 
   async function abrir(a: Arquivo) {
     setAbrindo(a.id)
-    const { data } = await supabase.storage.from('cofre').createSignedUrl(a.caminho, 60 * 60)
+    await abrirDoCofre(a.caminho)
     setAbrindo(null)
-    if (data?.signedUrl) Linking.openURL(data.signedUrl)
   }
 
   return (

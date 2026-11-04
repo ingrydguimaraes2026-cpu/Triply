@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useBlocker } from 'react-router'
+import { Link, useBlocker, useNavigate } from 'react-router'
 import { AlertTriangle, BarChart3, BedDouble, Car, ChevronRight, Clock, FileText, Image as ImageIcon, MapPinned, CalendarRange, Camera, CircleCheck, ListChecks, Lock, Luggage, MapPin, Globe, Pencil, PiggyBank, Plus, ReceiptText, Route, ShoppingBasket, Sparkles, Sun, TrainFront, Users, Wallet } from '../../components/ui/icones'
 import MapaMundi from '../../features/mapa/MapaMundi'
 import EditorRoteiro from '../../features/destinos/EditorRoteiro'
@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { CONGELADO, encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
+import { CONGELADO, viagemAcontecendo, encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -82,6 +82,20 @@ export default function Overview() {
   const capa = useCapas([viagem.id])
   const podeEditarRoteiro = euSouAdm || viagem.membro_edita_roteiro // spec 078
   useFocoDeItem() // destaca a enquete/ponto quando se chega por um link de compartilhar
+
+  // Spec 120a: num dia de viagem, abrir a viagem leva direto pro Hoje (uma vez por aba do navegador)
+  const navegar = useNavigate()
+  useEffect(() => {
+    if (!viagemAcontecendo([{ dataInicio: viagem.data_inicio, dataFim: viagem.data_fim }], hojeTexto(new Date()))) return
+    const chave = `together:hoje-aberto:${viagem.id}`
+    try {
+      if (sessionStorage.getItem(chave)) return
+      sessionStorage.setItem(chave, '1')
+    } catch {
+      return
+    }
+    navegar('hoje')
+  }, [viagem.id, viagem.data_inicio, viagem.data_fim, navegar])
 
   // Modo de edição do roteiro: enquanto edita, a lista E o mapa mostram o rascunho.
   // null = não está editando (mostra o que está salvo).

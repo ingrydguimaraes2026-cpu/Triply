@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -6,12 +6,12 @@ import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import { descreverAtividade, type ViagemComDetalhes } from '@together/core'
+import { descreverAtividade, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
 import { carregarResumoDoInicio } from '../src/dados/resumoDoInicio'
 import { useCarregar } from '../src/dados/useCarregar'
 import { mola, useReducedMotion } from '../src/ui/movimento'
 import { proximaViagem, useViagemAtual, viagensPassadas } from '../src/dados/viagemAtual'
-import { diasAte, mesEAno, periodo, primeiroNome } from '../src/lib/formato'
+import { diasAte, hojeIso, mesEAno, periodo, primeiroNome } from '../src/lib/formato'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { FaixaConvidado } from '../src/ui/FaixaConvidado'
@@ -20,6 +20,10 @@ import { Norti } from '../src/ui/Norti'
 import { Avatar, Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
 import { cor, sombra } from '../theme'
 
+// Spec 120a: num dia de viagem o app abre direto no "Hoje" (a aba Viagem vira o Hoje).
+// Só uma vez por abertura do app: voltar pro Início não puxa de novo.
+let jaAbriuNaViagem = false
+
 // Início (spec 117, tela 1): sem barra de abas. Próxima viagem com os carimbos,
 // o que o comboio fez agora e Nova viagem. O Perfil abre pelo avatar.
 export default function MinhasViagens() {
@@ -27,6 +31,15 @@ export default function MinhasViagens() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { ehConvidado } = useSessao()
+
+  useEffect(() => {
+    if (status !== 'pronto' || jaAbriuNaViagem) return
+    jaAbriuNaViagem = true
+    const agora = viagemAcontecendo(viagens, hojeIso())
+    if (!agora) return
+    escolher(agora.id)
+    router.push(`/viagem/${agora.id}`)
+  }, [status, viagens])
 
   if (status === 'carregando') return <Carregando texto="Arrumando a mala…" />
   if (status === 'erro') return <ErroNaTela aoTentar={recarregar} />

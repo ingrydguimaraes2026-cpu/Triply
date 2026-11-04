@@ -1,9 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, ExternalLink, Luggage, MapPin, TrainFront } from '../../components/ui/icones'
-import { agoraEProximo, destinoDoDia, diaDePassagem, linkUltimoTrem, voltaPraBase, diaNoFuso, faltaPara, horaNoFuso, linksDeGuardaVolumes, montarAgendaDoDia, type Tables } from '@together/core'
+import { BedDouble, CalendarDays, Clock, ExternalLink, KeyRound, Luggage, MapPin, TrainFront, Wifi } from '../../components/ui/icones'
+import {
+  agoraEProximo,
+  arquivoDeCadaTrajeto,
+  destinoDoDia,
+  diaDePassagem,
+  lerDiasDoRoteiro,
+  linkUltimoTrem,
+  planoDoDia,
+  quemChegaESaiHoje,
+  voltaPraBase,
+  diaNoFuso,
+  faltaPara,
+  horaNoFuso,
+  linksDeGuardaVolumes,
+  montarAgendaDoDia,
+  type Tables,
+} from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
+import { useSessao } from '../../features/auth/hooks'
+import { buscarArquivos, type Arquivo } from '../../features/cofre/api'
+import { PlanoDoDia, QuemChegaESai } from '../../features/hoje/ReservasDoDia'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { useEventosDaAgenda, diaPorExtenso } from '../../features/agenda/hooks'
 import { hojeTexto } from '../../features/destinos/datas'
@@ -18,12 +37,26 @@ import './hoje.css'
 
 type Hospedagem = Pick<
   Tables<'hospedagens'>,
-  'id' | 'nome' | 'endereco' | 'destino_id' | 'hora_checkin' | 'hora_checkout' | 'checkin' | 'checkout' | 'guarda_malas' | 'guarda_malas_obs' | 'como_chegar'
+  | 'id'
+  | 'nome'
+  | 'endereco'
+  | 'destino_id'
+  | 'hora_checkin'
+  | 'hora_checkout'
+  | 'checkin'
+  | 'checkout'
+  | 'guarda_malas'
+  | 'guarda_malas_obs'
+  | 'como_chegar'
+  | 'codigo_porta'
+  | 'wifi_rede'
+  | 'wifi_senha'
 >
+type LugarDoRoteiro = Pick<Tables<'lugares'>, 'id' | 'nome' | 'endereco' | 'latitude' | 'longitude' | 'visitado_em'>
 type GuardaVolumes = Pick<Tables<'lugares'>, 'id' | 'nome' | 'destino_id' | 'link' | 'horario'>
 type Ponto = Pick<Tables<'pontos_de_encontro'>, 'id' | 'local' | 'quando' | 'latitude' | 'longitude'>
 
-// Tela Hoje (spec 058): o que está acontecendo agora, o próximo, onde dormimos, encontro e as ferramentas do dia.
+// Tela Hoje (spec 058 + 120a): agora e próximo, onde dormimos, quem chega e sai, plano do dia, encontro e as ferramentas do dia.
 export default function Hoje() {
   const { viagem, destinos, membros, meuId } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
@@ -31,7 +64,12 @@ export default function Hoje() {
   const [hospedagens, setHospedagens] = useState<Hospedagem[]>([])
   const [pontos, setPontos] = useState<Ponto[]>([])
   const [guardaVolumes, setGuardaVolumes] = useState<GuardaVolumes[]>([])
+  const [roteiros, setRoteiros] = useState<{ destino_id: string; dias: string[][] }[]>([])
+  const [lugares, setLugares] = useState<LugarDoRoteiro[]>([])
+  const [arquivos, setArquivos] = useState<Arquivo[]>([])
   const [agora, setAgora] = useState(() => new Date())
+  // Convidado pelo link vê o plano do dia, mas não o endereço, o código nem as reservas (spec 120a)
+  const { ehConvidado } = useSessao()
 
   // Atualiza o "agora" a cada minuto
   useEffect(() => {
@@ -44,17 +82,25 @@ export default function Hoje() {
     Promise.all([
       supabase
         .from('hospedagens')
-        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar')
+        .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha')
         .eq('viagem_id', viagem.id)
         .eq('escolhida', true),
       supabase.from('pontos_de_encontro').select('id, local, quando, latitude, longitude').eq('viagem_id', viagem.id),
       supabase.from('lugares').select('id, nome, destino_id, link, horario').eq('viagem_id', viagem.id).eq('tipo', 'guarda_volumes'),
+      supabase.from('roteiros').select('destino_id, dias').eq('viagem_id', viagem.id),
+      buscarArquivos(viagem.id).catch(() => [] as Arquivo[]),
     ])
-      .then(([h, p, g]) => {
+      .then(async ([h, p, g, r, a]) => {
+        const dosRoteiros = (r.data ?? []).map((x) => ({ destino_id: x.destino_id, dias: lerDiasDoRoteiro(x.dias) }))
+        const ids = [...new Set(dosRoteiros.flatMap((x) => x.dias.flat()))]
+        const l = ids.length ? await supabase.from('lugares').select('id, nome, endereco, latitude, longitude, visitado_em').in('id', ids) : null
         if (!ativo) return
         setHospedagens(h.data ?? [])
         setPontos(p.data ?? [])
         setGuardaVolumes(g.data ?? [])
+        setRoteiros(dosRoteiros)
+        setLugares(l?.data ?? [])
+        setArquivos(a)
       })
       .catch((e) => console.error('Erro ao carregar o Hoje:', e))
     return () => {
@@ -78,6 +124,10 @@ export default function Hoje() {
   // Spec 080 (D9): bate-e-volta hoje → hora da volta pra base (ou aviso de que falta)
   const bateEVolta = voltaPraBase(hoje, trajetos, diaNoFuso)
   const nomeDo = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? '?'
+  // Spec 120a: bilhetes de quem chega e sai hoje, e o plano do dia (roteiro + agenda)
+  const movimentos = quemChegaESaiHoje(hoje, trajetos, destinos, membros, diaNoFuso, horaNoFuso)
+  const plano = planoDoDia(hoje, { destinos, eventos: eventos ?? [], roteiros, lugares })
+  const cofrePorTrajeto = arquivoDeCadaTrajeto(arquivos)
 
   return (
     <div className="hoje">
@@ -122,6 +172,53 @@ export default function Hoje() {
 
       {/* Cartões do dia e ferramentas em mosaico de 2 colunas (design Plataforma, spec 113) */}
       <div className="hoje-mosaico">
+        {naViagem && !ehConvidado && (
+          <Cartao titulo="Onde dormimos hoje" icone={BedDouble}>
+            {dormimos ? (
+              <div className="hoje-dormimos">
+                <strong>{dormimos.nome}</strong>
+                {dormimos.endereco && <small>{dormimos.endereco}</small>}
+                {(dormimos.hora_checkin || dormimos.hora_checkout) && (
+                  <small>
+                    {[
+                      dormimos.hora_checkin && `Check-in ${dormimos.checkin === hoje ? 'hoje ' : ''}a partir das ${dormimos.hora_checkin.slice(0, 5)}`,
+                      dormimos.hora_checkout && `check-out ${dormimos.checkout === hoje ? 'hoje ' : ''}até ${dormimos.hora_checkout.slice(0, 5)}`,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </small>
+                )}
+                {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
+                {dormimos.como_chegar && onde?.chegada === hoje && (
+                  <p className="hoje-como-chegar">
+                    <strong>Como chegar:</strong> {dormimos.como_chegar}
+                  </p>
+                )}
+                {dormimos.codigo_porta && (
+                  <small className="hoje-dormimos-extra">
+                    <KeyRound size={14} aria-hidden="true" /> Código de acesso: <strong>{dormimos.codigo_porta}</strong>
+                  </small>
+                )}
+                {dormimos.wifi_rede && (
+                  <small className="hoje-dormimos-extra">
+                    <Wifi size={14} aria-hidden="true" /> {dormimos.wifi_rede}
+                    {dormimos.wifi_senha && <strong> · {dormimos.wifi_senha}</strong>}
+                  </small>
+                )}
+                {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
+              </div>
+            ) : (
+              <p className="dica">
+                Nenhuma hospedagem escolhida em {onde?.nome}. <Link to="../hospedagem" relative="path">Abrir Hospedagem</Link>
+              </p>
+            )}
+          </Cartao>
+        )}
+
+        {naViagem && !ehConvidado && <QuemChegaESai movimentos={movimentos} linkDoCofre={(id) => cofrePorTrajeto.get(id)?.url ?? null} />}
+
+        {naViagem && <PlanoDoDia viagemId={viagem.id} plano={plano} podeChegar={!ehConvidado} />}
+
         {bateEVolta && (
           <Cartao titulo={`Volta pra ${nomeDo(bateEVolta.ida.origem_id)}`} icone={TrainFront}>
             {bateEVolta.volta?.partida ? (
@@ -193,32 +290,6 @@ export default function Hoje() {
                 <strong>{horaNoFuso(p.quando!)}</strong> {p.local} <BotaoIr alvo={{ nome: p.local, latitude: p.latitude, longitude: p.longitude }} />
               </p>
             ))}
-          </Cartao>
-        )}
-
-        {naViagem && (
-          <Cartao titulo="Onde dormimos hoje" icone={BedDouble}>
-            {dormimos ? (
-              <div className="hoje-dormimos">
-                <strong>{dormimos.nome}</strong>
-                {dormimos.endereco && <small>{dormimos.endereco}</small>}
-                <small>
-                  {dormimos.checkin === hoje && dormimos.hora_checkin && `Check-in a partir das ${dormimos.hora_checkin.slice(0, 5)} · `}
-                  {dormimos.checkout === hoje && dormimos.hora_checkout && `Check-out até ${dormimos.hora_checkout.slice(0, 5)} · `}
-                </small>
-                {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
-                {dormimos.como_chegar && onde?.chegada === hoje && (
-                  <p className="hoje-como-chegar">
-                    <strong>Como chegar:</strong> {dormimos.como_chegar}
-                  </p>
-                )}
-                {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
-              </div>
-            ) : (
-              <p className="dica">
-                Nenhuma hospedagem escolhida em {onde?.nome}. <Link to="../hospedagem" relative="path">Abrir Hospedagem</Link>
-              </p>
-            )}
           </Cartao>
         )}
 

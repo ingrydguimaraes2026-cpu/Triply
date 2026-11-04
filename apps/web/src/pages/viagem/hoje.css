@@ -224,3 +224,9 @@ html[data-tema='escuro'] .hoje-mosaico .ferramenta-campo {
   font-size: 14px;
   text-decoration: none;
 }
+
+.hoje-dormimos-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

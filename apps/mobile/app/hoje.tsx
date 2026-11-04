@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, Luggage, MapPin, Sun, TrainFront } from '../src/ui/icones'
+import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
 import {
   agoraEProximo,
+  arquivoDeCadaTrajeto,
   buscarDestinos,
   buscarEventosDaAgenda,
   buscarPontosDeEncontro,
-  buscarTrajetos,
   destinoDoDia,
   diaDePassagem,
   diaNoFuso,
@@ -16,14 +16,21 @@ import {
   horaNoFuso,
   linksDeGuardaVolumes,
   linkUltimoTrem,
+  lerDiasDoRoteiro,
   montarAgendaDoDia,
+  planoDoDia,
+  quemChegaESaiHoje,
+  registrarChegada,
   voltaPraBase,
+  type Tables,
 } from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Clima } from '../src/ui/Clima'
 import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
+import { useSessao } from '../src/lib/sessao'
+import { BilheteDoTrajeto, ItemDoPlanoDoDia } from '../src/ui/BilheteDoDia'
 import { diaLongo, hojeIso, lerData } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
 import { BotaoIr } from '../src/ui/BotaoIr'
@@ -31,24 +38,42 @@ import { Bloco, FerramentasDoDia } from '../src/ui/FerramentasDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
 
-// Tela Hoje (spec 058 no mobile, + 060, 062 e 080): o que está acontecendo agora,
-// o que vem depois, as malas no dia de passagem e onde o comboio dorme.
+// Tela Hoje (spec 058 no mobile, + 060, 062, 080 e 120a): o dia do grupo numa rolagem só.
+// Ordem da 120a: agora/próximo → onde dormimos → quem chega e sai → plano do dia. Depois o resto.
 async function buscarTudo(viagemId: string) {
-  const [destinos, trajetos, eventos, pontos, hospedagens, guarda] = await Promise.all([
+  const [destinos, trajetos, eventos, pontos, hospedagens, guarda, roteiros, arquivos] = await Promise.all([
     buscarDestinos(supabase, viagemId),
-    buscarTrajetos(supabase, viagemId),
+    // Com os passageiros (spec 067), pra dizer quem chega
+    supabase.from('trajetos').select('*, trajeto_passageiros (usuario_id)').eq('viagem_id', viagemId).order('partida', { ascending: true, nullsFirst: false }),
     buscarEventosDaAgenda(supabase, viagemId),
     buscarPontosDeEncontro(supabase, viagemId),
     supabase
       .from('hospedagens')
-      .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar')
+      .select('id, nome, endereco, destino_id, hora_checkin, hora_checkout, checkin, checkout, guarda_malas, guarda_malas_obs, como_chegar, codigo_porta, wifi_rede, wifi_senha')
       .eq('viagem_id', viagemId)
       .eq('escolhida', true),
     supabase.from('lugares').select('id, nome, destino_id, link, horario').eq('viagem_id', viagemId).eq('tipo', 'guarda_volumes'),
+    supabase.from('roteiros').select('destino_id, dias').eq('viagem_id', viagemId),
+    supabase.from('arquivos_viagem').select('id, caminho, trajeto_id, criado_em').eq('viagem_id', viagemId),
   ])
-  if (hospedagens.error) throw hospedagens.error
-  if (guarda.error) throw guarda.error
-  return { destinos, trajetos, eventos, pontos, hospedagens: hospedagens.data ?? [], guarda: guarda.data ?? [] }
+  for (const r of [trajetos, hospedagens, guarda, roteiros, arquivos]) if (r.error) throw r.error
+  const dosRoteiros = (roteiros.data ?? []).map((r) => ({ destino_id: r.destino_id, dias: lerDiasDoRoteiro(r.dias) }))
+  const ids = [...new Set(dosRoteiros.flatMap((r) => r.dias.flat()))]
+  const lugares = ids.length
+    ? await supabase.from('lugares').select('id, nome, endereco, latitude, longitude, visitado_em').in('id', ids)
+    : { data: [], error: null }
+  if (lugares.error) throw lugares.error
+  return {
+    destinos,
+    trajetos: (trajetos.data ?? []).map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) })),
+    eventos,
+    pontos,
+    hospedagens: hospedagens.data ?? [],
+    guarda: guarda.data ?? [],
+    roteiros: dosRoteiros,
+    lugares: (lugares.data ?? []) as Pick<Tables<'lugares'>, 'id' | 'nome' | 'endereco' | 'latitude' | 'longitude' | 'visitado_em'>[],
+    arquivos: arquivoDeCadaTrajeto(arquivos.data ?? []),
+  }
 }
 
 function horaDe(d: Date) {
@@ -64,6 +89,9 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
+  // Convidado pelo link vê o plano do dia, mas não o endereço, o código nem as reservas (spec 120a)
+  const { ehConvidado } = useSessao()
+  const [chegamos, setChegamos] = useState<Set<string>>(() => new Set())
   // Só em desenvolvimento: /hoje?dia=2027-06-07T10:00 simula outro dia (pra testar fora da viagem)
   const { dia: simulado } = useLocalSearchParams<{ dia?: string }>()
   const carga = useCarregar(viagem ? () => buscarTudo(viagem.id) : null, [viagem?.id])
@@ -78,7 +106,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const { destinos, trajetos, eventos, pontos, hospedagens, guarda } = carga.dados
+  const { destinos, trajetos, eventos, pontos, hospedagens, guarda, roteiros, lugares, arquivos } = carga.dados
 
   const hoje = __DEV__ && simulado ? simulado.slice(0, 10) : hojeIso()
   const horaAtual = horaDe(agora)
@@ -91,6 +119,26 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   const guardaDaqui = onde ? guarda.filter((g) => g.destino_id === onde.id) : []
   const encontros = pontos.filter((p) => p.quando && diaNoFuso(p.quando) === hoje)
   const nomeDo = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? '?'
+  const membros = viagem.membros.map((m) => ({ id: m.id, nome: m.nome }))
+  const movimentos = quemChegaESaiHoje(hoje, trajetos, destinos, membros, diaNoFuso, horaNoFuso)
+  const plano = planoDoDia(hoje, { destinos, eventos, roteiros, lugares })
+
+  // "Cheguei" (spec 120a): avisa o grupo (chegadas, spec 051) e marca o lugar como visitado.
+  // O carimbo do lugar (118a) entra na 120c.
+  async function cheguei(item: (typeof plano)[number]) {
+    if (!viagem) return
+    setChegamos((s) => new Set(s).add(item.chave))
+    try {
+      await registrarChegada(supabase, viagem.id, item.titulo)
+      if (item.lugarId) await supabase.rpc('marcar_visitado', { p_lugar: item.lugarId, p_visitado: true })
+    } catch {
+      setChegamos((s) => {
+        const n = new Set(s)
+        n.delete(item.chave)
+        return n
+      })
+    }
+  }
 
   return (
     <View className="flex-1 bg-fundo">
@@ -133,6 +181,86 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
             </Pressable>
           </Cartao>
         )}
+
+        {/* Spec 120a: convidado pelo link não vê endereço nem código */}
+        {onde && !ehConvidado ? (
+          <Bloco Icone={BedDouble} titulo="Onde dormimos hoje">
+            {dormimos ? (
+              <>
+                <Text className="font-body-bold text-[15px] text-texto">{dormimos.nome}</Text>
+                {dormimos.endereco ? <Text className="font-body text-[13px] text-suave">{dormimos.endereco}</Text> : null}
+                {dormimos.hora_checkin || dormimos.hora_checkout ? (
+                  <Text className="font-body text-[13px] text-suave">
+                    {[
+                      dormimos.hora_checkin ? `Check-in ${dormimos.checkin === hoje ? 'hoje ' : ''}a partir das ${dormimos.hora_checkin.slice(0, 5)}` : null,
+                      dormimos.hora_checkout ? `check-out ${dormimos.checkout === hoje ? 'hoje ' : ''}até ${dormimos.hora_checkout.slice(0, 5)}` : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </Text>
+                ) : null}
+                {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
+                {dormimos.como_chegar && onde.chegada === hoje ? (
+                  <Text className="font-body text-[13px] leading-5 text-corpo">
+                    <Text className="font-body-bold">Como chegar:</Text> {dormimos.como_chegar}
+                  </Text>
+                ) : null}
+                {dormimos.codigo_porta ? (
+                  <View className="flex-row items-center gap-1.5">
+                    <KeyRound size={14} color={cor.couro} />
+                    <Text selectable className="font-body text-[13px] text-corpo">
+                      Código de acesso: <Text className="font-body-bold text-texto">{dormimos.codigo_porta}</Text>
+                    </Text>
+                  </View>
+                ) : null}
+                {dormimos.wifi_rede ? (
+                  <View className="flex-row items-center gap-1.5">
+                    <Wifi size={14} color={cor.couro} />
+                    <Text selectable className="min-w-0 flex-1 font-body text-[13px] text-corpo">
+                      {dormimos.wifi_rede}
+                      {dormimos.wifi_senha ? <Text className="font-body-bold text-texto"> · {dormimos.wifi_senha}</Text> : null}
+                    </Text>
+                  </View>
+                ) : null}
+                {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
+              </>
+            ) : (
+              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
+            )}
+          </Bloco>
+        ) : null}
+
+        {/* Spec 120a: quem chega e quem sai hoje, como bilhetes */}
+        {movimentos.length > 0 && !ehConvidado ? (
+          <View className="gap-2">
+            <View className="flex-row items-center gap-2 px-1">
+              <Plane size={16} color={cor.couro} />
+              <Text className="font-body-bold text-[15px] text-texto">Quem chega e quem sai hoje</Text>
+            </View>
+            {movimentos.map((m) => (
+              <BilheteDoTrajeto key={m.chave} m={m} caminhoNoCofre={arquivos.get(m.trajetoId)?.caminho ?? null} />
+            ))}
+          </View>
+        ) : null}
+
+        {/* Spec 120a: plano do dia (roteiro + agenda), cada um com "Ir" e "Cheguei" */}
+        {onde ? (
+          <Bloco Icone={ListChecks} titulo="Plano do dia">
+            {plano.length ? (
+              plano.map((item) => (
+                <ItemDoPlanoDoDia
+                  key={item.chave}
+                  item={item}
+                  chegou={item.visitado || chegamos.has(item.chave)}
+                  podeChegar={!ehConvidado}
+                  aoChegar={() => void cheguei(item)}
+                />
+              ))
+            ) : (
+              <Text className="font-body text-[14px] leading-5 text-corpo">Nada no roteiro de hoje. Montem o dia na tela Roteiro.</Text>
+            )}
+          </Bloco>
+        ) : null}
 
         {/* Spec 080: bate-e-volta hoje → hora da volta pra base */}
         {bateEVolta ? (
@@ -185,32 +313,6 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
                 <BotaoIr alvo={{ nome: p.local, latitude: p.latitude, longitude: p.longitude }} />
               </View>
             ))}
-          </Bloco>
-        ) : null}
-
-        {onde ? (
-          <Bloco Icone={BedDouble} titulo="Onde dormimos hoje">
-            {dormimos ? (
-              <>
-                <Text className="font-body-bold text-[15px] text-texto">{dormimos.nome}</Text>
-                {dormimos.endereco ? <Text className="font-body text-[13px] text-suave">{dormimos.endereco}</Text> : null}
-                {dormimos.checkin === hoje && dormimos.hora_checkin ? (
-                  <Text className="font-body text-[13px] text-suave">Check-in a partir das {dormimos.hora_checkin.slice(0, 5)}</Text>
-                ) : null}
-                {dormimos.checkout === hoje && dormimos.hora_checkout ? (
-                  <Text className="font-body text-[13px] text-suave">Check-out até {dormimos.hora_checkout.slice(0, 5)}</Text>
-                ) : null}
-                {/* Spec 062: no dia da chegada, como chegar do aeroporto/estação */}
-                {dormimos.como_chegar && onde.chegada === hoje ? (
-                  <Text className="font-body text-[13px] leading-5 text-corpo">
-                    <Text className="font-body-bold">Como chegar:</Text> {dormimos.como_chegar}
-                  </Text>
-                ) : null}
-                {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
-              </>
-            ) : (
-              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
-            )}
           </Bloco>
         ) : null}
 

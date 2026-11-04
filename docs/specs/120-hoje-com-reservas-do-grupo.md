@@ -1,6 +1,6 @@
 # 120. "Hoje" com as reservas do grupo
 
-**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** A fazer
+**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco da 120a não aplicado · 120b e 120c a fazer
 
 > Camada 2 do [`docs/RUMO.md`](../RUMO.md): o que faz abrir o app todo dia durante a viagem. Alimenta o [passaporte da galera (118)](118-passaporte-da-galera.md).
 
@@ -70,12 +70,19 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 ## Critérios de aceite
 - [ ] Mando o print da reserva do Airbnb e, em até 15 s, vejo o rascunho com endereço, check-in e check-out; confirmo e a casa aparece no "Hoje" de todo mundo.
 - [ ] Mando o PDF de um voo e ele vira trajeto com horário e a pessoa certa; aparece em "quem chega hoje" no dia.
-- [ ] "Ver reserva" abre o arquivo original.
+- [x] "Ver reserva" abre o arquivo original. (120a: no bilhete do trajeto, pelo cofre ou pelo link da reserva. Casa e agenda esperam a migration `20261103120000_reservas_no_hoje.sql`.)
 - [ ] Leitura que falha abre o formulário com o que deu pra ler, sem perder o arquivo.
-- [ ] Num dia da viagem, o app abre direto no "Hoje".
+- [x] Num dia da viagem, o app abre direto no "Hoje". (120a: no app, o Início leva pra viagem, uma vez por abertura; no site, abrir a viagem leva pro Hoje, uma vez por aba.)
 - [ ] "Cheguei" num lugar do roteiro avisa o grupo e libera o carimbo (118a).
-- [ ] O convidado pelo link vê o plano do dia, mas não o endereço nem o código da reserva.
-- [ ] Tudo funciona em 360px.
+- [x] O convidado pelo link vê o plano do dia, mas não o endereço nem o código da reserva. (120a: conta de convidado no app e no site esconde "Onde dormimos" e os bilhetes. A web leve `/v/` é a 0.8.)
+- [ ] Tudo funciona em 360px. (120a: bilhete e plano conferidos em 360px no site com uma página de teste; a tela logada e o app ficam pra conferir com conta de teste.)
+
+## Como ficou a 120a (03/11/2026)
+- Regra: `packages/core/src/hoje-do-grupo.ts` (`quemChegaESaiHoje`, `planoDoDia`, `arquivoDeCadaTrajeto`, `viagemAcontecendo`). Teste: `apps/web/tests/hoje-do-grupo.test.mjs`.
+- App: `apps/mobile/app/hoje.tsx` + `src/ui/BilheteDoDia.tsx`; abre sozinho em `app/index.tsx`.
+- Site: `apps/web/src/pages/viagem/Hoje.tsx` + `src/features/hoje/ReservasDoDia.tsx` (o pedido foi fazer no site também, apesar do "não inclui").
+- "Cheguei" hoje avisa o grupo (chegadas, 051) e marca o lugar como visitado. O carimbo é a 120c.
+- "Quem vai buscar", contato do anfitrião e "ver reserva" da casa e da agenda dependem da migration `20261103120000_reservas_no_hoje.sql` (não aplicada).
 
 ## Perguntas em aberto
 - O endereço da casa e o código de acesso podem aparecer pro convidado pelo link? (proposta: não, só pra quem está no comboio com conta)
