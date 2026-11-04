@@ -125,6 +125,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 118 | [Passaporte da galera](118-passaporte-da-galera.md) (a âncora: carimbo sem digitar, mapa da galera, retrospectiva que monta sozinha, "há 1 ano", widget, viagens antigas e rolês) | 0 | A fazer · **prioridade 1**, depois da validação com 3 telas falsas (ver [RUMO](../RUMO.md)) |
 | 119 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | ❄ Congelada pelo RUMO (vira assinatura do organizador) |
 | 120 | ["Hoje" com as reservas do grupo](120-hoje-com-reservas-do-grupo.md) (casa, check-in, quem chega, plano do dia; reserva entra por print ou PDF; "Cheguei" vira carimbo) | 0 | **120a pronta pra testar** (app e site, 03/11) · banco aplicado · 120b e 120c a fazer · prioridade 1, junto com a 118 |
+| 121 | [Transportes e Hospedagem que ajudam](121-transportes-e-hospedagem-que-ajudam.md) ("saia às X", do aeroporto até a casa, dividir o transfer, links entre destinos; teto de preço e região perto do roteiro) | 0/2 | A fazer · 3 etapas; a 1 serve ao "Hoje" e não usa banco · falta o Victor escolher a 1ª etapa |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |
