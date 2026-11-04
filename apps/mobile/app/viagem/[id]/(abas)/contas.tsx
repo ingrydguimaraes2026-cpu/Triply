@@ -4,7 +4,7 @@ import { StatusBar } from '../../../../src/ui/StatusBar'
 import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeftRight, CheckCheck, MessageCircle, Receipt, Send, Wallet } from '../../../../src/ui/icones'
-import { buscarGastos, contarComentariosDaViagem, cotacoesDeHoje, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type ViagemComDetalhes } from '@together/core'
+import { buscarGastos, CONGELADO, contarComentariosDaViagem, cotacoesDeHoje, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type ViagemComDetalhes } from '@together/core'
 import { resumoDasContas } from '../../../../src/dados/contas'
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
@@ -166,7 +166,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                 {!meu ? <Avatar nome={viagem.membros[indice(e.pago_por)]?.nome ?? '?'} indice={indice(e.pago_por)} tamanho={28} /> : null}
                 <Pressable
                   onPress={() => setAberto(aberto === e.id ? null : e.id)}
-                  accessibilityLabel={`Comentários de ${e.descricao}`}
+                  accessibilityLabel={CONGELADO.comentarios ? e.descricao : `Comentários de ${e.descricao}`}
                   className={`max-w-[78%] rounded-[20px] px-4 py-3 active:opacity-90 ${meu ? 'rounded-br-md bg-couro' : 'rounded-bl-md bg-cartao'}`}
                   style={meu ? undefined : sombra.cartao}
                 >
@@ -176,7 +176,8 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                   <Text className={`mt-0.5 font-body text-[12px] ${meu ? 'text-creme' : 'text-suave'}`}>
                     {e.pessoal ? 'só seu' : pessoas ? `dividido em ${pessoas} · ${formatarDinheiro(Math.round(e.valor / pessoas), e.moeda)} cada` : ''}
                   </Text>
-                  {comentarios[e.id] ? (
+                  {/* ❄ comentários soltos congelados pelo RUMO (03/11/2026) */}
+                  {comentarios[e.id] && !CONGELADO.comentarios ? (
                     <View className={`absolute -bottom-2.5 ${meu ? 'left-3' : 'right-3'} flex-row items-center gap-1 rounded-full border border-linha bg-cartao px-2 py-0.5`}>
                       <MessageCircle size={11} color={cor.caramelo} />
                       <Text className="font-body-bold text-[11px] text-texto">{comentarios[e.id]}</Text>
@@ -184,8 +185,8 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                   ) : null}
                 </Pressable>
               </View>
-              {/* Spec 025: comentários do gasto */}
-              {aberto === e.id ? (
+              {/* Spec 025: comentários do gasto. ❄ congelado pelo RUMO (03/11/2026) */}
+              {aberto === e.id && !CONGELADO.comentarios ? (
                 <View className="mt-2 rounded-2xl bg-cartao px-3" style={sombra.cartao}>
                   <ComentariosDoItem
                     viagemId={viagem.id}

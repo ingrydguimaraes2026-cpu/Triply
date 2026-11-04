@@ -24,7 +24,7 @@ import QuemDormeOnde from '../../features/hospedagem/QuemDormeOnde'
 import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { mensagemDeErro } from '../../features/financeiro/api'
-import { formatarDinheiro, prazoDeCancelamento } from '@together/core'
+import { CONGELADO, formatarDinheiro, prazoDeCancelamento } from '@together/core'
 import { hojeTexto } from '../../features/destinos/datas'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -186,7 +186,8 @@ export default function Hospedagem() {
           </p>
         )}
         {opcao.observacao && <p className="hosp-opcao-obs">{opcao.observacao}</p>}
-        {destaque && <GuiaDaCasa guia={opcao.guia} podeEditar={podeEditar} aoEditar={() => setJanela({ tipo: 'guia', opcao })} />}
+        {/* Guia da casa. ❄ congelado pelo RUMO (03/11/2026) */}
+        {destaque && !CONGELADO.guiaDaCasa && <GuiaDaCasa guia={opcao.guia} podeEditar={podeEditar} aoEditar={() => setJanela({ tipo: 'guia', opcao })} />}
         {destaque && <QuemDormeOnde viagemId={viagem.id} hospedagemId={opcao.id} membros={membros} meuId={meuId} podeEditar={podeEditar} />}
 
         <div className="hosp-opcao-rodape">
@@ -200,12 +201,15 @@ export default function Hospedagem() {
             <Heart size={16} aria-hidden="true" fill={votei ? 'currentColor' : 'none'} />
             {opcao.votos.length > 0 ? opcao.votos.length : 'Curti'}
           </button>
-          <ComentariosDoItem
-            alvo={{ tipo: 'hospedagem', id: opcao.id }}
-            titulo={opcao.nome}
-            quantidade={comentarios.contagem[opcao.id]}
-            aoMudar={comentarios.recarregar}
-          />
+          {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+          {!CONGELADO.comentarios && (
+            <ComentariosDoItem
+              alvo={{ tipo: 'hospedagem', id: opcao.id }}
+              titulo={opcao.nome}
+              quantidade={comentarios.contagem[opcao.id]}
+              aoMudar={comentarios.recarregar}
+            />
+          )}
           {quemVotou.length > 0 && (
             <span className="hosp-quem" aria-label={`Votaram: ${quemVotou.map((m) => m.nome).join(', ')}`}>
               {quemVotou.slice(0, 4).map((m) => (

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Banknote, BarChart3, CalendarClock, Coins, Download, UserRound, Euro, HandCoins, Plus, Receipt, Settings2, Wallet } from '../../components/ui/icones'
-import { gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
+import { CONGELADO, gastosEmCsv, gastosParaSplitwise, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
 import APagar from '../../features/previstos/APagar'
@@ -313,8 +313,8 @@ export default function Financeiro() {
 
           <div className="fin-colunas">
             <div className="fin-principal">
-              {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? */}
-              {moeda !== 'BRL' && (
+              {/* Termômetro do câmbio: a moeda da viagem está barata ou cara em reais? (e o boletim). ❄ congelado pelo RUMO (03/11/2026) */}
+              {moeda !== 'BRL' && !CONGELADO.cambioAvancado && (
                 <TermometroCambio
                   viagemId={viagem.id}
                   meuId={meuId}
@@ -514,12 +514,15 @@ export default function Financeiro() {
                             </span>
                             <span className="gasto-valor">{formatarDinheiro(g.valor, g.moeda)}</span>
                           </button>
-                          <ComentariosDoItem
-                            alvo={{ tipo: 'gasto', id: g.id }}
-                            titulo={g.descricao}
-                            quantidade={comentarios.contagem[g.id]}
-                            aoMudar={comentarios.recarregar}
-                          />
+                          {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+                          {!CONGELADO.comentarios && (
+                            <ComentariosDoItem
+                              alvo={{ tipo: 'gasto', id: g.id }}
+                              titulo={g.descricao}
+                              quantidade={comentarios.contagem[g.id]}
+                              aoMudar={comentarios.recarregar}
+                            />
+                          )}
                           {/* Gasto pessoal só você vê: não faz sentido compartilhar */}
                           {!g.pessoal && (
                             <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'gasto', id: g.id, titulo: g.descricao }} nomeDaViagem={viagem.nome} />

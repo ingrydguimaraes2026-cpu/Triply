@@ -7,7 +7,7 @@ import { useLugares } from '../../features/lugares/hooks'
 import { contarPorTipo, linkNoMapa, TIPOS_DE_LUGAR, tipoDeLugar, type Lugar, type TipoDeLugar } from '../../features/lugares/regras'
 import { ICONE_DO_TIPO } from '../../features/lugares/icones'
 import FormLugar from '../../features/lugares/FormLugar'
-import { formatarDinheiro } from '@together/core'
+import { CONGELADO, formatarDinheiro } from '@together/core'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import { useFocoDeItem } from '../../lib/foco'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
@@ -127,12 +127,15 @@ export default function Lugares() {
               <Heart size={13} aria-hidden="true" fill={euVotei ? 'currentColor' : 'none'} />
               {lugar.votos.length > 0 && <span>{lugar.votos.length}</span>}
             </button>
-            <ComentariosDoItem
-              alvo={{ tipo: 'lugar', id: lugar.id }}
-              titulo={lugar.nome}
-              quantidade={comentarios.contagem[lugar.id]}
-              aoMudar={comentarios.recarregar}
-            />
+            {/* ❄ congelado pelo RUMO (03/11/2026): comentários soltos */}
+            {!CONGELADO.comentarios && (
+              <ComentariosDoItem
+                alvo={{ tipo: 'lugar', id: lugar.id }}
+                titulo={lugar.nome}
+                quantidade={comentarios.contagem[lugar.id]}
+                aoMudar={comentarios.recarregar}
+              />
+            )}
             <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'lugar', id: lugar.id, titulo: lugar.nome }} nomeDaViagem={viagem.nome} />
             {autor && <small>por {autor.id === meuId ? 'você' : autor.nome.split(' ')[0]}</small>}
           </div>

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Linking, Modal, Pressable, Text, View } from 'react-native'
 import { Briefcase, Calculator, Camera, Car, Languages, Percent, Utensils, X, type LucideIcon } from './icones'
 import {
+  CONGELADO,
   codigoDoPais,
   contaComGorjeta,
   cotacoesDeHoje,
@@ -41,7 +42,8 @@ export function FerramentasDoDia({ destino, moedaViagem, enderecoHospedagem }: {
       <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-suave">Ferramentas do dia</Text>
       <Conversor moeda={moedaLocal === 'BRL' ? moedaViagem : moedaLocal} />
       <Gorjeta pais={pais} moeda={moedaLocal} />
-      {idioma ? <Frases idioma={idioma} /> : null}
+      {/* ❄ congelado pelo RUMO (03/11/2026): frases úteis */}
+      {idioma && !CONGELADO.frasesUteis ? <Frases idioma={idioma} /> : null}
       {enderecoHospedagem ? <MostrarProMotorista endereco={enderecoHospedagem} /> : null}
       {destino ? (
         <Bloco Icone={Utensils} titulo="Comer por perto">

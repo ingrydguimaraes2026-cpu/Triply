@@ -14,7 +14,7 @@ import {
 } from '../../features/destinos/api'
 import { contarNoites, destinoDeHoje, hojeTexto, periodoDosDestinos, textoNoites } from '../../features/destinos/datas'
 import { useResumoFinanceiro } from '../../features/financeiro/hooks'
-import { encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
+import { CONGELADO, encontrarFuros, formatarDinheiro, prontidao, proximoPasso, resumoDosTrajetos } from '@together/core'
 import { progresso } from '../../features/documentos/checklist'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { meio } from '../../features/transportes/api'
@@ -259,7 +259,8 @@ export default function Overview() {
   const pronto =
     viagem.data_inicio && viagem.data_inicio > hojeTexto()
       ? prontidao([
-          { nome: 'documentos', feitas: docsProgresso.feitas, total: docsProgresso.total },
+          // ❄ congelado pelo RUMO (03/11/2026): documentos de entrada saem da conta
+          ...(CONGELADO.documentos ? [] : [{ nome: 'documentos', feitas: docsProgresso.feitas, total: docsProgresso.total }]),
           { nome: 'hospedagem', feitas: hospResumo.resolvidos, total: hospResumo.total },
           { nome: 'trajetos comprados', feitas: comprados?.comprados ?? 0, total: comprados?.total ?? 0 },
         ])
@@ -504,13 +505,15 @@ export default function Overview() {
               )}
             </Cartao>
           )}
-          {/* Spec 010: checklist de documentos */}
-          <ChecklistDocumentos
-            docs={docs}
-            membros={membros}
-            className="overview-documentos"
-            passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
-          />
+          {/* Spec 010: checklist de documentos. ❄ congelado pelo RUMO (03/11/2026) */}
+          {!CONGELADO.documentos && (
+            <ChecklistDocumentos
+              docs={docs}
+              membros={membros}
+              className="overview-documentos"
+              passaporte={{ viagemId: viagem.id, meuId, volta: viagem.data_fim ?? viagem.data_inicio, euSouAdm }}
+            />
+          )}
         </div>
       </div>
 
@@ -648,10 +651,12 @@ export default function Overview() {
           <ListasDoComboio />
         </Cartao>
 
-        {/* Spec 047: ficha do país + lembrete do eSIM */}
-        <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
-          <FichaDoPais viagem={viagem} destinos={destinos} />
-        </Cartao>
+        {/* Spec 047: ficha do país + lembrete do eSIM. ❄ congelado pelo RUMO (03/11/2026) */}
+        {!CONGELADO.fichaDoPais && (
+          <Cartao titulo="Ficha do país" icone={Globe} className="overview-ficha-pais">
+            <FichaDoPais viagem={viagem} destinos={destinos} />
+          </Cartao>
+        )}
 
         {/* Roadmap #7: ponto de encontro (onde e que horas se encontrar) */}
         <Cartao titulo="Ponto de encontro" icone={MapPin} className="overview-encontro">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, BedDouble, CalendarDays, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from '../../components/ui/icones'
 import {
+  CONGELADO,
   buscarClima,
   compromissosApertados,
   destinoDoDia,
@@ -124,9 +125,12 @@ export default function Agenda() {
             <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
               <Printer size={16} aria-hidden="true" /> PDF
             </Link>
-            <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
-              <CalendarPlus size={16} aria-hidden="true" /> Calendário
-            </button>
+            {/* Baixar o .ics (spec 036). ❄ congelado pelo RUMO (03/11/2026) */}
+            {!CONGELADO.calendario && (
+              <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
+                <CalendarPlus size={16} aria-hidden="true" /> Calendário
+              </button>
+            )}
             <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
               <Plus size={16} aria-hidden="true" /> Evento
             </button>

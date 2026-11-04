@@ -23,6 +23,7 @@ import { Hoje } from '../../../hoje'
 import { Comemoracao } from '../../../../src/ui/Comemoracao'
 import { Selo } from '../../../../src/ui/Selos'
 import { ErroNaTela } from '../../../../src/ui/pecas'
+import { CONGELADO } from '@together/core'
 import { cor } from '../../../../theme'
 
 // Aba Viagem (spec 117): muda com a fase. Antes da viagem: capa, comboio, próximo carimbo,
@@ -147,9 +148,12 @@ export default function AbaViagem() {
             <ResumoDasContas total={contas.total} meuSaldo={contas.saldos.get(meuId) ?? 0} moeda={viagem.moeda} aoAbrir={() => ir('contas')} />
           </Secao>
 
-          <Secao indice={5} titulo="Antes de embarcar">
-            <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />
-          </Secao>
+          {/* ❄ congelado pelo RUMO (03/11/2026): documentos de entrada */}
+          {CONGELADO.documentos ? null : (
+            <Secao indice={5} titulo="Antes de embarcar">
+              <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />
+            </Secao>
+          )}
         </View>
       </Animated.ScrollView>
 

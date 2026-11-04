@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { formatarDinheiro } from '@together/core'
+import { CONGELADO, formatarDinheiro } from '@together/core'
 import { Camera, CheckCheck, ChevronRight, FileText, Lock, Printer, Sparkles, TriangleAlert } from '../icones'
 import { Passaporte } from './Passaporte'
 import { Secao } from './Secoes'
@@ -59,8 +59,13 @@ export function Lembrancas({ viagem, foto, numeros, passos, contasEmDia, ir, aoE
           <View className="rounded-2xl bg-cartao px-4" style={sombra.cartao}>
             <Linha Icone={Sparkles} titulo="Retrospectiva" sub="A viagem em cartões pro story" aoTocar={() => ir('retrospectiva')} />
             <Linha Icone={FileText} titulo="Livro da viagem em PDF" sub="Roteiro, fotos e contas" aoTocar={() => ir('pdf-da-viagem')} borda />
-            <Linha Icone={Printer} titulo="Livro impresso do comboio" sub="As fotos e o roteiro, em casa" aoTocar={() => aoExtra('livro_impresso')} borda trancado />
-            <Linha Icone={Camera} titulo="Vídeo da viagem" sub="Um minuto com o melhor de tudo" aoTocar={() => aoExtra('video')} borda trancado />
+            {/* Extras do Passe. ❄ congelado pelo RUMO (03/11/2026) */}
+            {CONGELADO.passe ? null : (
+              <>
+                <Linha Icone={Printer} titulo="Livro impresso do comboio" sub="As fotos e o roteiro, em casa" aoTocar={() => aoExtra('livro_impresso')} borda trancado />
+                <Linha Icone={Camera} titulo="Vídeo da viagem" sub="Um minuto com o melhor de tudo" aoTocar={() => aoExtra('video')} borda trancado />
+              </>
+            )}
           </View>
         </Secao>
       </View>
