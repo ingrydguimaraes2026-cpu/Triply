@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, CalendarPlus, Heart, SlidersHorizontal, Star, Undo2, X } from '../src/ui/icones'
 import {
   ESTILOS,
+  semAcento,
   ORCAMENTOS,
   RITMOS,
   acabou,
@@ -140,6 +141,17 @@ function ExplorarDestino({
   const rotulos = useMemo(() => (destino.chegada ? dias.map(diaPorExtenso) : dias), [destino.chegada, dias])
   const porDia = porDiaDoRitmo(ritmo)
   const porId = useMemo(() => new Map(catalogo.map((l) => [l.id, l])), [catalogo])
+  // Foto de cada lugar do roteiro: acha no catálogo pelo Wikidata (ou pelo nome, sem acento)
+  const fotosDosLugares = useMemo(() => {
+    const porWikidata = new Map(catalogo.filter((c) => c.wikidata && c.fotoUrl).map((c) => [c.wikidata!, c.fotoUrl!]))
+    const porNome = new Map(catalogo.filter((c) => c.fotoUrl).map((c) => [semAcento(c.nome), c.fotoUrl!]))
+    const fotos: Record<string, string> = {}
+    for (const l of lugaresDoGrupo) {
+      const f = (l.wikidata && porWikidata.get(l.wikidata)) || porNome.get(semAcento(l.nome))
+      if (f) fotos[l.id] = f
+    }
+    return fotos
+  }, [catalogo, lugaresDoGrupo])
   const atual = porId.get(deslize.pilha[deslize.posicao] ?? '') ?? null
   const proximo = porId.get(deslize.pilha[deslize.posicao + 1] ?? '') ?? null
   const alturaCartao = Math.round(Math.min(600, Math.max(400, height - insets.top - insets.bottom - 240)))
@@ -294,6 +306,12 @@ function ExplorarDestino({
       setLugaresDoGrupo(doGrupo)
       setDiasSalvos(diasDoRoteiro)
       setEtapa('roteiro')
+      // Abriu direto no roteiro (onboarding, link): busca o catálogo só pras fotos dos lugares, sem travar a tela
+      if (catalogo.length === 0) {
+        carregarCatalogoDaCidade(supabase, destino)
+          .then((cat) => setCatalogo(cat.lugares))
+          .catch((e) => console.warn('Roteiro sem fotos do catálogo:', e))
+      }
     } catch (e) {
       console.error('Erro ao montar:', e)
       setErro('Não deu pra montar o roteiro agora. Suas escolhas estão salvas: tente de novo.')
@@ -415,9 +433,6 @@ function ExplorarDestino({
         <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
           {topo}
           <View className="gap-3 px-5 pt-4">
-            <Text className="font-display text-[22px] text-texto">
-              {destino.nome} em {rotulos.length} {rotulos.length === 1 ? 'dia' : 'dias'}
-            </Text>
             {aviso ? <Aviso texto={aviso} /> : null}
             <RoteiroDoExplorar
               destinoNome={destino.nome}
@@ -430,6 +445,8 @@ function ExplorarDestino({
               aoReorganizar={() => mudarRoteiro(propor(lugaresDoGrupo))}
               aoVerMais={comecar}
               aoConvidar={() => void convidarProComboio(viagem.id, viagem.nome)}
+              fotos={fotosDosLugares}
+              mostrarConvite={!guiado}
             />
           </View>
         </ScrollView>

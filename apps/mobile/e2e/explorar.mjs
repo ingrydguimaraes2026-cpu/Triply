@@ -61,8 +61,9 @@ async function abrirRoteiro(p) {
     await reorganizar.waitFor({ timeout: 60_000 })
   }
 }
-const aba = (p, t) => p.getByRole('tab', { name: new RegExp(`^${t}\\b`) })
+// O roteiro mostra todos os dias empilhados; cada dia é um bloco com testID "dia-N"
 const mexer = (p, nome) => p.getByRole('button', { name: `Mexer em ${nome}`, exact: true })
+const noDia = (p, n, nome) => p.getByTestId(`dia-${n}`).getByRole('button', { name: `Mexer em ${nome}`, exact: true })
 
 let lugar = ''
 try {
@@ -87,38 +88,33 @@ try {
   })
 
   await passo('"Mover pra Dia 2" no menu "…"', async () => {
-    await aba(a, 'Dia 1').click()
-    const primeiro = a.getByRole('button', { name: /^Mexer em / }).first()
+    const primeiro = a.getByTestId('dia-1').getByRole('button', { name: /^Mexer em / }).first()
     await primeiro.waitFor({ timeout: 10_000 })
     lugar = (await primeiro.getAttribute('aria-label')).replace('Mexer em ', '')
     await primeiro.click()
     await a.getByText('Mover pra').waitFor()
     await a.getByText('Dia 2', { exact: true }).last().click()
-    await aba(a, 'Dia 2').click()
-    await mexer(a, lugar).waitFor({ timeout: 5_000 })
+    await noDia(a, 2, lugar).waitFor({ timeout: 5_000 })
   })
 
   await passo('a mudança ficou salva (recarregar a página)', async () => {
     await a.waitForTimeout(1500) // deixa o salvamento chegar no banco
     await a.reload()
     await abrirRoteiro(a)
-    await aba(a, 'Dia 2').click()
-    await mexer(a, lugar).waitFor({ timeout: 10_000 })
+    await noDia(a, 2, lugar).waitFor({ timeout: 10_000 })
   })
 
   await passo('tempo real: a outra aba vê a mudança sem recarregar', async () => {
     const b = await contexto.newPage()
     await b.goto(a.url())
     await abrirRoteiro(b)
-    await aba(b, 'Dia 2').click()
-    await mexer(b, lugar).waitFor({ timeout: 10_000 })
+    await noDia(b, 2, lugar).waitFor({ timeout: 10_000 })
     // Na aba A, devolve o lugar pro Dia 1 (também deixa os dados como estavam)
     await mexer(a, lugar).click()
     await a.getByText('Mover pra').waitFor()
     await a.getByText('Dia 1', { exact: true }).last().click()
-    await mexer(b, lugar).waitFor({ state: 'detached', timeout: 10_000 })
-    await aba(b, 'Dia 1').click()
-    await mexer(b, lugar).waitFor({ timeout: 5_000 })
+    await noDia(b, 2, lugar).waitFor({ state: 'detached', timeout: 10_000 })
+    await noDia(b, 1, lugar).waitFor({ timeout: 5_000 })
   })
 
   await passo('sem erro de JavaScript na tela', async () => {

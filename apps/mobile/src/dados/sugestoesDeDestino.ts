@@ -1,4 +1,6 @@
-// Cidades sugeridas na primeira tela do onboarding. A cada abertura sorteamos 6 (3 do Brasil
+// Cidades sugeridas na primeira tela do onboarding. Só entram cidades com catálogo cheio no Explorar
+// (20+ lugares com foto): com catálogo pequeno o deslize mostra cartão sem foto e o roteiro sai magro.
+// A cada abertura sorteamos 6 (3 do Brasil
 // e 3 de fora), pra a tela não ficar sempre igual. Fotos do Wikimedia Commons (crédito no cartão);
 // ficam fixas aqui porque nessa hora a pessoa ainda não entrou e o catálogo só abre pra quem entrou.
 // Pra trocar uma foto: o caminho é o pedaço depois de ".../commons/thumb/" (use a largura 500px).
@@ -10,12 +12,11 @@ const FOTO = (caminho: string) => `https://thumb.wikimedia.org/wikipedia/commons
 export const SUGESTOES_DE_DESTINO: SugestaoDeDestino[] = [
   // Brasil
   { nome: 'Rio de Janeiro', pais: 'BR', clima: 'Praia, samba e vista lá do alto', foto: FOTO('0/04/Rio_de_Janeiro_skyline_and_Sugarloaf_Mountain_at_sunset%2C_Brazil_3.jpg/500px-Rio_de_Janeiro_skyline_and_Sugarloaf_Mountain_at_sunset%2C_Brazil_3.jpg'), credito: 'Wilfredor · CC0' },
-  { nome: 'Jericoacoara', pais: 'BR', clima: 'Dunas e pôr do sol na areia', foto: FOTO('1/1e/Pedra_furada.jpg/500px-Pedra_furada.jpg'), credito: 'Sombriks · CC BY-SA 3.0' },
-  { nome: 'Gramado', pais: 'BR', clima: 'Serra, frio e fondue', foto: FOTO('2/28/Lago_Negro12.jpg/500px-Lago_Negro12.jpg'), credito: 'F. S. Aldado · domínio público' },
   { nome: 'Salvador', pais: 'BR', clima: 'Pelourinho, axé e acarajé', foto: FOTO('5/5b/Largo_do_Pelourinho%2C_Salvador_20150719-DSC05452.JPG/500px-Largo_do_Pelourinho%2C_Salvador_20150719-DSC05452.JPG'), credito: 'Matti Blume · CC BY-SA 4.0' },
-  { nome: 'Ouro Preto', pais: 'BR', clima: 'Ladeiras, igrejas e história', foto: FOTO('8/85/SFrancisOuroPreto-CCBY.jpg/500px-SFrancisOuroPreto-CCBY.jpg'), credito: 'Sarah and Iain · CC BY 2.0' },
-  { nome: 'Olinda', pais: 'BR', clima: 'Casario colorido e frevo', foto: FOTO('2/26/Mosteiro_de_S%C3%A3o_Bento_-_Olinda_-_Pernambuco_-_Brasil.jpg/500px-Mosteiro_de_S%C3%A3o_Bento_-_Olinda_-_Pernambuco_-_Brasil.jpg'), credito: 'Prefeitura de Olinda · CC BY 2.0' },
-  { nome: 'Florianópolis', pais: 'BR', clima: 'Praias pra todo gosto', foto: FOTO('0/02/Ponte_Herc%C3%ADlio_Luz_-_Florian%C3%B3polis_-_20220911165825.jpg/500px-Ponte_Herc%C3%ADlio_Luz_-_Florian%C3%B3polis_-_20220911165825.jpg'), credito: 'Agnaldo Servo · CC BY-SA 4.0' },
+  { nome: 'São Paulo', pais: 'BR', clima: 'Comida, museus e noite sem fim', foto: FOTO('7/75/Vista_a%C3%A9rea_de_la_Avenida_Paulista_de_S%C3%A3o_Paulo_05.jpg/500px-Vista_a%C3%A9rea_de_la_Avenida_Paulista_de_S%C3%A3o_Paulo_05.jpg'), credito: 'ProtoplasmaKid · CC BY-SA 4.0' },
+  { nome: 'Recife', pais: 'BR', clima: 'Frevo, praia e centro histórico', foto: FOTO('2/2a/Capela_Dourada%2C_Recife%2C_Pernambuco%2C_Brasil.jpg/500px-Capela_Dourada%2C_Recife%2C_Pernambuco%2C_Brasil.jpg'), credito: 'Wilfredor · CC0' },
+  { nome: 'Belém', pais: 'BR', clima: 'Açaí, Ver-o-Peso e Amazônia', foto: FOTO('2/25/Belem-TeatroPaz1.jpg/500px-Belem-TeatroPaz1.jpg'), credito: 'Celso R. de Abreu Silva · CC BY 2.0' },
+  { nome: 'Curitiba', pais: 'BR', clima: 'Parques, jardins e Niemeyer', foto: FOTO('9/94/%27JardimBotanico.BotanicalGarden.CuritibaParanaBrasilBrazil.JPG/500px-%27JardimBotanico.BotanicalGarden.CuritibaParanaBrasilBrazil.JPG'), credito: 'SamirNosteb · CC BY-SA 2.5' },
   // Fora do Brasil
   { nome: 'Lisboa', pais: 'PT', clima: 'Miradouros e pastel de nata', foto: FOTO('e/e8/Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg/500px-Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg'), credito: 'Diego Delso · CC BY-SA 3.0' },
   { nome: 'Porto', pais: 'PT', clima: 'Vinho, Ribeira e pontes', foto: FOTO('e/e5/Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG/500px-Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG'), credito: 'Diego Delso · CC BY-SA 3.0' },
