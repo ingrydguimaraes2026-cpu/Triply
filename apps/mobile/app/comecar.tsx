@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Animated, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
+import { LinearGradient } from 'expo-linear-gradient'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Heart, MapPin, Minus, Plus, Search, Star, X } from '../src/ui/icones'
 import {
@@ -39,13 +40,16 @@ type Etapa = 'oi' | 'destino' | 'dias' | 'gosto' | 'preparando' | 'deslize' | 'p
 const ORDEM: Etapa[] = ['oi', 'destino', 'dias', 'gosto', 'deslize', 'previa', 'conta']
 const CARTOES_DO_GOSTINHO = 6
 
-const SUGESTOES: { nome: string; pais: string }[] = [
-  { nome: 'Rio de Janeiro', pais: 'BR' },
-  { nome: 'Jericoacoara', pais: 'BR' },
-  { nome: 'Gramado', pais: 'BR' },
-  { nome: 'Lisboa', pais: 'PT' },
-  { nome: 'Paris', pais: 'FR' },
-  { nome: 'Buenos Aires', pais: 'AR' },
+// Sugestões da primeira tela, com foto (Wikimedia Commons; crédito aparece no cartão) e o clima da cidade.
+// Fotos fixas aqui porque nessa hora a pessoa ainda não entrou e o catálogo só abre pra quem entrou.
+const FOTO = (caminho: string) => `https://thumb.wikimedia.org/wikipedia/commons/thumb/${caminho}`
+const SUGESTOES: { nome: string; pais: string; clima: string; foto: string; credito: string }[] = [
+  { nome: 'Rio de Janeiro', pais: 'BR', clima: 'Praia, samba e vista lá do alto', foto: FOTO('0/04/Rio_de_Janeiro_skyline_and_Sugarloaf_Mountain_at_sunset%2C_Brazil_3.jpg/500px-Rio_de_Janeiro_skyline_and_Sugarloaf_Mountain_at_sunset%2C_Brazil_3.jpg'), credito: 'Wilfredor · CC0' },
+  { nome: 'Jericoacoara', pais: 'BR', clima: 'Dunas e pôr do sol na areia', foto: FOTO('1/1e/Pedra_furada.jpg/500px-Pedra_furada.jpg'), credito: 'Sombriks · CC BY-SA 3.0' },
+  { nome: 'Gramado', pais: 'BR', clima: 'Serra, frio e fondue', foto: FOTO('2/28/Lago_Negro12.jpg/500px-Lago_Negro12.jpg'), credito: 'F. S. Aldado · domínio público' },
+  { nome: 'Lisboa', pais: 'PT', clima: 'Miradouros e pastel de nata', foto: FOTO('e/e8/Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg/500px-Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg'), credito: 'Diego Delso · CC BY-SA 3.0' },
+  { nome: 'Paris', pais: 'FR', clima: 'Museus, cafés e a Torre', foto: FOTO('a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/500px-Tour_Eiffel_Wikimedia_Commons.jpg'), credito: 'Benh Lieu Song · domínio público' },
+  { nome: 'Buenos Aires', pais: 'AR', clima: 'Tango, parrilla e livrarias', foto: FOTO('1/15/ObeliscoBA2015.jpg/500px-ObeliscoBA2015.jpg'), credito: 'Sebastianalmaraz · CC BY-SA 4.0' },
 ]
 const GRUPOS: { id: string; nome: string; selo: NomeDoSelo; estilo?: EstiloId }[] = [
   { id: 'amigos', nome: 'Amigos', selo: 'galera' },
@@ -272,8 +276,8 @@ export default function Comecar() {
       </View>
 
       {etapa === 'destino' ? (
-        <Conversa fala="Pra onde vocês vão?">
-          <Campo icone={<Search size={20} color={cor.couro} />} placeholder="Buscar cidade" value={busca} onChangeText={setBusca} autoCorrect={false} />
+        <Conversa fala="Bora! Pra onde vai ser a próxima viagem?" humor="feliz">
+          <Campo icone={<Search size={20} color={cor.couro} />} placeholder="Qualquer cidade do mundo" value={busca} onChangeText={setBusca} autoCorrect={false} />
           <ListaDeCidades
             busca={busca}
             aoEscolher={(c) => {
@@ -436,7 +440,19 @@ function ListaDeCidades({ busca, aoEscolher }: { busca: string; aoEscolher: (c: 
     if (t.length < 2) return []
     return CIDADES_DA_PRE_CARGA.filter((c) => semAcento(c.nome).includes(t)).slice(0, 6)
   }, [digitado])
-  const lista = digitado.length > 1 ? achadas : SUGESTOES
+  if (digitado.length < 2) {
+    return (
+      <View className="mt-5">
+        <Text className="mb-3 font-body-bold text-[12px] uppercase tracking-[1.4px] text-caramelo">Ou se inspire</Text>
+        <View className="flex-row flex-wrap justify-between" style={{ rowGap: 12 }}>
+          {SUGESTOES.map((c) => (
+            <CartaoDeCidade key={c.nome} cidade={c} aoTocar={() => aoEscolher({ nome: c.nome, pais: c.pais })} />
+          ))}
+        </View>
+      </View>
+    )
+  }
+  const lista = achadas
   return (
     <View className="mt-3 gap-2">
       {lista.map((c) => (
@@ -457,6 +473,21 @@ function ListaDeCidades({ busca, aoEscolher }: { busca: string; aoEscolher: (c: 
         </Pressable>
       ) : null}
     </View>
+  )
+}
+
+// Cartão com foto da cidade (grade de 2 colunas na primeira tela)
+function CartaoDeCidade({ cidade, aoTocar }: { cidade: (typeof SUGESTOES)[number]; aoTocar: () => void }) {
+  return (
+    <Pressable onPress={aoTocar} accessibilityRole="button" accessibilityLabel={cidade.nome} className="h-[176px] w-[48.5%] overflow-hidden rounded-3xl bg-areia active:opacity-90" style={sombra.cartao}>
+      <Image source={{ uri: cidade.foto }} resizeMode="cover" style={{ position: 'absolute', width: '100%', height: '100%' }} />
+      <LinearGradient colors={['rgba(30,18,8,0)', 'rgba(30,18,8,0.78)']} locations={[0.35, 1]} style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }} />
+      <Text numberOfLines={1} className="absolute left-3 right-2 top-1.5 text-right font-body text-[8px] text-white/70">{cidade.credito}</Text>
+      <View className="mt-auto p-3">
+        <Text className="font-display text-[20px] leading-[23px] text-white">{cidade.nome}</Text>
+        <Text className="mt-0.5 font-body-medium text-[12px] leading-[16px] text-white/85">{cidade.clima}</Text>
+      </View>
+    </Pressable>
   )
 }
 
