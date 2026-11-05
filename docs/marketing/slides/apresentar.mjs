@@ -38,6 +38,36 @@ const POSTS = {
     { tipo: 'duas', olho: '4 · o passaporte', titulo: 'Cada lugar vira *carimbo*. O mapa da galera acende', telas: ['pass-1', 'pass-carimbou'], pose: 'celebrate' },
     { tipo: 'fim', titulo: 'Norti', sub: 'do "bora?" ao carimbo', pose: 'celebrate' },
   ],
+  C2: [
+    { tipo: 'capa', olho: 'pergunta séria', titulo: 'Sua galera ainda decide a viagem num grupo com *300 mensagens*?', pose: 'think' },
+    { tipo: 'bolhas', olho: 'o grupo de sempre', titulo: 'Toda vez é *assim*:', bolhas: ['Ana: e aquela casa que eu mandei?', 'Beto: qual?? manda de novo', 'Ju: gente, vota na enquete', 'Léo: que enquete', 'Ana: esquece, eu decido'], pose: 'oops' },
+    { tipo: 'tela', olho: 'na norti', titulo: 'Cada um vota em *1 toque*. O grupo vê o placar', telas: ['viagem'], pose: 'point' },
+    { tipo: 'tela', olho: 'sem cobrar ninguém', titulo: 'Quem ainda não votou aparece ali: *falta você*', telas: ['passaporte'], pose: 'think' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'a galera decide junto', pose: 'celebrate' },
+  ],
+  C3: [
+    { tipo: 'capa', olho: 'pode apagar', titulo: 'Você *não precisa* de planilha pra viagem com os amigos', pose: 'celebrate' },
+    { tipo: 'lista', olho: 'a planilha tentava', titulo: 'Guardar:', itens: ['quem vai', 'onde dorme', 'o que fazer', 'quanto deu'], pose: 'think' },
+    { tipo: 'tela', olho: 'o roteiro', titulo: 'O que a galera quer vira o *roteiro* do dia', telas: ['roteiro'], pose: 'point' },
+    { tipo: 'tela', olho: 'as contas', titulo: 'Escreveu "jantar 84", a Norti *divide* sozinha', telas: ['contas'], pose: 'wave' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'a viagem da galera num lugar só', pose: 'celebrate' },
+  ],
+  C4: [
+    { tipo: 'capa', olho: 'pra você', titulo: 'Se você é quem *sempre organiza* a viagem, precisa ler isso', pose: 'point' },
+    { tipo: 'lista', olho: 'a sua vida hoje', titulo: 'Você:', itens: ['acha a casa', 'cobra a confirmação', 'monta o roteiro', 'faz a conta no fim'], pose: 'oops' },
+    { tipo: 'tela', olho: 'agora', titulo: 'Manda um link e a galera *vota*', telas: ['viagem'], pose: 'wave' },
+    { tipo: 'duas', olho: 'o roteiro', titulo: 'Cada um desliza. O roteiro sai dos *matches*', telas: ['explorar', 'roteiro'], pose: 'love' },
+    { tipo: 'duas', olho: 'e no fim', titulo: 'Você ganha o *passaporte* de todas as viagens de vocês', telas: ['pass-capa', 'pass-1'], pose: 'celebrate' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'pra quem sempre organiza', pose: 'wave' },
+  ],
+  K1: [
+    { tipo: 'capa', olho: 'comparação', titulo: 'Grupo do zap *x* Norti', pose: 'think' },
+    { tipo: 'versus', olho: '1 · a casa', titulo: 'Onde a galera vai *dormir*', zap: ['olha essa casa', 'e essa?', 'qual era a primeira mesmo?'], legenda: '40 links perdidos na conversa', telas: ['viagem'], norti: 'as casas lado a lado, com votos' },
+    { tipo: 'versus', olho: '2 · os passeios', titulo: 'O que a galera vai *fazer*', zap: ['quem quer ir no museu?', '...', 'alguém?'], legenda: 'enquete que ninguém responde', telas: ['match'], norti: 'deu match: 3 querem o mesmo' },
+    { tipo: 'versus', olho: '3 · a conta', titulo: 'Quanto *deu* a viagem', zap: ['quanto foi o mercado?', 'acho que 800', 'eu achei 1.200'], legenda: 'a planilha no fim', telas: ['contas'], norti: 'cada gasto dividido na hora' },
+    { tipo: 'versus', olho: '4 · a memória', titulo: 'O que *fica* da viagem', zap: ['manda as fotos', 'quais?', 'tá no drive do Léo'], legenda: 'tudo espalhado', telas: ['pass-2'], norti: 'cada lugar vira carimbo' },
+    { tipo: 'fim', titulo: 'Norti', sub: 'sai do grupo, entra na viagem', pose: 'celebrate' },
+  ],
 }
 
 // ---------- Visual ----------
@@ -54,7 +84,7 @@ function conteudo(s, i, total) {
   const olho = s.olho ? `<span class="olho">${esc(s.olho)}</span>` : ''
   const sub = s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''
   // com celular, o @ ficaria atrás do aparelho: só o número da página
-  const comCelular = s.tipo === 'tela' || s.tipo === 'duas'
+  const comCelular = s.tipo === 'tela' || s.tipo === 'duas' || s.tipo === 'versus'
   const rodape = `${comCelular ? '' : '<span class="arroba">@norti.app</span>'}<span class="conta">${i}/${total}</span>`
   if (s.tipo === 'capa') return `
     <div class="capa">${olho}<h1${s.titulo.length < 30 ? ' class="curto"' : ''}>${rico(s.titulo)}</h1>${sub}</div>
@@ -71,6 +101,17 @@ function conteudo(s, i, total) {
     <div class="topo">${olho}<h2>${rico(s.titulo)}</h2>${sub}</div>
     ${celular(s.telas[0], 'esq')}${celular(s.telas[1], 'dir')}
     <img class="norti n-duas" src="${norti(s.pose)}">${rodape}`
+  if (s.tipo === 'bolhas') return `
+    <div class="topo">${olho}<h2>${rico(s.titulo)}</h2></div>
+    <div class="bolhas">${s.bolhas.map((b, k) => { const [quem, ...resto] = b.split(': '); return `<div class="bolha ${k % 2 ? 'dir' : ''}"><b>${esc(quem)}</b>${esc(resto.join(': '))}</div>` }).join('')}</div>
+    <img class="norti n-bolhas" src="${norti(s.pose)}">${rodape}`
+  if (s.tipo === 'versus') return `
+    <div class="topo">${olho}<h2>${rico(s.titulo)}</h2></div>
+    <div class="lado zap"><span class="rotulo">no grupo do zap</span>
+      ${s.zap.map((b) => `<div class="bolha">${esc(b)}</div>`).join('')}
+      <span class="nota">✕ ${esc(s.legenda)}</span></div>
+    <div class="lado app"><span class="rotulo ouro">na Norti</span>${celular(s.telas[0], 'vs')}<span class="nota ok">✓ ${esc(s.norti)}</span></div>
+    ${rodape}`
   // fim
   return `
     <div class="fim">
@@ -133,6 +174,28 @@ em { font-style: normal; color: var(--dourado); }
 .celular.dir { width: 400px; left: 560px; top: 520px; transform: rotate(4deg); }
 .n-tela { width: 250px; left: 70px; bottom: 120px; transform: rotate(-6deg); }
 .n-duas { width: 200px; right: 40px; top: 400px; transform: rotate(8deg); }
+
+
+/* balões do grupo (genéricos, sem marca de app de mensagem) */
+.bolhas { position: absolute; left: 80px; right: 80px; top: 330px; display: flex; flex-direction: column; gap: 22px; z-index: 3; }
+.bolha { align-self: flex-start; max-width: 78%; background: #3A2A1E; border: 2px solid rgba(255,255,255,.06); color: #F1E4CF; border-radius: 10px 36px 36px 36px; padding: 20px 30px 24px; font-size: 40px; line-height: 1.2; box-shadow: 0 10px 24px rgba(0,0,0,.3); }
+.bolha b { display: block; font-size: 24px; letter-spacing: .04em; color: var(--ouro); margin-bottom: 4px; }
+.bolha.dir { align-self: flex-end; border-radius: 36px 10px 36px 36px; background: #2E2218; }
+.n-bolhas { width: 220px; right: 60px; bottom: 80px; transform: rotate(8deg); }
+
+/* versus */
+.lado { position: absolute; top: 380px; bottom: 120px; display: flex; flex-direction: column; gap: 18px; z-index: 3; }
+.lado.zap { left: 70px; width: 440px; padding: 30px 28px; border-radius: 40px; background: rgba(0,0,0,.28); border: 2px dashed rgba(245,233,214,.18); }
+.lado.app { left: 560px; width: 450px; align-items: center; }
+.lado .bolha { font-size: 32px; max-width: 100%; padding: 16px 24px 18px; }
+.lado .bolha:nth-of-type(2) { align-self: flex-end; transform: rotate(2deg); }
+.lado .bolha:nth-of-type(3) { transform: rotate(-2deg); opacity: .8; }
+.rotulo { font-weight: 700; font-size: 26px; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,233,214,.6); }
+.rotulo.ouro { color: var(--dourado); }
+.nota { margin-top: auto; font-weight: 700; font-size: 30px; line-height: 1.25; color: #E9A58C; }
+.nota.ok { margin-top: 0; color: #CFE0A0; text-align: center; }
+.celular.vs { position: relative; width: 330px; left: auto; top: auto; transform: rotate(2deg); padding: 12px; border-radius: 56px; }
+.celular.vs img { border-radius: 44px; height: 620px; object-fit: cover; object-position: top; }
 
 /* fim */
 .fim { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 22px; z-index: 3; }
