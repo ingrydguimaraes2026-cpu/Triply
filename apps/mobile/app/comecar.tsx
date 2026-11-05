@@ -53,6 +53,36 @@ const GRUPOS: { id: string; nome: string; selo: NomeDoSelo; estilo?: EstiloId }[
   { id: 'familia', nome: 'Família', selo: 'familia', estilo: 'criancas' },
   { id: 'sozinho', nome: 'Sozinho', selo: 'mochila' },
 ]
+// Tela de guardar o roteiro: comemora o que já está pronto e mostra o que a pessoa ganha,
+// de acordo com quem vai (quem viaja sozinho não precisa ouvir falar de "galera")
+function falaDaConta(destino: string, dias: number, curtidos: number) {
+  const roteiro = `Seu roteiro de ${dias} ${dias === 1 ? 'dia' : 'dias'} em ${destino}`
+  return curtidos
+    ? `${roteiro} tá pronto, com ${curtidos} ${curtidos === 1 ? 'lugar' : 'lugares'} que você curtiu. Só falta guardar!`
+    : `${roteiro} tá pronto. Só falta guardar!`
+}
+const VANTAGENS: Record<string, { selo: NomeDoSelo; texto: string }[]> = {
+  sozinho: [
+    { selo: 'calendario', texto: 'Seu roteiro dia a dia, na mão durante a viagem' },
+    { selo: 'passagem', texto: 'Passagens, hospedagem e gastos num lugar só' },
+    { selo: 'mochila', texto: 'Cada viagem vira um carimbo no seu passaporte' },
+  ],
+  casal: [
+    { selo: 'coracoes', texto: 'Vocês dois deslizam e o roteiro junta o gosto do casal' },
+    { selo: 'calendario', texto: 'Roteiro dia a dia no celular dos dois' },
+    { selo: 'moedas', texto: 'Gastos divididos sem planilha' },
+  ],
+  familia: [
+    { selo: 'familia', texto: 'Todo mundo dá palpite e o roteiro se ajusta' },
+    { selo: 'calendario', texto: 'Roteiro dia a dia no celular de cada um' },
+    { selo: 'mala', texto: 'Hospedagem, documentos e gastos num lugar só' },
+  ],
+  amigos: [
+    { selo: 'cartas', texto: 'A galera desliza também e o roteiro junta o gosto de todo mundo' },
+    { selo: 'moedas', texto: 'Contas divididas sem planilha nem cobrança chata' },
+    { selo: 'camera', texto: 'Fotos da viagem de todo mundo num lugar só' },
+  ],
+}
 const GOSTOS: { id: EstiloId; nome: string; selo: NomeDoSelo }[] = [
   { id: 'ar_livre', nome: 'Natureza e trilhas', selo: 'montanha' },
   { id: 'cultura', nome: 'Museus e história', selo: 'museu' },
@@ -73,7 +103,7 @@ export default function Comecar() {
   const [busca, setBusca] = useState('')
   const [destino, setDestino] = useState<{ nome: string; pais: string | null } | null>(rascunhoGuardado ? { nome: rascunhoGuardado.destino, pais: rascunhoGuardado.pais } : null)
   const [dias, setDias] = useState(rascunhoGuardado?.dias ?? 4)
-  const [grupo, setGrupo] = useState<string | null>(rascunhoGuardado ? 'amigos' : null)
+  const [grupo, setGrupo] = useState<string | null>(rascunhoGuardado ? (rascunhoGuardado.grupo ?? 'amigos') : null)
   const [gostos, setGostos] = useState<EstiloId[]>(rascunhoGuardado?.estilos ?? [])
   const [pilha, setPilha] = useState<LugarDoCatalogo[]>([])
   const [posicao, setPosicao] = useState(0)
@@ -93,7 +123,7 @@ export default function Comecar() {
     if (temConta && rascunhoGuardado && etapa === 'conta') setEtapa('criando')
   }, [temConta, rascunhoGuardado, etapa])
 
-  const rascunho = (): RascunhoDaViagem => ({ destino: destino!.nome, pais: destino!.pais, dias, estilos, escolhas })
+  const rascunho = (): RascunhoDaViagem => ({ destino: destino!.nome, pais: destino!.pais, dias, estilos, escolhas, grupo: grupo ?? undefined })
 
   // ---------- Gostinho: entra como convidado (sem a pessoa ver) e carrega uns lugares ----------
   async function preparar() {
@@ -196,7 +226,7 @@ export default function Comecar() {
         <View className="flex-1 items-center justify-center gap-4">
           <Norti humor="oi" tamanho={170} />
           <Text className="mt-2 text-center font-display text-[36px] leading-[40px] text-texto">Oi, eu sou a Norti</Text>
-          <Text className="text-center font-body text-[17px] leading-[25px] text-corpo">Em 1 minuto eu monto o roteiro da sua viagem com a galera. Bora?</Text>
+          <Text className="text-center font-body text-[17px] leading-[25px] text-corpo">Em 1 minuto eu monto o roteiro da sua próxima viagem. Bora?</Text>
         </View>
         <Botao titulo="Bora" aoTocar={() => setEtapa('destino')} />
         {!temConta ? (
@@ -296,7 +326,7 @@ export default function Comecar() {
 
       {etapa === 'previa' ? (
         <>
-          <Previa destino={destino?.nome ?? ''} dias={dias} pilha={pilha} escolhas={escolhas} />
+          <Previa destino={destino?.nome ?? ''} dias={dias} pilha={pilha} escolhas={escolhas} sozinho={grupo === 'sozinho'} />
           <Rodape>
             <Botao titulo="Salvar meu roteiro" aoTocar={() => (temConta ? setEtapa('criando') : setEtapa('conta'))} />
           </Rodape>
@@ -305,15 +335,16 @@ export default function Comecar() {
 
       {etapa === 'conta' ? (
         <>
-          <Conversa fala="Crie sua conta pra guardar o roteiro e chamar a galera. Leva 20 segundos." humor="feliz">
+          <Conversa fala={falaDaConta(destino?.nome ?? '', dias, Object.values(escolhas).filter((e) => e !== 'passo').length)} humor="feliz">
             <View className="mt-4 gap-3 rounded-3xl bg-cartao p-5" style={sombra.cartao}>
-              <Vantagem selo="mapa" texto="O roteiro fica salvo no seu celular e no de quem for" />
-              <Vantagem selo="cartas" texto="A galera desliza também e o roteiro se ajusta" />
-              <Vantagem selo="mala" texto="Contas, hospedagem e fotos do grupo num lugar só" />
+              {(VANTAGENS[grupo ?? 'amigos'] ?? VANTAGENS.amigos).map((v) => (
+                <Vantagem key={v.texto} selo={v.selo} texto={v.texto} />
+              ))}
             </View>
           </Conversa>
           <Rodape>
-            <Botao titulo="Criar minha conta" aoTocar={() => void irPraConta('criar')} />
+            <Botao titulo="Guardar meu roteiro" aoTocar={() => void irPraConta('criar')} />
+            <Text className="mt-2 text-center font-body text-[13px] text-suave">Leva 20 segundos, com Google ou e-mail</Text>
             <Pressable onPress={() => void irPraConta('entrar')} className="h-12 items-center justify-center">
               <Text className="font-body-semibold text-[15px] text-couro">Já tenho conta</Text>
             </Pressable>
@@ -479,7 +510,7 @@ function Direcao({ Icone, tom, texto }: { Icone: typeof Heart; tom: string; text
 }
 
 // Prévia do roteiro: o que curtiu, 2 por dia (o roteiro de verdade é montado depois da conta)
-function Previa({ destino, dias, pilha, escolhas }: { destino: string; dias: number; pilha: LugarDoCatalogo[]; escolhas: Record<string, Escolha> }) {
+function Previa({ destino, dias, pilha, escolhas, sozinho }: { destino: string; dias: number; pilha: LugarDoCatalogo[]; escolhas: Record<string, Escolha>; sozinho: boolean }) {
   // Mesma conta do roteiro que abre depois (Explorar, ritmo equilibrado): o que a pessoa vê aqui é o que vai ganhar
   const curtidos = pilha.filter((l) => escolhas[l.id] === 'nao_abro_mao' || escolhas[l.id] === 'quero')
   const proposta = montarDiasPelosVotos(
@@ -494,7 +525,7 @@ function Previa({ destino, dias, pilha, escolhas }: { destino: string; dias: num
         {blocos.map((lugares, i) => (
           <View key={i} className="rounded-2xl bg-cartao p-4" style={[sombra.cartao, { opacity: lugares.length ? 1 : 0.55 }]}>
             <Text className="font-body-bold text-[12px] uppercase tracking-[1.4px] text-caramelo">Dia {i + 1}</Text>
-            <Text className="mt-1 font-body-bold text-[16px] leading-[22px] text-texto">{lugares.length ? lugares.map((l) => l.nome).join(' · ') : 'Vou completar com o que a galera curtir'}</Text>
+            <Text className="mt-1 font-body-bold text-[16px] leading-[22px] text-texto">{lugares.length ? lugares.map((l) => l.nome).join(' · ') : (sozinho ? 'Vou completar com os favoritos de quem já foi' : 'Vou completar com o que a galera curtir')}</Text>
           </View>
         ))}
         {dias > 3 ? <Text className="text-center font-body text-[14px] text-suave">+ {dias - 3} {dias - 3 === 1 ? 'dia' : 'dias'}</Text> : null}
