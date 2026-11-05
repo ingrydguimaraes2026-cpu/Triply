@@ -154,7 +154,7 @@ function CartaoStory({ cartao, nome }: { cartao: CartaoDaRetrospectiva; nome: st
             <Text className="font-display text-[30px] text-[#F3E3C7]">{cartao.titulo}</Text>
             <Text className="mt-3 font-body text-[16px] leading-6 text-[#E3D2B8]">{cartao.legenda}</Text>
           </View>
-          <Text className="font-body-bold text-[12px] uppercase tracking-widest text-[#B97A22]">Tripwave</Text>
+          <Text className="font-body-bold text-[12px] uppercase tracking-widest text-[#B97A22]">Norti</Text>
         </View>
       </View>
       {podePostar ? (

@@ -150,7 +150,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
           <View className="items-center gap-2 py-10">
             <Norti humor="dormindo" tamanho={110} />
             <Text className="font-display text-[24px] text-texto">Lance o primeiro gasto</Text>
-            <Text className="text-center font-body text-[14px] leading-5 text-corpo">Escreva aí embaixo, tipo &quot;jantar 84&quot;. O Tripwave divide na hora.</Text>
+            <Text className="text-center font-body text-[14px] leading-5 text-corpo">Escreva aí embaixo, tipo &quot;jantar 84&quot;. A Norti divide na hora.</Text>
           </View>
         ) : null}
 

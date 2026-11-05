@@ -129,7 +129,7 @@ a {
   cursor: pointer;
 }
 
-/* Logo do Tripwave (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
+/* Logo da Norti (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
 .logo {
   display: inline-flex;
   align-items: center;
@@ -266,7 +266,7 @@ html[data-tema='escuro'][data-contraste='alto'] {
   --cor-borda: #8a6a45;
 }
 
-/* Ícones do Tripwave (docs/design/ICONES.md): traço na cor do texto, fundo dourado.
+/* Ícones da Norti (docs/design/ICONES.md): traço na cor do texto, fundo dourado.
    Pra mudar o fundo num lugar só: --icone-duo (cor) e --icone-duo-op (opacidade). */
 .icone { flex: none; vertical-align: middle; }
 .icone .duo { fill: var(--icone-duo, var(--laranja)); fill-opacity: var(--icone-duo-op, 1); }

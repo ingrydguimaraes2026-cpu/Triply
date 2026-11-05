@@ -126,7 +126,7 @@ export default function MinhasViagens() {
           <span className="pagina-solta-norti">
             <Norti tamanho={34} sombra={false} />
           </span>
-          Tripwave
+          Norti
         </Link>
         <nav>
           <Link to="/perfil" className="botao-texto">

@@ -92,7 +92,7 @@ export default function Passe() {
           sub={`uma vez · ${formatarDinheiro(Math.round(PRECO_DO_PASSE / pessoas), 'BRL')} por pessoa no Pix`}
           aoTocar={() => setPlano('passe')}
         />
-        <Plano ativo={plano === 'anual'} titulo="Tripwave+ anual" preco={formatarDinheiro(PRECO_DO_ANUAL, 'BRL')} sub="todas as viagens · 7 dias grátis" aoTocar={() => setPlano('anual')} />
+        <Plano ativo={plano === 'anual'} titulo="Norti+ anual" preco={formatarDinheiro(PRECO_DO_ANUAL, 'BRL')} sub="todas as viagens · 7 dias grátis" aoTocar={() => setPlano('anual')} />
 
         {quis ? (
           <View className="items-center gap-1 rounded-2xl bg-areia px-4 py-4">

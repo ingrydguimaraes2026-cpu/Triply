@@ -1,4 +1,4 @@
-// Ícones e selos do Tripwave (docs/design/ICONES.md). Um catálogo só pra web e app:
+// Ícones e selos da Norti (docs/design/ICONES.md). Um catálogo só pra web e app:
 // - Ícone: desenho do dia a dia (botão, aba, lista). Phosphor Duotone recolorido: traço na cor pedida
 //   e uma camada de fundo dourada. Ex.: svgDoIcone('lugar', { cor: '#7B542F' })
 // - Selo: ilustração nossa, grande, pra categorias, passos e onboarding. Ex.: svgDoSelo('mapa')

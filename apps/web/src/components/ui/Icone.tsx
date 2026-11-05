@@ -1,7 +1,7 @@
 import { memo, type ComponentType, type SVGProps } from 'react'
 import { corpoDoIcone, svgDoSelo, type NomeDoIcone, type NomeDoSelo } from '@together/core'
 
-// Ícones do Tripwave (docs/design/ICONES.md). Ex.: <Icone nome="lugar" size={20} />
+// Ícones da Norti (docs/design/ICONES.md). Ex.: <Icone nome="lugar" size={20} />
 // O traço usa a cor do texto (currentColor); a camada de fundo é dourada (.icone .duo no global.css).
 // `cheio`: versão preenchida (coração curtido, estrela).
 export type PropsDoIcone = Omit<SVGProps<SVGSVGElement>, 'ref'> & {

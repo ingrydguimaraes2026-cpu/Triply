@@ -51,7 +51,7 @@ test('103: texto pra indicar lugares, recomendados primeiro', async () => {
       '• Castelo',
       'https://www.google.com/maps/search/?api=1&query=Castelo%20Nice',
       '',
-      'Montado no Tripwave',
+      'Montado na Norti',
     ].join('\n'),
   )
 })

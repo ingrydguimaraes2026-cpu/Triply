@@ -37,18 +37,18 @@ const textos: Record<Modo, { titulo: string; sub: string; botao: string }> = {
 // Frases da foto do computador: mudam junto com a foto (design Plataforma, spec 113)
 const FRASES = [
   { titulo: 'Planejem juntos', texto: 'Roteiro, transportes e reservas do grupo inteiro, organizados num lugar só.' },
-  { titulo: 'Dividam as contas', texto: 'Cada gasto lançado na hora. O Tripwave calcula quem deve quanto, sem planilha.' },
+  { titulo: 'Dividam as contas', texto: 'Cada gasto lançado na hora. A Norti calcula quem deve quanto, sem planilha.' },
   { titulo: 'Guardem as memórias', texto: 'As fotos de todo mundo, juntas e separadas por dia, prontas pra rever.' },
 ]
 
-// Marca do Tripwave como no app: a Norti num quadradinho claro + o nome na serifada
+// Marca da Norti como no app: a Norti num quadradinho claro + o nome na serifada
 function Marca({ className }: { className: string }) {
   return (
     <p className={`login-marca ${className}`}>
       <span className="login-marca-norti">
         <Norti tamanho={44} sombra={false} />
       </span>
-      Tripwave
+      Norti
     </p>
   )
 }

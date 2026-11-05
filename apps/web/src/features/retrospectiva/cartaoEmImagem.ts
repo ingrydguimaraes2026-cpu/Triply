@@ -58,7 +58,7 @@ export async function cartaoEmImagem(cartao: CartaoDaRetrospectiva, nomeDaViagem
   linhas.slice(0, 3).forEach((l, i) => g.fillText(l, c.width / 2, 1160 + i * 60, 960))
 
   g.font = `700 48px ${titulo}`
-  g.fillText('Tripwave', c.width / 2, c.height - 120)
+  g.fillText('Norti', c.width / 2, c.height - 120)
 
   return new Promise((resolver) => c.toBlob(resolver, 'image/png'))
 }

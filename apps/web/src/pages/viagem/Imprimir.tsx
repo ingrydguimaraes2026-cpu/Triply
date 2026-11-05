@@ -176,7 +176,7 @@ export default function Imprimir() {
           </table>
         </section>
 
-        <p className="imprimir-rodape">Gerado pelo Tripwave em {new Date().toLocaleDateString('pt-BR')}.</p>
+        <p className="imprimir-rodape">Gerado pela Norti em {new Date().toLocaleDateString('pt-BR')}.</p>
       </div>
     </div>
   )

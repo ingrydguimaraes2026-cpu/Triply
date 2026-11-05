@@ -1,7 +1,7 @@
 import './norti/mascot.js' // registra o <mascot-view> (os tipos ficam em norti/mascot-view.d.ts)
 import './ui.css'
 
-// A Norti: mascote do Tripwave (uma bússola em forma de pino de mapa, de chapéu de safári).
+// A Norti: mascote e nome do app (uma bússola em forma de pino de mapa, de chapéu de safári).
 // Quem anima é o <mascot-view> (norti/mascot.js, gerado pela skill Mascot Designer),
 // com as poses em public/norti/. O app usa as mesmas poses (apps/mobile/src/ui/Norti.tsx).
 //   parada   → respira e pisca              feliz    → pula e solta confete (depois volta a parada)

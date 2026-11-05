@@ -184,11 +184,11 @@ export default function ViagemLayout() {
 
       <aside className="viagem-menu">
         <div className="viagem-menu-cabeca">
-          <Link to="/viagens" className="viagem-logo" aria-label="Tripwave: ver todas as viagens">
+          <Link to="/viagens" className="viagem-logo" aria-label="Norti: ver todas as viagens">
             <span className="viagem-logo-norti">
               <Norti tamanho={34} sombra={false} />
             </span>
-            <span className="viagem-menu-texto">Tripwave</span>
+            <span className="viagem-menu-texto">Norti</span>
           </Link>
           <button type="button" className="viagem-menu-recolher" onClick={alternarMenu} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir' : 'Recolher'}>
             <PanelLeft size={19} aria-hidden="true" />

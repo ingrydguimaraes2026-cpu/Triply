@@ -1,6 +1,6 @@
 import Norti from './Norti'
 
-// Logo do Tripwave, igual à marca do app (spec 112): a Norti num quadradinho bege + o nome na serifada.
+// Logo da Norti, igual à marca do app (spec 112): a Norti num quadradinho bege + o nome na serifada.
 // O nome usa a cor do texto onde a logo está; o tamanho segue o font-size de quem está em volta.
 // Uso: <Logo /> (Norti + nome) ou <Logo comNome={false} /> (só a Norti).
 // O símbolo antigo ("Rota", 18/10/2026) continua em SimboloTogether, pra quem ainda precisar dele.
@@ -24,11 +24,11 @@ export function SimboloTogether() {
 
 export default function Logo({ comNome = true, className }: Props) {
   return (
-    <span className={`logo ${className ?? ''}`} aria-label={comNome ? undefined : 'Tripwave'} role={comNome ? undefined : 'img'}>
+    <span className={`logo ${className ?? ''}`} aria-label={comNome ? undefined : 'Norti'} role={comNome ? undefined : 'img'}>
       <span className="logo-norti" aria-hidden="true">
         <Norti tamanho={30} sombra={false} />
       </span>
-      {comNome && <span className="logo-nome">Tripwave</span>}
+      {comNome && <span className="logo-nome">Norti</span>}
     </span>
   )
 }

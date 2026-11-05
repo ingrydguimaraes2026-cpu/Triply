@@ -98,7 +98,7 @@ export function mensagemDeErro(erro: AuthError): string {
     case 'over_request_rate_limit':
       return 'Muitas tentativas seguidas. Espere alguns minutos e tente de novo.'
     case 'identity_already_exists':
-      return 'Esse Google já tem conta no Tripwave. Entre com ele e abra o convite de novo.'
+      return 'Esse Google já tem conta na Norti. Entre com ele e abra o convite de novo.'
     case 'manual_linking_disabled':
       return 'Ainda não dá pra ligar o Google aqui. Use o e-mail por enquanto.'
     case 'same_password':

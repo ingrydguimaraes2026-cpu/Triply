@@ -4,7 +4,7 @@ import { SvgXml } from 'react-native-svg'
 import { svgDoIcone, svgDoSelo, type NomeDoIcone, type NomeDoSelo } from '@together/core'
 import { cor as paleta } from '../../theme'
 
-// Ícones do Tripwave (docs/design/ICONES.md). Ex.: <Icone nome="lugar" tamanho={20} cor={cor.couro} />
+// Ícones da Norti (docs/design/ICONES.md). Ex.: <Icone nome="lugar" tamanho={20} cor={cor.couro} />
 // `cheio`: versão preenchida (coração curtido, estrela). `duo`: troca a cor da camada de fundo.
 export type PropsDoIcone = {
   tamanho?: number
