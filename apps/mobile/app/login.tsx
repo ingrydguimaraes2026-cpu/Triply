@@ -11,6 +11,7 @@ import { entrarComGoogle } from '../src/lib/google'
 import { Norti } from '../src/ui/Norti'
 import { Botao, Campo } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { MODO_TESTE, criarContaDeTeste, entrarNaUltimaContaDeTeste } from '../src/lib/contasDeTeste'
 
 // Login / Cadastro (tela "1d" do design): faixa caramelo com a Norti de logo e uma
 // folha clara que sobe com as abas Entrar | Criar conta.
@@ -61,6 +62,19 @@ export default function Login() {
     } catch {
       setAviso({ tipo: 'erro', texto: 'Não deu pra entrar com Google. Tente de novo ou use e-mail e senha.' })
     }
+  }
+
+  // Só em modo dev (MODO_TESTE): entra numa conta de teste sem Google nem e-mail de verdade
+  async function contaDeTeste(qual: 'nova' | 'ultima') {
+    setAviso(null)
+    setEnviando(true)
+    try {
+      const conta = qual === 'nova' ? await criarContaDeTeste() : await entrarNaUltimaContaDeTeste()
+      setAviso({ tipo: 'ok', texto: `Entrou como ${conta.email}` })
+    } catch (e) {
+      setAviso({ tipo: 'erro', texto: e instanceof Error ? e.message : 'Não deu pra usar a conta de teste.' })
+    }
+    setEnviando(false)
   }
 
   async function esqueci() {
@@ -182,6 +196,13 @@ export default function Login() {
           <Text className="px-3 text-center font-body text-[12px] leading-[18px] text-suave">
             Ao continuar, você concorda com os Termos de uso e a Política de privacidade.
           </Text>
+          {MODO_TESTE ? (
+            <View className="mt-2 rounded-2xl border border-dashed border-tracejado p-3" style={{ gap: 8 }}>
+              <Text className="text-center font-body-semibold text-[12px] text-suave">Modo teste (não aparece na loja)</Text>
+              <Botao titulo="Nova conta de teste" tipo="secundario" compacto aoTocar={() => contaDeTeste('nova')} desabilitado={enviando} />
+              <Botao titulo="Voltar pra última conta de teste" tipo="secundario" compacto aoTocar={() => contaDeTeste('ultima')} desabilitado={enviando} />
+            </View>
+          ) : null}
       </View>
       </ScrollView>
     </KeyboardAvoidingView>

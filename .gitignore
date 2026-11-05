@@ -32,3 +32,6 @@ expo-env.d.ts
 # Lixo do Supabase CLI
 supabase/.temp/
 docs/marketing/slides/saida/*/html/
+
+# contas de teste geradas (e-mail e senha): só no computador
+**/e2e/.contas-teste.local.json

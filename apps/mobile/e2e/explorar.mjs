@@ -3,13 +3,20 @@
 // (sobrevive a recarregar) e o tempo real (uma 2ª aba vê a mudança sem recarregar).
 //
 // Precisa: o Expo web rodando (porta 8089) e uma conta de TESTE com uma viagem que já tenha destino.
-//   TRIPWAVE_EMAIL=... TRIPWAVE_SENHA=... VIAGEM_ID=<uuid> node apps/mobile/e2e/explorar.mjs
+//   node apps/mobile/e2e/conta-de-teste.mjs   (cria conta + viagem e guarda em e2e/.contas-teste.local.json)
+//   node apps/mobile/e2e/explorar.mjs        (ou TRIPWAVE_EMAIL=... TRIPWAVE_SENHA=... VIAGEM_ID=<uuid>)
 // Opcional: BASE=http://localhost:8089  MOSTRAR=1 (abre a janela do navegador)
 // Playwright: `npx playwright` já baixa; o roteiro usa o Chrome instalado (channel 'chrome').
 const BASE = process.env.BASE ?? 'http://localhost:8089'
-const { TRIPWAVE_EMAIL: email, TRIPWAVE_SENHA: senha, VIAGEM_ID: viagemId } = process.env
+// Sem variáveis, usa a última conta de `node apps/mobile/e2e/conta-de-teste.mjs` (arquivo fora do git)
+import { existsSync, readFileSync } from 'node:fs'
+const arquivoDeContas = new URL('.contas-teste.local.json', import.meta.url)
+const ultima = existsSync(arquivoDeContas) ? JSON.parse(readFileSync(arquivoDeContas, 'utf8'))[0] : undefined
+const email = process.env.TRIPWAVE_EMAIL ?? ultima?.email
+const senha = process.env.TRIPWAVE_SENHA ?? ultima?.senha
+const viagemId = process.env.VIAGEM_ID ?? ultima?.viagemId
 if (!email || !senha || !viagemId) {
-  console.error('Faltou TRIPWAVE_EMAIL, TRIPWAVE_SENHA ou VIAGEM_ID (use uma conta de teste).')
+  console.error('Faltou conta de teste: rode `node apps/mobile/e2e/conta-de-teste.mjs` (ou passe TRIPWAVE_EMAIL, TRIPWAVE_SENHA e VIAGEM_ID).')
   process.exit(2)
 }
 
@@ -36,15 +43,19 @@ a.on('request', (r) => r.url().includes('/functions/v1/explorar-cidade') && pedi
 const errosNoConsole = []
 a.on('pageerror', (e) => errosNoConsole.push(e.message))
 
-// Abre o roteiro do Explorar (desliza 3 "Quero" + "Pronto" se cair no deslize)
+// Abre o roteiro do Explorar: se cair no deslize, arrasta 3 cartões pra direita ("quero") e toca "Pronto".
+// (Os botões "Quero" saíram da tela: o deslize agora é só por gesto.)
 async function abrirRoteiro(p) {
   const reorganizar = p.getByText('Reorganizar tudo pela proximidade')
-  const quero = p.getByRole('button', { name: 'Quero', exact: true })
-  await reorganizar.or(quero).first().waitFor({ timeout: 60_000 })
+  const desfazer = p.getByRole('button', { name: 'Desfazer', exact: true })
+  await reorganizar.or(desfazer).first().waitFor({ timeout: 60_000 })
   if (!(await reorganizar.isVisible())) {
-    for (let i = 0; i < 3 && (await quero.isVisible()); i++) {
-      await quero.click()
-      await p.waitForTimeout(700)
+    for (let i = 0; i < 3 && (await desfazer.isVisible()); i++) {
+      await p.mouse.move(187, 420)
+      await p.mouse.down()
+      await p.mouse.move(370, 430, { steps: 12 })
+      await p.mouse.up()
+      await p.waitForTimeout(900)
     }
     if (!(await reorganizar.isVisible())) await p.getByText('Pronto', { exact: true }).click()
     await reorganizar.waitFor({ timeout: 60_000 })
@@ -64,8 +75,8 @@ try {
   })
 
   await passo('abrir a viagem e o Explorar', async () => {
-    await a.goto(`${BASE}/viagem/${viagemId}`)
-    await a.getByText('Explorar', { exact: true }).first().click()
+    // O botão "Explorar" saiu da tela da viagem (agora vem do Roteiro): abre pelo endereço
+    await a.goto(`${BASE}/explorar?viagem=${viagemId}&roteiro=1`)
     await abrirRoteiro(a)
   })
 
