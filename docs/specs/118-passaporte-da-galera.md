@@ -110,7 +110,7 @@
 - [ ] Sem prova, "a gente esteve aqui" libera o carimbo com o traço "de memória".
 - [ ] "Postar carimbo" gera imagem 9:16 bonita com "feito com Norti".
 - [ ] O mapa da galera acende os lugares de todas as minhas viagens e rolês, e mostra quem carimbou mais no ano.
-- [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta. (08/11: moldura testada na regra; falta conferir na tela e publicar a função `lembretes` pro aviso.)
+- [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta. (08/11: moldura testada na regra e função `lembretes` publicada; falta conferir na tela e receber um aviso de verdade.)
 - [ ] Com um carimbo de 03/11/2025, no dia 03/11/2026 chega o aviso "há 1 ano vocês estavam em...".
 - [ ] O widget mostra "Floripa em N dias" e atualiza a cada dia.
 - [ ] "A gente já foi pra Paris em 2019" acende Paris no mapa em menos de 30 s.
