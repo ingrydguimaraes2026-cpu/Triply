@@ -14,6 +14,7 @@ import {
   cartoesDaRetrospectiva,
   codigoDoPais,
   estatisticasDoViajante,
+  fonteDoNomeNoCarimbo,
   formatarDinheiro,
   legendaDaRetrospectiva,
   melhoresPosts,
@@ -177,7 +178,7 @@ function Tela({
                     className="h-[76px] w-[76px] items-center justify-center rounded-full p-1.5"
                     style={{ borderWidth: 2.5, borderStyle: c.memoria ? 'dashed' : 'solid', borderColor: moldura.destaque, transform: [{ rotate: i % 2 ? '5deg' : '-6deg' }] }}
                   >
-                    <Text className="text-center font-body-bold text-[10px] uppercase" style={{ color: moldura.texto }} numberOfLines={2}>
+                    <Text className="text-center font-body-bold uppercase" style={{ color: moldura.texto, fontSize: fonteDoNomeNoCarimbo(c.nome, 60, 10) }} numberOfLines={2}>
                       {c.nome}
                     </Text>
                     <Text className="mt-0.5 font-body-bold text-[8px] uppercase" style={{ color: moldura.destaque }}>

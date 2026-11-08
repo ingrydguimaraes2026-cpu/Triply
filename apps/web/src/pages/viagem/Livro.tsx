@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft, Printer } from '../../components/ui/icones'
-import { carimbosDaCapa, diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
+import { carimbosDaCapa, diaNoFuso, fonteDoNomeNoCarimbo, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -75,7 +75,7 @@ export default function Livro() {
               <ul className="livro-carimbos" aria-label="Carimbos da viagem">
                 {carimbos.slice(0, 8).map((c, i) => (
                   <li key={`${c.nome}-${i}`} className={c.memoria ? 'memoria' : undefined}>
-                    <strong>{c.nome}</strong>
+                    <strong style={{ fontSize: fonteDoNomeNoCarimbo(c.nome, 58, 9.5) }}>{c.nome}</strong>
                     <span>{c.data}</span>
                   </li>
                 ))}

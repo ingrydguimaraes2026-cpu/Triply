@@ -56,3 +56,12 @@ test('carimbos da viagem: um por destino, na ordem, aceso ou apagado', () => {
 test('data da arte', () => {
   assert.equal(dataDaArte('2026-12-31'), '31 dez 2026')
 })
+
+test('118c: nome longo encolhe pra caber inteiro no carimbo', async () => {
+  const { fonteDoNomeNoCarimbo } = await import(new URL('../../../packages/core/src/carimbos.ts', import.meta.url))
+  assert.equal(fonteDoNomeNoCarimbo('Rio', 70, 11), 11) // curto: tamanho máximo
+  const f = fonteDoNomeNoCarimbo('Florianópolis', 70, 11)
+  assert.ok(f < 11 && f * 0.72 * 13 <= 70)
+  assert.equal(fonteDoNomeNoCarimbo('Praia do Rosa', 70, 11), 11) // palavras curtas quebram na linha
+  assert.equal(fonteDoNomeNoCarimbo('Llanfairpwllgwyngyll', 40, 11), 7) // nunca menor que o mínimo
+})

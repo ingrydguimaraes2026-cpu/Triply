@@ -2,6 +2,8 @@
 // Puro (só texto), pra dar pra testar. Quem chama já entrega datas e horas formatadas.
 // No site, as mesmas páginas são telas com "Imprimir → Salvar como PDF".
 
+import { fonteDoNomeNoCarimbo } from './carimbos.ts'
+
 // Escapa o texto pra não quebrar o HTML (nome com "<" ou "&", por exemplo)
 export function escaparHtml(texto: string | null | undefined): string {
   return (texto ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -41,7 +43,7 @@ const ESTILO = `
   .carimbo:nth-child(odd) { transform: rotate(-6deg); }
   .carimbo:nth-child(even) { transform: rotate(5deg); }
   .carimbo.memoria { border-style: dashed; }
-  .carimbo strong { font: 700 10pt -apple-system, Roboto, Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em; line-height: 1.15; }
+  .carimbo strong { font-family: -apple-system, Roboto, Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; line-height: 1.15; }
   .carimbo span { font: 600 8pt -apple-system, Roboto, Arial, sans-serif; color: #B97A22; margin-top: 3px; text-transform: uppercase; }
   .rodape { margin-top: 26px; font-size: 9pt; color: #8A7560; text-align: center; }
 `
@@ -121,7 +123,7 @@ function capaDosCarimbos(carimbos: NonNullable<LivroParaPdf['carimbos']>): strin
   const e = escaparHtml
   return `<div class="carimbos">${carimbos
     .slice(0, 12)
-    .map((c) => `<div class="carimbo${c.memoria ? ' memoria' : ''}"><strong>${e(c.nome)}</strong><span>${e(c.data)}</span></div>`)
+    .map((c) => `<div class="carimbo${c.memoria ? ' memoria' : ''}"><strong style="font-size:${fonteDoNomeNoCarimbo(c.nome, 84, 13)}px">${e(c.nome)}</strong><span>${e(c.data)}</span></div>`)
     .join('')}</div>`
 }
 

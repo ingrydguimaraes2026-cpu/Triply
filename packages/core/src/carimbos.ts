@@ -104,6 +104,14 @@ export function carimbosDaCapa(carimbos: Pick<Carimbo, 'nome' | 'data' | 'como'>
   return [...carimbos].sort((a, b) => a.data.localeCompare(b.data)).map((c) => ({ nome: c.nome, data: dataDaArte(c.data), memoria: c.como === 'memoria' }))
 }
 
+// Tamanho da letra do nome dentro do carimbo redondo: encolhe até a palavra mais longa caber
+// inteira (sem quebrar "Florianópolis" no meio). `largura` = espaço útil dentro do círculo, em px.
+export function fonteDoNomeNoCarimbo(nome: string, largura: number, maximo: number, minimo = 7): number {
+  const maior = Math.max(1, ...nome.split(/\s+/).map((p) => p.length))
+  const cabe = largura / (maior * 0.72) // letra maiúscula em negrito ocupa ~0,72 do tamanho
+  return Math.max(minimo, Math.min(maximo, Math.floor(cabe * 10) / 10))
+}
+
 // ---- Banco -------------------------------------------------------------------
 
 export async function buscarCarimbos(cli: ClienteTogether, viagemId: string): Promise<Carimbo[]> {

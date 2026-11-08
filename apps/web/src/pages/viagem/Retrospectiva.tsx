@@ -4,6 +4,7 @@ import { BookOpen, Copy, Download, RotateCcw, Share2, Sparkles, Users } from '..
 import { Icone } from '../../components/ui/Icone'
 import {
   carimbosDaCapa,
+  fonteDoNomeNoCarimbo,
   cartoesDaRetrospectiva,
   estatisticasDoViajante,
   formatarDinheiro,
@@ -143,7 +144,7 @@ export default function Retrospectiva() {
             <ul className="retro-carimbos">
               {daCapa.map((c, i) => (
                 <li key={`${c.nome}-${i}`} className={c.memoria ? 'memoria' : undefined}>
-                  <strong>{c.nome}</strong>
+                  <strong style={{ fontSize: fonteDoNomeNoCarimbo(c.nome, 70, 11) }}>{c.nome}</strong>
                   <span>{c.data}</span>
                 </li>
               ))}

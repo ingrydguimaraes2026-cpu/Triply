@@ -196,7 +196,7 @@
   font-size: 9.5px;
   line-height: 1.15;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 .livro-carimbos span {
   margin-top: 2px;

@@ -98,7 +98,7 @@ test('118c: carimbos na capa do caderno', () => {
   ])
   const html = htmlDoLivro({ nome: 'Fim de ano', periodo: '', rota: '', comboio: '', carimbos: capa, paginas: [], geradoEm: '06/01/2027' })
   assert.match(html, /class="carimbos"/)
-  assert.match(html, /class="carimbo memoria"><strong>Garopaba<\/strong><span>2 jan 2027<\/span>/)
+  assert.match(html, /class="carimbo memoria"><strong style="font-size:[\d.]+px">Garopaba<\/strong><span>2 jan 2027<\/span>/)
   assert.doesNotMatch(htmlDoLivro({ nome: 'X', periodo: '', rota: '', comboio: '', paginas: [], geradoEm: '' }), /class="carimbos"/)
 })
 
