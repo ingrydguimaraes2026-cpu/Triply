@@ -1,6 +1,6 @@
 # 118. Passaporte da galera (a âncora)
 
-**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a e 118b prontas pra testar (08/11, banco aplicado); 118c a 118f a fazer
+**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a, 118b e 118c prontas pra testar (08/11, banco aplicado); 118d a 118f a fazer
 
 > Esta spec é a âncora do produto. Leia antes o [`docs/RUMO.md`](../RUMO.md) e a [parte 09 do benchmark](../benchmark-2026-11/09-ancora-opcoes.md).
 > **Substitui** a versão anterior da 118 ("o ciclo viagem sem climão", com a cobrança do Pix como âncora), rejeitada pelo Victor em 03/11/2026.
@@ -48,6 +48,7 @@
 - **Legenda pronta** (IA invisível) que a pessoa pode trocar antes de postar.
 - **Caderno:** o livro da viagem (106) em PDF, com os carimbos na capa.
 - "Bora a próxima?" cria uma viagem nova com a mesma galera (055).
+- (08/11, feito) Regras em `packages/core/src/retrospectiva.ts` (`molduraDaViagem`, `legendaDaRetrospectiva`, `trajetoDaViagem`, `areaDoTrajeto`, cartão dos carimbos) e `carimbosDaCapa` em `carimbos.ts`; teste `apps/web/tests/retrospectiva.test.mjs`. A legenda sai **por regra** (lugares, moldura e números), sem chamar IA: é "invisível" porque ninguém digita; IA de verdade só se a regra ficar pobre. Feriadão = passa por feriado nacional, tem 3+ dias e pega sábado ou domingo. São João = qualquer dia de 20 a 29/06. Aviso: migration `20261108150000_aviso_da_retrospectiva.sql` (uma vez por viagem, até 2 dias depois do fim, 10h às 21h) chamada pela função `lembretes`; quem desligou o aviso "resumo" não recebe. No app, o toque abre `/retrospectiva`; "Bora a próxima?" abre `/nova-viagem?comboio=<id>` (app e site).
 
 ### 118d · "Há 1 ano"
 - No dia em que faz 1 ano (ou 2, 3...) de um carimbo, aviso no celular: **"há 1 ano vocês estavam em Floripa"**, com a foto mais curtida.
@@ -109,7 +110,7 @@
 - [ ] Sem prova, "a gente esteve aqui" libera o carimbo com o traço "de memória".
 - [ ] "Postar carimbo" gera imagem 9:16 bonita com "feito com Norti".
 - [ ] O mapa da galera acende os lugares de todas as minhas viagens e rolês, e mostra quem carimbou mais no ano.
-- [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta.
+- [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta. (08/11: moldura testada na regra; falta conferir na tela e publicar a função `lembretes` pro aviso.)
 - [ ] Com um carimbo de 03/11/2025, no dia 03/11/2026 chega o aviso "há 1 ano vocês estavam em...".
 - [ ] O widget mostra "Floripa em N dias" e atualiza a cada dia.
 - [ ] "A gente já foi pra Paris em 2019" acende Paris no mapa em menos de 30 s.

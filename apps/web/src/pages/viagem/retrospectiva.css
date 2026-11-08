@@ -10,8 +10,8 @@
 .retro-cartao {
   aspect-ratio: 9 / 16;
   border-radius: 20px;
-  background: var(--couro);
-  color: var(--creme);
+  background: var(--retro-fundo, var(--couro));
+  color: var(--retro-texto, var(--creme));
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@
   font-family: var(--fonte-titulo);
   font-size: clamp(40px, 12vw, 64px);
   line-height: 1.05;
-  color: var(--laranja);
+  color: var(--retro-destaque, var(--laranja));
   overflow-wrap: anywhere;
 }
 .retro-titulo {
@@ -64,4 +64,104 @@
   min-height: 0;
   object-fit: cover;
   border-radius: 12px;
+}
+
+/* Spec 118c: moldura por data, mapa percorrido, carimbos, legenda e "Bora a próxima?" */
+.retro-moldura {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--retro-fundo, var(--couro));
+  color: var(--retro-texto, var(--creme));
+  font-size: 13px;
+  font-weight: 700;
+}
+.retro-capa {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--retro-fundo, var(--couro));
+}
+.retro-mapa {
+  position: relative;
+  height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.retro-carimbos {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.retro-carimbos li {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 3px double var(--retro-destaque, var(--laranja));
+  color: var(--retro-texto, var(--creme));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  text-align: center;
+  transform: rotate(-6deg);
+}
+.retro-carimbos li:nth-child(even) {
+  transform: rotate(5deg);
+}
+.retro-carimbos li.memoria {
+  border-style: dashed;
+}
+.retro-carimbos strong {
+  font-size: 11px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.retro-carimbos span {
+  margin-top: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--retro-destaque, var(--laranja));
+}
+.retro-bloco {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  display: grid;
+  gap: 8px;
+}
+.retro-bloco .form-dica {
+  margin: 0;
+}
+.retro-bloco textarea {
+  width: 100%;
+  min-height: 90px;
+  font: inherit;
+  line-height: 1.5;
+}
+.retro-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.retro-proxima {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 22px;
 }

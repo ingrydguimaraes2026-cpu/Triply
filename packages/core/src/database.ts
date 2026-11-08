@@ -98,6 +98,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "arquivos_viagem_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos_agenda"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arquivos_viagem_hospedagem_id_fkey"
+            columns: ["hospedagem_id"]
+            isOneToOne: false
+            referencedRelation: "hospedagens"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "arquivos_viagem_trajeto_id_fkey"
             columns: ["trajeto_id"]
             isOneToOne: false
@@ -279,6 +293,29 @@ export type Database = {
           },
         ]
       }
+      avisos_de_retrospectiva: {
+        Row: {
+          enviado_em: string
+          viagem_id: string
+        }
+        Insert: {
+          enviado_em?: string
+          viagem_id: string
+        }
+        Update: {
+          enviado_em?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_de_retrospectiva_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: true
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidato_votos: {
         Row: {
           candidato_id: string
@@ -305,6 +342,70 @@ export type Database = {
             columns: ["usuario_id"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carimbos: {
+        Row: {
+          como: string
+          data: string
+          destino_id: string | null
+          id: string
+          latitude: number | null
+          liberado_em: string
+          liberado_por: string
+          longitude: number | null
+          nome: string
+          tipo: string
+          viagem_id: string
+        }
+        Insert: {
+          como: string
+          data?: string
+          destino_id?: string | null
+          id?: string
+          latitude?: number | null
+          liberado_em?: string
+          liberado_por?: string
+          longitude?: number | null
+          nome: string
+          tipo?: string
+          viagem_id: string
+        }
+        Update: {
+          como?: string
+          data?: string
+          destino_id?: string | null
+          id?: string
+          latitude?: number | null
+          liberado_em?: string
+          liberado_por?: string
+          longitude?: number | null
+          nome?: string
+          tipo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carimbos_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carimbos_liberado_por_fkey"
+            columns: ["liberado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carimbos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
             referencedColumns: ["id"]
           },
         ]
@@ -511,70 +612,6 @@ export type Database = {
             columns: ["usuario_id"]
             isOneToOne: false
             referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      carimbos: {
-        Row: {
-          como: string
-          data: string
-          destino_id: string | null
-          id: string
-          latitude: number | null
-          liberado_em: string
-          liberado_por: string
-          longitude: number | null
-          nome: string
-          tipo: string
-          viagem_id: string
-        }
-        Insert: {
-          como: string
-          data?: string
-          destino_id?: string | null
-          id?: string
-          latitude?: number | null
-          liberado_em?: string
-          liberado_por?: string
-          longitude?: number | null
-          nome: string
-          tipo?: string
-          viagem_id: string
-        }
-        Update: {
-          como?: string
-          data?: string
-          destino_id?: string | null
-          id?: string
-          latitude?: number | null
-          liberado_em?: string
-          liberado_por?: string
-          longitude?: number | null
-          nome?: string
-          tipo?: string
-          viagem_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "carimbos_destino_id_fkey"
-            columns: ["destino_id"]
-            isOneToOne: false
-            referencedRelation: "destinos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "carimbos_liberado_por_fkey"
-            columns: ["liberado_por"]
-            isOneToOne: false
-            referencedRelation: "perfis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "carimbos_viagem_id_fkey"
-            columns: ["viagem_id"]
-            isOneToOne: false
-            referencedRelation: "viagens"
             referencedColumns: ["id"]
           },
         ]
@@ -3199,6 +3236,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "trajetos_quem_busca_id_fkey"
+            columns: ["quem_busca_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trajetos_viagem_id_fkey"
             columns: ["viagem_id"]
             isOneToOne: false
@@ -3439,6 +3483,13 @@ export type Database = {
         Returns: undefined
       }
       restaurar_da_lixeira: { Args: { p_id: string }; Returns: string }
+      retrospectivas_a_avisar: {
+        Args: never
+        Returns: {
+          nome: string
+          viagem_id: string
+        }[]
+      }
       saldo_euro_do_comboio: { Args: { p_viagem_id: string }; Returns: number }
       salvar_gasto: {
         Args: { p_divisoes?: Json; p_gasto: Json; p_viagem: string }

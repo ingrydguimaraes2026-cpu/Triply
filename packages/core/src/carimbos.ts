@@ -99,6 +99,11 @@ export function dataDaArte(dia: string): string {
   return `${Number(d)} ${meses[Number(m) - 1]} ${a}`
 }
 
+// Spec 118c: carimbos na capa do caderno e na retrospectiva, na ordem em que caíram
+export function carimbosDaCapa(carimbos: Pick<Carimbo, 'nome' | 'data' | 'como'>[]): { nome: string; data: string; memoria: boolean }[] {
+  return [...carimbos].sort((a, b) => a.data.localeCompare(b.data)).map((c) => ({ nome: c.nome, data: dataDaArte(c.data), memoria: c.como === 'memoria' }))
+}
+
 // ---- Banco -------------------------------------------------------------------
 
 export async function buscarCarimbos(cli: ClienteTogether, viagemId: string): Promise<Carimbo[]> {

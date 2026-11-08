@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft, Printer } from '../../components/ui/icones'
-import { diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
+import { carimbosDaCapa, diaNoFuso, paginasDoLivro, roteiroDiaADia, type Tables } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -12,14 +12,16 @@ import Logo from '../../components/ui/Logo'
 import './imprimir.css'
 import './livro.css'
 import { useCapas } from '../../features/viagens/capas'
+import { useCarimbos } from '../../features/carimbos/hooks'
 
 const FOTOS_POR_DIA = 6
 
 // Livro da viagem (spec 106, K8): uma página por dia com a agenda, o diário e as fotos.
-// "Imprimir" → "Salvar como PDF" no navegador.
+// "Imprimir" → "Salvar como PDF" no navegador. Spec 118c: os carimbos da viagem vão na capa.
 export default function Livro() {
   const { viagem, destinos, membros } = useViagemAtual()
   const capa = useCapas([viagem.id])
+  const carimbos = carimbosDaCapa(useCarimbos(viagem.id))
   const { estado: trajetosEstado } = useTrajetos(viagem.id)
   const { eventos } = useEventosDaAgenda(viagem.id)
   const { estado: postsEstado } = usePosts(viagem.id)
@@ -69,6 +71,16 @@ export default function Livro() {
             <Logo />
             <h1>{viagem.nome}</h1>
             <p>{[formatarPeriodo(viagem.data_inicio, viagem.data_fim), ...membros.map((m) => m.nome.split(' ')[0])].join(' · ')}</p>
+            {carimbos.length > 0 && (
+              <ul className="livro-carimbos" aria-label="Carimbos da viagem">
+                {carimbos.slice(0, 8).map((c, i) => (
+                  <li key={`${c.nome}-${i}`} className={c.memoria ? 'memoria' : undefined}>
+                    <strong>{c.nome}</strong>
+                    <span>{c.data}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </header>
 

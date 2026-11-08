@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Calendar, MapPin, Minus, Plus, Search, Ticket, X } from './icones'
-import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, moedaDoPais, semAcento, type CidadeDaLista } from '@together/core'
+import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, moedaDoPais, trazerComboio, semAcento, type CidadeDaLista } from '@together/core'
 import { useViagemAtual } from '../dados/viagemAtual'
 import { paraIso } from '../lib/formato'
 import { supabase } from '../lib/supabase'
@@ -17,6 +17,7 @@ import { cor } from '../../theme'
 // Jeito rápido de criar viagem (specs 115 v2 e 116): uma pergunta por tela.
 // 1. Pra onde? → 2. Quantos dias? → cria a viagem e abre o deslize do Explorar.
 // `primeira`: conta nova sem viagem (sem botão de fechar, com "Tenho um convite").
+// `comboioDe` (spec 118c, "Bora a próxima?"): ao criar, a galera dessa viagem já entra na nova.
 
 type Escolhido = { nome: string; pais: string | null }
 
@@ -31,7 +32,7 @@ const SUGESTOES: { nome: string; pais: string; frase: string; cores: [string, st
 const DIAS_RAPIDOS = [2, 3, 4, 5, 7, 10]
 const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-export function CriarViagemRapida({ primeira }: { primeira: boolean }) {
+export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; comboioDe?: string }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { recarregar, escolher } = useViagemAtual()
@@ -99,6 +100,8 @@ export function CriarViagemRapida({ primeira }: { primeira: boolean }) {
           },
         ],
       })
+      // A galera entra sem convite; se falhar, a viagem continua criada e o convite segue valendo
+      if (comboioDe) await trazerComboio(supabase, id, comboioDe).catch((e) => console.error('Erro ao trazer a galera:', e))
       escolher(id)
       recarregar()
       // Direto pro deslize; no fim do roteiro, "Continuar" leva pro convite e pra viagem

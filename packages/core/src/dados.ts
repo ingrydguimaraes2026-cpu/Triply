@@ -219,6 +219,14 @@ export type NovaViagem = {
 }
 
 // Cria a viagem e os destinos (igual à web: quem cria vira ADM pelo banco). Devolve o id.
+// Traz todo mundo do comboio de uma viagem antiga pra uma nova (spec 055; "Bora a próxima?" da 118c).
+// Só o ADM da nova, e só de uma viagem em que ele está (o banco confere). Devolve quantos entraram.
+export async function trazerComboio(cli: ClienteTogether, novaId: string, origemId: string): Promise<number> {
+  const { data, error } = await cli.rpc('trazer_comboio', { p_nova: novaId, p_origem: origemId })
+  if (error) throw error
+  return data ?? 0
+}
+
 export async function criarViagem(cli: ClienteTogether, dados: NovaViagem): Promise<string> {
   const { data: viagem, error } = await cli
     .from('viagens')

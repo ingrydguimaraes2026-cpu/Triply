@@ -13,7 +13,7 @@ import { hojeIso } from '../lib/formato'
 import { cor } from '../../theme'
 
 // Desenho dos países uma vez só (sem a Antártida)
-const PAISES: Feature<Geometry>[] = (
+export const PAISES: Feature<Geometry>[] = (
   feature(mundo as unknown as Topology, (mundo as unknown as Topology).objects.countries as GeometryCollection) as unknown as { features: Feature<Geometry>[] }
 ).features.filter((f) => f.id !== '010')
 

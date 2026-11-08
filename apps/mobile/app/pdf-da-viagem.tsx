@@ -6,12 +6,14 @@ import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
 import { ArrowLeft, BookOpen, FileText } from '../src/ui/icones'
 import {
+  buscarCarimbos,
   buscarDestinos,
   buscarEventosDaAgenda,
   buscarFichasDoComboio,
   buscarOpcoesDeHospedagem,
   buscarPostsDaViagem,
   buscarTrajetos,
+  carimbosDaCapa,
   diaNoFuso,
   htmlDoLivro,
   htmlDoResumo,
@@ -107,7 +109,7 @@ async function montarResumo(viagem: ViagemComDetalhes, comSegredos: boolean) {
 }
 
 async function montarLivro(viagem: ViagemComDetalhes) {
-  const [destinos, trajetos, eventos, posts, diario] = await Promise.all([
+  const [destinos, trajetos, eventos, posts, diario, carimbos] = await Promise.all([
     buscarDestinos(supabase, viagem.id),
     buscarTrajetos(supabase, viagem.id),
     buscarEventosDaAgenda(supabase, viagem.id),
@@ -123,6 +125,7 @@ async function montarLivro(viagem: ViagemComDetalhes) {
         if (error) throw error
         return data ?? []
       }),
+    buscarCarimbos(supabase, viagem.id).catch(() => []), // spec 118c: carimbos na capa
   ])
   const agenda = roteiroDiaADia(viagem.dataInicio, viagem.dataFim, { destinos, trajetos, eventos }).flatMap((d) =>
     d.itens.map((i) => ({ dia: d.dia, hora: i.hora, titulo: i.titulo })),
@@ -138,6 +141,7 @@ async function montarLivro(viagem: ViagemComDetalhes) {
     periodo: periodo(viagem.dataInicio, viagem.dataFim),
     rota: destinos.map((d) => d.nome).join(' → '),
     comboio: viagem.membros.map((m) => primeiroNome(m.nome)).join(' · '),
+    carimbos: carimbosDaCapa(carimbos),
     paginas: paginasDoLivro(agenda, diario, fotos).map((p) => ({
       titulo: tituloDoDia(p.dia, ondeNoDia(p.dia)),
       agenda: p.agenda,

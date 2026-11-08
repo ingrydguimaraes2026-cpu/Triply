@@ -6,6 +6,7 @@
 // Segredos: VAPID_PRIVATE_KEY (o mesmo das funções avisos-cambio e avisos-feed).
 // Spec 117: e o aviso "falta você opinar" de quem ainda não deslizou um lugar que deu match.
 // Spec 110: além do site (Web Push), manda pro app do celular pelo serviço de push do Expo (sem segredo).
+// Spec 118c: e "a retrospectiva de X está pronta", uma vez por viagem, no dia seguinte ao fim.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
 import webpush from 'npm:web-push@3.6.7'
 
@@ -14,6 +15,7 @@ const CONTATO = 'https://github.com/ingrydguimaraes2026-cpu/Triply'
 
 type Inscricao = { id: string; usuario_id: string; endpoint: string; p256dh: string; auth: string }
 type AparelhoDoApp = { id: string; token: string }
+type RetrospectivaPronta = { viagem_id: string; nome: string }
 type AvisoDeMatch = { viagem_id: string; usuario_id: string; catalogo_lugar_id: string; lugar: string }
 type Lembrete = { tipo: 'trajeto' | 'ponto' | 'cancelamento'; alvo_id: string; viagem_id: string; titulo: string | null; horario: string; meio: string | null }
 
@@ -127,7 +129,38 @@ Deno.serve(async () => {
     }
   }
 
-  return json({ lembretes: lembretes?.length ?? 0, matches: matches?.length ?? 0, enviados })
+  // Spec 118c: a viagem acabou ontem (ou anteontem): "a retrospectiva está pronta". O banco
+  // devolve cada viagem uma vez só, entre 10h e 21h de Brasília, e já marca como avisada.
+  const { data: prontas, error: erroDaRetro } = await admin.rpc('retrospectivas_a_avisar')
+  if (erroDaRetro) console.error('Avisos de retrospectiva:', erroDaRetro.message)
+  for (const r of (prontas ?? []) as RetrospectivaPronta[]) {
+    const { data: membros } = await admin.from('comboio_membros').select('usuario_id').eq('viagem_id', r.viagem_id)
+    const pessoas = (membros ?? []).map((m) => m.usuario_id)
+    if (pessoas.length === 0) continue
+    const { data: desligados } = await admin.from('preferencias_aviso').select('usuario_id').eq('tipo', 'resumo').eq('ligado', false).in('usuario_id', pessoas)
+    const fora = new Set((desligados ?? []).map((d) => d.usuario_id))
+    const quem = pessoas.filter((p) => !fora.has(p))
+    if (quem.length === 0) continue
+    const texto = { titulo: `A retrospectiva de ${r.nome} está pronta`, corpo: 'Carimbos, fotos mais curtidas e a legenda pronta pra postar.', url: `/viagem/${r.viagem_id}/retrospectiva`, tag: `retrospectiva-${r.viagem_id}` }
+    const { data: doApp } = await admin.from('push_expo').select('id, token').in('usuario_id', quem)
+    enviados += await mandarPeloExpo((id) => admin.from('push_expo').delete().eq('id', id), (doApp ?? []) as AparelhoDoApp[], {
+      title: texto.titulo,
+      body: texto.corpo,
+      data: { tipo: 'retrospectiva', viagemId: r.viagem_id, url: texto.url },
+    })
+    const { data: aparelhos } = await admin.from('push_inscricoes').select('id, usuario_id, endpoint, p256dh, auth').in('usuario_id', quem)
+    for (const a of (aparelhos ?? []) as Inscricao[]) {
+      try {
+        await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(texto), { TTL: 60 * 60 * 12 })
+        enviados++
+      } catch (erro) {
+        const status = (erro as { statusCode?: number }).statusCode
+        if (status === 404 || status === 410) await admin.from('push_inscricoes').delete().eq('id', a.id)
+      }
+    }
+  }
+
+  return json({ lembretes: lembretes?.length ?? 0, matches: matches?.length ?? 0, retrospectivas: prontas?.length ?? 0, enviados })
 })
 
 // Serviço de push do Expo: até 100 avisos por chamada; a resposta vem na mesma ordem.

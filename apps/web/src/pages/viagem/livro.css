@@ -60,7 +60,7 @@
 
 .livro-capa {
   position: relative;
-  height: 340px;
+  min-height: 340px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -161,4 +161,47 @@
   .livro-dia {
     break-before: page;
   }
+}
+
+/* Spec 118c: carimbos da viagem na capa */
+.livro-carimbos {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.livro-carimbos li {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px double var(--laranja);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  text-align: center;
+  transform: rotate(-6deg);
+}
+.livro-carimbos li:nth-child(even) {
+  transform: rotate(5deg);
+}
+.livro-carimbos li.memoria {
+  border-style: dashed;
+}
+.livro-carimbos strong {
+  font-size: 9.5px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.livro-carimbos span {
+  margin-top: 2px;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--laranja);
 }

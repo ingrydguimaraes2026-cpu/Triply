@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { X } from '../src/ui/icones'
 import { useSessao } from '../src/lib/sessao'
@@ -11,9 +11,11 @@ import { cor } from '../theme'
 
 // Nova viagem (specs 115 v2 e 116): jeito rápido, pra onde → quantos dias → deslize.
 // Convidado (spec 018) cria conta antes de criar viagem: o banco também recusa
+// `?comboio=<id>`: "Bora a próxima?" da retrospectiva (spec 118c) traz a mesma galera
 export default function NovaViagem() {
   const { ehConvidado } = useSessao()
-  return ehConvidado ? <ConvidadoSemConta /> : <CriarViagemRapida primeira={false} />
+  const { comboio } = useLocalSearchParams<{ comboio?: string }>()
+  return ehConvidado ? <ConvidadoSemConta /> : <CriarViagemRapida primeira={false} comboioDe={comboio} />
 }
 
 function ConvidadoSemConta() {

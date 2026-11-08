@@ -1,13 +1,12 @@
-import type { CartaoDaRetrospectiva } from '@together/core'
+import type { CartaoDaRetrospectiva, Moldura } from '@together/core'
 
 // Desenha um cartão da retrospectiva em PNG 1080×1920 (tamanho de story), sem biblioteca:
-// canvas do próprio navegador. Cores lidas das variáveis do global.css.
-export async function cartaoEmImagem(cartao: CartaoDaRetrospectiva, nomeDaViagem: string): Promise<Blob | null> {
+// canvas do próprio navegador. Cores da moldura da viagem (spec 118c, paleta do global.css).
+export async function cartaoEmImagem(cartao: CartaoDaRetrospectiva, nomeDaViagem: string, moldura: Moldura): Promise<Blob | null> {
   const css = getComputedStyle(document.documentElement)
-  const cor = (nome: string, reserva: string) => css.getPropertyValue(nome).trim() || reserva
-  const fundo = cor('--couro', '#7b542f')
-  const destaque = cor('--laranja', '#ff9d00')
-  const claro = cor('--creme', '#fff6e5')
+  const fundo = moldura.fundo
+  const destaque = moldura.destaque
+  const claro = moldura.texto
   const titulo = css.getPropertyValue('--fonte-titulo').trim() || 'serif'
   const texto = "'Plus Jakarta Sans Variable', system-ui, sans-serif"
   await document.fonts?.ready
@@ -28,6 +27,12 @@ export async function cartaoEmImagem(cartao: CartaoDaRetrospectiva, nomeDaViagem
   g.fillStyle = claro
   g.font = `600 44px ${texto}`
   g.fillText(nomeDaViagem.toUpperCase(), c.width / 2, 260, 960)
+  if (moldura.titulo) {
+    g.fillStyle = destaque
+    g.font = `700 52px ${texto}`
+    g.fillText(moldura.titulo.toUpperCase(), c.width / 2, 340, 960)
+    g.fillStyle = claro
+  }
 
   // Número grande (encolhe se não couber)
   let tamanho = 260

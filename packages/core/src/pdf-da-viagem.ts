@@ -36,6 +36,13 @@ const ESTILO = `
   .fotos img { width: 100%; height: 190px; object-fit: cover; border-radius: 6px; }
   .fotos figcaption { font-size: 9.5pt; color: #6B5540; margin-top: 2px; }
   .vazio { color: #8A7560; font-style: italic; }
+  .carimbos { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin: 28px auto 0; max-width: 520px; }
+  .carimbo { width: 104px; height: 104px; border: 3px double #B97A22; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center; color: #7B542F; }
+  .carimbo:nth-child(odd) { transform: rotate(-6deg); }
+  .carimbo:nth-child(even) { transform: rotate(5deg); }
+  .carimbo.memoria { border-style: dashed; }
+  .carimbo strong { font: 700 10pt -apple-system, Roboto, Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em; line-height: 1.15; }
+  .carimbo span { font: 600 8pt -apple-system, Roboto, Arial, sans-serif; color: #B97A22; margin-top: 3px; text-transform: uppercase; }
   .rodape { margin-top: 26px; font-size: 9pt; color: #8A7560; text-align: center; }
 `
 
@@ -98,6 +105,8 @@ export type LivroParaPdf = {
   periodo: string
   rota: string
   comboio: string // "Ana · Bia · Caio"
+  // Spec 118c: os carimbos da viagem na capa ("dez 2026"; de memória tem o traço tracejado)
+  carimbos?: { nome: string; data: string; memoria?: boolean }[]
   paginas: {
     titulo: string // "Sábado, 5 de junho · Nice"
     agenda: { hora: string; titulo: string }[]
@@ -107,9 +116,18 @@ export type LivroParaPdf = {
   geradoEm: string
 }
 
+function capaDosCarimbos(carimbos: NonNullable<LivroParaPdf['carimbos']>): string {
+  if (carimbos.length === 0) return ''
+  const e = escaparHtml
+  return `<div class="carimbos">${carimbos
+    .slice(0, 12)
+    .map((c) => `<div class="carimbo${c.memoria ? ' memoria' : ''}"><strong>${e(c.nome)}</strong><span>${e(c.data)}</span></div>`)
+    .join('')}</div>`
+}
+
 export function htmlDoLivro(l: LivroParaPdf): string {
   const e = escaparHtml
-  const capa = `<section class="capa"><div class="marca">Norti</div><h1>${e(l.nome)}</h1><p class="sub">${e(l.periodo)}</p><p class="sub">${e(l.rota)}</p><p class="suave">${e(l.comboio)}</p></section>`
+  const capa = `<section class="capa"><div class="marca">Norti</div><h1>${e(l.nome)}</h1><p class="sub">${e(l.periodo)}</p><p class="sub">${e(l.rota)}</p><p class="suave">${e(l.comboio)}</p>${capaDosCarimbos(l.carimbos ?? [])}</section>`
   const paginas = l.paginas.length
     ? l.paginas
         .map(

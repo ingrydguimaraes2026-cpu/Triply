@@ -62,11 +62,12 @@ export async function esquecerEsteAparelho() {
 }
 
 // O que o servidor manda junto do aviso (supabase/functions/lembretes)
-export type DadosDoAviso = { tipo?: 'trajeto' | 'ponto' | 'cancelamento' | 'match'; viagemId?: string }
+export type DadosDoAviso = { tipo?: 'trajeto' | 'ponto' | 'cancelamento' | 'match' | 'retrospectiva'; viagemId?: string }
 
 // Pra onde o toque no aviso leva, dentro do app
 export function telaDoAviso(dados: DadosDoAviso): string | null {
   if (!dados.viagemId) return null
   if (dados.tipo === 'match') return `/viagem/${dados.viagemId}/roteiro` // spec 117: falta você opinar
+  if (dados.tipo === 'retrospectiva') return '/retrospectiva' // spec 118c: a retrospectiva está pronta
   return dados.tipo === 'trajeto' ? '/transportes' : `/viagem/${dados.viagemId}`
 }

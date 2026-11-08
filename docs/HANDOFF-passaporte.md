@@ -6,14 +6,16 @@
 - `6638b5b` **nome do produto agora é Norti** (antes Tripwave). Ficaram de propósito: chaves `tripwave.*` no celular, `TRIPWAVE_*` do e2e, nomes de arquivos, migrations antigas. **Domínio e @ da Norti: decisão do Victor** (ver nota em `docs/marketing/NOME-E-VOZ.md`).
 - `017e894` **0.5 "Cheguei" vira carimbo (120c)**: "Cheguei" no plano do dia e "Cheguei na casa" liberam o carimbo do destino de hoje.
 - `db6b201` **0.6 mapa da galera no Início (118b)**: core `mapa-da-galera.ts` + teste; app desenha com d3-geo + world-atlas + react-native-svg; site em Minhas viagens. Sem banco novo.
+- **0.7 retrospectiva que monta sozinha (118c)** (commit "Retrospectiva que monta sozinha"): core `retrospectiva.ts` (moldura por data, legenda por regra, mapa percorrido, cartão dos carimbos) + `carimbosDaCapa` em `carimbos.ts` + `trazerComboio` em `dados.ts`; teste `retrospectiva.test.mjs`. App: `app/retrospectiva.tsx` (capa 9:16 com mapa percorrido `src/ui/viagem/MapaPercorrido.tsx` e carimbos, cartões na cor da moldura, legenda editável, "Bora a próxima?" → `/nova-viagem?comboio=<id>`), carimbos na capa do PDF. Site: `pages/viagem/Retrospectiva.tsx` e capa do `Livro.tsx`. Banco aplicado e registrado: `20261108150000_aviso_da_retrospectiva.sql` (tabela `avisos_de_retrospectiva` + `retrospectivas_a_avisar()`, só service role). Tipos regenerados.
 
 ## Não conferido
-- Nenhuma tela logada foi aberta (sem conta de teste aqui; criar conta mandaria dados pro Supabase de produção). Conferir em 360px e no app: carimbos na viagem e no Hoje, "Cheguei na casa", mapa no Início, postar carimbo e postar mapa.
+- **Função `lembretes` NÃO publicada** com o aviso da retrospectiva (o código está em `supabase/functions/lembretes/index.ts`). A CLI pede confirmação de quem é dono pra publicar em produção. Com o OK do Victor: `npx --no-install supabase functions deploy lembretes --project-ref ltygqabtdbphtjscvuit --use-api --yes`. Enquanto não publica, nada é marcado como avisado (o banco só marca quando a função chama).
+- Nenhuma tela logada foi aberta (sem conta de teste aqui; criar conta mandaria dados pro Supabase de produção). Conferir em 360px e no app: carimbos na viagem e no Hoje, "Cheguei na casa", mapa no Início, postar carimbo e postar mapa, retrospectiva (moldura, capa com mapa e carimbos, legenda, "Bora a próxima?") e capa do caderno.
 - `icones.test.mjs` já falhava antes (emojis antigos, inclusive os `❄` dos congelados).
 
 ## Próximo passo exato
-**0.7 · Retrospectiva que monta sozinha (spec 118c)**: moldura por data (Réveillon se passa por 31/12, Carnaval, São João, feriado), carimbos da viagem na retrospectiva, 3 fotos mais curtidas, gasto por pessoa (só do grupo), legenda pronta (IA invisível, editável), caderno PDF com carimbos na capa (livro 106), aviso "a retrospectiva de X está pronta", "Bora a próxima?". Base: `apps/mobile/app/retrospectiva.tsx`, `apps/web/src/pages/viagem/Retrospectiva.tsx`, `packages/core/src/retrospectiva.ts`, `pdf-da-viagem.ts`.
-Depois: 0.8 convite web leve (`/v/<código>`), 0.9 viagens antigas e rolê (118f).
+**0.8 · Convite que todo mundo topa sem instalar** (web leve `/v/<código>`: topar, votar, ver o plano, vitrine do passaporte). Spec [018](specs/018-convidado-sem-conta.md) + `docs/RUMO.md` (o app é do organizador; o convidado age pela web leve, sem instalar). Ver na FILA a linha 0.8. Começar lendo a 018 e o que já existe em `/convite/<código>` (`apps/web/src/router.tsx`).
+Depois: 0.9 viagens antigas e rolê (118f).
 
 ## Cuidados
 - Ler `AGENTS.md`, `docs/RUMO.md`, spec 118.
