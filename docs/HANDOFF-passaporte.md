@@ -10,7 +10,8 @@
 
 ## Não conferido
 - Função `lembretes` publicada em 08/11 (OK do Victor) e rodando: a rodada das 19:15 respondeu 200 com `retrospectivas: 0`. Ainda ninguém recebeu um aviso de verdade (nenhuma viagem acabou nesses dias).
-- Nenhuma tela logada foi aberta (sem conta de teste aqui; criar conta mandaria dados pro Supabase de produção). Conferir em 360px e no app: carimbos na viagem e no Hoje, "Cheguei na casa", mapa no Início, postar carimbo e postar mapa, retrospectiva (moldura, capa com mapa e carimbos, legenda, "Bora a próxima?") e capa do caderno.
+- 08/11, site conferido logado (viagem Eurotrip, 360px e 1280px, sem erro no console e sem rolagem lateral): retrospectiva (mapa percorrido, cartão de cidades, legenda pronta, "Bora a próxima?"), capa do caderno, carimbos apagados na viagem, mapa da galera vazio no Início. **Sem dado pra ver:** carimbo aceso, moldura de data, fotos mais curtidas, gasto. App do celular não conferido.
+- (antes) Nenhuma tela logada foi aberta (sem conta de teste aqui; criar conta mandaria dados pro Supabase de produção). Conferir em 360px e no app: carimbos na viagem e no Hoje, "Cheguei na casa", mapa no Início, postar carimbo e postar mapa, retrospectiva (moldura, capa com mapa e carimbos, legenda, "Bora a próxima?") e capa do caderno.
 - `icones.test.mjs` já falhava antes (emojis antigos, inclusive os `❄` dos congelados).
 
 ## Próximo passo exato
