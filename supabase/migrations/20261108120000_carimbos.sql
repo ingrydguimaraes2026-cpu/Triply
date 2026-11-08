@@ -1,4 +1,4 @@
--- Spec 118a: carimbo de lugar (FILA 0.3). A âncora do produto: o passaporte da galera.
+-- Spec 118a: carimbo de lugar (FILA 0.3). Aplicada em 08/11/2026 (confirmada pelo Victor). A âncora do produto: o passaporte da galera.
 -- O que muda, em português simples:
 -- 1. Tabela nova `carimbos`: cada destino da viagem que alguém do grupo provou que visitou.
 --    O carimbo "apagado" não é guardado: é o destino sem linha aqui.

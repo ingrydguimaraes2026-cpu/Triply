@@ -1,6 +1,6 @@
 # 118. Passaporte da galera (a âncora)
 
-**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a com código pronto (08/11), banco a aplicar; 118b a 118f a fazer
+**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a pronta pra testar (08/11, banco aplicado); 118b a 118f a fazer
 
 > Esta spec é a âncora do produto. Leia antes o [`docs/RUMO.md`](../RUMO.md) e a [parte 09 do benchmark](../benchmark-2026-11/09-ancora-opcoes.md).
 > **Substitui** a versão anterior da 118 ("o ciclo viagem sem climão", com a cobrança do Pix como âncora), rejeitada pelo Victor em 03/11/2026.
