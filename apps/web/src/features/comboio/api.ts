@@ -1,4 +1,5 @@
 import {
+  caminhoDoConvite,
   buscarConvidados as buscarConvidadosDoCore,
   buscarConvitesAtivos,
   cancelarConvite as cancelarConviteNoCore,
@@ -15,7 +16,7 @@ export async function criarConvite(viagemId: string) {
     .select('codigo')
     .single()
   if (error) throw error
-  return `${window.location.origin}/convite/${data.codigo}`
+  return `${window.location.origin}${caminhoDoConvite(data.codigo)}`
 }
 
 // ---------- Gestão do comboio (spec 007) ----------
@@ -32,5 +33,5 @@ export type Convite = { codigo: string; expiraEm: string; link: string }
 // Convites que ainda valem (só o ADM vê)
 export async function buscarConvites(viagemId: string): Promise<Convite[]> {
   const convites = await buscarConvitesAtivos(supabase, viagemId)
-  return convites.map((c) => ({ ...c, link: `${window.location.origin}/convite/${c.codigo}` }))
+  return convites.map((c) => ({ ...c, link: `${window.location.origin}${caminhoDoConvite(c.codigo)}` }))
 }

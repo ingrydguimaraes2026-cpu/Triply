@@ -1,11 +1,11 @@
 import { Platform, Share } from 'react-native'
-import { criarCodigoDeConvite } from '@together/core'
+import { caminhoDoConvite, criarCodigoDeConvite } from '@together/core'
 import { supabase } from './supabase'
 
-// Link de convite: o mesmo /convite/<código> do site, pra quem receber abrir em qualquer lugar.
+// Link de convite: a web leve /v/<código> do site (FILA 0.8). Quem recebe topa e vota no navegador, sem instalar.
 const SITE = process.env.EXPO_PUBLIC_SITE_URL ?? 'https://together-viagem.vercel.app'
 
-export const linkDoConvite = (codigo: string) => `${SITE}/convite/${codigo}`
+export const linkDoConvite = (codigo: string) => `${SITE}${caminhoDoConvite(codigo)}`
 
 export async function gerarLinkDeConvite(viagemId: string) {
   return linkDoConvite(await criarCodigoDeConvite(supabase, viagemId))

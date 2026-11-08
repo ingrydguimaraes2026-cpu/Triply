@@ -260,6 +260,8 @@ export type PreviaDoConvite = {
   destinos: string[]
   membros: string[]
   jaSouMembro: boolean
+  expirado: boolean // só vem true pra quem já é do comboio (os outros recebem null)
+  passaporte: { nome: string; tipo: string; data: string | null }[] // vitrine da web leve (FILA 0.8)
 }
 
 // Prévia da viagem pelo código do convite. Funciona até sem login.
@@ -276,6 +278,8 @@ export async function verConvite(cli: ClienteTogether, codigo: string): Promise<
     destinos: string[]
     membros: string[]
     ja_sou_membro: boolean
+    expirado?: boolean
+    passaporte?: { nome: string; tipo: string; data: string | null }[]
   }
   return {
     viagemId: d.viagem_id,
@@ -285,6 +289,8 @@ export async function verConvite(cli: ClienteTogether, codigo: string): Promise<
     destinos: d.destinos,
     membros: d.membros,
     jaSouMembro: d.ja_sou_membro,
+    expirado: !!d.expirado,
+    passaporte: d.passaporte ?? [],
   }
 }
 

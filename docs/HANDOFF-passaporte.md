@@ -1,4 +1,4 @@
-# HANDOFF: passaporte da galera (Fase 0), 08/11/2026
+# HANDOFF: passaporte da galera (Fase 0), 08/11/2026 (atualizado depois da 0.8)
 
 ## Pronto (commits locais na `monorepo-split`, sem push)
 - `92a23e1` tirou da fila o teste das 3 telas (0.1). A 118 não espera mais validação.
@@ -8,15 +8,19 @@
 - `db6b201` **0.6 mapa da galera no Início (118b)**: core `mapa-da-galera.ts` + teste; app desenha com d3-geo + world-atlas + react-native-svg; site em Minhas viagens. Sem banco novo.
 - **0.7 retrospectiva que monta sozinha (118c)** (commit "Retrospectiva que monta sozinha"): core `retrospectiva.ts` (moldura por data, legenda por regra, mapa percorrido, cartão dos carimbos) + `carimbosDaCapa` em `carimbos.ts` + `trazerComboio` em `dados.ts`; teste `retrospectiva.test.mjs`. App: `app/retrospectiva.tsx` (capa 9:16 com mapa percorrido `src/ui/viagem/MapaPercorrido.tsx` e carimbos, cartões na cor da moldura, legenda editável, "Bora a próxima?" → `/nova-viagem?comboio=<id>`), carimbos na capa do PDF. Site: `pages/viagem/Retrospectiva.tsx` e capa do `Livro.tsx`. Banco aplicado e registrado: `20261108150000_aviso_da_retrospectiva.sql` (tabela `avisos_de_retrospectiva` + `retrospectivas_a_avisar()`, só service role). Tipos regenerados.
 
+- **0.8 convite que todo mundo topa sem instalar (018, web leve)** (commit "Convite leve /v/"): core `convite-leve.ts` (`caminhoDoConvite`, dias e cidade do plano, vitrine do passaporte, "falta seu voto") + teste `convite-leve.test.mjs` (7 passaram). Site: `pages/Convite.tsx` virou a página `/v/<código>` (sem o mapa do `SobreOMapa`, CSS em `convite-leve.css`): prévia, "Tô dentro" (convidado anônimo só com o nome, ou um toque com login), "Falta seu voto" (casa por destino, só nome e preço; enquetes abertas), o plano dia a dia (`planoDoDia` do Hoje), "Abrir a viagem completa" e a vitrine do passaporte com "Quero o app" (→ `/espera`). `/convite/<código>` redireciona pra `/v/`. Links gerados no site (`features/comboio/api.ts`) e no app (`apps/mobile/src/lib/convite.ts`) agora são `/v/`. Banco aplicado e registrado: `20261108170000_convite_leve.sql` (`ver_convite` devolve `passaporte` e `expirado`, e quem já é do comboio abre mesmo com o convite vencido). Assinatura igual, tipos não mudaram.
+
 ## Não conferido
+- **0.8:** conferido logado como membro (Florianópolis e Garopaba, convite `7240e1c96e98bd4dea` criado em 08/11), 360px e 1280px, sem rolagem lateral: redirecionamento, plano dia a dia, vitrine (1 de 2 carimbados). `ver_convite` como anônimo conferido pelo banco (prévia + passaporte; código errado = null). **Não visto na tela:** o estado sem login ("Tô dentro" com nome) e a votação com opções de verdade (a viagem de teste não tem casa nem enquete, e gravar dado de teste no banco de produção foi barrado). Pra testar: numa janela anônima, abrir `http://localhost:5173/v/7240e1c96e98bd4dea`, entrar como "Tia Rosa"; antes, como ADM, pôr 2 opções de casa e 1 enquete nessa viagem. Os destinos dela estão sem data por cidade, por isso o plano não mostra a cidade do dia.
+- **0.8, peso:** a página `/v/` ainda baixa o pacote do site inteiro (o `router.tsx` importa todas as telas de uma vez). Separar em pedaços (`lazy`) deixaria o link mais rápido no 4G.
 - Função `lembretes` publicada em 08/11 (OK do Victor) e rodando: a rodada das 19:15 respondeu 200 com `retrospectivas: 0`. Ainda ninguém recebeu um aviso de verdade (nenhuma viagem acabou nesses dias).
 - 08/11, site conferido logado (viagem Eurotrip, 360px e 1280px, sem erro no console e sem rolagem lateral): retrospectiva (mapa percorrido, cartão de cidades, legenda pronta, "Bora a próxima?"), capa do caderno, carimbos apagados na viagem, mapa da galera vazio no Início. Depois, com a viagem de teste **"Florianópolis e Garopaba"** (28/12/2025 a 02/01/2026, criada na conta do Paulo, com Florianópolis carimbada "de memória"): moldura "Réveillon 2026", aviso "a retrospectiva ficou pronta", cartões de dias, carimbo, cidades e km, legenda pronta, carimbo na capa da retrospectiva e do caderno. Corrigido: nome longo quebrava no meio ("FLORIANÓP/OLIS"); agora a letra encolhe (`fonteDoNomeNoCarimbo`). **Ainda sem dado pra ver:** fotos mais curtidas e gasto. App do celular não conferido. A viagem de teste pode ser apagada quando quiserem.
 - (antes) Nenhuma tela logada foi aberta (sem conta de teste aqui; criar conta mandaria dados pro Supabase de produção). Conferir em 360px e no app: carimbos na viagem e no Hoje, "Cheguei na casa", mapa no Início, postar carimbo e postar mapa, retrospectiva (moldura, capa com mapa e carimbos, legenda, "Bora a próxima?") e capa do caderno.
 - `icones.test.mjs` já falhava antes (emojis antigos, inclusive os `❄` dos congelados).
 
 ## Próximo passo exato
-**0.8 · Convite que todo mundo topa sem instalar** (web leve `/v/<código>`: topar, votar, ver o plano, vitrine do passaporte). Spec [018](specs/018-convidado-sem-conta.md) + `docs/RUMO.md` (o app é do organizador; o convidado age pela web leve, sem instalar). Ver na FILA a linha 0.8. Começar lendo a 018 e o que já existe em `/convite/<código>` (`apps/web/src/router.tsx`).
-Depois: 0.9 viagens antigas e rolê (118f).
+**0.9 · Viagens antigas e rolê em 2 toques** (spec [118f](specs/118-passaporte-da-galera.md)). Ver na FILA a linha 0.9. Começar lendo a seção 118f da spec 118 e o que já existe em "onde já fui" (`apps/web/src/features/perfil/`) e no mapa da galera (`packages/core/src/mapa-da-galera.ts`).
+Depois: 0.10 reserva entra sem digitar (120b).
 
 ## Cuidados
 - Ler `AGENTS.md`, `docs/RUMO.md`, spec 118.

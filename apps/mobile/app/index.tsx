@@ -227,7 +227,7 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
   const [entrando, setEntrando] = useState(false)
 
   async function entrarComCodigo() {
-    // Aceita o código puro ou o link inteiro (…/convite/<código>)
+    // Aceita o código puro ou o link inteiro (…/v/<código> ou o antigo …/convite/<código>)
     const limpo = codigo.trim().split('/').filter(Boolean).pop() ?? ''
     if (!limpo) return
     setErro(null)

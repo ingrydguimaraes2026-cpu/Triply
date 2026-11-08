@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router'
 import RotaProtegida from './features/auth/RotaProtegida'
-import Convite from './pages/Convite'
+import Convite, { ConviteAntigo } from './pages/Convite'
 import Inicio from './pages/Inicio'
 import ListaDeEspera from './pages/ListaDeEspera'
 import Login from './pages/Login'
@@ -35,8 +35,10 @@ export const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       // Lista de espera: página pública, sem login (docs/marketing/ESTRATEGIA-REDES.md)
       { path: '/espera', element: <ListaDeEspera /> },
-      // Convite abre até sem login: dá pra entrar como convidado (spec 018)
-      { path: '/convite/:codigo', element: <Convite /> },
+      // Web leve do convite (spec 018, FILA 0.8): abre até sem login, o convidado topa, vota e vê o plano
+      { path: '/v/:codigo', element: <Convite /> },
+      // Link antigo do convite: cai na mesma página
+      { path: '/convite/:codigo', element: <ConviteAntigo /> },
       {
         // Daqui pra baixo só entra quem fez login
         element: <RotaProtegida />,
@@ -74,3 +76,4 @@ export const router = createBrowserRouter([
     ],
   },
 ])
+

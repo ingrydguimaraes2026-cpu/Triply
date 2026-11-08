@@ -1,6 +1,6 @@
 # 018. Convidado sem conta
 
-**Fase:** 2 · **Tamanho:** M · **Depende de:** 007 · **Status:** Em andamento
+**Fase:** 2 · **Tamanho:** M · **Depende de:** 007 · **Status:** Pronto pra testar (web leve `/v/` na FILA 0.8)
 
 ## Objetivo
 Quem recebe o link do convite entra na viagem só digitando o nome: sem e-mail, sem senha e sem instalar nada. Depois, se quiser, cria a conta e não perde nada do que já fez.
@@ -64,6 +64,30 @@ Comparação do dia a dia: é como entrar numa festa com uma pulseirinha de visi
   - Authentication → ligar **"Manual linking"**, que é o que permite o `linkIdentity` do Google.
   - Recomendado: **CAPTCHA** (Turnstile) pro login anônimo, pra ninguém criar milhares de contas falsas. Pode ser depois do teste local.
 - **Tipos:** depois da migration, gerar de novo `packages/core/src/database.ts`.
+
+## Web leve `/v/<código>` (FILA 0.8, RUMO de 03/11/2026)
+O app é do organizador; o convidado age pelo **navegador do WhatsApp**, sem instalar. O link que o app e o site mandam passa a ser `/v/<código>`. O `/convite/<código>` antigo continua valendo e só redireciona pra `/v/`.
+
+**Uma página só, leve, que abre rápido:**
+1. **Prévia:** nome, datas, destinos e quem já topou (até sem login).
+2. **"Tô dentro":** sem login, o campo "Como te chamam?" e o botão entram como convidado (login anônimo, igual ao resto da spec). Com login, um toque. Embaixo, "Já tenho conta".
+3. **Depois de topar (na mesma página):**
+   - **Falta seu voto:** as opções de hospedagem de cada destino ainda sem escolhida (votar e tirar o voto) e as enquetes abertas. Destino com hospedagem escolhida mostra só o nome dela (sem endereço, código de porta ou Wi-Fi).
+   - **O plano:** dia a dia, com a cidade do dia e o que está marcado (roteiro do dia + agenda), o mesmo "plano do dia" do Hoje (spec 120).
+   - "Abrir a viagem completa" leva ao site normal, pra quem quiser.
+4. **Vitrine do passaporte** (em todo estado, inclusive antes de topar): os carimbos da viagem (aceso ou apagado), "X de Y lugares carimbados" e o convite pra baixar o app e ganhar o seu carimbo (por enquanto leva à lista de espera `/espera`, até o app estar na loja).
+
+**Convite expirado:** quem já está no comboio continua abrindo a página pelo mesmo link. Quem não está vê "Convite inválido".
+
+**Banco:** `ver_convite` passa a devolver também o passaporte (destino, tipo e data do carimbo, se tiver) e se o convite expirou; e responde pra quem já é membro mesmo com o convite vencido. Nada de endereço nem dado pessoal.
+
+**Critérios de aceite da web leve**
+- [ ] Numa janela anônima, `/v/<código>` mostra prévia e vitrine do passaporte sem pedir login, e em 360px não tem rolagem lateral.
+- [ ] "Tô dentro" com o nome mostra, na mesma página, "Falta seu voto" e o plano.
+- [ ] O voto na hospedagem e na enquete aparece pro ADM na viagem.
+- [ ] A hospedagem escolhida não mostra endereço, porta nem Wi-Fi na web leve.
+- [ ] O link de convite gerado no site e no app é `/v/<código>`; o `/convite/<código>` antigo cai na mesma página.
+- [ ] Depois que o convite vence, quem já topou ainda abre `/v/<código>`.
 
 ## Quem pode o quê
 | Ação | ADM | Membro | Convidado |
