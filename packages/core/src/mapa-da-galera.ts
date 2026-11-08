@@ -11,13 +11,15 @@ export type CarimboDoMapa = {
   data: string
   liberado_por: string
 }
-export type ViagemDoMapa = { id: string; data_inicio: string | null; data_fim: string | null }
+// tipo (118f): 'viagem', 'role' ou 'antiga'. Sem tipo, conta como viagem.
+export type ViagemDoMapa = { id: string; data_inicio: string | null; data_fim: string | null; tipo?: string | null }
 export type FiltroDoMapa = 'todos' | 'meus'
 
 export type MapaDaGalera = {
   pontos: { nome: string; latitude: number; longitude: number }[]
   lugares: number
-  viagens: number
+  viagens: number // viagens e viagens antigas
+  roles: number
   diasJuntos: number
   km: number
   // Os 3 que mais carimbaram no ano (sem último lugar, sem quem tem zero)
@@ -48,8 +50,11 @@ export function mapaDaGalera(carimbos: CarimboDoMapa[], viagens: ViagemDoMapa[],
   const lugares = new Set(lista.map((c) => chaveDoLugar(c.nome))).size
 
   const idsDasViagens = new Set(lista.map((c) => c.viagem_id))
+  const tipoDe = new Map(viagens.map((v) => [v.id, v.tipo ?? 'viagem']))
+  const roles = [...idsDasViagens].filter((id) => tipoDe.get(id) === 'role').length
+  // Viagem antiga só guarda o mês: não dá pra saber quantos dias foram, então não conta
   const diasJuntos = viagens
-    .filter((v) => idsDasViagens.has(v.id) && v.data_inicio)
+    .filter((v) => idsDasViagens.has(v.id) && v.data_inicio && v.tipo !== 'antiga')
     .reduce((soma, v) => soma + Math.max(1, diasEntre(v.data_inicio as string, v.data_fim ?? (v.data_inicio as string))), 0)
 
   // km: dentro de cada viagem, de carimbo em carimbo, na ordem das datas
@@ -71,7 +76,7 @@ export function mapaDaGalera(carimbos: CarimboDoMapa[], viagens: ViagemDoMapa[],
     .sort((a, b) => b.carimbos - a.carimbos || a.pessoaId.localeCompare(b.pessoaId))
     .slice(0, 3)
 
-  return { pontos: [...porLugar.values()], lugares, viagens: idsDasViagens.size, diasJuntos, km: Math.round(total), podio }
+  return { pontos: [...porLugar.values()], lugares, viagens: idsDasViagens.size - roles, roles, diasJuntos, km: Math.round(total), podio }
 }
 
 // ---- Banco -------------------------------------------------------------------
@@ -82,7 +87,7 @@ export type DadosDoMapa = { carimbos: CarimboDoMapa[]; viagens: ViagemDoMapa[]; 
 export async function buscarMapaDaGalera(cli: ClienteTogether): Promise<DadosDoMapa> {
   const [c, v] = await Promise.all([
     cli.from('carimbos').select('viagem_id, nome, latitude, longitude, data, liberado_por'),
-    cli.from('viagens').select('id, data_inicio, data_fim'),
+    cli.from('viagens').select('id, data_inicio, data_fim, tipo'),
   ])
   if (c.error) throw c.error
   if (v.error) throw v.error

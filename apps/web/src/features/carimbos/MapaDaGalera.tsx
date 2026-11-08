@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { buscarMapaDaGalera, mapaDaGalera, type DadosDoMapa, type FiltroDoMapa } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { hojeTexto } from '../destinos/datas'
-import { Globe2, Share2 } from '../../components/ui/icones'
+import { Globe2, History, Share2 } from '../../components/ui/icones'
+import Gaveta from '../../components/ui/Gaveta'
+import ViagemAntiga from './ViagemAntiga'
 import MapaMundi from '../mapa/MapaMundi'
 import { mapaEmImagem } from './mapaEmImagem'
 import './mapa-da-galera.css'
@@ -13,6 +15,9 @@ export default function MapaDaGalera({ meuId }: { meuId: string }) {
   const [dados, setDados] = useState<DadosDoMapa | null>(null)
   const [filtro, setFiltro] = useState<FiltroDoMapa>('todos')
   const [gerando, setGerando] = useState(false)
+  const [contando, setContando] = useState(false) // gaveta "a gente já foi pra..." (118f)
+  const [vez, setVez] = useState(0)
+  const [acendeu, setAcendeu] = useState<string | null>(null)
   const hoje = hojeTexto()
 
   useEffect(() => {
@@ -23,7 +28,7 @@ export default function MapaDaGalera({ meuId }: { meuId: string }) {
     return () => {
       ativo = false
     }
-  }, [meuId])
+  }, [meuId, vez])
 
   const m = useMemo(() => (dados ? mapaDaGalera(dados.carimbos, dados.viagens, meuId, filtro, hoje) : null), [dados, meuId, filtro, hoje])
   if (!dados || !m) return null
@@ -66,7 +71,7 @@ export default function MapaDaGalera({ meuId }: { meuId: string }) {
       </header>
 
       {dados.carimbos.length === 0 ? (
-        <p className="dica">Seu mapa está vazio. Cada lugar onde a galera chegar vira um carimbo e acende aqui.</p>
+        <p className="dica">Seu mapa está vazio. Conta onde a galera já foi: cada lugar vira um carimbo e acende aqui.</p>
       ) : (
         <>
           <div className="mapa-galera-filtro" role="group" aria-label="Filtro do mapa">
@@ -87,6 +92,7 @@ export default function MapaDaGalera({ meuId }: { meuId: string }) {
               [
                 [m.lugares, m.lugares === 1 ? 'lugar' : 'lugares'],
                 [m.viagens, m.viagens === 1 ? 'viagem' : 'viagens'],
+                ...(m.roles ? [[m.roles, m.roles === 1 ? 'rolê' : 'rolês']] : []),
                 [m.diasJuntos, 'dias juntos'],
                 [m.km, 'km'],
               ] as [number, string][]
@@ -114,6 +120,23 @@ export default function MapaDaGalera({ meuId }: { meuId: string }) {
             </div>
           )}
         </>
+      )}
+
+      {acendeu && <p className="mapa-galera-acendeu" role="status">{acendeu} acendeu no mapa.</p>}
+      <button type="button" className="botao-texto mapa-galera-antiga" onClick={() => setContando(true)}>
+        <History size={15} aria-hidden="true" /> A gente já foi pra...
+      </button>
+
+      {contando && (
+        <Gaveta titulo="A gente já foi pra..." aoFechar={() => setContando(false)}>
+          <ViagemAntiga
+            aoSalvar={(nome) => {
+              setContando(false)
+              setAcendeu(nome)
+              setVez((v) => v + 1)
+            }}
+          />
+        </Gaveta>
       )}
     </section>
   )

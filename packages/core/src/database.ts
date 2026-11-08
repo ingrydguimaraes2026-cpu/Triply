@@ -942,6 +942,7 @@ export type Database = {
           ordem: number
           pais: string | null
           saida: string | null
+          tipo_do_lugar: string | null
           viagem_id: string
         }
         Insert: {
@@ -954,6 +955,7 @@ export type Database = {
           ordem?: number
           pais?: string | null
           saida?: string | null
+          tipo_do_lugar?: string | null
           viagem_id: string
         }
         Update: {
@@ -966,6 +968,7 @@ export type Database = {
           ordem?: number
           pais?: string | null
           saida?: string | null
+          tipo_do_lugar?: string | null
           viagem_id?: string
         }
         Relationships: [
@@ -3263,6 +3266,7 @@ export type Database = {
           membro_edita_transportes: boolean
           moeda_principal: string
           nome: string
+          tipo: string
         }
         Insert: {
           criado_em?: string
@@ -3275,6 +3279,7 @@ export type Database = {
           membro_edita_transportes?: boolean
           moeda_principal?: string
           nome: string
+          tipo?: string
         }
         Update: {
           criado_em?: string
@@ -3287,6 +3292,7 @@ export type Database = {
           membro_edita_transportes?: boolean
           moeda_principal?: string
           nome?: string
+          tipo?: string
         }
         Relationships: [
           {
@@ -3474,6 +3480,15 @@ export type Database = {
           ultimo_sync: string
         }[]
       }
+      minha_galera: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          id: string
+          nome: string
+          viagens_juntos: number
+        }[]
+      }
       registrar_push: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
         Returns: undefined
@@ -3507,6 +3522,7 @@ export type Database = {
           ordem: number
           pais: string | null
           saida: string | null
+          tipo_do_lugar: string | null
           viagem_id: string
         }[]
         SetofOptions: {
@@ -3518,6 +3534,10 @@ export type Database = {
       }
       trazer_comboio: {
         Args: { p_nova: string; p_origem: string }
+        Returns: number
+      }
+      trazer_da_galera: {
+        Args: { p_pessoas: string[]; p_viagem: string }
         Returns: number
       }
       trocar_exigencias: {

@@ -4,7 +4,7 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
+import { ChevronRight, Clock, History, Locate, Plus, Ticket } from '../src/ui/icones'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { buscarMapaDaGalera, descreverAtividade, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
 import { MapaDaGalera } from '../src/ui/MapaDaGalera'
@@ -89,10 +89,13 @@ export default function MinhasViagens() {
 
         {/* Convidado cria conta antes de criar viagem (spec 018) */}
         {!ehConvidado ? (
-          <Pressable onPress={() => router.push('/nova-viagem')} className="mt-8 h-14 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-tracejado active:opacity-80">
-            <Plus size={20} color={cor.couro} />
-            <Text className="font-body-bold text-[15px] text-couro">Nova viagem</Text>
-          </Pressable>
+          <>
+            <Pressable onPress={() => router.push('/nova-viagem')} className="mt-8 h-14 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-tracejado active:opacity-80">
+              <Plus size={20} color={cor.couro} />
+              <Text className="font-body-bold text-[15px] text-couro">Nova viagem</Text>
+            </Pressable>
+            <AtalhosDoPassaporte />
+          </>
         ) : null}
       </ScrollView>
     </View>
@@ -101,11 +104,12 @@ export default function MinhasViagens() {
 
 // Mapa da galera (spec 118b): carrega sozinho, pra não atrasar o resto do Início
 function MapaDoInicio({ meuId }: { meuId: string }) {
+  const router = useRouter()
   const carga = useCarregar(() => buscarMapaDaGalera(supabase), [meuId])
   if (carga.status !== 'pronto' || !carga.dados) return null
   return (
     <View className="mb-5">
-      <MapaDaGalera dados={carga.dados} meuId={meuId} />
+      <MapaDaGalera dados={carga.dados} meuId={meuId} aoAntigas={() => router.push('/viagem-antiga')} />
     </View>
   )
 }
@@ -250,6 +254,9 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
         <View className="mt-3 self-stretch">
           <Botao titulo="Nova viagem" icone={<Plus size={20} color="#fff" />} aoTocar={aoCriar} />
         </View>
+        <View className="self-stretch">
+          <AtalhosDoPassaporte />
+        </View>
         {comCodigo ? (
           <View className="gap-2 self-stretch">
             <Campo icone={<Ticket size={20} color={cor.suave} />} placeholder="Código ou link do convite" value={codigo} onChangeText={setCodigo} autoCapitalize="none" onSubmitEditing={entrarComCodigo} />
@@ -262,6 +269,23 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
           </Pressable>
         )}
       </View>
+    </View>
+  )
+}
+
+// Spec 118f: "rolê hoje" (2 toques) e "a gente já foi pra..." (viagem antiga), lado a lado
+function AtalhosDoPassaporte() {
+  const router = useRouter()
+  return (
+    <View className="mt-3 flex-row gap-3">
+      <Pressable onPress={() => router.push('/role')} accessibilityRole="button" className="min-h-[52px] flex-1 flex-row items-center justify-center gap-2 rounded-2xl bg-areia px-3 active:opacity-80">
+        <Locate size={18} color={cor.couro} />
+        <Text className="font-body-bold text-[14px] text-couro">Rolê hoje</Text>
+      </Pressable>
+      <Pressable onPress={() => router.push('/viagem-antiga')} accessibilityRole="button" className="min-h-[52px] flex-1 flex-row items-center justify-center gap-2 rounded-2xl bg-areia px-3 active:opacity-80">
+        <History size={18} color={cor.couro} />
+        <Text className="font-body-bold text-[14px] text-couro" numberOfLines={1}>Já fomos pra...</Text>
+      </Pressable>
     </View>
   )
 }

@@ -85,3 +85,120 @@
   color: var(--cor-texto-suave);
   margin-left: 6px;
 }
+
+/* Spec 118f: "a gente já foi pra..." */
+.mapa-galera-antiga {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 12px;
+}
+.mapa-galera-acendeu {
+  margin: 10px 0 0;
+  font-weight: 700;
+  color: var(--couro);
+}
+.viagem-antiga {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.viagem-antiga .dica {
+  margin: 0;
+}
+.viagem-antiga label,
+.viagem-antiga legend {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.viagem-antiga select {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  font: inherit;
+}
+.viagem-antiga-busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+}
+.viagem-antiga-busca input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  outline: none;
+}
+.viagem-antiga-achados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.viagem-antiga-achados button,
+.viagem-antiga-escolhido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--cor-comboio-fundo);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.viagem-antiga-achados button {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.viagem-antiga-escolhido span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.viagem-antiga small {
+  color: var(--cor-texto-suave);
+  font-size: 0.78rem;
+}
+.viagem-antiga-quando {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.viagem-antiga-galera {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.viagem-antiga-galera label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-weight: 600;
+}
+.viagem-antiga-galera input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--couro);
+}

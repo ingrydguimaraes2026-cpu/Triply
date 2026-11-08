@@ -1,6 +1,6 @@
 # 118. Passaporte da galera (a âncora)
 
-**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a, 118b e 118c prontas pra testar (08/11, banco aplicado); 118d a 118f a fazer
+**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a, 118b, 118c e 118f prontas pra testar (08/11, banco aplicado); 118d e 118e a fazer
 
 > Esta spec é a âncora do produto. Leia antes o [`docs/RUMO.md`](../RUMO.md) e a [parte 09 do benchmark](../benchmark-2026-11/09-ancora-opcoes.md).
 > **Substitui** a versão anterior da 118 ("o ciclo viagem sem climão", com a cobrança do Pix como âncora), rejeitada pelo Victor em 03/11/2026.
@@ -39,7 +39,7 @@
 - Números: lugares carimbados, viagens, rolês, dias juntos, km.
 - **Disputa leve:** "quem carimbou mais este ano" entre a galera, com os 3 primeiros. Sem ranking público, sem gente desconhecida.
 - "Postar mapa": imagem 9:16 do mapa aceso com os números.
-- Reaproveita o mapa do "Onde já fui" (102). (08/11: o "Onde já fui" do Perfil continua lendo os destinos; o mapa da galera lê os carimbos. Rolês entram na contagem com a 118f.)
+- Reaproveita o mapa do "Onde já fui" (102). (08/11: o "Onde já fui" do Perfil continua lendo os destinos; o mapa da galera lê os carimbos. Rolês entram na contagem com a 118f: feito, número "rolês" à parte.)
 
 ### 118c · Retrospectiva que monta sozinha
 - No fim da viagem, a retrospectiva (105) fica pronta sozinha, com aviso no celular: "a retrospectiva de Floripa está pronta".
@@ -66,6 +66,7 @@
 - Dá pra pôr fotos antigas: se tiverem GPS e data (108), o lugar e o mês vêm sozinhos.
 - **Rolê em 2 toques:** "rolê hoje" + lugar (praia, show, bate-volta). Sem roteiro, sem hospedagem. Na hora, o carimbo cai pela localização ou pela foto.
 - Cada viagem antiga ou rolê conta no mapa, na disputa e no "há 1 ano".
+- (08/11, feito) Os dois viram **viagens normais com 1 destino**, marcadas em `viagens.tipo` ('viagem', 'role', 'antiga'); assim carimbo, mapa e "há 1 ano" funcionam sem nada à parte (o rolê **não** usa carimbo com `destino_id` nulo). Regras em `packages/core/src/viagens-antigas.ts`, teste `apps/web/tests/viagens-antigas.test.mjs`. Viagem antiga guarda só o mês (dia 1), carimba "de memória" na hora e **não conta em "dias juntos"** (não dá pra saber quantos dias foram). Rolê = viagem de 1 dia (hoje); se o lugar veio da localização ("Estou aqui agora"), o carimbo cai na hora "pela localização"; senão, cai depois pelas regras da 118a. Tipo do rolê (bate-volta, praia, show) vai em `destinos.tipo_do_lugar` e decide o ícone do carimbo. Busca de lugar com coordenada: Open-Meteo (nome) e BigDataCloud (ponto → cidade, só no aparelho, nada guardado). "Quem foi": `minha_galera()` lista quem já dividiu viagem comigo e `trazer_da_galera()` põe direto (só ADM, só gente da galera); quem não está na lista entra pelo link. Foto antiga (só no app): lê GPS e data do EXIF e preenche lugar e mês; a foto em si não é postada. App: `app/role.tsx`, `app/viagem-antiga.tsx`, atalhos no Início. Site: gaveta "A gente já foi pra..." no mapa da galera (Minhas viagens); rolê é só no app.
 
 ## Não inclui (fica pra depois)
 - Localização em segundo plano (rastrear o trajeto como o Polarsteps). Só com o app aberto, por privacidade (089).
@@ -113,8 +114,8 @@
 - [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta. (08/11: moldura testada na regra e função `lembretes` publicada; falta conferir na tela e receber um aviso de verdade.)
 - [ ] Com um carimbo de 03/11/2025, no dia 03/11/2026 chega o aviso "há 1 ano vocês estavam em...".
 - [ ] O widget mostra "Floripa em N dias" e atualiza a cada dia.
-- [ ] "A gente já foi pra Paris em 2019" acende Paris no mapa em menos de 30 s.
-- [ ] "Rolê hoje" + lugar cria o rolê em 2 toques.
+- [ ] "A gente já foi pra Paris em 2019" acende Paris no mapa em menos de 30 s. (08/11: regra testada; tela do site conferida sem salvar; falta salvar de verdade e ver acender.)
+- [ ] "Rolê hoje" + lugar cria o rolê em 2 toques. (08/11: feito no app, não conferido no celular.)
 - [ ] A localização exata não aparece em nenhuma tabela do banco.
 - [ ] Tudo funciona em 360px.
 

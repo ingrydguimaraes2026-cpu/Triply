@@ -1,4 +1,4 @@
-# HANDOFF: passaporte da galera (Fase 0), 08/11/2026 (atualizado depois da 0.8)
+# HANDOFF: passaporte da galera (Fase 0), 08/11/2026 (atualizado depois da 0.9)
 
 ## Pronto (commits locais na `monorepo-split`, sem push)
 - `92a23e1` tirou da fila o teste das 3 telas (0.1). A 118 não espera mais validação.
@@ -10,7 +10,11 @@
 
 - **0.8 convite que todo mundo topa sem instalar (018, web leve)** (commit "Convite leve /v/"): core `convite-leve.ts` (`caminhoDoConvite`, dias e cidade do plano, vitrine do passaporte, "falta seu voto") + teste `convite-leve.test.mjs` (7 passaram). Site: `pages/Convite.tsx` virou a página `/v/<código>` (sem o mapa do `SobreOMapa`, CSS em `convite-leve.css`): prévia, "Tô dentro" (convidado anônimo só com o nome, ou um toque com login), "Falta seu voto" (casa por destino, só nome e preço; enquetes abertas), o plano dia a dia (`planoDoDia` do Hoje), "Abrir a viagem completa" e a vitrine do passaporte com "Quero o app" (→ `/espera`). `/convite/<código>` redireciona pra `/v/`. Links gerados no site (`features/comboio/api.ts`) e no app (`apps/mobile/src/lib/convite.ts`) agora são `/v/`. Banco aplicado e registrado: `20261108170000_convite_leve.sql` (`ver_convite` devolve `passaporte` e `expirado`, e quem já é do comboio abre mesmo com o convite vencido). Assinatura igual, tipos não mudaram.
 
+- **0.9 viagens antigas e rolê em 2 toques (118f)** (commit "Viagens antigas e rolê em 2 toques"): os dois viram viagens normais com 1 destino, marcadas em `viagens.tipo` ('viagem', 'role', 'antiga'). Core `viagens-antigas.ts` (conferir mês/ano, data do dia 1, tipo do rolê, GPS e data do EXIF, `procurarLugar` no Open-Meteo, `lugarPelaCoordenada` no BigDataCloud, `criarViagemAntiga`, `criarRole`, galera) + teste `viagens-antigas.test.mjs` (7 passaram); `mapa-da-galera.ts` conta `roles` à parte e não soma "dias juntos" de viagem antiga; `liberarCarimbo` usa `destinos.tipo_do_lugar` quando houver. App: `app/role.tsx` ("Estou aqui agora" pela localização = 2º toque, ou busca), `app/viagem-antiga.tsx` (busca, "puxar de uma foto antiga", mês/ano, quem foi, "chamar mais gente pelo link"), atalhos "Rolê hoje" e "Já fomos pra..." no Início e no Início vazio, "Contar onde a galera já foi" no mapa vazio. Site: gaveta "A gente já foi pra..." no mapa da galera (`features/carimbos/ViagemAntiga.tsx`). Banco aplicado e registrado: `20261108190000_viagens_antigas_e_roles.sql` (`viagens.tipo`, `destinos.tipo_do_lugar`, `minha_galera()`, `trazer_da_galera()`; testado com rollback: pessoa de fora da galera não entra). Tipos regenerados.
+
 ## Não conferido
+- **0.9:** site conferido logado em 360px e 1280px, sem salvar (busca achou Paris, galera listou 1 pessoa, sem rolagem lateral, sem erro no console). **Não feito:** salvar de verdade (gravaria no banco de produção) e o app no celular (rolê com localização, foto antiga). Pra testar: no site, Minhas viagens → "A gente já foi pra..." → Paris, julho de 2019 → "Acender no mapa" e ver Paris acesa; no app, Início → "Rolê hoje" → "Estou aqui agora". O select de mês no site não mudou pelo robô de teste (com clique de verdade deve mudar; conferir). Dá pra apagar depois a viagem criada no teste.
+- **0.9, por fazer depois:** a foto antiga só preenche lugar e mês (não é postada no feed); raio menor pra show (pergunta em aberto da spec); `novo-post.tsx` ainda tem a própria cópia de `pontoDoExif` (a do core é igual).
 - **0.8:** conferido logado como membro (Florianópolis e Garopaba, convite `7240e1c96e98bd4dea` criado em 08/11), 360px e 1280px, sem rolagem lateral: redirecionamento, plano dia a dia, vitrine (1 de 2 carimbados). `ver_convite` como anônimo conferido pelo banco (prévia + passaporte; código errado = null). **Não visto na tela:** o estado sem login ("Tô dentro" com nome) e a votação com opções de verdade (a viagem de teste não tem casa nem enquete, e gravar dado de teste no banco de produção foi barrado). Pra testar: numa janela anônima, abrir `http://localhost:5173/v/7240e1c96e98bd4dea`, entrar como "Tia Rosa"; antes, como ADM, pôr 2 opções de casa e 1 enquete nessa viagem. Os destinos dela estão sem data por cidade, por isso o plano não mostra a cidade do dia.
 - **0.8, peso:** a página `/v/` ainda baixa o pacote do site inteiro (o `router.tsx` importa todas as telas de uma vez). Separar em pedaços (`lazy`) deixaria o link mais rápido no 4G.
 - Função `lembretes` publicada em 08/11 (OK do Victor) e rodando: a rodada das 19:15 respondeu 200 com `retrospectivas: 0`. Ainda ninguém recebeu um aviso de verdade (nenhuma viagem acabou nesses dias).
@@ -19,8 +23,8 @@
 - `icones.test.mjs` já falhava antes (emojis antigos, inclusive os `❄` dos congelados).
 
 ## Próximo passo exato
-**0.9 · Viagens antigas e rolê em 2 toques** (spec [118f](specs/118-passaporte-da-galera.md)). Ver na FILA a linha 0.9. Começar lendo a seção 118f da spec 118 e o que já existe em "onde já fui" (`apps/web/src/features/perfil/`) e no mapa da galera (`packages/core/src/mapa-da-galera.ts`).
-Depois: 0.10 reserva entra sem digitar (120b).
+**0.10 · Reserva entra sem digitar** (spec [120b](specs/120-hoje-com-reservas-do-grupo.md)): print, PDF ou texto vira trajeto, casa ou agenda (Edge Function de leitura). Ver na FILA a linha 0.10. Começar lendo a seção 120b da spec 120 e o que já existe no "Hoje" (`packages/core/src/hoje.ts`, `hoje-do-grupo.ts`) e em transportes/hospedagem. Publicar Edge Function em produção pede OK do Victor.
+Depois: 118d ("há 1 ano") e 118e (widget), conforme a FILA.
 
 ## Cuidados
 - Ler `AGENTS.md`, `docs/RUMO.md`, spec 118.

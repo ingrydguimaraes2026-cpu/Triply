@@ -82,6 +82,7 @@ function Numeros({ m, claro = false }: { m: Resumo; claro?: boolean }) {
   const itens: [number, string][] = [
     [m.lugares, m.lugares === 1 ? 'lugar' : 'lugares'],
     [m.viagens, m.viagens === 1 ? 'viagem' : 'viagens'],
+    ...(m.roles ? ([[m.roles, m.roles === 1 ? 'rolê' : 'rolês']] as [number, string][]) : []),
     [m.diasJuntos, 'dias juntos'],
     [m.km, 'km'],
   ]

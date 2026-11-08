@@ -80,6 +80,8 @@ export default function RootLayout() {
               {Platform.OS !== 'web' && sessao && segments[0] !== 'comecar' ? <AbrirAvisos /> : null}
               <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
                 <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="role" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="viagem-antiga" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="comecar" options={{ gestureEnabled: false, animation: 'fade' }} />
                 <Stack.Screen name="chamar-galera" options={{ gestureEnabled: false, animation: 'fade' }} />
                 {/* Deslize: arrastar o cartão pro lado não pode virar "voltar" (iPhone) */}

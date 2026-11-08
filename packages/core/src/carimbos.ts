@@ -20,6 +20,7 @@ export type DestinoDoCarimbo = {
   longitude: number | null
   chegada: string | null
   saida: string | null
+  tipo_do_lugar?: string | null // dica da arte (rolê de show, 118f); vazio = adivinha pelo nome
 }
 export type DatasDaViagem = { data_inicio: string | null; data_fim: string | null }
 
@@ -137,7 +138,7 @@ export async function liberarCarimbo(
       nome: destino.nome,
       latitude: destino.latitude,
       longitude: destino.longitude,
-      tipo: tipoDoLugar(destino.nome),
+      tipo: destino.tipo_do_lugar ?? tipoDoLugar(destino.nome),
       data: dataDoCarimbo(como, destino, viagem, hoje),
       como,
     })
