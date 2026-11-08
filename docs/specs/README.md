@@ -125,6 +125,7 @@ Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na
 | 118 | [Passaporte da galera](118-passaporte-da-galera.md) (a âncora: carimbo sem digitar, mapa da galera, retrospectiva que monta sozinha, "há 1 ano", widget, viagens antigas e rolês) | 0 | 118a, 118b, 118c, 118d e 118f: prontas pra testar (08/11, banco aplicado; função `lembretes` publicada com o aviso da 118d) · 118e a fazer · **prioridade 1** |
 | 119 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | ❄ Congelada pelo RUMO (vira assinatura do organizador) |
 | 120 | ["Hoje" com as reservas do grupo](120-hoje-com-reservas-do-grupo.md) (casa, check-in, quem chega, plano do dia; reserva entra por print ou PDF; "Cheguei" vira carimbo) | 0 | **120a, 120b e 120c prontas pra testar** (app e site, 03 e 08/11; 120b só no app, leitura de print/PDF espera a função `ler-reserva` ser publicada) · banco aplicado · prioridade 1, junto com a 118 |
+| 121 | [Transporte v2](121-transporte-v2.md) (chegadas e saídas por pessoa, membro lança o seu, "Como chegar" com transporte público e Uber, mapa do trajeto com as paradas) | 0 | A fazer (spec de 08/11) · revisa a 004 |
 | 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
 | 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
 | 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |

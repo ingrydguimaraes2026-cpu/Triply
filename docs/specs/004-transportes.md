@@ -1,5 +1,7 @@
 # 004. Transportes
 
+> **Revisada pela [121 (Transporte v2)](121-transporte-v2.md), 08/11/2026:** a tela vira linha do tempo (chegadas e saídas por pessoa + trechos), membro lança o próprio transporte, "Como chegar" e mapa do trajeto com as paradas. O que está aqui continua valendo pros trechos.
+
 **Fase:** 1 · **Tamanho:** G · **Depende de:** 001 · **Status:** A fazer
 
 ## Objetivo
