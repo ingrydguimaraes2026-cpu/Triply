@@ -1,6 +1,6 @@
 # 118. Passaporte da galera (a âncora)
 
-**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a pronta pra testar (08/11, banco aplicado); 118b a 118f a fazer
+**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a e 118b prontas pra testar (08/11, banco aplicado); 118c a 118f a fazer
 
 > Esta spec é a âncora do produto. Leia antes o [`docs/RUMO.md`](../RUMO.md) e a [parte 09 do benchmark](../benchmark-2026-11/09-ancora-opcoes.md).
 > **Substitui** a versão anterior da 118 ("o ciclo viagem sem climão", com a cobrança do Pix como âncora), rejeitada pelo Victor em 03/11/2026.
@@ -39,7 +39,7 @@
 - Números: lugares carimbados, viagens, rolês, dias juntos, km.
 - **Disputa leve:** "quem carimbou mais este ano" entre a galera, com os 3 primeiros. Sem ranking público, sem gente desconhecida.
 - "Postar mapa": imagem 9:16 do mapa aceso com os números.
-- Reaproveita o mapa do "Onde já fui" (102), que passa a ler os carimbos.
+- Reaproveita o mapa do "Onde já fui" (102). (08/11: o "Onde já fui" do Perfil continua lendo os destinos; o mapa da galera lê os carimbos. Rolês entram na contagem com a 118f.)
 
 ### 118c · Retrospectiva que monta sozinha
 - No fim da viagem, a retrospectiva (105) fica pronta sozinha, com aviso no celular: "a retrospectiva de Floripa está pronta".

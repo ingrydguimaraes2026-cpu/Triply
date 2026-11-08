@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { geoContains, geoMercator, geoPath, type GeoPermissibleObjects } from 'd3-geo'
-import { feature } from 'topojson-client'
-import type { Topology, GeometryCollection } from 'topojson-specification'
-import type { Feature, Geometry } from 'geojson'
-import mundoUrl from 'world-atlas/countries-50m.json?url'
+import { carregarPaises, type Pais } from './paises'
 import './mapa.css'
 
 export type PontoNoMapa = {
@@ -27,24 +24,11 @@ type Props = {
 }
 
 type Visao = { k: number; x: number; y: number }
-type Pais = Feature<Geometry>
 
 const VISAO_INICIAL: Visao = { k: 1, x: 0, y: 0 }
 const ZOOM_MAXIMO = 14
 const DURACAO = 1200
 
-// Carrega o desenho dos países uma vez só
-let paisesEmCache: Promise<Pais[]> | null = null
-function carregarPaises() {
-  paisesEmCache ??= fetch(mundoUrl)
-    .then((r) => r.json())
-    .then((topo: Topology) => {
-      const colecao = feature(topo, topo.objects.countries as GeometryCollection)
-      // Tira a Antártida pra sobrar mais espaço
-      return colecao.features.filter((p) => p.id !== '010') as Pais[]
-    })
-  return paisesEmCache
-}
 
 const suave = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 

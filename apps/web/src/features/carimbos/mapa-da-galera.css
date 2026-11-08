@@ -1,0 +1,87 @@
+/* Mapa da galera (spec 118b) */
+.mapa-galera {
+  margin-bottom: 20px;
+}
+.mapa-galera-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.mapa-galera-topo h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+  margin: 0;
+}
+.mapa-galera-filtro {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.mapa-galera-filtro button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--cor-comboio-fundo);
+  color: var(--couro);
+}
+.mapa-galera-filtro button.ativo {
+  background: var(--couro);
+  color: #fff;
+}
+.mapa-galera-mapa {
+  position: relative;
+  height: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.mapa-galera-numeros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+.mapa-galera-numeros div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.mapa-galera-numeros dt {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+.mapa-galera-numeros dd {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 1.4rem;
+}
+.mapa-galera-podio {
+  border-top: 1px solid var(--cor-borda);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.mapa-galera-podio h3 {
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+  margin: 0 0 6px;
+}
+.mapa-galera-podio ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 4px;
+}
+.mapa-galera-podio li span {
+  font-weight: 600;
+}
+.mapa-galera-podio li small {
+  color: var(--cor-texto-suave);
+  margin-left: 6px;
+}

@@ -5,6 +5,7 @@ import { arquivarViagem, buscarMinhasViagens, situacaoDaViagem, type ResumoDaVia
 import { hojeTexto } from '../features/destinos/datas'
 import { sair, useSessao } from '../features/auth/hooks'
 import FaixaConvidado from '../features/auth/FaixaConvidado'
+import MapaDaGalera from '../features/carimbos/MapaDaGalera'
 import { diasAte, formatarPeriodo } from '../lib/datas'
 import ApagarViagem from '../features/viagens/ApagarViagem'
 import Gaveta from '../components/ui/Gaveta'
@@ -160,6 +161,9 @@ export default function MinhasViagens() {
         </div>
 
         <FaixaConvidado />
+
+        {/* Spec 118b: o mapa da galera em cima (convidado pelo link não tem) */}
+        {!ehConvidado && sessao?.user.id && Array.isArray(viagens) && ativas.length + arquivadas.length > 0 && <MapaDaGalera meuId={sessao.user.id} />}
 
         {viagens === null && <Carregando texto="Arrumando a mala…" />}
         {viagens === 'erro' && <ErroNaTela aoTentar={carregar} />}

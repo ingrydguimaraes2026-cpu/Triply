@@ -6,7 +6,8 @@ import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ChevronRight, Clock, Plus, Ticket } from '../src/ui/icones'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import { descreverAtividade, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { buscarMapaDaGalera, descreverAtividade, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { MapaDaGalera } from '../src/ui/MapaDaGalera'
 import { carregarResumoDoInicio } from '../src/dados/resumoDoInicio'
 import { useCarregar } from '../src/dados/useCarregar'
 import { mola, useReducedMotion } from '../src/ui/movimento'
@@ -78,6 +79,9 @@ export default function MinhasViagens() {
 
         <FaixaConvidado />
 
+        {/* Spec 118b: o mapa da galera em cima (convidado pelo link não tem) */}
+        {!ehConvidado ? <MapaDoInicio meuId={meuId} /> : null}
+
         <Destaque viagem={destaque} meuId={meuId} aoAbrir={() => abrir(destaque)} />
 
         {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
@@ -91,6 +95,17 @@ export default function MinhasViagens() {
           </Pressable>
         ) : null}
       </ScrollView>
+    </View>
+  )
+}
+
+// Mapa da galera (spec 118b): carrega sozinho, pra não atrasar o resto do Início
+function MapaDoInicio({ meuId }: { meuId: string }) {
+  const carga = useCarregar(() => buscarMapaDaGalera(supabase), [meuId])
+  if (carga.status !== 'pronto' || !carga.dados) return null
+  return (
+    <View className="mb-5">
+      <MapaDaGalera dados={carga.dados} meuId={meuId} />
     </View>
   )
 }
