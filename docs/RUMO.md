@@ -105,16 +105,7 @@ Sai do papel de âncora. No máximo, o **Pix copia-e-cola fica como detalhe do F
 
 ## Como saber se está certo (validação)
 
-**Antes de construir**, fazer **3 telas falsas, uma por opção da parte 09**, e mostrar pra **10 organizadores** (gente fechando réveillon ou carnaval):
-- **A:** passaporte da galera (mapa do grupo com carimbos);
-- **B:** copiar a viagem de um grupo real;
-- **C:** convite que todo mundo topa + contagem no widget.
-
-Perguntar:
-- "qual você postaria?";
-- "qual faria seus amigos baixarem?".
-
-Leva 1 a 2 dias. **Se a A não ganhar com folga, voltar pro Victor antes de construir a spec 118.**
+O teste das 3 telas falsas com 10 organizadores saiu da fila (decisão do Victor, 08/11/2026): a âncora é o passaporte da galera e a gente constrói direto. As telas continuam em `docs/marketing/teste/ancora/` pra quem quiser usar.
 
 Sinais de que funciona (primeiros 30 dias depois de lançar a âncora):
 - 7 de 10 convidados abrem o link e topam sem instalar;
