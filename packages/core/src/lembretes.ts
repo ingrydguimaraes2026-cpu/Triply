@@ -81,18 +81,19 @@ export function textoDoLembrete(l: LembreteDoBanco, agora: Date = new Date()): A
 // ---------- Preferências de aviso (spec 033) ----------
 // Sem linha no banco = ligado. Só guardo o que a pessoa mudou.
 
-export type TipoAviso = 'lembretes' | 'fotos' | 'resumo'
+export type TipoAviso = 'lembretes' | 'fotos' | 'resumo' | 'lembrancas'
 
 export const TIPOS_DE_AVISO: { tipo: TipoAviso; nome: string; explica: string }[] = [
   { tipo: 'lembretes', nome: 'Lembretes de horário', explica: '1 hora antes de cada trajeto e ponto de encontro' },
   { tipo: 'resumo', nome: 'Resumo da noite', explica: 'Às 21h, o que acontece amanhã' },
+  { tipo: 'lembrancas', nome: 'Lembranças', explica: '"Há 1 ano vocês estavam em..." no dia certo' },
   { tipo: 'fotos', nome: 'Fotos do comboio', explica: 'Post novo e comentário nas suas fotos' },
 ]
 
 export async function buscarPreferenciasDeAviso(cli: ClienteTogether): Promise<Record<TipoAviso, boolean>> {
   const { data, error } = await cli.from('preferencias_aviso').select('tipo, ligado')
   if (error) throw error
-  const prefs: Record<TipoAviso, boolean> = { lembretes: true, fotos: true, resumo: true }
+  const prefs: Record<TipoAviso, boolean> = { lembretes: true, fotos: true, resumo: true, lembrancas: true }
   for (const linha of data ?? []) if (linha.tipo in prefs) prefs[linha.tipo as TipoAviso] = linha.ligado
   return prefs
 }

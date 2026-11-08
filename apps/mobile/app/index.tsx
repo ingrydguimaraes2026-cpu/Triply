@@ -6,7 +6,7 @@ import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ChevronRight, Clock, History, Locate, Plus, Ticket } from '../src/ui/icones'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import { buscarMapaDaGalera, descreverAtividade, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { buscarMapaDaGalera, descreverAtividade, lembrancasDeHoje, textoDaLembranca, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
 import { MapaDaGalera } from '../src/ui/MapaDaGalera'
 import { carregarResumoDoInicio } from '../src/dados/resumoDoInicio'
 import { useCarregar } from '../src/dados/useCarregar'
@@ -107,8 +107,25 @@ function MapaDoInicio({ meuId }: { meuId: string }) {
   const router = useRouter()
   const carga = useCarregar(() => buscarMapaDaGalera(supabase), [meuId])
   if (carga.status !== 'pronto' || !carga.dados) return null
+  const [lembranca] = lembrancasDeHoje(carga.dados.carimbos, carga.dados.viagens, hojeIso())
   return (
-    <View className="mb-5">
+    <View className="mb-5 gap-3">
+      {lembranca ? (
+        <Pressable
+          onPress={() => router.push(`/lembranca?viagem=${lembranca.viagemId}&dia=${lembranca.data}`)}
+          accessibilityRole="button"
+          className="flex-row items-center gap-3 rounded-2xl bg-couro px-4 py-3.5 active:opacity-90"
+        >
+          <History size={22} color={cor.dourado} />
+          <View className="flex-1">
+            <Text className="font-body-bold text-[11px] uppercase tracking-widest text-dourado">Neste dia</Text>
+            <Text className="font-body-bold text-[15px] text-creme" numberOfLines={2}>
+              {textoDaLembranca(lembranca).titulo}
+            </Text>
+          </View>
+          <ChevronRight size={20} color={cor.creme} />
+        </Pressable>
+      ) : null}
       <MapaDaGalera dados={carga.dados} meuId={meuId} aoAntigas={() => router.push('/viagem-antiga')} />
     </View>
   )

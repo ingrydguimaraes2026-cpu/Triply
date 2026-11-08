@@ -160,7 +160,31 @@ Deno.serve(async () => {
     }
   }
 
-  return json({ lembretes: lembretes?.length ?? 0, matches: matches?.length ?? 0, retrospectivas: prontas?.length ?? 0, enviados })
+  // Spec 118d: "Há 1 ano vocês estavam em Floripa". O banco devolve no máximo uma lembrança por
+  // pessoa por dia (entre 10h e 21h de Brasília), já sem quem desligou "Lembranças" no Perfil.
+  const { data: lembrancas, error: erroDaLembranca } = await admin.rpc('lembrancas_a_avisar')
+  if (erroDaLembranca) console.error('Avisos de lembrança:', erroDaLembranca.message)
+  for (const l of (lembrancas ?? []) as LembrancaDeHoje[]) {
+    const texto = { titulo: tituloDaLembranca(l), corpo: 'Abre pra ver os carimbos, as fotos daquele dia e postar.', url: `/viagem/${l.viagem_id}/retrospectiva`, tag: `lembranca-${l.data}` }
+    const { data: doApp } = await admin.from('push_expo').select('id, token').eq('usuario_id', l.usuario_id)
+    enviados += await mandarPeloExpo((id) => admin.from('push_expo').delete().eq('id', id), (doApp ?? []) as AparelhoDoApp[], {
+      title: texto.titulo,
+      body: texto.corpo,
+      data: { tipo: 'lembranca', viagemId: l.viagem_id, dia: l.data, url: texto.url },
+    })
+    const { data: aparelhos } = await admin.from('push_inscricoes').select('id, usuario_id, endpoint, p256dh, auth').eq('usuario_id', l.usuario_id)
+    for (const a of (aparelhos ?? []) as Inscricao[]) {
+      try {
+        await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(texto), { TTL: 60 * 60 * 12 })
+        enviados++
+      } catch (erro) {
+        const status = (erro as { statusCode?: number }).statusCode
+        if (status === 404 || status === 410) await admin.from('push_inscricoes').delete().eq('id', a.id)
+      }
+    }
+  }
+
+  return json({ lembretes: lembretes?.length ?? 0, matches: matches?.length ?? 0, retrospectivas: prontas?.length ?? 0, lembrancas: lembrancas?.length ?? 0, enviados })
 })
 
 // Serviço de push do Expo: até 100 avisos por chamada; a resposta vem na mesma ordem.
@@ -190,4 +214,14 @@ async function mandarPeloExpo(
     }
   }
   return enviados
+}
+
+// O mesmo texto de packages/core/src/ha-um-ano.ts (textoDaLembranca); a função do servidor não importa o core.
+type LembrancaDeHoje = { usuario_id: string; viagem_id: string; data: string; anos: number; lugares: string[]; so_o_mes: boolean; sozinho: boolean }
+function tituloDaLembranca(l: LembrancaDeHoje) {
+  const tempo = l.anos === 1 ? 'Há 1 ano' : `Há ${l.anos} anos`
+  const quem = l.sozinho ? 'você estava' : 'vocês estavam'
+  const ls = [...new Set(l.lugares)]
+  const onde = ls.length <= 1 ? (ls[0] ?? '') : ls.length === 2 ? `${ls[0]} e ${ls[1]}` : `${ls[0]}, ${ls[1]} e mais ${ls.length - 2}`
+  return `${tempo} ${quem} em ${onde}`
 }

@@ -1,4 +1,4 @@
-# HANDOFF: passaporte da galera (Fase 0), 08/11/2026 (atualizado depois da 0.10)
+# HANDOFF: passaporte da galera (Fase 0), 08/11/2026 (atualizado depois da 0.11)
 
 ## Pronto (commits locais na `monorepo-split`, sem push)
 - `92a23e1` tirou da fila o teste das 3 telas (0.1). A 118 não espera mais validação.
@@ -14,7 +14,10 @@
 
 - **0.10 reserva entra sem digitar (120b)** (commit "Reserva entra sem digitar"): core `reserva-lida.ts` + teste `reserva-lida.test.mjs` (13 passaram). App: `app/nova-reserva.tsx` (print, PDF ou colar texto → "lendo..." → conferir → confirmar), botão "Adicionar reserva" no Hoje, `src/lib/cofre.ts` (arquivo vai pro cofre ligado ao trajeto, casa ou agenda). Pacote novo `expo-document-picker`. Edge Function nova `supabase/functions/ler-reserva` (Haiku 5.5, JSON com esquema; conferida com `deno check` numa pasta temporária). **Não publicada.** Sem banco novo.
 
+- **0.11 "há 1 ano" (118d)** (commit "Há 1 ano vocês estavam em..."): core `ha-um-ano.ts` (`lembrancasDeHoje`, `textoDaLembranca`, `fotosDaLembranca`, `buscarLembranca`) + teste `ha-um-ano.test.mjs` (6 passaram). App: cartão "Neste dia" no Início (sai dos dados do mapa da galera), `app/lembranca.tsx` (`/lembranca?viagem=&dia=`), toque no aviso tipo `lembranca` abre essa tela. Preferência nova "Lembranças" em `TIPOS_DE_AVISO` (aparece sozinha no app e no site). Banco aplicado e registrado: `20261108210000_ha_um_ano.sql` (`preferencias_aviso` aceita `lembrancas`, tabela `avisos_de_lembranca`, `lembrancas_a_avisar()` só service role). Testado com rollback: 1ª chamada devolveu a lembrança, 2ª no mesmo dia nada. Tipos regenerados. Bloco novo na função `lembretes` (conferida com `deno check` em pasta temporária). **Não publicada:** a versão no ar ainda não manda lembrança.
+
 ## Não conferido
+- **0.11:** o app não foi aberto (precisa de build de desenvolvimento novo, como na 0.9/0.10). **Pra ligar o aviso:** com o OK do Victor, `npx supabase functions deploy lembretes --project-ref ltygqabtdbphtjscvuit`. Ficou de fora: a foto mais curtida dentro do próprio aviso (sai só texto) e a lembrança no site (no site, o aviso abre a retrospectiva da viagem). Pra testar sem esperar 1 ano: viagem antiga (0.9) com o mês atual cai no dia 1; ou um carimbo "de memória" com a data de hoje no ano passado.
 - **0.10:** nada aberto no celular (o app precisa de build de desenvolvimento novo por causa do `expo-location` e do `expo-document-picker`). **Pra ligar print e PDF (adiado pelo Victor em 08/11, fazer só quando ele pedir):** (1) Victor cria a chave na Anthropic e roda `npx supabase secrets set ANTHROPIC_API_KEY=... --project-ref ltygqabtdbphtjscvuit`; (2) com o OK dele, `npx supabase functions deploy ler-reserva --project-ref ltygqabtdbphtjscvuit`. Custo: Haiku 5.5 a US$ 0,10 / 0,50 por milhão de tokens, perto de 1 décimo de centavo por print. Ainda sem limite de leituras por viagem (a spec propõe limite no grátis). Sem a função, colar texto já funciona (regras no aparelho) e print/PDF abrem o formulário vazio com o arquivo guardado. Pra testar: Hoje → "Adicionar reserva" → "Colar o texto" com um e-mail do Airbnb → conferir → confirmar; ver a casa no "Onde dormimos" (se for ADM) e o "ver reserva". Casa lançada por membro entra só como opção.
 - **Cuidado (aprendido aqui):** `deno check` dentro do repositório escreveu `"workspaces"` no `package.json` da raiz (desfeito). Rodar o Deno numa pasta temporária com `{"nodeModulesDir":"auto"}`.
 - **0.9:** site conferido logado em 360px e 1280px, sem salvar (busca achou Paris, galera listou 1 pessoa, sem rolagem lateral, sem erro no console). **Não feito:** salvar de verdade (gravaria no banco de produção) e o app no celular (rolê com localização, foto antiga). Pra testar: no site, Minhas viagens → "A gente já foi pra..." → Paris, julho de 2019 → "Acender no mapa" e ver Paris acesa; no app, Início → "Rolê hoje" → "Estou aqui agora". O select de mês no site não mudou pelo robô de teste (com clique de verdade deve mudar; conferir). Dá pra apagar depois a viagem criada no teste.
@@ -27,8 +30,7 @@
 - `icones.test.mjs` já falhava antes (emojis antigos, inclusive os `❄` dos congelados).
 
 ## Próximo passo exato
-**0.11 · "Há 1 ano vocês estavam em..."** (spec [118d](specs/118-passaporte-da-galera.md)): aviso no celular no aniversário de um carimbo (com a foto mais curtida), lembrança ao tocar e cartão "neste dia" no Início; no máximo 1 aviso por dia, dá pra desligar no Perfil. Sem tabela nova (lê carimbos e viagens; viagens antigas da 0.9 guardam só o mês, com dia 1). O aviso deve sair pela função `lembretes` (publicar pede OK do Victor). Ligar print e PDF da 0.10 (chave + publicar a `ler-reserva`) ficou **pra muito depois** (decisão do Victor, 08/11): não puxar o assunto antes.
-Depois: 0.12 widget (precisa de build nativo).
+**0.12 · Widget da contagem** (spec [118e](specs/118-passaporte-da-galera.md)): precisa de build nativo (EAS). Antes, pedir pro Victor publicar a função `lembretes` (liga o aviso da 0.11). Ligar print e PDF da 0.10 (chave + publicar a `ler-reserva`) ficou **pra muito depois** (decisão do Victor, 08/11): não puxar o assunto antes.
 
 ## Cuidados
 - Ler `AGENTS.md`, `docs/RUMO.md`, spec 118.

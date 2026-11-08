@@ -81,6 +81,7 @@ export default function RootLayout() {
               <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: cor.fundo } }}>
                 <Stack.Screen name="nova-viagem" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="role" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="lembranca" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="viagem-antiga" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="nova-reserva" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="comecar" options={{ gestureEnabled: false, animation: 'fade' }} />

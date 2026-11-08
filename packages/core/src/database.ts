@@ -247,6 +247,42 @@ export type Database = {
           },
         ]
       }
+      avisos_de_lembranca: {
+        Row: {
+          dia: string
+          enviado_em: string
+          usuario_id: string
+          viagem_id: string | null
+        }
+        Insert: {
+          dia: string
+          enviado_em?: string
+          usuario_id: string
+          viagem_id?: string | null
+        }
+        Update: {
+          dia?: string
+          enviado_em?: string
+          usuario_id?: string
+          viagem_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_de_lembranca_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_de_lembranca_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       avisos_de_match: {
         Row: {
           catalogo_lugar_id: string | null
@@ -3433,6 +3469,18 @@ export type Database = {
           telefone: string
           tipo_sanguineo: string
           usuario_id: string
+        }[]
+      }
+      lembrancas_a_avisar: {
+        Args: never
+        Returns: {
+          anos: number
+          data: string
+          lugares: string[]
+          so_o_mes: boolean
+          sozinho: boolean
+          usuario_id: string
+          viagem_id: string
         }[]
       }
       lembretes_a_enviar: {

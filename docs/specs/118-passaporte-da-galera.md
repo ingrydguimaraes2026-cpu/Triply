@@ -1,6 +1,6 @@
 # 118. Passaporte da galera (a âncora)
 
-**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a, 118b, 118c e 118f prontas pra testar (08/11, banco aplicado); 118d e 118e a fazer
+**Fase:** 0 (vem antes de tudo) · **Tamanho:** G (dividida em 118a a 118f) · **Depende de:** 102, 105, 106, 108, 110, 117, 120 · **Status:** 118a, 118b, 118c, 118d e 118f prontas pra testar (08/11, banco aplicado); 118e a fazer
 
 > Esta spec é a âncora do produto. Leia antes o [`docs/RUMO.md`](../RUMO.md) e a [parte 09 do benchmark](../benchmark-2026-11/09-ancora-opcoes.md).
 > **Substitui** a versão anterior da 118 ("o ciclo viagem sem climão", com a cobrança do Pix como âncora), rejeitada pelo Victor em 03/11/2026.
@@ -55,6 +55,8 @@
 - Tocar abre a lembrança: carimbo, fotos daquele dia, quem estava, e "postar".
 - No Início, um cartão "neste dia" quando houver lembrança.
 - No máximo 1 aviso por dia; dá pra desligar no Perfil.
+
+**Como ficou (08/11):** regras em `packages/core/src/ha-um-ano.ts` (aniversário, 29/02 lembra em 28/02, viagem antiga lembra no dia 1 do mês e fala "em julho de 2019", "você" quando estava sozinho, fotos do dia mais curtidas primeiro) + teste `ha-um-ano.test.mjs`. Banco `20261108210000_ha_um_ano.sql`: tipo de aviso `lembrancas` (botão "Lembranças" nas preferências de aviso, app e site), tabela `avisos_de_lembranca` (a trava de 1 por pessoa por dia) e `lembrancas_a_avisar()` (só service role, 10h às 21h de Brasília). A função `lembretes` manda o aviso (tipo `lembranca`); tocar abre `/lembranca?viagem=&dia=` no app (carimbo, fotos daquele dia ou as mais curtidas, quem estava, "Postar" 9:16). Cartão "Neste dia" no Início do app. Ficou de fora: a foto dentro do próprio aviso (o aviso sai só com texto) e a lembrança no site.
 
 ### 118e · Widget da contagem
 - Widget na tela do celular (iPhone e Android): **"Floripa em 23 dias"** com a foto de capa da viagem.
