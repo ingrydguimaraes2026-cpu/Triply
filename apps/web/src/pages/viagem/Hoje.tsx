@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BedDouble, CalendarDays, Clock, ExternalLink, KeyRound, Luggage, MapPin, TrainFront, Wifi } from '../../components/ui/icones'
+import { BedDouble, CalendarDays, CircleCheck, Clock, ExternalLink, KeyRound, Luggage, MapPin, TrainFront, Wifi } from '../../components/ui/icones'
 import {
   agoraEProximo,
   arquivoDeCada,
@@ -16,6 +16,7 @@ import {
   horaNoFuso,
   linksDeGuardaVolumes,
   montarAgendaDoDia,
+  registrarChegada,
   type Tables,
 } from '@together/core'
 import { supabase } from '../../lib/supabase'
@@ -33,7 +34,7 @@ import Cartao from '../../components/ui/Cartao'
 import Norti from '../../components/ui/Norti'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
 import OndeEstaOComboio from '../../features/hoje/OndeEstaOComboio'
-import CarimbosDaViagem from '../../features/carimbos/CarimbosDaViagem'
+import CarimbosDaViagem, { type ChegadaNoDestino } from '../../features/carimbos/CarimbosDaViagem'
 import './abas.css'
 import './hoje.css'
 
@@ -72,6 +73,9 @@ export default function Hoje() {
   const [arquivos, setArquivos] = useState<Arquivo[]>([])
   const [versaoDoCofre, setVersaoDoCofre] = useState(0) // sobe quando alguém anexa uma reserva
   const [agora, setAgora] = useState(() => new Date())
+  // Spec 120c: o "Cheguei" (plano do dia ou casa) libera o carimbo do destino de hoje
+  const [chegada, setChegada] = useState<ChegadaNoDestino>(null)
+  const [chegueiNaCasa, setChegueiNaCasa] = useState(false)
   // Convidado pelo link vê o plano do dia, mas não o endereço, o código nem as reservas (spec 120a)
   const { ehConvidado } = useSessao()
 
@@ -134,6 +138,21 @@ export default function Hoje() {
   const cofrePorTrajeto = arquivoDeCada(arquivos, 'trajeto_id')
   const cofrePorEvento = arquivoDeCada(arquivos, 'evento_id')
   const recarregarCofre = () => setVersaoDoCofre((v) => v + 1)
+
+  function carimbarHoje() {
+    if (onde) setChegada({ destinoId: onde.id, vez: Date.now() })
+  }
+
+  async function chegarNaCasa(nome: string) {
+    setChegueiNaCasa(true)
+    try {
+      await registrarChegada(supabase, viagem.id, nome)
+      carimbarHoje()
+    } catch (e) {
+      console.error('Erro ao registrar a chegada na casa:', e)
+      setChegueiNaCasa(false)
+    }
+  }
 
   return (
     <div className="hoje">
@@ -213,6 +232,18 @@ export default function Hoje() {
                   </small>
                 )}
                 {dormimos.endereco && <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} rotulo="Ir / corrida" />}
+                {/* Spec 120c: "Cheguei na casa" avisa o grupo e carimba o destino */}
+                {naViagem &&
+                  !ehConvidado &&
+                  (chegueiNaCasa ? (
+                    <span className="hoje-plano-chegou">
+                      <CircleCheck size={15} aria-hidden="true" /> Chegamos na casa
+                    </span>
+                  ) : (
+                    <button type="button" className="botao hoje-plano-cheguei" onClick={() => void chegarNaCasa(dormimos.nome)}>
+                      <MapPin size={15} aria-hidden="true" /> Cheguei na casa
+                    </button>
+                  ))}
                 {/* Spec 120a: ver (ou anexar) a reserva da casa */}
                 <BilheteDoTrajeto
                   viagemId={viagem.id}
@@ -237,6 +268,7 @@ export default function Hoje() {
             podeChegar={!ehConvidado}
             reservaDoEvento={(id) => cofrePorEvento.get(id)}
             aoMudarCofre={recarregarCofre}
+            aoChegar={carimbarHoje}
           />}
 
         {bateEVolta && (
@@ -301,7 +333,7 @@ export default function Hoje() {
         )}
 
         {/* Spec 118a: carimbo cai sozinho pela localização (com a permissão já dada) */}
-        <CarimbosDaViagem />
+        <CarimbosDaViagem chegada={chegada} />
 
         {/* Spec 107: localização ao vivo (só com mais gente no comboio) */}
         {membros.length > 1 && <OndeEstaOComboio viagemId={viagem.id} membros={membros} meuId={meuId} />}

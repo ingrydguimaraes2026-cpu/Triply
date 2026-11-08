@@ -28,7 +28,10 @@ import './carimbos.css'
 // Carimbos da viagem (spec 118a): um por destino, apagado até alguém do grupo provar que esteve lá.
 // Prova: localização (só com o site aberto, nas datas), foto com GPS (no post) ou "Cheguei" (120c).
 // Sem prova: "a gente esteve aqui" (traço de memória). A localização da pessoa não sai do navegador.
-export default function CarimbosDaViagem() {
+// `chegada`: o "Cheguei" do Hoje (spec 120c) avisa aqui qual destino carimbar; `vez` muda a cada toque.
+export type ChegadaNoDestino = { destinoId: string; vez: number } | null
+
+export default function CarimbosDaViagem({ chegada = null }: { chegada?: ChegadaNoDestino }) {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { ehConvidado } = useSessao()
   const [carimbos, setCarimbos] = useState<Carimbo[] | null>(null)
@@ -86,6 +89,15 @@ export default function CarimbosDaViagem() {
     },
     [carimbos, destinos, viagem, liberar],
   )
+
+  // Spec 120c: "Cheguei" no Hoje libera o carimbo do destino de hoje (se ainda estiver apagado)
+  useEffect(() => {
+    if (!chegada || !carimbos || !podeLiberar) return
+    const destino = destinos.find((d) => d.id === chegada.destinoId)
+    if (!destino || carimbos.some((c) => c.destino_id === destino.id)) return
+    liberar(destino, 'hoje').catch((e) => console.error('Erro ao carimbar pelo Cheguei:', e))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chegada?.vez])
 
   // Na viagem, com a permissão já dada: confere sozinho ao abrir (sem perguntar de novo)
   const carregou = carimbos !== null

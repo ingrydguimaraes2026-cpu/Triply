@@ -32,7 +32,10 @@ import { cor } from '../../../theme'
 // Carimbos da viagem (spec 118a): um por destino, apagado até alguém do grupo provar que esteve lá.
 // Prova: localização (só com o app aberto, nas datas), foto com GPS ou "Cheguei" (120c).
 // Sem prova: "a gente esteve aqui" (traço de memória). A localização não sai do celular.
-export function CarimbosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: string }) {
+// `chegada`: o "Cheguei" do Hoje (spec 120c) avisa qual destino carimbar; `vez` muda a cada toque.
+export type ChegadaNoDestino = { destinoId: string; vez: number } | null
+
+export function CarimbosDaViagem({ viagem, meuId, chegada = null }: { viagem: ViagemComDetalhes; meuId: string; chegada?: ChegadaNoDestino }) {
   const { ehConvidado } = useSessao()
   const [destinos, setDestinos] = useState<DestinoDoCarimbo[]>([])
   const [carimbos, setCarimbos] = useState<Carimbo[] | null>(null)
@@ -97,6 +100,15 @@ export function CarimbosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes;
     },
     [carimbos, destinos, viagem.dataInicio, viagem.dataFim, liberar],
   )
+
+  // Spec 120c: "Cheguei" no Hoje libera o carimbo do destino de hoje (se ainda estiver apagado)
+  useEffect(() => {
+    if (!chegada || !carimbos || !podeLiberar) return
+    const destino = destinos.find((d) => d.id === chegada.destinoId)
+    if (!destino || carimbos.some((c) => c.destino_id === destino.id)) return
+    liberar(destino, 'hoje').catch((e) => console.error('Erro ao carimbar pelo Cheguei:', e))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chegada?.vez])
 
   // Na viagem, com a permissão já dada: confere sozinho ao abrir (sem perguntar)
   const carregou = carimbos !== null

@@ -64,17 +64,19 @@ type PropsDoPlano = {
   podeChegar: boolean // convidado pelo link só vê
   reservaDoEvento: (eventoId: string) => Arquivo | undefined
   aoMudarCofre: () => void
+  aoChegar?: () => void // spec 120c: libera o carimbo do destino de hoje
 }
 
-export function PlanoDoDia({ viagemId, plano, podeChegar, reservaDoEvento, aoMudarCofre }: PropsDoPlano) {
+export function PlanoDoDia({ viagemId, plano, podeChegar, reservaDoEvento, aoMudarCofre, aoChegar }: PropsDoPlano) {
   const [chegamos, setChegamos] = useState<Set<string>>(() => new Set())
 
-  // Avisa o grupo (chegadas, spec 051) e marca o lugar como visitado. O carimbo (118a) entra na 120c.
+  // Avisa o grupo (chegadas, spec 051), marca o lugar como visitado e libera o carimbo (120c).
   async function cheguei(item: ItemDoPlano) {
     setChegamos((s) => new Set(s).add(item.chave))
     try {
       await registrarChegada(supabase, viagemId, item.titulo)
       if (item.lugarId) await marcarVisitado(item.lugarId, true)
+      aoChegar?.()
     } catch (e) {
       console.error('Erro ao registrar a chegada:', e)
       setChegamos((s) => {

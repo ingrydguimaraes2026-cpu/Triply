@@ -1,6 +1,6 @@
 # 120. "Hoje" com as reservas do grupo
 
-**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco aplicado · 120b e 120c a fazer
+**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco aplicado · 120c pronta pra testar (08/11) · 120b a fazer
 
 > Camada 2 do [`docs/RUMO.md`](../RUMO.md): o que faz abrir o app todo dia durante a viagem. Alimenta o [passaporte da galera (118)](118-passaporte-da-galera.md).
 
@@ -81,7 +81,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 - Regra: `packages/core/src/hoje-do-grupo.ts` (`quemChegaESaiHoje`, `planoDoDia`, `arquivoDeCadaTrajeto`, `viagemAcontecendo`). Teste: `apps/web/tests/hoje-do-grupo.test.mjs`.
 - App: `apps/mobile/app/hoje.tsx` + `src/ui/BilheteDoDia.tsx`; abre sozinho em `app/index.tsx`.
 - Site: `apps/web/src/pages/viagem/Hoje.tsx` + `src/features/hoje/ReservasDoDia.tsx` (o pedido foi fazer no site também, apesar do "não inclui").
-- "Cheguei" hoje avisa o grupo (chegadas, 051) e marca o lugar como visitado. O carimbo é a 120c.
+- "Cheguei" hoje avisa o grupo (chegadas, 051), marca o lugar como visitado e libera o carimbo do destino de hoje (120c, 08/11). "Cheguei na casa" no Onde dormimos faz o mesmo. O "cheguei bem" (051) da Overview continua lá fora da viagem.
 - Banco (`20261103120000_reservas_no_hoje.sql`, aplicado 03/11): arquivo do cofre amarra em hospedagem e agenda, `hospedagens.contato_anfitriao`, `trajetos.quem_busca_id`. Onde preencher (site): contato no formulário da hospedagem, "quem vai buscar" no do trajeto, reserva anexada no Hoje.
 
 ## Perguntas em aberto

@@ -27,7 +27,7 @@ import {
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Clima } from '../src/ui/Clima'
-import { CarimbosDaViagem } from '../src/ui/viagem/CarimbosDaViagem'
+import { CarimbosDaViagem, type ChegadaNoDestino } from '../src/ui/viagem/CarimbosDaViagem'
 import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
 import { useSessao } from '../src/lib/sessao'
@@ -97,6 +97,8 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   // Convidado pelo link vê o plano do dia, mas não o endereço, o código nem as reservas (spec 120a)
   const { ehConvidado } = useSessao()
   const [chegamos, setChegamos] = useState<Set<string>>(() => new Set())
+  // Spec 120c: o "Cheguei" (plano do dia ou casa) libera o carimbo do destino de hoje
+  const [chegada, setChegada] = useState<ChegadaNoDestino>(null)
   // Só em desenvolvimento: /hoje?dia=2027-06-07T10:00 simula outro dia (pra testar fora da viagem)
   const { dia: simulado } = useLocalSearchParams<{ dia?: string }>()
   const carga = useCarregar(viagem ? () => buscarTudo(viagem.id) : null, [viagem?.id])
@@ -128,14 +130,15 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   const movimentos = quemChegaESaiHoje(hoje, trajetos, destinos, membros, diaNoFuso, horaNoFuso)
   const plano = planoDoDia(hoje, { destinos, eventos, roteiros, lugares })
 
-  // "Cheguei" (spec 120a): avisa o grupo (chegadas, spec 051) e marca o lugar como visitado.
-  // O carimbo do lugar (118a) entra na 120c.
-  async function cheguei(item: (typeof plano)[number]) {
+  // "Cheguei" (spec 120a): avisa o grupo (chegadas, spec 051), marca o lugar como visitado
+  // e libera o carimbo do destino de hoje (120c). Serve pro plano do dia e pra casa.
+  async function cheguei(item: { chave: string; titulo: string; lugarId: string | null }) {
     if (!viagem) return
     setChegamos((s) => new Set(s).add(item.chave))
     try {
       await registrarChegada(supabase, viagem.id, item.titulo)
       if (item.lugarId) await supabase.rpc('marcar_visitado', { p_lugar: item.lugarId, p_visitado: true })
+      if (onde) setChegada({ destinoId: onde.id, vez: Date.now() })
     } catch {
       setChegamos((s) => {
         const n = new Set(s)
@@ -188,7 +191,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         )}
 
         {/* Spec 118a: o carimbo do lugar cai sozinho pela localização (permissão já dada) */}
-        <CarimbosDaViagem viagem={viagem} meuId={meuId} />
+        <CarimbosDaViagem viagem={viagem} meuId={meuId} chegada={chegada} />
 
         {/* Spec 120a: convidado pelo link não vê endereço nem código */}
         {onde && !ehConvidado ? (
@@ -242,6 +245,19 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
                   {dormimos.endereco ? <BotaoIr alvo={{ nome: dormimos.nome, endereco: dormimos.endereco }} /> : null}
                   <VerReserva caminho={arquivos.hospedagem.get(dormimos.id)?.caminho ?? null} />
                 </View>
+                {/* Spec 120c: "Cheguei na casa" avisa o grupo e carimba o destino */}
+                {chegamos.has('casa') ? (
+                  <Text className="font-body-bold text-[13px] text-verde">Chegamos na casa</Text>
+                ) : (
+                  <Pressable
+                    onPress={() => void cheguei({ chave: 'casa', titulo: dormimos.nome, lugarId: null })}
+                    accessibilityRole="button"
+                    className="flex-row items-center gap-1.5 self-start rounded-full bg-couro px-4 py-2 active:opacity-80"
+                  >
+                    <MapPin size={15} color="#fff" />
+                    <Text className="font-body-bold text-[13px] text-white">Cheguei na casa</Text>
+                  </Pressable>
+                )}
               </>
             ) : (
               <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
