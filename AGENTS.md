@@ -1,4 +1,4 @@
-# AGENTS.md — Tripwave
+# AGENTS.md — Norti
 
 Regras pra qualquer assistente de IA (Claude Code, Cursor, Codex) que trabalhar neste projeto.
 
@@ -148,5 +148,6 @@ Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais 
 - Concorrentes: `docs/benchmark.md`
 - Glossário pra Ingryd: `docs/glossario.md`
 - Guia "como pedir coisas pro Claude": `docs/COMO-TRABALHAR.md`
-- O nome do produto é **Tripwave** (decidido em 02/11/2026; antes foi "Triply" e "Together"). Ver `docs/marketing/NOME-E-VOZ.md`.
+- O nome do produto é **Norti** (decidido pelo Victor em 08/11/2026; antes foi "Tripwave", "Triply" e "Together"). É o mesmo nome da mascote; fala-se "a Norti". Ver `docs/marketing/NOME-E-VOZ.md`.
+- Nomes internos com "tripwave" ficam de propósito: chaves `tripwave.*` salvas no celular, variáveis `TRIPWAVE_*` do teste e o nome de arquivos antigos. Domínios e @ (`tripwave.app`, `@tripwaveapp`) ainda não foram trocados: decisão do Victor.
 - Nomes internos continuam com "together" de propósito: pacote `@together/core`, chaves `together:*` no navegador, caches, link `together://` do app e o endereço `together-viagem.vercel.app`. Trocar esses quebra login, convites e dados salvos. O repositório no GitHub continua se chamando Triply.

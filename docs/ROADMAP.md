@@ -9,7 +9,7 @@ As ondas abaixo continuam como histórico e catálogo. **Item de onda que não s
 
 > Meta da manhã de 03/11 ("viagem sem climão", com a cobrança do Pix como âncora): rejeitada pelo Victor no mesmo dia. O Pix ficou só como detalhe do acerto no Financeiro.
 
-> Meta antiga (29/10): "o comboio planeja, decide, paga, se encontra e guarda as memórias sem sair do Together". Trocada porque o grupo vive no WhatsApp; o Tripwave abastece o grupo em vez de tentar substituir.
+> Meta antiga (29/10): "o comboio planeja, decide, paga, se encontra e guarda as memórias sem sair do Together". Trocada porque o grupo vive no WhatsApp; a Norti abastece o grupo em vez de tentar substituir.
 
 > **Ordem de execução de tudo:** `docs/FILA-completa.md` (uma task atrás da outra). Ideias vindas de outros apps: `docs/ideias-de-outros-apps.md`.
 

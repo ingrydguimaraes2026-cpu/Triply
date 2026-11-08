@@ -3,7 +3,7 @@ import { Animated, Easing, Platform, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Norti } from './Norti'
 
-// Abertura (tela "1o" do design): a Norti entra com mola, depois "Tripwave" e
+// Abertura (tela "1o" do design): a Norti entra com mola, depois "Norti" e
 // "Viajem juntos.", com três pontinhos pulando embaixo.
 const nativo = Platform.OS !== 'web'
 
@@ -32,7 +32,7 @@ export function Splash() {
           <Norti tamanho={190} />
         </Animated.View>
         <Animated.Text style={[{ fontFamily: 'Fraunces_600SemiBold', fontSize: 48, letterSpacing: -1, color: '#3B2715' }, subir(nome)]}>
-          Tripwave
+          Norti
         </Animated.Text>
         <Animated.Text style={[{ fontFamily: 'PlusJakartaSans_400Regular', fontSize: 15, color: '#6E5540' }, subir(frase)]}>
           Viajem juntos.

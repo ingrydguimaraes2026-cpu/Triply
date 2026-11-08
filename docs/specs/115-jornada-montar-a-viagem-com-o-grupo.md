@@ -3,7 +3,7 @@
 **Fase:** 2 · **Tamanho:** G · **Depende de:** 114 (Explorar) · **Status:** Pronto pra testar (v2, 2026-11-02: deslize dentro da criação e roteiro editável, inspirado no Roameo)
 
 ## Objetivo
-Quem abre o Tripwave pela primeira vez sai com **um roteiro de verdade, montado com o grupo**, sem se perder. O app não só organiza a viagem que a pessoa já tem na cabeça: ele **ajuda a montar** o roteiro, a partir do destino e do que cada um quer fazer.
+Quem abre a Norti pela primeira vez sai com **um roteiro de verdade, montado com o grupo**, sem se perder. O app não só organiza a viagem que a pessoa já tem na cabeça: ele **ajuda a montar** o roteiro, a partir do destino e do que cada um quer fazer.
 
 ## Por que
 Teste do Victor em 02/11/2026, no site: "eu, que sou o criador, estou me sentindo perdido". O que o código mostra hoje:

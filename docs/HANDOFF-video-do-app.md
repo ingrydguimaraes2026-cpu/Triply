@@ -3,7 +3,7 @@
 Data: 03/11/2026. Branch `monorepo-split`. Pasta: `docs/marketing/video/`.
 
 ## O pedido do Victor
-Um vídeo curto (v1 em pé 1080x1920; **v2 horizontal 1920x1080, no estilo do vídeo do HPM**, pedido do Victor em 03/11), mostrando o Tripwave de verdade dentro de um iPhone.
+Um vídeo curto (v1 em pé 1080x1920; **v2 horizontal 1920x1080, no estilo do vídeo do HPM**, pedido do Victor em 03/11), mostrando a Norti de verdade dentro de um iPhone.
 Precisa de animações caprichadas e narração. O Victor quer **fazer tudo sem precisar dele**: nada de pedir pra ele entrar na conta.
 Precisa de um comboio com várias pessoas e conteúdo bonito (dá pra copiar da Eurotrip).
 

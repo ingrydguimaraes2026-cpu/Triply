@@ -287,7 +287,7 @@ function PostarCarimbo({ carimbo, nomeDaViagem, aoFechar }: { carimbo: Carimbo |
               </View>
               <View className="items-center gap-3">
                 <Text className="font-body-medium text-[15px] text-creme">{carimbo.como === 'memoria' ? 'A gente esteve aqui.' : 'Carimbado pela galera.'}</Text>
-                <Text className="font-body-bold text-[11px] uppercase tracking-widest text-dourado">Feito com Tripwave</Text>
+                <Text className="font-body-bold text-[11px] uppercase tracking-widest text-dourado">Feito com Norti</Text>
               </View>
             </View>
           </View>

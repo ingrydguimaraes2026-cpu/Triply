@@ -240,7 +240,7 @@ Critério: força da evidência de que o padrão sozinho gera download, volta e 
 | 7 | **"Qualquer lugar"** (inspiração a partir de restrição: dinheiro, data, cidade) | Skyscanner Everywhere, Google Explore, Going | Skyscanner chama de recurso mais procurado; Going vive disso | Média. "Pra onde o grupo dá conta de ir" é bom 1º minuto |
 | 8 | **Planejar junto num mapa** (roteiro colaborativo) | Wanderlog, Stippl, Airbnb wishlist, Roadtrippers | Uso grande, mas ninguém é lembrado só por isso; Chesky admite que grupo é o buraco | Baixa como âncora. É base obrigatória, não diferencial |
 
-### O que isso diz pro Tripwave (curto)
+### O que isso diz pro Norti (curto)
 - **Âncora candidata:** a **memória do comboio que se monta sozinha** (padrão 1), com mapa do grupo e conquistas (3), alimentada pelo **ao vivo da viagem** (4), e decisões feitas por **comparação divertida** (5).
 - O que já temos (planejar, gastos, roteiro) é padrão 8: necessário, mas não é o motivo de lembrar do app.
 - O objeto final precisa ser **postável** (recap em formato story, mapa do grupo) e **físico** se possível (livro do comboio = receita, como o Polarsteps).

@@ -56,7 +56,7 @@ Este arquivo junta as 4 partes. Os detalhes e as fontes estão nelas:
 
 ## A proposta: uma coisa só, a melhor do Brasil
 
-> **Tripwave: tira a viagem do grupo do WhatsApp e leva até o Pix pago.**
+> **Norti: tira a viagem do grupo do WhatsApp e leva até o Pix pago.**
 > O organizador para de ser o chato que cobra. O resto do grupo só toca no link.
 
 O ciclo, em 4 passos (cada um já existe em parte no código):

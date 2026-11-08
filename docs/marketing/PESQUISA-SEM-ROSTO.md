@@ -88,7 +88,7 @@ O que se repete em praticamente todos os casos de app que cresceu no orgânico:
 3. Print fictício: "eu te faço o Pix amanhã"
 4. Print fictício: "quem pagou a casa mesmo?"
 5. **Print real da tela de acertos do app** + Norti Apontando: "a Norti anota quem pagou o quê na hora"
-6. Norti Oi + "Tripwave · lista de espera no perfil"
+6. Norti Oi + "Norti · lista de espera no perfil"
 
 **S2. Slideshow "Checklist do réveillon"** (o R7 virando carrossel no TikTok também; é o formato de "salvar")
 

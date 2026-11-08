@@ -272,7 +272,7 @@ h1{font-size:34px;line-height:1.05;margin:10px 0 16px}h1.g{font-size:42px}
 `
 const html = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Direções do Passaporte</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"><style>${css}</style></head><body>
-<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Tripwave · conceito "passaporte do comboio"</h1>
+<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Norti · conceito "passaporte do comboio"</h1>
 <p style="margin:0 0 30px 6px;color:#7A5F45;max-width:900px">Mesmas 5 telas nas 3 direções. Regra das 3: uma ação por tela, texto de uma linha, 4 abas (Passaporte, Roteiro, Contas, Fotos). Ícones e selos são os nossos de verdade; fotos do nosso catálogo de Lisboa.</p>
 ${secao('a', 'A · Passaporte de papel', 'Claro e quente. A tela da viagem é uma página de passaporte: cada etapa vira um carimbo (selo) que o grupo vai conquistando. Embaixo, só o próximo carimbo e um botão.', A)}
 ${secao('b', 'B · A foto manda', 'Escuro e imersivo. A foto do destino ocupa a tela inteira; por cima, só o nome gigante, a fileira de selos e um cartão de vidro com a próxima ação.', B)}

@@ -1,4 +1,4 @@
-# HANDOFF: marketing do Tripwave
+# HANDOFF: marketing da Norti
 
 *02/11/2026. Sessão de marketing (sem código: código e banco ficam com as sessões de dev).*
 
@@ -7,7 +7,7 @@
 | O quê | Onde |
 |---|---|
 | Estratégia de redes (X, TikTok, Instagram, contato direto com influenciadores), ideias da Ingryd, plano de 30 dias | `docs/marketing/ESTRATEGIA-REDES.md` |
-| Nome **Tripwave** (decidido), triagem de domínios e @, tom de voz, rodadas de nomes descartados | `docs/marketing/NOME-E-VOZ.md` |
+| Nome **Norti** (decidido), triagem de domínios e @, tom de voz, rodadas de nomes descartados | `docs/marketing/NOME-E-VOZ.md` |
 | Mascote **Norti**, versão "Pin" (bússola em forma de pino de mapa, chapéu de safári, agulha vermelha) | `docs/marketing/MASCOTE.md` |
 | 9 poses PNG transparentes, ficha do personagem, vídeo 32 s | `docs/marketing/norti/` |
 | Poses recortadas e leves (360 px) pra páginas web | `docs/marketing/norti/web/` |
@@ -23,7 +23,7 @@
 
 **Páginas em HTML, só no repo (abrir com duplo clique; não publicar na nuvem do Claude):**
 - Calendário das 2 semanas: `docs/marketing/calendario-2-semanas.html`
-- Ícones do Tripwave: `docs/marketing/icones-tripwave.html`
+- Ícones da Norti: `docs/marketing/icones-tripwave.html`
 
 **Páginas no claude.ai:** se foram feitas na conta da Humana, apagar de lá e manter só o HTML do repo. As da conta pessoal do Victor podem ficar.
 - Caderno de marketing: https://claude.ai/artifact/HzBVv7tXWkKLmAqu4x8nom (fonte: `docs/marketing/tripwave-marketing.html`).
@@ -41,8 +41,8 @@
    - ✅ **Grupo D (X) feito** (03/11): 30 posts da bolha dev na mesma `posts.csv` e 4 padrões no fim do `PADROES.md` (processo copiável, número real, puxar conversa, surfar o assunto do dia). Lido com a conta do Victor no navegador do app, só leitura. Ideia pronta pro 1º post do X: o próprio resultado do benchmark.
    - **Atenção:** o navegador do app do Claude está **logado numa conta do TikTok**. O benchmark só leu páginas, mas confira de quem é a conta e saia dela se for a pessoal.
 
-1. **Dupla registra** tripwave.app e tripwave.com.br, cria `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), busca "Tripwave" no INPI (classes 9, 39, 42).
-2. **Nome da Norti como nome do app?** Em discussão (NOME-E-VOZ.md, rodada 7). Hoje: app Tripwave, mascote Norti.
+1. **Dupla registra** tripwave.app e tripwave.com.br, cria `@tripwaveapp` (X) e `@tripwave.app` (Instagram e TikTok), busca "Norti" no INPI (classes 9, 39, 42).
+2. **Nome da Norti como nome do app?** Em discussão (NOME-E-VOZ.md, rodada 7). Hoje: app Norti, mascote Norti.
 3. ~~**Sessão de dev:** migration da lista de espera e troca da Agulha pela Norti~~ ✅ 02/11/2026: tabela no ar e testada; Norti no site (`<mascot-view>`, `apps/web/src/components/ui/Norti.tsx`, poses em `apps/web/public/norti`) e no app (`apps/mobile/src/ui/Norti.tsx`, poses em `apps/mobile/assets/norti`). Falta: ícone do app e splash nativo (ainda com o desenho antigo), e versão nativa com `app-ios` se um dia tiver.
 4. **Ingryd revisa** `CONTEUDO-INICIAL.md` (piadas e bios). Post "em breve" do X só depois que a lista de espera funcionar.
 5. **Personalidade da Norti** com a Ingryd (piadas fixas), antes de gravar a série "tipos de amigo".
@@ -50,7 +50,7 @@
 
 ## Cuidados
 
-- **Nuvem do Claude (Artifacts), regra do Victor (esclarecida em 03/11/2026):** na conta da **Humana**, **nada** do Tripwave: lá as páginas ficam só como HTML no repo. Na conta **pessoal do Victor** (este PC, `victuribdev@gmail.com`), **pode** publicar Artifacts. Na dúvida sobre qual conta está em uso, pergunte antes de publicar.
+- **Nuvem do Claude (Artifacts), regra do Victor (esclarecida em 03/11/2026):** na conta da **Humana**, **nada** da Norti: lá as páginas ficam só como HTML no repo. Na conta **pessoal do Victor** (este PC, `victuribdev@gmail.com`), **pode** publicar Artifacts. Na dúvida sobre qual conta está em uso, pergunte antes de publicar.
 
 - Sessão de marketing **não mexe em código, banco ou migrations**.
 - Ao usar conversas privadas que o Victor mandar (ex.: WhatsApp), **usar só as ideias**, sem citar a conversa nos docs.

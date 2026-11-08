@@ -15,12 +15,12 @@
 Limites: X, 160 caracteres. Instagram, 150. TikTok, 80.
 
 ### X: `@tripwaveapp`
-- **Nome:** Tripwave
+- **Nome:** Norti
 - **Bio:** `O app da viagem com a galera: roteiro, quem pagou o quê e o Pix de cada um numa tela só. Feito por uma dupla, em público. Em breve 🧭`
 - **Link:** `tripwave.app/espera?origem=x`
 
 ### Instagram: `@tripwave.app`
-- **Nome:** Tripwave | viagem em grupo
+- **Nome:** Norti | viagem em grupo
 - **Bio:**
   ```
   A viagem com a galera, finalmente fora do grupo do zap 🧭
@@ -31,7 +31,7 @@ Limites: X, 160 caracteres. Instagram, 150. TikTok, 80.
 - **Destaques (stories fixos):** "O que é", "Réveillon", "Norti", "Bastidores".
 
 ### TikTok: `@tripwave.app`
-- **Nome:** Tripwave
+- **Nome:** Norti
 - **Bio:** `A Norti organiza a viagem do grupo. Você só aparece 🧭`
 - **Link:** `tripwave.app/espera?origem=tiktok` (o TikTok costuma liberar link na bio só com 1.000 seguidores ou conta comercial; até lá, escrever "link no Instagram").
 
@@ -107,7 +107,7 @@ Slides (texto curto, a Norti num canto):
 5. Combinado de como dividir: igual ou por consumo
 6. O mercado e a bebida anotados na hora, não no dia 2
 7. Pix de cada um acertado antes de voltar
-8. "Salva e manda no grupo" + "o Tripwave faz a lista inteira com vocês. Em breve". Pose **Apontando**.
+8. "Salva e manda no grupo" + "a Norti faz a lista inteira com vocês. Em breve". Pose **Apontando**.
 - **Legenda:** "salva pra não esquecer o item 6 🙃"
 
 ### R8. Dica útil: "Como dividir a casa do réveillon sem briga"
@@ -130,7 +130,7 @@ eu sou dev. a Ingryd tá aprendendo a programar.
 
 a gente tá construindo um app de viagem em grupo, juntos, com IA, e vamos contar tudo aqui: o que deu certo, o que quebrou e os números.
 
-chama Tripwave 🧭
+chama Norti 🧭
 ```
 Com a ficha da Norti ou um print do app.
 
@@ -149,7 +149,7 @@ a gente quer acabar com pelo menos 4 desses
 
 ### P3. O "em breve" (dia 3, o post principal)
 ```
-tripwave: você vê o roteiro, quem pagou o quê e o Pix de cada um numa tela, e o grupo do zap para de virar bagunça.
+norti: você vê o roteiro, quem pagou o quê e o Pix de cada um numa tela, e o grupo do zap para de virar bagunça.
 
 em breve
 ```
@@ -158,7 +158,7 @@ em breve
 
 ### P4. Bastidor: a mascote (dia 4)
 ```
-a mascote do Tripwave mudou 3 vezes em um dia.
+a mascote do app mudou 3 vezes em um dia.
 
 começou como uma bússola redonda. virou uma bússola em forma de pino de mapa, de chapéu de safári.
 
@@ -175,7 +175,7 @@ nomes que a gente descartou pro app:
 - Comboio (é trem em Portugal)
 - Triplyy (letra dobrada, não)
 
-ficou Tripwave: trip + wave. o grupo pega a mesma onda e vai junto
+ficou Norti: trip + wave. o grupo pega a mesma onda e vai junto
 ```
 
 ### P6. A Ingryd aprendendo (dia 6, no perfil dela)
@@ -190,7 +190,7 @@ Funciona porque é verdade e pouca gente mostra esse lado.
 
 ### P7. Resumo de sexta (toda semana)
 ```
-semana [N] do Tripwave:
+semana [N] da Norti:
 
 - [N] pessoas na lista de espera
 - fizemos: [1 ou 2 coisas]
@@ -210,7 +210,7 @@ As respostas viram roteiro de TikTok.
 - Em posts de fundador BR sobre lançamento: comentar algo específico do post dele, nunca "top demais 🔥".
 - Em posts virais sobre viagem com amigos: entrar na piada como pessoa, não como propaganda. Sem link.
 - Bom: "o pior é quando quem pagou a casa vira cobrador do grupo até março".
-- Ruim: "conheça o Tripwave, a solução pra sua viagem!".
+- Ruim: "conheça a Norti, a solução pra sua viagem!".
 
 ---
 

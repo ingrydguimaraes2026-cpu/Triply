@@ -81,7 +81,7 @@ export default function BoletimCambio({ viagemId, meuId, moeda }: Props) {
       <div className="termometro-aviso">
         {situacao === 'iphone-instalar' ? (
           <p>
-            No iPhone, o boletim só chega com o app instalado: no Safari, toque em Compartilhar → "Adicionar à Tela de Início" e abra o Tripwave por lá.
+            No iPhone, o boletim só chega com o app instalado: no Safari, toque em Compartilhar → "Adicionar à Tela de Início" e abra a Norti por lá.
           </p>
         ) : situacao === 'negado' ? (
           <p>

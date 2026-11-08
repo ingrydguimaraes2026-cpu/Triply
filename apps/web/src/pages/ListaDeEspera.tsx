@@ -56,7 +56,7 @@ export default function ListaDeEspera() {
           <span className="espera-marca-norti">
             <Norti tamanho={34} sombra={false} />
           </span>
-          Tripwave
+          Norti
         </p>
         <span className="espera-selo">Em breve</span>
       </header>
@@ -123,7 +123,7 @@ export default function ListaDeEspera() {
         </div>
       </section>
 
-      <section className="espera-vantagens" aria-label="O que o Tripwave faz">
+      <section className="espera-vantagens" aria-label="O que a Norti faz">
         {VANTAGENS.map(({ icone: Icone, titulo, texto }) => (
           <article key={titulo} className="espera-vantagem">
             <span className="espera-vantagem-icone">

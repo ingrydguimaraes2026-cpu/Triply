@@ -1,4 +1,4 @@
-// Função "conectar-gmail" (spec 015): liga o Gmail de uma pessoa ao Tripwave.
+// Função "conectar-gmail" (spec 015): liga o Gmail de uma pessoa à Norti.
 // O app manda o `code` que o Google devolveu depois do consentimento; aqui a gente troca
 // esse code pelo refresh token (precisa do client secret, por isso é no servidor) e guarda.
 //
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
 
   const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  // Quem está pedindo (tem que estar logado no Tripwave)
+  // Quem está pedindo (tem que estar logado na Norti)
   const token = req.headers.get('Authorization')?.replace('Bearer ', '') ?? ''
   const { data: quem } = await admin.auth.getUser(token)
   if (!quem?.user) return json({ erro: 'Faça login pra conectar o Gmail.' }, 401)

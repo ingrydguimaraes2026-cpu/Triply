@@ -1,4 +1,4 @@
-# Rumo do Tripwave (decidido em 03/11/2026, revisto no mesmo dia)
+# Rumo da Norti (decidido em 03/11/2026, revisto no mesmo dia)
 
 Este é o documento que manda. Quando a FILA, o ROADMAP ou uma spec antiga brigar com ele, **vale o RUMO**.
 De onde veio: o benchmark de 11/2026, principalmente a conclusão [`09-ancora-opcoes.md`](benchmark-2026-11/09-ancora-opcoes.md) (com as partes [06](benchmark-2026-11/06-ancoras-eua-europa.md), [07](benchmark-2026-11/07-ancoras-asia-e-mundo.md) e [08](benchmark-2026-11/08-ancoras-fora-de-viagem.md)). A decisão do Victor está registrada em [`HANDOFF-rumo-ancora.md`](HANDOFF-rumo-ancora.md).
@@ -78,7 +78,7 @@ Regra prática: **antes de pegar uma task, pergunte "isso serve à âncora, ao '
 
 ## O Pix
 
-Sai do papel de âncora. No máximo, o **Pix copia-e-cola fica como detalhe do Financeiro**, no acerto de contas ("pagar a Ana: copiar Pix"). Sem cobrança automática, sem parcelas, sem "barra de quem pagou" como tela principal. O dinheiro da viagem nunca passa pelo Tripwave.
+Sai do papel de âncora. No máximo, o **Pix copia-e-cola fica como detalhe do Financeiro**, no acerto de contas ("pagar a Ana: copiar Pix"). Sem cobrança automática, sem parcelas, sem "barra de quem pagou" como tela principal. O dinheiro da viagem nunca passa pela Norti.
 
 ## Onde roda
 
@@ -96,7 +96,7 @@ Sai do papel de âncora. No máximo, o **Pix copia-e-cola fica como detalhe do F
 
 ## Distribuição (metade do trabalho)
 
-- **O post é o anúncio:** carimbo, mapa da galera, retrospectiva e contagem saem em 9:16 com "feito com Tripwave". Todo convite também.
+- **O post é o anúncio:** carimbo, mapa da galera, retrospectiva e contagem saem em 9:16 com "feito com Norti". Todo convite também.
 - **Temporada:** réveillon agora (o post do mapa e da retrospectiva de 01 a 05/01 é o momento de viralizar); janela do Carnaval 2027 de 26/12 a 25/01.
 - **Campanhas:** "o mapa da sua galera", "Réveillon 2027 carimbado", "há 1 ano a gente estava aqui".
 - **TikTok/Reels sem rosto**, várias contas, 1 vídeo por dia: o mapa da galera acendendo, carimbos caindo, "quantos lugares sua galera já carimbou?", a retrospectiva montando sozinha. Os vídeos saem por código (`docs/marketing/video/`).

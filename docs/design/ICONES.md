@@ -1,4 +1,4 @@
-# Ícones e selos do Tripwave
+# Ícones e selos da Norti
 
 Decidido em 02/11/2026 com o Victor: **selos (desenho nosso) + Phosphor Duotone**. Nada de emoji e nada de ícone genérico solto.
 

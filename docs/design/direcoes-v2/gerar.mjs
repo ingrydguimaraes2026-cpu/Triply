@@ -1,4 +1,4 @@
-// Gera modelos.html: 3 modelos mais ricos do Tripwave (o que prende + onde cobra), 6 telas cada.
+// Gera modelos.html: 3 modelos mais ricos da Norti (o que prende + onde cobra), 6 telas cada.
 import { writeFileSync } from 'node:fs'
 const core = new URL('../../../packages/core/src/', import.meta.url).href
 const { DESENHOS_DOS_ICONES } = await import(core + 'icones-desenhos.ts')
@@ -90,7 +90,7 @@ const M1 = [
   tel('O que prende', 'avisos que puxam de volta', `
     <div class="bloqueio" style="background-image:linear-gradient(#0006,#0008),url('${F.comercio}')">
       <div class="hora-bloq">9:41</div><small class="data-bloq">terça-feira, 11 de novembro</small>
-      ${[['Tripwave', 'Ana votou na Casa da Graça', 'Falta só você e o Beto. Vota rapidinho?'], ['Tripwave', 'Euro caiu: R$ 6,12', 'Está entre os mais baratos dos últimos 90 dias.'], ['Tripwave', 'Faltam 34 dias pra Lisboa', 'Ainda falta: onde dormir e como chegar.']].map(([a, t, c]) => `<div class="notif"><span class="app">${ic('identidade', '#fff', 16)}</span><div><small>${a.toUpperCase()} · agora</small><b>${t}</b><span>${c}</span></div></div>`).join('')}
+      ${[['Norti', 'Ana votou na Casa da Graça', 'Falta só você e o Beto. Vota rapidinho?'], ['Norti', 'Euro caiu: R$ 6,12', 'Está entre os mais baratos dos últimos 90 dias.'], ['Norti', 'Faltam 34 dias pra Lisboa', 'Ainda falta: onde dormir e como chegar.']].map(([a, t, c]) => `<div class="notif"><span class="app">${ic('identidade', '#fff', 16)}</span><div><small>${a.toUpperCase()} · agora</small><b>${t}</b><span>${c}</span></div></div>`).join('')}
     </div>`, 'escura'),
   tel('Onde cobra', 'Passe da viagem (assinatura opcional)', `
     <div class="pad top paywall">
@@ -100,7 +100,7 @@ const M1 = [
       <div class="previa" style="background-image:url('${F.castelo}')"><span class="etq">${ic('wifi-desligado', '#3B2715', 14)} mapa offline</span></div>
       <ul class="beneficios">${[['wifi-desligado', 'Mapa e roteiro sem internet'], ['magica', 'Roteiro montado pelos votos'], ['documento', 'Reservas lidas do e-mail'], ['baixar', 'Livro da viagem em PDF']].map(([i, t]) => `<li>${ic(i, '#7B542F', 20)}${t}</li>`).join('')}</ul>
       <div class="plano on"><b>Esta viagem</b><span>R$ 39,90 · uma vez</span><small>vale pros 5 do comboio</small></div>
-      <div class="plano"><b>Tripwave+ anual</b><span>R$ 99,90/ano</span><small>todas as viagens</small></div>
+      <div class="plano"><b>Norti+ anual</b><span>R$ 99,90/ano</span><small>todas as viagens</small></div>
       <button class="botao largo">Liberar pro comboio · R$ 39,90</button>
       <small class="miuda">Pagamento único. Sem renovação. Restaurar compra</small>
     </div>`),
@@ -111,7 +111,7 @@ const story = (k, nome, novo = true) => `<div class="story ${novo ? 'novo' : ''}
 const M2 = [
   tel('Início', 'o grupo em primeiro lugar', `
     <div class="pad top">
-      <div class="linha"><h2 class="serif logo">tripwave</h2><span>${ic('avisos', '#3B2715', 24)}</span></div>
+      <div class="linha"><h2 class="serif logo">norti</h2><span>${ic('avisos', '#3B2715', 24)}</span></div>
       <div class="stories">${story('PV', 'Você', false)}${story('AN', 'Ana')}${story('JU', 'Ju')}${story('BE', 'Beto')}${story('LI', 'Lia', false)}</div>
       <div class="post">
         <div class="post-topo">${av('JU', 30)}<div><b>Ju</b><small>Lisboa · sugeriu um lugar</small></div></div>
@@ -320,9 +320,9 @@ h1{font-size:30px;line-height:1.08;margin:6px 0 14px}h2{font-size:24px}
 .paywall.centro .plano{text-align:left}
 `
 const modelo = (id, titulo, frase, tags, telas) => `<section class="modelo ${id}"><header><h2>${titulo}</h2><p>${frase}</p><div class="tags">${tags.map(([a, b]) => `<span><b>${a}:</b> ${b}</span>`).join('')}</div></header><div class="telas">${telas.join('')}</div></section>`
-const html = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Modelos do Tripwave</title>
+const html = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Modelos da Norti</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"><style>${css}</style></head><body>
-<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Tripwave · 3 modelos (rodada 2)</h1>
+<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Norti · 3 modelos (rodada 2)</h1>
 <p style="margin:0 0 30px 6px;color:#7A5F45;max-width:1000px">Mais ricos que a rodada 1, mas organizados em seções. Cada modelo tem um jeito diferente de <b>prender</b> o usuário e de <b>cobrar</b>. Todos seguem a pesquisa de mercado (reports/): o essencial do grupo é grátis, o dinheiro vem do <b>Passe da viagem</b> (um paga, o comboio inteiro ganha) e de <b>parceiros</b> na hora certa. Preços são de exemplo.</p>
 ${modelo('m1', '1 · Revista de viagem', 'Jeito Airbnb: calmo, fotos grandes, seções que você rola (comboio agora, roteiro, onde dormir, contas, passeios). Prende pelos avisos certos na hora certa.', [['Prende', 'avisos úteis (voto, câmbio, contagem)'], ['Cobra', 'Passe da viagem + passeios, seguro e eSIM de parceiros']], M1)}
 ${modelo('m2', '2 · Comboio ao vivo', 'Jeito Instagram: o grupo em primeiro lugar. Stories de quem tem novidade, decisões com voto, mapa de onde está cada um, contas como conversa.', [['Prende', 'o grupo: "falta só você", cutucar, reações'], ['Cobra', 'Passe da viagem dividido no Pix entre o comboio']], M2)}
@@ -400,7 +400,7 @@ const D = [
   tel('6 · O que traz de volta', 'avisos do grupo, não do app', `
     <div class="bloqueio" style="background-image:linear-gradient(#0006,#0008),url('${F.comercio}')">
       <div class="hora-bloq">9:41</div><small class="data-bloq">terça-feira, 11 de novembro</small>
-      ${[['Falta só você, Beto', 'Casa na Graça tem 3 votos. Fecha amanhã às 20h.'], ['Ju sugeriu o Museu do Azulejo', '4 pessoas curtiram. Entra no dia 2?'], ['Euro caiu: R$ 6,12', 'Entre os mais baratos dos últimos 90 dias.']].map(([t, c]) => `<div class="notif"><span class="app">${ic('identidade', '#fff', 16)}</span><div><small>TRIPWAVE · agora</small><b>${t}</b><span>${c}</span></div></div>`).join('')}
+      ${[['Falta só você, Beto', 'Casa na Graça tem 3 votos. Fecha amanhã às 20h.'], ['Ju sugeriu o Museu do Azulejo', '4 pessoas curtiram. Entra no dia 2?'], ['Euro caiu: R$ 6,12', 'Entre os mais baratos dos últimos 90 dias.']].map(([t, c]) => `<div class="notif"><span class="app">${ic('identidade', '#fff', 16)}</span><div><small>NORTI · agora</small><b>${t}</b><span>${c}</span></div></div>`).join('')}
     </div>`, 'escura'),
   tel('7 · Carimbo novo', 'a Norti só aparece nos marcos', `
     <div class="festa">
@@ -420,7 +420,7 @@ const D = [
       <h1 class="serif centro">Um paga, o comboio todo ganha</h1>
       <ul class="beneficios">${[['nova-foto', 'Scan de recibo: foto e já divide'], ['wifi-desligado', 'Mapa e roteiro sem internet'], ['documento', 'Reservas lidas do e-mail'], ['fotos', 'Álbum sem limite'], ['baixar', 'Livro da viagem em PDF']].map(([i, t]) => `<li>${ic(i, '#7B542F', 20)}${t}</li>`).join('')}</ul>
       <div class="plano on"><b>Passe Lisboa</b><span>R$ 39,90</span><small>uma vez · R$ 7,98 por pessoa no Pix</small></div>
-      <div class="plano"><b>Tripwave+ anual</b><span>R$ 99,90</span><small>todas as viagens · 7 dias grátis</small></div>
+      <div class="plano"><b>Norti+ anual</b><span>R$ 99,90</span><small>todas as viagens · 7 dias grátis</small></div>
       <button class="botao largo">Liberar e dividir no comboio</button>
       <small class="miuda">Gastos, divisão, votos e fotos seguem grátis. Restaurar compra</small>
     </div>`),
@@ -450,9 +450,9 @@ const cssD = `
 .livro-imp{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;padding:14px;margin-top:12px}.livro-imp div{display:grid}.livro-imp b{font-size:14.5px}.livro-imp small{font-size:12px;color:var(--suave)}
 .capa .rodape h1{font-size:34px;line-height:1.05}
 `
-const htmlD = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tripwave definitivo</title>
+const htmlD = `<!doctype html><html lang="pt-BR" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Norti definitivo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"><style>${css}${cssD}</style></head><body>
-<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Tripwave · modelo definitivo</h1>
+<h1 class="serif" style="font-size:36px;margin:0 0 6px 6px">Norti · modelo definitivo</h1>
 <p style="margin:0 0 12px 6px;color:#7A5F45;max-width:1150px">A jornada inteira em 9 telas, do início até a volta. <b>Base do Comboio ao vivo</b> (o grupo é o que traz de volta), <b>seções da Revista</b> (rico, mas organizado), <b>carimbos e Norti do Jogo</b> só nos marcos. Grátis: gastos, divisão, votos, fotos. Pago: Passe da viagem (um paga, todos ganham), parceiros na hora certa e livro impresso na volta.</p>
 <div class="tags" style="display:flex;gap:8px;margin:0 0 24px 6px;flex-wrap:wrap"><span><b>Abas da viagem:</b> Viagem · Roteiro · Contas · Fotos</span><span><b>Prende:</b> votos do grupo, "falta você", carimbos</span><span><b>Cobra:</b> Passe R$ 39,90 por viagem · anual R$ 99,90 · livro R$ 129 · parceiros</span></div>
 <div class="telas">${D.join('')}</div></body></html>`

@@ -16,7 +16,7 @@
 - **Já temos a base:** passaporte de selos (117), retrospectiva (105), livro (106), onde já fui (102), GPS da foto (108), avisos no app (110).
 
 ## Palavras desta spec
-- **Galera:** a pessoa e todo mundo com quem ela já dividiu pelo menos uma viagem ou rolê no Tripwave.
+- **Galera:** a pessoa e todo mundo com quem ela já dividiu pelo menos uma viagem ou rolê na Norti.
 - **Carimbo:** um lugar (cidade, praia, show) com data, arte e quem estava lá. É diferente dos **selos** da 117 (os 6 passos de planejar: Roteiro, Galera, Datas, Dormir, Chegar, Contas). Os selos continuam; na tela, chamar de "passos" pra não confundir.
 - **Rolê:** viagem curta de 1 dia ou fim de semana, criada em 2 toques, sem planejar nada.
 
@@ -30,7 +30,7 @@
   - **"Hoje":** chegou no lugar do roteiro (o "Cheguei" do "Hoje", spec 120).
 - Sem prova: qualquer um que estava lá toca em **"a gente esteve aqui"** (1 toque, sem digitar). O carimbo fica com o traço um pouco diferente ("de memória").
 - Arte do carimbo: moldura redonda ou quadrada com o **nome do lugar, a data e um ícone do tipo** (praia, serra, cidade, show, festa), gerada no aparelho, nas cores do app. Arte ilustrada própria das 30 cidades mais buscadas do Brasil fica pra depois.
-- Quando cai um carimbo: animação de carimbar (o "tum" da 117), a Norti comemora e aparece **"postar carimbo"** (imagem 9:16 com "feito com Tripwave").
+- Quando cai um carimbo: animação de carimbar (o "tum" da 117), a Norti comemora e aparece **"postar carimbo"** (imagem 9:16 com "feito com Norti").
 - Cada carimbo mostra quem estava lá (rostos) e quem liberou primeiro.
 
 ### 118b · Mapa da galera
@@ -107,7 +107,7 @@
 - [ ] Viagem com 2 destinos: os 2 carimbos aparecem apagados antes da viagem.
 - [ ] No dia da viagem, abrindo o app perto do destino (ou postando uma foto com GPS de lá), o carimbo cai sozinho com a animação, sem digitar nada.
 - [ ] Sem prova, "a gente esteve aqui" libera o carimbo com o traço "de memória".
-- [ ] "Postar carimbo" gera imagem 9:16 bonita com "feito com Tripwave".
+- [ ] "Postar carimbo" gera imagem 9:16 bonita com "feito com Norti".
 - [ ] O mapa da galera acende os lugares de todas as minhas viagens e rolês, e mostra quem carimbou mais no ano.
 - [ ] Viagem que passa por 31/12 ganha a moldura de Réveillon na retrospectiva, e a retrospectiva avisa sozinha quando fica pronta.
 - [ ] Com um carimbo de 03/11/2025, no dia 03/11/2026 chega o aviso "há 1 ano vocês estavam em...".

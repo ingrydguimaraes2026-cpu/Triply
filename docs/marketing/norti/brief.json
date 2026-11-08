@@ -1,6 +1,6 @@
 {
   "name": "Norti",
-  "app": "Tripwave",
+  "app": "Norti",
   "style": "line",
   "character": "a golden compass shaped like a map pin, with a cream compass face, big glossy bean eyes, rosy cheeks, a red compass needle above the eyes, short brown arms and a brown safari hat",
   "colour": "warm gold case, cream face, red needle, leather-brown hat and arms",
@@ -19,7 +19,7 @@
     "toast": "Todo mundo pagou. Ninguém deve nada!",
     "oops": "Ops, sem internet. Já tento de novo.",
     "tip": "Toque num lugar pra votar com o grupo.",
-    "loveTitle": "Curtiu o Tripwave?",
+    "loveTitle": "Curtiu a Norti?",
     "love": "Conta pra galera da próxima viagem.",
     "items": [
       "Roteiro no mapa",

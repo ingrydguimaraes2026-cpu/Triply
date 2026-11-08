@@ -4,11 +4,11 @@
 
 ## Por que esse teste
 
-Nenhum grupo real usou o Tripwave até hoje. Tudo que sabemos vem de pesquisa, benchmark e do nosso próprio uso. O réveillon 2026/27 é a maior janela do ano pra viagem com amigos (benchmark: o pico vai de 26/12 a 04/01). Se 5 grupos não usam o app numa viagem que eles já vão fazer, nada mais importa.
+Nenhum grupo real usou a Norti até hoje. Tudo que sabemos vem de pesquisa, benchmark e do nosso próprio uso. O réveillon 2026/27 é a maior janela do ano pra viagem com amigos (benchmark: o pico vai de 26/12 a 04/01). Se 5 grupos não usam o app numa viagem que eles já vão fazer, nada mais importa.
 
 ## A pergunta que o teste responde
 
-1. **Principal:** o grupo usa o Tripwave pra **fechar a conta** da viagem (sinal, gastos, acerto) em vez do zap + planilha + Splitwise? (aposta do dinheiro, `JORNADA.md`)
+1. **Principal:** o grupo usa a Norti pra **fechar a conta** da viagem (sinal, gastos, acerto) em vez do zap + planilha + Splitwise? (aposta do dinheiro, `JORNADA.md`)
 2. **Secundária:** o grupo volta ao app sem a gente pedir? Em que fase?
 3. **Secundária:** alguém toca no Passe? Alguém paga?
 
@@ -35,7 +35,7 @@ Nenhum grupo real usou o Tripwave até hoje. Tudo que sabemos vem de pesquisa, b
 Amigos próximos do Victor e da Ingryd: só se faltar gente, e anotar que o dado é mais fraco.
 
 **Convite (e-mail ou DM, curto)**
-> Oi! Você entrou na lista de espera do Tripwave. Estamos procurando 5 grupos que vão viajar juntos no réveillon pra usar o app antes de todo mundo, de graça. Em troca, a gente quer 2 conversas de 30 min com quem está organizando (uma agora, outra na volta). Vocês vão viajar em grupo no réveillon? Quantas pessoas, e pra onde?
+> Oi! Você entrou na lista de espera da Norti. Estamos procurando 5 grupos que vão viajar juntos no réveillon pra usar o app antes de todo mundo, de graça. Em troca, a gente quer 2 conversas de 30 min com quem está organizando (uma agora, outra na volta). Vocês vão viajar em grupo no réveillon? Quantas pessoas, e pra onde?
 
 Sem prometer nada além disso. Sem brinde que mude o comportamento (ex.: não pagar a casa de ninguém).
 

@@ -6,7 +6,7 @@
 
 | Problema | O que acontece no S1 |
 |---|---|
-| **Parece anúncio, não conteúdo** | 4 dos 6 slides são telas desenhadas com o visual do Tripwave. O próprio dado do Roameo diz que demonstração rende de 20 a 250 vezes menos que brincadeira. |
+| **Parece anúncio, não conteúdo** | 4 dos 6 slides são telas desenhadas com o visual da Norti. O próprio dado do Roameo diz que demonstração rende de 20 a 250 vezes menos que brincadeira. |
 | **A dor e a solução têm a mesma cara** | O "grupo do zap" do slide 2 ao 4 tem o cabeçalho couro, a Norti no avatar e a paleta do app. Ninguém reconhece aquilo como o grupo dele, então não sente a dor. |
 | **Gancho sem tensão** | "dia 2 de janeiro no grupo do réveillon:" é só uma abertura, não tem piada nem susto. E sai em 09/11, quando a dor de quem viaja é outra: fechar a casa, pagar o sinal, decidir quem vai. A conta do dia 2 ainda não aconteceu. |
 | **Texto pequeno pra celular** | Bolhas de chat em fonte pequena, e o slide 5 é uma tabela de 7 linhas. No TikTok, quem não lê em 1 segundo já passou o post. |

@@ -6,7 +6,7 @@
 
 Blocos de UI de celular, cada um com vídeo, um prompt pra React Native (Expo + Reanimated) e o código no GitHub. **Grátis por enquanto.** Antes de copiar código, confira a licença do repositório e o autor do design: muitos blocos citam o Pinterest como fonte.
 
-| Bloco | Pra quê no Tripwave |
+| Bloco | Pra quê na Norti |
 |---|---|
 | [blacklight-flight-passport](https://nativecook.dev/blocks/blacklight-flight-passport/) | Passaporte com mapa, rotas em arco, zona de leitura e **luz UV que revela tinta escondida**. É a base da página de dados. |
 | [postcard-stamp-cancel](https://nativecook.dev/blocks/postcard-stamp-cancel/) | Carimbo de correio caindo num cartão-postal do dia ("Lisbon, day 4"): o carimbo do dia da viagem. |

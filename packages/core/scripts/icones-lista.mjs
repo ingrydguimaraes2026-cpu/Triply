@@ -1,4 +1,4 @@
-// Catálogo de ícones do Tripwave: [nome nosso, desenho do Phosphor, nomes antigos (lucide) que viram apelido].
+// Catálogo de ícones da Norti: [nome nosso, desenho do Phosphor, nomes antigos (lucide) que viram apelido].
 // Para trocar o desenho de um ícone, mude a 2ª coluna e rode `node packages/core/scripts/gerar-icones.mjs`.
 // Desenhos: Phosphor Icons (MIT), peso "duotone"; os da lista CHEIOS também ganham o peso "fill".
 export const ICONES = [

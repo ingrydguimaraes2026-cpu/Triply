@@ -41,5 +41,5 @@ export function linkDoItem(base: string, viagemId: string, item: ItemCompartilha
 export function textoDoItem(item: ItemCompartilhavel, link: string, nomeDaViagem?: string): string {
   const alvo = item.titulo ? `"${item.titulo.trim()}"` : ROTULO[item.tipo]
   const ondeVai = nomeDaViagem ? ` da viagem ${nomeDaViagem}` : ''
-  return `Dá uma olhada em ${alvo}${ondeVai} no Tripwave: ${link}`
+  return `Dá uma olhada em ${alvo}${ondeVai} na Norti: ${link}`
 }

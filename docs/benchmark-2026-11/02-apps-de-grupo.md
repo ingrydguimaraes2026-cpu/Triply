@@ -49,7 +49,7 @@ Reddit bloqueia a ferramenta de busca usada; as opiniões de usuários vêm de A
 
 ### Troupe (JetBlue)
 - Lançado em 21/09/2022 por uma subsidiária da JetBlue. Grátis. O grupo propõe e ranqueia datas, lugar, hospedagem e atividades antes de alguém pagar ([Skift](https://skift.com/2022/09/21/jetblue-wants-to-make-group-travel-easier-with-new-app), [Business Wire](https://www.businesswire.com/news/home/20220921005148/en/JetBlue-Travel-Products-Launches-New-Travel-App-Troupe)).
-- É o app mais parecido com a proposta do Tripwave (votar lugar e hospedagem).
+- É o app mais parecido com a proposta da Norti (votar lugar e hospedagem).
 - Hoje: o domínio troupe.com não resolve (testei em 03/11/2026). Um comparativo de set/2026 diz que o último registro no Internet Archive é de 27/03/2025 e que não houve anúncio de encerramento ([Will U Be There](https://willubethere.app/blog/group-trip-planning-apps-compared/)).
 - Lição: nem uma companhia aérea, com dinheiro e base de clientes, segurou um app de votação de viagem em grupo. Morreu em silêncio.
 
@@ -172,7 +172,7 @@ Reddit bloqueia a ferramenta de busca usada; as opiniões de usuários vêm de A
 ### Enquete do WhatsApp (o concorrente de verdade no Brasil)
 - Lançada em nov/2022; voto único desde mai/2023 ([The Star/AFP](https://www.thestar.com.my/tech/tech-news/2023/05/08/whatsapp-updates-poll-feature-and-lets-you-forward-pics-with-captions)).
 - Brasil 2025 (Opinion Box, 1.126 pessoas): 97% dos usuários abrem o WhatsApp todo dia; 94% estão em algum grupo; 72% em grupo de amigos ([Canaltech](https://canaltech.com.br/apps/o-que-os-brasileiros-mais-fazem-no-whatsapp-segundo-pesquisa/)).
-- Lição: pro brasileiro, "votar onde ficar" já se resolve com enquete no grupo. O Tripwave só vence se fizer algo que a enquete não faz (preço, link do Airbnb, quem já pagou) **e** se aparecer dentro do WhatsApp.
+- Lição: pro brasileiro, "votar onde ficar" já se resolve com enquete no grupo. A Norti só vence se fizer algo que a enquete não faz (preço, link do Airbnb, quem já pagou) **e** se aparecer dentro do WhatsApp.
 
 ---
 
@@ -219,12 +219,12 @@ Reddit bloqueia a ferramenta de busca usada; as opiniões de usuários vêm de A
    - memória que aparece sozinha (widget do Locket, ritual semanal do Retro, livro do Polarsteps);
    - aviso pelo canal que a pessoa já usa (SMS do Partiful).
 6. **Grupo pequeno e privado.** Locket (até 20 amigos), Retro (amigos próximos), viagem (5 a 6 pessoas no Bach). Privacidade é parte da graça.
-7. **Viral de vídeo curto.** Locket chegou ao topo da App Store por um vídeo de TikTok copiado pelos usuários. Isso combina com o plano do Tripwave (TikTok/Reels).
+7. **Viral de vídeo curto.** Locket chegou ao topo da App Store por um vídeo de TikTok copiado pelos usuários. Isso combina com o plano da Norti (TikTok/Reels).
 8. **O que NÃO funciona:** convite forçado (Lapse: download sim, uso nem sempre); travar o plano grátis no meio do uso do grupo (Splitwise 2023); depender de uso diário em produto raro.
 
 ---
 
-## (3) Três recomendações concretas para o Tripwave
+## (3) Três recomendações concretas para a Norti
 
 ### 1. O amigo convidado faz tudo pelo link, sem instalar o app
 - **O que:** o link `/convite/<código>` que cai no WhatsApp abre uma página web onde a pessoa, em menos de 10 segundos e só com nome e celular: confirma "tô dentro", vota na hospedagem e nas datas, vê quanto deve e o roteiro.
@@ -234,7 +234,7 @@ Reddit bloqueia a ferramenta de busca usada; as opiniões de usuários vêm de A
 
 ### 2. Não brigar com o grupo do WhatsApp: abastecer o grupo
 - **O que:** cada decisão vira um cartão bonito com link, feito pra colar no grupo do WhatsApp. Exemplos: "Votação: qual casa? 3 opções com preço por pessoa"; "Faltam 2 votarem"; "Resumo: quem deve quanto pra quem"; "Fechado: Casa X, R$ 380 por pessoa".
-- **Por que:** 97% dos brasileiros usuários abrem o WhatsApp todo dia e 72% estão em grupo de amigos. A enquete do WhatsApp já resolve a votação simples. O Tripwave ganha onde a enquete não chega: preço por pessoa, link do Airbnb, quem já pagou, prazo. E cada cartão leva a marca pra todo o grupo, como o convite do Partiful.
+- **Por que:** 97% dos brasileiros usuários abrem o WhatsApp todo dia e 72% estão em grupo de amigos. A enquete do WhatsApp já resolve a votação simples. A Norti ganha onde a enquete não chega: preço por pessoa, link do Airbnb, quem já pagou, prazo. E cada cartão leva a marca pra todo o grupo, como o convite do Partiful.
 - **Não fazer:** chat próprio. Ninguém vai trocar o grupo do WhatsApp por outro chat.
 
 ### 3. Crescer pelo "depois da viagem" e cobrar no fim, não no começo

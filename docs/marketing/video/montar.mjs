@@ -149,7 +149,7 @@ function extraDaCena(c) {
   }
   if (c.id === 'contas') {
     return `<div class="digitar"><span id="digitado"></span><span id="cursor"></span><span id="lancar">Lançar</span></div>
-      <div class="dica">o Tripwave entende, divide e mostra quem deve quem</div>`
+      <div class="dica">a Norti entende, divide e mostra quem deve quem</div>`
   }
   if (c.id === 'carimbo') {
     return `<div class="passaporte">${['Roteiro', 'Galera', 'Datas', 'Hospedagem', 'Transporte', 'Contas'].map((n, i) => `
@@ -348,7 +348,7 @@ const html = `<!doctype html>
       </defs>
       <g filter="url(#tinta-falha)" fill="none" stroke="#C9492A">
         <circle cx="165" cy="165" r="156" stroke-width="7"/><circle cx="165" cy="165" r="100" stroke-width="3"/>
-        <text font-family="Jakarta" font-weight="700" font-size="25" letter-spacing="7" fill="#C9492A" stroke="none"><textPath href="#volta">TRIPWAVE · PASSAPORTE DO COMBOIO ·</textPath></text>
+        <text font-family="Jakarta" font-weight="700" font-size="25" letter-spacing="7" fill="#C9492A" stroke="none"><textPath href="#volta">NORTI · PASSAPORTE DO COMBOIO ·</textPath></text>
         <text x="165" y="160" text-anchor="middle" font-family="Fraunces" font-weight="700" font-size="50" fill="#C9492A" stroke="none">Contas</text>
         <text x="165" y="198" text-anchor="middle" font-family="Jakarta" font-weight="700" font-size="22" letter-spacing="5" fill="#C9492A" stroke="none">RESOLVIDO</text>
       </g>
@@ -361,7 +361,7 @@ const html = `<!doctype html>
     <svg id="fim-mapa" width="${W}" height="${H}"><path id="fim-rota" d="M 300 250 C 560 120, 760 330, 960 220 S 1400 120, 1620 250"/></svg>
     ${[['PARIS', 300, 250], ['NICE', 960, 220], ['ROMA', 1620, 250]].map(([n, x, y]) => `<div class="fim-cidade" id="fc-${n}" style="left:${x - 60}px; width:120px; text-align:center; top:${y - 16}px">${n}</div>`).join('')}
     <div id="aviao"></div>
-    <div id="marca">${[...'Tripwave'].map((l) => `<span>${l}</span>`).join('')}</div>
+    <div id="marca">${[...'Norti'].map((l) => `<span>${l}</span>`).join('')}</div>
     <div id="slogan">${fim.texto.replace(/(\S+)$/, '<em>$1</em>')}</div>
     <img id="norti-fim" class="norti" src="assets/norti-celebrate.png" />
     ${Array.from({ length: 44 }, (_, i) => `<div class="confete" id="cf${i}" style="background:${['#E3A04A', '#B97A22', '#7B542F', '#C9492A', '#6E7F5A'][i % 5]}"></div>`).join('')}

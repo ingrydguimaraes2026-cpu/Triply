@@ -1,4 +1,4 @@
-// Selos do Tripwave: ilustrações nossas no estilo da Agulha (traço couro grosso e as cores da mala),
+// Selos da Norti: ilustrações nossas no estilo da Agulha (traço couro grosso e as cores da mala),
 // como adesivos de mala. Vão em categorias, passos da viagem, onboarding e telas vazias; nunca em botão pequeno.
 // Desenho em 48x48. __TRACO__ = cor do traço (muda no fundo escuro). Para desenhar um novo, siga docs/design/ICONES.md.
 export const DESENHOS_DOS_SELOS = {

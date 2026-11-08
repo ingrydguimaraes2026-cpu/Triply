@@ -61,7 +61,7 @@ export async function carimboEmImagem(carimbo: Carimbo, nomeDaViagem: string): P
 
   g.fillStyle = ouro
   g.font = `700 34px ${texto}`
-  g.fillText('FEITO COM TRIPWAVE', meio, 1780)
+  g.fillText('FEITO COM NORTI', meio, 1780)
 
   return new Promise((ok) => c.toBlob((b) => ok(b), 'image/png'))
 }

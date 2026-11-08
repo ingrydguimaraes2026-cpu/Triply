@@ -48,9 +48,9 @@ Táticas de monetização que ele testa:
 - **bloquear print** da lista, pra quem não assina não sair com ela;
 - Retention Messaging API da Apple.
 
-## Traduzindo pro Tripwave
+## Traduzindo pro Norti
 
-| Enxovaly | Tripwave (proposta) |
+| Enxovaly | Norti (proposta) |
 |---|---|
 | A grávida, antes do nascimento | **O organizador da viagem com os amigos**, antes da data |
 | "Enxoval sem exageros", pelo mês e pelo clima | **"Viagem sem climão"**: o plano do grupo pela data, destino, clima e orçamento de cada um |

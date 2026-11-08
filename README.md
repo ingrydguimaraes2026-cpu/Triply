@@ -1,4 +1,4 @@
-# Tripwave ✈️
+# Norti ✈️
 
 Site de planejamento de viagens em grupo. Funciona no navegador e pode ser **instalado no celular como app** (PWA).
 

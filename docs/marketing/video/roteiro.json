@@ -11,7 +11,7 @@
     },
     {
       "id": "explorar",
-      "fala": "With Tripwave, everyone swipes the places they want. When the crew agrees, it's a match.",
+      "fala": "With Norti, everyone swipes the places they want. When the crew agrees, it's a match.",
       "texto": "Deslizou, deu *match*",
       "gravacao": "explorar",
       "rotulo": "01 · Explorar",
@@ -27,7 +27,7 @@
     },
     {
       "id": "contas",
-      "fala": "Paid for dinner? Just type it. Tripwave splits it and shows who owes who.",
+      "fala": "Paid for dinner? Just type it. Norti splits it and shows who owes who.",
       "texto": "\"jantar 84\" e *pronto*",
       "gravacao": "contas",
       "rotulo": "03 · Contas",
@@ -43,7 +43,7 @@
     },
     {
       "id": "fim",
-      "fala": "This is Tripwave. Grab your crew and go.",
+      "fala": "This is Norti. Grab your crew and go.",
       "texto": "Chama a galera e vai junto",
       "norti": "celebrate"
     }

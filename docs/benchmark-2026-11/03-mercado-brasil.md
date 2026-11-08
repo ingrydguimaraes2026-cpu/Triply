@@ -57,7 +57,7 @@ Leitura: banco divide um gasto que **já aconteceu**. Ninguém organiza o dinhei
 
 **O que a crise Hurb/123milhas ensina:**
 1. O brasileiro perdeu confiança em quem **segura o dinheiro dele** prometendo viagem barata no futuro. Pesquisadores ouvidos pela imprensa dizem que a percepção desses negócios piorou ([Diário do Nordeste](https://diariodonordeste.verdesmares.com.br/negocios/com-crises-na-123-milhas-e-hurb-compra-de-passagens-aereas-mudou-no-brasil-1.3465473)).
-2. Para o Tripwave: **não custodiar dinheiro** (não ser "conta" do grupo). Mostrar e cobrar, mas o Pix vai direto de pessoa para pessoa. Isso é argumento de confiança, não limitação.
+2. Para a Norti: **não custodiar dinheiro** (não ser "conta" do grupo). Mostrar e cobrar, mas o Pix vai direto de pessoa para pessoa. Isso é argumento de confiança, não limitação.
 3. Marketplace com reserva dentro do app (o caminho do Tropê) traz risco de suporte e de reputação. Melhor mandar para Airbnb/Booking e registrar o gasto.
 
 ---
@@ -152,7 +152,7 @@ Leitura: banco divide um gasto que **já aconteceu**. Ninguém organiza o dinhei
 4. **Decisão do grupo dentro do WhatsApp, não contra ele.** Tropê tenta com a Giquinha (IA no WhatsApp), mas está no começo. Nenhum app transforma "o link no grupo" em voto fechado com prazo.
 5. **Segurança da casa.** Nenhum app de grupo ajuda a checar se o anúncio é real e se a chave Pix bate com o dono, nem guarda o plano B se o anfitrião cancelar.
 
-### 6.3 Três apostas concretas para o Tripwave
+### 6.3 Três apostas concretas para a Norti
 
 **Aposta 1 - "O cobrador do comboio" (dinheiro antes, durante e depois).**
 - Quando alguém paga a casa, o app cria o plano: "R$ 4.800 em 6x no cartão do Lucas = R$ 100 por pessoa por mês".

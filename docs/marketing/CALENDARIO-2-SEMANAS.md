@@ -31,7 +31,7 @@
 3. A dupla aprova, posta pelo próprio app da rede e escolhe a música em alta na hora. **Nada de postagem automática** (risco de perder a conta).
 
 **Imagens**
-- Prints do Tripwave e a Norti: são nossos, use à vontade.
+- Prints da Norti e a Norti: são nossos, use à vontade.
 - Fotos de fundo: bancos com licença livre (Unsplash, Pexels), sem rosto em destaque, ou fotos de viagem da própria dupla sem gente.
 - Foto realista de pessoa gerada por IA: só com o rótulo de IA ligado no TikTok.
 - **Nunca** foto de celebridade ou de outra conta.
@@ -232,7 +232,7 @@ ou sempre fica faltando aquele um
 
 ### X4 (Ingryd)
 ```
-o que eu mais gosto no Tripwave até agora: a Norti dorme quando a viagem ainda não tem nada.
+o que eu mais gosto na Norti até agora: a Norti dorme quando a viagem ainda não tem nada.
 
 parece bobo, mas quem fez isso fui eu entendendo cada linha
 ```
@@ -240,7 +240,7 @@ parece bobo, mas quem fez isso fui eu entendendo cada linha
 
 ### X5 (Victor)
 ```
-decisão de produto da semana: o Tripwave vai ser app primeiro, site depois.
+decisão de produto da semana: a Norti vai ser app primeiro, site depois.
 
 motivo: quem viaja com a galera decide tudo pelo celular, no grupo. ninguém abre o notebook pra ver quanto deve.
 ```
@@ -301,7 +301,7 @@ a rede que mais trouxe gente: [rede]. a que eu achava que ia trazer: [rede].
 
 ### X14 (Victor)
 ```
-2 semanas falando do Tripwave em público. o que aprendi:
+2 semanas falando da Norti em público. o que aprendi:
 
 - [aprendizado 1, com número]
 - [aprendizado 2]

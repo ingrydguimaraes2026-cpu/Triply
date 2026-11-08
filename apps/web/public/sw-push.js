@@ -1,4 +1,4 @@
-// Notificações do Tripwave (spec 013). Este arquivo é carregado pelo service worker do app (vite.config.ts → importScripts).
+// Notificações da Norti (spec 013). Este arquivo é carregado pelo service worker do app (vite.config.ts → importScripts).
 // O servidor manda { titulo, corpo, url, tag }; tocar na notificação abre o app nessa página.
 
 self.addEventListener('push', (evento) => {
@@ -9,7 +9,7 @@ self.addEventListener('push', (evento) => {
     dados = { corpo: evento.data ? evento.data.text() : '' }
   }
   evento.waitUntil(
-    self.registration.showNotification(dados.titulo || 'Tripwave', {
+    self.registration.showNotification(dados.titulo || 'Norti', {
       body: dados.corpo || '',
       icon: '/icon-192.png',
       badge: '/icon-192.png',

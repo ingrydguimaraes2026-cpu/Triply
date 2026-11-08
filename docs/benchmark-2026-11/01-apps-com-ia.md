@@ -60,7 +60,7 @@ Limite honesto: Reddit, Google Play e a PhocusWire bloquearam leitura direta. As
 
 **Como cresce.** Duas frentes: app de consumo e venda B2B. A PhocusWire diz que a Roameo captura "sinais de intenção" (o que o grupo desliza) pra vender a destinos e fornecedores [7]. Ganha comissão por links da Klook, Trip.com, Agoda, Viator, GetYourGuide, Booking [13][16]. Não achei campanha de TikTok ou influenciador.
 
-**Leitura pro Tripwave.** O que assusta não é a IA. É que o primeiro minuto é um jogo (deslizar), e o resultado é um roteiro pronto. O Tripwave tem votação, mas não tem esse "jogo" nem o roteiro saindo dele.
+**Leitura pro Norti.** O que assusta não é a IA. É que o primeiro minuto é um jogo (deslizar), e o resultado é um roteiro pronto. A Norti tem votação, mas não tem esse "jogo" nem o roteiro saindo dele.
 
 ---
 
@@ -212,7 +212,7 @@ Limite honesto: Reddit, Google Play e a PhocusWire bloquearam leitura direta. As
 
 **Como cresce.** Distribuição dentro de onde a pessoa já está (WhatsApp, Instagram) + B2B.
 
-**Leitura pro Tripwave.** É a prova de que "estar no WhatsApp" é canal. Pro Brasil, isso pesa muito.
+**Leitura pro Norti.** É a prova de que "estar no WhatsApp" é canal. Pro Brasil, isso pesa muito.
 
 ---
 
@@ -226,7 +226,7 @@ Limite honesto: Reddit, Google Play e a PhocusWire bloquearam leitura direta. As
 
 **Tração.** "1.000+ planejadores" e "200+ avaliações nota 4,9" no próprio site [46]. Um blog de 2026 elegeu como melhor planejador de grupo com IA, mas o blog vende serviço concorrente [48].
 
-**Leitura pro Tripwave.** É o mais parecido com o Tripwave em escopo (votar + IA + gastos). Também é pequeno. Isso mostra que "fazer tudo" não basta.
+**Leitura pro Norti.** É o mais parecido com a Norti em escopo (votar + IA + gastos). Também é pequeno. Isso mostra que "fazer tudo" não basta.
 
 ---
 
@@ -270,7 +270,7 @@ Pro grupo de amigos brasileiro (não achei nenhum app pesquisado tratando disso)
 - **Português e WhatsApp.** Tudo em inglês; o grupo brasileiro decide no WhatsApp, não dentro do app.
 - **Parcelamento.** Brasileiro paga viagem parcelado; ninguém acompanha "quanto falta cada um pagar até a data".
 
-## (3) Três ideias de "momento uau" pro Tripwave
+## (3) Três ideias de "momento uau" pro Norti
 
 **1. "Cola o print do grupo" (do WhatsApp ao plano).**
 A pessoa cola um print ou exporta a conversa do grupo do WhatsApp ("bora Floripa no réveillon?", "eu topo", "sem grana em dezembro"). A IA devolve em 20 segundos: destino, datas candidatas, quem topou, quem está em dúvida, orçamento implícito e uma enquete pronta pra mandar de volta no grupo. Todo mundo importa TikTok. Ninguém importa a conversa onde a viagem realmente nasce.

@@ -1,6 +1,6 @@
 # @together/mobile
 
-App mobile do Tripwave (Expo / React Native), parte do monorepo. Usa a lógica
+App mobile da Norti (Expo / React Native), parte do monorepo. Usa a lógica
 compartilhada de `@together/core` (dinheiro, câmbio, client do Supabase).
 
 ## Rodar

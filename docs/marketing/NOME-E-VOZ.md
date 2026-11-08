@@ -1,5 +1,7 @@
 # Nome e tom de voz
 
+> **Atualização 08/11/2026:** o nome mudou de novo. Agora o produto é **Norti** (o mesmo nome da mascote; fala-se "a Norti"). Este documento fica como registro da escolha do "Tripwave". Falta decidir domínio e @ da Norti (checar `norti.app`, `norti.com.br`, `@nortiapp` e se já existe "Norti" nas lojas).
+
 *02/11/2026. Triagem inicial feita pelo Claude. **Nada aqui confirma que um nome está livre**: veja "Checagens obrigatórias" no fim.*
 
 ## ✅ Decisão: **Tripwave**

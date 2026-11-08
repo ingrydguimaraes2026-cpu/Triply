@@ -1,4 +1,4 @@
-// Nomes antigos (do lucide) dos ícones do Tripwave, pra as telas antigas continuarem iguais.
+// Nomes antigos (do lucide) dos ícones da Norti, pra as telas antigas continuarem iguais.
 // Código novo: <Icone nome="lugar" /> (./Icone). Lista e desenhos: packages/core/scripts/icones-lista.mjs
 import { criarIcone, type ComponenteDeIcone } from './Icone'
 

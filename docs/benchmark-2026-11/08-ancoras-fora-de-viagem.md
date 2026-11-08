@@ -2,7 +2,7 @@
 
 Pesquisa feita em 03/11/2026. Fontes no fim, numeradas [n].
 
-**A pergunta:** qual UMA funcionalidade faz o Tripwave ser lembrado, baixado, aberto de novo e espalhado? "Cobrar Pix dos amigos" foi recusado como âncora.
+**A pergunta:** qual UMA funcionalidade faz a Norti ser lembrado, baixado, aberto de novo e espalhado? "Cobrar Pix dos amigos" foi recusado como âncora.
 
 **O problema de fundo:** viagem é rara. A pessoa viaja 1 ou 2 vezes por ano. Garry Tan (YC) chama "planejar viagem" de ideia de startup que mais morre (ver [02](02-apps-de-grupo.md)).
 
@@ -18,7 +18,7 @@ Pesquisa feita em 03/11/2026. Fontes no fim, numeradas [n].
 1. **Toda âncora forte tem um "objeto" que a pessoa posta.** Wrapped (card), Letterboxd (nota), Beli (ranking), Strava (mapa da corrida), Duolingo (número do streak). O app é lembrado pelo objeto, não pela ferramenta.
 2. **Hábito vem de frequência natural, não de truque.** Strava funciona porque a pessoa corre 3x por semana. Letterboxd, porque vê filme toda semana. Beli, porque come fora. **Viagem não tem essa frequência.** Nenhum truque (streak, badge) cria frequência do nada.
 3. **Os apps "de evento raro" que vencem usam o raro como pico, e algo frequente como vale.** Spotify Wrapped é 1x por ano, mas o Spotify é diário. Polarsteps é usado na viagem, mas vive do livro e da memória depois.
-4. **Por isso a âncora do Tripwave precisa de uma de três saídas:**
+4. **Por isso a âncora da Norti precisa de uma de três saídas:**
    - (a) **sair do "viagem" e pegar o "rolê"** (fim de semana, show, praia, aniversário): frequência mensal, não anual;
    - (b) **viver do passado e do futuro**, não só do durante: diário de viagens antigas, contagem regressiva, "há 1 ano";
    - (c) **aceitar que é raro e ser o melhor pico** (Wrapped da viagem) e crescer pela viralidade, não pela volta.
@@ -75,7 +75,7 @@ Formato: **Âncora** · **Hábito/volta** · **Objeto compartilhado** · **Núme
 - **Hábito:** o alerta sincronizado cria evento coletivo diário.
 - **Objeto:** a foto dupla, sem filtro. Mas fica dentro do app.
 - **Números:** cerca de 40 milhões de usuários ativos em 2025 (empresa, Voodoo); 50% dos usuários nos principais mercados abrem 6 dias por semana (empresa) [14]. Comprado pela Voodoo por cerca de €500 milhões em 2024 [15]. Teve pico e queda forte depois de 2022 (estimativas variam muito) [14].
-- **Versão viagem:** durante a viagem, um alerta "Tripwave agora!" na mesma hora pra todo o comboio; cada um posta a foto do momento. No fim, vira o "diário de 2 minutos" da viagem.
+- **Versão viagem:** durante a viagem, um alerta "Norti agora!" na mesma hora pra todo o comboio; cada um posta a foto do momento. No fim, vira o "diário de 2 minutos" da viagem.
 - **Crítica:** encaixa muito bem DURANTE a viagem (o grupo está junto e quer registrar). Mas só existe nos dias de viagem. Bom ingrediente da retrospectiva, não âncora sozinha.
 
 ### 7. Locket Widget
@@ -119,7 +119,7 @@ Formato: **Âncora** · **Hábito/volta** · **Objeto compartilhado** · **Núme
 - **Objeto:** o vídeo de memória; em 2025 ganhou botão pra status do WhatsApp e edição no CapCut [25].
 - **Números:** o Google não divulga uso de Memórias ou Recap. (Não achei número confiável.)
 - **Versão viagem:** "Há 1 ano vocês estavam em Floripa": cartão automático pro grupo inteiro, com 5 fotos e um botão "bora repetir?".
-- **Crítica:** o melhor mecanismo de volta **fora de época** que achei, e é barato. Mas precisa que as fotos estejam no Tripwave, e hoje elas ficam no rolo de cada um e no WhatsApp.
+- **Crítica:** o melhor mecanismo de volta **fora de época** que achei, e é barato. Mas precisa que as fotos estejam na Norti, e hoje elas ficam no rolo de cada um e no WhatsApp.
 
 ### 13. Polarsteps (comparação, é de viagem)
 - **Âncora:** rastreia a rota sozinho e vira livro impresso.
@@ -219,7 +219,7 @@ Formato: **Âncora** · **Hábito/volta** · **Objeto compartilhado** · **Núme
 - **Âncora:** saber quem deve quanto, sem briga.
 - **Hábito:** a dívida pendente puxa a volta.
 - **Números:** Tricount diz 17 milhões+ de usuários (empresa) e que se dividiu £20,2 bilhões em 2025 [48]. Splitwise não divulga.
-- **Versão viagem:** é o que o Tripwave já tem (Contas).
+- **Versão viagem:** é o que a Norti já tem (Contas).
 - **Crítica:** dor real, mas o dono recusou como âncora. Fica como base do produto, não como vitrine.
 
 ### 28. Apps "Been" (mapa de países visitados)
@@ -242,13 +242,13 @@ Formato: **Âncora** · **Hábito/volta** · **Objeto compartilhado** · **Núme
    - preencher o passado (Letterboxd, Been: o 1º uso já é recompensador);
    - meta anual (Goodreads).
 3. **O objeto postável é o anúncio.** Partiful (convite), Wrapped (cards), Strava (mapa). Se não dá pra postar, não espalha.
-4. **O "rolê" é a saída de frequência.** Partiful vive de festa, não de casamento. Se o Tripwave aceitar "fim de semana na praia", "show" e "aniversário fora", a frequência sobe de 1-2 por ano pra 1 por mês.
+4. **O "rolê" é a saída de frequência.** Partiful vive de festa, não de casamento. Se a Norti aceitar "fim de semana na praia", "show" e "aniversário fora", a frequência sobe de 1-2 por ano pra 1 por mês.
 5. **Grupo é o diferencial que ninguém pegou na memória.** Polarsteps, Been, Letterboxd e Google Fotos são individuais. "A memória **do grupo**" está vazia.
 6. **Cuidado com o que já cansou:** check-in manual (Swarm), streak forçado, swipe (todo mundo tem), atividade falsa (NGL).
 
 ---
 
-## Parte 3 — 10 candidatos de âncora pro Tripwave
+## Parte 3 — 10 candidatos de âncora pro Norti
 
 Notas de 1 a 5. **Dor/desejo:** quanto a pessoa quer. **Frequência:** quanto volta sem viagem marcada. **Viralidade:** quanto o objeto se espalha sozinho. **Facilidade:** quanto é fácil de construir com o que já temos (5 = fácil).
 
@@ -284,7 +284,7 @@ Notas de 1 a 5. **Dor/desejo:** quanto a pessoa quer. **Frequência:** quanto vo
 - **Risco principal:** só o organizador instala. E todo app de viagem pode copiar em uma semana.
 - **Notas:** dor/desejo 3 · frequência 4 · viralidade 4 · facilidade 5.
 
-### E. "Tripwave agora" (BeReal da viagem)
+### E. "Norti agora" (BeReal da viagem)
 - **Frase de venda:** "Uma vez por dia, todo o comboio tira a foto do mesmo minuto."
 - **Momento uau:** a 1ª notificação na viagem; 8 fotos do mesmo instante, cada uma num canto da festa.
 - **Volta fora de época:** quase nenhuma. Só pela retrospectiva.
@@ -301,7 +301,7 @@ Notas de 1 a 5. **Dor/desejo:** quanto a pessoa quer. **Frequência:** quanto vo
 - **Notas:** dor/desejo 2 · frequência 2 · viralidade 3 · facilidade 4.
 
 ### G. "Há 1 ano" (Memórias do Google Fotos em grupo)
-- **Frase de venda:** "Lembra disso? O Tripwave lembra pela galera."
+- **Frase de venda:** "Lembra disso? A Norti lembra pela galera."
 - **Momento uau:** chega pra todo o grupo, no mesmo dia: "Há 1 ano vocês estavam em Floripa", com 5 fotos e o botão "bora repetir?".
 - **Volta fora de época:** é exatamente pra isso. Volta grátis, com data marcada, todo ano, pra cada viagem.
 - **Como espalha:** o card de memória vai pro status do WhatsApp e nos stories; o "bora repetir?" vira a próxima viagem.
@@ -344,7 +344,7 @@ Notas de 1 a 5. **Dor/desejo:** quanto a pessoa quer. **Frequência:** quanto vo
 | I | Copie essa viagem | 3 | 2 | 4 | 3 | **12** |
 | J | Meta do grupo | 2 | 2 | 3 | 5 | **12** |
 | F | Ranking do comboio | 2 | 2 | 3 | 4 | **11** |
-| E | Tripwave agora | 2 | 1 | 4 | 3 | **10** |
+| E | Norti agora | 2 | 1 | 4 | 3 | **10** |
 | H | Mapa vivo | 4 | 1 | 2 | 2 | **9** |
 
 ### Leitura crítica

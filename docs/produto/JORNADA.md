@@ -4,7 +4,7 @@
 
 ## O problema em uma linha
 
-A viagem acontece poucas vezes por ano. Se o Tripwave só serve **durante** a viagem, a pessoa abre o app 10 dias por ano e esquece. A jornada precisa começar antes da viagem existir e continuar depois que ela acaba.
+A viagem acontece poucas vezes por ano. Se a Norti só serve **durante** a viagem, a pessoa abre o app 10 dias por ano e esquece. A jornada precisa começar antes da viagem existir e continuar depois que ela acaba.
 
 Hoje o app é forte no meio (antes e durante) e quase vazio nas pontas.
 
@@ -29,7 +29,7 @@ Regra pra ler as ideias abaixo: **no máximo 3 por fase**. Ideia que não está 
 - No benchmark, esse é o tema que **mais gera compartilhamento**: "a viagem que vocês sempre se prometeram finalmente saiu do whatsapp" e "chegou a tão falada viagem" (padrão 2, até 77 mil compartilhamentos).
 - Na pesquisa, achar data em comum (39%) e definir orçamento (36%) são os maiores obstáculos (Skyscanner, em `reports/`).
 
-**O que o Tripwave já tem**
+**O que a Norti já tem**
 - Onboarding da spec 116: começa em "Pra onde vocês vão?". Ou seja, **já supõe que o destino existe**.
 - Enquetes (spec 021) e convite por link. Mas tudo mora **dentro de uma viagem**, que precisa de destino pra nascer.
 - Nada pra quem ainda está no "bora?".
@@ -54,7 +54,7 @@ Regra pra ler as ideias abaixo: **no máximo 3 por fase**. Ideia que não está 
 - Planilha pra dividir quartos, compras e quem leva o quê. Pesquisa: 30,4% definem a cota de cada um antes (Imaginadora, em `reports/`).
 - Documentos e seguro: alguém lembra na véspera.
 
-**O que o Tripwave já tem**
+**O que a Norti já tem**
 - Aba Viagem "antes" (spec 117): próximo carimbo, passaporte do comboio com 6 selos, Cutucar.
 - Hospedagem com opções, votos e escolha do ADM; duelo de fotos.
 - Explorar com deslize e **match do comboio** (3 "quero" = Deu match!).
@@ -81,7 +81,7 @@ Regra pra ler as ideias abaixo: **no máximo 3 por fase**. Ideia que não está 
 - Splitwise ou Tricount pros gastos, quando alguém lembra. O Splitwise grátis limita a cerca de 3 a 4 despesas por dia (em `reports/`).
 - Google Maps pra se achar, câmbio na cabeça.
 
-**O que o Tripwave já tem**
+**O que a Norti já tem**
 - Aba Viagem "na viagem": Hoje com agenda, clima e ponto de encontro.
 - Contas como conversa, com a barra "o que foi?" ("taxi 20" vira € 20 Transporte), câmbio e boletim às 12h e 20h.
 - Fotos do comboio, documentos e cofre, guia da casa.
@@ -106,7 +106,7 @@ Regra pra ler as ideias abaixo: **no máximo 3 por fase**. Ideia que não está 
 - A cobrança do Pix dura semanas e é constrangedora. É o tema mais compartilhado do benchmark (padrão 4: "e o pix? nada ainda?", até 71,6 mil compartilhamentos).
 - As fotos ficam espalhadas entre o zap e o celular de cada um. O grupo do zap vira grupo de meme e esfria.
 
-**O que o Tripwave já tem**
+**O que a Norti já tem**
 - Aba Viagem "voltou" = Lembranças: números da viagem, passaporte completo, "contas em dia".
 - Retrospectiva (spec 105, cartão vira imagem) e PDF da viagem.
 - Repetir com o mesmo comboio (spec 055, só web, banco não aplicado).
@@ -129,7 +129,7 @@ Regra pra ler as ideias abaixo: **no máximo 3 por fase**. Ideia que não está 
 - Nada. "A gente tem que repetir" no zap, uma vez por mês, sem data.
 - O próximo feriado chega e ninguém se organizou.
 
-**O que o Tripwave já tem**
+**O que a Norti já tem**
 - Início com "No comboio agora" e a lista de viagens.
 - Repetir com o mesmo comboio (055, só web).
 
@@ -158,7 +158,7 @@ O que fecha o ciclo são duas portas que **não existem hoje**: a viagem rascunh
 
 ## A aposta central
 
-**Hipótese inicial:** "o Tripwave faz a viagem do grupo sair do papel".
+**Hipótese inicial:** "a Norti faz a viagem do grupo sair do papel".
 
 ### Por que eu contesto (em parte)
 
@@ -169,7 +169,7 @@ O que fecha o ciclo são duas portas que **não existem hoje**: a viagem rascunh
 ### A aposta que proponho
 
 > **"Ninguém fica devendo e ninguém precisa cobrar."**
-> O Tripwave é o lugar onde o dinheiro do grupo fica claro, do sinal da casa ao último pix, sem ninguém virar o chato.
+> A Norti é o lugar onde o dinheiro do grupo fica claro, do sinal da casa ao último pix, sem ninguém virar o chato.
 
 Por que essa:
 - **É onde o zap é 10 vezes pior.** Enquete o zap faz. Saldo com câmbio, IOF, quem pagou o sinal e quem ainda deve, ele não faz.

@@ -110,7 +110,7 @@ Não achei nada com o nome **"Holicay"**. O mais próximo é o **Holiday (ホリ
 4. **Como espalha:** o restaurante cola o selo na porta. Vira peregrinação.
 5. **Monetização:** anúncio de comércio local, cupom (团购), comissão.
 6. **Tração:** 3.091 restaurantes em 144 cidades em 2025 ([Governo de Xangai](https://english.shanghai.gov.cn/en-Latest-WhatsNew/20250627/1d003a13325c4bb09788c8e75424eded.html)). Pedidos de turistas em restaurantes da lista +165% no feriado; um restaurante +272% de tráfego ([China Daily](https://www.chinadaily.com.cn/a/202511/26/WS69265aa5a310d6866eb2b70f.html)). Em 2026 lançou a lista no exterior e uma "Tem que brincar" (必玩榜). Números da empresa.
-7. **O que copiar:** **ranking com nome próprio, anual, com selo físico**. Um "Tripwave Recomenda" feito com o que os grupos realmente fizeram e amaram.
+7. **O que copiar:** **ranking com nome próprio, anual, com selo físico**. Um "Norti Recomenda" feito com o que os grupos realmente fizeram e amaram.
 
 ---
 
@@ -402,7 +402,7 @@ Não achei nada com o nome **"Holicay"**. O mais próximo é o **Holiday (ホリ
 - **Mapa vivo dos amigos depois do Zenly.** No ocidente o espaço ficou com Find My e Life360 (família, controle). O lado "brinquedo entre amigos" ficou vazio, fora o Bump (baixa adoção).
 - **Pote do grupo no chat** (모임통장). No Brasil, as "caixinhas" dos bancos são individuais. *Registro, não proposta.*
 
-## (3) O que isso sugere pro Tripwave (pra discutir, não decidido)
+## (3) O que isso sugere pro Norti (pra discutir, não decidido)
 
 **Âncora candidata: "o passaporte do grupo".**
 - Cada viagem do grupo enche um **caderno de carimbos compartilhado**. O carimbo tem arte do lugar e data, e só é liberado quando alguém do grupo está lá (GPS ou foto na hora).

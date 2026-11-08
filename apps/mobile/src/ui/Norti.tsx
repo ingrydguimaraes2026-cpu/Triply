@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, Image, Platform, View } from 'react-native'
 
-// A Norti: mascote do Tripwave (uma bússola em forma de pino de mapa, de chapéu de safári).
+// A Norti: mascote do app (uma bússola em forma de pino de mapa, de chapéu de safári).
 // As poses são as mesmas do site (assets/norti, vindas de docs/marketing/norti/app-web).
 // Lá quem anima é o mascot.js; aqui imitamos os movimentos dele com Animated:
 //   parada   → respira, balança de leve e pisca     feliz    → pula

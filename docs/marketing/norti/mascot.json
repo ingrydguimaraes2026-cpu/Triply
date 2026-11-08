@@ -85,7 +85,7 @@
     ]
   },
   "name": "Norti",
-  "app": "Tripwave",
+  "app": "Norti",
   "style": "line",
   "role": "Uma bússola em forma de pino de mapa: o caminho e o destino da viagem do grupo.",
   "represents": [
@@ -101,7 +101,7 @@
     "toast": "Todo mundo pagou. Ninguém deve nada!",
     "oops": "Ops, sem internet. Já tento de novo.",
     "tip": "Toque num lugar pra votar com o grupo.",
-    "loveTitle": "Curtiu o Tripwave?",
+    "loveTitle": "Curtiu a Norti?",
     "love": "Conta pra galera da próxima viagem.",
     "items": [
       "Roteiro no mapa",

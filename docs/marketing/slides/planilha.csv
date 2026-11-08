@@ -4,7 +4,7 @@ S1;seg 09/11;2;chat;o mercado;Duda: alguém lembra quanto deu o mercado? | Léo:
 S1;seg 09/11;3;chat;o Pix;Rafa: eu te faço o Pix amanhã, pode ser? | Ana: claro! | # 9 de janeiro | Ana: e o Pix, Rafa? 😅 | Rafa: ahh verdade, hoje sem falta;oops;;Conversa fictícia.
 S1;seg 09/11;4;chat;a casa;Gabi: gente, quem pagou a casa mesmo? | Caio: eu 🙋 os 5 mil | Bia: e quanto dá pra cada um? | Caio: sei lá, alguém faz uma planilha | Bia: socorro;oops;;Conversa fictícia.
 S1;seg 09/11;5;app;a Norti anota quem pagou o quê na hora. no fim, cada um sabe o Pix que deve.;Bia>Caio:775 | Duda>Caio:775 | Gabi>Caio:775 | Léo>Caio:775 | Mari>Caio:775 | Rafa>Caio:350 | Rafa>Ana:425;point;;Ilustração no visual do app. Conta feita com a regra real do app (calcularAcertos): casa R$ 5.000 paga pelo Caio + mercado R$ 1.200 pago pela Ana, 8 pessoas = R$ 775 cada. Trocar pelo print real quando tiver.
-S1;seg 09/11;6;cta;Tripwave;o app da viagem com a galera: roteiro, gastos e o Pix de cada um numa tela só.;wave;;Fecho. CTA pra lista de espera.
+S1;seg 09/11;6;cta;Norti;o app da viagem com a galera: roteiro, gastos e o Pix de cada um numa tela só.;wave;;Fecho. CTA pra lista de espera.
 F1;exemplo;1;nome;LUCAS,;;think;marca o Lucas que ainda não pagou a casa do réveillon 🙃 / #reveillon #pix #amigos #viagemcomamigos;Série infinita: 1 nome por post (os nomes mais comuns do Brasil).
 F1;exemplo;2;frase;oi sumido rs;;wave;;
 F1;exemplo;3;frase;tudo bem?;;blink;;

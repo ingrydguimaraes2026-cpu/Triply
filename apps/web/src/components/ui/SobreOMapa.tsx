@@ -18,11 +18,11 @@ type Props = {
 // Logo clara no canto de cima (também usada na Nova viagem)
 export function MarcaSobreOMapa() {
   return (
-    <Link to="/" className="sobre-mapa-marca" aria-label="Tripwave: ir pro início">
+    <Link to="/" className="sobre-mapa-marca" aria-label="Norti: ir pro início">
       <span className="sobre-mapa-norti">
         <Norti tamanho={36} sombra={false} />
       </span>
-      Tripwave
+      Norti
     </Link>
   )
 }

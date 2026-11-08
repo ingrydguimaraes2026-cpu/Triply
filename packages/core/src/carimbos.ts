@@ -68,7 +68,7 @@ export function tipoDoLugar(nome: string): TipoDeLugar {
   return 'cidade'
 }
 
-// Ícone da arte do carimbo (catálogo de ícones do Tripwave)
+// Ícone da arte do carimbo (catálogo de ícones da Norti)
 export function iconeDoTipo(tipo: string): 'lugar' | 'sol' | 'natureza' | 'ingresso' | 'festa' {
   if (tipo === 'praia') return 'sol'
   if (tipo === 'serra') return 'natureza'

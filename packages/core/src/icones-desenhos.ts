@@ -465,7 +465,7 @@ export const DESENHOS_DOS_ICONES = {
  }
 } as const satisfies Record<string, { d: string; c?: string }>
 
-// Nomes antigos (lucide) → nome do Tripwave. Só pra a troca não quebrar nada; código novo usa o nome em português.
+// Nomes antigos (lucide) → nome da Norti. Só pra a troca não quebrar nada; código novo usa o nome em português.
 export const APELIDOS_DOS_ICONES = {
  "Luggage": "viagens",
  "Map": "roteiro",

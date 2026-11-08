@@ -54,7 +54,7 @@ Links: https://apps.apple.com/br/app/triplly-roteiro-de-viagem/id6759879426 · h
 
 ### Timeline e salvos do Victor (03/11/2026)
 
-A timeline é quase toda de dev, IA e gente construindo app em público. O que serve pro Tripwave:
+A timeline é quase toda de dev, IA e gente construindo app em público. O que serve pro Norti:
 
 | O que vi | Quem | Lição pra nós |
 |---|---|---|
@@ -66,7 +66,7 @@ A timeline é quase toda de dev, IA e gente construindo app em público. O que s
 | Enxovaly (BR): 2.500 assinantes em 90 dias; 120 assinaturas na 1ª hora do lançamento "só com os grupos VIP"; contas novas com 1,1 a 1,6 mil views no 1º dia | @gabrielbuzziv (salvo) | Lançar **em grupos** (WhatsApp/Telegram VIP) e ter contas nas 3 redes desde o dia 1. |
 | Teste grátis: conversão mediana de 25,5% (até 4 dias), 37,4% (5 a 9 dias), 42,5% (17 a 32 dias), segundo a RevenueCat | @gabrielbuzziv (salvo) | Se cobrarmos, nada de cobrar antes de mostrar valor (o erro do Roameo). |
 | App com 180 mil downloads em 18 meses, sem anúncio | @ndhabarde11 (salvo) | ASO (otimizar a loja) funciona; o Roameo está em 13º por isso. |
-| "Dê um número de WhatsApp ao Claude" (Kapso, 14 milhões de views) | anúncio | **Já dá pra ter o Tripwave dentro do grupo do WhatsApp** como um número que responde. |
+| "Dê um número de WhatsApp ao Claude" (Kapso, 14 milhões de views) | anúncio | **Já dá pra ter a Norti dentro do grupo do WhatsApp** como um número que responde. |
 | Habilidade que cria mascote: "o único fosso que sobrou é marca e marketing" | @tobiadonadon_ (salvo) | A Norti é um ativo; precisa ter atitude, não só enfeite. |
 | Appllama, "unslop", Native Cook: ferramentas pra deixar a UI do app com cara de app grande | salvos | Usar pra subir o acabamento das telas (o Roameo ganha no polimento). |
 | Mandar vídeo de demonstração nas notas da revisão da Apple destrava app parado | @_aurumX (salvo) | Guardar pro lançamento na loja. |
@@ -86,7 +86,7 @@ A timeline é quase toda de dev, IA e gente construindo app em público. O que s
   - "deu 3 dias de teste porém no mesmo dia descontou do cartão";
   - "muitos fakes";
   - "não tem muitos usuários e ainda cobram".
-- **Concorrente?** Não diretamente. É pra conhecer estranhos; o Tripwave é pra viajar com quem você já conhece.
+- **Concorrente?** Não diretamente. É pra conhecer estranhos; a Norti é pra viajar com quem você já conhece.
 - **Lições:**
   - O viajante solo quer **conhecer gente**. É outro produto, e mais um motivo pra não mirar no solo.
   - "Wrapped" de viagem já é palavra de loja: confirma a retrospectiva como peça forte.

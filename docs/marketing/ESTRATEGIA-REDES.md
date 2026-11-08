@@ -81,7 +81,7 @@ Por que funcionou:
 - **"Em breve"**: cria expectativa e lista de espera antes de lançar.
 - Outros devs compartilharam por causa do **design** (o Magdiel citou o post só elogiando a animação).
 
-**Nossa versão:** "tripwave: você vê o roteiro, quem pagou o quê e o Pix de cada um numa tela, e o grupo do zap para de virar bagunça. Em breve" + vídeo de 15-20s do app.
+**Nossa versão:** "norti: você vê o roteiro, quem pagou o quê e o Pix de cada um numa tela, e o grupo do zap para de virar bagunça. Em breve" + vídeo de 15-20s do app.
 
 ### Formatos que funcionam no X BR hoje
 
@@ -110,7 +110,7 @@ Por que funcionou:
 
 - **1 a 3 posts por dia.** Pelo menos 1 com vídeo ou print do app.
 - **20-30 respostas por dia** em posts desses perfis acima. No começo, responder bem traz mais seguidor que postar.
-- **Toda sexta**: post de resumo da semana ("semana 3 do tripwave: X pessoas na lista, fizemos Y, erramos Z").
+- **Toda sexta**: post de resumo da semana ("semana 3 da norti: X pessoas na lista, fizemos Y, erramos Z").
 - Vocês são **dois fundadores** (você + Ingryd). Isso é história boa: uma dupla construindo com IA, um dev e uma pessoa aprendendo a programar. Usem.
 
 ---
@@ -141,7 +141,7 @@ Todo mundo já viveu isso. E a pesquisa do projeto mostra as dores exatas:
 
 O Ernesto recomenda começar com **UGC** (você gravando) e **conteúdo sem rosto** (tela + texto), porque é grátis.
 
-1. **POV / esquete** — "POV: você é o amigo que organiza a viagem" (grupo do zap explodindo, ninguém responde, você pagando tudo). Final: abre o tripwave e tá tudo lá.
+1. **POV / esquete** — "POV: você é o amigo que organiza a viagem" (grupo do zap explodindo, ninguém responde, você pagando tudo). Final: abre a norti e tá tudo lá.
 2. **"Tipos de amigo na viagem"** — o que nunca paga, o que só some, o que quer tudo de luxo, o planilheiro. Série, 1 por vídeo.
 3. **Gravação da tela + texto em cima** — "como dividimos R$ 8.400 entre 6 amigos em 10 segundos". Áudio em alta por baixo.
 4. **Print de grupo de WhatsApp caótico** (inventado, com nomes fictícios) → corta pro app organizado.
@@ -165,11 +165,11 @@ O melhor marketing de app de grupo é o **convite**. Cada viagem criada manda um
 O que ajuda isso (várias coisas já estão nas specs):
 - **Entrar pelo link sem cadastro** (spec 018) — a maior reclamação dos concorrentes é obrigar todo mundo a criar conta.
 - **Prévia bonita do link no WhatsApp** (spec 072).
-- **"Feito com Tripwave"** discreto no PDF da viagem, nos resumos e na retrospectiva.
+- **"Feito com Norti"** discreto no PDF da viagem, nos resumos e na retrospectiva.
 
 ---
 
-## 4. Nome: Tripwave
+## 4. Nome: Norti
 
 Decidido em 02/11/2026. Detalhes, triagem e tom de voz em [NOME-E-VOZ.md](NOME-E-VOZ.md).
 

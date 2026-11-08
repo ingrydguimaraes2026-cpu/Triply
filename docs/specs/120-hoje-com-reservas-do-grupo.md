@@ -26,7 +26,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 
 ### 120b · Reserva entra sem digitar (IA invisível)
 - Botão "adicionar reserva" com 3 jeitos: **mandar print**, **mandar PDF** ou **colar o texto** do e-mail.
-- Também pelo compartilhar do celular: no app do banco, da companhia aérea ou do Airbnb, "compartilhar" → Tripwave.
+- Também pelo compartilhar do celular: no app do banco, da companhia aérea ou do Airbnb, "compartilhar" → Norti.
 - A IA lê e devolve um rascunho: tipo (voo, ônibus, casa, carro, ingresso, restaurante), data, horário, endereço, código da reserva e de quem é.
 - A pessoa confere e confirma (1 toque). O rascunho vira o que já existe:
   - voo, ônibus, carro → trajeto (004);
@@ -40,7 +40,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 - O "Cheguei" da casa substitui o "cheguei bem" (051) durante a viagem.
 
 ## Não inclui (fica pra depois)
-- Encaminhar e-mail pra um endereço do Tripwave (precisa de e-mail de entrada; ver 015). Na 1ª versão, print, PDF e texto colado.
+- Encaminhar e-mail pra um endereço da Norti (precisa de e-mail de entrada; ver 015). Na 1ª versão, print, PDF e texto colado.
 - Ler a caixa de e-mail da pessoa sozinho (Gmail).
 - Status do voo ao vivo (atraso, portão). Precisa de API paga.
 - Live Activity na tela de bloqueio.

@@ -77,7 +77,7 @@ Perfis pequenos chegam longe quando acertam o padrão: @clar4cruz (587 seguidore
 
 ## O que isso muda no calendário
 
-1. **Zero tela do Tripwave nos primeiros posts.** O app entra no máximo como a última piada (no estilo do iFood) ou só na bio. O S1 sai de vez.
+1. **Zero tela da Norti nos primeiros posts.** O app entra no máximo como a última piada (no estilo do iFood) ou só na bio. O S1 sai de vez.
 2. **O formato base vira:** 1 frase grande na tela (até 12 palavras, legível em 1 segundo) + a Norti em 1 pose ou animação curta + de 6 a 15 segundos. O slideshow de 6 slides só fica se **cada slide for uma piada sozinha**.
 3. **A Norti deixa de ser selo e vira personagem**, como o Duo: ela cobra pix, dorme no colchão do chão, foi quem deu a ideia. Nunca vende.
 4. **Datas** (os posts de réveillon que mais rodaram saíram em setembro e outubro e no pico de 26/12 a 04/01):
@@ -132,7 +132,7 @@ A 1ª linha tem um número pequeno e verdadeiro, ou uma história em lista com "
 
 ### D3. Puxar conversa
 Uma pergunta, um convite pra grupo ou marcar alguém da bolha.
-- @thallisribeiro: *É normal por ai o povo gerar tanto pix e não pagar? kkk*. Teve **27 mil** views. **A dor do Tripwave (pix não pago) já roda na bolha dev.**
+- @thallisribeiro: *É normal por ai o povo gerar tanto pix e não pagar? kkk*. Teve **27 mil** views. **A dor da Norti (pix não pago) já roda na bolha dev.**
 - @gabrielbuzziv: *esse cara aqui que ta me dando o passo a passo...*. Teve 19 mil views.
 
 ### D4. Surfar o assunto do dia com o próprio produto

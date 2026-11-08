@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Tripwave",
+    "name": "Norti",
     "slug": "together",
     "scheme": "together",
     "version": "1.0.0",
@@ -37,14 +37,14 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "O Tripwave usa a sua localização só com o app aberto, pra liberar o carimbo do lugar onde a galera está. Ela não é guardada."
+          "locationWhenInUsePermission": "A Norti usa a sua localização só com o app aberto, pra liberar o carimbo do lugar onde a galera está. Ela não é guardada."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "O Tripwave usa suas fotos pra você postar no feed da viagem.",
-          "cameraPermission": "O Tripwave usa a câmera pra você tirar fotos e postar no feed da viagem."
+          "photosPermission": "A Norti usa suas fotos pra você postar no feed da viagem.",
+          "cameraPermission": "A Norti usa a câmera pra você tirar fotos e postar no feed da viagem."
         }
       ]
     ]

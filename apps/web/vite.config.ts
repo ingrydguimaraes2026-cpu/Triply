@@ -48,8 +48,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'Tripwave',
-        short_name: 'Tripwave',
+        name: 'Norti',
+        short_name: 'Norti',
         description: 'Planeje a viagem com seu comboio, num lugar só.',
         lang: 'pt-BR',
         theme_color: '#7B542F',

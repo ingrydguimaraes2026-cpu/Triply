@@ -36,4 +36,4 @@
 ## Cuidados
 - **Deno:** rodar `deno check` numa pasta temporária. Dentro do projeto ele edita sozinho o `package.json` da raiz (adiciona `workspaces`).
 - O Overpass público e o Nominatim **não podem** ser usados ao vivo nem pela função (bloqueiam).
-- Outra sessão trocou o nome do produto pra **Tripwave** (textos visíveis). Nomes internos (`@together/core` etc.) continuam iguais de propósito.
+- Outra sessão trocou o nome do produto pra **Norti** (textos visíveis). Nomes internos (`@together/core` etc.) continuam iguais de propósito.
