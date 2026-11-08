@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, MoreHorizontal, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
+import { ArrowLeft, MoreHorizontal, Plus, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
 import {
   agoraEProximo,
   arquivoDeCada,
@@ -168,6 +168,18 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
           <Text className="mt-0.5 font-body text-[14px] text-suave">{diaLongo(lerData(hoje))}</Text>
         </View>
 
+        {/* Spec 120b: reserva entra sem digitar (print, PDF ou texto) */}
+        {!ehConvidado ? (
+          <Pressable
+            onPress={() => router.push('/nova-reserva')}
+            accessibilityRole="button"
+            className="min-h-[48px] flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-tracejado active:opacity-80"
+          >
+            <Plus size={18} color={cor.couro} />
+            <Text className="font-body-bold text-[15px] text-couro">Adicionar reserva</Text>
+          </Pressable>
+        ) : null}
+
         {!onde ? (
           <Cartao className="flex-row items-center gap-3 p-4">
             <Sun size={20} color={cor.caramelo} />
@@ -260,7 +272,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
                 )}
               </>
             ) : (
-              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. O ADM escolhe em Hospedagem.</Text>
+              <Text className="font-body text-[14px] leading-5 text-corpo">Nenhuma hospedagem escolhida em {onde.nome}. Mande o print da reserva da casa em "Adicionar reserva" e ela aparece aqui pra todo mundo.</Text>
             )}
           </Bloco>
         ) : null}

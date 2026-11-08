@@ -1,6 +1,6 @@
 # 120. "Hoje" com as reservas do grupo
 
-**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco aplicado · 120c pronta pra testar (08/11) · 120b a fazer
+**Fase:** 0 · **Tamanho:** G (dividida em 120a a 120c) · **Depende de:** 004, 011, 028, 029, 058, 117 · **Status:** 120a pronta pra testar (app e site, 03/11/2026) · banco aplicado · 120c pronta pra testar (08/11) · 120b pronta pra testar no app (08/11; print e PDF esperam a função `ler-reserva` no ar)
 
 > Camada 2 do [`docs/RUMO.md`](../RUMO.md): o que faz abrir o app todo dia durante a viagem. Alimenta o [passaporte da galera (118)](118-passaporte-da-galera.md).
 
@@ -71,7 +71,7 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 - [ ] Mando o print da reserva do Airbnb e, em até 15 s, vejo o rascunho com endereço, check-in e check-out; confirmo e a casa aparece no "Hoje" de todo mundo.
 - [ ] Mando o PDF de um voo e ele vira trajeto com horário e a pessoa certa; aparece em "quem chega hoje" no dia.
 - [x] "Ver reserva" abre o arquivo original. (120a: no bilhete do trajeto, no "Onde dormimos" e nos itens da agenda, pelo cofre. No site dá pra anexar a reserva ali mesmo; no app só abre.)
-- [ ] Leitura que falha abre o formulário com o que deu pra ler, sem perder o arquivo.
+- [ ] Leitura que falha abre o formulário com o que deu pra ler, sem perder o arquivo. (08/11: feito no app; não conferido no celular.)
 - [x] Num dia da viagem, o app abre direto no "Hoje". (120a: no app, o Início leva pra viagem, uma vez por abertura; no site, abrir a viagem leva pro Hoje, uma vez por aba.)
 - [ ] "Cheguei" num lugar do roteiro avisa o grupo e libera o carimbo (118a).
 - [x] O convidado pelo link vê o plano do dia, mas não o endereço nem o código da reserva. (120a: conta de convidado no app e no site esconde "Onde dormimos" e os bilhetes. A web leve `/v/` é a 0.8.)
@@ -83,6 +83,14 @@ Durante a viagem, uma tela só com o dia do grupo: o plano de hoje com horários
 - Site: `apps/web/src/pages/viagem/Hoje.tsx` + `src/features/hoje/ReservasDoDia.tsx` (o pedido foi fazer no site também, apesar do "não inclui").
 - "Cheguei" hoje avisa o grupo (chegadas, 051), marca o lugar como visitado e libera o carimbo do destino de hoje (120c, 08/11). "Cheguei na casa" no Onde dormimos faz o mesmo. O "cheguei bem" (051) da Overview continua lá fora da viagem.
 - Banco (`20261103120000_reservas_no_hoje.sql`, aplicado 03/11): arquivo do cofre amarra em hospedagem e agenda, `hospedagens.contato_anfitriao`, `trajetos.quem_busca_id`. Onde preencher (site): contato no formulário da hospedagem, "quem vai buscar" no do trajeto, reserva anexada no Hoje.
+
+## Como ficou a 120b (08/11/2026)
+- Regra: `packages/core/src/reserva-lida.ts` (`lerTextoDaReserva` por regras, `normalizarRascunho`, `oQueFalta`, `destinosDaReserva`, `pessoaDaReserva`, `trajetoDaReserva`/`hospedagemDaReserva`/`eventoDaReserva`, `lerReserva`, `salvarReserva`). Teste: `apps/web/tests/reserva-lida.test.mjs` (Airbnb, voo LATAM e ingresso Sympla de exemplo).
+- **Texto colado é lido no aparelho, por regras** (sem custo e sem internet pra ler); se a função estiver no ar, a IA lê também e as regras completam. **Print e PDF só pela IA**: Edge Function `supabase/functions/ler-reserva` (modelo `claude-haiku-5-5`, saída em JSON com esquema, nada guardado, só quem tem conta). Precisa do segredo `ANTHROPIC_API_KEY` e de publicar (OK do Victor). Sem ela, o formulário abre vazio com o aviso "não consegui ler" e o arquivo vai pro cofre do mesmo jeito.
+- App: `app/nova-reserva.tsx` (3 jeitos → "lendo..." → conferir → confirmar), botão "Adicionar reserva" no topo do Hoje, upload pro cofre em `src/lib/cofre.ts`. Novo pacote: `expo-document-picker` (precisa de build de desenvolvimento novo).
+- Casa lançada pelo ADM já entra como a **escolhida** do destino; lançada por membro entra como opção (o ADM escolhe). Transporte segue a permissão da viagem (ADM ou "membro edita transportes"); se o membro não puder, a tela explica.
+- Passageiro: o nome da reserva que bate com o primeiro nome de **uma** pessoa do comboio vira passageiro do trajeto.
+- Sem banco novo (os campos e o vínculo do cofre já existiam desde a 120a). Site sem mudança (o "Hoje" com reservas é do app). Compartilhar do celular → Norti fica pra depois (precisa de build nativo).
 
 ## Perguntas em aberto
 - O endereço da casa e o código de acesso podem aparecer pro convidado pelo link? (proposta: não, só pra quem está no comboio com conta)
