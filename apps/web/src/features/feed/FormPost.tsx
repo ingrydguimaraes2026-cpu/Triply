@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ImagePlus, X } from '../../components/ui/icones'
-import { gpsDoJpeg, type Tables } from '@together/core'
+import { gpsDoJpeg, liberarPelasFotos, type Tables } from '@together/core'
+import { supabase } from '../../lib/supabase'
+import { useViagemAtual } from '../viagens/hooks'
+import { hojeTexto } from '../destinos/datas'
 import { ArquivoInvalido, comprimirFoto } from '../fotos/comprimir'
 import { criarPost, MAX_FOTOS_POR_POST } from './api'
 
@@ -17,6 +20,7 @@ type Etapa = { tipo: 'parado' } | { tipo: 'preparando'; feitas: number; total: n
 
 // Novo post (spec 014): até 10 fotos, lugar e legenda. As fotos são comprimidas aqui mesmo, antes de enviar.
 export default function FormPost({ viagemId, destinos, destinoInicial, membros = [], aoTerminar }: Props) {
+  const { viagem } = useViagemAtual()
   const [fotos, setFotos] = useState<Escolhida[]>([])
   const [destino, setDestino] = useState(destinoInicial ?? '') // lugar é opcional
   const [legenda, setLegenda] = useState('')
@@ -80,6 +84,10 @@ export default function FormPost({ viagemId, destinos, destinoInicial, membros =
         (feitas) => setEtapa({ tipo: 'enviando', feitas }),
         marcados,
         noMapa ? fotos.map((f) => f.ponto) : [],
+      )
+      // Spec 118a: foto com GPS perto de um destino libera o carimbo (o GPS só é comparado, não guardado)
+      void liberarPelasFotos(supabase, viagemId, destinos, fotos.map((f) => f.ponto), viagem, hojeTexto()).catch((e) =>
+        console.error('Erro ao carimbar pela foto:', e),
       )
       aoTerminar(id)
     } catch (erro) {

@@ -15,6 +15,7 @@ import { compartilharTexto, linkDaViagem } from '../../../../src/lib/compartilha
 import { diasAte, diasDaViagem, hojeIso, periodo } from '../../../../src/lib/formato'
 import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '../../../../src/ui/PassosDaViagem'
 import { Passaporte } from '../../../../src/ui/viagem/Passaporte'
+import { CarimbosDaViagem } from '../../../../src/ui/viagem/CarimbosDaViagem'
 import { ProximoCarimbo } from '../../../../src/ui/viagem/ProximoCarimbo'
 import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
@@ -105,6 +106,9 @@ export default function AbaViagem() {
             ir={ir}
             aoExtra={(origem) => ir(`passe?de=${origem}`)}
           />
+          <View className="px-5 pt-6">
+            <CarimbosDaViagem viagem={viagem} meuId={meuId} />
+          </View>
         </Animated.ScrollView>
         <Cabecalho nome={viagem.nome} rolagem={rolagem} aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))} aoCompartilhar={convidar} aoMais={() => ir('tudo-da-viagem')} />
       </View>
@@ -138,6 +142,11 @@ export default function AbaViagem() {
 
           <Secao indice={2}>
             <Passaporte viagemId={viagem.id} passos={passos} aoCarimbar={setCarimbo} />
+          </Secao>
+
+          {/* Spec 118a: os carimbos dos lugares (apagados até a galera chegar lá) */}
+          <Secao indice={2}>
+            <CarimbosDaViagem viagem={viagem} meuId={meuId} />
           </Secao>
 
           <Secao indice={3} titulo="Roteiro" direita={d.dias.length ? <Text className="font-body-bold text-[13px] text-caramelo">{d.dias.length} {d.dias.length === 1 ? 'dia' : 'dias'}</Text> : null}>

@@ -37,6 +37,7 @@ import OrcamentoCombinado from '../../features/orcamento-combinado/OrcamentoComb
 import FichaDoPais from '../../features/ficha-do-pais/FichaDoPais'
 import ListasDoComboio from '../../features/listas/ListasDoComboio'
 import ChegueiBem from '../../features/chegadas/ChegueiBem'
+import CarimbosDaViagem from '../../features/carimbos/CarimbosDaViagem'
 import DatasEmComum from '../../features/datas-em-comum/DatasEmComum'
 import MinhaMala from '../../features/mala/MinhaMala'
 import DestinosCandidatos from '../../features/candidatos/DestinosCandidatos'
@@ -401,6 +402,9 @@ export default function Overview() {
             <MapaMundi pontos={pontos} areaLivre={areaLivre} zoomMaximo={8} />
             {pontos.length > 1 && <p className="mapa-legenda">As linhas mostram só a ordem do roteiro, não o caminho real.</p>}
           </section>
+
+          {/* Spec 118a: o passaporte da galera começa aqui (um carimbo por destino) */}
+          {!rascunho && <CarimbosDaViagem />}
 
           {/* Roteiro: destinos na ordem. O ADM pode editar (o banco também só deixa o ADM). */}
           <Cartao

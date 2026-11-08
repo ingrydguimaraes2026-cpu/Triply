@@ -33,6 +33,7 @@ import Cartao from '../../components/ui/Cartao'
 import Norti from '../../components/ui/Norti'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
 import OndeEstaOComboio from '../../features/hoje/OndeEstaOComboio'
+import CarimbosDaViagem from '../../features/carimbos/CarimbosDaViagem'
 import './abas.css'
 import './hoje.css'
 
@@ -298,6 +299,9 @@ export default function Hoje() {
             </div>
           </Cartao>
         )}
+
+        {/* Spec 118a: carimbo cai sozinho pela localização (com a permissão já dada) */}
+        <CarimbosDaViagem />
 
         {/* Spec 107: localização ao vivo (só com mais gente no comboio) */}
         {membros.length > 1 && <OndeEstaOComboio viagemId={viagem.id} membros={membros} meuId={meuId} />}

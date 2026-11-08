@@ -35,6 +35,12 @@
       ],
       "expo-sharing",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O Tripwave usa a sua localização só com o app aberto, pra liberar o carimbo do lugar onde a galera está. Ela não é guardada."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "O Tripwave usa suas fotos pra você postar no feed da viagem.",

@@ -27,6 +27,7 @@ import {
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Clima } from '../src/ui/Clima'
+import { CarimbosDaViagem } from '../src/ui/viagem/CarimbosDaViagem'
 import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
 import { useSessao } from '../src/lib/sessao'
@@ -185,6 +186,9 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
             </Pressable>
           </Cartao>
         )}
+
+        {/* Spec 118a: o carimbo do lugar cai sozinho pela localização (permissão já dada) */}
+        <CarimbosDaViagem viagem={viagem} meuId={meuId} />
 
         {/* Spec 120a: convidado pelo link não vê endereço nem código */}
         {onde && !ehConvidado ? (

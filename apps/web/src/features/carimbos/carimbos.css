@@ -1,0 +1,128 @@
+/* Carimbos da viagem (spec 118a). Visual do passaporte literal: aro duplo, girado, cor de tinta. */
+.carimbos-conta {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--caramelo);
+}
+
+.carimbos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 12px 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: var(--raio);
+  background: var(--cor-fundo-suave);
+}
+
+.carimbo {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: rotate(var(--giro, -6deg));
+  transition: transform 0.2s ease;
+}
+.carimbo:focus-visible {
+  outline: 3px solid var(--caramelo);
+  outline-offset: 3px;
+}
+.carimbo.aberto {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.carimbo-arte {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid currentColor;
+  box-shadow: inset 0 0 0 3px var(--cor-fundo-suave), inset 0 0 0 5px currentColor;
+  padding: 10px;
+  text-align: center;
+  color: var(--couro);
+}
+.carimbo-arte strong {
+  font-family: var(--fonte-titulo);
+  font-size: 0.8rem;
+  line-height: 1.1;
+  max-width: 70px;
+  overflow-wrap: anywhere;
+}
+.carimbo-arte small {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--caramelo);
+}
+
+/* Apagado: ainda falta alguém do grupo estar lá */
+.carimbo.apagado .carimbo-arte {
+  color: var(--cor-texto-suave);
+  opacity: 0.35;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+/* De memória: traço um pouco diferente (pontilhado) */
+.carimbo.memoria .carimbo-arte {
+  border-style: dotted;
+}
+
+/* Acabou de cair: desce girando e "carimba" */
+.carimbo.novo .carimbo-arte {
+  animation: carimbar 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+@keyframes carimbar {
+  from {
+    transform: scale(2.2) rotate(-30deg);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carimbo.novo .carimbo-arte {
+    animation: none;
+  }
+}
+
+.carimbos-recado {
+  margin: 10px 0 0;
+  font-weight: 600;
+  color: var(--cor-sucesso);
+}
+
+.carimbo-detalhe {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+.carimbo-detalhe p {
+  margin: 0;
+}
+.carimbo-quem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cor-texto-suave);
+}
+.carimbo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}

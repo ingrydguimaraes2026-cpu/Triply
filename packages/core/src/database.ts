@@ -515,6 +515,70 @@ export type Database = {
           },
         ]
       }
+      carimbos: {
+        Row: {
+          como: string
+          data: string
+          destino_id: string | null
+          id: string
+          latitude: number | null
+          liberado_em: string
+          liberado_por: string
+          longitude: number | null
+          nome: string
+          tipo: string
+          viagem_id: string
+        }
+        Insert: {
+          como: string
+          data?: string
+          destino_id?: string | null
+          id?: string
+          latitude?: number | null
+          liberado_em?: string
+          liberado_por?: string
+          longitude?: number | null
+          nome: string
+          tipo?: string
+          viagem_id: string
+        }
+        Update: {
+          como?: string
+          data?: string
+          destino_id?: string | null
+          id?: string
+          latitude?: number | null
+          liberado_em?: string
+          liberado_por?: string
+          longitude?: number | null
+          nome?: string
+          tipo?: string
+          viagem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carimbos_destino_id_fkey"
+            columns: ["destino_id"]
+            isOneToOne: false
+            referencedRelation: "destinos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carimbos_liberado_por_fkey"
+            columns: ["liberado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carimbos_viagem_id_fkey"
+            columns: ["viagem_id"]
+            isOneToOne: false
+            referencedRelation: "viagens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chegadas: {
         Row: {
           criado_em: string

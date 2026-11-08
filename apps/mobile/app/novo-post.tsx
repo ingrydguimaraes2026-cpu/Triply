@@ -17,12 +17,13 @@ import {
   avisarComboioDoFeed,
   buscarDestinos,
   criarPostComFotos,
+  liberarPelasFotos,
   MAX_FOTOS_POR_POST,
   type FotoParaEnviar,
 } from "@together/core";
 import { useCarregar } from "../src/dados/useCarregar";
 import { useViagemAtual } from "../src/dados/viagemAtual";
-import { primeiroNome } from "../src/lib/formato";
+import { hojeIso, primeiroNome } from "../src/lib/formato";
 import { supabase } from "../src/lib/supabase";
 import { StatusBar } from "../src/ui/StatusBar";
 import { Avatar, Botao, BotaoRedondo, RotuloDeSecao } from "../src/ui/pecas";
@@ -153,6 +154,16 @@ export default function NovoPost() {
         aoEnviar: setEnviadas,
       });
       avisarComboioDoFeed(supabase, { post_id: id });
+      // Spec 118a: foto com GPS perto de um destino libera o carimbo (o GPS só é comparado aqui)
+      if (destinos.status === "pronto")
+        void liberarPelasFotos(
+          supabase,
+          viagem.id,
+          destinos.dados,
+          fotos.map((f) => f.ponto),
+          { data_inicio: viagem.dataInicio, data_fim: viagem.dataFim },
+          hojeIso(),
+        ).catch((e) => console.error("Erro ao carimbar pela foto:", e));
       fechar();
     } catch (e) {
       console.error("Erro ao postar:", e);
