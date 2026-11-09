@@ -71,7 +71,9 @@ function idNovo() {
 async function carregar(viagemId: string, trajetoId: string | undefined) {
   const [destinos, lugares, trajetos] = await Promise.all([buscarDestinos(supabase, viagemId), buscarLugares(supabase, viagemId), buscarTrajetos(supabase, viagemId, { comOpcoes: true })])
   const trajeto = trajetoId ? ((trajetos as Trajeto[]).find((t) => t.id === trajetoId) ?? null) : null
-  return { destinos, lugares, trajetos: trajetos as Trajeto[], trajeto }
+  // Spec 122: membro sugere; decidir e comprar é do ADM ou de quem ele liberou
+  const { data: v } = await supabase.from('viagens').select('membro_edita_transportes').eq('id', viagemId).maybeSingle()
+  return { destinos, lugares, trajetos: trajetos as Trajeto[], trajeto, membroEdita: !!v?.membro_edita_transportes }
 }
 
 export default function NovoDeslocamento() {
@@ -95,6 +97,7 @@ function Formulario({
   grupo,
   deInicial,
   paraInicial,
+  membroEdita,
 }: {
   destinos: Destino[]
   lugares: Lugar[]
@@ -106,6 +109,7 @@ function Formulario({
   grupo?: string
   deInicial?: string
   paraInicial?: string
+  membroEdita: boolean
 }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -132,7 +136,10 @@ function Formulario({
   const [observacao, setObservacao] = useState(trajeto?.observacao ?? '')
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
-  const podeApagar = !!trajeto && (euSouAdm || trajeto.criado_por === meuId)
+  const podeDecidir = euSouAdm || membroEdita
+  // Membro mexe só na sugestão que ele mesmo pôs
+  const podeMexer = !trajeto || podeDecidir || (trajeto.criado_por === meuId && (trajeto.situacao ?? 'sugestao') === 'sugestao')
+  const podeApagar = !!trajeto && (euSouAdm || membroEdita || trajeto.criado_por === meuId)
   const [frequencia, setFrequencia] = useState<number | null>(trajeto?.frequencia_min ?? null)
   const grupoAtual = grupo ?? trajeto?.grupo_opcoes ?? null
 
@@ -325,7 +332,7 @@ function Formulario({
     if (error) {
       console.error('Erro ao salvar o deslocamento:', error)
       return setErro(
-        error.code === '42501' ? 'Deslocamento do grupo só o ADM (ou quem ele liberou) põe. Peça pra ele.' : 'Não deu pra salvar. Confira a internet e tente de novo.',
+        error.code === '42501' ? 'Não deu: decidir e comprar é com o ADM. Você pode deixar como sugestão.' : 'Não deu pra salvar. Confira a internet e tente de novo.',
       )
     }
     const g = irPraComparar ?? grupo
@@ -471,6 +478,13 @@ function Formulario({
               <Campo value={preco} onChangeText={setPreco} placeholder="Opcional" keyboardType="decimal-pad" />
             </View>
 
+            {!podeDecidir ? (
+              <Text className="rounded-2xl bg-areia p-3 font-body text-[13px] leading-5 text-corpo">
+                {podeMexer ? 'Vai como sugestão pro grupo. Quem decide e compra é o ADM.' : 'Só quem pôs essa sugestão ou o ADM mexe nela.'}
+              </Text>
+            ) : null}
+
+            {podeDecidir ? (
             <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
               <View className="min-w-0 flex-1 pr-3">
                 <Text className="font-body-bold text-[14px] text-texto">Já comprei</Text>
@@ -482,6 +496,7 @@ function Formulario({
                 trackColor={{ true: cor.couro, false: cor.borda }}
               />
             </View>
+            ) : null}
 
             <Pressable onPress={() => setMaisDetalhes(!maisDetalhes)} accessibilityRole="button" className="flex-row items-center justify-between py-1 active:opacity-70">
               <Text className="font-body-bold text-[14px] text-couro">Mais detalhes</Text>
@@ -498,15 +513,19 @@ function Formulario({
                 <Rotulo texto="Trocas" />
                 <Chips opcoes={TROCAS.map((t) => ({ chave: String(t.valor), nome: t.nome }))} valor={String(trocas)} aoMudar={(v) => setTrocas(v === 'null' ? null : Number(v))} />
 
-                <Rotulo texto="Situação" />
-                <Chips opcoes={SITUACOES} valor={situacao} aoMudar={setSituacao} />
+                {podeDecidir ? (
+                  <>
+                    <Rotulo texto="Situação" />
+                    <Chips opcoes={SITUACOES} valor={situacao} aoMudar={setSituacao} />
+                  </>
+                ) : null}
 
               </View>
             ) : null}
 
             {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
-            <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : 'Pôr no dia'} aoTocar={() => void salvar()} carregando={salvando} />
-            {!grupo ? (
+            {podeMexer ? <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : podeDecidir ? 'Pôr no dia' : 'Sugerir pro grupo'} aoTocar={() => void salvar()} carregando={salvando} /> : null}
+            {!grupo && podeMexer ? (
               <Botao titulo={trajeto ? 'Adicionar outra opção pra comparar' : 'Guardar como opção pra comparar'} tipo="secundario" aoTocar={() => void salvarComoOpcao()} desabilitado={salvando} />
             ) : null}
             {grupoAtual && trajeto ? (

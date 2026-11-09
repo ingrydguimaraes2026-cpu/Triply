@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AlertTriangle, ArrowLeft, Bus, Car, ChevronRight, Footprints, Plane, Plus, Route, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
 import {
@@ -58,6 +58,15 @@ export default function Transportes() {
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
   const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id])
+  // Voltou do Novo deslocamento ou do Comparar: busca de novo pra mostrar o que mudou
+  const primeiraVez = useRef(true)
+  const { recarregar } = carga
+  useFocusEffect(
+    useCallback(() => {
+      if (primeiraVez.current) primeiraVez.current = false
+      else recarregar()
+    }, [recarregar]),
+  )
 
   if (!viagem) return null
   if (carga.status === 'carregando') return <Carregando />

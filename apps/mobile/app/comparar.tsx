@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Check, Pencil, Plus } from '../src/ui/icones'
 import { buscarTrajetos, diaNoFuso, duracaoCurta, FOLGA_MINIMA, horaNoFuso, nomeDoMeio, type Tables } from '@together/core'
@@ -22,7 +22,8 @@ const SIMBOLO: Record<string, string> = { EUR: '€', BRL: 'R$', USD: 'US$' }
 async function carregar(viagemId: string, grupo: string) {
   const todos = (await buscarTrajetos(supabase, viagemId, { comOpcoes: true })) as Trajeto[]
   const opcoes = todos.filter((t) => t.grupo_opcoes === grupo).sort((a, b) => (a.partida ?? '9').localeCompare(b.partida ?? '9'))
-  return { todos, opcoes }
+  const { data: v } = await supabase.from('viagens').select('membro_edita_transportes').eq('id', viagemId).maybeSingle()
+  return { todos, opcoes, membroEdita: !!v?.membro_edita_transportes }
 }
 
 // Folga de cada opção: do deslocamento anterior no mesmo dia (fora do grupo) até a saída da opção
@@ -39,14 +40,26 @@ export default function Comparar() {
   const { atual: viagem } = useViagemAtual()
   const { grupo } = useLocalSearchParams<{ grupo: string }>()
   const carga = useCarregar(viagem && grupo ? () => carregar(viagem.id, grupo) : null, [viagem?.id, grupo])
+  // Voltou de editar uma opção: busca de novo
+  const primeiraVez = useRef(true)
+  const { recarregar } = carga
+  useFocusEffect(
+    useCallback(() => {
+      if (primeiraVez.current) primeiraVez.current = false
+      else recarregar()
+    }, [recarregar]),
+  )
   if (!viagem || !grupo) return <ErroNaTela aoTentar={() => {}} />
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   return <Tela {...carga.dados} grupo={grupo} aoMudar={carga.recarregar} />
 }
 
-function Tela({ todos, opcoes, grupo, aoMudar }: { todos: Trajeto[]; opcoes: Trajeto[]; grupo: string; aoMudar: () => void }) {
+function Tela({ todos, opcoes, grupo, aoMudar, membroEdita }: { todos: Trajeto[]; opcoes: Trajeto[]; grupo: string; aoMudar: () => void; membroEdita: boolean }) {
   const router = useRouter()
+  const { atual, meuId } = useViagemAtual()
+  // Escolher a opção é decidir: só o ADM ou quem ele liberou. Membro vê e sugere outra.
+  const podeDecidir = membroEdita || !!atual?.membros.some((m) => m.id === meuId && m.papel === 'adm')
   const insets = useSafeAreaInsets()
   const [salvando, setSalvando] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
@@ -99,7 +112,7 @@ function Tela({ todos, opcoes, grupo, aoMudar }: { todos: Trajeto[]; opcoes: Tra
         </View>
         <Text className="font-display text-[26px] leading-[30px] text-texto">{`${base.de_texto ?? 'Origem'} → ${base.para_texto ?? 'Destino'}`}</Text>
         <Text className="font-body text-[13px] text-suave">
-          {escolhida ? 'Opção escolhida marcada. Dá pra trocar quando quiser.' : `${opcoes.length} ${opcoes.length === 1 ? 'opção' : 'opções'} · toque em "Ficar com esta" pra decidir`}
+          {escolhida ? 'Opção escolhida marcada. Dá pra trocar quando quiser.' : `${opcoes.length} ${opcoes.length === 1 ? 'opção' : 'opções'} · ${podeDecidir ? 'toque em "Ficar com esta" pra decidir' : 'quem escolhe é o ADM'}`}
         </Text>
 
         {opcoes.map((o, i) => {
@@ -153,15 +166,17 @@ function Tela({ todos, opcoes, grupo, aoMudar }: { todos: Trajeto[]; opcoes: Tra
               </View>
               <View className="flex-row gap-2">
                 <View className="flex-1">
+                  {podeDecidir || eEscolhida ? (
                   <Botao
                     titulo={eEscolhida ? 'Escolhida' : 'Ficar com esta'}
                     icone={<Check size={16} color={eEscolhida ? cor.couro : '#fff'} />}
                     tipo={eEscolhida ? 'secundario' : 'primario'}
                     aoTocar={() => void escolher(o)}
                     carregando={salvando === o.id}
-                    desabilitado={eEscolhida || !!salvando}
+                    desabilitado={eEscolhida || !!salvando || !podeDecidir}
                     compacto
                   />
+                  ) : null}
                 </View>
                 <Pressable
                   onPress={() => router.push(`/novo-deslocamento?trajeto=${o.id}` as never)}

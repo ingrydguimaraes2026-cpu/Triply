@@ -218,7 +218,7 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - Editar um deslocamento abre direto no passo 2.
 
 ## Perguntas em aberto
-- Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
+- ~~Membro pode adicionar opção sem ser liberado?~~ **Decidido (Victor, 08/11):** sim. Membro põe deslocamento e opção como "pra decidir" e mexe/apaga a própria sugestão; decidir, reservar, comprar e "Ficar com esta" ficam com o ADM ou com quem ele liberou. Migration `20261109010000_membro_sugere_deslocamento.sql`.
 - Folga mínima: 30 min sem malas e 45 com malas (assumido na 122b; dá pra mudar em `FOLGA_MINIMA`).
 - O "Hoje" mostra só o próximo deslocamento ou o dia todo dali pra frente?
 - Arrumar os destinos da Eurotrip (tirar o Mônaco repetido, transformar Bernina e Como em passeio do dia) fica com vocês ou eu proponho no app?
