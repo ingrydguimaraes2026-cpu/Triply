@@ -3194,13 +3194,16 @@ export type Database = {
       trajetos: {
         Row: {
           bate_e_volta: boolean
+          caminho: Json | null
           chegada: string | null
+          criado_por: string | null
           destino_id: string | null
           escalas: Json
           estacao_chegada: string | null
           estacao_partida: string | null
           id: string
           link_reserva: string | null
+          lugares_livres: number | null
           meio: string
           moeda: string | null
           motorista_id: string | null
@@ -3210,17 +3213,21 @@ export type Database = {
           preco: number | null
           quem_busca_id: string | null
           situacao: string
+          tipo: string
           viagem_id: string
         }
         Insert: {
           bate_e_volta?: boolean
+          caminho?: Json | null
           chegada?: string | null
+          criado_por?: string | null
           destino_id?: string | null
           escalas?: Json
           estacao_chegada?: string | null
           estacao_partida?: string | null
           id?: string
           link_reserva?: string | null
+          lugares_livres?: number | null
           meio?: string
           moeda?: string | null
           motorista_id?: string | null
@@ -3230,17 +3237,21 @@ export type Database = {
           preco?: number | null
           quem_busca_id?: string | null
           situacao?: string
+          tipo?: string
           viagem_id: string
         }
         Update: {
           bate_e_volta?: boolean
+          caminho?: Json | null
           chegada?: string | null
+          criado_por?: string | null
           destino_id?: string | null
           escalas?: Json
           estacao_chegada?: string | null
           estacao_partida?: string | null
           id?: string
           link_reserva?: string | null
+          lugares_livres?: number | null
           meio?: string
           moeda?: string | null
           motorista_id?: string | null
@@ -3250,9 +3261,17 @@ export type Database = {
           preco?: number | null
           quem_busca_id?: string | null
           situacao?: string
+          tipo?: string
           viagem_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "trajetos_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "trajetos_destino_id_fkey"
             columns: ["destino_id"]
@@ -3595,6 +3614,10 @@ export type Database = {
       ver_convite: { Args: { p_codigo: string }; Returns: Json }
       votar_enquete: {
         Args: { p_marcar?: boolean; p_opcao: string }
+        Returns: undefined
+      }
+      vou_buscar: {
+        Args: { p_buscar: boolean; p_trajeto: string }
         Returns: undefined
       }
     }

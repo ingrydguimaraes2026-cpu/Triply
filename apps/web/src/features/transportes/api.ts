@@ -11,13 +11,14 @@ export const MEIOS: { chave: string; nome: string; icone: LucideIcon }[] = [
   { chave: 'onibus', nome: 'Ônibus', icone: Bus },
   { chave: 'aviao', nome: 'Avião', icone: Plane },
   { chave: 'carro', nome: 'Carro', icone: Car },
+  { chave: 'carona', nome: 'Carona', icone: Car },
   { chave: 'barco', nome: 'Barco', icone: Ship },
   { chave: 'a_pe', nome: 'A pé', icone: Footprints },
   { chave: 'outro', nome: 'Outro', icone: Route },
 ]
 
 export function meio(chave: string) {
-  return MEIOS.find((m) => m.chave === chave) ?? MEIOS[6]
+  return MEIOS.find((m) => m.chave === chave) ?? MEIOS[MEIOS.length - 1]
 }
 
 // Trajetos da viagem em ordem de partida (os sem horário no fim)
@@ -64,9 +65,11 @@ export type DadosDoTrajeto = {
   estacao_partida?: string | null // spec 074
   estacao_chegada?: string | null
   escalas?: { local: string; chegada: string | null; partida: string | null }[]
+  tipo?: 'chegada' | 'saida' | 'trecho' // spec 121: chegada/saída de cada um ou trecho do grupo
+  lugares_livres?: number | null
 }
 
-// Só o ADM consegue (regra do banco)
+// Trecho: ADM ou liberado. Chegada/saída: quem lançou ou o ADM (regra do banco, spec 121)
 export async function salvarTrajeto(viagemId: string, dados: DadosDoTrajeto, id?: string): Promise<string> {
   if (id) {
     const { error } = await supabase.from('trajetos').update(dados).eq('id', id)

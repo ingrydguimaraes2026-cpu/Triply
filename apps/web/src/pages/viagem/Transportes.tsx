@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from '../../components/ui/icones'
-import { conexoes, formatarDinheiro, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
+import { conexoes, formatarDinheiro, linkDoCaminho, meioComCaminho, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -24,6 +24,7 @@ import {
 import MapaMundi from '../../features/mapa/MapaMundi'
 import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
+import ChegadasESaidas from '../../features/transportes/ChegadasESaidas'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Carregando from '../../components/ui/Carregando'
@@ -35,7 +36,7 @@ import './hospedagem.css'
 import './transportes.css'
 
 type Destino = Tables<'destinos'>
-type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string } | null
+type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string; tipo?: 'chegada' | 'saida' } | null
 type GastoDoTrajeto = Trajeto | null
 type Selecao = { tipo: 'tudo' } | { tipo: 'trecho'; indice: number } | { tipo: 'passeio'; id: string }
 
@@ -55,7 +56,9 @@ export default function Transportes() {
   )
 
   const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
-  const todosTrajetos = estado.status === 'pronto' ? estado.trajetos : []
+  const carregados = estado.status === 'pronto' ? estado.trajetos : []
+  // Spec 121: chegadas e saídas de cada um ficam na seção própria; o resto da tela é dos trechos do grupo
+  const todosTrajetos = carregados.filter((t) => (t.tipo ?? 'trecho') === 'trecho')
   const trajetos = soOsMeus ? todosTrajetos.filter((t) => vouNesse(t, meuId)) : todosTrajetos
   const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
   const nomeDe = (id: string | null) => destinoDe(id)?.nome ?? 'Sem destino'
@@ -169,6 +172,16 @@ export default function Transportes() {
             </small>
           ))}
           {t.observacao && <small className="trajeto-obs">{t.observacao}</small>}
+          {meioComCaminho(t.meio) && (
+            <a
+              href={linkDoCaminho(t.estacao_partida ?? nomeDe(t.origem_id), t.estacao_chegada ?? nomeDe(t.destino_id))}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="trajeto-link"
+            >
+              Ver o caminho <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          )}
           {t.link_reserva && (
             <a href={t.link_reserva} target="_blank" rel="noreferrer noopener" className="trajeto-link">
               Reserva <ExternalLink size={12} aria-hidden="true" />
@@ -397,6 +410,19 @@ export default function Transportes() {
         </section>
       )}
 
+      {estado.status === 'pronto' && (
+        <ChegadasESaidas
+          trajetos={carregados}
+          membros={membros}
+          destinos={destinos}
+          meuId={meuId}
+          euSouAdm={souAdmDeVerdade}
+          aoAdicionar={(tipo) => setJanela({ tipo })}
+          aoEditar={(t) => setJanela({ trajeto: t })}
+          aoMudar={recarregar}
+        />
+      )}
+
       {destinos.length === 0 ? (
         <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra montar a rota.</p>
       ) : (
@@ -494,7 +520,7 @@ export default function Transportes() {
       )}
 
       {janela && (
-        <Gaveta titulo={janela.trajeto ? 'Editar trajeto' : 'Adicionar trajeto'} aoFechar={fechar}>
+        <Gaveta titulo={janela.trajeto ? 'Editar trajeto' : janela.tipo === 'chegada' ? 'Adicionar sua chegada' : janela.tipo === 'saida' ? 'Adicionar sua volta' : 'Adicionar trajeto'} aoFechar={fechar}>
           <FormTrajeto
             viagemId={viagem.id}
             moedaViagem={viagem.moeda_principal}
@@ -503,6 +529,7 @@ export default function Transportes() {
             trajeto={janela.trajeto}
             origemId={janela.origemId}
             destinoId={janela.destinoId}
+            tipo={janela.tipo}
             aoTerminar={() => {
               fechar()
               recarregar()

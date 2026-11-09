@@ -7,6 +7,7 @@
 //   Se ela falhar, o formulário abre com o que deu pra ler, sem perder o arquivo.
 // Teste: apps/web/tests/reserva-lida.test.mjs
 import type { ClienteTogether } from './supabase'
+import { tipoProvavel, type TipoDoTrajeto } from './transporte-do-grupo.ts'
 
 // O core não tem os tipos do navegador: o console vem do próprio ambiente (web ou app)
 declare const console: { error: (...dados: unknown[]) => void }
@@ -401,7 +402,7 @@ export async function salvarReserva(
   cli: ClienteTogether,
   viagemId: string,
   r: RascunhoDeReserva,
-  ctx: { destinos: DestinoDaViagem[]; membros: { id: string; nome: string }[]; euSouAdm: boolean },
+  ctx: { destinos: DestinoDaViagem[]; membros: { id: string; nome: string }[]; euSouAdm: boolean; tipoDoTrajeto?: TipoDoTrajeto },
 ): Promise<ReservaSalva> {
   if (!r.tipo) throw new Error('Escolha o tipo da reserva.')
   const falta = oQueFalta(r)
@@ -410,9 +411,10 @@ export async function salvarReserva(
   const ids = destinosDaReserva(r, ctx.destinos)
 
   if (onde === 'trajeto') {
-    const { data, error } = await cli.from('trajetos').insert({ ...trajetoDaReserva(r, ids), viagem_id: viagemId }).select('id').single()
+    const tipo = ctx.tipoDoTrajeto ?? tipoProvavel(ids)
+    const { data, error } = await cli.from('trajetos').insert({ ...trajetoDaReserva(r, ids), tipo, viagem_id: viagemId }).select('id').single()
     if (error) {
-      if (error.code === '42501') throw new Error('Nesta viagem, só o ADM (ou quem ele liberou) lança transporte. Peça pra ele ou mande a reserva no grupo.')
+      if (error.code === '42501') throw new Error('Trecho do grupo só o ADM (ou quem ele liberou) lança. Se é a sua chegada ou saída, marque assim e confirme de novo.')
       throw error
     }
     const pessoa = pessoaDaReserva(r.pessoa, ctx.membros)

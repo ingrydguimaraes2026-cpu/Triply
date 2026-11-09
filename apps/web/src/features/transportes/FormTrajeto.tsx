@@ -14,11 +14,14 @@ type Props = {
   trajeto?: Trajeto // editando
   origemId?: string // já vem preenchido pelo trecho
   destinoId?: string
+  tipo?: 'chegada' | 'saida' // spec 121: a chegada ou a volta de alguém (origem ou destino fica "de fora")
   aoTerminar: () => void
 }
 
-// Formulário do trajeto (spec 004). Só o ADM chega aqui.
-export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, trajeto, origemId, destinoId, aoTerminar }: Props) {
+// Formulário do trajeto (spec 004). Trecho: só o ADM (ou liberado). Chegada/volta: qualquer um lança a sua (spec 121).
+export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, trajeto, origemId, destinoId, tipo: tipoInicial, aoTerminar }: Props) {
+  const tipo = trajeto?.tipo === 'chegada' || trajeto?.tipo === 'saida' ? trajeto.tipo : tipoInicial
+  const [lugaresLivres, setLugaresLivres] = useState(trajeto?.lugares_livres != null ? String(trajeto.lugares_livres) : '')
   const [origem, setOrigem] = useState(trajeto ? (trajeto.origem_id ?? '') : (origemId ?? ''))
   const [destino, setDestino] = useState(trajeto ? (trajeto.destino_id ?? '') : (destinoId ?? ''))
   const [meioEscolhido, setMeio] = useState(trajeto?.meio ?? 'trem')
@@ -51,7 +54,8 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
   async function salvar(e: FormEvent) {
     e.preventDefault()
     setErro(null)
-    if (!origem || !destino) return setErro('Escolha de onde sai e pra onde vai.')
+    if (tipo === 'chegada' ? !destino : tipo === 'saida' ? !origem : !origem || !destino)
+      return setErro(tipo === 'chegada' ? 'Escolha em qual destino você chega.' : tipo === 'saida' ? 'Escolha de qual destino você sai.' : 'Escolha de onde sai e pra onde vai.')
     if (origem === destino) return setErro('A origem e o destino são o mesmo lugar.')
     if (partida && chegada && chegada < partida) return setErro('A chegada está antes da partida.')
     if (criandoVolta && voltaPartida && partida && voltaPartida < partida) return setErro('A volta está antes da ida.')
@@ -64,8 +68,10 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
     if (precoNumero !== null && !/^[A-Z]{3}$/.test(moedaLimpa)) return setErro('A moeda tem 3 letras. Ex.: EUR')
 
     const dados = {
-      origem_id: origem,
-      destino_id: destino,
+      origem_id: origem || null,
+      destino_id: destino || null,
+      tipo: (tipo ?? 'trecho') as 'chegada' | 'saida' | 'trecho',
+      lugares_livres: (meioEscolhido === 'carro' || meioEscolhido === 'carona') && lugaresLivres.trim() ? Math.max(0, Math.min(8, Number(lugaresLivres) || 0)) : null,
       meio: meioEscolhido,
       partida: deCampoHorario(partida),
       chegada: deCampoHorario(chegada),
@@ -75,7 +81,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
       situacao,
       preco: precoNumero,
       moeda: precoNumero === null ? null : moedaLimpa,
-      motorista_id: meioEscolhido === 'carro' ? motorista || null : null,
+      motorista_id: meioEscolhido === 'carro' || meioEscolhido === 'carona' ? motorista || null : null,
       quem_busca_id: quemBusca || null,
       estacao_partida: estacaoPartida.trim() || null,
       estacao_chegada: estacaoChegada.trim() || null,
@@ -89,7 +95,8 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
         ? await criarBateEVolta(viagemId, dados, { partida: deCampoHorario(voltaPartida), chegada: deCampoHorario(voltaChegada) })
         : [await salvarTrajeto(viagemId, dados, trajeto?.id)]
       // Spec 067: todo mundo marcado = lista vazia (o comboio inteiro, inclusive quem entrar depois)
-      const todos = passageiros.length === membros.length
+      // Chegada/volta sem ninguém marcado = de quem lançou (não do comboio inteiro)
+      const todos = !tipo && passageiros.length === membros.length
       if (passageiros.length > 0 || (trajeto?.passageiros.length ?? 0) > 0) await definirPassageiros(ids, todos ? [] : passageiros)
       aoTerminar()
     } catch (erro) {
@@ -120,7 +127,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
             Saindo de
           </label>
           <select id="trajeto-origem" value={origem} onChange={(e) => setOrigem(e.target.value)}>
-            <option value="">Escolha…</option>
+            <option value="">{tipo === 'chegada' ? 'De fora (casa, outra cidade)' : 'Escolha…'}</option>
             {destinos.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.nome}
@@ -133,7 +140,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
             Indo pra
           </label>
           <select id="trajeto-destino" value={destino} onChange={(e) => setDestino(e.target.value)}>
-            <option value="">Escolha…</option>
+            <option value="">{tipo === 'saida' ? 'Pra casa (fora da viagem)' : 'Escolha…'}</option>
             {destinos.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.nome}
@@ -205,6 +212,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
         )}
       </fieldset>
 
+      {!tipo && (
       <label className="interruptor">
         <span>
           <strong>Bate-e-volta</strong>
@@ -212,6 +220,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
         </span>
         <input type="checkbox" checked={bateEVolta} onChange={(e) => setBateEVolta(e.target.checked)} />
       </label>
+      )}
 
       {criandoVolta && (
         <div className="form-linha">
@@ -230,7 +239,15 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
         </div>
       )}
 
-      {meioEscolhido === 'carro' && (
+      {(meioEscolhido === 'carro' || meioEscolhido === 'carona') && (
+        <div className="form-campo">
+          <label className="form-rotulo" htmlFor="trajeto-lugares">
+            Lugares sobrando no carro
+          </label>
+          <input id="trajeto-lugares" inputMode="numeric" value={lugaresLivres} onChange={(e) => setLugaresLivres(e.target.value.replace(/\D/g, '').slice(0, 1))} placeholder="Ex.: 2" />
+        </div>
+      )}
+      {(meioEscolhido === 'carro' || meioEscolhido === 'carona') && (
         <div className="form-campo">
           <label className="form-rotulo" htmlFor="trajeto-motorista">
             Quem dirige
@@ -265,7 +282,7 @@ export default function FormTrajeto({ viagemId, moedaViagem, membros, destinos, 
 
       {membros.length > 1 && (
         <fieldset className="form-campo passageiros">
-          <legend className="form-rotulo">Quem vai {passageiros.length === 0 && '(ninguém marcado = todo mundo)'}</legend>
+          <legend className="form-rotulo">Quem vai {passageiros.length === 0 && (tipo ? '(ninguém marcado = só quem lançou)' : '(ninguém marcado = todo mundo)')}</legend>
           {membros.map((m) => (
             <label key={m.id}>
               <input

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
 import * as DocumentPicker from 'expo-document-picker'
 import {
   TIPOS_DE_RESERVA,
   buscarDestinos,
+  destinosDaReserva,
+  tipoProvavel,
   dataDoCampo,
   dataParaCampo,
   ligacaoNoCofre,
@@ -18,6 +20,7 @@ import {
   rascunhoVazio,
   salvarReserva,
   type RascunhoDeReserva,
+  type TipoDoTrajeto,
 } from '@together/core'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { useCarregar } from '../src/dados/useCarregar'
@@ -35,6 +38,13 @@ import { cor } from '../theme'
 type Arquivo = { bytes: Uint8Array; tipo: string; nome: string }
 type Etapa = 'escolher' | 'colar' | 'lendo' | 'conferir'
 
+// Spec 121a: transporte é a chegada/saída da pessoa (ela mesma lança) ou um trecho do grupo (ADM)
+const TIPOS_DO_TRAJETO: { tipo: TipoDoTrajeto; titulo: string }[] = [
+  { tipo: 'chegada', titulo: 'Minha chegada' },
+  { tipo: 'saida', titulo: 'Minha volta' },
+  { tipo: 'trecho', titulo: 'Trecho do grupo' },
+]
+
 const ONDE_VAI = { trajeto: 'Vai pros transportes e pro "Hoje" de quem chega.', hospedagem: 'Vai pra Hospedagem e pro "Onde dormimos".', agenda: 'Vai pra agenda do dia.' }
 
 export default function NovaReserva() {
@@ -42,6 +52,9 @@ export default function NovaReserva() {
   const insets = useSafeAreaInsets()
   const { ehConvidado } = useSessao()
   const { atual: viagem, meuId } = useViagemAtual()
+  // ?como=chegada|saida: veio do "Adicionar meu transporte"; ?voltar=transportes: volta pra lá ao salvar
+  const params = useLocalSearchParams<{ como?: string; voltar?: string }>()
+  const [tipoTrajeto, setTipoTrajeto] = useState<TipoDoTrajeto | null>(params.como === 'chegada' || params.como === 'saida' ? params.como : null)
   const destinos = useCarregar(viagem ? () => buscarDestinos(supabase, viagem.id) : null, [viagem?.id])
   const [etapa, setEtapa] = useState<Etapa>('escolher')
   const [texto, setTexto] = useState('')
@@ -92,6 +105,10 @@ export default function NovaReserva() {
 
   const mudar = (campo: keyof RascunhoDeReserva, valor: string | null) => setR((atual) => ({ ...atual, [campo]: valor || null }))
 
+  // O tipo do transporte: o que a pessoa marcou ou o provável (de fora pra cá = chegada)
+  const tipoDoTrajeto: TipoDoTrajeto | null =
+    r.tipo && ondeVaiAReserva(r.tipo) === 'trajeto' ? (tipoTrajeto ?? tipoProvavel(destinosDaReserva(r, destinos.status === 'pronto' ? (destinos.dados ?? []) : []))) : null
+
   async function confirmar() {
     if (!viagem || destinos.status !== 'pronto') return
     const final = normalizarRascunho({ ...r, data: dataDoCampo(campos.data), dataFim: dataDoCampo(campos.dataFim) })
@@ -105,12 +122,13 @@ export default function NovaReserva() {
         destinos: destinos.dados ?? [],
         membros: viagem.membros.map((m) => ({ id: m.id, nome: m.nome })),
         euSouAdm,
+        tipoDoTrajeto: tipoDoTrajeto ?? undefined,
       })
       if (arquivo) await guardarNoCofre(viagem.id, arquivo, ligacaoNoCofre(salva)).catch((e) => console.error('Reserva salva, mas o arquivo não foi pro cofre:', e))
-      router.replace('/hoje')
+      router.replace(params.voltar === 'transportes' ? '/transportes' : '/hoje')
     } catch (e) {
       console.error('Erro ao salvar a reserva:', e)
-      setErro(e instanceof Error && e.message.startsWith('Nesta viagem') ? e.message : 'Não deu pra salvar. Confira a internet e tente de novo.')
+      setErro(e instanceof Error && e.message.startsWith('Trecho do grupo') ? e.message : 'Não deu pra salvar. Confira a internet e tente de novo.')
       setSalvando(false)
     }
   }
@@ -194,6 +212,21 @@ export default function NovaReserva() {
               ))}
             </View>
             {r.tipo ? <Text className="font-body text-[13px] text-suave">{ONDE_VAI[ondeVaiAReserva(r.tipo)]}</Text> : null}
+            {tipoDoTrajeto ? (
+              <View className="flex-row flex-wrap gap-2">
+                {TIPOS_DO_TRAJETO.map((t) => (
+                  <Pressable
+                    key={t.tipo}
+                    onPress={() => setTipoTrajeto(t.tipo)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: tipoDoTrajeto === t.tipo }}
+                    className={`min-h-[38px] justify-center rounded-full border-[1.5px] px-3.5 ${tipoDoTrajeto === t.tipo ? 'border-caramelo bg-areia' : 'border-borda bg-cartao'}`}
+                  >
+                    <Text className={`font-body-semibold text-[13px] ${tipoDoTrajeto === t.tipo ? 'text-couro' : 'text-texto'}`}>{t.titulo}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
 
             <Rotulo texto={r.tipo === 'voo' ? 'Número do voo' : r.tipo === 'casa' ? 'Nome da casa ou hotel' : 'Nome'} />
             <Campo value={r.titulo ?? ''} onChangeText={(v) => mudar('titulo', v)} placeholder="Opcional" />

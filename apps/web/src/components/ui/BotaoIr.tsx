@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Car, ExternalLink, Navigation } from './icones'
-import { linksDeCorrida, linksDeNavegacao, textoDoAlvo, type Alvo } from '@together/core'
+import { linksComoChegar, linksDeCorrida, linksDeNavegacao, textoDoAlvo, type Alvo } from '@together/core'
 import Gaveta from './Gaveta'
 
-// Botão "Ir" (spec 040): abre o caminho no app de navegação preferido ou pede uma corrida.
+// Botão "Ir" / "Como chegar" (specs 040 e 121b): abre o caminho no app de navegação preferido ou pede uma corrida.
 // Uso: <BotaoIr alvo={{ nome: 'Hotel', endereco: 'Rue X 1, Nice' }} />
 export default function BotaoIr({ alvo, rotulo = 'Ir' }: { alvo: Alvo; rotulo?: string }) {
   const [aberto, setAberto] = useState(false)
@@ -29,7 +29,17 @@ export default function BotaoIr({ alvo, rotulo = 'Ir' }: { alvo: Alvo; rotulo?: 
         <Gaveta titulo={`Ir até ${alvo.nome}`} aoFechar={() => setAberto(false)}>
           <p className="ir-endereco">{texto}</p>
           <h3 className="ir-grupo">
-            <Navigation size={16} aria-hidden="true" /> Ver o caminho
+            <Navigation size={16} aria-hidden="true" /> Como chegar
+          </h3>
+          <div className="ir-apps">
+            {linksComoChegar(alvo).map((l) => (
+              <a key={l.chave} href={l.url} target="_blank" rel="noreferrer noopener" className={`ir-app ir-${l.chave}`}>
+                {l.nome} <ExternalLink size={12} aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+          <h3 className="ir-grupo">
+            <Navigation size={16} aria-hidden="true" /> Outros apps de mapa
           </h3>
           <div className="ir-apps">
             {linksDeNavegacao(alvo).map((l) => (

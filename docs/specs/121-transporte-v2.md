@@ -1,6 +1,6 @@
 # 121. Transporte v2: quem chega, entre cidades e "como chegar"
 
-**Fase:** 0 · **Tamanho:** G (dividida em 121a a 121c) · **Depende de:** 004, 067, 120 · **Status:** A fazer (spec escrita em 08/11/2026)
+**Fase:** 0 · **Tamanho:** G (dividida em 121a a 121c) · **Depende de:** 004, 067, 120 · **Status:** 121a, 121b e 121c prontas pra testar (08/11/2026, banco aplicado)
 
 > Revisão da [004 (Transportes)](004-transportes.md). A 004 continua valendo pro que já existe (trechos, bate-e-volta, avisos); esta spec troca a ideia da tela e diz o que vem depois.
 > Cabe no [`docs/RUMO.md`](../RUMO.md) como **conserto da base que alimenta o "Hoje" (120)**: não é funcionalidade nova solta.
@@ -91,6 +91,14 @@ Cada pessoa vê, sem perguntar no grupo, **como todo mundo chega e vai embora**,
 - [ ] 121c (passo 1): "Ver o caminho" num trem abre o Maps de A pra B em transporte público.
 - [ ] 121c (passo 2): com dado disponível, o mapa mostra a linha e as paradas com horário, e a parada de chegada em destaque.
 - [ ] Tudo funciona em 360px (site) e no app.
+
+## Como ficou (08/11/2026)
+- **Banco:** `20261108230000_transporte_v2.sql` (`trajetos.tipo`, `criado_por`, `lugares_livres`, `caminho`; `meio` aceita `carona`; RLS nova; passageiros: quem lançou também põe e tira gente) e `20261108233000_eu_busco.sql` (`vou_buscar(trajeto, buscar)`: qualquer membro com conta marca "eu busco" sem poder editar o resto). Testado com rollback: membro cria e edita a própria chegada, não vira trecho, não cria trecho, não edita a dos outros, não lança em nome de outro; convidado anônimo barrado.
+- **Core:** `packages/core/src/transporte-do-grupo.ts` (`tipoProvavel`, `chegadasPorPessoa`, `trechosDoGrupo`, `linksComoChegar`, `linkDoCaminho`, `decodificarLinha`, `caminhoDaResposta`, `buscarCaminho` no Transitous) + teste `transporte-do-grupo.test.mjs`. `salvarReserva` grava o `tipo` (chegada, saída ou trecho).
+- **App:** `app/transportes.tsx` refeito (Chegadas e saídas + Entre cidades, apagar o que é seu, "Eu busco", botão fixo "Adicionar transporte"); `app/nova-reserva.tsx` pergunta "Minha chegada / Minha volta / Trecho do grupo" (vem marcado o provável); `app/caminho.tsx` (mapa em SVG com a linha e as paradas, "Estou no caminho: qual a próxima?", "Dá pra conhecer no caminho"); `src/ui/BotaoIr.tsx` virou "Como chegar".
+- **Site:** seção `features/transportes/ChegadasESaidas.tsx` no topo de Transportes; `FormTrajeto` aceita chegada/volta (origem "De fora", destino "Pra casa", sem bate-e-volta) e lugares sobrando; "Ver o caminho" (link do Maps) em trem e ônibus; `BotaoIr` ganhou transporte público e a pé.
+- **Transitous:** conferido em 08/11: Roma → Florença devolve o trem com paradas e linha; Florianópolis → Garopaba (ônibus) não devolve nada, aí fica o link do Maps. Resposta do serviço é guardada em `trajetos.caminho` (quem não pode editar só vê, sem guardar).
+- **Não conferido:** o app no celular (precisa do build de desenvolvimento); salvar de verdade pelo site (gravaria no banco de produção).
 
 ## Perguntas em aberto
 - O "Falta o seu" vira um lembrete no celular antes da viagem (ex.: 7 dias antes)? Seria mais um tipo de aviso.
