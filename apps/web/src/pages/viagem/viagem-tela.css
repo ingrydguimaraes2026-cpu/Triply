@@ -1,0 +1,752 @@
+/* Tela da viagem (aba Viagem do app, spec 117) + Reservas, Cidades e "Tudo da viagem".
+   Celular: uma coluna, como no app. Computador: coluna central larga + passagens e contas ao lado. */
+
+.vg {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ---------- Capa ---------- */
+.vg-capa {
+  position: relative;
+  overflow: hidden;
+  height: 300px;
+  margin: calc(-20px - env(safe-area-inset-top)) -16px 0;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  animation: vg-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.vg-capa > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vg-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(74 46 20 / 0.35) 0%, rgb(74 46 20 / 0) 35%, rgb(74 46 20 / 0.85) 100%);
+}
+
+.vg-capa-texto {
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  right: 20px;
+  bottom: 24px;
+}
+
+.vg-capa-texto p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.vg-capa-texto h1 {
+  margin: 4px 0 0;
+  font-family: var(--fonte-titulo);
+  font-size: 40px;
+  line-height: 1.05;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.vg-capa .vg-capa-botao {
+  position: absolute;
+  z-index: 1;
+  top: calc(16px + env(safe-area-inset-top));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--escuro);
+}
+
+.vg-capa .vg-capa-voltar {
+  left: 16px;
+}
+
+.vg-capa .vg-capa-mais {
+  right: 16px;
+}
+
+/* No computador o menu já leva pras viagens */
+@media (min-width: 1024px) {
+  .vg-capa .vg-capa-voltar {
+    display: none;
+  }
+}
+
+.vg-capa-botao:hover {
+  background: #fff;
+}
+
+@keyframes vg-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* ---------- Corpo: uma coluna no celular ---------- */
+.vg-corpo,
+.vg-principal,
+.vg-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.vg-titulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.vg-titulo h2 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  color: var(--cor-texto);
+}
+
+.vg-titulo span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--caramelo);
+}
+
+.vg-cartao {
+  display: block;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.vg-cartao:hover {
+  box-shadow: 0 6px 18px rgb(74 46 20 / 0.1);
+}
+
+.vg-cartao small {
+  display: block;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Rostos do comboio (como stories) ---------- */
+.vg-rostos {
+  display: flex;
+  gap: 14px;
+  margin: 0 -16px;
+  padding: 0 16px 4px;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.vg-rostos a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 64px;
+  color: var(--cor-texto-suave);
+  text-decoration: none;
+}
+
+.vg-rosto {
+  display: grid;
+  padding: 3px;
+  border: 2.5px solid transparent;
+  border-radius: 50%;
+}
+
+.vg-rosto.novidade {
+  border-color: var(--laranja);
+}
+
+.vg-rosto-convidar {
+  display: grid;
+  place-items: center;
+  width: 63px;
+  height: 63px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 50%;
+  color: var(--couro);
+}
+
+.vg-rosto-nome {
+  max-width: 64px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Próximo carimbo ---------- */
+.vg-proximo {
+  padding: 16px;
+  border: 1.5px solid var(--laranja);
+  border-radius: 24px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+}
+
+.vg-proximo-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.vg-proximo-topo > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vg-proximo-topo small {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+}
+
+.vg-proximo-topo strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.vg-proximo-sub {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+
+.vg-proximo-selo {
+  transform: rotate(-8deg);
+}
+
+.vg-proximo-botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  margin-top: 16px;
+  border-radius: 16px;
+  background: var(--couro);
+  box-shadow: var(--sombra-botao);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.vg-proximo-botao:hover {
+  background: var(--escuro);
+}
+
+/* Duelo de hospedagem */
+.vg-duelo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.vg-duelo-lados {
+  display: flex;
+  gap: 10px;
+}
+
+.vg-duelo-lado {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vg-duelo-lado.votei {
+  border-color: var(--caramelo);
+}
+
+.vg-duelo-lado img,
+.vg-duelo-sem-foto {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  background: var(--cor-fundo-suave);
+}
+
+.vg-duelo-sem-foto {
+  display: grid;
+  place-items: center;
+}
+
+.vg-duelo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+}
+
+.vg-duelo-texto strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vg-duelo-texto small {
+  font-size: 11px;
+  color: var(--cor-texto-suave);
+}
+
+.vg-duelo-barra {
+  height: 6px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--cor-fundo-suave);
+}
+
+.vg-duelo-barra span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--caramelo);
+  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.vg-duelo-faltam {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Passaporte do comboio ---------- */
+.vg-passaporte-selos {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 14px 8px;
+  list-style: none;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 16px;
+  background: var(--cor-cartao);
+}
+
+.vg-passaporte-selos li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.vg-passaporte-selos .selo {
+  opacity: 0.28;
+  transform: rotate(var(--giro));
+}
+
+.vg-passaporte-selos li.feito {
+  color: var(--cor-texto);
+}
+
+.vg-passaporte-selos li.feito .selo {
+  opacity: 1;
+}
+
+/* Selo novo cai girando no lugar */
+.vg-passaporte-selos li.novo .selo {
+  animation: vg-carimbo 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) var(--atraso) both;
+}
+
+@keyframes vg-carimbo {
+  from {
+    opacity: 0;
+    transform: scale(2.4) rotate(calc(var(--giro) - 30deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vg-capa,
+  .vg-passaporte-selos li.novo .selo {
+    animation: none;
+  }
+}
+
+/* ---------- Carrossel dos dias ---------- */
+.vg-dias {
+  display: flex;
+  gap: 12px;
+  margin: 0 -16px;
+  padding: 0 16px 4px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.vg-dias li {
+  flex: 0 0 150px;
+  scroll-snap-align: start;
+}
+
+.vg-dias a {
+  display: flex;
+  flex-direction: column;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.vg-dias img,
+.vg-dia-sem-foto {
+  width: 150px;
+  height: 110px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: var(--cor-fundo-suave);
+}
+
+.vg-dia-sem-foto {
+  display: grid;
+  place-items: center;
+}
+
+.vg-dias small {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.vg-dias strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.vg-sem-dias {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 16px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.vg-sem-dias > span {
+  flex: 1;
+}
+
+.vg-sem-dias strong {
+  display: block;
+  font-size: 15px;
+}
+
+.vg-sem-dias small {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Passagens e contas ---------- */
+.vg-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vg-linha > span:not(.vg-numero) {
+  flex: 1;
+}
+
+.vg-linha strong {
+  font-size: 14px;
+}
+
+.vg-linha small {
+  font-size: 13px;
+}
+
+.vg-numero {
+  flex: 1;
+}
+
+.vg-numero strong {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  color: var(--cor-texto-suave);
+}
+
+.vg-numero.decidir strong {
+  color: var(--caramelo);
+}
+
+.vg-numero.comprar strong {
+  color: var(--couro);
+}
+
+.vg-numero.comprada strong {
+  color: var(--cor-sucesso);
+}
+
+.vg-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cor-borda);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.vg-aviso svg {
+  flex: none;
+  color: var(--cor-erro);
+}
+
+.vg-contas {
+  display: flex;
+}
+
+.vg-contas > span {
+  flex: 1;
+}
+
+.vg-contas strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+}
+
+.vg-contas-saldo {
+  text-align: right;
+}
+
+.vg-contas strong.recebe {
+  color: var(--cor-sucesso);
+}
+
+.vg-contas strong.deve {
+  color: var(--cor-erro);
+}
+
+/* ---------- Computador: capa com cantos, coluna larga + lateral ---------- */
+@media (min-width: 1024px) {
+  .vg-capa {
+    height: 320px;
+    margin: 0;
+    border-radius: 26px;
+  }
+
+  .vg-capa-texto {
+    left: 32px;
+    right: 32px;
+    bottom: 28px;
+  }
+
+  .vg-capa-texto h1 {
+    font-size: clamp(44px, 4vw, 56px);
+  }
+
+  .vg-corpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    gap: 32px;
+  }
+
+  .vg-lateral {
+    position: sticky;
+    top: 24px;
+  }
+
+  .vg-rostos,
+  .vg-dias {
+    margin: 0;
+    padding: 0 0 4px;
+  }
+}
+
+/* ---------- Reservas: as duas pílulas (como no app) ---------- */
+.reservas {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reservas-parte {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reservas-parte[hidden] {
+  display: none;
+}
+
+.reservas-pilulas {
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  padding: 4px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 99px;
+  background: var(--cor-cartao);
+}
+
+.reservas-pilulas button {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reservas-pilulas button.ativa {
+  background: var(--couro);
+  color: var(--creme);
+  font-weight: 700;
+}
+
+/* ---------- Tudo da viagem ---------- */
+.tudo-da-viagem {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.tudo-lista {
+  display: flex;
+  width: 100%;
+  max-width: 640px;
+  flex-direction: column;
+  padding: 0 16px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+}
+
+.tudo-lista a,
+.tudo-lista button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 8px 0;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.tudo-lista button {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tudo-lista > * + * {
+  border-top: 1px solid var(--cor-borda);
+}
+
+.tudo-lista a > span:not(.icone-quadrado),
+.tudo-lista button > span:not(.icone-quadrado) {
+  flex: 1;
+}
+
+.tudo-lista .icone-quadrado {
+  flex: none;
+}
+
+.tudo-lista strong {
+  display: block;
+  font-size: 15px;
+}
+
+.tudo-lista small {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.tudo-lista a > svg,
+.tudo-lista button > svg {
+  color: var(--cor-texto-suave);
+}
+
+.tudo-cartoes {
+  columns: 2 340px;
+  column-gap: 18px;
+}
+
+.tudo-cartoes > * {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+/* ---------- Cidades ---------- */
+.cidades {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.cidades .overview-mapa {
+  height: 360px;
+}

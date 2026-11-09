@@ -1,0 +1,191 @@
+/* Spec 088: página pra imprimir / salvar PDF */
+.imprimir {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1rem;
+  color: var(--cor-texto);
+}
+.imprimir-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.imprimir-opcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+.imprimir-topo h1 {
+  margin: 0.5rem 0 0.25rem;
+}
+.imprimir-topo p,
+.imprimir-vazio,
+.imprimir-rodape,
+.imprimir small {
+  color: var(--cor-texto-suave);
+}
+.imprimir section {
+  margin-top: 1.5rem;
+}
+.imprimir h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--cor-borda);
+  padding-bottom: 0.3rem;
+}
+.imprimir h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.3rem;
+  text-transform: capitalize;
+}
+.imprimir-dia {
+  break-inside: avoid;
+}
+.imprimir-dia ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.imprimir-dia li {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+}
+.imprimir-hora {
+  flex-shrink: 0;
+  width: 3rem;
+  font-variant-numeric: tabular-nums;
+}
+.imprimir table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  display: block;
+  overflow-x: auto;
+}
+.imprimir th,
+.imprimir td {
+  text-align: left;
+  padding: 0.35rem 0.5rem 0.35rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  vertical-align: top;
+}
+.imprimir-casa {
+  break-inside: avoid;
+}
+.imprimir-casa p {
+  margin: 0.15rem 0;
+}
+.imprimir-rodape {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+}
+
+/* ---------- Design Plataforma (spec 113): barra em cima e a página como uma folha branca ---------- */
+.imprimir {
+  max-width: 920px;
+  padding: 0;
+}
+
+.imprimir-barra {
+  margin-bottom: 18px;
+}
+
+.imprimir-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.imprimir-botao-claro {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid #d9c3a2;
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.imprimir-botao-claro:hover {
+  background: var(--cor-fundo);
+}
+
+.imprimir-folha {
+  padding: clamp(24px, 5vw, 56px);
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow:
+    0 2px 4px rgb(74 46 20 / 0.06),
+    0 24px 60px rgb(74 46 20 / 0.12);
+}
+
+/* No computador: o dia à esquerda e os horários à direita; a tabela do comboio ocupa a largura toda */
+@media (min-width: 640px) {
+  .imprimir-dia {
+    display: grid;
+    grid-template-columns: minmax(140px, 200px) 1fr;
+    gap: 6px 20px;
+    padding: 14px 0 4px;
+  }
+
+  .imprimir-dia h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .imprimir-dia h3 small {
+    display: block;
+    color: #b97a22;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .imprimir-dia li {
+    font-size: 14px;
+  }
+
+  .imprimir table {
+    display: table;
+  }
+}
+
+@media print {
+  /* Esconde o menu e as abas da viagem: só a folha aparece */
+  body * {
+    visibility: hidden;
+  }
+  .imprimir,
+  .imprimir * {
+    visibility: visible;
+  }
+  .imprimir {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .imprimir-barra {
+    display: none;
+  }
+  .imprimir {
+    max-width: none;
+    padding: 0;
+  }
+  .imprimir-folha {
+    padding: 0;
+    box-shadow: none;
+  }
+  .imprimir table {
+    display: table;
+  }
+}

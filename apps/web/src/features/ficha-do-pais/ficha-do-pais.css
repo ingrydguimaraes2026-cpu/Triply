@@ -1,0 +1,65 @@
+/* Ficha do país (spec 047). Só cores do global.css. */
+.ficha-pais {
+  display: grid;
+  gap: 12px;
+}
+
+.ficha-pais-abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ficha-pais-abas button {
+  padding: 4px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ficha-pais-abas button[aria-selected='true'] {
+  border-color: var(--laranja);
+  background: var(--laranja);
+  font-weight: 700;
+}
+
+.ficha-pais dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.ficha-pais dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ficha-pais dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+}
+
+.ficha-pais-internet {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.ficha-pais-internet p {
+  margin: 0;
+}
+
+.ficha-pais-internet button {
+  justify-self: start;
+}

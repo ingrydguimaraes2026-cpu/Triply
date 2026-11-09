@@ -1,0 +1,571 @@
+/* Moldura da viagem no estilo do app (spec 112): tudo claro, sem faixa escura.
+   Computador: menu branco na lateral esquerda. Celular: só as abas fixas embaixo, como no app (cada tela abre no título grande). */
+
+.viagem {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--cor-fundo);
+}
+
+.viagem-carregando {
+  min-height: 100vh;
+  background: var(--cor-fundo);
+}
+
+/* ---------- Celular: abas embaixo (a barra do app) ---------- */
+.viagem-menu {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid var(--cor-borda);
+  background: color-mix(in srgb, var(--cor-cartao) 96%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.viagem-menu-cabeca,
+.viagem-atual,
+.viagem-menu-rodape {
+  display: none;
+}
+
+.viagem-abas {
+  display: grid;
+  /* Spec 115: quantas abas a fase mostrar (até 6 + "Mais"), cada uma com a mesma largura */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+/* No celular, nome curto quando a aba tem ("Estadia", "Transp.") */
+.viagem-abas a:has(.aba-curto) .aba-nome {
+  display: none;
+}
+
+.viagem-abas a,
+.viagem-abas .aba-mais {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #8a7058; /* "apagado" do app */
+  font-size: 11px; /* até 7 itens em 360px: cada um tem ~51px */
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.viagem-abas a.active,
+.viagem-abas .aba-mais.active {
+  color: var(--cor-comboio);
+  font-weight: 700;
+}
+
+.viagem-abas a.active svg {
+  stroke-width: 2.2;
+}
+
+html[data-tema='escuro'] .viagem-abas a:not(.active) {
+  color: var(--cor-texto-suave);
+}
+
+/* Spec 090: modo simples, 5 abas maiores */
+.viagem-abas.simples a {
+  font-size: 12px;
+}
+
+/* Aba guardada (Overview, Hospedagem, Transportes): mesmo espaçamento do conteúdo */
+.aba-guardada {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aba-guardada[hidden] {
+  display: none;
+}
+
+.viagem-conteudo {
+  padding: calc(20px + env(safe-area-inset-top)) 16px 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Computador: menu claro na lateral, que recolhe (spec 113) ---------- */
+@media (min-width: 1024px) {
+  .viagem {
+    display: grid;
+    grid-template-columns: 264px minmax(0, 1fr);
+    transition: grid-template-columns 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .viagem.menu-recolhido {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+
+  .viagem-menu {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 12px;
+    overflow: hidden;
+    border-top: 0;
+    border-right: 1px solid var(--cor-borda-menu);
+    background: var(--cor-menu);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .viagem-menu-cabeca {
+    height: 48px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .viagem-logo {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--fonte-titulo);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--cor-texto);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .viagem-logo-norti {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .viagem-menu-recolher {
+    width: 34px;
+    height: 34px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    color: var(--cor-texto-suave);
+    cursor: pointer;
+  }
+
+  .viagem-menu-recolher:hover {
+    background: var(--cor-fundo-suave);
+  }
+
+  /* Viagem atual: mini capa com o nome em cima. Toque troca de viagem. */
+  .viagem-atual {
+    position: relative;
+    flex: none;
+    height: 128px;
+    margin: 10px 0 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px 14px;
+    overflow: hidden;
+    border-radius: 16px;
+    background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+    box-shadow: 0 8px 20px rgba(74, 46, 20, 0.18);
+    color: #f6ead7;
+    font-size: 12px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: height 0.28s;
+  }
+
+  .viagem-atual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease-out;
+  }
+
+  .viagem-atual:hover img {
+    transform: scale(1.03);
+  }
+
+  .viagem-atual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(30 20 11 / 0) 20%, rgb(30 20 11 / 0.8) 100%);
+  }
+
+  .viagem-atual > span,
+  .viagem-atual > strong {
+    position: relative;
+    z-index: 1;
+  }
+
+  .viagem-atual-rotulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #eadbc2;
+  }
+
+  .viagem-atual strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--fonte-titulo);
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--creme);
+  }
+
+  .viagem-abas {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .viagem-abas a {
+    height: 40px;
+    min-height: 40px;
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 12px;
+    border-radius: 10px;
+    color: var(--cor-texto-menu);
+    font-size: 14.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .viagem-abas a svg {
+    flex: none;
+  }
+
+  .viagem-abas a:has(.aba-curto) .aba-nome {
+    display: inline;
+  }
+
+  .viagem-abas .aba-curto {
+    display: none;
+  }
+
+  .viagem-abas a:hover {
+    background: var(--cor-fundo-suave);
+  }
+
+  /* Aba ativa: fundo bege e texto escuro, como no design */
+  .viagem-abas a.active {
+    background: var(--cor-fundo-suave);
+    color: var(--cor-texto);
+    font-weight: 700;
+  }
+
+  .viagem-abas a.active svg {
+    stroke-width: 2;
+  }
+
+  .viagem .viagem-abas a.so-computador {
+    display: flex;
+  }
+
+  .viagem .viagem-abas .viagem-abas-titulo.so-computador {
+    display: block;
+    padding: 18px 12px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a8268;
+    white-space: nowrap;
+  }
+
+  .viagem-menu-rodape {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cor-borda-menu);
+  }
+
+  .viagem-menu-acao {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--cor-texto-menu);
+    font: inherit;
+    font-size: 14px;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .viagem-menu-acao svg {
+    flex: none;
+  }
+
+  .viagem-menu-acao:hover {
+    background: var(--cor-fundo-suave);
+    color: var(--cor-texto);
+  }
+
+  .viagem-menu-perfil {
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 12px;
+    color: var(--cor-texto);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .viagem-menu-perfil:hover {
+    background: var(--cor-fundo-suave);
+  }
+
+  .viagem-menu-perfil .avatar {
+    flex: none;
+  }
+
+  .viagem-menu-perfil-nome {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .viagem-menu-perfil-nome strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+  }
+
+  .viagem-menu-perfil-nome span {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+  }
+
+  .viagem-comboio-mini {
+    flex: none;
+    display: flex;
+    padding-left: 8px;
+  }
+
+  .viagem-comboio-mini .avatar {
+    margin-left: -8px;
+    border: 2px solid var(--cor-fundo);
+  }
+
+  /* Recolhido: só os ícones, centralizados */
+  .menu-recolhido .viagem-menu-texto,
+  .viagem.menu-recolhido .viagem-abas a .aba-nome,
+  .menu-recolhido .viagem-atual > span,
+  .menu-recolhido .viagem-atual > strong {
+    display: none;
+  }
+
+  .menu-recolhido .viagem-menu-cabeca {
+    height: auto;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .menu-recolhido .viagem-menu-recolher {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .menu-recolhido .viagem-atual {
+    height: 56px;
+  }
+
+  .menu-recolhido .viagem-abas a,
+  .menu-recolhido .viagem-menu-acao,
+  .menu-recolhido .viagem-menu-perfil {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .viagem.menu-recolhido .viagem-abas .viagem-abas-titulo.so-computador {
+    height: 1px;
+    margin: 12px 8px;
+    padding: 0;
+    overflow: hidden;
+    background: var(--cor-borda-menu);
+    color: transparent;
+  }
+
+  .viagem-conteudo {
+    width: 100%;
+    max-width: 1440px;
+    padding: 32px clamp(20px, 3vw, 44px) 80px;
+    gap: 22px;
+  }
+}
+
+.viagem-abas .so-computador {
+  display: none;
+}
+
+.viagem-atual {
+  text-decoration: none;
+}
+
+.recado {
+  position: fixed;
+  z-index: 60;
+  left: 16px;
+  right: 16px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  margin: 0 auto;
+  max-width: 440px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--escuro);
+  color: var(--creme);
+  font-size: 14px;
+  box-shadow: var(--sombra-flutuante);
+}
+
+@media (min-width: 1024px) {
+  .recado {
+    bottom: 32px;
+  }
+}
+
+/* Legenda sobre os mapas: deixa claro que linha/caminho no mapa é estimativa, não trajeto confirmado */
+.mapa-legenda {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgb(26 16 9 / 0.72);
+  color: var(--creme);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+/* No mapa de Transportes, embaixo dos botões "Como ir" (o canto de baixo é do "Abrir no Google Maps") */
+.mapa-legenda-topo {
+  top: 56px;
+  bottom: auto;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+}
+
+/* Botão de emergência (spec 037): botão sem cara de botão, igual ao sino */
+.botao-sos {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* Sem internet (spec 034) */
+.faixa-offline {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 16px;
+  background: var(--dourado-claro);
+  color: var(--cor-texto);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.faixa-offline svg {
+  flex: none;
+}
+
+@media (min-width: 1024px) {
+  /* No computador a faixa ocupa as duas colunas do grid */
+  .faixa-offline {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Spec 115: botão "Mais" (só no celular) e a lista que ele abre */
+.viagem-abas .aba-mais {
+  border: 0;
+  background: none;
+  font: inherit;
+  color: #8a7058;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .viagem-abas .aba-mais.so-celular {
+    display: none;
+  }
+}
+
+.mais-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mais-lista a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: var(--cor-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mais-lista a:hover {
+  background: var(--cor-fundo-suave);
+}

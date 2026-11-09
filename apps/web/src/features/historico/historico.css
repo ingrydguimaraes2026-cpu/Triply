@@ -1,0 +1,23 @@
+/* Histórico e lixeira (spec 087) */
+.historico-lista {
+  list-style: none;
+  margin: 0.5rem 0;
+  padding: 0;
+}
+.historico-lista li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--cor-borda);
+}
+.historico-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+.historico-texto small {
+  color: var(--cor-texto-suave);
+}

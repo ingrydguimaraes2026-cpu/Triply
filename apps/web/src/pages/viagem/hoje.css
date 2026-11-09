@@ -1,0 +1,232 @@
+/* Tela Hoje (spec 058). Só cores do global.css. */
+.hoje {
+  display: grid;
+  gap: 16px;
+}
+
+.hoje-fora {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.hoje-agora {
+  display: grid;
+  gap: 10px;
+}
+
+.hoje-item {
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+}
+
+.hoje-item.agora {
+  border-color: var(--laranja);
+  background: var(--dourado-claro);
+}
+
+.hoje-item strong {
+  font-size: 18px;
+}
+
+.hoje-item small {
+  color: var(--cor-texto-suave);
+}
+
+.hoje-rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--caramelo);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hoje-dormimos {
+  display: grid;
+  gap: 4px;
+}
+
+.hoje-dormimos small {
+  color: var(--cor-texto-suave);
+}
+
+.hoje-dormimos .botao-ir {
+  justify-self: start;
+}
+
+.hoje-encontro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+/* Dia de passagem (spec 060) */
+.hoje-passagem {
+  display: grid;
+  gap: 6px;
+}
+
+.hoje-passagem p {
+  margin: 0;
+}
+
+.hoje-passagem ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.hoje-como-chegar {
+  margin: 4px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+  white-space: pre-line;
+}
+
+/* Volta pra base (spec 080) */
+.hoje-volta {
+  margin: 0 0 6px;
+}
+
+.hoje-volta.alerta {
+  color: var(--cor-pessoal);
+  font-weight: 700;
+}
+
+/* ---------- Spec 112: no estilo da tela Hoje do app ---------- */
+.hoje-item {
+  border-color: transparent;
+  border-radius: 20px;
+  box-shadow: var(--sombra-cartao);
+}
+
+html[data-tema='escuro'] .hoje-item {
+  border-color: var(--cor-borda);
+}
+
+.hoje-item.agora {
+  border-color: transparent;
+  background: var(--dourado-claro);
+  box-shadow: none;
+}
+
+html[data-tema='escuro'] .hoje-item.agora {
+  background: var(--cor-comboio-fundo);
+}
+
+.hoje-item strong {
+  font-size: 16px;
+}
+
+.hoje-rotulo {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.hoje-fora {
+  border-radius: 20px;
+}
+
+/* ---------- Design Plataforma (spec 113) ---------- */
+.hoje {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Aviso com a Norti dormindo */
+.hoje-fora {
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--cor-fundo-suave);
+}
+
+.hoje-fora p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cor-texto);
+}
+
+.hoje-fora .norti,
+.hoje-fora > :first-child {
+  flex: none;
+}
+
+/* Mosaico de 2 colunas: os cartões do dia e as ferramentas juntos */
+.hoje-mosaico {
+  columns: 2 380px;
+  column-gap: 18px;
+}
+
+.hoje-mosaico .ferramentas {
+  display: contents;
+}
+
+.hoje-mosaico .cartao-ui {
+  break-inside: avoid;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+/* Campos das ferramentas: borda clara, raio 12 */
+.hoje-mosaico .ferramenta-campo {
+  min-height: 46px;
+  border-color: #e3d2b8;
+  border-radius: 12px;
+}
+
+html[data-tema='escuro'] .hoje-mosaico .ferramenta-campo {
+  border-color: var(--cor-borda);
+}
+
+.hoje-mosaico .ferramenta-campo span {
+  font-size: 13px;
+}
+
+.hoje-mosaico .ferramenta-campo input {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hoje-mosaico .ferramenta-resultado {
+  margin: 0;
+}
+
+.hoje-mosaico .ferramenta-resultado strong {
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hoje-mosaico .ferramenta-resultado small {
+  font-size: 12.5px;
+}
+
+.hoje-mosaico .ferramenta-links a {
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.hoje-dormimos-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

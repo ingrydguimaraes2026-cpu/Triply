@@ -1,0 +1,1897 @@
+/* Estilos das abas da viagem */
+
+/* Selo pequeno, ex.: "ADM" */
+.selo {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Overview ----------
+   Layout no fim do arquivo ("Overview no design Plataforma", spec 113). */
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ---------- Avisos do ADM (spec 019): recados fixados no topo ---------- */
+.faixa-avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 1200px) {
+  /* ocupa as duas colunas do grid do Overview */
+  .faixa-avisos {
+    grid-column: 1 / -1;
+  }
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-suave);
+}
+
+.aviso > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--caramelo);
+}
+
+.aviso p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: var(--cor-texto);
+  font-size: 15px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.aviso-acoes {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.aviso-acoes button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.aviso-acoes button:hover:not(:disabled) {
+  background: rgba(123, 84, 47, 0.1);
+  color: var(--cor-comboio);
+}
+
+.aviso-acoes button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.aviso-form textarea {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  color: var(--cor-texto);
+  outline: none;
+}
+
+.aviso-novo {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-comboio);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aviso-novo:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* ---------- Tarefas (spec 020): checklist com responsável e prazo ---------- */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checklist-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tarefa {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 4px;
+  border-radius: 10px;
+}
+
+.tarefa:hover {
+  background: rgba(123, 84, 47, 0.04);
+}
+
+.tarefa-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--tracejado, var(--cor-borda-forte));
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tarefa-check:disabled {
+  cursor: default;
+}
+
+.tarefa.feita .tarefa-check {
+  background: var(--couro);
+  border-color: var(--couro);
+}
+
+.tarefa-corpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tarefa-titulo {
+  color: var(--cor-texto);
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.tarefa.feita .tarefa-titulo {
+  text-decoration: line-through;
+  color: var(--cor-texto-suave);
+}
+
+.tarefa-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.tarefa-meta select {
+  border: none;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+  max-width: 130px;
+}
+
+.tarefa-prazo.atrasada {
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
+.tarefa-apagar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.tarefa:hover .tarefa-apagar {
+  opacity: 1;
+}
+
+.tarefa-apagar:hover {
+  background: rgba(123, 84, 47, 0.1);
+  color: var(--cor-comboio);
+}
+
+.checklist-nova {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.checklist-nova input[type='text'],
+.checklist-nova input[type='date'],
+.checklist-nova select {
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--cor-texto);
+  background: var(--cor-fundo, var(--cor-cartao));
+}
+
+.checklist-nova-linha {
+  display: flex;
+  gap: 6px;
+}
+
+.checklist-nova-linha select {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist-nova-linha input[type='date'] {
+  flex-shrink: 0;
+}
+
+.checklist-nova-linha button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  border: none;
+  border-radius: 10px;
+  background: var(--couro);
+  color: #fff;
+  cursor: pointer;
+}
+
+.checklist-nova-linha button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Enquetes (spec 021): decidir em grupo ---------- */
+.enquetes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.enquete {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.enquete.fechada {
+  opacity: 0.75;
+}
+
+.enquete-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.enquete-topo h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  line-height: 1.3;
+}
+
+.enquete-acoes {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.enquete-acoes button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.enquete-acoes button:hover {
+  background: rgba(123, 84, 47, 0.1);
+  color: var(--cor-comboio);
+}
+
+.enquete-opcoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.opcao {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: var(--cor-fundo, var(--cor-cartao));
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+}
+
+.opcao:disabled {
+  cursor: default;
+}
+
+.opcao.votada {
+  border-color: var(--couro);
+}
+
+.opcao-barra {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: rgba(185, 122, 34, 0.14);
+  transition: width 0.25s ease;
+  z-index: 0;
+}
+
+.opcao.votada .opcao-barra {
+  background: rgba(123, 84, 47, 0.18);
+}
+
+.opcao-marca {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--tracejado, var(--cor-borda-forte));
+  border-radius: 50%;
+  color: #fff;
+}
+
+.opcao.votada .opcao-marca {
+  background: var(--couro);
+  border-color: var(--couro);
+}
+
+.opcao-texto {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.opcao-n {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.enquete-rodape {
+  margin: 0;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.enquete-nova-btn,
+.enquete-add-opcao {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-comboio);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.enquete-nova-btn:hover,
+.enquete-add-opcao:hover {
+  background: var(--cor-fundo-suave);
+}
+
+.enquete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-cartao);
+}
+
+.enquete-form input[type='text'] {
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--cor-texto);
+  background: var(--cor-cartao);
+}
+
+.enquete-form-opcao {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.enquete-form-opcao input {
+  flex: 1;
+  min-width: 0;
+}
+
+.enquete-form-opcao button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.enquete-multipla {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.enquete-form-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.enquete-criar {
+  flex: 1;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--couro);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.enquete-criar:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.enquete-form-acoes > button[type='button'] {
+  padding: 9px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Resumo sem dados: uma linha com o próximo passo */
+.resumo-vazio {
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.resumo-vazio a {
+  color: var(--cor-comboio);
+  font-weight: 700;
+}
+
+.overview-mapa {
+  position: relative;
+  min-height: 280px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #1a1009;
+  box-shadow: var(--sombra-cartao);
+}
+
+/* ---------- Capa da viagem (spec 112, tela "1g" do app) ---------- */
+.overview-capa {
+  order: -2;
+  position: relative;
+  height: 330px;
+  margin: -20px -16px 0; /* no celular encosta nas bordas, como no app */
+  overflow: hidden;
+  border-radius: 0 0 28px 28px;
+  background: var(--couro);
+  color: #ffffff;
+}
+
+.overview-capa > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Degradê do app: escurece em cima (botões) e embaixo (texto) */
+.overview-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(74 46 20 / 0.35) 0%, rgb(74 46 20 / 0) 30%, rgb(185 122 34 / 0.4) 60%, #4a2e14 100%);
+}
+
+.overview-contagem {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fbf3e6;
+  color: #3b2715;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.overview-contagem svg {
+  color: var(--caramelo);
+}
+
+.overview-capa-texto {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+}
+
+.overview-capa-texto > p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.overview-capa-texto h1 {
+  margin: 8px 0 16px;
+  font-size: 38px;
+  line-height: 1.05;
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+
+.overview-capa-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.overview-capa-comboio {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--creme);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.overview-capa-comboio .avatar {
+  border-color: #5a3818;
+}
+
+/* ---------- Atalhos (quadradinhos do app) ---------- */
+.overview-atalhos {
+  order: -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.overview-atalho {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+html[data-tema='escuro'] .overview-atalho {
+  border: 1px solid var(--cor-borda);
+}
+
+.overview-atalho:hover {
+  box-shadow: var(--sombra-flutuante);
+  transform: translateY(-1px);
+}
+
+.overview-atalho strong {
+  display: block;
+  font-size: 15px;
+}
+
+.overview-atalho small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--cor-texto-suave);
+}
+
+@media (min-width: 640px) {
+  .overview-atalhos {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .overview-capa {
+    height: 360px;
+    margin: 0;
+    border-radius: 28px;
+    box-shadow: var(--sombra-hero);
+  }
+
+  .overview-capa-texto {
+    left: 32px;
+    right: 32px;
+    bottom: 28px;
+  }
+
+  .overview-capa-texto h1 {
+    font-size: 48px;
+  }
+
+  .overview-atalhos {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.roteiro-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.roteiro-lista li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+/* Linha tracejada ligando os números */
+.roteiro-lista li + li::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: -12px;
+  height: 22px;
+  border-left: 2px dashed var(--cor-borda-forte);
+}
+
+.roteiro-numero {
+  position: relative;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--laranja);
+  color: #2a1a0c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.roteiro-nome small,
+.membro-nome small {
+  display: block;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.overview-comboio,
+.membros {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview-comboio li,
+.membros li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Tablet pra cima: roteiro vira uma linha do tempo na horizontal */
+@media (min-width: 760px) {
+  .overview-roteiro:not(.editando) .roteiro-lista {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li {
+    flex: 1 0 120px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0 12px 0 0;
+    scroll-snap-align: start;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li + li::before {
+    display: none;
+  }
+
+  /* Linha tracejada ligando um número ao próximo */
+  .overview-roteiro:not(.editando) .roteiro-lista li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 36px;
+    right: 8px;
+    border-top: 2px dashed var(--cor-borda-forte);
+  }
+}
+
+/* ---------- Transportes ---------- */
+.trechos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.trecho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+}
+
+.trecho svg {
+  color: var(--caramelo);
+}
+
+.trecho-vazio {
+  margin: 0;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Financeiro ---------- */
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.numero {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.numero-legenda {
+  margin: -8px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.categorias {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.categorias li {
+  display: grid;
+  grid-template-columns: auto 110px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.categoria-icone {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+}
+
+.categoria-nome {
+  font-weight: 600;
+}
+
+.categoria-barra {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cor-fundo-suave);
+  overflow: hidden;
+}
+
+.categoria-barra span {
+  display: block;
+  height: 100%;
+  background: var(--laranja);
+}
+
+.categoria-valor {
+  color: var(--cor-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 520px) {
+  .categorias li {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .categoria-barra {
+    grid-column: 2 / -1;
+  }
+}
+
+/* ---------- Fotos ---------- */
+.filtros {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filtros button {
+  flex: none;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtros button span {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+.filtros button.ativo {
+  background: var(--couro);
+  border-color: var(--couro);
+  color: #ffffff;
+}
+
+.filtros button.ativo span {
+  color: #ffe7b8;
+}
+
+/* ---------- Comboio ---------- */
+.membro-nome {
+  min-width: 0;
+}
+
+.link-convite {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--caramelo);
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.aviso-erro {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+}
+
+/* ---------- Overview: editar roteiro ---------- */
+.roteiro-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cor-comboio);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.roteiro-editar:hover {
+  background: var(--cor-fundo);
+}
+
+.roteiro-adicionar {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.roteiro-legenda {
+  margin: 12px 0 0;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.roteiro-periodo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+/* ---------- Overview com dados reais (spec 006) ---------- */
+.resumo-orcamento,
+.resumo-trajeto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.resumo-orcamento .numero-legenda {
+  margin: 0;
+}
+
+.resumo-trajeto strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.resumo-trajeto span {
+  color: var(--cor-texto-suave);
+}
+
+.resumo-fotos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 760px) {
+  .resumo-fotos {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.resumo-fotos a {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--cor-borda-forte);
+}
+
+.resumo-fotos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.roteiro-lista li.hoje .roteiro-numero {
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #ffe7b8;
+}
+
+.roteiro-nome strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* ---------- Gestão do comboio (spec 007) ---------- */
+.membros li.membro {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.membro-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.membro-linha .membro-nome {
+  flex: 1;
+}
+
+.membro-linha .selo {
+  margin-left: 0;
+}
+
+.membro-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 56px;
+}
+
+.convites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.convites li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.convite-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.convite-texto code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.convite-texto small {
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.comboio-sair {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+/* Decisão da enquete fechada (spec 044) */
+.enquete-decisao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.enquete-decisao time {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+/* Orçamento combinado (spec 045) */
+
+.orcamento-combinado {
+  display: grid;
+  gap: 10px;
+}
+
+.orcamento-combinado-resultado {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.orcamento-combinado-resultado.tipo-sem_acordo {
+  background: var(--dourado-claro);
+}
+
+.orcamento-combinado-resultado small {
+  color: var(--cor-texto-suave);
+}
+
+.orcamento-combinado-minha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+/* Modo sonhando (spec 046) */
+.faixa-sonhando {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--caramelo);
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+}
+
+.faixa-sonhando svg {
+  flex: none;
+  color: var(--caramelo);
+}
+
+.faixa-sonhando ol {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+@media (min-width: 1200px) {
+  .faixa-sonhando {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Ficha da pessoa no comboio (spec 050) */
+.membro-ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 2px;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+}
+
+.membro-ficha a {
+  color: var(--cor-comboio);
+}
+
+.membro-ficha svg {
+  vertical-align: -2px;
+}
+
+.bom-saber {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.bom-saber svg {
+  margin-right: 4px;
+  color: var(--caramelo);
+  vertical-align: -3px;
+}
+
+/* "Cheguei bem" (spec 051) */
+
+.cheguei-bem {
+  display: grid;
+  gap: 8px;
+}
+
+.cheguei-bem > button {
+  justify-self: start;
+}
+
+.cheguei-bem-lista {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.cheguei-bem-lista li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Repetir com o mesmo comboio (spec 055) */
+.comboio-repetir {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+/* Spec 091: caixinha "Trazer o comboio junto" */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.form-check input {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Destinos candidatos (spec 075) */
+
+.candidatos-busca {
+  display: grid;
+  gap: 4px;
+}
+
+/* Spec 092: furos no plano */
+.furos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.furos-lista li {
+  padding-left: 12px;
+  border-left: 3px solid var(--cor-borda);
+  font-size: 14px;
+}
+.furos-lista li.furo-alto {
+  border-left-color: var(--laranja);
+}
+.furos-lista a {
+  color: inherit;
+}
+
+/* Spec 094: sugestões de lugares */
+.sugestoes {
+  margin-top: 12px;
+}
+.sugestoes .form-dica {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sugestoes-lista {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.sugestoes-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--cor-borda);
+}
+.sugestoes-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+.sugestoes-texto small {
+  color: var(--cor-texto-suave);
+}
+.sugestoes-texto a {
+  color: inherit;
+}
+
+/* Spec 096: montar os dias pelos votos */
+.montar-dias-botao {
+  margin-top: 10px;
+}
+.montar-dia h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  text-transform: capitalize;
+}
+.montar-dia ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.montar-dia li {
+  padding: 4px 0;
+  border-top: 1px solid var(--cor-borda);
+}
+.montar-hora {
+  display: inline-block;
+  width: 3.2rem;
+  color: var(--cor-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Spec 103: indicar lugares */
+.indicar-lugares {
+  margin-top: 10px;
+  margin-right: 14px;
+}
+
+/* ---------- Overview no design Plataforma (spec 113) ----------
+   Capa → atalhos → duas colunas (mapa, roteiro, clima, fotos | furos, documentos) → mosaico com o resto.
+   As colunas quebram sozinhas: no celular tudo vira uma coluna. */
+.overview-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.overview-principal {
+  flex: 2 1 480px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.overview-lateral {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.overview-mapa {
+  height: 400px;
+  min-height: 0;
+  border-radius: 22px;
+  background: #1e140b;
+  box-shadow: none;
+}
+
+/* Mosaico: colunas de 300px, cada cartão com a altura do conteúdo */
+.overview-mosaico {
+  columns: 3 300px;
+  column-gap: 18px;
+}
+
+.overview-mosaico > * {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+.overview .cartao-ui {
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+/* Capa */
+.overview-capa {
+  margin: 0;
+  height: clamp(240px, 24vw, 320px);
+  border-radius: 26px;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  box-shadow: none;
+  animation: overview-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes overview-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.overview-capa::after {
+  background: linear-gradient(180deg, rgb(30 20 11 / 0.1) 0%, rgb(30 20 11 / 0) 30%, rgb(42 26 12 / 0.86) 100%);
+}
+
+.overview-contagem {
+  top: 18px;
+  left: 18px;
+  height: 34px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.overview-contagem-divisoria {
+  width: 1px;
+  height: 14px;
+  background: #e3d2b8;
+}
+
+.overview-capa-texto {
+  left: 28px;
+  right: 28px;
+  bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overview-capa-texto > div {
+  min-width: 0;
+}
+
+.overview-capa-texto p {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e3b572;
+}
+
+.overview-capa-texto h1 {
+  margin: 0;
+  font-size: clamp(40px, 4.4vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #fbf3e6;
+}
+
+.overview-capa-comboio {
+  margin-top: 10px;
+  color: #fbf3e6;
+  font-size: 14px;
+}
+
+.overview-capa-comboio .avatar {
+  border: 2px solid #fbf3e6;
+}
+
+.overview-capa-convidar {
+  height: 42px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #fbf3e6;
+  color: #3b2715;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.overview-capa-convidar:hover {
+  background: #ffffff;
+}
+
+/* Atalhos: quadradinhos que se ajeitam sozinhos */
+.overview-atalhos {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.overview-atalho {
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.overview-atalho:hover {
+  box-shadow: 0 10px 24px rgb(74 46 20 / 0.12);
+}
+
+.overview-atalho .icone-quadrado {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 11px !important;
+  background: var(--cor-fundo-suave);
+}
+
+.overview-atalho .icone-quadrado svg {
+  width: 18px;
+  height: 18px;
+}
+
+.overview-atalho strong {
+  font-size: 14.5px;
+}
+
+.overview-atalho small {
+  font-size: 12.5px;
+}
+
+/* Roteiro: "Editar" e "Abrir" no canto */
+.overview-roteiro-acoes {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roteiro-noites {
+  color: #9a8268 !important;
+  font-size: 12px !important;
+}
+
+@media (min-width: 760px) {
+  .overview-roteiro:not(.editando) .roteiro-lista li {
+    flex: none;
+    width: 112px;
+    padding-right: 0;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-lista li:not(:last-child)::after {
+    left: 34px;
+    right: 6px;
+    border-top-width: 1.5px;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-nome strong {
+    font-size: 14px;
+  }
+
+  .overview-roteiro:not(.editando) .roteiro-nome small {
+    font-size: 12px;
+  }
+}
+
+.roteiro-numero {
+  background: #e3a04a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Furos: linhas bege com a barrinha colorida e a setinha */
+.furos-lista {
+  gap: 6px;
+}
+
+.furos-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-left: 0;
+  border-radius: 10px;
+  background: var(--cor-fundo);
+  font-size: 13.5px;
+}
+
+.furos-lista li::before {
+  content: '';
+  flex: none;
+  align-self: stretch;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--cor-borda-forte);
+}
+
+.furos-lista li.furo-alto::before {
+  background: var(--cor-erro);
+}
+
+.furos-lista li > span,
+.furos-lista a {
+  flex: 1;
+  min-width: 0;
+}
+
+.furos-lista a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.furos-lista a span {
+  flex: 1;
+}
+
+.furos-lista a svg {
+  flex: none;
+  color: #9a8268;
+}
+
+.furos-lista li:has(a):hover {
+  background: var(--cor-fundo-suave);
+}
+
+.overview-furos .cartao-ui-topo h2 svg {
+  color: var(--cor-erro);
+}
+
+/* Hospedagem: "0 de 5" com o "de 5" menor */
+.resumo-orcamento .numero small {
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+/* Celular: a capa encosta nas bordas, como no app */
+@media (max-width: 1023px) {
+  .overview-capa {
+    height: 300px;
+    margin: -20px -16px 0;
+    border-radius: 0 0 28px 28px;
+  }
+
+  .overview-capa-texto {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .overview-mapa {
+    height: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-capa {
+    animation: none;
+  }
+}
+
+/* ---------- Comboio no design Plataforma (spec 113) ----------
+   Quem vai (1 1 360) | Histórico e lixeira (1.4 1 420); no celular vira uma coluna. */
+.comboio-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.comboio-esquerda {
+  flex: 1 1 360px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.comboio-direita {
+  flex: 1.4 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.comboio-dica {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cor-fundo);
+}
+
+.comboio-dica p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--cor-texto-suave);
+}
+
+.comboio-dica .norti {
+  flex: none;
+}
+
+/* ---------- Configurações pra quem não é ADM (spec 113) ---------- */
+.config-leitura {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 760px;
+}
+
+.config-leitura .vazio {
+  padding: 44px 24px;
+  border: 1.5px dashed #e3d2b8;
+  border-radius: 20px;
+}
+
+.config-adms {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: -6px 0 0;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.config-agora {
+  padding: 22px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+  opacity: 0.85;
+}
+
+.config-agora h2 {
+  margin: 0 0 8px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b97a22;
+}
+
+.config-agora-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #f1e6d4;
+}
+
+.config-agora-linha > svg:first-child {
+  flex: none;
+  color: #9a8268;
+}
+
+.config-agora-linha span {
+  flex: 1;
+  font-size: 13px;
+  color: #7a5f45;
+}
+
+.config-agora-linha strong {
+  min-width: 0;
+  font-size: 14px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.config-agora-linha > svg:last-child {
+  flex: none;
+  color: #c8b59a;
+}
+
+/* Spec 115: cartão "Próximo passo" no topo da viagem (uma ação só) */
+.proximo-passo {
+  order: -1; /* logo depois da capa (a capa é -2; os atalhos também são -1, mas vêm depois no HTML) */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 16px 18px;
+  border-radius: var(--raio);
+  background: var(--couro);
+  color: var(--creme);
+  box-shadow: var(--sombra-botao);
+}
+
+.proximo-passo-rotulo {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.proximo-passo strong {
+  flex: 1 1 240px;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.proximo-passo-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--creme);
+  color: var(--couro);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.proximo-passo-botao:hover {
+  background: #ffffff;
+}

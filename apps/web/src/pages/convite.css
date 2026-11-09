@@ -1,0 +1,163 @@
+/* Convite (spec 018), no visual do design Plataforma (spec 113).
+   A moldura (mapa escuro, logo, cartão creme) vem do SobreOMapa. */
+.convite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.convite-form h1 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+/* Norti espiando por cima do cartão */
+.convite-mascote {
+  position: absolute;
+  top: -62px;
+  right: 28px;
+}
+
+.convite-mascote-meio {
+  margin-top: -80px;
+}
+
+.convite-largo {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.convite-rotulo {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+}
+
+.convite-detalhes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14.5px;
+  color: #6e5540;
+}
+
+.convite-detalhes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-wrap: pretty;
+}
+
+.convite-detalhes svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--caramelo);
+}
+
+.convite-linha {
+  width: 100%;
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid #eadcc6;
+}
+
+.convite-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.convite-campo label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #3b2715;
+}
+
+.convite-campo input {
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid #e3d2b8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #3b2715;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.convite-campo input:focus-visible {
+  outline: none;
+  border-color: var(--caramelo);
+  box-shadow: 0 0 0 4px rgb(185 122 34 / 0.14);
+}
+
+.convite-campo small {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7a5f45;
+}
+
+.convite-erro {
+  margin: 0;
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
+.convite-link {
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: var(--couro);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Texto suave (usado também na faixa de convidado) */
+.convite-suave {
+  margin: 0;
+  color: var(--cor-texto-suave);
+}
+
+/* Faixa "Você está como convidado" dentro da viagem */
+.faixa-convidado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-texto);
+}
+
+.faixa-convidado p {
+  margin: 0;
+  flex: 1;
+  min-width: 180px;
+}
+
+.criar-conta {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.criar-conta-ou {
+  margin: 0;
+  text-align: center;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}

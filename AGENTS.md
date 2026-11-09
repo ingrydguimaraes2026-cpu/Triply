@@ -1,4 +1,4 @@
-# AGENTS.md — Together (nome provisório)
+# AGENTS.md — Norti
 
 Regras pra qualquer assistente de IA (Claude Code, Cursor, Codex) que trabalhar neste projeto.
 
@@ -65,6 +65,25 @@ O objetivo não é só fazer: é ela **entender o que foi feito e conseguir test
 
 Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que aparecer (celular e computador no mesmo Wi-Fi).
 
+## 3.1 Limite de uso do Claude (regra do Victor, 02/11/2026)
+
+Quando o uso da conta do Claude chegar perto do fim (~90%) ou a pessoa avisar que está acabando:
+1. **Pare de começar coisa nova.** Termine só o passo que está no meio, com calma.
+2. Escreva ou atualize um `docs/HANDOFF-<assunto>.md`: o que está pronto, o que está no ar, onde parou, o próximo passo exato e os cuidados.
+3. **Commit e push de tudo** na branch de trabalho (hoje `monorepo-split`), inclusive o que outras sessões deixaram sem commit (nunca `.env`). Não precisa pedir confirmação pra esse commit/push: a regra já é a autorização.
+4. Avise em uma linha qual é o HANDOFF, pra continuar em outra conta.
+
+### Sessão grande → sessão nova (regra do Victor, 02/11/2026)
+Cada passo de uma conversa longa reprocessa o histórico inteiro: é o que mais gasta. Então:
+- **Quando trocar:** depois de terminar uma funcionalidade ou etapa grande, quando a conversa já passou por vários assuntos, ou quando a pessoa disser que o uso está alto. Na dúvida, troque.
+- **Como:** faça os passos 2 e 3 acima (HANDOFF + commit e push) e proponha uma **sessão nova** com um resumo curto que manda ler o `AGENTS.md`, o HANDOFF e a spec. Não continue trabalho grande na sessão velha.
+
+### Economia de uso
+- Não leia arquivo grande inteiro: use `grep` e leia só as linhas que importam.
+- Publicar Edge Function: pela CLI a partir do arquivo (`supabase functions deploy`), nunca colando o conteúdo na conversa. Sem CLI, só o que mudou.
+- Teste de tela: prefira um roteiro (Playwright, em texto, "passou/falhou") a clicar passo a passo. Print só pra julgar o visual, e em tamanho pequeno.
+- `npm test` inteiro só uma vez, no fim. No meio, rode só o arquivo de teste da mudança.
+
 ## 4. Como trabalhamos com Git (explique isso pra ela na primeira vez)
 
 - `main` = versão oficial. **Nunca** commitar nem dar push direto na `main`.
@@ -77,15 +96,23 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 
 ## 5. Regras do código
 
+- **Mobile primeiro (decisão do Victor, 02/11/2026).** O produto é o app (Expo, `apps/mobile`): o público é de celular e vem de TikTok/Reels pra loja. Toda funcionalidade nova nasce no app. O site fica pro essencial: abrir o convite sem instalar, ver a viagem, planejar no PC e as páginas de divulgação (`/espera`). **Atualização do rumo (03/11/2026):** o app é do **organizador**; o **convidado** age pela **web leve** (`/v/<código>`: topar, votar, ver o plano), sem instalar. **Atualização (09/11/2026):** o site de quem planeja passa a ser **espelho do app**: mesmas 5 partes, mesmos nomes, mesmo desenho adaptado pra tela larga. Funcionalidade nova nasce no app e o site acompanha depois (`docs/HANDOFF-site-espelho.md`).
+- **Rumo do produto: [`docs/RUMO.md`](docs/RUMO.md) manda.** Âncora = **passaporte da galera** (spec 118); na viagem, o **"Hoje" com as reservas do grupo** (spec 120); a base de planejar fica sem coisa nova. IA só invisível, pra tirar digitação. Antes de pegar qualquer task, pergunte "isso serve à âncora, ao 'Hoje' ou é conserto da base?". Se não serve, está congelado (❄): não abra spec nova pra isso.
 - Código simples, sem "esperteza". Nomes e comentários em português.
 - Rotas em `src/router.tsx`. Telas em `src/pages/` (só mostram as coisas).
 - Regras e acesso ao banco em `src/features/<módulo>/` (`api.ts`, `hooks.ts`).
 - Peças visuais prontas em `src/components/ui/` (veja o README de lá). Reaproveite antes de criar outra.
 - Dados da viagem dentro das abas: `const { viagem, destinos, membros, euSouAdm } = useViagemAtual()`.
-- Cada aba em `src/pages/viagem/` tem um comentário **`TODO (Ingryd)`** no topo dizendo o que construir e quais tabelas usar. Comece por ele.
-- Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: `lucide-react`.
+- **Antes de construir uma funcionalidade, leia a spec dela em `docs/specs/`** (o README de lá tem o roteiro em ordem). A spec diz o que entra, o que não entra, quem pode o quê e os critérios de aceite. Se o pedido da pessoa sair da spec, avise e sugira atualizar a spec primeiro.
+- Ao terminar, use os **critérios de aceite** da spec como roteiro de teste e atualize o status no `docs/specs/README.md`.
+- Cores e fontes: só as variáveis de `src/styles/global.css` (paleta Couro e laranja). Ícones: só `<Icone nome="...">` e `<Selo nome="...">` (catálogo em `@together/core`, regras em `docs/design/ICONES.md`). **Nada de emoji** em tela ou texto do app (aviso, compartilhar) e nada de importar `lucide-*`: o teste `apps/web/tests/icones.test.mjs` barra.
 - Variáveis de ambiente do navegador começam com `VITE_`. Nunca colocar segredos nelas.
-- Antes de dizer que terminou: `npm run build` e `npm run lint` sem erros. Se der erro, explique e conserte.
+- Antes de dizer que terminou, confira só o que a mudança pode quebrar (rodar tudo sempre gasta tempo à toa):
+  - Mexeu no app (`apps/mobile`) ou no core: `npx tsc --noEmit` na pasta que mudou.
+  - Mexeu no site (`apps/web`): `npm run build` e `npm run lint`.
+  - `npm test` (testes de lógica e regras do banco, não de tela) **só** se mexeu em dinheiro, datas, regras ou banco. Rode **uma vez**, em primeiro plano, e mostre só o resumo (quantos passaram/falharam). A falha do `zip.test.mjs` no Windows (nome com acento) é antiga: ignore.
+  - Tela e responsividade não têm teste automático: confira abrindo no navegador (360px e desktop). Sem navegador, diga isso em vez de inventar outro teste.
+  - Se der erro, explique e conserte.
 
 ## 6. O que já existe (pra contextualizar e montar roteiros de teste)
 
@@ -94,8 +121,14 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 | Login (Google, e-mail e senha, criar conta, esqueci a senha) | Pronto |
 | Onboarding com mapa: destinos, datas, nome/moeda, convite do comboio | Pronto |
 | Link de convite `/convite/<código>` | Pronto |
-| Dashboard: menu, Overview (mapa, roteiro, comboio), aba Comboio | Pronto |
-| Transportes, Financeiro, Fotos | Só o visual. Funcionalidade = trabalho da Ingryd (ver `TODO (Ingryd)`) |
+| Dashboard: menu, Overview com resumo de tudo, editar roteiro com datas | Pronto pra testar |
+| Financeiro: gastos, divisão, acertos, orçamento, câmbio, lançamento rápido (botão "+") | Pronto pra testar |
+| Transportes, Comboio (papéis, convites, sair) | Pronto pra testar |
+| Fotos: feed do comboio estilo Instagram (posts com até 10 fotos, curtidas, comentários, grade, aviso no celular) | Pronto pra testar |
+| Financeiro: termômetro do câmbio e boletim no celular às 12h e 20h | Pronto pra testar |
+| Minhas viagens (`/viagens`), Perfil (`/perfil`), Configurações da viagem | Pronto pra testar |
+| Documentos de entrada: checklist por país na Overview, ao lado do mapa, com prazo e fonte oficial | Pronto pra testar |
+| Hospedagem: busca pronta (Airbnb, Booking, Maps), opções do comboio, votos, escolhida pelo ADM, lançar como gasto | Pronto pra testar |
 | Página 404 e de erro | Pronto |
 
 ## 7. Banco de dados (Supabase)
@@ -103,12 +136,18 @@ Pra ver no celular: `npm run dev -- --host` e abrir o endereço "Network" que ap
 - Tabelas e regras de acesso estão em `supabase/migrations/` (leia o README de lá).
 - Regra geral: quem está no comboio vê a viagem; o ADM edita destinos, trajetos, orçamento e convites; gasto "pessoal" só quem lançou vê. Isso é garantido pelo banco (RLS), não só pela tela.
 - Mudar o banco = criar um arquivo novo de migration (nunca editar um antigo), explicar pra ela o que muda em linguagem simples e **pedir confirmação** antes de aplicar. O Victor revisa no PR.
-- Depois de mudar o banco, gerar de novo os tipos em `src/types/database.ts`.
+- Depois de mudar o banco, gerar de novo os tipos em `packages/core/src/database.ts` (monorepo: os tipos agora ficam no `@together/core`, que web e mobile usam).
 
 ## 8. Referências
 
+- **Rumo do produto (manda em tudo): `docs/RUMO.md`**
+- Plano das próximas funcionalidades (ondas): `docs/ROADMAP.md`
+- Specs de cada funcionalidade: `docs/specs/README.md`
+- Pesquisa de mercado e catálogo completo: `reports/`
 - Requisitos combinados: `docs/conversa-2026-10-10-requisitos.md`
 - Concorrentes: `docs/benchmark.md`
 - Glossário pra Ingryd: `docs/glossario.md`
 - Guia "como pedir coisas pro Claude": `docs/COMO-TRABALHAR.md`
-- O nome "Together" é provisório (era "Triply", que já existe). O repositório no GitHub continua se chamando Triply.
+- O nome do produto é **Norti** (decidido pelo Victor em 08/11/2026; antes foi "Tripwave", "Triply" e "Together"). É o mesmo nome da mascote; fala-se "a Norti". Ver `docs/marketing/NOME-E-VOZ.md`.
+- Nomes internos com "tripwave" ficam de propósito: chaves `tripwave.*` salvas no celular, variáveis `TRIPWAVE_*` do teste e o nome de arquivos antigos. Domínios e @ (`tripwave.app`, `@tripwaveapp`) ainda não foram trocados: decisão do Victor.
+- Nomes internos continuam com "together" de propósito: pacote `@together/core`, chaves `together:*` no navegador, caches, link `together://` do app e o endereço `together-viagem.vercel.app`. Trocar esses quebra login, convites e dados salvos. O repositório no GitHub continua se chamando Triply.

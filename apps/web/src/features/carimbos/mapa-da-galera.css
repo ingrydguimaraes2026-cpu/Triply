@@ -1,0 +1,330 @@
+/* Mapa da galera (spec 118b), claro como no app: cartão branco, países em areia, carimbos em dourado */
+.mapa-galera {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--cor-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+.mapa-galera h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.mapa-galera-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mapa-galera-postar {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--caramelo);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mapa-galera-postar:hover {
+  text-decoration: underline;
+}
+.mapa-galera-filtro {
+  display: flex;
+  gap: 8px;
+}
+.mapa-galera-filtro button,
+.mapa-galera-chip {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mapa-galera-filtro button.ativo {
+  background: var(--couro);
+  color: #fff;
+}
+.mapa-galera-chip {
+  align-self: stretch;
+  min-height: 40px;
+  font-size: 14px;
+}
+.mapa-galera-desenho {
+  width: 100%;
+}
+.mapa-galera-desenho svg {
+  display: block;
+}
+.mapa-galera-desenho path {
+  fill: #f1e4cf;
+  stroke: var(--cor-cartao);
+  stroke-width: 0.5;
+}
+.mapa-galera-desenho path.aceso {
+  fill: var(--laranja);
+}
+.mapa-galera-halo {
+  fill: var(--laranja);
+  opacity: 0.35;
+}
+.mapa-galera-ponto {
+  fill: var(--couro);
+}
+html[data-tema='escuro'] .mapa-galera-desenho path:not(.aceso) {
+  fill: #3a2716;
+}
+html[data-tema='escuro'] .mapa-galera-ponto {
+  fill: var(--creme);
+}
+.mapa-galera-vazio {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mapa-galera-numeros {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+}
+.mapa-galera-numeros div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.mapa-galera-numeros dt {
+  font-size: 11px;
+  color: var(--cor-texto-suave);
+}
+.mapa-galera-numeros dd {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+.mapa-galera-podio {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cor-borda);
+}
+.mapa-galera-podio h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cor-texto-suave);
+}
+.mapa-galera-podio ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.mapa-galera-podio li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mapa-galera-podio li span {
+  font-size: 14px;
+  font-weight: 600;
+}
+.mapa-galera-podio li small {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+/* Spec 118f: "a gente já foi pra..." (abre numa gaveta pelo atalho do Início) */
+.viagem-antiga {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.viagem-antiga .dica {
+  margin: 0;
+}
+.viagem-antiga label,
+.viagem-antiga legend {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.viagem-antiga select {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  font: inherit;
+}
+.viagem-antiga-busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+}
+.viagem-antiga-busca input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  outline: none;
+}
+.viagem-antiga-achados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.viagem-antiga-achados button,
+.viagem-antiga-escolhido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--cor-comboio-fundo);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.viagem-antiga-achados button {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.viagem-antiga-escolhido span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.viagem-antiga small {
+  color: var(--cor-texto-suave);
+  font-size: 0.78rem;
+}
+.viagem-antiga-quando {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.viagem-antiga-galera {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.viagem-antiga-galera label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-weight: 600;
+}
+.viagem-antiga-galera input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--couro);
+}
+
+/* Spec 118f: "Rolê hoje" (gaveta do Início) */
+.role-hoje {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.role-hoje .dica {
+  margin: 0;
+}
+.role-hoje-tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.role-hoje-tipos button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.role-hoje-tipos button.ativo {
+  border-color: var(--couro);
+  background: var(--couro);
+  color: #fff;
+}
+.role-hoje-aqui,
+.role-hoje-usar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 24px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.role-hoje-aqui {
+  background: var(--couro);
+  color: var(--creme);
+}
+.role-hoje-aqui span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.role-hoje-aqui small {
+  font-size: 13px;
+  color: var(--laranja);
+}
+.role-hoje-aqui strong {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.role-hoje-usar {
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 700;
+}
+.role-hoje-criando {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}

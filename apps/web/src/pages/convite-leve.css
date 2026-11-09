@@ -1,0 +1,224 @@
+/* Web leve do convite (spec 018, FILA 0.8): /v/<código>.
+   Página simples, coluna única, sem o mapa do site, pra abrir rápido no navegador do WhatsApp. */
+.leve {
+  min-height: 100dvh;
+  background: var(--cor-fundo);
+  padding: 16px 16px 40px;
+}
+
+.leve-marca {
+  display: inline-flex;
+  color: var(--couro);
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.leve-conteudo {
+  max-width: 560px;
+  margin: 12px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.leve-centro {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 8px;
+  text-align: center;
+}
+.leve-centro h1 {
+  margin: 0;
+}
+
+.leve-capa h1 {
+  margin: 4px 0 12px;
+  font-size: 32px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.leve-cartao {
+  margin: 0;
+  padding: 18px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.leve-cartao h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 21px;
+  color: var(--cor-texto);
+}
+.leve-cartao h2 svg {
+  color: var(--caramelo);
+}
+.leve-cartao > p {
+  margin: 0;
+}
+
+.leve-largo {
+  width: 100%;
+  justify-content: center;
+}
+
+.leve-falta {
+  font-weight: 700;
+  color: var(--cor-pessoal);
+}
+
+/* ---------- Votação ---------- */
+.leve-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cor-borda);
+}
+.leve-grupo h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.leve-escolhida {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cor-sucesso);
+  font-weight: 600;
+}
+
+.leve-opcoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leve-opcao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+}
+.leve-opcao.meu {
+  border-color: var(--caramelo);
+  background: var(--cor-fundo-suave);
+}
+.leve-opcao img {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.leve-opcao button {
+  flex-shrink: 0;
+}
+
+.leve-opcao-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.leve-opcao-texto strong {
+  overflow-wrap: anywhere;
+}
+.leve-opcao-texto small {
+  color: var(--cor-texto-suave);
+}
+.leve-opcao-texto a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--couro);
+}
+
+/* ---------- Plano dia a dia ---------- */
+.leve-dias {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.leve-dias > li {
+  padding: 10px 0;
+  border-top: 1px solid var(--cor-borda);
+}
+.leve-dias > li:first-child {
+  border-top: 0;
+}
+
+.leve-dia {
+  margin: 0 0 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+}
+.leve-dia span {
+  color: var(--caramelo);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.leve-itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.leve-itens li {
+  display: flex;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.leve-hora {
+  flex-shrink: 0;
+  min-width: 42px;
+  font-weight: 700;
+  color: var(--cor-texto-suave);
+}
+
+.leve-completa {
+  align-self: flex-start;
+  text-decoration: none;
+}
+
+/* ---------- Vitrine do passaporte ---------- */
+.leve-carimbo {
+  cursor: default;
+}
+
+.leve-app {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.leve-app p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}

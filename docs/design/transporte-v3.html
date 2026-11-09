@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deslocamentos no dia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Protótipo da spec 122 (deslocamentos no dia). Só desenho: dados de exemplo da Eurotrip, quarta 9/jun. */
+:root{--texto:#3B2715;--suave:#7A5F45;--couro:#7B542F;--caramelo:#B97A22;--dourado:#E3A04A;--fundo:#FBF3E6;--areia:#F1E4CF;--chip:#F6EAD7;--borda:#EADCC6;--verde:#5E6B2E;--verde-f:#EEF0DF;--verm:#A1442B;--verm-f:#F6E2DA;--ouro-f:#FBEBD2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E6D8C2;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--texto);padding:28px 16px}
+.serif{font-family:'Fraunces',serif;font-weight:700;letter-spacing:-.01em}
+header.topo{max-width:1440px;margin:0 auto 22px}
+header.topo h1{font:700 30px 'Fraunces',serif}
+header.topo p{color:var(--suave);font-size:15px;margin-top:6px;max-width:820px;line-height:1.45}
+.telas{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:flex-start;max-width:1440px;margin:0 auto}
+figure{width:330px}
+figcaption{margin:0 0 8px 6px;display:grid;gap:2px}
+figcaption b{font-size:14px}
+figcaption small{font-size:12px;color:var(--suave);line-height:1.35}
+.tela{width:330px;height:760px;border-radius:44px;overflow:hidden;position:relative;background:var(--fundo);border:7px solid #1E140B;box-shadow:0 18px 40px #4a2e1440}
+.rola{position:absolute;inset:0;overflow-y:auto;padding:50px 16px 110px}
+.rola::-webkit-scrollbar{display:none}
+.ilha{position:absolute;width:90px;height:26px;background:#1E140B;border-radius:20px;left:50%;top:8px;transform:translateX(-50%);z-index:9}
+.ic{width:18px;height:18px;flex:none;display:inline-block}
+.ic svg{width:100%;height:100%;display:block}
+
+/* topo do dia */
+.voltar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.redondo{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;border:1px solid var(--borda)}
+.dias{display:flex;gap:6px;margin:4px -16px 12px;padding:0 16px;overflow:hidden}
+.dia{flex:none;border-radius:14px;padding:7px 10px;background:#fff;border:1px solid var(--borda);display:grid;justify-items:center;min-width:48px}
+.dia small{font-size:10px;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
+.dia b{font-size:15px}
+.dia.on{background:var(--couro);border-color:var(--couro);color:#fff}.dia.on small{color:#F5E9D6}
+.dia i{width:5px;height:5px;border-radius:50%;background:var(--dourado);margin-top:2px}
+.dia.on i{background:#F5E9D6}
+h2.titulo{font-size:27px;line-height:1.08}
+.sub{font-size:13px;color:var(--suave);margin-top:4px}
+.resumo{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}
+.pill{border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700;display:inline-flex;gap:5px;align-items:center;background:#fff;border:1px solid var(--borda)}
+.pill.ok{background:var(--verde-f);color:var(--verde);border-color:transparent}
+.pill.dec{background:var(--ouro-f);color:#8A5A10;border-color:transparent}
+.pill.ruim{background:var(--verm-f);color:var(--verm);border-color:transparent}
+
+/* linha do tempo */
+.linha{position:relative;margin-top:14px}
+.passo{display:grid;grid-template-columns:44px 1fr;gap:0 10px;position:relative}
+.hora{font-size:12.5px;font-weight:800;padding-top:12px;text-align:right;color:var(--texto)}
+.hora small{display:block;font-weight:600;color:var(--suave);font-size:11px}
+.trilho{position:absolute;left:54px;top:0;bottom:0;width:2px;background:var(--borda)}
+.desl{background:#fff;border-radius:18px;padding:11px 12px;margin:5px 0;border:1px solid var(--borda);position:relative}
+.desl .cab{display:flex;gap:9px;align-items:center}
+.meio{width:32px;height:32px;border-radius:10px;background:var(--chip);display:grid;place-items:center;flex:none}
+.desl b{font-size:14px;display:block;line-height:1.2}
+.desl .det{font-size:12px;color:var(--suave);margin-top:1px}
+.desl .rodape{display:flex;gap:6px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.estado{font-size:11px;font-weight:800;border-radius:99px;padding:3px 8px;letter-spacing:.02em}
+.estado.comprado{background:var(--verde-f);color:var(--verde)}
+.estado.decidido{background:var(--chip);color:var(--couro)}
+.estado.comparando{background:var(--ouro-f);color:#8A5A10}
+.acao{font-size:11.5px;font-weight:700;color:var(--couro);display:inline-flex;gap:4px;align-items:center;margin-left:auto}
+.passeio{padding:10px 2px;margin:2px 0}
+.passeio b{font-size:14px}
+.passeio span{display:block;font-size:12px;color:var(--suave);margin-top:1px}
+.folga{font-size:11.5px;color:var(--suave);padding:3px 0 3px 2px;display:flex;gap:5px;align-items:center}
+.aviso{border-radius:14px;padding:9px 11px;margin:5px 0;font-size:12.5px;line-height:1.35;display:flex;gap:8px;align-items:flex-start}
+.aviso b{display:block;font-size:12.5px}
+.aviso.ruim{background:var(--verm-f);color:var(--verm)}
+.aviso.dica{background:var(--ouro-f);color:#7A4E0C}
+.aviso .ic{margin-top:1px}
+.aviso button{margin-top:6px}
+.mini{border:0;font:700 11.5px 'Plus Jakarta Sans';border-radius:10px;padding:6px 10px;background:#fff;color:var(--couro)}
+
+.fab{position:absolute;right:18px;bottom:96px;z-index:7;background:var(--couro);color:#fff;border-radius:18px;padding:13px 16px;font-weight:800;font-size:14px;display:flex;gap:6px;align-items:center;box-shadow:0 8px 20px #7b542f47}
+.abas{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:10px 8px 24px;background:#fffffff2;border-top:1px solid #F1E6D4;z-index:8}
+.abas span{display:grid;justify-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#8A7058}
+.abas .on{color:var(--caramelo)}
+
+/* gaveta */
+.fundo-escuro{position:absolute;inset:0;background:#2b1a0b66}
+.gaveta{position:absolute;left:0;right:0;bottom:0;background:var(--fundo);border-radius:28px 28px 0 0;padding:10px 16px 30px;max-height:88%;overflow-y:auto}
+.gaveta::-webkit-scrollbar{display:none}
+.puxador{width:40px;height:5px;border-radius:5px;background:#D9C3A2;margin:0 auto 12px}
+.opcao{background:#fff;border:1.5px solid var(--borda);border-radius:18px;padding:12px;margin-top:10px}
+.opcao.melhor{border-color:var(--verde)}
+.opcao .cab{display:flex;gap:9px;align-items:center}.opcao .cab .det{display:block}
+.opcao .preco{margin-left:auto;text-align:right}
+.opcao .preco b{font-size:16px}
+.opcao .preco small{display:block;font-size:11px;color:var(--suave)}
+.horas{display:flex;align-items:center;gap:8px;margin:10px 0 8px;font-weight:800;font-size:16px}
+.horas i{flex:1;height:2px;background:var(--borda);position:relative}
+.horas i em{position:absolute;left:50%;top:-9px;transform:translateX(-50%);font-style:normal;font-size:10.5px;color:var(--suave);background:#fff;padding:0 4px;font-weight:700}
+.fatos{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fato{background:var(--fundo);border-radius:10px;padding:6px 8px;font-size:11.5px;color:var(--suave)}
+.fato b{display:block;color:var(--texto);font-size:12.5px}
+.fato.ruim{background:var(--verm-f);color:var(--verm)}.fato.ruim b{color:var(--verm)}
+.fato.ok{background:var(--verde-f);color:var(--verde)}.fato.ok b{color:var(--verde)}
+.botao{border:0;width:100%;background:var(--couro);color:#fff;font:800 14.5px 'Plus Jakarta Sans';border-radius:16px;padding:13px;margin-top:10px;display:flex;gap:6px;align-items:center;justify-content:center}
+.botao.claro{background:#fff;color:var(--couro);border:1.5px solid #E5D2B0}
+.selo-melhor{font-size:10.5px;font-weight:800;color:var(--verde);background:var(--verde-f);border-radius:99px;padding:3px 8px;display:inline-block;margin-bottom:6px}
+
+/* novo deslocamento */
+.campo{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:9px 12px;margin-top:8px}
+.campo small{display:block;font-size:10.5px;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
+.campo b{font-size:15px}
+.de-para{position:relative}
+.troca{position:absolute;right:12px;top:42px;width:30px;height:30px;border-radius:50%;background:var(--chip);display:grid;place-items:center;border:2px solid var(--fundo)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{border-radius:99px;padding:7px 11px;font-size:12.5px;font-weight:700;background:#fff;border:1px solid var(--borda);display:inline-flex;gap:5px;align-items:center}
+.chip.on{background:var(--couro);color:#fff;border-color:var(--couro)}
+.rotulo{font-size:12px;font-weight:800;color:var(--caramelo);letter-spacing:.08em;text-transform:uppercase;margin:16px 0 4px}
+.saida{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--borda);border-radius:14px;padding:10px 12px;margin-top:6px}
+.saida .h{font-weight:800;font-size:15px;width:48px}
+.saida span.txt{flex:1;font-size:12.5px;color:var(--suave)}
+.saida span.txt b{display:block;color:var(--texto);font-size:13px}
+.saida.on{border-color:var(--couro);box-shadow:0 0 0 1px var(--couro) inset}
+.saida .tag{font-size:10.5px;font-weight:800;border-radius:99px;padding:3px 7px;background:var(--verm-f);color:var(--verm)}
+.ou{display:flex;gap:8px;margin-top:12px}
+.ou div{flex:1;background:#fff;border:1px dashed #D9C3A2;border-radius:14px;padding:10px;font-size:12px;color:var(--suave);display:grid;justify-items:center;gap:4px;text-align:center}
+.ou b{color:var(--texto);font-size:12.5px}
+
+.meiocard{background:#fff;border:1px solid var(--borda);border-radius:16px;padding:10px 12px;margin-top:8px}
+.meiocard.aberto{border-color:var(--couro);box-shadow:0 0 0 1px var(--couro) inset}
+.meiocard.tracejado{border-style:dashed;background:transparent}
+.meiocard .saida{margin-top:6px;background:var(--fundo)}
+.mc-cab{display:flex;gap:10px;align-items:center}
+.mc-cab .txt{flex:1;min-width:0}.mc-cab .txt b{display:block;font-size:14px}.mc-cab .txt small{font-size:12px;color:var(--suave)}
+.mc-preco{text-align:right;font-size:11.5px;font-weight:700;color:var(--couro)}.mc-preco b{display:block;font-size:15px;color:var(--texto)}.mc-preco small{font-size:10.5px;color:var(--suave);font-weight:600}
+/* passagens */
+.contador{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.contador div{background:#fff;border-radius:16px;padding:10px;border:1px solid var(--borda)}
+.contador b{font-size:22px;display:block}
+.contador small{font-size:11.5px;color:var(--suave);font-weight:600}
+.contador .dec b{color:#8A5A10}.contador .comp b{color:var(--couro)}.contador .ok b{color:var(--verde)}
+.grupo{font-size:13px;font-weight:800;margin:16px 0 6px;display:flex;justify-content:space-between}
+.grupo small{color:var(--suave);font-weight:600}
+.item{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--borda);border-radius:16px;padding:10px 12px;margin-top:6px}
+.item>span.txt{flex:1;min-width:0}
+.item span.txt b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item span.txt small{font-size:11.5px;color:var(--suave)}
+.item .dir{font-size:12px;font-weight:800;color:var(--couro);text-align:right}
+.total{background:var(--couro);color:#fff;border-radius:18px;padding:14px;margin-top:16px;display:flex;justify-content:space-between;align-items:center}
+.total small{color:#F5E9D6;font-size:12px;display:block}
+.total b{font-size:20px}
+
+.notas{max-width:1100px;margin:30px auto 0;background:#fff;border-radius:20px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notas h3{font:700 19px 'Fraunces',serif;margin-bottom:6px}
+.notas li{margin-left:18px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="trem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l-2-4M15 21l2-4"/><circle cx="9" cy="14" r=".6"/><circle cx="15" cy="14" r=".6"/></g></symbol>
+    <symbol id="onibus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="15" rx="2"/><path d="M4 11h16M8 21v-3M16 21v-3"/></g></symbol>
+    <symbol id="barco" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l2 3h14l2-3H3zM6 17V9h12v8M12 9V4"/></g></symbol>
+    <symbol id="pe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M9 11l3-3 3 3 3 1M12 8l-2 7"/></g></symbol>
+    <symbol id="carro" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-5h10l2 5v5H5zM5 11h14"/><circle cx="8" cy="16" r="1.6"/><circle cx="16" cy="16" r="1.6"/></g></symbol>
+    <symbol id="mala" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M9 7V4h6v3M9 20v1M15 20v1"/></g></symbol>
+    <symbol id="alerta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3zM12 10v4M12 17.5v.5"/></g></symbol>
+    <symbol id="relogio" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+    <symbol id="seta" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="mais" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="mapa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></g></symbol>
+    <symbol id="camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></g></symbol>
+    <symbol id="link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 006 0l3-3a4 4 0 00-6-6l-1 1M14 10a4 4 0 00-6 0l-3 3a4 4 0 006 6l1-1"/></g></symbol>
+    <symbol id="troca" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M4 17l3 3 3-3M17 20V4M14 7l3-3 3 3"/></g></symbol>
+    <symbol id="casa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/></g></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="topo">
+  <h1>Deslocamentos no dia (protótipo da spec 122)</h1>
+  <p>O transporte deixa de ser uma tela de "trechos entre cidades" e vira um <b>passo dentro do dia</b>, do jeito que o Victor e a Ingryd planejam nas reuniões: horário por horário, comparando opções e cuidando da folga, do último horário, das malas e do check-in. Exemplo: quarta, 9/jun, Lago de Como.</p>
+</header>
+
+<div class="telas">
+
+  <!-- 1. O DIA -->
+  <figure>
+    <figcaption><b>1. O dia em horários</b><small>Passeio e deslocamento na mesma linha. Os avisos aparecem sozinhos, entre os passos.</small></figcaption>
+    <div class="tela"><div class="ilha"></div>
+      <div class="rola">
+        <div class="voltar"><span class="redondo"><span class="ic"><svg><use href="#seta"/></svg></span></span><span class="pill"><span class="ic" style="width:14px;height:14px"><svg><use href="#mapa"/></svg></span>Ver no mapa</span></div>
+        <div class="dias">
+          <span class="dia"><small>seg</small><b>7</b><i></i></span>
+          <span class="dia"><small>ter</small><b>8</b><i></i></span>
+          <span class="dia on"><small>qua</small><b>9</b><i></i></span>
+          <span class="dia"><small>qui</small><b>10</b><i></i></span>
+          <span class="dia"><small>sex</small><b>11</b></span>
+          <span class="dia"><small>sáb</small><b>12</b></span>
+        </div>
+        <h2 class="titulo serif">Quarta no Lago de Como</h2>
+        <p class="sub">Tirano → Como → Veneza · dorme em Veneza</p>
+        <div class="resumo">
+          <span class="pill ok">3 comprados</span>
+          <span class="pill dec">1 pra decidir</span>
+          <span class="pill ruim">1 aviso</span>
+        </div>
+
+        <div class="linha">
+          <div class="trilho"></div>
+
+          <div class="passo"><div class="hora">06:10</div>
+            <div class="desl"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span><b>Tirano → Como</b><span class="det">Trem regional · 3h20 · 1 troca</span></span></div>
+              <div class="rodape"><span class="estado comprado">Comprado</span><span class="acao"><span class="ic" style="width:14px;height:14px"><svg><use href="#mapa"/></svg></span>Paradas</span></div></div></div>
+
+          <div class="passo"><div class="hora">09:30</div>
+            <div>
+              <div class="aviso dica"><span class="ic"><svg><use href="#mala"/></svg></span><span><b>Malas até as 22:20</b>Saíram de Tirano e só dormem em Veneza. Deixem num guarda-volumes perto da estação de Como.<br><button class="mini">Achar guarda-volumes</button></span></div>
+            </div></div>
+
+          <div class="passo"><div class="hora">10:00</div>
+            <div class="desl"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#barco"/></svg></span></span><span><b>Como → Lenno</b><span class="det">Balsa · 40 min · €9</span></span></div>
+              <div class="rodape"><span class="estado decidido">Decidido</span><span class="acao">Compra no cais</span></div></div></div>
+
+          <div class="passo"><div class="hora">10:45<small>2h</small></div>
+            <div class="passeio"><b>Villa del Balbianello</b><span>A pé desde Lenno · 15 min</span></div></div>
+
+          <div class="passo"><div class="hora">14:15</div>
+            <div class="desl"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#barco"/></svg></span></span><span><b>Lenno → Varenna</b><span class="det">Balsa · 45 min · €7</span></span></div>
+              <div class="rodape"><span class="estado decidido">Decidido</span></div></div></div>
+
+          <div class="passo"><div class="hora">15:00<small>2h50</small></div>
+            <div class="passeio"><b>Villa Cipressi e Villa Monastero</b><span>Foto do portão, depois o jardim</span></div></div>
+
+          <div class="passo"><div class="hora">17:55</div>
+            <div class="desl"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#barco"/></svg></span></span><span><b>Varenna → Bellagio</b><span class="det">Ferry · 15 min · €5</span></span></div>
+              <div class="rodape"><span class="estado comprado">Comprado</span></div></div></div>
+
+          <div class="passo"><div class="hora">18:10</div>
+            <div class="passeio"><b>Jantar em Bellagio</b><span>Restaurante a escolher</span></div></div>
+
+          <div class="passo"><div class="hora">20:00</div>
+            <div class="desl"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#onibus"/></svg></span></span><span><b>Bellagio → Como</b><span class="det">Ônibus C30 · 1h · último do dia 20:40</span></span></div>
+              <div class="rodape"><span class="estado comprado">Comprado</span></div></div></div>
+
+          <div class="passo"><div class="hora"></div>
+            <div class="folga"><span class="ic" style="width:14px;height:14px"><svg><use href="#relogio"/></svg></span>1h20 de folga pra pegar as malas e o próximo</div></div>
+
+          <div class="passo"><div class="hora">22:20</div>
+            <div class="desl" style="border-color:#E3A04A"><div class="cab"><span class="meio"><span class="ic"><svg><use href="#onibus"/></svg></span></span><span><b>Como → Veneza</b><span class="det">2 opções · decidir até sexta</span></span></div>
+              <div class="rodape"><span class="estado comparando">Comparando</span><span class="acao">Comparar</span></div></div></div>
+
+          <div class="passo"><div class="hora">03:10<small>qui</small></div>
+            <div class="aviso ruim"><span class="ic"><svg><use href="#alerta"/></svg></span><span><b>Chegam às 3h, check-in até 0h</b>Avisem o anfitrião do Airbnb em Veneza ou peguem a opção que chega mais cedo.<br><button class="mini">Mandar mensagem pro anfitrião</button></span></div></div>
+
+        </div>
+      </div>
+      <span class="fab"><span class="ic"><svg><use href="#mais"/></svg></span>Adicionar</span>
+      <nav class="abas"><span class="on">Hoje</span><span>Dias</span><span>Contas</span><span>Galera</span></nav>
+    </div>
+  </figure>
+
+  <!-- 2. COMPARAR -->
+  <figure>
+    <figcaption><b>2. Comparar opções</b><small>Toque em "Comparar". O app mostra o que vocês olham nas reuniões: troca, de quanto em quanto tempo passa, último do dia, folga e preço.</small></figcaption>
+    <div class="tela"><div class="ilha"></div>
+      <div class="rola" style="opacity:.35;filter:blur(1px)">
+        <h2 class="titulo serif" style="margin-top:40px">Quarta no Lago de Como</h2>
+      </div>
+      <div class="fundo-escuro"></div>
+      <div class="gaveta">
+        <div class="puxador"></div>
+        <h2 class="serif" style="font-size:22px">Como → Veneza</h2>
+        <p class="sub">Quarta à noite, depois do ônibus de Bellagio (chega 21:00)</p>
+
+        <div class="opcao melhor">
+          <span class="selo-melhor">Mais folga</span>
+          <div class="cab"><span class="meio"><span class="ic"><svg><use href="#onibus"/></svg></span></span><span><b style="font-size:14px">Ônibus</b><span class="det" style="font-size:12px;color:var(--suave)">FlixBus · troca em Milão</span></span>
+            <span class="preco"><b>€29</b><small>por pessoa</small></span></div>
+          <div class="horas">22:20<i><em>4h50</em></i>03:10</div>
+          <div class="fatos">
+            <span class="fato ok"><b>1h20 de folga</b>depois de chegar</span>
+            <span class="fato"><b>Último 23:00</b>tem plano B</span>
+            <span class="fato"><b>1 troca</b>Milano Lampugnano</span>
+            <span class="fato ruim"><b>Chega 3h</b>check-in até 0h</span>
+          </div>
+        </div>
+
+        <div class="opcao">
+          <div class="cab"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span><b style="font-size:14px">Trem</b><span class="det" style="font-size:12px;color:var(--suave)">Trenitalia · troca em Milano C.</span></span>
+            <span class="preco"><b>€42</b><small>por pessoa</small></span></div>
+          <div class="horas">21:36<i><em>4h05</em></i>01:41</div>
+          <div class="fatos">
+            <span class="fato ruim"><b>36 min de folga</b>com as malas</span>
+            <span class="fato ruim"><b>Último do dia</b>perdeu, dormiu em Como</span>
+            <span class="fato"><b>Passa de 1 em 1h</b>até 21:36</span>
+            <span class="fato"><b>Chega 1h40</b>check-in até 0h</span>
+          </div>
+        </div>
+
+        <button class="botao"><span class="ic"><svg><use href="#check"/></svg></span>Ficar com o ônibus</button>
+        <button class="botao claro">Ver as outras saídas</button>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <!-- 3. ADICIONAR -->
+  <figure>
+    <figcaption><b>3. Achar o jeito de ir</b><small>Primeiro os meios, como no Rome2rio. Tocou em um, abrem os horários exatos daquele meio. Tudo dentro do Norti.</small></figcaption>
+    <div class="tela"><div class="ilha"></div>
+      <div class="rola">
+        <div class="voltar"><span class="redondo"><span class="ic"><svg><use href="#seta"/></svg></span></span><span class="sub" style="margin:0">Quarta, 9 jun</span></div>
+        <h2 class="titulo serif">Novo deslocamento</h2>
+        <div class="de-para">
+          <div class="campo"><small>De</small><b>Como</b></div>
+          <div class="campo"><small>Para</small><b>Veneza</b></div>
+          <span class="troca"><span class="ic" style="width:15px;height:15px"><svg><use href="#troca"/></svg></span></span>
+        </div>
+
+        <p class="rotulo">Jeitos de ir</p>
+        <div class="meiocard aberto">
+          <div class="mc-cab"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span class="txt"><b>Trem</b><small>4h · 2 trocas · a cada 1h</small></span><span class="selo-melhor" style="margin:0">Mais rápido</span></div>
+          <p class="sub" style="margin:10px 0 2px">Vocês ficam livres às 21:00 (chegam de Bellagio)</p>
+          <div class="saida"><span class="h">21:11</span><span class="txt"><b>Chega 01:15</b>2 trocas</span><span class="tag">Não dá tempo</span></div>
+          <div class="saida on"><span class="h">21:41</span><span class="txt"><b>Chega 01:45</b>Último do dia</span><span class="ic" style="color:var(--couro)"><svg><use href="#check"/></svg></span></div>
+        </div>
+        <div class="meiocard"><div class="mc-cab"><span class="meio"><span class="ic"><svg><use href="#onibus"/></svg></span></span><span class="txt"><b>Ônibus</b><small>7h · noturno</small></span><span class="mc-preco">ver horários</span></div></div>
+        <div class="meiocard"><div class="mc-cab"><span class="meio"><span class="ic"><svg><use href="#carro"/></svg></span></span><span class="txt"><b>Carro</b><small>3h10 · 284 km</small></span><span class="mc-preco"><b>€70</b><small>estimativa</small></span></div></div>
+        <div class="meiocard"><div class="mc-cab"><span class="meio"><span class="ic"><svg><use href="#carro"/></svg></span></span><span class="txt"><b>Táxi</b><small>3h10</small></span><span class="mc-preco"><b>€600</b><small>estimativa</small></span></div></div>
+        <div class="meiocard tracejado"><div class="mc-cab"><span class="meio"><span class="ic"><svg><use href="#mais"/></svg></span></span><span class="txt"><b>Cadastrar à mão</b><small>balsa, avião ou o que não apareceu</small></span></div></div>
+
+        <button class="botao">Pôr no dia, 21:41</button>
+        <button class="botao claro">Guardar como opção pra comparar</button>
+      </div>
+    </div>
+  </figure>
+
+  <!-- 4. PASSAGENS -->
+  <figure>
+    <figcaption><b>4. Passagens da viagem</b><small>No lugar da tela "Transportes": o que falta decidir e comprar, com prazo. Quem quiser ver o dia, toca e cai no dia certo.</small></figcaption>
+    <div class="tela"><div class="ilha"></div>
+      <div class="rola">
+        <div class="voltar"><span class="redondo"><span class="ic"><svg><use href="#seta"/></svg></span></span></div>
+        <h2 class="titulo serif">Passagens</h2>
+        <p class="sub">Eurotrip · 4 a 14 jun</p>
+        <div class="contador">
+          <div class="dec"><b>2</b><small>pra decidir</small></div>
+          <div class="comp"><b>3</b><small>pra comprar</small></div>
+          <div class="ok"><b>7</b><small>compradas</small></div>
+        </div>
+
+        <div class="aviso ruim"><span class="ic"><svg><use href="#alerta"/></svg></span><span><b>2 avisos na viagem</b>Chegada às 3h em Veneza · folga de 12 min em Milão no domingo</span></div>
+
+        <p class="grupo">Pra decidir <small>quanto antes, mais barato</small></p>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#onibus"/></svg></span></span><span class="txt"><b>Como → Veneza</b><small>qua 9 · 2 opções</small></span><span class="dir">Comparar</span></div>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span class="txt"><b>Veneza → Roma</b><small>qui 10 · nenhuma opção ainda</small></span><span class="dir">Buscar</span></div>
+
+        <p class="grupo">Pra comprar</p>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span class="txt"><b>Nice → Milão</b><small>seg 7 · via Ventimiglia · €38</small></span><span class="dir">Comprar</span></div>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span class="txt"><b>Milão → Tirano</b><small>seg 7 · €12</small></span><span class="dir">Comprar</span></div>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#barco"/></svg></span></span><span class="txt"><b>Como → Lenno</b><small>qua 9 · compra no cais</small></span><span class="dir" style="color:var(--suave)">Na hora</span></div>
+
+        <p class="grupo">Compradas <small>7</small></p>
+        <div class="item"><span class="meio"><span class="ic"><svg><use href="#trem"/></svg></span></span><span class="txt"><b>Tirano → Como</b><small>qua 9 · 06:10</small></span><span class="dir" style="color:var(--verde)">Ver bilhete</span></div>
+
+        <div class="total"><span><small>Transporte por pessoa</small><b>€214</b></span><span style="text-align:right"><small>já pago</small><b>€131</b></span></div>
+      </div>
+      <nav class="abas"><span>Hoje</span><span class="on">Dias</span><span>Contas</span><span>Galera</span></nav>
+    </div>
+  </figure>
+
+</div>
+
+<div class="notas">
+  <h3>O que muda em relação a hoje</h3>
+  <ul>
+    <li><b>Hoje:</b> um trecho por par de cidades do roteiro, com campos pra digitar. Não cabe "Varenna → Bellagio" nem 6 deslocamentos num dia.</li>
+    <li><b>Novo:</b> o deslocamento mora no dia, entre os passeios, de qualquer lugar pra qualquer lugar.</li>
+    <li><b>Comparar:</b> 2 ou 3 opções lado a lado com o que pesa de verdade (folga, último do dia, trocas, preço) e um toque pra escolher.</li>
+    <li><b>Avisos que o app calcula:</b> folga curta, último do dia, chegada depois do check-in, malas entre o check-out e o próximo trem.</li>
+    <li><b>Achar o jeito de ir:</b> cartões por meio (trem, ônibus, carro, táxi), como no Rome2rio; tocou, abrem os horários exatos (Transitous). Carro e táxi com preço estimado. O que não aparece (balsa do lago) entra à mão.</li>
+    <li><b>Passagens:</b> a tela da viagem vira uma lista do que falta decidir e comprar.</li>
+  </ul>
+</div>
+</body>
+</html>

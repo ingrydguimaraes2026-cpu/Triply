@@ -1,0 +1,109 @@
+import { useEffect, useState } from 'react'
+import { CloudSun } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
+import { buscarClima, interpretarTempo, type PrevisaoDia } from '@together/core'
+import { hojeTexto } from '../destinos/datas'
+import type { Destino } from '../destinos/api'
+import Cartao from '../../components/ui/Cartao'
+import './clima.css'
+
+// "2026-11-12" → "qua 12" (parse em UTC pra não escorregar de dia por fuso)
+function diaCurto(data: string) {
+  const [a, m, d] = data.split('-').map(Number)
+  const dt = new Date(Date.UTC(a, m - 1, d))
+  const semana = dt.toLocaleDateString('pt-BR', { weekday: 'short', timeZone: 'UTC' }).replace('.', '')
+  return `${semana} ${d}`
+}
+
+const grau = (t: number | null) => (t == null ? '—' : `${Math.round(t)}°`)
+
+type ClimaDoDestino = { destino: Destino; dias: PrevisaoDia[] }
+
+// Clima dia a dia dos destinos da viagem (roadmap #8). Só aparece quando há
+// destino com coordenadas e datas, e com dias ainda por vir. Estimativa longe = pelo ano passado.
+export default function ClimaDaViagem({ destinos }: { destinos: Destino[] }) {
+  const [estado, setEstado] = useState<'carregando' | 'pronto' | 'erro'>('carregando')
+  const [resultado, setResultado] = useState<ClimaDoDestino[]>([])
+
+  const hoje = hojeTexto()
+  // Só destinos que dá pra consultar: coordenadas, data de chegada e que ainda não passaram.
+  // Limita aos próximos (por chegada) pra não disparar uma busca por destino de uma vez só.
+  const MAX_DESTINOS = 6
+  const proximos = destinos
+    .filter((d) => d.latitude != null && d.longitude != null && d.chegada && (d.saida ?? d.chegada)! >= hoje)
+    .sort((a, b) => a.chegada!.localeCompare(b.chegada!))
+  const mostrados = proximos.slice(0, MAX_DESTINOS)
+  const escondidos = proximos.length - mostrados.length
+  const assinatura = mostrados.map((d) => `${d.id}:${d.chegada}:${d.saida ?? ''}`).join('|')
+
+  useEffect(() => {
+    let vivo = true
+    setEstado('carregando')
+    Promise.all(
+      mostrados.map(async (destino) => ({
+        destino,
+        dias: await buscarClima(destino.latitude, destino.longitude, destino.chegada, destino.saida ?? destino.chegada, hoje),
+      })),
+    )
+      .then((todos) => {
+        if (!vivo) return
+        setResultado(todos.filter((r) => r.dias.length > 0))
+        setEstado('pronto')
+      })
+      .catch(() => vivo && setEstado('erro'))
+    return () => {
+      vivo = false
+    }
+    // assinatura resume os destinos mostrados; refaz a busca só quando eles mudam
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assinatura])
+
+  // Nada pra mostrar (sem coordenadas/datas, ou viagem já passou): o cartão nem aparece
+  if (estado === 'pronto' && resultado.length === 0) return null
+  if (estado === 'carregando' && mostrados.length === 0) return null
+
+  return (
+    <Cartao titulo="Clima" icone={CloudSun} className="overview-clima" acao={<span className="clima-sub">Previsão dos próximos destinos</span>}>
+      {estado === 'carregando' ? (
+        <p className="carregando-texto">Carregando…</p>
+      ) : estado === 'erro' ? (
+        <p className="carregando-texto">Não deu pra buscar a previsão agora.</p>
+      ) : (
+        <div className="clima-destinos">
+          {/* Uma caixinha por destino, lado a lado (rola pro lado se não couber) */}
+          <div className="clima-fileira">
+            {resultado.map(({ destino, dias }) => (
+              <div key={destino.id} className="clima-destino">
+                <h4>{destino.nome}</h4>
+                <ul className="clima-dias">
+                  {dias.map((p) => {
+                    const t = interpretarTempo(p.codigo)
+                    return (
+                      <li key={p.data} className={p.tipo === 'estimativa' ? 'estimativa' : undefined}>
+                        <span className="clima-data">{diaCurto(p.data)}</span>
+                        <span className="clima-emoji" title={t.rotulo}>
+                          <Icone nome={t.icone} size={26} aria-label={t.rotulo} />
+                        </span>
+                        <span className="clima-temp">
+                          <strong>{grau(p.tempMax)}</strong> {grau(p.tempMin)}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+          {escondidos > 0 && (
+            <p className="clima-nota">
+              Mostrando os próximos {MAX_DESTINOS} destinos (+{escondidos} mais pra frente).
+            </p>
+          )}
+          {resultado.some((r) => r.dias.some((p) => p.tipo === 'estimativa')) && (
+            <p className="clima-nota">Dias mais distantes são estimativa pelo mesmo período do ano passado.</p>
+          )}
+        </div>
+      )}
+    </Cartao>
+  )
+}

@@ -1,0 +1,190 @@
+/* Reservas do grupo no Hoje (spec 120a). Só cores do global.css. */
+.hoje-bilhetes {
+  display: grid;
+  gap: 10px;
+}
+
+.hoje-bilhetes h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  color: var(--cor-texto);
+}
+
+.bilhete {
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.bilhete-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 10px;
+}
+
+.bilhete-icone {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+}
+
+.bilhete-rota {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.bilhete-rota strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bilhete-rotulo {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cor-texto-suave);
+}
+
+.bilhete-rotulo.chega {
+  color: var(--caramelo);
+}
+
+.bilhete-hora {
+  font-family: var(--fonte-titulo, inherit);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* Picote: linha tracejada com um recorte redondo em cada ponta */
+.bilhete-picote {
+  position: relative;
+  height: 16px;
+  margin: 0 12px;
+}
+
+.bilhete-picote::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1.5px dashed var(--cor-borda-forte);
+}
+
+.bilhete-picote::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -21px;
+  right: -21px;
+  height: 16px;
+  background:
+    radial-gradient(circle at 8px 8px, var(--cor-fundo) 7px, transparent 8px) left / 16px 16px no-repeat,
+    radial-gradient(circle at 8px 8px, var(--cor-fundo) 7px, transparent 8px) right / 16px 16px no-repeat;
+}
+
+.bilhete-baixo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px 14px;
+}
+
+.bilhete-baixo small {
+  color: var(--cor-texto-suave);
+}
+
+.bilhete-baixo p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.bilhete-reserva {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hoje-plano {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoje-plano li {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.hoje-plano li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.hoje-plano-hora {
+  flex: none;
+  width: 44px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.hoje-plano-corpo {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hoje-plano-corpo small {
+  color: var(--cor-texto-suave);
+}
+
+.hoje-plano-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.hoje-plano-cheguei {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hoje-plano-chegou {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--cor-sucesso);
+}
+
+.bilhete-busca {
+  display: block;
+  color: var(--caramelo) !important;
+  font-weight: 700;
+}

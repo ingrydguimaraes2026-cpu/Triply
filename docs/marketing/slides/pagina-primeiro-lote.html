@@ -1,0 +1,197 @@
+<title>Primeiro lote da Norti</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: mesa de aprovação dos carrosséis. Couro escuro igual aos slides, a grade do perfil no topo e cada post como no Instagram, deslizando. */
+:root {
+  --bg: #1a1009; --painel: #24170d; --linha: #3d2b1b; --fg: #f5e9d6; --suave: #c9b192; --dourado: #e3a04a; --ouro: #c9a066;
+  --f-display: 'Fraunces', Georgia, serif; --f-body: 'Plus Jakarta Sans', system-ui, sans-serif; --f-mono: ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15.5px; line-height: 1.5; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 980px; margin: 0 auto; }
+h1, h2 { font-family: var(--f-display); font-weight: 700; letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
+button:focus-visible, .trilho:focus-visible, a:focus-visible { outline: 3px solid var(--dourado); outline-offset: 3px; border-radius: 8px; }
+header.topo .wrap { padding-block: 32px 20px; display: flex; flex-direction: column; gap: 8px; }
+.olho { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ouro); }
+header.topo h1 { font-size: clamp(30px, 6vw, 46px); }
+header.topo p { margin: 0; color: var(--suave); max-width: 62ch; }
+main .wrap { display: flex; flex-direction: column; gap: 40px; padding-block: 8px 56px; }
+.perfil h2 { font-size: 20px; margin-bottom: 12px; }
+.grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; max-width: 540px; }
+.mini { position: relative; display: block; }
+.mini img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.mini span { position: absolute; left: 6px; top: 6px; font-size: 11px; font-weight: 700; background: rgba(0,0,0,.55); padding: 2px 7px; border-radius: 999px; }
+.posts { display: grid; grid-template-columns: 1fr; gap: 36px; }
+@media (min-width: 900px) { .posts { grid-template-columns: 1fr 1fr; } }
+.post { display: flex; flex-direction: column; gap: 10px; min-width: 0; scroll-margin-top: 16px; }
+.post-topo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.cod { font-weight: 700; font-size: 12px; color: var(--bg); background: var(--dourado); padding: 2px 8px; border-radius: 999px; }
+.post-topo h2 { font-size: 22px; }
+.ordem { font-size: 13px; color: var(--suave); }
+.carrossel { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--linha); background: var(--painel); }
+.trilho { list-style: none; margin: 0; padding: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.trilho::-webkit-scrollbar { display: none; }
+.trilho li { flex: 0 0 100%; scroll-snap-align: start; }
+.trilho img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; }
+.seta { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(245,233,214,.9); color: var(--bg); font-size: 26px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding-bottom: 3px; }
+.seta.ant { left: 10px; } .seta.prox { right: 10px; }
+.seta[disabled] { opacity: 0; pointer-events: none; }
+.contador { position: absolute; right: 10px; top: 10px; font-size: 12px; font-weight: 700; background: rgba(0,0,0,.6); padding: 3px 9px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+.pontos { display: flex; justify-content: center; gap: 5px; }
+.pontos i { width: 6px; height: 6px; border-radius: 50%; background: var(--linha); }
+.pontos i.on { background: var(--dourado); }
+.legenda { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+.legenda pre { flex: 1 1 240px; min-width: 0; margin: 0; white-space: pre-wrap; font-family: var(--f-mono); font-size: 13px; color: var(--suave); background: var(--painel); border: 1px solid var(--linha); border-radius: 10px; padding: 10px 12px; }
+.copiar { font: inherit; font-size: 13px; font-weight: 700; color: var(--bg); background: var(--dourado); border: 0; border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+footer .wrap { padding-block: 0 40px; color: var(--suave); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .trilho { scroll-behavior: auto; } }
+</style>
+
+<header class="topo gutter"><div class="wrap">
+  <span class="olho">Norti · Instagram · rascunho pra aprovar</span>
+  <h1>Primeiro lote de carrosséis</h1>
+  <p>6 carrosséis, 36 slides em 1080×1350. Arraste para o lado ou use as setas. As telas são do app de verdade no modo demonstração (por isso a viagem de exemplo é em euro).</p>
+</div></header>
+
+<main class="gutter"><div class="wrap">
+  <section class="perfil" aria-labelledby="t-perfil">
+    <h2 id="t-perfil">Como fica o perfil (ordem de postar)</h2>
+    <div class="grade"><a class="mini" href="#c0"><img src="img/C0-1.jpg" width="1080" height="1350" alt="Capa do C0: A história" loading="lazy"><span>C0</span></a><a class="mini" href="#c1"><img src="img/C1-1.jpg" width="1080" height="1350" alt="Capa do C1: O que é a Norti?" loading="lazy"><span>C1</span></a><a class="mini" href="#c2"><img src="img/C2-1.jpg" width="1080" height="1350" alt="Capa do C2: 300 mensagens" loading="lazy"><span>C2</span></a><a class="mini" href="#k1"><img src="img/K1-1.jpg" width="1080" height="1350" alt="Capa do K1: Grupo do zap x Norti" loading="lazy"><span>K1</span></a><a class="mini" href="#c3"><img src="img/C3-1.jpg" width="1080" height="1350" alt="Capa do C3: Sem planilha" loading="lazy"><span>C3</span></a><a class="mini" href="#c4"><img src="img/C4-1.jpg" width="1080" height="1350" alt="Capa do C4: Pra quem sempre organiza" loading="lazy"><span>C4</span></a></div>
+  </section>
+  <div class="posts">
+  <article class="post" id="c0">
+    <header class="post-topo"><span class="cod">C0</span><h2>A história</h2><span class="ordem">fixado no perfil · 7 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do C0"><li><img src="img/C0-1.jpg" width="1080" height="1350" alt="A história, slide 1 de 7" loading="lazy"></li><li><img src="img/C0-2.jpg" width="1080" height="1350" alt="A história, slide 2 de 7" loading="lazy"></li><li><img src="img/C0-3.jpg" width="1080" height="1350" alt="A história, slide 3 de 7" loading="lazy"></li><li><img src="img/C0-4.jpg" width="1080" height="1350" alt="A história, slide 4 de 7" loading="lazy"></li><li><img src="img/C0-5.jpg" width="1080" height="1350" alt="A história, slide 5 de 7" loading="lazy"></li><li><img src="img/C0-6.jpg" width="1080" height="1350" alt="A história, slide 6 de 7" loading="lazy"></li><li><img src="img/C0-7.jpg" width="1080" height="1350" alt="A história, slide 7 de 7" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/7</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-C0">a gente fez a Norti porque sempre um da galera organiza a viagem sozinho.
+
+marca o organizador do seu grupo 👇
+
+#viagemcomamigos #viagememgrupo #amigos</pre>
+      <button class="copiar" type="button" data-alvo="leg-C0">Copiar legenda</button>
+    </div>
+  </article>
+  <article class="post" id="c1">
+    <header class="post-topo"><span class="cod">C1</span><h2>O que é a Norti?</h2><span class="ordem">2º post · 7 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do C1"><li><img src="img/C1-1.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 1 de 7" loading="lazy"></li><li><img src="img/C1-2.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 2 de 7" loading="lazy"></li><li><img src="img/C1-3.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 3 de 7" loading="lazy"></li><li><img src="img/C1-4.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 4 de 7" loading="lazy"></li><li><img src="img/C1-5.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 5 de 7" loading="lazy"></li><li><img src="img/C1-6.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 6 de 7" loading="lazy"></li><li><img src="img/C1-7.jpg" width="1080" height="1350" alt="O que é a Norti?, slide 7 de 7" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/7</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-C1">o que é a Norti, em 7 slides 🧭
+
+salva pra mostrar pra galera
+
+#viagemcomamigos #appdeviagem #viagememgrupo</pre>
+      <button class="copiar" type="button" data-alvo="leg-C1">Copiar legenda</button>
+    </div>
+  </article>
+  <article class="post" id="c2">
+    <header class="post-topo"><span class="cod">C2</span><h2>300 mensagens</h2><span class="ordem">3º post · 5 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do C2"><li><img src="img/C2-1.jpg" width="1080" height="1350" alt="300 mensagens, slide 1 de 5" loading="lazy"></li><li><img src="img/C2-2.jpg" width="1080" height="1350" alt="300 mensagens, slide 2 de 5" loading="lazy"></li><li><img src="img/C2-3.jpg" width="1080" height="1350" alt="300 mensagens, slide 3 de 5" loading="lazy"></li><li><img src="img/C2-4.jpg" width="1080" height="1350" alt="300 mensagens, slide 4 de 5" loading="lazy"></li><li><img src="img/C2-5.jpg" width="1080" height="1350" alt="300 mensagens, slide 5 de 5" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/5</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-C2">300 mensagens no grupo e ninguém decidiu nada 🙃
+
+manda pro seu grupo
+
+#viagemcomamigos #reveillon #amigos</pre>
+      <button class="copiar" type="button" data-alvo="leg-C2">Copiar legenda</button>
+    </div>
+  </article>
+  <article class="post" id="k1">
+    <header class="post-topo"><span class="cod">K1</span><h2>Grupo do zap x Norti</h2><span class="ordem">4º post · 6 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do K1"><li><img src="img/K1-1.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 1 de 6" loading="lazy"></li><li><img src="img/K1-2.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 2 de 6" loading="lazy"></li><li><img src="img/K1-3.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 3 de 6" loading="lazy"></li><li><img src="img/K1-4.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 4 de 6" loading="lazy"></li><li><img src="img/K1-5.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 5 de 6" loading="lazy"></li><li><img src="img/K1-6.jpg" width="1080" height="1350" alt="Grupo do zap x Norti, slide 6 de 6" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/6</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-K1">grupo do zap x Norti. o seu grupo tá de qual lado?
+
+#viagemcomamigos #viagememgrupo #amigos</pre>
+      <button class="copiar" type="button" data-alvo="leg-K1">Copiar legenda</button>
+    </div>
+  </article>
+  <article class="post" id="c3">
+    <header class="post-topo"><span class="cod">C3</span><h2>Sem planilha</h2><span class="ordem">5º post · 5 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do C3"><li><img src="img/C3-1.jpg" width="1080" height="1350" alt="Sem planilha, slide 1 de 5" loading="lazy"></li><li><img src="img/C3-2.jpg" width="1080" height="1350" alt="Sem planilha, slide 2 de 5" loading="lazy"></li><li><img src="img/C3-3.jpg" width="1080" height="1350" alt="Sem planilha, slide 3 de 5" loading="lazy"></li><li><img src="img/C3-4.jpg" width="1080" height="1350" alt="Sem planilha, slide 4 de 5" loading="lazy"></li><li><img src="img/C3-5.jpg" width="1080" height="1350" alt="Sem planilha, slide 5 de 5" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/5</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-C3">pode aposentar a planilha da viagem 🗂️
+
+#viagemcomamigos #organizacao #amigos</pre>
+      <button class="copiar" type="button" data-alvo="leg-C3">Copiar legenda</button>
+    </div>
+  </article>
+  <article class="post" id="c4">
+    <header class="post-topo"><span class="cod">C4</span><h2>Pra quem sempre organiza</h2><span class="ordem">6º post · 6 slides</span></header>
+    <div class="carrossel">
+      <ul class="trilho" tabindex="0" aria-label="Slides do C4"><li><img src="img/C4-1.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 1 de 6" loading="lazy"></li><li><img src="img/C4-2.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 2 de 6" loading="lazy"></li><li><img src="img/C4-3.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 3 de 6" loading="lazy"></li><li><img src="img/C4-4.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 4 de 6" loading="lazy"></li><li><img src="img/C4-5.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 5 de 6" loading="lazy"></li><li><img src="img/C4-6.jpg" width="1080" height="1350" alt="Pra quem sempre organiza, slide 6 de 6" loading="lazy"></li></ul>
+      <button class="seta ant" type="button" aria-label="Slide anterior">‹</button>
+      <button class="seta prox" type="button" aria-label="Próximo slide">›</button>
+      <span class="contador">1/6</span>
+    </div>
+    <div class="pontos" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="legenda">
+      <pre id="leg-C4">pra quem sempre organiza tudo sozinho. marca essa pessoa 👇
+
+#viagemcomamigos #viagememgrupo #amigos</pre>
+      <button class="copiar" type="button" data-alvo="leg-C4">Copiar legenda</button>
+    </div>
+  </article>
+  </div>
+</div></main>
+<footer class="gutter"><div class="wrap">Fonte: docs/marketing/slides/apresentar.mjs · textos em docs/marketing/APRESENTAR-O-APP.md</div></footer>
+
+<script>
+document.querySelectorAll('.post').forEach(function (post) {
+  var trilho = post.querySelector('.trilho'), ant = post.querySelector('.ant'), prox = post.querySelector('.prox');
+  var cont = post.querySelector('.contador'), pontos = post.querySelectorAll('.pontos i'), n = pontos.length;
+  function atual() { return Math.round(trilho.scrollLeft / trilho.clientWidth); }
+  function pinta() {
+    var i = Math.max(0, Math.min(n - 1, atual()));
+    cont.textContent = (i + 1) + '/' + n;
+    pontos.forEach(function (p, k) { p.classList.toggle('on', k === i); });
+    ant.disabled = i === 0; prox.disabled = i === n - 1;
+  }
+  function vai(d) { trilho.scrollTo({ left: (atual() + d) * trilho.clientWidth, behavior: 'smooth' }); }
+  ant.addEventListener('click', function () { vai(-1); });
+  prox.addEventListener('click', function () { vai(1); });
+  trilho.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); vai(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); vai(-1); } });
+  trilho.addEventListener('scroll', pinta, { passive: true });
+  pinta();
+});
+document.querySelectorAll('.copiar').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var pre = document.getElementById(b.dataset.alvo);
+    function sel() { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selecionada: Ctrl+C'; }
+    try { navigator.clipboard.writeText(pre.textContent).then(function () { b.textContent = 'Copiada'; setTimeout(function () { b.textContent = 'Copiar legenda'; }, 1500); }, sel); } catch (e) { sel(); }
+  });
+});
+</script>

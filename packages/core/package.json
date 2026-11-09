@@ -1,0 +1,28 @@
+{
+  "name": "@together/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lógica compartilhada da Norti (dinheiro, câmbio, regras). Sem React, sem react-dom, sem react-native — só TypeScript puro, pra web e mobile usarem igual.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./paises": "./src/paises.ts",
+    "./hospedagem": "./src/hospedagem.ts",
+    "./documentos": "./src/documentos.ts",
+    "./documentos-regras": "./src/documentos-regras.ts",
+    "./exigencias": "./src/exigencias.ts",
+    "./feed-regras": "./src/feed-regras.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@iconify-json/ph": "1.2.2",
+    "typescript": "~6.0.3"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0"
+  }
+}

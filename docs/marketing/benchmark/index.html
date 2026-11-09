@@ -1,0 +1,686 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Benchmark Norti</title><style>
+:root{--bg:#faf7f2;--card:#fff;--ink:#2b2420;--mute:#7a6e66;--line:#e8e0d6;--acc:#d9622b;--frame:#f1e9df}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1715;--card:#26201d;--ink:#f3ece6;--mute:#b3a69c;--line:#3a322d;--acc:#f08a4b;--frame:#332b26}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 64px}h1{margin:0 0 4px;font-size:26px}h2{margin:40px 0 8px}
+.sub{color:var(--mute);margin:0 0 20px}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}.kpi b{display:block;font-size:22px;color:var(--acc)}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}.filters button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.filters button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.card img,.noimg{width:90px;height:120px;object-fit:cover;border-radius:8px;flex:none;background:var(--frame)}
+.body{min-width:0;font-size:13px}.meta{color:var(--mute);font-size:12px}.who{color:var(--mute);font-size:12px;overflow-wrap:anywhere}
+.hook{margin:4px 0;font-weight:600}.nums{font-size:12px}.why{margin:4px 0 0;color:var(--mute);font-size:12px}
+.tag{display:inline-block;border-radius:6px;padding:0 6px;font-size:11px;font-weight:600;background:var(--frame)}.t-contra{background:#c0392b;color:#fff}
+.draft{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.draft h3{margin:0 0 4px}.draft p{margin:0 0 10px;color:var(--mute)}
+.frames{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}.frame{flex:none;width:150px;aspect-ratio:9/16;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;text-align:center}
+.frame img{width:80px}.ft{font-weight:800;font-size:15px;line-height:1.2}.ft.big{font-size:30px;letter-spacing:.5px}.fb{font-weight:700;font-size:13px}.leg{margin-top:8px!important;font-size:13px}
+</style></head><body><main>
+<h1>Benchmark de posts</h1><p class="sub">Viagem com amigos no Brasil · TikTok e YouTube Shorts · coletado em 03/11/2026 sem curtir, seguir nem postar. O texto completo está em <code>PADROES.md</code> e a planilha em <code>posts.csv</code>. Clique no print pra abrir o post.</p>
+<div class="kpis"><div class="kpi"><b>108</b>posts na planilha (78 de TikTok e Shorts, 30 do X)</div><div class="kpi"><b>3,5 mil</b>mediana de views de quem mostra o app</div><div class="kpi"><b>220 mil a 1,2 mi</b>mediana dos 4 padrões de humor</div><div class="kpi"><b>3 e 34</b>anúncios na Meta com "dividir gastos" e "viagem com amigos"</div></div>
+<h2>Rascunhos de formato (pra aprovar)</h2>
+<section class="draft"><h3>F1. "E o pix, [NOME]?"</h3><p>Padrão 4. Nome comum enorme na capa (série infinita, 1 nome por post). 8 a 12 s.</p>
+<div class="frames"><div class="frame" style="background:var(--frame)"><div class="ft big">LUCAS,</div><img src="../norti/web/norti-think.png" alt="Norti"></div><div class="frame" style="background:var(--frame)"><div class="ft">oi sumido rs<br>tudo bem?</div><img src="../norti/web/norti-point.png" alt="Norti"></div><div class="frame" style="background:var(--frame)"><div class="ft">e o pix da casa<br>do réveillon?</div><img src="../norti/web/norti-oops.png" alt="Norti"></div></div>
+<p class="leg">Legenda: "marca o Lucas que ainda não pagou a casa 🙃"</p></section>
+<section class="draft"><h3>F2. "O amigo que..."</h3><p>Padrão 3. 1 tipo de amigo por post, a Norti com o acessório do papel.</p>
+<div class="frames"><div class="frame" style="background:var(--frame)"><div class="ft">a amiga que deu<br>a ideia da viagem</div><img src="../norti/web/norti-point.png" alt="Norti"></div><div class="frame" style="background:var(--frame)"><img src="../norti/web/norti-wave.png" alt="Norti"></div><div class="frame" style="background:var(--frame)"><div class="ft">e sumiu quando chegou<br>a hora de pagar o sinal</div><img src="../norti/web/norti-sleep.png" alt="Norti"></div></div>
+<p class="leg">Legenda: "marca ela"</p></section>
+<section class="draft"><h3>F3. "Expectativa x 3º dia"</h3><p>Padrões 1 e 2. Frase de expectativa entre aspas → a realidade com a Norti.</p>
+<div class="frames"><div class="frame" style="background:var(--frame)"><div class="ft">"esse ano a gente<br>decide o réveillon cedo"</div><img src="../norti/web/norti-celebrate.png" alt="Norti"></div><div class="frame" style="background:var(--frame)"><div class="ft">3 de novembro</div><img src="../norti/web/norti-think.png" alt="Norti"><div class="fb">grupo do zap:<br>0 decisões</div></div><div class="frame" style="background:var(--frame)"><img src="../norti/web/norti-oops.png" alt="Norti"><div class="fb">o mapa: em branco</div></div></div>
+<p class="leg">Datas: novembro (decidir) e de 26/12 a 04/01 (3º dia, a conta).</p></section>
+<h2>Os posts</h2><div class="filters"><button data-f="" class="on">Todos</button><button data-f="P1">Expectativa x 3º dia</button><button data-f="P2">Saiu do papel</button><button data-f="P3">Qual desses é você?</button><button data-f="P4">Personagem + frase pra encaminhar</button><button data-f="P5">Lista / dica</button><button data-f="contra">Mostra o app (não fazer)</button><button data-f="—">Fora dos padrões</button><button data-f="D1">X: processo copiável</button><button data-f="D2">X: número real + jornada</button><button data-f="D3">X: conversa e comunidade</button><button data-f="D4">X: surfar o assunto do dia</button></div>
+<div class="grid" id="grid"><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@raulrabaca/video/7434308533878902071" target="_blank" rel="noopener"><img src="prints/tt-00.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #1 · TikTok</div>
+<div class="who">@raulrabaca · 130 mil seg. · 2024-11-06</div>
+<p class="hook">pov a viagem que vocês sempre se prometeram de fazer finalmente saiu do whatsapp e virou realidade</p>
+<div class="nums"><b>195 mil</b> views · <b>26 mil</b> curt. · <b>132</b> coment. · <b>5 mil</b> compart. · <b>2 mil</b> salvos</div>
+<p class="why">&quot;saiu do whatsapp&quot;: todo grupo tem uma viagem que nunca sai; o texto é a piada</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@andrenavarrooo/video/7663198747593100564" target="_blank" rel="noopener"><img src="prints/tt-01.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #2 · TikTok</div>
+<div class="who">@andrenavarrooo · 126 mil seg. · 2026-07-16</div>
+<p class="hook">Quando a amizade chega no nível de viagens internacionais juntos</p>
+<div class="nums"><b>843 mil</b> views · <b>173 mil</b> curt. · <b>663</b> coment. · <b>40 mil</b> compart. · <b>8 mil</b> salvos</div>
+<p class="why">&quot;nível&quot; de amizade: quem assiste marca o amigo pra cobrar a viagem (39,7 mil compart.)</p></div></article><article class="card" data-p="P5" data-g="A">
+<a href="https://www.tiktok.com/@raulrabaca/video/7693308709811850514" target="_blank" rel="noopener"><img src="prints/tt-02.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P5">Lista / dica</span> #3 · TikTok</div>
+<div class="who">@raulrabaca · 130 mil seg. · 2026-10-05</div>
+<p class="hook">5 VIAGENS PRA FAZER COM O TEU MELHOR AMIGO</p>
+<div class="nums"><b>75 mil</b> views · <b>9 mil</b> curt. · <b>27</b> coment. · <b>3 mil</b> compart. · <b>3 mil</b> salvos</div>
+<p class="why">lista salvável (2,5 mil salvos), mas longa: views bem menores que os POVs do mesmo perfil</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@levii_fg/video/7703943449099111688" target="_blank" rel="noopener"><img src="prints/tt-03.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #4 · TikTok</div>
+<div class="who">@levii_fg · 153 mil seg. · 2026-11-03</div>
+<p class="hook">A viagem com os amigos passou de 3 dias</p>
+<div class="nums"><b>55 mil</b> views · <b>8 mil</b> curt. · <b>16</b> coment. · <b>1 mil</b> compart. · <b>148</b> salvos</div>
+<p class="why">virada de humor: a viagem dura demais e começa a briga; postado no dia, ainda subindo</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@matheus_theodoro/video/7590900979281743112" target="_blank" rel="noopener"><img src="prints/tt-04.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #5 · TikTok</div>
+<div class="who">@matheus_theodoro · 4,4 mi seg. · 2026-01-02</div>
+<p class="hook">&quot;vai ser uma delícia viajar entre amigos!&quot; 3º dia de viagem</p>
+<div class="nums"><b>2,7 mi</b> views · <b>372 mil</b> curt. · <b>401</b> coment. · <b>56 mil</b> compart. · <b>9 mil</b> salvos</div>
+<p class="why">expectativa x realidade do 3º dia: todo mundo já viveu; postado 2/jan, no pós-réveillon</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@mariussi_/video/7664634365418212629" target="_blank" rel="noopener"><img src="prints/tt-05.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #6 · TikTok</div>
+<div class="who">@mariussi_ · 26 mil seg. · 2026-07-20</div>
+<p class="hook">&quot;amigo vamos viajar pra sp?&quot;</p>
+<div class="nums"><b>204 mil</b> views · <b>40 mil</b> curt. · <b>239</b> coment. · <b>4 mil</b> compart. · <b>2 mil</b> salvos</div>
+<p class="why">convite falado entre aspas = a fala do grupo; 2ª parte mostra que saiu</p></div></article><article class="card" data-p="—" data-g="A">
+<a href="https://www.tiktok.com/@emiboteroo/video/7699222060769348895" target="_blank" rel="noopener"><img src="prints/tt-06.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-—">Fora dos padrões</span> #7 · TikTok</div>
+<div class="who">@emiboteroo · 33 mil seg. · 2026-10-21</div>
+<p class="hook">(sem texto: 2 amigos num lago na Europa)</p>
+<div class="nums"><b>32,6 mi</b> views · <b>7,1 mi</b> curt. · <b>16 mil</b> coment. · <b>751 mil</b> compart. · <b>703 mil</b> salvos</div>
+<p class="why">fora da curva: estética + música; 702 mil salvos. Não dá pra copiar sem gente e paisagem real</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@gabi.salis/video/7617059299646328071" target="_blank" rel="noopener"><img src="prints/tt-07.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #8 · TikTok</div>
+<div class="who">@gabi.salis · 37 mil seg. · 2026-03-14</div>
+<p class="hook">Quando a amizade chega no nível de viagens internacionais juntos</p>
+<div class="nums"><b>560 mil</b> views · <b>97 mil</b> curt. · <b>328</b> coment. · <b>30 mil</b> compart. · <b>4 mil</b> salvos</div>
+<p class="why">mesma frase do andrenavarrooo: o formato &quot;nível de amizade&quot; é trend reaproveitável</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@miguewll/video/7522541984704138501" target="_blank" rel="noopener"><img src="prints/tt-08.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #9 · TikTok</div>
+<div class="who">@miguewll · 13 mil seg. · 2025-07-02</div>
+<p class="hook">pov: aquela viagem inesquecível com seus amigos</p>
+<div class="nums"><b>219 mil</b> views · <b>12 mil</b> curt. · <b>62</b> coment. · <b>3 mil</b> compart. · <b>3 mil</b> salvos</div>
+<p class="why">nostalgia + compilado de momentos</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@thaaleixo13/video/7495186549525564677" target="_blank" rel="noopener"><img src="prints/tt-09.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #10 · TikTok</div>
+<div class="who">@thaaleixo13 · 1 mil seg. · 2025-04-20</div>
+<p class="hook">Pov: a viagem com os amigos finalmente saiu do papel e agora os próximos dias tem esse som</p>
+<div class="nums"><b>26 mil</b> views · <b>1 mil</b> curt. · <b>3</b> coment. · <b>488</b> compart. · <b>372</b> salvos</div>
+<p class="why">perfil pequeno (1,2 mil seg.) chega a 25 mil com o tema &quot;saiu do papel&quot;</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@eericborges/video/7318761795735325957" target="_blank" rel="noopener"><img src="prints/tt-10.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #11 · TikTok</div>
+<div class="who">@eericborges · 1,6 mi seg. · 2023-12-31</div>
+<p class="hook">POV: isso dos dias que você tá dividindo casa na viagem que fez com seus amigos</p>
+<div class="nums"><b>313 mil</b> views · <b>42 mil</b> curt. · <b>320</b> coment. · <b>3 mil</b> compart. · <b>2 mil</b> salvos</div>
+<p class="why">caos da casa dividida; postado 31/dez</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@canalaquelescaras/video/7651322551842393364" target="_blank" rel="noopener"><img src="prints/tt-11.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #12 · TikTok</div>
+<div class="who">@canalaquelescaras · 1,3 mi seg. · 2026-06-14</div>
+<p class="hook">pov: você está vivendo uma viagem internacional com seus melhores amigos (legenda)</p>
+<div class="nums"><b>2,0 mi</b> views · <b>540 mil</b> curt. · <b>1 mil</b> coment. · <b>23 mil</b> compart. · <b>18 mil</b> salvos</div>
+<p class="why">perfil grande de humor; o pov emotivo é o que mais roda</p></div></article><article class="card" data-p="—" data-g="A">
+<a href="https://www.tiktok.com/@lifebykristian/video/7689129871129185537" target="_blank" rel="noopener"><img src="prints/tt-12.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-—">Fora dos padrões</span> #13 · TikTok</div>
+<div class="who">@lifebykristian · 63 mil seg. · 2026-09-24</div>
+<p class="hook">&quot;bro, let&#x27;s go&quot;</p>
+<div class="nums"><b>473 mil</b> views · <b>86 mil</b> curt. · <b>208</b> coment. · <b>13 mil</b> compart. · <b>6 mil</b> salvos</div>
+<p class="why">estética de montanha + fala curta</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@christian.andrei/video/7452543808362958085" target="_blank" rel="noopener"><img src="prints/tt-13.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #14 · TikTok</div>
+<div class="who">@christian.andrei · 24 mil seg. · 2024-12-26</div>
+<p class="hook">eu tentando dormir sabendo que essa semana vou viajar com meus amigos</p>
+<div class="nums"><b>424 mil</b> views · <b>28 mil</b> curt. · <b>136</b> coment. · <b>14 mil</b> compart. · <b>866</b> salvos</div>
+<p class="why">6 segundos, ansiedade pré-viagem; postado na semana do réveillon</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@brunaldojr/video/7591545727315234066" target="_blank" rel="noopener"><img src="prints/tt-14.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #15 · TikTok</div>
+<div class="who">@brunaldojr · 34 mil seg. · 2026-01-04</div>
+<p class="hook">quando você viaja com seus amigos e tenta tirar um cochilo à tarde</p>
+<div class="nums"><b>236 mil</b> views · <b>32 mil</b> curt. · <b>50</b> coment. · <b>6 mil</b> compart. · <b>757</b> salvos</div>
+<p class="why">situação específica que todo grupo vive (ninguém deixa dormir)</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@harleyalvees/video/7633932028844510484" target="_blank" rel="noopener"><img src="prints/tt-15.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #16 · TikTok</div>
+<div class="who">@harleyalvees · 214 mil seg. · 2026-04-28</div>
+<p class="hook">pov: você é o responsável pelo vídeo da viagem dos amigos</p>
+<div class="nums"><b>31 mil</b> views · <b>3 mil</b> curt. · <b>17</b> coment. · <b>218</b> compart. · <b>357</b> salvos</div>
+<p class="why">papel no grupo (&quot;o do vídeo&quot;); rendeu pouco pro tamanho do perfil</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@joshpachecoo/video/7608296637726805268" target="_blank" rel="noopener"><img src="prints/tt-16.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #17 · TikTok</div>
+<div class="who">@joshpachecoo · 18 mil seg. · 2026-02-18</div>
+<p class="hook">One day I&#x27;m going to travel the world with my friends</p>
+<div class="nums"><b>47 mil</b> views · <b>3 mil</b> curt. · <b>26</b> coment. · <b>561</b> compart. · <b>373</b> salvos</div>
+<p class="why">frase-sonho sobre paisagem</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@fpsknas/video/7629419331008367892" target="_blank" rel="noopener"><img src="prints/tt-17.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #18 · TikTok</div>
+<div class="who">@fpsknas · 294 seg. · 2026-04-16</div>
+<p class="hook">(...) no nível de viagens internacionais juntos</p>
+<div class="nums"><b>73 mil</b> views · <b>11 mil</b> curt. · <b>20</b> coment. · <b>3 mil</b> compart. · <b>559</b> salvos</div>
+<p class="why">perfil de 294 seguidores com 72 mil: a frase-trend carrega o vídeo</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@gui.maturana/video/7559736305983212811" target="_blank" rel="noopener"><img src="prints/tt-18.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #19 · TikTok</div>
+<div class="who">@gui.maturana · 1,6 mi seg. · 2025-10-10</div>
+<p class="hook">como eu acho que vai ser viajar com meus amigos</p>
+<div class="nums"><b>385 mil</b> views · <b>53 mil</b> curt. · <b>83</b> coment. · <b>5 mil</b> compart. · <b>1 mil</b> salvos</div>
+<p class="why">expectativa x realidade</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@juaraujo.o/video/7592094064934210834" target="_blank" rel="noopener"><img src="prints/tt-19.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #20 · TikTok</div>
+<div class="who">@juaraujo.o · 427 seg. · 2026-01-06</div>
+<p class="hook">explica a sensação de ter 20 e poucos anos (...) pelas ruas amarelas de roma com sua amiga</p>
+<div class="nums"><b>524 mil</b> views · <b>153 mil</b> curt. · <b>644</b> coment. · <b>19 mil</b> compart. · <b>17 mil</b> salvos</div>
+<p class="why">427 seguidores e 524 mil views: emoção + amiga marcada; 17 mil salvos</p></div></article><article class="card" data-p="—" data-g="A">
+<a href="https://www.tiktok.com/@thisisoche/video/7592675371871489300" target="_blank" rel="noopener"><img src="prints/tt-20.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-—">Fora dos padrões</span> #21 · TikTok</div>
+<div class="who">@thisisoche · 3 mil seg. · 2026-01-07</div>
+<p class="hook">(texto pequeno ilegível no aeroporto)</p>
+<div class="nums"><b>120 mil</b> views · <b>21 mil</b> curt. · <b>265</b> coment. · <b>3 mil</b> compart. · <b>1 mil</b> salvos</div>
+<p class="why">emoção, melhor amigo</p></div></article><article class="card" data-p="contra" data-g="A">
+<a href="https://www.tiktok.com/@emequatrodu/video/7655647676272332052" target="_blank" rel="noopener"><img src="prints/tt-21.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #22 · TikTok</div>
+<div class="who">@emequatrodu · 14 mil seg. · 2026-06-26</div>
+<p class="hook">pov: melhores amigos viajando juntos</p>
+<div class="nums"><b>7 mil</b> views · <b>265</b> curt. · <b>2</b> coment. · <b>8</b> compart. · <b>11</b> salvos</div>
+<p class="why">contraexemplo: pov genérico sem situação específica, quase nada</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@_leticiahae/video/7539278015205756216" target="_blank" rel="noopener"><img src="prints/tt-22.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #23 · TikTok</div>
+<div class="who">@_leticiahae · 6 mil seg. · 2025-08-16</div>
+<p class="hook">A QUE DEU A IDEIA (legenda: No fim todo mundo é essencial)</p>
+<div class="nums"><b>2,7 mi</b> views · <b>261 mil</b> curt. · <b>1 mil</b> coment. · <b>20 mil</b> compart. · <b>14 mil</b> salvos</div>
+<p class="why">cada amigo tem um papel; perfil de 6 mil seg. chega a 2,7 mi; gente se marca nos comentários (1,4 mil)</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@naosoueunayaracandeias/video/7666439036382448916" target="_blank" rel="noopener"><img src="prints/tt-23.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #24 · TikTok</div>
+<div class="who">@naosoueunayaracandeias · 9 mil seg. · 2026-07-25</div>
+<p class="hook">Pov: quando um grupo de liso resolve viajar</p>
+<div class="nums"><b>92 mil</b> views · <b>15 mil</b> curt. · <b>34</b> coment. · <b>3 mil</b> compart. · <b>601</b> salvos</div>
+<p class="why">dinheiro curto no grupo: dor do planejamento</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@thiagotluna/video/7317764433013492998" target="_blank" rel="noopener"><img src="prints/tt-24.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #25 · TikTok</div>
+<div class="who">@thiagotluna · 908 mil seg. · 2023-12-28</div>
+<p class="hook">&quot;relaxe, nós vamos a viagem toda resenhando&quot;</p>
+<div class="nums"><b>462 mil</b> views · <b>61 mil</b> curt. · <b>118</b> coment. · <b>937</b> compart. · <b>824</b> salvos</div>
+<p class="why">promessa entre aspas x realidade</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@matheustolottii/video/7525611130828442936" target="_blank" rel="noopener"><img src="prints/tt-25.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #26 · TikTok</div>
+<div class="who">@matheustolottii · 2 mil seg. · 2025-07-11</div>
+<p class="hook">Pov: chegou a tão falada viagem pra praia com os amigos</p>
+<div class="nums"><b>1,5 mi</b> views · <b>275 mil</b> curt. · <b>682</b> coment. · <b>77 mil</b> compart. · <b>9 mil</b> salvos</div>
+<p class="why">perfil de 1,7 mil seg. com 1,5 mi; 77 mil compart.: &quot;tão falada&quot; = a viagem do grupo</p></div></article><article class="card" data-p="contra" data-g="A">
+<a href="https://www.tiktok.com/@aldeniojunnior/video/7666079032303324424" target="_blank" rel="noopener"><img src="prints/tt-26.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #27 · TikTok</div>
+<div class="who">@aldeniojunnior · 32 mil seg. · 2026-07-24</div>
+<p class="hook">pov: viagem com seu amigo finalmente saiu do papel</p>
+<div class="nums"><b>3 mil</b> views · <b>195</b> curt. · <b>0</b> coment. · <b>31</b> compart. · <b>14</b> salvos</div>
+<p class="why">contraexemplo: mesmo tema do #9 e #25, mas vídeo longo e lento</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@matheus_theodoro/video/7335908300652842246" target="_blank" rel="noopener"><img src="prints/tt-27.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #28 · TikTok</div>
+<div class="who">@matheus_theodoro · 4,4 mi seg. · 2024-02-15</div>
+<p class="hook">&quot;vai ser uma delícia viajar entre amigos!&quot; 3º dia de viagem</p>
+<div class="nums"><b>4,4 mi</b> views · <b>889 mil</b> curt. · <b>3 mil</b> coment. · <b>22 mil</b> compart. · <b>30 mil</b> salvos</div>
+<p class="why">mesma piada do #4, 2 anos antes: o formato se repete e roda de novo</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@clar4cruz/video/7628410674741366023" target="_blank" rel="noopener"><img src="prints/tt-28.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #29 · TikTok</div>
+<div class="who">@clar4cruz · 587 seg. · 2026-04-14</div>
+<p class="hook">(legenda) ansiosos não, planejados! (não decidimos nada</p>
+<div class="nums"><b>187 mil</b> views · <b>34 mil</b> curt. · <b>85</b> coment. · <b>8 mil</b> compart. · <b>700</b> salvos</div>
+<p class="why">587 seg. com 186 mil: a piada é o grupo que planeja e não decide nada</p></div></article><article class="card" data-p="contra" data-g="A">
+<a href="https://www.tiktok.com/@tiagosf_/video/7538927903644454200" target="_blank" rel="noopener"><img src="prints/tt-29.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #30 · TikTok</div>
+<div class="who">@tiagosf_ · 306 seg. · 2025-08-15</div>
+<p class="hook">(sem texto) Só 5% da história...</p>
+<div class="nums"><b>16 mil</b> views · <b>1 mil</b> curt. · <b>18</b> coment. · <b>113</b> compart. · <b>75</b> salvos</div>
+<p class="why">compilado longo, pouco alcance</p></div></article><article class="card" data-p="P4" data-g="A">
+<a href="https://www.tiktok.com/@cenarios.brasil/video/7702435860456721670" target="_blank" rel="noopener"><img src="prints/tt-30.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #31 · TikTok</div>
+<div class="who">@cenarios.brasil · 3 mil seg. · 2026-10-30</div>
+<p class="hook">PIX RECEBIDO: / E o pix? Nada ainda?</p>
+<div class="nums"><b>745 mil</b> views · <b>75 mil</b> curt. · <b>718</b> coment. · <b>26 mil</b> compart. · <b>5 mil</b> salvos</div>
+<p class="why">sem rosto, personagem animado, tema pix: perfil de 3 mil seg. chega a 745 mil</p></div></article><article class="card" data-p="P4" data-g="A">
+<a href="https://www.tiktok.com/@bob.nafrase/video/7584253681609067794" target="_blank" rel="noopener"><img src="prints/tt-31.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #32 · TikTok</div>
+<div class="who">@bob.nafrase · 1 mil seg. · 2025-12-16</div>
+<p class="hook">&quot;E O PIX? NADA AINDA?&quot;</p>
+<div class="nums"><b>76 mil</b> views · <b>1 mil</b> curt. · <b>19</b> coment. · <b>3 mil</b> compart. · <b>479</b> salvos</div>
+<p class="why">frase de cobrança pronta pra mandar pro amigo (compart. &gt; curtidas)</p></div></article><article class="card" data-p="P4" data-g="A">
+<a href="https://www.tiktok.com/@luizz.gs/video/7507277645722242310" target="_blank" rel="noopener"><img src="prints/tt-32.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #33 · TikTok</div>
+<div class="who">@luizz.gs · 788 mil seg. · 2025-05-22</div>
+<p class="hook">Mandando mensagem para o meu amigo que disse que ia mandar o pix quando chegasse em casa</p>
+<div class="nums"><b>1,6 mi</b> views · <b>246 mil</b> curt. · <b>1 mil</b> coment. · <b>72 mil</b> compart. · <b>10 mil</b> salvos</div>
+<p class="why">dor do pix virada em piada; 71,6 mil compart. (manda pro amigo)</p></div></article><article class="card" data-p="P4" data-g="A">
+<a href="https://www.tiktok.com/@alexsandro_363/video/7527795849175272760" target="_blank" rel="noopener"><img src="prints/tt-33.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #34 · TikTok</div>
+<div class="who">@alexsandro_363 · 9 mil seg. · 2025-07-16</div>
+<p class="hook">(legenda) Como cobrar seu amigo sem deixar ele magoado</p>
+<div class="nums"><b>858 mil</b> views · <b>23 mil</b> curt. · <b>297</b> coment. · <b>21 mil</b> compart. · <b>4 mil</b> salvos</div>
+<p class="why">9 segundos feito pra encaminhar: compart. quase igual às curtidas</p></div></article><article class="card" data-p="P4" data-g="A">
+<a href="https://www.tiktok.com/@jarmeuai/video/7645884377565629716" target="_blank" rel="noopener"><img src="prints/tt-34.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #35 · TikTok</div>
+<div class="who">@jarmeuai · 4 mil seg. · 2026-05-31</div>
+<p class="hook">manda esse vídeo para o seu amigo que está te devendo um pix</p>
+<div class="nums"><b>108 mil</b> views · <b>12 mil</b> curt. · <b>77</b> coment. · <b>6 mil</b> compart. · <b>842</b> salvos</div>
+<p class="why">pede o compartilhamento na cara: 6 mil compart.</p></div></article><article class="card" data-p="P5" data-g="A">
+<a href="https://www.tiktok.com/@mel.lbarreto/video/7586404079287520532" target="_blank" rel="noopener"><img src="prints/tt-35.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P5">Lista / dica</span> #36 · TikTok</div>
+<div class="who">@mel.lbarreto · 1 mil seg. · 2025-12-21</div>
+<p class="hook">todo final de ano eu e meus amigos</p>
+<div class="nums"><b>34 mil</b> views · <b>1 mil</b> curt. · <b>35</b> coment. · <b>196</b> compart. · <b>234</b> salvos</div>
+<p class="why">organização do réveillon, mas longo (90s)</p></div></article><article class="card" data-p="P5" data-g="A">
+<a href="https://www.tiktok.com/@diogosoarez_/video/7457359585167428869" target="_blank" rel="noopener"><img src="prints/tt-36.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P5">Lista / dica</span> #37 · TikTok</div>
+<div class="who">@diogosoarez_ · 16 mil seg. · 2025-01-08</div>
+<p class="hook">(texto pequeno: preparando a festa com balões)</p>
+<div class="nums"><b>416 mil</b> views · <b>39 mil</b> curt. · <b>299</b> coment. · <b>3 mil</b> compart. · <b>7 mil</b> salvos</div>
+<p class="why">bastidor do grupo arrumando a casa; 6,5 mil salvos</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@laactea/video/7316667389100313862" target="_blank" rel="noopener"><img src="prints/tt-37.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #38 · TikTok</div>
+<div class="who">@laactea · 4,3 mi seg. · 2023-12-25</div>
+<p class="hook">pov: quando algum amigo (...) réveillon (texto parcial; legenda: fica a dica)</p>
+<div class="nums"><b>2,2 mi</b> views · <b>331 mil</b> curt. · <b>1 mil</b> coment. · <b>10 mil</b> compart. · <b>10 mil</b> salvos</div>
+<p class="why">perfil grande; dica em tom de piada</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@euwatson/video/7559281537573850380" target="_blank" rel="noopener"><img src="prints/tt-38.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #39 · TikTok</div>
+<div class="who">@euwatson · 10,8 mi seg. · 2025-10-09</div>
+<p class="hook">Onde eu e meus amigos vamos passar o Réveillon esse ano:</p>
+<div class="nums"><b>1,9 mi</b> views · <b>269 mil</b> curt. · <b>786</b> coment. · <b>43 mil</b> compart. · <b>5 mil</b> salvos</div>
+<p class="why">postado em OUTUBRO: o réveillon sem plano já é piada antes de dezembro</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@yaasminribeiro/video/7500299614566845701" target="_blank" rel="noopener"><img src="prints/tt-39.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #40 · TikTok</div>
+<div class="who">@yaasminribeiro · 2 mil seg. · 2025-05-03</div>
+<p class="hook">Esse é um sinal pra você passar seu próximo réveillon no nordeste</p>
+<div class="nums"><b>69 mil</b> views · <b>5 mil</b> curt. · <b>31</b> coment. · <b>3 mil</b> compart. · <b>294</b> salvos</div>
+<p class="why">&quot;sinal pra você&quot; = marca o amigo</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.tiktok.com/@lopeswords/video/7685924158768762120" target="_blank" rel="noopener"><img src="prints/tt-40.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #41 · TikTok</div>
+<div class="who">@lopeswords · 22 mil seg. · 2026-09-16</div>
+<p class="hook">se tudo ocorrer bem, estarei assim com os de verdade dia 31 de dezembro</p>
+<div class="nums"><b>700 mil</b> views · <b>86 mil</b> curt. · <b>187</b> coment. · <b>7 mil</b> compart. · <b>2 mil</b> salvos</div>
+<p class="why">postado em SETEMBRO; &quot;os de verdade&quot; = marca o grupo</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@_yramoficial/video/7589395448683580680" target="_blank" rel="noopener"><img src="prints/tt-41.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #42 · TikTok</div>
+<div class="who">@_yramoficial · 44 mil seg. · 2025-12-29</div>
+<p class="hook">você alugou chácara com seus amigos pro ano novo e tem que dividir quarto com um casal aleatório:</p>
+<div class="nums"><b>309 mil</b> views · <b>8 mil</b> curt. · <b>266</b> coment. · <b>4 mil</b> compart. · <b>403</b> salvos</div>
+<p class="why">situação específica da casa dividida; muitos comentários</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@vittorfernando/video/7471426132697435398" target="_blank" rel="noopener"><img src="prints/tt-42.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #43 · TikTok</div>
+<div class="who">@vittorfernando · 10,9 mi seg. · 2025-02-14</div>
+<p class="hook">quando vc divide quarto na viagem</p>
+<div class="nums"><b>2,1 mi</b> views · <b>147 mil</b> curt. · <b>468</b> coment. · <b>9 mil</b> compart. · <b>3 mil</b> salvos</div>
+<p class="why">8 segundos, situação universal</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.tiktok.com/@_silviaportugal/video/7457473341172092165" target="_blank" rel="noopener"><img src="prints/tt-43.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #44 · TikTok</div>
+<div class="who">@_silviaportugal · 16 mil seg. · 2025-01-08</div>
+<p class="hook">Pov: a casa que você e seus amigos alugaram e que disseram que ia ter espaço pra todo mundo</p>
+<div class="nums"><b>194 mil</b> views · <b>15 mil</b> curt. · <b>62</b> coment. · <b>3 mil</b> compart. · <b>281</b> salvos</div>
+<p class="why">promessa x realidade da casa alugada</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@jessie.shen/video/7588663474604018962" target="_blank" rel="noopener"><img src="prints/tt-44.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #45 · TikTok</div>
+<div class="who">@jessie.shen · 12,6 mi seg. · 2025-12-27</div>
+<p class="hook">melhor dupla de viagem:</p>
+<div class="nums"><b>414 mil</b> views · <b>63 mil</b> curt. · <b>182</b> coment. · <b>2 mil</b> compart. · <b>2 mil</b> salvos</div>
+<p class="why">&quot;quem é você da dupla?&quot; puxa comentário</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@leejeongchan727/video/7666053533493513492" target="_blank" rel="noopener"><img src="prints/tt-45.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #46 · TikTok</div>
+<div class="who">@leejeongchan727 · 60 mil seg. · 2026-07-24</div>
+<p class="hook">The 3 Types of Travel Friends:</p>
+<div class="nums"><b>38 mil</b> views · <b>2 mil</b> curt. · <b>116</b> coment. · <b>236</b> compart. · <b>222</b> salvos</div>
+<p class="why">tipos de amigo; muitos comentários pro tamanho (&quot;which one are you?&quot;)</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@matheus_theodoro/video/7042354268032077061" target="_blank" rel="noopener"><img src="prints/tt-46.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #47 · TikTok</div>
+<div class="who">@matheus_theodoro · 4,4 mi seg. · 2021-12-16</div>
+<p class="hook">1- o que leva tudo (legenda: qual desses é você? manda pro seu amigo)</p>
+<div class="nums"><b>731 mil</b> views · <b>150 mil</b> curt. · <b>1 mil</b> coment. · <b>4 mil</b> compart. · <b>3 mil</b> salvos</div>
+<p class="why">lista numerada de tipos + &quot;manda pro seu amigo&quot;</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.tiktok.com/@matheus_theodoro/video/7630158543953415432" target="_blank" rel="noopener"><img src="prints/tt-47.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #48 · TikTok</div>
+<div class="who">@matheus_theodoro · 4,4 mi seg. · 2026-04-18</div>
+<p class="hook">aquele amigo que fala que vai acordar cedo na viagem (nem alarme ele coloca)</p>
+<div class="nums"><b>409 mil</b> views · <b>76 mil</b> curt. · <b>107</b> coment. · <b>11 mil</b> compart. · <b>1 mil</b> salvos</div>
+<p class="why">1 tipo por vídeo, bem específico</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@duolingobrasil/video/7386787498879405317" target="_blank" rel="noopener"><img src="prints/tt-48.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #49 · TikTok</div>
+<div class="who">@duolingobrasil · 9,1 mi seg. · 2024-07-01</div>
+<p class="hook">(Duo fantasiado de gnomo na rua) tente não ser um gnomo hoje</p>
+<div class="nums"><b>52M</b> views</div>
+<p class="why">mascote fazendo algo absurdo, zero produto</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@duolingobrasil/video/7644682722044022037" target="_blank" rel="noopener"><img src="prints/tt-49.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #50 · TikTok</div>
+<div class="who">@duolingobrasil · 9,1 mi seg. · 2026-05-27</div>
+<p class="hook">&quot;Pega no&quot; (tela branca, só texto)</p>
+<div class="nums"><b>21.7M</b> views</div>
+<p class="why">capa de texto puro que gera curiosidade; recente (2026)</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@duolingobrasil/video/7665079218623089941" target="_blank" rel="noopener"><img src="prints/tt-50.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #51 · TikTok</div>
+<div class="who">@duolingobrasil · 9,1 mi seg. · 2026-07-21</div>
+<p class="hook">oi netflix rs fiquei sabendo q vc tá solteira...</p>
+<div class="nums"><b>9.7M</b> views</div>
+<p class="why">mascote como personagem com vida própria, mexe com outras marcas</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@duolingobrasil/video/7313704142600555782" target="_blank" rel="noopener"><img src="prints/tt-51.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #52 · TikTok</div>
+<div class="who">@duolingobrasil · 9,1 mi seg. · 2023-12-17</div>
+<p class="hook">(logos Netflix, Burger King e Duo) Tá difícil ser o amigo conselheiro</p>
+<div class="nums"><b>8.2M</b> views</div>
+<p class="why">o mascote é &quot;o amigo&quot; de um grupo de marcas</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@lolopaulon/video/7593877974097677586" target="_blank" rel="noopener"><img src="prints/tt-52.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #53 · TikTok</div>
+<div class="who">@lolopaulon · 2026-01-10</div>
+<p class="hook">Pov: você e suas amigas acharam um app para separar os gastos da viagem</p>
+<div class="nums"><b>61</b> curt.</div>
+<p class="why">contraexemplo: mostrar o app = 61 curtidas</p></div></article><article class="card" data-p="P5" data-g="B">
+<a href="https://www.tiktok.com/@giovannisandes/video/7180067729183935749" target="_blank" rel="noopener"><img src="prints/tt-53.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P5">Lista / dica</span> #54 · TikTok</div>
+<div class="who">@giovannisandes · 2022-12-22</div>
+<p class="hook">Você vai viajar com os amigos nesse final de ano (Splitwise salva as amizades)</p>
+<div class="nums"><b>3 mil</b> curt.</div>
+<p class="why">dica de app com gancho de época (fim de ano), rende mais que demo pura</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@lyvcamilo/video/7462361119009606918" target="_blank" rel="noopener"><img src="prints/tt-54.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #55 · TikTok</div>
+<div class="who">@lyvcamilo · 2025-01-21</div>
+<p class="hook">(print da App Store do Splitwise)</p>
+<div class="nums"><b>248</b> curt.</div>
+<p class="why">contraexemplo: tela de loja de app = 248 curtidas</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@nomadglobalapp/video/7532881627660242232" target="_blank" rel="noopener"><img src="prints/tt-55.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #56 · TikTok</div>
+<div class="who">@nomadglobalapp · 2025-07-30</div>
+<p class="hook">(mão mexendo no app: Viagem em Grupo da Nomad)</p>
+<div class="nums"><b>2 mil</b> curt.</div>
+<p class="why">marca grande com recurso &quot;Viagem em Grupo&quot;: demo rende pouco</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@kingcase.salto/video/7459473029425319173" target="_blank" rel="noopener"><img src="prints/tt-56.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #57 · TikTok</div>
+<div class="who">@kingcase.salto · 2025-01-13</div>
+<p class="hook">Então gente, adeus Excel.</p>
+<div class="nums"><b>63</b> curt.</div>
+<p class="why">contraexemplo: 63 curtidas</p></div></article><article class="card" data-p="P5" data-g="B">
+<a href="https://www.tiktok.com/@giuliawebers/video/7497605435612990726" target="_blank" rel="noopener"><img src="prints/tt-57.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P5">Lista / dica</span> #58 · TikTok</div>
+<div class="who">@giuliawebers · 2025-04-26</div>
+<p class="hook">O app que vai fazer vc economizar nas suas viagens (Wanderlog)</p>
+<div class="nums"><b>4 mil</b> curt.</div>
+<p class="why">promessa de economia &gt; funcionalidade</p></div></article><article class="card" data-p="—" data-g="B">
+<a href="https://www.tiktok.com/@nubank/video/7703265269346618625" target="_blank" rel="noopener"><img src="prints/tt-58.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-—">Fora dos padrões</span> #59 · TikTok</div>
+<div class="who">@nubank · 2,7 mi seg. · 2026-11-01</div>
+<p class="hook">(fila da Nubanca, evento)</p>
+<div class="nums"><b>21.9K</b> views</div>
+<p class="why">orgânico típico da marca: 10 a 30 mil</p></div></article><article class="card" data-p="P1" data-g="B">
+<a href="https://www.tiktok.com/@nubank/video/7701449945634655509" target="_blank" rel="noopener"><img src="prints/tt-59.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #60 · TikTok</div>
+<div class="who">@nubank · 2,7 mi seg. · 2026-10-27</div>
+<p class="hook">POV: protagonista de novela</p>
+<div class="nums"><b>619.9K</b> views</div>
+<p class="why">POV de personagem rende 30x mais que o post de produto do mesmo perfil</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@nubank/video/7699610274461945095" target="_blank" rel="noopener"><img src="prints/tt-60.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #61 · TikTok</div>
+<div class="who">@nubank · 2,7 mi seg. · 2026-10-22</div>
+<p class="hook">(capa não carregou) Chegou NuCoin...</p>
+<div class="nums"><b>17.9K</b> views</div>
+<p class="why">produto puro: fica no piso do perfil</p></div></article><article class="card" data-p="P1" data-g="B">
+<a href="https://www.tiktok.com/@nubank/video/7697322285329419528" target="_blank" rel="noopener"><img src="prints/tt-61.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #62 · TikTok</div>
+<div class="who">@nubank · 2,7 mi seg. · 2026-10-16</div>
+<p class="hook">(capa não carregou) nesse pique até o Enem, quem mais tá assim?</p>
+<div class="nums"><b>21.8M</b> views</div>
+<p class="why">meme de época (Enem); número alto provavelmente com impulsionamento pago</p></div></article><article class="card" data-p="P3" data-g="B">
+<a href="https://www.tiktok.com/@ifoodbrasil/video/7702551148867112210" target="_blank" rel="noopener"><img src="prints/tt-62.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #63 · TikTok</div>
+<div class="who">@ifoodbrasil · 1,4 mi seg. · 2026-10-30</div>
+<p class="hook">faltam 8 horas (quando aquele amigo que entrega tudo chega pra curtir o show)</p>
+<div class="nums"><b>1.2M</b> views</div>
+<p class="why">&quot;aquele amigo que...&quot; + evento do momento (show)</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.tiktok.com/@ifoodbrasil/video/7701363326332259605" target="_blank" rel="noopener"><img src="prints/tt-63.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #64 · TikTok</div>
+<div class="who">@ifoodbrasil · 1,4 mi seg. · 2026-10-27</div>
+<p class="hook">(capa não carregou) Gostosura ou travessura? Comenta aqui embaixo</p>
+<div class="nums"><b>1 mil</b> views</div>
+<p class="why">contraexemplo: pedir comentário sem piada = 1,3 mil</p></div></article><article class="card" data-p="P4" data-g="B">
+<a href="https://www.tiktok.com/@ifoodbrasil/photo/7699612772509699348" target="_blank" rel="noopener"><img src="prints/tt-64.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #65 · TikTok</div>
+<div class="who">@ifoodbrasil · 1,4 mi seg. · 2026-10-22</div>
+<p class="hook">(capa não carregou) desculpa a brincadeira, no meu app tem mais gostoso</p>
+<div class="nums"><b>6.7M</b> views</div>
+<p class="why">carrossel de meme &gt; vídeo de produto; o produto entra só na última piada</p></div></article><article class="card" data-p="P4" data-g="B">
+<a href="https://www.tiktok.com/@ifoodbrasil/video/7694041012368346388" target="_blank" rel="noopener"><img src="prints/tt-65.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #66 · TikTok</div>
+<div class="who">@ifoodbrasil · 1,4 mi seg. · 2026-10-07</div>
+<p class="hook">(capa não carregou) Entramos na trend pra deixar esses pedidos mais brilhantes</p>
+<div class="nums"><b>4.5M</b> views</div>
+<p class="why">entra na trend do momento com o produto</p></div></article><article class="card" data-p="contra" data-g="C">
+<a href="https://www.tiktok.com/@magalu/video/7702846934641380628" target="_blank" rel="noopener"><img src="prints/tt-66.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #67 · TikTok</div>
+<div class="who">@magalu · 7,5 mi seg. · 2026-10-31</div>
+<p class="hook">(Lu segurando prato de morangos-caveira)</p>
+<div class="nums"><b>2 mil</b> views</div>
+<p class="why">contraexemplo: mascote vendedora com 7,5 mi seg. = 2 mil views</p></div></article><article class="card" data-p="contra" data-g="C">
+<a href="https://www.tiktok.com/@magalu/video/7702197476798893332" target="_blank" rel="noopener"><img src="prints/tt-67.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #68 · TikTok</div>
+<div class="who">@magalu · 7,5 mi seg. · 2026-10-29</div>
+<p class="hook">(Lu ao telefone) Me ligaram para passar um recado... tem cupom</p>
+<div class="nums"><b>2 mil</b> views</div>
+<p class="why">contraexemplo: mascote que anuncia cupom</p></div></article><article class="card" data-p="contra" data-g="C">
+<a href="https://www.tiktok.com/@magalu/video/7693670439268224264" target="_blank" rel="noopener"><img src="prints/tt-68.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #69 · TikTok</div>
+<div class="who">@magalu · 7,5 mi seg. · 2026-10-06</div>
+<p class="hook">(capa não carregou) Amanhã é dia de Payday Magalu</p>
+<div class="nums"><b>5 mil</b> views</div>
+<p class="why">contraexemplo</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@cenarios.brasil/video/7703262207840226580" target="_blank" rel="noopener"><img src="prints/tt-69.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #70 · TikTok</div>
+<div class="who">@cenarios.brasil · 3 mil seg. · 2026-11-01</div>
+<p class="hook">NEYMAR (E se o Neymar virasse presidente do Brasil? Marca ele aí)</p>
+<div class="nums"><b>75.7K</b> views</div>
+<p class="why">&quot;e se...&quot; com famoso</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@cenarios.brasil/video/7702574680477109524" target="_blank" rel="noopener"><img src="prints/tt-70.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #71 · TikTok</div>
+<div class="who">@cenarios.brasil · 3 mil seg. · 2026-10-30</div>
+<p class="hook">GABRIEL (Já marca o Gabriel e segue)</p>
+<div class="nums"><b>313.4K</b> views</div>
+<p class="why">NOME NA CAPA: todo Gabriel é marcado; perfil de 3 mil seg.</p></div></article><article class="card" data-p="P4" data-g="C">
+<a href="https://www.tiktok.com/@cenarios.brasil/video/7702118707383782677" target="_blank" rel="noopener"><img src="prints/tt-71.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P4">Personagem + frase pra encaminhar</span> #72 · TikTok</div>
+<div class="who">@cenarios.brasil · 3 mil seg. · 2026-10-29</div>
+<p class="hook">(planeta; nome Mateus/Matheus no vídeo)</p>
+<div class="nums"><b>466.5K</b> views</div>
+<p class="why">mesmo formato com outro nome: 466 mil</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.youtube.com/shorts/lNMlr69wpMM" target="_blank" rel="noopener"><img src="prints/yt-lNMlr69wpMM.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #73 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">VIAGEM CAÓTICA ENTRE AMIGOS - bárbara coura</p>
+<div class="nums"><b>1,2 mi</b> views</div>
+<p class="why">caos da viagem do grupo</p></div></article><article class="card" data-p="P2" data-g="A">
+<a href="https://www.youtube.com/shorts/vLpnpR1QVpE" target="_blank" rel="noopener"><img src="prints/yt-vLpnpR1QVpE.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P2">Saiu do papel</span> #74 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">Trend Viral de Viagem</p>
+<div class="nums"><b>112 mil</b> views</div>
+<p class="why">trend com áudio do momento</p></div></article><article class="card" data-p="P3" data-g="A">
+<a href="https://www.youtube.com/shorts/BepOPqf24yE" target="_blank" rel="noopener"><img src="prints/yt-BepOPqf24yE.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P3">Qual desses é você?</span> #75 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">Vocês também tem um grupo assim?</p>
+<div class="nums"><b>37 mil</b> views</div>
+<p class="why">&quot;tem um grupo assim?&quot; puxa marcação</p></div></article><article class="card" data-p="P1" data-g="A">
+<a href="https://www.youtube.com/shorts/s4Muv_CWB4M" target="_blank" rel="noopener"><img src="prints/yt-s4Muv_CWB4M.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-P1">Expectativa x 3º dia</span> #76 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">Prioridades amigos</p>
+<div class="nums"><b>11 mil</b> views</div>
+<p class="why">prioridades do grupo</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.youtube.com/shorts/5K5wxl_mhPw" target="_blank" rel="noopener"><img src="prints/yt-5K5wxl_mhPw.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #77 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">Dica de app para dividir conta de viagem</p>
+<div class="nums"><b>1,5 mil</b> views</div>
+<p class="why">contraexemplo: dica de app</p></div></article><article class="card" data-p="contra" data-g="B">
+<a href="https://www.youtube.com/shorts/l-gm2t1Q1gQ" target="_blank" rel="noopener"><img src="prints/yt-l-gm2t1Q1gQ.jpg" alt="" loading="lazy"></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #78 · YouTube Shorts</div>
+<div class="who"></div>
+<p class="hook">Divida Gastos em Viagens com Amigos: Funcionalidade Incrível!</p>
+<div class="nums"><b>189</b> views</div>
+<p class="why">contraexemplo: &quot;funcionalidade incrível&quot; = 189 views</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/magdiel_rb/status/2115855561598394680" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #79 · X</div>
+<div class="who">@magdiel_rb · 2026-10-29</div>
+<p class="hook">Pega a call pessoal, baixa o video, separa os frames e manda pro agente de IA entender quais pontos foram ajustados.</p>
+<div class="nums"><b>13 mil</b> views · <b>358</b> curt. · <b>9</b> coment. · <b>10</b> compart. · <b>334</b> salvos</div>
+<p class="why">tutorial/fluxo copiável: salvos (334) quase igual às curtidas</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/magdiel_rb/status/2116580639835406841" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #80 · X</div>
+<div class="who">@magdiel_rb · 2026-10-31</div>
+<p class="hook">Esse aqui já tem 13 pessoas e um unicórnio no nome do grupo.</p>
+<div class="nums"><b>4 mil</b> views · <b>28</b> curt. · <b>13</b> coment. · <b>7</b> compart. · <b>18</b> salvos</div>
+<p class="why">convite pra grupo (comunidade)</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/magdiel_rb/status/2115907930218262949" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #81 · X</div>
+<div class="who">@magdiel_rb · 2026-10-29</div>
+<p class="hook">ONTEM EU TINHA 80 SEGUIDORES / Hoje ja estamos atingindo o dobro.</p>
+<div class="nums"><b>4 mil</b> views · <b>48</b> curt. · <b>15</b> coment. · <b>3</b> compart. · <b>8</b> salvos</div>
+<p class="why">número pequeno e real + &quot;todo mundo no mesmo barco&quot;</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/magdiel_rb/status/2116945934202606055" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #82 · X</div>
+<div class="who">@magdiel_rb · 2026-11-01</div>
+<p class="hook">EU SEI QUEM DENUNCIOU A COMUNIDADE!</p>
+<div class="nums"><b>4 mil</b> views · <b>56</b> curt. · <b>18</b> coment. · <b>4</b> compart. · <b>8</b> salvos</div>
+<p class="why">drama/bastidor em caixa alta puxa resposta</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/magdiel_rb/status/2116942195202875548" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #83 · X</div>
+<div class="who">@magdiel_rb · 2026-11-01</div>
+<p class="hook">ALERTA DE NOVO GRUPO!</p>
+<div class="nums"><b>3 mil</b> views · <b>43</b> curt. · <b>9</b> coment. · <b>5</b> compart. · <b>11</b> salvos</div>
+<p class="why">convite pra grupo</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/gabrielbuzziv/status/2109975997504217148" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #84 · X</div>
+<div class="who">@gabrielbuzziv · 2026-10-13</div>
+<p class="hook">&gt; sou casado / &gt; sou cristão / &gt; minha filha tem 15 dias / &gt; fui demitido / &gt; tenho 15 anos de carreira / &gt; em 60 dias construí 2 apps que faturaram...</p>
+<div class="nums"><b>229 mil</b> views · <b>1 mil</b> curt. · <b>53</b> coment. · <b>37</b> compart. · <b>919</b> salvos</div>
+<p class="why">história pessoal em lista &quot;&gt;&quot; + número de faturamento; post fixado</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/gabrielbuzziv/status/2115508730099839328" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #85 · X</div>
+<div class="who">@gabrielbuzziv · 2026-10-28</div>
+<p class="hook">eu apresento o meu time que ta fazendo isso / NINA -&gt; pesquisa 2x por dia no insta e tiktok por virais...</p>
+<div class="nums"><b>38 mil</b> views · <b>937</b> curt. · <b>56</b> coment. · <b>33</b> compart. · <b>1 mil</b> salvos</div>
+<p class="why">bastidor de processo (time de agentes de IA): mais salvos que curtidas</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/gabrielbuzziv/status/2115587988868727007" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #86 · X</div>
+<div class="who">@gabrielbuzziv · 2026-10-28</div>
+<p class="hook">uma das coisas que eu fiz e aumentou minha conversão / eu comecei a bloquear print do app</p>
+<div class="nums"><b>23 mil</b> views · <b>262</b> curt. · <b>12</b> coment. · <b>1</b> compart. · <b>123</b> salvos</div>
+<p class="why">1 decisão de produto + resultado</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/gabrielbuzziv/status/2117586792581099587" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #87 · X</div>
+<div class="who">@gabrielbuzziv · 2026-11-03</div>
+<p class="hook">esse cara aqui que ta me dando o passo a passo para esses conteúdos virais</p>
+<div class="nums"><b>19 mil</b> views · <b>683</b> curt. · <b>19</b> coment. · <b>20</b> compart. · <b>392</b> salvos</div>
+<p class="why">marca outra pessoa da bolha (networking)</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/gabrielbuzziv/status/2116595570924220806" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #88 · X</div>
+<div class="who">@gabrielbuzziv · 2026-10-31</div>
+<p class="hook">eu posto todos os meses exatamente o valor que a gente faturou e lucrou</p>
+<div class="nums"><b>6 mil</b> views · <b>79</b> curt. · <b>8</b> coment. · <b>2</b> compart. · <b>19</b> salvos</div>
+<p class="why">transparência de receita</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/thallisribeiro/status/2109713422501941255" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #89 · X</div>
+<div class="who">@thallisribeiro · 2026-10-12</div>
+<p class="hook">Isso aqui é muito doido...</p>
+<div class="nums"><b>131 mil</b> views · <b>742</b> curt. · <b>31</b> coment. · <b>9</b> compart. · <b>391</b> salvos</div>
+<p class="why">1ª linha curta + print de resultado; curiosidade</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/thallisribeiro/status/2115537565218427192" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #90 · X</div>
+<div class="who">@thallisribeiro · 2026-10-28</div>
+<p class="hook">É normal por ai o povo gerar tanto pix e não pagar? kkk as vezes fico de cara com isso...</p>
+<div class="nums"><b>27 mil</b> views · <b>64</b> curt. · <b>16</b> coment. · <b>2</b> compart. · <b>25</b> salvos</div>
+<p class="why">pergunta sobre pix não pago: a dor da Norti rendendo na bolha dev</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/thallisribeiro/status/2116751335529869367" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #91 · X</div>
+<div class="who">@thallisribeiro · 2026-11-01</div>
+<p class="hook">Falou a true meu amigo dos clones IA</p>
+<div class="nums"><b>7 mil</b> views · <b>25</b> curt. · <b>0</b> coment. · <b>1</b> compart. · <b>16</b> salvos</div>
+<p class="why">citação de outro perfil</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/thallisribeiro/status/2110095927734136974" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #92 · X</div>
+<div class="who">@thallisribeiro · 2026-10-13</div>
+<p class="hook">Eta porra, e esse criativo aqui q subi hoje? kkkk</p>
+<div class="nums"><b>4 mil</b> views · <b>34</b> curt. · <b>10</b> coment. · <b>0</b> compart. · <b>11</b> salvos</div>
+<p class="why">mostra o anúncio que subiu</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/thallisribeiro/status/2117397299609399416" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #93 · X</div>
+<div class="who">@thallisribeiro · 2026-11-02</div>
+<p class="hook">Hoje foi um dia desafiador. Mts problemas, muita coisa deu errado...</p>
+<div class="nums"><b>3 mil</b> views · <b>18</b> curt. · <b>5</b> coment. · <b>0</b> compart. · <b>1</b> salvos</div>
+<p class="why">desabafo</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/condzxyz/status/2116646425677471849" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #94 · X</div>
+<div class="who">@condzxyz · 2026-10-31</div>
+<p class="hook">masterclass part-1 de como eu viralizo no X. de graça.</p>
+<div class="nums"><b>36 mil</b> views · <b>580</b> curt. · <b>48</b> coment. · <b>43</b> compart. · <b>881</b> salvos</div>
+<p class="why">conteúdo gratuito + número grande</p></div></article><article class="card" data-p="D1" data-g="D">
+<a href="https://x.com/condzxyz/status/2117112215270559802" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D1">X: processo copiável</span> #95 · X</div>
+<div class="who">@condzxyz · 2026-11-02</div>
+<p class="hook">em outubro eu testei um jeito simples de fazer dinheiro com IA: vender vídeo de motion por R$ 150 pra empresa pequena.</p>
+<div class="nums"><b>26 mil</b> views · <b>619</b> curt. · <b>18</b> coment. · <b>20</b> compart. · <b>664</b> salvos</div>
+<p class="why">fluxo numerado copiável: salvos &gt; curtidas</p></div></article><article class="card" data-p="D3" data-g="D">
+<a href="https://x.com/condzxyz/status/2116569288853106994" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D3">X: conversa e comunidade</span> #96 · X</div>
+<div class="who">@condzxyz · 2026-10-31</div>
+<p class="hook">hoje mais tarde vou lançar um curso completo 100% gratuito de como viralizar no X, segue aí</p>
+<div class="nums"><b>19 mil</b> views · <b>222</b> curt. · <b>13</b> coment. · <b>7</b> compart. · <b>61</b> salvos</div>
+<p class="why">anúncio do que vem + &quot;segue aí&quot;</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/condzxyz/status/2115770136137548205" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #97 · X</div>
+<div class="who">@condzxyz · 2026-10-29</div>
+<p class="hook">Estou com um contrato de 6 dígitos para construir um Vtuber.</p>
+<div class="nums"><b>14 mil</b> views · <b>71</b> curt. · <b>12</b> coment. · <b>0</b> compart. · <b>24</b> salvos</div>
+<p class="why">número + pedido de ajuda (comentários)</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/condzxyz/status/2117608649866576321" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #98 · X</div>
+<div class="who">@condzxyz · 2026-11-03</div>
+<p class="hook">vou pagar de R$500 a R$1.500 por mês se você criar ou tiver uma conta automatizada</p>
+<div class="nums"><b>7 mil</b> views · <b>110</b> curt. · <b>6</b> coment. · <b>4</b> compart. · <b>64</b> salvos</div>
+<p class="why">oferta com valor</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/yayyzeka/status/2112903665228914795" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #99 · X</div>
+<div class="who">@yayyzeka · 2026-10-21</div>
+<p class="hook">GM, DAY 20</p>
+<div class="nums"><b>2 mil</b> views · <b>53</b> curt. · <b>9</b> coment. · <b>2</b> compart. · <b>4</b> salvos</div>
+<p class="why">diário numerado (&quot;DAY 20&quot;) constante</p></div></article><article class="card" data-p="contra" data-g="D">
+<a href="https://x.com/yayyzeka/status/2116980870641045947" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #100 · X</div>
+<div class="who">@yayyzeka · 2026-11-01</div>
+<p class="hook">Atualizações / consegui colocar minhas informações no app de forma automática :)</p>
+<div class="nums"><b>1 mil</b> views · <b>1</b> curt. · <b>0</b> coment. · <b>0</b> compart. · <b>1</b> salvos</div>
+<p class="why">contraexemplo: atualização de app = 1 curtida</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/yayyzeka/status/2111223147772997742" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #101 · X</div>
+<div class="who">@yayyzeka · 2026-10-16</div>
+<p class="hook">DAY 16 GOD IS THE WAY</p>
+<div class="nums"><b>698</b> views · <b>27</b> curt. · <b>1</b> coment. · <b>0</b> compart. · <b>0</b> salvos</div>
+<p class="why">diário</p></div></article><article class="card" data-p="D2" data-g="D">
+<a href="https://x.com/yayyzeka/status/2117211649564151857" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D2">X: número real + jornada</span> #102 · X</div>
+<div class="who">@yayyzeka · 2026-11-02</div>
+<p class="hook">Bom dia, já to arrumando muita coisa do app, obrigado pra todo mundo que deu feedback, já to na versão 27</p>
+<div class="nums"><b>626</b> views · <b>16</b> curt. · <b>4</b> coment. · <b>0</b> compart. · <b>1</b> salvos</div>
+<p class="why">bastidor</p></div></article><article class="card" data-p="contra" data-g="D">
+<a href="https://x.com/yayyzeka/status/2117577892905505063" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-contra">Mostra o app (não fazer)</span> #103 · X</div>
+<div class="who">@yayyzeka · 2026-11-03</div>
+<p class="hook">Bom dia! / to alimentando o Mr yay e botando o máximo de segurança no App</p>
+<div class="nums"><b>288</b> views · <b>8</b> curt. · <b>0</b> coment. · <b>0</b> compart. · <b>1</b> salvos</div>
+<p class="why">contraexemplo: bom dia + app</p></div></article><article class="card" data-p="D4" data-g="D">
+<a href="https://x.com/brunoclz/status/2025226897743839315" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D4">X: surfar o assunto do dia</span> #104 · X</div>
+<div class="who">@brunoclz · 2026-02-21</div>
+<p class="hook">Então, aparentemente se você conectar todas as bases de dados abertas do Brasil, da para detectar corrupção com base no CPF de políticos</p>
+<div class="nums"><b>5,1 mi</b> views · <b>42 mil</b> curt. · <b>2 mil</b> coment. · <b>7 mil</b> compart. · <b>8 mil</b> salvos</div>
+<p class="why">projeto que mexe com assunto do país (política) + print</p></div></article><article class="card" data-p="D4" data-g="D">
+<a href="https://x.com/brunoclz/status/2106788325025783959" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D4">X: surfar o assunto do dia</span> #105 · X</div>
+<div class="who">@brunoclz · 2026-10-04</div>
+<p class="hook">vou ver apuração aqui só por causa do design / seuimposto.com</p>
+<div class="nums"><b>2,3 mi</b> views · <b>9 mil</b> curt. · <b>324</b> coment. · <b>579</b> compart. · <b>4 mil</b> salvos</div>
+<p class="why">surfa o evento do dia (apuração) com o próprio produto</p></div></article><article class="card" data-p="D4" data-g="D">
+<a href="https://x.com/brunoclz/status/2114509477319778388" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D4">X: surfar o assunto do dia</span> #106 · X</div>
+<div class="who">@brunoclz · 2026-10-26</div>
+<p class="hook">Obrigado por acessarem</p>
+<div class="nums"><b>444 mil</b> views · <b>4 mil</b> curt. · <b>243</b> coment. · <b>95</b> compart. · <b>282</b> salvos</div>
+<p class="why">agradecimento + print de tráfego no dia do evento</p></div></article><article class="card" data-p="D4" data-g="D">
+<a href="https://x.com/brunoclz/status/2116693272668291279" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D4">X: surfar o assunto do dia</span> #107 · X</div>
+<div class="who">@brunoclz · 2026-11-01</div>
+<p class="hook">Devo ter gasto próximo de 10 bilhões de tokens analisando os logs das urnas. Amanhã devo postar o resultado por aqui.</p>
+<div class="nums"><b>158 mil</b> views · <b>5 mil</b> curt. · <b>106</b> coment. · <b>364</b> compart. · <b>583</b> salvos</div>
+<p class="why">número absurdo + promessa de continuação</p></div></article><article class="card" data-p="D4" data-g="D">
+<a href="https://x.com/brunoclz/status/2114718735680274860" target="_blank" rel="noopener"><div class="noimg"></div></a>
+<div class="body"><div class="meta"><span class="tag t-D4">X: surfar o assunto do dia</span> #108 · X</div>
+<div class="who">@brunoclz · 2026-10-26</div>
+<p class="hook">Pra quem tiver curiosidade, esse foi o custo total pra manter 500k pessoas simultâneas e chat torando durante a apuração</p>
+<div class="nums"><b>91 mil</b> views · <b>2 mil</b> curt. · <b>43</b> coment. · <b>24</b> compart. · <b>166</b> salvos</div>
+<p class="why">bastidor técnico com número real</p></div></article></div>
+<p class="sub">Os posts do X (grupo D) estão na mesma grade, nos filtros que começam com "X:". Eles não têm print, só o texto.</p>
+</main><script>
+document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filters button').forEach(x=>x.classList.toggle('on',x===b));const f=b.dataset.f;document.querySelectorAll('.card').forEach(c=>c.style.display=!f||c.dataset.p===f?'':'none')});
+</script></body></html>

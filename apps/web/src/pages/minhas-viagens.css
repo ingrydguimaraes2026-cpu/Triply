@@ -1,0 +1,865 @@
+/* Telas fora da viagem: Minhas viagens e Perfil (spec 008), no estilo do app (spec 112) */
+
+.pagina-solta {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--cor-fundo);
+}
+
+/* Barra de cima clara, como o app (sem faixa escura) */
+.pagina-solta-topo {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 4px;
+}
+
+.pagina-solta-topo nav {
+  display: flex;
+  gap: 4px;
+}
+
+.pagina-solta-topo .botao-texto {
+  color: var(--cor-comboio);
+  text-decoration: none;
+}
+
+.pagina-solta-topo .botao-texto:hover {
+  background: var(--cor-comboio-fundo);
+}
+
+.pagina-solta-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.pagina-solta-norti {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--dourado-claro);
+}
+
+.pagina-solta-conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pagina-solta-conteudo.estreita {
+  max-width: 560px;
+}
+
+/* ---------- Início (spec 117), espelho do app ---------- */
+.inicio {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top)) clamp(20px, 5vw, 64px) 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* "Bom dia," + nome grande, avatar à direita (abre o Perfil) */
+.inicio-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inicio-topo > div {
+  min-width: 0;
+}
+
+.inicio-topo p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+.inicio-topo h1 {
+  margin: 0;
+  overflow: hidden;
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.15;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.inicio-avatar {
+  flex: none;
+  display: flex;
+  border-radius: 50%;
+}
+
+.inicio-avatar:hover {
+  opacity: 0.85;
+}
+
+/* Celular: uma coluna, mapa em cima. Computador: coluna larga + mapa ao lado */
+.inicio-colunas {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inicio-principal {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inicio-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inicio-acendeu {
+  margin: 0;
+  font-weight: 700;
+  color: var(--couro);
+}
+
+@media (min-width: 1024px) {
+  .inicio-colunas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+    grid-template-areas: 'principal lado';
+    align-items: start;
+    gap: 32px;
+  }
+
+  .inicio-principal {
+    grid-area: principal;
+  }
+
+  .inicio-lado {
+    grid-area: lado;
+    position: sticky;
+    top: 24px;
+  }
+}
+
+/* Nova viagem: tracejado, como no app */
+.inicio-nova {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 16px;
+  color: var(--couro);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.inicio-nova:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* Rolê hoje e "Já fomos pra...", lado a lado */
+.inicio-atalhos {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  align-self: stretch;
+}
+
+.inicio-atalhos button {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 16px;
+  background: #f1e4cf;
+  color: var(--couro);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+html[data-tema='escuro'] .inicio-atalhos button {
+  background: var(--cor-fundo-suave);
+}
+
+.inicio-atalhos button:hover {
+  filter: brightness(0.97);
+}
+
+/* "No comboio agora" */
+.inicio-agora h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.inicio-agora ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inicio-agora a {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.inicio-agora-texto {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.inicio-agora small {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Viagem em destaque (capa grande) ---------- */
+.viagem-destaque {
+  position: relative;
+  animation: viagens-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes viagens-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.viagem-destaque-link {
+  position: relative;
+  display: block;
+  height: clamp(340px, 36vw, 460px);
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
+  box-shadow: 0 24px 50px rgb(74 46 20 / 0.2);
+  color: #fbf3e6;
+  text-decoration: none;
+}
+
+/* Só a capa (">"): a foto do avatar não pode virar fundo */
+.viagem-destaque-link > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease-out;
+}
+
+.viagem-destaque-link:hover > img {
+  transform: scale(1.03);
+}
+
+.viagem-destaque-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(185 122 34 / 0) 38%, rgb(185 122 34 / 0.55) 62%, #4a2e14 100%);
+}
+
+.viagem-destaque-etiqueta {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fbf3e6;
+  color: #3b2715;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.viagem-destaque-etiqueta svg {
+  color: var(--caramelo);
+}
+
+.viagem-destaque-texto {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viagem-destaque-acima {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.viagem-destaque-texto strong {
+  margin: 8px 0 18px;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.viagem-destaque-comboio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--creme);
+}
+
+.viagem-destaque-comboio .avatar {
+  border: 2px solid #5a3818;
+}
+
+/* Barra de carimbos: enche em dourado */
+.viagem-destaque-barra {
+  margin-top: 10px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(245 233 214 / 0.25);
+}
+
+.viagem-destaque-barra span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--laranja);
+  transform-origin: left;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---------- Próximas: cartões em grade ---------- */
+.viagens-secao {
+  margin: 8px 0 12px;
+  font-size: 22px;
+  color: var(--cor-texto);
+}
+
+.viagens-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+}
+
+.viagem-linha {
+  position: relative;
+}
+
+.viagem-linha-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 92px 12px 12px;
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow 0.15s;
+}
+
+html[data-tema='escuro'] .viagem-linha-link {
+  border: 1px solid var(--cor-borda);
+}
+
+.viagem-linha-link:hover {
+  box-shadow: 0 12px 28px rgb(74 46 20 / 0.12);
+}
+
+.viagem-linha-link > img {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: linear-gradient(160deg, #d9b07a, #8e6a3e);
+}
+
+.viagem-linha-texto {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viagem-linha-texto strong {
+  overflow: hidden;
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.viagem-linha-texto span {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.viagem-linha-seta {
+  flex: none;
+  color: var(--cor-texto-suave);
+}
+
+/* Arquivar e apagar: fora do link, no canto */
+.viagem-acoes {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+}
+
+.viagem-acoes button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+}
+
+.viagem-acoes button:hover {
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+}
+
+.viagem-acoes button[title='Apagar viagem']:hover {
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+}
+
+/* Com mouse: arquivar/apagar só aparecem ao passar por cima, e o texto usa o cartão todo */
+@media (hover: hover) and (pointer: fine) {
+  .viagem-linha-link {
+    padding-right: 16px;
+  }
+
+  .viagem-linha .viagem-acoes {
+    right: 12px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--cor-cartao);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .viagem-linha:hover .viagem-acoes,
+  .viagem-linha:focus-within .viagem-acoes {
+    opacity: 1;
+  }
+}
+
+/* No destaque: bolinhas creme em cima da foto */
+.viagem-acoes.claro {
+  top: 20px;
+  right: 20px;
+  transform: none;
+  gap: 8px;
+}
+
+.viagem-acoes.claro button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgb(251 243 230 / 0.92);
+  color: #3b2715;
+}
+
+.viagem-acoes.claro button svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Estado vazio: Norti dormindo esperando a primeira viagem */
+.viagens-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 28px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.viagens-vazio h2 {
+  max-width: 420px;
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.12;
+}
+
+.viagens-vazio p {
+  max-width: 360px;
+  margin: 0 0 8px;
+  color: var(--cor-texto-suave);
+  line-height: 1.6;
+}
+
+.viagens-arquivadas summary {
+  color: var(--cor-texto-suave);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.viagens-arquivadas .viagens-lista {
+  margin-top: 12px;
+  opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+  .viagem-destaque-link {
+    height: 400px;
+  }
+
+  .viagem-destaque-texto {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viagem-destaque {
+    animation: none;
+  }
+
+  .viagem-destaque-barra span {
+    transition: none;
+  }
+}
+
+/* ---------- Perfil (design Plataforma, spec 113) ---------- */
+.perfil-pagina .pagina-solta-conteudo {
+  max-width: 1120px;
+  padding: calc(24px + env(safe-area-inset-top)) clamp(20px, 5vw, 64px) 80px;
+  gap: 0;
+}
+
+.perfil-voltar {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--couro);
+  text-decoration: none;
+}
+
+.perfil-voltar:hover {
+  text-decoration: underline;
+}
+
+.perfil-titulo {
+  margin: 18px 0 24px;
+  font-size: clamp(34px, 3.4vw, 44px);
+  letter-spacing: -0.02em;
+}
+
+/* Duas colunas que viram uma só no celular */
+.perfil-colunas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.perfil-lado {
+  position: sticky;
+  top: 24px;
+  flex: 1 1 260px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.perfil-cartoes {
+  flex: 3 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.perfil-cartoes .cartao-ui,
+.perfil-lado .cartao-ui {
+  padding: 24px;
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.perfil-ancora {
+  scroll-margin-top: 20px;
+}
+
+.perfil-ancora:empty {
+  display: none;
+}
+
+.perfil-cartoes h2 {
+  font-size: 20px;
+}
+
+.perfil-cartoes .perfil-secao {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.perfil-cartoes h2 svg {
+  color: var(--couro);
+}
+
+.perfil-foto {
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.perfil-foto .avatar {
+  box-shadow: 0 0 0 4px var(--cor-cartao), 0 0 0 6px #e3d2b8;
+}
+
+.perfil-foto-acoes {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Botão pequeno com borda clara do design */
+.perfil-botao-pequeno {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid #d9c3a2;
+  border-radius: 10px;
+  background: var(--cor-cartao);
+  color: var(--couro);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.perfil-botao-pequeno.sem-borda {
+  border-color: transparent;
+}
+
+.perfil-botao-pequeno:hover {
+  background: var(--cor-fundo-suave);
+}
+
+.perfil-atalhos {
+  gap: 0;
+  padding: 8px !important;
+}
+
+.perfil-atalhos a {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.perfil-atalhos a:hover {
+  background: var(--cor-fundo-suave);
+}
+
+.perfil-atalhos svg {
+  color: var(--couro);
+}
+
+.perfil-nome-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.perfil-nome-linha input {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* No celular a coluna da esquerda não fica presa e os atalhos somem (é tudo uma coluna só) */
+@media (max-width: 760px) {
+  .perfil-lado {
+    position: static;
+    max-width: none;
+  }
+
+  .perfil-atalhos {
+    display: none !important;
+  }
+}
+
+/* Passaporte no perfil (spec 038) */
+.perfil-secao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.perfil-paises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-paises li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 10px;
+  border-radius: 999px;
+  background: var(--cor-comboio-fundo);
+  font-size: 14px;
+}
+
+.perfil-pais-novo {
+  display: flex;
+  gap: 8px;
+}
+
+.perfil-pais-novo input {
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil-nome {
+  margin-top: 4px;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.perfil-email {
+  margin-top: -6px;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.perfil-norti {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0 0;
+  text-align: center;
+}
+
+.perfil-norti p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+
+/* Emergência e saúde da ficha: caixa bege dentro do cartão (spec 113) */
+.ficha-emergencia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--cor-fundo);
+}
+
+.ficha-emergencia .perfil-secao {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ficha-emergencia .perfil-secao svg {
+  color: var(--cor-erro);
+}
+
+/* Botões de salvar do Perfil: pequenos, à esquerda */
+.perfil-cartoes .form-rodape {
+  justify-content: flex-start;
+}
+
+.perfil-cartoes .form-rodape .botao {
+  flex: none;
+}

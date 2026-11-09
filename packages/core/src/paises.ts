@@ -1,0 +1,190 @@
+// Descobre o código do país (ISO, ex.: "FR") a partir do nome guardado no destino.
+// O banco só guarda o nome, e ele chega escrito de jeitos diferentes conforme a busca
+// ("Mónaco", "Mônaco", "Italia", "Itália"). Aqui a gente compara sem acento e sem maiúscula,
+// em vários idiomas, usando os nomes que o próprio aparelho conhece (Intl.DisplayNames).
+// Veio da web (features/documentos/paises.ts) pro app usar também.
+
+const IDIOMAS = ['pt-BR', 'pt-PT', 'en', 'es', 'it', 'fr', 'de']
+
+// Nomes que o navegador não usa mas aparecem nas buscas
+const APELIDOS: Record<string, string> = {
+  'estados unidos da america': 'US',
+  eua: 'US',
+  usa: 'US',
+  inglaterra: 'GB',
+  escocia: 'GB',
+  'pais de gales': 'GB',
+  'irlanda do norte': 'GB',
+  holanda: 'NL',
+  vaticano: 'VA',
+  'cidade do vaticano': 'VA',
+  'santa se': 'VA',
+}
+
+// Quando o aparelho não tem Intl.DisplayNames (o motor do app no celular pode não ter):
+// os destinos mais comuns, em português, espanhol, italiano e inglês
+const RESERVA: Record<string, string> = {
+  franca: 'FR', france: 'FR', francia: 'FR',
+  italia: 'IT', italy: 'IT',
+  espanha: 'ES', espana: 'ES', spain: 'ES', spagna: 'ES',
+  portugal: 'PT',
+  alemanha: 'DE', germany: 'DE', deutschland: 'DE', alemania: 'DE', germania: 'DE',
+  suica: 'CH', switzerland: 'CH', schweiz: 'CH', suiza: 'CH', svizzera: 'CH',
+  austria: 'AT', osterreich: 'AT',
+  belgica: 'BE', belgium: 'BE', belgio: 'BE',
+  'paises baixos': 'NL', netherlands: 'NL', 'paesi bassi': 'NL',
+  'reino unido': 'GB', 'united kingdom': 'GB', 'regno unito': 'GB',
+  irlanda: 'IE', ireland: 'IE',
+  monaco: 'MC', 'principado de monaco': 'MC',
+  grecia: 'GR', greece: 'GR',
+  croacia: 'HR', croatia: 'HR', croazia: 'HR',
+  'republica tcheca': 'CZ', tchequia: 'CZ', czechia: 'CZ', 'czech republic': 'CZ',
+  hungria: 'HU', hungary: 'HU',
+  polonia: 'PL', poland: 'PL',
+  dinamarca: 'DK', denmark: 'DK',
+  suecia: 'SE', sweden: 'SE',
+  noruega: 'NO', norway: 'NO',
+  turquia: 'TR', turkey: 'TR', turkiye: 'TR',
+  'estados unidos': 'US', 'united states': 'US',
+  canada: 'CA',
+  mexico: 'MX',
+  argentina: 'AR',
+  chile: 'CL',
+  uruguai: 'UY', uruguay: 'UY',
+  peru: 'PE',
+  colombia: 'CO',
+  brasil: 'BR', brazil: 'BR',
+  japao: 'JP', japan: 'JP',
+  china: 'CN',
+  tailandia: 'TH', thailand: 'TH',
+  'africa do sul': 'ZA', 'south africa': 'ZA',
+  australia: 'AU',
+  'san marino': 'SM',
+  andorra: 'AD',
+  luxemburgo: 'LU', luxembourg: 'LU',
+  malta: 'MT',
+}
+
+export function semAcento(texto: string) {
+  return texto
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+let mapa: Map<string, string> | null = null
+
+function montarMapa() {
+  const m = new Map<string, string>(Object.entries(RESERVA))
+  if (typeof Intl.DisplayNames === 'function') {
+    const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    for (const idioma of IDIOMAS) {
+      let nomes: Intl.DisplayNames
+      try {
+        nomes = new Intl.DisplayNames([idioma], { type: 'region', fallback: 'none' })
+      } catch {
+        continue
+      }
+      for (const a of letras)
+        for (const b of letras) {
+          const codigo = a + b
+          let nome: string | undefined
+          try {
+            nome = nomes.of(codigo)
+          } catch {
+            nome = undefined
+          }
+          if (nome) {
+            const chave = semAcento(nome)
+            if (!m.has(chave)) m.set(chave, codigo)
+          }
+        }
+    }
+  }
+  for (const [nome, codigo] of Object.entries(APELIDOS)) m.set(nome, codigo)
+  // Garante os países da lista de cidades mesmo sem Intl.DisplayNames (Hermes no celular)
+  for (const [codigo, nome] of Object.entries(NOME_EM_PORTUGUES)) if (!m.has(semAcento(nome))) m.set(semAcento(nome), codigo)
+  return m
+}
+
+// "Mónaco" → "MC". Não reconheceu → null.
+export function codigoDoPais(nome: string | null | undefined): string | null {
+  if (!nome) return null
+  mapa ??= montarMapa()
+  return mapa.get(semAcento(nome)) ?? null
+}
+
+// Nome em português dos países da lista de cidades (explorar-cidades.ts)
+export const NOME_EM_PORTUGUES: Record<string, string> = {
+  BR: 'Brasil', AR: 'Argentina', CL: 'Chile', DO: 'República Dominicana', US: 'Estados Unidos', PT: 'Portugal',
+  FR: 'França', IT: 'Itália', ES: 'Espanha', GB: 'Reino Unido', NL: 'Países Baixos', DE: 'Alemanha',
+  CZ: 'Tchéquia', AT: 'Áustria', HU: 'Hungria', CH: 'Suíça', GR: 'Grécia', TR: 'Turquia', AE: 'Emirados Árabes Unidos',
+  MX: 'México', PE: 'Peru', UY: 'Uruguai', CO: 'Colômbia', CA: 'Canadá', JP: 'Japão', KR: 'Coreia do Sul',
+  TH: 'Tailândia', EG: 'Egito', ZA: 'África do Sul', MA: 'Marrocos',
+}
+
+// Moeda mais provável pelo país
+const ZONA_EURO = ['AT', 'BE', 'HR', 'CY', 'EE', 'FI', 'FR', 'DE', 'GR', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PT', 'SK', 'SI', 'ES', 'MC', 'SM', 'VA', 'AD', 'ME', 'XK']
+const OUTRAS: Record<string, string> = { US: 'USD', GB: 'GBP', CH: 'CHF', BR: 'BRL', AR: 'ARS', CL: 'CLP', JP: 'JPY', CA: 'CAD', AU: 'AUD', MX: 'MXN', UY: 'UYU', CZ: 'CZK', HU: 'HUF', PL: 'PLN', DK: 'DKK', SE: 'SEK', NO: 'NOK', TR: 'TRY', TH: 'THB', CN: 'CNY', ZA: 'ZAR' }
+
+export function moedaDoPais(codigoPais: string): string {
+  if (ZONA_EURO.includes(codigoPais)) return 'EUR'
+  return OUTRAS[codigoPais] ?? 'EUR'
+}
+
+/**
+ * Cotações de hoje pra converter pra moeda `base`.
+ * Devolve `taxas[X]` = quantas unidades de X valem 1 da base (o mesmo formato de cotacao.ts).
+ * Sem internet ou moeda que o Frankfurter não tem → null.
+ */
+const TRES_HORAS = 3 * 60 * 60 * 1000
+const memoria = new Map<string, { quando: number; taxas: Record<string, number> }>()
+
+export async function cotacoesDeHoje(base: string, moedas: string[]): Promise<Record<string, number> | null> {
+  const lista = [...new Set(moedas.filter((m) => m !== base))].sort()
+  if (lista.length === 0) return {}
+  const chave = `${base}:${lista.join(',')}`
+  const guardado = memoria.get(chave)
+  if (guardado && Date.now() - guardado.quando < TRES_HORAS) return guardado.taxas
+  try {
+    const resposta = await fetch(`https://api.frankfurter.dev/v1/latest?base=${base}&symbols=${lista.join(',')}`)
+    if (!resposta.ok) return null
+    const dados: { rates?: Record<string, number> } = await resposta.json()
+    const taxas = dados.rates ?? {}
+    memoria.set(chave, { quando: Date.now(), taxas })
+    return taxas
+  } catch {
+    return null
+  }
+}
+
+// "MC" → "Mônaco". Sem Intl.DisplayNames no aparelho, usa a tabela de reserva (ou o próprio código).
+const NOMES_PT: Record<string, string> = {
+  FR: 'França', IT: 'Itália', ES: 'Espanha', PT: 'Portugal', DE: 'Alemanha', CH: 'Suíça', AT: 'Áustria',
+  BE: 'Bélgica', NL: 'Países Baixos', GB: 'Reino Unido', IE: 'Irlanda', MC: 'Mônaco', GR: 'Grécia',
+  HR: 'Croácia', CZ: 'Tchéquia', HU: 'Hungria', PL: 'Polônia', DK: 'Dinamarca', SE: 'Suécia', NO: 'Noruega',
+  TR: 'Turquia', US: 'Estados Unidos', CA: 'Canadá', MX: 'México', AR: 'Argentina', CL: 'Chile',
+  UY: 'Uruguai', PY: 'Paraguai', BO: 'Bolívia', PE: 'Peru', EC: 'Equador', CO: 'Colômbia', BR: 'Brasil',
+  JP: 'Japão', CN: 'China', TH: 'Tailândia', ZA: 'África do Sul', AU: 'Austrália', NZ: 'Nova Zelândia',
+  IN: 'Índia', EG: 'Egito', MA: 'Marrocos', AE: 'Emirados Árabes Unidos', KR: 'Coreia do Sul',
+  VN: 'Vietnã', ID: 'Indonésia', SM: 'San Marino', AD: 'Andorra', LU: 'Luxemburgo', MT: 'Malta', VA: 'Vaticano',
+  IL: 'Israel', CU: 'Cuba', DO: 'República Dominicana', SG: 'Singapura', MY: 'Malásia', PH: 'Filipinas',
+}
+let nomesPt: Intl.DisplayNames | null | undefined
+export function nomeDoPais(codigo: string): string {
+  if (nomesPt === undefined) {
+    try {
+      nomesPt = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['pt-BR'], { type: 'region' }) : null
+    } catch {
+      nomesPt = null
+    }
+  }
+  try {
+    const nome = nomesPt?.of(codigo)
+    if (nome && nome !== codigo) return nome
+  } catch {
+    // código estranho: cai na reserva
+  }
+  return NOMES_PT[codigo] ?? codigo
+}

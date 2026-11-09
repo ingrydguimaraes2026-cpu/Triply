@@ -1,0 +1,25 @@
+/* Privacidade e LGPD (spec 089) */
+.privacidade h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+}
+.privacidade-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.privacidade-acoes .botao-texto.perigo {
+  color: #a3330f; /* mesmo tom do .botao.perigo */
+}
+.privacidade-lista {
+  margin: 0 0 0.75rem;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}

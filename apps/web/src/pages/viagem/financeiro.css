@@ -1,0 +1,892 @@
+/* Financeiro (specs 002 e 003) */
+
+.categorias li.alerta .categoria-barra span {
+  background: var(--caramelo);
+}
+
+.categorias li.estourou .categoria-barra span {
+  background: var(--laranja);
+}
+
+.categoria-valor {
+  text-align: right;
+}
+
+.categoria-valor small {
+  display: block;
+  font-size: 12px;
+}
+
+.categoria-estourou {
+  color: #a3330f;
+  font-weight: 800;
+}
+
+.categoria-alerta {
+  color: #8a5a00;
+  font-weight: 700;
+}
+
+.acertos,
+.carteiras,
+.compras,
+.divisao-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acertos li {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cor-fundo);
+  line-height: 1.5;
+}
+
+.acerto-valor {
+  color: var(--cor-comboio);
+}
+
+.carteiras li,
+.divisao-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.carteiras small {
+  color: var(--cor-texto-suave);
+}
+
+.divisao-lista {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+}
+
+.divisao-lista input {
+  width: 110px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 10px;
+  font: inherit;
+  text-align: right;
+}
+
+.compras {
+  padding-top: 12px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.compras button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.compras button:hover:not(:disabled) {
+  background: var(--cor-fundo);
+}
+
+.compras button:disabled {
+  cursor: default;
+}
+
+.compras button span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.compras small {
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+}
+
+.rendendo-bem {
+  color: #2f6b1f;
+  font-weight: 700;
+}
+
+.rendendo-mal {
+  color: #a3330f;
+  font-weight: 700;
+}
+
+.form-apagar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alinhar-inicio {
+  align-self: flex-start;
+}
+
+.valor-grande.pequeno input {
+  font-size: 26px;
+}
+
+.orcamento-campo label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Exportar gastos (spec 052) */
+.financeiro-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.menu-exportar {
+  position: relative;
+}
+
+.menu-exportar summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.menu-exportar summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-exportar > div {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  top: calc(100% + 6px);
+  display: grid;
+  min-width: 230px;
+  padding: 6px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  box-shadow: 0 8px 24px rgb(59 39 21 / 15%);
+}
+
+.menu-exportar > div button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-exportar > div button:hover {
+  background: var(--cor-comboio-fundo);
+}
+
+/* Meu orçamento pessoal (spec 056) */
+.meu-orcamento .numero small {
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.meu-orcamento .barra-orcamento {
+  height: 8px;
+  margin: 6px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--cor-borda);
+}
+
+.meu-orcamento .barra-orcamento span {
+  display: block;
+  height: 100%;
+  background: var(--caramelo);
+}
+
+.meu-orcamento.nivel-atencao .barra-orcamento span {
+  background: var(--laranja);
+}
+
+.meu-orcamento.nivel-estourou .barra-orcamento span {
+  background: var(--cor-pessoal);
+}
+
+.meu-orcamento-form {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.meu-orcamento-form > div {
+  display: flex;
+  gap: 6px;
+}
+
+.meu-orcamento-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Divisão por pesos e por item (spec 081) */
+.modos-divisao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.modos-divisao button,
+.divisao-item-pessoas button {
+  padding: 4px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.modos-divisao button[aria-pressed='true'],
+.divisao-item-pessoas button[aria-pressed='true'] {
+  border-color: var(--laranja);
+  background: var(--laranja);
+  font-weight: 700;
+}
+
+.divisao-peso {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divisao-peso input {
+  width: 52px;
+}
+
+.divisao-itens {
+  display: grid;
+  gap: 8px;
+}
+
+.divisao-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+}
+
+.divisao-item-pessoas {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: 4px;
+}
+
+/* Relatórios (spec 082) */
+.relatorio {
+  display: grid;
+  gap: 10px;
+}
+
+.relatorio-barras {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.relatorio-barras li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.relatorio-barra {
+  display: grid;
+  gap: 2px;
+}
+
+.relatorio-barra span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--caramelo);
+}
+
+.relatorio-barra.dupla .pagou {
+  height: 4px;
+  background: var(--couro);
+}
+
+.relatorio-valor {
+  display: grid;
+  font-weight: 700;
+  text-align: right;
+}
+
+.relatorio-valor small {
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+.relatorio-rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Contas no estilo do app (site espelho, etapa 4, 09/11/2026) ----------
+   Celular: saldo, painel dobrado, conversa e a barra de lançar presa embaixo.
+   Computador: saldo, conversa e barra numa coluna; o painel fica do lado. */
+.contas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'saldo'
+    'painel'
+    'conversa'
+    'barra';
+  gap: 14px;
+}
+
+@media (min-width: 1000px) {
+  .contas {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-areas:
+      'saldo painel'
+      'conversa painel'
+      'barra painel';
+    grid-template-rows: auto 1fr auto;
+    column-gap: 24px;
+    max-width: 1120px;
+  }
+}
+
+/* Meu saldo: cartão couro com o número grande, como o do app */
+.meu-saldo {
+  grid-area: saldo;
+  border-radius: 24px;
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: var(--sombra-hero);
+  overflow: hidden;
+}
+
+.meu-saldo-botao {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 20px 18px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.meu-saldo-rotulo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--creme);
+}
+
+.meu-saldo-valor {
+  font-family: var(--fonte-titulo);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.meu-saldo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--creme);
+}
+
+.meu-saldo-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-weight: 600;
+}
+
+.meu-saldo-detalhe {
+  margin: 0;
+  padding: 0 20px 16px;
+  font-size: 13px;
+  color: var(--creme);
+}
+
+.meu-saldo-acertos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 20px;
+  padding: 16px 0 20px;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+  font-size: 14px;
+}
+
+.meu-saldo-acertos p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--creme);
+}
+
+.meu-saldo-acertos ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meu-saldo-pessoas li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.meu-saldo-pessoas span {
+  flex: 1;
+  color: var(--creme);
+  font-weight: 600;
+}
+
+/* Painel: no celular é uma linha que abre; no computador fica aberto do lado */
+.contas-painel {
+  grid-area: painel;
+  align-self: start;
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+}
+
+.contas-painel-alternar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.contas-painel-alternar > span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.contas-painel-alternar strong {
+  font-size: 15px;
+}
+
+.contas-painel-alternar small {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.contas-painel-alternar > svg:first-child {
+  color: var(--couro);
+}
+
+.contas-painel-seta {
+  transition: transform 0.15s;
+}
+
+.contas-painel.aberto .contas-painel-seta {
+  transform: rotate(180deg);
+}
+
+.contas-painel-corpo {
+  display: none;
+  padding: 0 16px 8px;
+}
+
+.contas-painel.aberto .contas-painel-corpo {
+  display: block;
+}
+
+/* Cada pedaço do painel é um cartão sem moldura, separado por uma linha */
+.contas-painel .cartao-ui {
+  gap: 8px;
+  padding: 16px 0;
+  border: 0;
+  border-top: 1px solid var(--cor-borda);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.contas-painel .cartao-ui-topo h2 {
+  font-size: 15px;
+}
+
+.contas-painel .numero,
+.contas-painel .carteira-saldo {
+  margin: 0;
+  font-size: 22px;
+}
+
+.contas-painel .numero small {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+.contas-painel .numero-legenda {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.painel-barra {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--cor-fundo-suave);
+  overflow: hidden;
+}
+
+.painel-barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cor-comboio);
+}
+
+.painel-barra.alerta span {
+  background: var(--caramelo);
+}
+
+.painel-barra.estourou span {
+  background: var(--laranja);
+}
+
+.painel-dobra summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--couro);
+  cursor: pointer;
+  list-style: none;
+}
+
+.painel-dobra summary::-webkit-details-marker {
+  display: none;
+}
+
+.painel-dobra[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.painel-dobra > div {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+/* "Meu orçamento" num painel estreito: o campo encolhe e o botão desce se não couber */
+.meu-orcamento-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.meu-orcamento-form > div {
+  flex-wrap: wrap;
+}
+
+.meu-orcamento-form input {
+  flex: 1 1 90px;
+}
+
+@media (min-width: 1000px) {
+  .contas-painel {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  .contas-painel-alternar {
+    display: none;
+  }
+
+  .contas-painel-corpo {
+    display: block;
+    padding: 0 18px 8px;
+  }
+
+  .contas-painel-corpo > .cartao-ui:first-child {
+    border-top: 0;
+  }
+}
+
+/* A conversa: os meus à direita (couro), dos outros à esquerda (cartão branco) */
+.contas-conversa {
+  grid-area: conversa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.contas-euro,
+.contas-recado {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.contas-euro {
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+}
+
+.contas-euro svg {
+  color: var(--couro);
+}
+
+.contas-recado {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso);
+}
+
+.conversa-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.conversa-dia h3 {
+  align-self: center;
+  margin: 8px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.conversa-dia h3 span {
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.conversa-dia ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bolha-linha {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bolha-linha.minha {
+  justify-content: flex-end;
+}
+
+.bolha-pilha {
+  max-width: min(78%, 460px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bolha-linha.minha .bolha-pilha {
+  align-items: flex-end;
+}
+
+.bolha {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 20px 20px 20px 6px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bolha-linha.minha .bolha {
+  border-radius: 20px 20px 6px 20px;
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.bolha:hover {
+  filter: brightness(0.97);
+}
+
+.bolha strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.bolha small {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.bolha-linha.minha .bolha small {
+  color: var(--creme);
+}
+
+.bolha-acoes {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bolha-acoes:empty {
+  display: none;
+}
+
+.contas-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+.contas-vazio svg {
+  color: var(--caramelo);
+}
+
+.contas-vazio h2 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  color: var(--cor-texto);
+}
+
+.contas-vazio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Barra de lançar: presa embaixo da tela enquanto a conversa rola */
+.contas-barra {
+  grid-area: barra;
+  position: sticky;
+  z-index: 5;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-flutuante);
+}
+
+.contas-barra input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 999px;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 15px;
+}
+
+.contas-barra-completo,
+.contas-barra-enviar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.contas-barra-completo {
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+}
+
+.contas-barra-enviar {
+  background: var(--caramelo);
+  color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .contas-barra {
+    bottom: 16px;
+  }
+}

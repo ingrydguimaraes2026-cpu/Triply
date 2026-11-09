@@ -1,0 +1,144 @@
+/* Mapa escuro em tons de couro */
+.mapa {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 60% 40%, #2c1d10 0%, #1a1009 70%);
+}
+
+.mapa svg {
+  display: block;
+}
+
+.mapa-pais {
+  fill: #3a2716;
+  stroke: #573b22;
+  stroke-width: 0.6;
+  transition: fill 0.6s;
+}
+
+.mapa-pais.aceso {
+  fill: #7b542f;
+  stroke: #b6771d;
+}
+
+.mapa-rota {
+  fill: none;
+  stroke: var(--dourado-claro);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 9;
+  animation: mapa-rota-anda 1.2s linear infinite;
+}
+
+@keyframes mapa-rota-anda {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.mapa-pino-centro {
+  fill: var(--laranja);
+  stroke: #1a1009;
+  stroke-width: 3;
+}
+
+.mapa-pino-onda {
+  fill: var(--laranja);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mapa-pino-pulsa 2.4s ease-out infinite;
+}
+
+@keyframes mapa-pino-pulsa {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.mapa-pino-nome {
+  fill: var(--creme);
+  font-size: 14px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #1a1009;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-rota,
+  .mapa-pino-onda {
+    animation: none;
+  }
+}
+
+/* Destino de hoje (spec 006) */
+.mapa-pino.hoje .mapa-pino-centro {
+  fill: #ffffff;
+  stroke: var(--laranja);
+  stroke-width: 4px;
+}
+/* Google Maps embutido (MapaGoogle): os mapas guardados ficam um em cima do outro, só o atual aparece */
+.mapa-google {
+  position: absolute;
+  inset: 0;
+  background: var(--cor-comboio-fundo);
+}
+
+.mapa-google iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  visibility: hidden;
+}
+
+.mapa-google iframe.ativo {
+  visibility: visible;
+}
+
+.mapa-google-carregando {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--cor-comboio-fundo);
+  color: var(--cor-comboio);
+  font-size: 14px;
+  font-weight: 700;
+  animation: mapa-google-aparece 0.2s ease-out;
+}
+
+.mapa-google-pino {
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--laranja);
+  transform: rotate(-45deg);
+  animation: mapa-google-pula 0.9s ease-in-out infinite;
+}
+
+@keyframes mapa-google-pula {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+@keyframes mapa-google-aparece {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-google-pino { animation: none; }
+}

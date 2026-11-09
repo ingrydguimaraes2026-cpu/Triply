@@ -1,0 +1,31 @@
+/* Spec 101: diário do dia */
+.diario {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--cor-borda);
+}
+.diario h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.diario-entrada {
+  padding: 8px 0;
+}
+.diario-entrada p {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.diario-entrada small {
+  color: var(--cor-texto-suave);
+  font-weight: 400;
+}
+.diario-so-eu {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}

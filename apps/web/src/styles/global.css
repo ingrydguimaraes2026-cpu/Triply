@@ -1,0 +1,274 @@
+/* Cores e medidas do site. Mude aqui e muda em tudo.
+   Paleta do redesign "Malinha" (Couro e caramelo), a mesma do app: apps/mobile/theme.ts.
+   Mudou lá, muda aqui também (os nomes do site ficaram os antigos pra não mexer nas telas).
+   Dourado e "laranja" NÃO servem pra texto (pouco contraste): só fundos, barras e selos. */
+:root {
+  --couro: #7b542f;
+  --caramelo: #b97a22;
+  --laranja: #e3a04a; /* no app é o "dourado" */
+  --dourado-claro: #f6ead7; /* no app é o "chip" (fundo de ícone e selo) */
+  --creme: #f5e9d6; /* texto claro em cima do couro ou de foto (não muda no tema escuro) */
+  --escuro: #4a2e14;
+
+  --cor-fundo: #fbf3e6;
+  --cor-cartao: #ffffff;
+  --cor-texto: #3b2715;
+  --cor-texto-suave: #7a5f45;
+  --cor-borda: #eadcc6;
+  --cor-comboio: var(--couro); /* compartilhado com o comboio */
+  --cor-comboio-fundo: #f1e4cf;
+  --cor-pessoal: #9a5b00; /* só você vê (dourado escurecido pra dar pra ler) */
+  --cor-pessoal-fundo: var(--laranja);
+  /* Spec 109: tons que estavam fixos nos CSS das telas */
+  --cor-borda-forte: #d9c3a2;
+  --cor-fundo-suave: #f6ead7;
+  --cor-menu: #fffdf8; /* menu lateral (spec 113) */
+  --cor-borda-menu: #efe3cf;
+  --cor-texto-menu: #6e5540;
+  --cor-erro: #a1442b;
+  --cor-erro-fundo: #f6e2da;
+  --cor-sucesso: #5e6b2e;
+  --cor-sucesso-fundo: #eef0df;
+  /* Sombras marrons do app */
+  --sombra-cartao: 0 4px 14px rgba(74, 46, 20, 0.06);
+  --sombra-botao: 0 8px 20px rgba(123, 84, 47, 0.28);
+  --sombra-flutuante: 0 4px 12px rgba(74, 46, 20, 0.15);
+  --sombra-hero: 0 18px 40px rgba(74, 46, 20, 0.25);
+  --raio: 18px;
+  --fonte-titulo: 'Fraunces Variable', Georgia, serif;
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--cor-comboio);
+}
+
+.pagina {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cartao {
+  background: var(--cor-cartao);
+  border-radius: var(--raio);
+  padding: 16px;
+  border: 1px solid transparent;
+  box-shadow: var(--sombra-cartao);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: var(--sombra-botao);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  font: inherit;
+}
+
+.botao:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Botão que parece link (ex.: "Esqueci a senha") */
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-comboio);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Logo da Norti (src/components/ui/Logo.tsx). O tamanho segue o font-size de quem está em volta. */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18em;
+  line-height: 1;
+}
+
+.logo-simbolo {
+  flex: none;
+  width: 1.9em;
+  height: 1.9em;
+  margin: -0.25em 0;
+}
+
+.logo-nome {
+  font-family: var(--fonte-titulo);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Quadradinho bege da Norti (marca do app, spec 112) */
+.logo-norti {
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+  display: inline-grid;
+  place-items: center;
+  margin: -0.2em 0.2em -0.2em 0;
+  border-radius: 0.45em;
+  background: #f6ead7;
+}
+
+.logo-norti mascot-view {
+  width: 1.25em !important;
+  height: 1.25em !important;
+}
+
+/* Compartilhar (spec 025): botão de item e destaque de quem chegou por um link */
+.botao-compartilhar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 7px;
+  line-height: 0;
+}
+
+.botao-compartilhar:hover {
+  color: var(--cor-comboio);
+  background: var(--cor-borda);
+}
+
+.item-destacado {
+  animation: destacar-item 2.5s ease-out;
+  border-radius: 12px;
+}
+
+@keyframes destacar-item {
+  0%,
+  60% {
+    box-shadow: 0 0 0 3px var(--caramelo);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ---------- Spec 090: acessibilidade (escolhida no Perfil, fica no aparelho) ---------- */
+/* Letra maior: aumenta tudo junto (boa parte do CSS usa px, então "zoom" é o que funciona) */
+html[data-fonte='grande'] body {
+  zoom: 1.15;
+}
+html[data-fonte='maior'] body {
+  zoom: 1.3;
+}
+/* Alto contraste: texto suave vira quase o texto, bordas mais escuras */
+html[data-contraste='alto'] {
+  --cor-texto: #1f1206;
+  --cor-texto-suave: #3b2715;
+  --cor-borda: #b08a55;
+}
+html[data-contraste='alto'] a,
+html[data-contraste='alto'] .botao-texto {
+  text-decoration: underline;
+}
+/* Quem pediu menos movimento no sistema não vê animação */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Spec 109: tema escuro (beta, escolhido no Perfil; fica no aparelho) ----------
+   "Couro à noite": mesmo couro e laranja, fundo escuro. Dourado e laranja continuam só em fundos e selos. */
+html[data-tema='escuro'] {
+  color-scheme: dark;
+  --cor-fundo: #1a1009;
+  --cor-cartao: #2a1a0c;
+  --cor-texto: #fff0d9;
+  --cor-texto-suave: #d9c3a2;
+  --cor-borda: #45301d;
+  --cor-borda-forte: #5c3f27;
+  --cor-fundo-suave: #22150a;
+  --cor-menu: var(--cor-cartao);
+  --cor-borda-menu: var(--cor-borda);
+  --cor-texto-menu: var(--cor-texto-suave);
+  --cor-comboio: var(--dourado-claro);
+  --cor-comboio-fundo: #3d2a14;
+  --cor-pessoal: #ffb547;
+  --cor-erro: #ffb4a1;
+  --cor-erro-fundo: #4a1d12;
+  --cor-sucesso: #8fd6a8;
+  --cor-sucesso-fundo: #173a24;
+}
+html[data-tema='escuro'] .cartao {
+  border-color: var(--cor-borda);
+}
+html[data-tema='escuro'] body {
+  background: var(--cor-fundo);
+}
+html[data-tema='escuro'][data-contraste='alto'] {
+  --cor-texto: #ffffff;
+  --cor-texto-suave: #fff0d9;
+  --cor-borda: #8a6a45;
+}
+
+/* Ícones da Norti (docs/design/ICONES.md): traço na cor do texto, fundo dourado.
+   Pra mudar o fundo num lugar só: --icone-duo (cor) e --icone-duo-op (opacidade). */
+.icone { flex: none; vertical-align: middle; }
+.icone .duo { fill: var(--icone-duo, var(--laranja)); fill-opacity: var(--icone-duo-op, 1); }
+.selo { display: inline-flex; flex: none; }
+.selo svg { width: 100%; height: 100%; }

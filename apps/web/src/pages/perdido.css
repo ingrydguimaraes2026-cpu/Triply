@@ -1,0 +1,46 @@
+/* Página 404 / erro (spec 113): cartão sobre o mapa, com o pino perdido no Ponto Nemo.
+   A moldura (mapa, logo, cartão) vem do SobreOMapa. */
+.perdido.sobre-mapa {
+  padding-top: 200px;
+}
+
+.perdido-mascote {
+  margin-top: -86px;
+}
+
+.perdido-codigo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--laranja);
+  -webkit-text-stroke: 1.5px #8a5a26;
+}
+
+.perdido .sobre-mapa-cartao h1 {
+  font-size: 36px;
+}
+
+.perdido-botoes {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .perdido.sobre-mapa {
+    padding-top: 140px;
+  }
+
+  .perdido-codigo {
+    font-size: 72px;
+  }
+
+  .perdido .sobre-mapa-cartao h1 {
+    font-size: 30px;
+  }
+}

@@ -1,0 +1,35 @@
+/* Pagamentos previstos (spec 057). Só cores do global.css. */
+.a-pagar {
+  display: grid;
+  gap: 8px;
+}
+
+.a-pagar-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.a-pagar-lista li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.a-pagar-texto {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.a-pagar-texto small {
+  color: var(--cor-texto-suave);
+}
+
+.a-pagar-lista li.situacao-atrasado small,
+.a-pagar-lista li.situacao-hoje small {
+  color: var(--cor-pessoal);
+  font-weight: 700;
+}

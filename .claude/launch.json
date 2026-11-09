@@ -1,0 +1,42 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@together/web",
+        "dev"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "web-2",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@together/web", "exec", "vite", "--port", "5174", "--strictPort"],
+      "port": 5174
+    },
+    {
+      "name": "marketing",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5180", "--directory", "docs/marketing"],
+      "port": 5180
+    },
+    {
+      "name": "mobile",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@together/mobile",
+        "exec",
+        "expo",
+        "start",
+        "--web",
+        "--port",
+        "8089"
+      ],
+      "port": 8089
+    }
+  ]
+}

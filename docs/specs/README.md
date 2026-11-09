@@ -1,0 +1,177 @@
+# Specs: o que vamos construir
+
+Cada arquivo aqui é um "envelope" de uma funcionalidade: o que é, por que existe, o que entra e o que não entra, quais telas e tabelas usa, e como saber que ficou pronto.
+
+**Antes de começar qualquer funcionalidade, leia a spec dela.** Se algo não estiver claro ou precisar mudar, combine com o Victor e atualize a spec primeiro.
+
+**O plano das próximas funcionalidades (em ondas) está no [`docs/ROADMAP.md`](../ROADMAP.md).** Cada item de lá vira uma spec aqui antes de codar.
+
+**Rumo novo (03/11/2026): leia o [`docs/RUMO.md`](../RUMO.md).** Âncora = passaporte da galera. Prioridade 1 é a spec [118](118-passaporte-da-galera.md), junto com a [120](120-hoje-com-reservas-do-grupo.md) ("Hoje" com as reservas do grupo). Spec nova que não serve à âncora, ao "Hoje" ou ao conserto da base não se abre agora; o resto fica congelado (❄). Roteiro do dia e transportes não congelam.
+
+Foco agora: **só o app**. Infraestrutura (banco de testes separado, publicar na internet, testes automáticos no GitHub, e-mail próprio) fica pra depois. (O convidado age pela web leve: ver RUMO.)
+
+## Roteiro
+
+| # | Spec | Fase | Tamanho | Depende de | Status |
+|---|---|---|---|---|---|
+| — | Editar o roteiro (era o PR #3) | 1 | M | — | Pronto pra testar |
+| 001 | [Datas de cada destino](001-datas-dos-destinos.md) | 1 | P | PR #3 | Pronto pra testar |
+| 002 | [Financeiro: gastos e divisão](002-financeiro-gastos-e-divisao.md) | 1 | G | — | Pronto pra testar |
+| 003 | [Financeiro: orçamento e câmbio](003-financeiro-orcamento-e-cambio.md) | 1 | M | 002 | Pronto pra testar |
+| 004 | [Transportes](004-transportes.md) | 1 | G | 001 | Pronto pra testar |
+| 005 | [Fotos](005-fotos.md) | 1 | M | — | Pronto pra testar |
+| 006 | [Overview com dados reais](006-overview-com-dados-reais.md) | 2 | P | 002, 003, 004, 005 | Pronto pra testar |
+| 007 | [Gestão do comboio](007-gestao-do-comboio.md) | 2 | P | — | Pronto pra testar (web e app) |
+| 008 | [Minhas viagens e perfil](008-minhas-viagens-e-perfil.md) | 2 | M | — | Pronto pra testar · app: Configurações (nome, datas, moeda, permissões); apagar só no site |
+| 009 | [Lançamento rápido de gasto](009-lancamento-rapido-de-gasto.md) | 2 | M | 002 | Pronto pra testar |
+| 010 | [Documentos de entrada](010-documentos-de-entrada.md) | 2 | M | 001 | Pronto pra testar (web e app) · países sem regra à mão usam a 111 |
+| 011 | [Hospedagem](011-hospedagem.md) | 2 | M | 001 | Pronto pra testar (web e app) |
+| 012 | [Termômetro do câmbio](012-termometro-do-cambio.md) | 2 | P | 003 | Pronto pra testar |
+| 013 | [Boletim do câmbio no celular](013-avisos-de-cambio.md) | 2 | M | 012 | Pronto pra testar |
+| 014 | [Feed de fotos do comboio](014-feed-de-fotos.md) | 2 | G | 005, 013 | Pronto pra testar (web e app: feed, postar até 10 fotos, curtir, comentar) |
+| 015 | [Saldo da viagem por e-mail (Wise e Nomad)](015-saldo-por-email.md) | 3 | G | 002, 003, 013 | Pausada (fora da fila por decisão do Victor, 31/10/2026) |
+| 016 | [Lugares de cada destino](016-lugares-dos-destinos.md) (passeios, comida, guarda-volumes) | 2 | M | 001 | Pronto pra testar |
+| 011+ | [Hospedagem: horário de check-in/out](011-hospedagem.md#atualização-de-23102026-horário-de-check-in-e-check-out) | 2 | P | 011 | Pronto pra testar |
+| 017 | [Arquitetura: monorepo, core e app mobile](017-arquitetura-monorepo-e-mobile.md) | 3 | G | app atual | Em andamento |
+| 018 | [Convidado sem conta](018-convidado-sem-conta.md) (entra pelo link só com o nome; web leve `/v/<código>`, FILA 0.8) | 2 | M | 007 | Pronto pra testar |
+| 019 | [Avisos do ADM](019-avisos-do-adm.md) (recado fixado no topo da viagem) | 2 | P | 007 | Em andamento |
+| 020 | [Tarefas com responsável](020-tarefas-com-responsavel.md) (quem fica com o quê, com prazo) | 2 | P | 007 | Em andamento |
+| 021 | [Enquete rápida](021-enquetes-rapidas.md) (pergunta com opções pra decidir junto) | 2 | P | 007 | Em andamento |
+| 022 | [Votos em lugares](022-votos-em-lugares.md) (curtir passeios e comidas) | 2 | P | 016 | Em andamento |
+| 023 | [Clima por dia](023-clima-por-dia.md) (previsão do tempo em cada dia do roteiro) | 2 | P | 001 | Em andamento |
+| 024 | [Ponto de encontro](024-ponto-de-encontro.md) (onde e que horas se encontrar, com mapa) | 2 | P | 007 | Em andamento |
+| 025 | [Compartilhar no WhatsApp](025-compartilhar-no-whatsapp.md) (link que abre direto no item) | 2 | P | — | Em andamento |
+| 026 | [Endereço e guia da casa](026-guia-da-casa.md) (Wi-Fi, código da porta, regras) | 2 | P | 011 | Pronto pra testar (web) |
+| 027 | [Comentários em qualquer item](027-comentarios-em-itens.md) (gasto, lugar e hospedagem) | 2 | M | 002, 011, 016 | Pronto pra testar (web) |
+| 028 | [Cofre da viagem + bilhete no trajeto](028-cofre-e-bilhete.md) (PDFs e fotos de reservas) | 2 | M | 004 | Pronto pra testar (web) |
+| 029 | [Agenda do dia](029-agenda-do-dia.md) (trajetos, chegadas e eventos por dia, com hora) | 2 | G | 003, 004 | Pronto pra testar (web e app) |
+| 031 | [Central de notificações](031-central-de-notificacoes.md) (sino com o que o comboio fez desde a última visita) | 2 | M | várias | Pronto pra testar (web) |
+| 032 | [Lembretes no celular](032-lembretes.md) (1 h antes de trajeto e encontro) | 2 | M | 004, 013, 024 | Pronto pra testar (web) · banco não aplicado |
+| 033 | [Preferências de aviso](033-preferencias-de-aviso.md) (o que cada um recebe no celular) | 2 | P | 032 | Pronto pra testar (web) · banco não aplicado |
+| 035 | [Situação e preço do trajeto](035-situacao-e-preco-do-trajeto.md) (sugestão/reservado/comprado + lançar como gasto) | 2 | P | 002, 004 | Pronto pra testar (web) · banco não aplicado |
+| 036 | [Calendário da viagem](036-calendario-da-viagem.md) (.ics pro Google/iPhone/Outlook) | 2 | P | 029 | Pronto pra testar (web) |
+| 037 | [Botão de emergência](037-emergencia.md) (números do país, hospital, consulado) | 2 | P | 010 | Pronto pra testar (web) |
+| 038 | [Passaporte: nacionalidade e validade](038-passaporte-e-nacionalidade.md) (aviso de 6 meses) | 2 | P | 008, 010 | Pronto pra testar (web) · banco não aplicado |
+| 039 | [Seguro viagem](039-seguro-viagem.md) (telefone 24 h na Emergência, quem está coberto) | 2 | P | 037 | Pronto pra testar (web) · banco não aplicado |
+| 034 | [Offline de leitura](034-offline-de-leitura.md) (o que já abriu abre sem internet) | 2 | G | PWA | Pronto pra testar (web publicado) |
+| 040 | [Ir até o lugar e pedir corrida](040-ir-e-pedir-corrida.md) (Maps, Waze, Apple, Citymapper, Uber, Bolt, FREENOW) | 2 | P | 016, 024 | Pronto pra testar (web) |
+| 041 | [Prazo de cancelamento grátis](041-prazo-de-cancelamento.md) (contagem + lembrete 2 dias antes) | 2 | P | 011, 032 | Pronto pra testar (web) · banco não aplicado |
+| 042 | [Resumo da noite](042-resumo-da-noite.md) (push às 21h com o amanhã) | 2 | P | 029, 032 | Pronto pra testar (servidor) · banco não aplicado |
+| 043 | [Menções @nome](043-mencoes.md) (destaque + aviso no celular) | 2 | P | 027 | Pronto pra testar (web) |
+| 044 | [Decisões registradas](044-decisoes-registradas.md) (enquete fechada vira decisão) | 2 | P | 021 | Pronto pra testar (web) · banco não aplicado |
+| 045 | [Orçamento combinado](045-orcamento-combinado.md) (faixa secreta de cada um, faixa comum pro comboio) | 2 | P | 003 | Pronto pra testar (web) · banco não aplicado |
+| 046 | [Modo sonhando](046-modo-sonhando.md) (criar a viagem antes de saber o destino) | 2 | P | 021, 045 | Pronto pra testar (web) |
+| 047 | [Ficha do país + internet no destino](047-ficha-do-pais.md) (tomada, gorjeta, idioma, eSIM) | 2 | P | 010, 020 | Pronto pra testar (web) |
+| 048 | [Listas do comboio](048-listas-do-comboio.md) (quem leva + compras com lançar como gasto) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
+| 049 | [Contagem e progresso](049-contagem-e-progresso.md) ("faltam 23 dias · 78% pronto") | 2 | P | 006, 035 | Pronto pra testar (web) |
+| 050 | [Ficha da pessoa + emergência e saúde](050-ficha-da-pessoa.md) (alergias, aniversário, saúde só pra quem liberar) | 2 | P | 007, 008 | Pronto pra testar (web) · banco não aplicado |
+| 051 | ["Cheguei bem"](051-cheguei-bem.md) (um toque avisa o comboio) | 2 | P | 013 | Pronto pra testar (web) · banco não aplicado |
+| 052 | [Exportar gastos](052-exportar-gastos.md) (planilha e Splitwise) | 2 | P | 002 | Pronto pra testar (web) |
+| 053 | [Busca na viagem](053-busca-na-viagem.md) (um campo acha tudo) | 2 | P | várias | Pronto pra testar (web) |
+| 054 | [Arquivar viagem](054-arquivar-viagem.md) (some só da minha lista) | 2 | P | 008 | Pronto pra testar (web) · banco não aplicado |
+| 055 | [Repetir com o mesmo comboio](055-repetir-comboio.md) (nova viagem já com as pessoas) | 2 | P | 007 | Pronto pra testar (web) · banco não aplicado |
+| 056 | [Meu orçamento pessoal](056-meu-orcamento.md) (minha parte + pessoais, quanto sobra por dia) | 2 | P | 003 | Pronto pra testar (web) · banco não aplicado |
+| 057 | [Gastos planejados e recorrentes](057-pagamentos-previstos.md) ("A pagar", fora dos acertos até pagar) | 2 | P | 002 | Pronto pra testar (web) · banco não aplicado |
+| 058 | [Tela Hoje](058-tela-hoje.md) (agora, próximo, onde dormimos, encontro) | 2 | M | 029, 040 | Pronto pra testar (web e app) |
+| 059 | [Ferramentas do dia](059-ferramentas-do-dia.md) (conversor, gorjeta, motorista, banheiro, restaurante, malas) | 2 | P | 058 | Pronto pra testar (web e app) |
+| 060 | [Malas antes do check-in + dia de passagem](060-malas-e-dia-de-passagem.md) (na Hospedagem e na Hoje) | 2 | P | 011, 058 | Pronto pra testar (web) · banco não aplicado |
+| 061 | ["Já fomos" e "Perto de mim"](061-ja-fomos-e-perto-de-mim.md) (Lugares) | 2 | P | 016, 040 | Pronto pra testar (web) · banco não aplicado |
+| 062 | [Transfer de chegada](062-como-chegar.md) ("como chegar" no guia e na Hoje) | 2 | P | 026, 058 | Pronto pra testar (web) · banco não aplicado |
+| 063 | [Vibe da hospedagem + hostels](063-vibe-da-hospedagem.md) (etiquetas, nota, busca de hostels) | 2 | P | 011 | Pronto pra testar (web) · banco não aplicado |
+| 064 | [Buscar lugar com autocompletar](064-buscar-lugar.md) (sugestões reais, guarda onde fica) | 2 | M | 016 | Pronto pra testar (web) · banco não aplicado |
+| 065 | [Datas em comum](065-datas-em-comum.md) (cada um pinta os dias livres) | 2 | M | 007 | Pronto pra testar (web) · banco não aplicado |
+| 066 | ["Não abro mão"](066-nao-abro-mao.md) (3 obrigatórios por pessoa por destino) | 2 | M | 022 | Pronto pra testar (web) · banco não aplicado |
+| 067 | [Quem vai em cada trajeto](067-quem-vai-no-trajeto.md) (+ "meu itinerário" e lembrete só pra quem vai) | 2 | M | 004, 032 | Pronto pra testar (web) · banco não aplicado |
+| 068 | [Quem dorme onde](068-quem-dorme-onde.md) (quartos, vagas, sorteio) | 2 | M | 011 | Pronto pra testar (web) · banco não aplicado |
+| 069 | [Minha mala](069-mala-individual.md) (checklist pessoal com modelo pelo clima) | 2 | M | 048 | Pronto pra testar (web) · banco não aplicado |
+| 070 | [Programação em paralelo](070-programacao-em-paralelo.md) (evento só de parte do comboio) | 2 | M | 029 | Pronto pra testar (web) · banco não aplicado |
+| 071 | [Mover evento entre dias](071-mover-entre-dias.md) (setas ‹ › na Agenda) | 2 | P | 029 | Pronto pra testar (web) |
+| 072 | [Prévia do link](072-previa-do-link.md) (título e foto da opção de hospedagem) | 2 | M | 011 | Pronto pra testar (web + função) · banco não aplicado |
+| 073 | [Carro e rodízio de motorista](073-carro-e-rodizio.md) (quem dirige, km estimados) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
+| 074 | [Conexões e estações](074-conexoes.md) (escalas com alerta de conexão curta) | 2 | M | 004 | Pronto pra testar (web) · banco não aplicado |
+| 075 | [Destinos candidatos](075-destinos-candidatos.md) ("Pra onde vamos?" com voto) | 2 | M | 046 | Pronto pra testar (web) · banco não aplicado |
+| 076 | [Sugestão de ordem do roteiro](076-sugestao-de-ordem.md) (menos km, com a fonte) | 2 | M | PR #3 | Pronto pra testar (web) |
+| 077 | [Tempo entre compromissos](077-tempo-entre-compromissos.md) (avisa sobreposição e folga curta) | 2 | M | 029 | Pronto pra testar (web) |
+| 078 | [Permissões simples](078-permissoes-simples.md) (roteiro, transportes, orçamento pro comboio) | 2 | M | 007 | Pronto pra testar (web) · banco não aplicado |
+| 079 | [Importar lista do Google Maps](079-importar-do-maps.md) (CSV do Takeout) | 2 | M | 016 | Pronto pra testar (web) |
+| 080 | [Volta pra base no bate-e-volta](080-volta-pra-base.md) (na Hoje, com atalho do último trem) | 2 | P | 058 | Pronto pra testar (web) · parcial |
+| 081 | [Divisão por pesos e por item](081-divisao-por-pesos-e-itens.md) (casal, criança, conta de restaurante) | 2 | M | 002 | Pronto pra testar (web) |
+| 082 | [Relatórios do Financeiro](082-relatorios.md) (por dia, por pessoa, custo por pessoa por dia) | 2 | M | 002 | Pronto pra testar (web) |
+| 083 | [Meio de pagamento e dinheiro na mão](083-meio-de-pagamento-e-dinheiro-na-mao.md) (cartão/conta/dinheiro, cotação do dia) | 2 | M | 003 | Pronto pra testar (web) · banco não aplicado |
+| 084 | [Movimento da carteira vira gasto](084-movimento-da-carteira-vira-gasto.md) | 2 | Pronto pra testar (web) · banco não aplicado |
+| 085 | [Tempo real](085-tempo-real.md) | 7 | Pronto pra testar (web) · banco não aplicado |
+| 086 | [Marcações sem internet](086-marcacoes-sem-internet.md) | 7 | Pronto pra testar (web) · sem banco |
+| 087 | [Histórico e lixeira](087-historico-e-lixeira.md) | 7 | Pronto pra testar (web) · banco não aplicado |
+| 088 | [A viagem em PDF](088-viagem-em-pdf.md) | 7 | Pronto pra testar (web e app: PDF pelo compartilhar) · sem banco |
+| 089 | [Privacidade e LGPD](089-privacidade-e-lgpd.md) | 7 | Pronto pra testar (web) · banco não aplicado |
+| 090 | [Acessibilidade e modo simples](090-acessibilidade-e-modo-simples.md) | 7 | Pronto pra testar (web) · sem banco |
+| 091 | [Duplicar viagem](091-duplicar-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 092 | [Detector de furos](092-detector-de-furos.md) | 8 | Pronto pra testar (web) · sem banco |
+| 093 | [Gasto por frase ou voz](093-gasto-por-frase-ou-voz.md) | 8 | Pronto pra testar (web) · sem banco |
+| 094 | [Sugestões de lugares por destino](094-sugestoes-de-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
+| 095 | [Feriados nas datas](095-feriados-nas-datas.md) | 8 | Pronto pra testar (web) · sem banco |
+| 096 | [Montar os dias pelos votos](096-montar-os-dias-pelos-votos.md) | 8 | Pronto pra testar (web) · sem banco |
+| 097 | [Link de rede social vira lugar](097-link-de-rede-social-vira-lugar.md) | 8 | Pronto pra testar (web) · sem banco |
+| 098 | [Álbum por dia e melhores fotos](098-album-por-dia-e-melhores.md) | 8 | Pronto pra testar (web) · sem banco |
+| 099 | [Baixar fotos em .zip](099-baixar-fotos-em-zip.md) | 8 | Pronto pra testar (web) · sem banco |
+| 110 | [Avisos no app do celular](110-avisos-no-app.md) (push do Expo pros lembretes) | 2 | Pronto pra testar (código) · banco aplicado · falta EAS |
+| 111 | [Exigências de entrada automáticas](111-exigencias-automaticas.md) (Wikipédia + Passport Index, por passaporte) | 2 | Pronto pra testar (web e app) · banco aplicado (20261031003430) · função publicada e agendada (seg 6h UTC) |
+| 112 | [Site no estilo do app](112-site-no-estilo-do-app.md) (redesign Malinha no web, tela por tela) | 7 | Pronto pra testar (web) · falta conferir no navegador |
+| 113 | [Site no design "Together Plataforma"](113-site-no-design-plataforma.md) (16 etapas, tela por tela) | 7 | Pronto pra testar (web) · 16 de 16 etapas |
+| 114 | [Explorar: deslizar lugares e montar o roteiro](114-explorar-deslizar-e-montar-roteiro.md) (catálogo grátis por cidade, web + app) | 2 | Em andamento · banco, core, função e site prontos (testes verdes) · falta: aplicar no Supabase, app mobile e "Começar explorando" na Nova viagem |
+| 115 | [Jornada nova: montar a viagem com o grupo](115-jornada-montar-a-viagem-com-o-grupo.md) (v2: deslize dentro da criação, roteiro editável do grupo, estilo Roameo) | 2 | Pronto pra testar |
+| 116 | [Onboarding e primeira viagem guiada no app](116-primeira-viagem-guiada-no-app.md) (v2: conversa com a Agulha, gostinho do deslize antes da conta, roteiro pronto ao criar a conta; checklist "Montem a viagem") | 2 | v2 pronta pra testar (iPhone) |
+| 117 | [UX definitiva do app](117-ux-definitiva-do-app.md) (viagem em 4 abas, carimbos, match do comboio, motion, tela do Passe sem cobrar) | 2 | Pronta pra testar no app (web 360px ok) · falta aplicar as 2 migrations (match e Passe), regerar tipos, deploy de lembretes e testar no iPhone |
+| 118 | [Passaporte da galera](118-passaporte-da-galera.md) (a âncora: carimbo sem digitar, mapa da galera, retrospectiva que monta sozinha, "há 1 ano", widget, viagens antigas e rolês) | 0 | 118a, 118b, 118c, 118d e 118f: prontas pra testar (08/11, banco aplicado; função `lembretes` publicada com o aviso da 118d) · 118e a fazer · **prioridade 1** |
+| 119 | Passe da viagem: cobrança de verdade (RevenueCat) e parceiros afiliados | 2 | ❄ Congelada pelo RUMO (vira assinatura do organizador) |
+| 120 | ["Hoje" com as reservas do grupo](120-hoje-com-reservas-do-grupo.md) (casa, check-in, quem chega, plano do dia; reserva entra por print ou PDF; "Cheguei" vira carimbo) | 0 | **120a, 120b e 120c prontas pra testar** (app e site, 03 e 08/11; 120b só no app, leitura de print/PDF espera a função `ler-reserva` ser publicada) · banco aplicado · prioridade 1, junto com a 118 |
+| 121 | [Transporte v2](121-transporte-v2.md) (chegadas e saídas por pessoa, membro lança o seu, "Como chegar" com transporte público e Uber, mapa do trajeto com as paradas) | 0 | 121a, 121b e 121c prontas pra testar (08/11, banco aplicado) · revisa a 004 |
+| 121 (outra) | [Transportes e Hospedagem que ajudam](121-transportes-e-hospedagem-que-ajudam.md) ("saia às X", do aeroporto até a casa, dividir o transfer, links entre destinos) | 0/2 | Etapa 1 feita em outra máquina (app, 04/11) na tela Transportes antiga · **no merge de 09/11 essa tela virou Passagens (122d) e as peças `AjudaDoTrajeto`/`NovoTrajeto` ficaram fora da tela: falta levar pra Passagens** · número repetido com a 121 de cima |
+| 122 | [Deslocamentos no dia](122-deslocamentos-no-dia.md) (transporte vira passo do dia: qualquer lugar pra qualquer lugar, comparar opções, horários reais, avisos de folga/último do dia/malas/check-in; tela Passagens no lugar de Transportes; protótipo em `docs/design/transporte-v3.html`) | 0 | **122a a 122d prontas pra testar** (app; Passagens também no site; 08/11, banco aplicado) · revisa a 121 |
+| 123 | [Hospedagem por noite](123-hospedagem-por-noite.md) (hospedagem vira as noites da viagem: noites sem cama, pra reservar e reservadas, total por pessoa; cada opção com preço/pessoa, minutos a pé da estação de chegada e check-in contra a hora de chegada; comparar lado a lado; protótipo em `docs/design/hospedagem-v2.html`) | 0 | **Pronta pra testar** (app, 09/11, banco aplicado) · revisa a 011 |
+| 124 | [Mapa da hospedagem](124-mapa-da-hospedagem.md) (na cidade, Lista/Mapa: opções numeradas com preço e nota, estação de chegada, ponto principal e minutos a pé; link do Airbnb ou do hotel já traz o lugar) | 0 | **Pronta pra testar** (app e site, 09/11, sem banco; função `previa-link` publicada) · acabamento da 123 |
+| 109 | [Tema escuro (teste)](109-tema-escuro.md) | 6 | Pronto pra testar (web) · liga no Perfil |
+| 108 | [Onde a foto foi tirada](108-onde-a-foto-foi-tirada.md) | 8 | Pronto pra testar (web e app: lê o GPS da foto) · banco não aplicado |
+| 107 | [Localização ao vivo temporária](107-localizacao-ao-vivo.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 106 | [Livro da viagem](106-livro-da-viagem.md) | 8 | Pronto pra testar (web e app: PDF pelo compartilhar) · sem banco |
+| 105 | [Retrospectiva da viagem](105-retrospectiva.md) | 8 | Pronto pra testar (web e app: cartão vira imagem) · sem banco |
+| 104 | [Frases úteis com áudio](104-frases-uteis.md) | 8 | Pronto pra testar (web) · sem banco |
+| 103 | [Indicar lugares pra um amigo](103-indicar-lugares.md) | 8 | Pronto pra testar (web) · sem banco |
+| 102 | [Onde já fui e estatísticas](102-onde-ja-fui-e-estatisticas.md) | 8 | Pronto pra testar (web) · sem banco |
+| 101 | [Diário da viagem](101-diario-da-viagem.md) | 8 | Pronto pra testar (web) · banco não aplicado |
+| 100 | [Marcar pessoas nas fotos](100-marcar-pessoas-nas-fotos.md) | 8 | Pronto pra testar (web e app) · banco não aplicado |
+
+Tamanho: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma semana.
+
+A ordem da Fase 1 é uma sugestão. 002 e 005 não dependem de nada e podem começar a qualquer momento.
+
+## Decisões tomadas nas perguntas em aberto (out/2026)
+
+Na implementação, valeram as sugestões que as próprias specs davam:
+
+- **001:** saída antes da chegada bloqueia o salvar; data fora do período só avisa, com o botão "Usar como período da viagem".
+- **002:** a sobra dos centavos fica com quem pagou; gasto pessoal entra só no total de quem lançou; ainda sem "marcar como acertado".
+- **003:** orçamento do comboio inteiro (a tela mostra por pessoa); comprinhas pessoais não contam; conversão pela cotação média do comboio e, sem compra registrada, pela cotação de hoje (Frankfurter).
+- **004:** bate-e-volta vira 2 trajetos (a volta é criada junto); membro ainda não sugere trajeto.
+- **005:** 5 fotos por destino, somando o comboio inteiro; ao chegar no limite, bloqueia (apaga uma pra pôr outra). Regra garantida no banco. *Substituída pela 014: virou feed, sem limite por lugar.*
+- **007:** fotos e gastos de quem sai ficam na viagem, com o nome da pessoa.
+- **008:** o app abre na viagem que está acontecendo agora; senão, na mais recente. Mudar a moeda só muda a exibição (os gastos não são convertidos).
+- **009:** moeda padrão = a última usada; o botão "+" aparece só no celular.
+
+## Fase 3: ideias guardadas (ainda sem spec)
+
+- **Sugestão de ordem do roteiro.** A estrutura já existe em `src/features/destinos/ordem.ts` (`SugestaoDeOrdem`).
+- **Horários reais de trem e ônibus** por uma API de transporte, pra preencher os trajetos.
+- ~~Ler e-mails do banco pra lançar gastos sozinho~~ → virou a [spec 015](015-saldo-por-email.md).
+- **Retrospectiva da viagem**: resumo com mapa, gastos e as melhores fotos no fim.
+- **Nome definitivo do app** e domínio.
+
+## Como usar uma spec
+
+1. Leia a spec inteira e as **perguntas em aberto**. Resolva as perguntas com o Victor antes de codar.
+2. Mude o status aqui pra "Em andamento".
+3. Trabalhe na sua branch, um pedaço de cada vez.
+4. Use os **critérios de aceite** como roteiro de teste antes de abrir o PR.
+5. No PR, cite a spec (ex.: "Implementa a spec 002"). Quando entrar na `main`, mude o status pra "Feito".
+
+Pra uma spec nova, copie o [`_modelo.md`](_modelo.md).
