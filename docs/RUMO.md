@@ -84,7 +84,12 @@ Sai do papel de âncora. No máximo, o **Pix copia-e-cola fica como detalhe do F
 
 - **App (Expo) = do organizador e de quem quiser o passaporte.** Criar, planejar, "Hoje", carimbos, mapa, retrospectiva, widget.
 - **Web leve = do convidado.** A página do convite (`/v/<código>`): topar, votar, ver o plano. Abre rápido no navegador do WhatsApp, sem login obrigatório. Toda página da web leve mostra o passaporte do grupo como vitrine ("baixe pra ganhar o seu carimbo").
-- O resto do site continua como está (planejar no PC, `/espera`), sem funcionalidade nova.
+- ~~O resto do site continua como está (planejar no PC, `/espera`), sem funcionalidade nova.~~
+- **Site de quem planeja = espelho do app (decisão do Victor, 09/11/2026).** Victor e Ingryd planejam pelo site no dia a dia, e ele parecia outro produto. Agora:
+  - o site tem as mesmas 5 partes do app (Viagem, Roteiro, Reservas, Contas, Fotos), com os mesmos nomes, e o resto em "Tudo da viagem";
+  - cada tela copia o desenho do app, adaptado pra tela larga;
+  - funcionalidade nova continua nascendo no app; o site acompanha depois.
+  - Comparação e ordem: `docs/COMPARACAO-SITE-APP-2026-11-09.md`. Andamento: `docs/HANDOFF-site-espelho.md`.
 
 ## Como ganha dinheiro
 
