@@ -79,6 +79,8 @@ export default function OpcaoDeHospedagem() {
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [ponto, setPonto] = useState<{ lat: number; lon: number; endereco: string } | null>(null)
+  // Spec 124: lugar que veio do link (Airbnb, hotel) ou já salvo sem endereço. O endereço passa na frente.
+  const [pontoDoLink, setPontoDoLink] = useState<{ lat: number; lon: number } | null>(null)
   const preenchido = useRef(false)
 
   const dados = carga.status === 'pronto' ? carga.dados : null
@@ -102,6 +104,7 @@ export default function OpcaoDeHospedagem() {
     setContato(existente.contatoAnfitriao ?? '')
     setObservacao(existente.observacao ?? '')
     if (existente.lat != null && existente.lon != null && existente.guia?.endereco) setPonto({ lat: existente.lat, lon: existente.lon, endereco: existente.guia.endereco })
+    else if (existente.lat != null && existente.lon != null) setPontoDoLink({ lat: existente.lat, lon: existente.lon })
     if (existente.horaCheckin || existente.horaCheckout || existente.cancelamentoGratisAte || existente.contatoAnfitriao || existente.observacao) setMaisDetalhes(true)
   }, [existente])
 
@@ -125,7 +128,8 @@ export default function OpcaoDeHospedagem() {
   const chegada = cidade?.chegada ?? null
   const valor = centavos(preco)
   const contas = typeof valor === 'number' && !Number.isNaN(valor) ? contasDaOpcao(valor, pessoas, cidade?.noites ?? null) : null
-  const minutos = ponto && ponto.endereco === endereco.trim() && chegada?.lat != null && chegada?.lon != null ? minutosAPe(ponto, { lat: chegada.lat, lon: chegada.lon }) : null
+  const pontoNaTela = endereco.trim() ? (ponto && ponto.endereco === endereco.trim() ? ponto : null) : pontoDoLink
+  const minutos = pontoNaTela && chegada?.lat != null && chegada?.lon != null ? minutosAPe(pontoNaTela, { lat: chegada.lat, lon: chegada.lon }) : null
 
   // Spec 072: puxa título e foto do link no servidor (se o site deixar)
   function trocarLink(texto: string) {
@@ -137,7 +141,8 @@ export default function OpcaoDeHospedagem() {
     supabase.functions
       .invoke('previa-link', { body: { url: limpo } })
       .then(({ data }) => {
-        const previa = data as { titulo?: string | null; imagem?: string | null } | null
+        const previa = data as { titulo?: string | null; imagem?: string | null; ponto?: { lat: number; lon: number } | null } | null
+        if (previa?.ponto) setPontoDoLink(previa.ponto)
         if (previa?.imagem) setFoto(previa.imagem)
         if (previa?.titulo) setNome((atual) => (atual.trim() && atual !== sugerirNome(limpo) ? atual : previa.titulo!.slice(0, 120)))
       })
@@ -170,7 +175,7 @@ export default function OpcaoDeHospedagem() {
     const cancela = lerData(cancelamento, (destino!.chegada ?? viagem!.dataInicio ?? '2027').slice(0, 4))
     if (cancela === 'x') return setErro('Data do cancelamento inválida. Ex.: 2/6')
     setSalvando(true)
-    const lugar = await acharEndereco().catch(() => null)
+    const lugar = endereco.trim() ? await acharEndereco().catch(() => null) : pontoDoLink
     const dadosDaOpcao: DadosDaOpcao = {
       destinoId: destino!.id,
       nome: nomeFinal,

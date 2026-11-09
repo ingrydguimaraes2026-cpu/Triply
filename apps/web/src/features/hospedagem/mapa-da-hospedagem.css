@@ -1,0 +1,75 @@
+/* Spec 124: mapa da hospedagem (espelho do app) */
+.mh { display: flex; flex-direction: column; gap: 12px; }
+.mh-quadro { position: relative; overflow: hidden; border-radius: var(--raio); background: var(--cor-comboio-fundo); }
+.mh-azulejo { position: absolute; opacity: 0.9; user-select: none; pointer-events: none; }
+.mh-retas { position: absolute; left: 0; top: 0; pointer-events: none; }
+.mh-lugar { fill: var(--caramelo); stroke: var(--cor-cartao); stroke-width: 1.5; opacity: 0.8; }
+.mh-reta { stroke: var(--cor-texto); stroke-width: 2.5; stroke-dasharray: 6 5; stroke-linecap: round; }
+
+.mh-marco { position: absolute; z-index: 1; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -15px); pointer-events: none; }
+.mh-marco-bola {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--cor-cartao); box-shadow: var(--sombra-flutuante);
+}
+.mh-marco.chegada .mh-marco-bola { background: var(--escuro); color: var(--creme); }
+.mh-marco.ponto .mh-marco-bola { background: var(--caramelo); color: var(--cor-cartao); }
+.mh-marco-nome {
+  margin-top: 2px; max-width: 140px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  padding: 0 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.85); color: var(--cor-texto); font-size: 10.5px; font-weight: 700;
+}
+
+.mh-pino {
+  position: absolute; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  transform: translate(-50%, calc(-100% + 14px)); padding: 0; border: 0; background: none; font: inherit; cursor: pointer;
+}
+.mh-pino.ativo { z-index: 3; }
+.mh-pino-rotulo {
+  padding: 1px 6px; border-radius: 6px; background: var(--cor-cartao); color: var(--cor-texto); box-shadow: var(--sombra-flutuante);
+  font-size: 10.5px; font-weight: 700; white-space: nowrap;
+}
+.mh-pino.ativo .mh-pino-rotulo { background: var(--cor-texto); color: var(--cor-cartao); }
+.mh-pino-numero {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid var(--couro);
+  background: var(--cor-cartao); color: var(--couro); box-shadow: var(--sombra-flutuante); font-size: 13px; font-weight: 700;
+}
+.mh-pino.escolhida .mh-pino-numero { background: var(--couro); color: var(--creme); }
+.mh-pino.ativo .mh-pino-numero { border-color: var(--cor-texto); }
+.mh-pino:focus-visible { outline: none; }
+.mh-pino:focus-visible .mh-pino-numero { outline: 2px solid var(--caramelo); outline-offset: 2px; }
+
+.mh-atribuicao { position: absolute; right: 6px; bottom: 4px; padding: 0 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.75); color: var(--cor-texto-suave); font-size: 9.5px; }
+
+.mh-pontos { display: flex; flex-direction: column; gap: 6px; }
+.mh-pontos-titulo { color: var(--caramelo); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.mh-pontos-lista { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.mh-pontos-lista button {
+  flex: none; max-width: 240px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--cor-borda); background: var(--cor-cartao); color: var(--couro); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.mh-pontos-lista button.ativo { border-color: var(--couro); background: var(--couro); color: var(--creme); }
+
+.mh-linhas { margin: 0; padding: 0; list-style: none; overflow: hidden; border: 1px solid var(--cor-borda); border-radius: var(--raio); background: var(--cor-cartao); }
+.mh-linhas li + li { border-top: 1px solid var(--cor-borda); }
+.mh-linhas button {
+  display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.mh-linhas button:hover, .mh-linhas button.ativo { background: var(--dourado-claro); }
+.mh-numero {
+  flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--couro);
+  background: var(--dourado-claro); color: var(--couro); font-size: 12.5px; font-weight: 700;
+}
+.mh-numero.escolhida { background: var(--couro); color: var(--creme); }
+.mh-linha-meio { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.mh-linha-meio b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13.5px; }
+.mh-linha-meio small { display: flex; align-items: center; gap: 4px; color: var(--cor-texto-suave); font-size: 12px; }
+.mh-linha-preco { flex: none; color: var(--couro); font-size: 12.5px; font-weight: 700; }
+.mh-sem-lugar { display: flex; flex-direction: column; padding: 10px 12px; color: var(--cor-texto-suave); }
+.mh-sem-lugar b { font-size: 13px; }
+.mh-sem-lugar small { font-size: 12px; }
+
+/* Alternância Lista/Mapa */
+.hn-modo { display: inline-flex; align-self: flex-start; gap: 2px; padding: 4px; border-radius: 999px; background: var(--cor-comboio-fundo); }
+.hn-modo button {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 0; border-radius: 999px; background: none;
+  color: var(--cor-texto-suave); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.hn-modo button.ativo { background: var(--cor-cartao); color: var(--cor-texto); }

@@ -58,6 +58,10 @@ export default function FormOpcaoCurta({ viagemId, destino, cidade, pessoas, moe
   const [ponto, setPonto] = useState<Ponto | null>(
     opcao?.lat != null && opcao?.lon != null && opcao.guia?.endereco ? { lat: opcao.lat, lon: opcao.lon, endereco: opcao.guia.endereco } : null,
   )
+  // Spec 124: lugar que veio do link (Airbnb, hotel) ou já salvo sem endereço. O endereço passa na frente.
+  const [pontoDoLink, setPontoDoLink] = useState<{ lat: number; lon: number } | null>(
+    opcao?.lat != null && opcao?.lon != null && !opcao.guia?.endereco ? { lat: opcao.lat, lon: opcao.lon } : null,
+  )
   const [lendoLink, setLendoLink] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [confirmando, setConfirmando] = useState(false)
@@ -66,8 +70,8 @@ export default function FormOpcaoCurta({ viagemId, destino, cidade, pessoas, moe
   const chegada = cidade?.chegada ?? null
   const valor = preco.trim() ? lerValor(preco) : null
   const contas = valor !== null ? contasDaOpcao(valor, pessoas, cidade?.noites ?? null) : null
-  const minutos =
-    ponto && ponto.endereco === endereco.trim() && chegada?.lat != null && chegada?.lon != null ? minutosAPe(ponto, { lat: chegada.lat, lon: chegada.lon }) : null
+  const pontoNaTela = endereco.trim() ? (ponto && ponto.endereco === endereco.trim() ? ponto : null) : pontoDoLink
+  const minutos = pontoNaTela && chegada?.lat != null && chegada?.lon != null ? minutosAPe(pontoNaTela, { lat: chegada.lat, lon: chegada.lon }) : null
 
   // Spec 072: puxa título e foto do link no servidor (se o site deixar)
   function trocarLink(texto: string) {
@@ -79,7 +83,8 @@ export default function FormOpcaoCurta({ viagemId, destino, cidade, pessoas, moe
     supabase.functions
       .invoke('previa-link', { body: { url: limpo } })
       .then(({ data }) => {
-        const previa = data as { titulo?: string | null; imagem?: string | null } | null
+        const previa = data as { titulo?: string | null; imagem?: string | null; ponto?: { lat: number; lon: number } | null } | null
+        if (previa?.ponto) setPontoDoLink(previa.ponto)
         if (previa?.imagem) setFoto(previa.imagem)
         if (previa?.titulo) setNome((atual) => (atual.trim() && atual !== sugerirNome(limpo) ? atual : previa.titulo!.slice(0, 120)))
       })
@@ -109,7 +114,7 @@ export default function FormOpcaoCurta({ viagemId, destino, cidade, pessoas, moe
     if (!nomeFinal) return setErro('Dê um nome pra opção (ex.: "Studio perto da estação").')
     if (preco.trim() && valor === null) return setErro('Preço inválido. Ex.: 190 ou 1.250,90')
     setSalvando(true)
-    const lugar = await acharEndereco().catch(() => null)
+    const lugar = endereco.trim() ? await acharEndereco().catch(() => null) : pontoDoLink
     const dados: DadosDaOpcao = {
       destinoId: destino.id,
       nome: nomeFinal.slice(0, 120),

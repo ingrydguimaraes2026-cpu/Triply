@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { Image, Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { AlertTriangle, ArrowLeft, ArrowLeftRight, Check, ExternalLink, Footprints, Heart, KeyRound, Luggage, Pencil, Plus } from '../src/ui/icones'
+import { AlertTriangle, ArrowLeft, ArrowLeftRight, Check, ExternalLink, Footprints, Heart, KeyRound, LayoutList, Luggage, Map, Pencil, Plus } from '../src/ui/icones'
 import {
   detectarSite,
   escolherHospedagem,
   fatosDaOpcao,
   formatarDinheiro,
+  buscarLugaresComVotos,
   linkDoGuardaVolumes,
+  mapaDaHospedagem,
   linksDeBusca,
   marcarReservaDaHospedagem,
   noitesDaViagem,
@@ -20,6 +22,8 @@ import {
   type Reserva,
 } from '@together/core'
 import { useHospedagemDaViagem } from '../src/dados/hospedagemDaViagem'
+import { useCarregar } from '../src/dados/useCarregar'
+import { MapaDaHospedagem } from '../src/ui/MapaDaHospedagem'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
@@ -41,6 +45,11 @@ export default function CidadeHospedagem() {
   const { atual: viagem, meuId } = useViagemAtual()
   const carga = useHospedagemDaViagem(viagem?.id)
   const [comparando, setComparando] = useState(false)
+  // Spec 124: Lista ou Mapa. Os lugares da cidade (ponto principal) só carregam quando abre o mapa.
+  const [modo, setModo] = useState<'lista' | 'mapa'>('lista')
+  const [pontoId, setPontoId] = useState<string | null>(null)
+  const [noMapa, setNoMapa] = useState<string | null>(null)
+  const lugares = useCarregar(modo === 'mapa' && viagem?.id ? () => buscarLugaresComVotos(supabase, viagem.id) : null, [modo === 'mapa', viagem?.id])
   const [erro, setErro] = useState<string | null>(null)
   // Cópia local pra o coração e o "escolher" responderem na hora (antes do banco)
   const [opcoes, setOpcoes] = useState<Opcao[]>([])
@@ -131,8 +140,41 @@ export default function CidadeHospedagem() {
         </View>
         {erro ? <Text className="font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
 
+        {!comparando && cidade.opcoes.length ? (
+          <View className="flex-row self-start rounded-full bg-areia p-1">
+            {(['lista', 'mapa'] as const).map((m) => {
+              const ativo = modo === m
+              const Icone = m === 'lista' ? LayoutList : Map
+              return (
+                <Pressable key={m} onPress={() => setModo(m)} accessibilityRole="button" accessibilityState={{ selected: ativo }} className={`flex-row items-center gap-1.5 rounded-full px-3.5 py-1.5 ${ativo ? 'bg-cartao' : ''}`}>
+                  <Icone size={14} color={ativo ? cor.texto : cor.suave} />
+                  <Text className={`font-body-bold text-[13px] ${ativo ? 'text-texto' : 'text-suave'}`}>{m === 'lista' ? 'Lista' : 'Mapa'}</Text>
+                </Pressable>
+              )
+            })}
+          </View>
+        ) : null}
+
         {comparando ? (
           <Comparar cidade={cidade} pessoas={pessoas} euSouAdm={euSouAdm} aoEscolher={(o) => escolher(o, true)} />
+        ) : modo === 'mapa' && cidade.opcoes.length ? (
+          lugares.status === 'carregando' ? (
+            <Carregando />
+          ) : (
+            <MapaDaHospedagem
+              mapa={mapaDaHospedagem(
+                cidade,
+                lugares.status === 'pronto'
+                  ? lugares.dados.filter((l) => l.destino_id === cidade.destino.id).map((l) => ({ id: l.id, nome: l.nome, tipo: l.tipo, latitude: l.latitude, longitude: l.longitude, votos: l.votos.length + l.prioridades.length }))
+                  : [],
+                pessoas,
+                pontoId,
+              )}
+              selecionada={noMapa ?? cidade.escolhida?.id ?? cidade.opcoes[0]?.id ?? null}
+              aoSelecionar={setNoMapa}
+              aoTrocarPonto={setPontoId}
+            />
+          )
         ) : (
           <>
             {cidade.malas ? (

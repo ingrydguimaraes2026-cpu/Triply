@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { AlertTriangle, ArrowLeft, ArrowLeftRight, BedDouble, Check, ChevronRight, ExternalLink, Footprints, Heart, KeyRound, Luggage, Pencil, Plus, Repeat } from '../../components/ui/icones'
+import { AlertTriangle, ArrowLeft, ArrowLeftRight, BedDouble, Check, ChevronRight, ExternalLink, Footprints, Heart, KeyRound, LayoutList, Luggage, Map as MapIcone, Pencil, Plus, Repeat } from '../../components/ui/icones'
+import MapaDaHospedagem from '../../features/hospedagem/MapaDaHospedagem'
 import {
   detectarSite,
   escolherHospedagem,
@@ -51,6 +52,7 @@ export default function Hospedagem({ naAba = false }: { naAba?: boolean }) {
   const carga = useNoitesDaViagem(viagem.id)
   const [busca, setBusca] = useSearchParams()
   const [comparando, setComparando] = useState(false)
+  const [modo, setModo] = useState<'lista' | 'mapa'>('lista') // spec 124
   const [janela, setJanela] = useState<Janela>(null)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -244,8 +246,21 @@ export default function Hospedagem({ naAba = false }: { naAba?: boolean }) {
                 </p>
               )}
 
+              {!comparando && noPainel.opcoes.length > 0 && (
+                <div className="hn-modo" role="group" aria-label="Ver como">
+                  <button type="button" className={modo === 'lista' ? 'ativo' : ''} aria-pressed={modo === 'lista'} onClick={() => setModo('lista')}>
+                    <LayoutList size={14} aria-hidden="true" /> Lista
+                  </button>
+                  <button type="button" className={modo === 'mapa' ? 'ativo' : ''} aria-pressed={modo === 'mapa'} onClick={() => setModo('mapa')}>
+                    <MapIcone size={14} aria-hidden="true" /> Mapa
+                  </button>
+                </div>
+              )}
+
               {comparando ? (
                 <Comparar cidade={noPainel} pessoas={pessoas} euSouAdm={euSouAdm} aoEscolher={(o) => escolher(o, true)} />
+              ) : modo === 'mapa' && noPainel.opcoes.length > 0 ? (
+                <MapaDaHospedagem key={noPainel.destino.id} viagemId={viagem.id} cidade={noPainel} pessoas={pessoas} />
               ) : (
                 <>
                   {noPainel.malas && (

@@ -55,6 +55,28 @@ function lerPrevia(html: string, url: string): Previa {
     site: meta(html, ['og:site_name']),
   }
 }
+// Spec 124: lugar (lat/lon) da página, pra a opção de hospedagem cair no mapa sem digitar endereço.
+// Airbnb e sites de hotel trazem "latitude"/"longitude" nos dados da página; Booking traz data-atlas-latlng
+// (quando não bloqueia); links do Google Maps trazem "@lat,lon" ou "!3d<lat>!4d<lon>" no próprio endereço.
+function lerPontoDaPagina(html: string, url: string): { lat: number; lon: number } | null {
+  const valido = (lat: number, lon: number) => Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180 && !(lat === 0 && lon === 0)
+  const tentar = (texto: string, padroes: RegExp[]) => {
+    for (const p of padroes) {
+      const m = p.exec(texto)
+      if (m && valido(Number(m[1]), Number(m[2]))) return { lat: Number(m[1]), lon: Number(m[2]) }
+    }
+    return null
+  }
+  return (
+    tentar(url, [/!3d(-?\d{1,3}\.\d{3,})!4d(-?\d{1,3}\.\d{3,})/, /@(-?\d{1,3}\.\d{3,}),(-?\d{1,3}\.\d{3,})/, /[?&](?:q|ll|query)=(-?\d{1,3}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/]) ??
+    tentar(html, [
+      /(?:place:location|og):latitude["'][^>]*content=["'](-?\d{1,3}\.\d{3,})["'][\s\S]{0,300}?(?:place:location|og):longitude["'][^>]*content=["'](-?\d{1,3}\.\d{3,})/i,
+      /data-atlas-latlng=["'](-?\d{1,3}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/i,
+      /"latitude"\s*:\s*"?(-?\d{1,3}\.\d{3,})"?\s*,\s*"longitude"\s*:\s*"?(-?\d{1,3}\.\d{3,})/i,
+      /"lat"\s*:\s*(-?\d{1,3}\.\d{3,})\s*,\s*"(?:lng|lon)"\s*:\s*(-?\d{1,3}\.\d{3,})/i,
+    ])
+  )
+}
 // ---- fim da cópia ----
 
 Deno.serve(async (req) => {
@@ -76,11 +98,13 @@ Deno.serve(async (req) => {
       redirect: 'follow',
       signal: AbortSignal.timeout(8000),
     })
-    if (!resposta.ok) return json({ titulo: null, imagem: null, descricao: null, site: null })
+    if (!resposta.ok) return json({ titulo: null, imagem: null, descricao: null, site: null, ponto: null })
     // Só o começo da página (as meta tags ficam no <head>)
     const html = (await resposta.text()).slice(0, 300000)
-    return json(lerPrevia(html, resposta.url || url))
+    const final = resposta.url || url
+    // ponto: lat/lon da página (spec 124), pra a opção de hospedagem cair no mapa
+    return json({ ...lerPrevia(html, final), ponto: lerPontoDaPagina(html, final) })
   } catch {
-    return json({ titulo: null, imagem: null, descricao: null, site: null })
+    return json({ titulo: null, imagem: null, descricao: null, site: null, ponto: null })
   }
 })
