@@ -103,5 +103,5 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - Tela: "Bom dia, <nome>" com o avatar (abre o Perfil; Sair fica no Perfil), mapa da galera **claro** (SVG parado como o do app, não o mapa escuro com zoom), cartão grande da próxima viagem com a capa, "Faltam N dias", "N de 6 carimbos" e a barra, "No comboio agora", Próximas, Viagens passadas, Arquivadas, Nova viagem tracejado, Rolê hoje e "Já fomos pra..." (gavetas).
 - Computador (≥1024px): coluna larga com as viagens + mapa fixo à direita. Celular: uma coluna, mapa em cima.
 - Novos: `features/carimbos/RoleHoje.tsx` (Rolê hoje no site: tipo, "Usar onde estou" pelo navegador ou busca) e `features/viagens/resumoDoInicio.ts` (carimbos + atividades, igual ao app).
-- **Não conferido no navegador logado**: a porta 5174 pede login e não há conta de teste. Falta abrir `/` em 375px e 1366px e comparar com o app (porta 8089).
+- Conferido logado na 5173 (medidas pela página, sem print: janela do Claude escondida): 375px sem rolagem pro lado, mapa em cima, cartão 400px, barra em 3/6; 1366px coluna de 680px + mapa de 400px à direita. Mesmos dados do app (Paulo, 204 dias, 3 de 6 carimbos).
 
