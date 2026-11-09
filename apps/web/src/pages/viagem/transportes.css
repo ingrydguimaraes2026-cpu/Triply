@@ -336,3 +336,10 @@
 .chegadas-acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .chegadas-falta { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1.5px dashed var(--cor-borda); border-radius: 12px; background: none; color: var(--couro); font-weight: 700; cursor: pointer; }
 .chegadas-ainda { color: var(--cor-texto-suave); }
+
+/* Trecho sem trajeto: uma faixa baixa, com os links pequenos (a tela não vira um paredão) */
+.trecho-compacto { gap: 8px; padding: 14px 16px; }
+.trecho-compacto .hosp-painel-topo h2 { font-size: 18px; }
+.trecho-compacto .rota-comparar { display: flex; flex-wrap: wrap; gap: 6px; }
+.trecho-compacto .rota-link { min-height: 34px; padding: 0 10px; font-size: 13px; background: none; color: var(--couro); border: 1px solid var(--cor-borda); }
+.trecho-compacto .hosp-adicionar { align-self: flex-start; }

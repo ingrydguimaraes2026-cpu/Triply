@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, ArrowRight, ArrowRightLeft, Check, ExternalLink, Maximize2, Pencil, Plane, Plus, Route, Wallet } from '../../components/ui/icones'
+import { AlertTriangle, ArrowRight, ArrowRightLeft, ExternalLink, Pencil, Plus, Wallet } from '../../components/ui/icones'
 import { conexoes, formatarDinheiro, linkDoCaminho, meioComCaminho, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -10,19 +10,10 @@ import { meio, vouNesse, type Trajeto } from '../../features/transportes/api'
 import { avisosDoTrajeto, diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
 import {
   agruparPasseios,
-  linkDeVoo,
-  linkDoMapaRota,
   linksDoTrecho,
-  modoDoMeio,
-  MODOS_NO_MAPA,
-  parteTerrestre,
-  trechoLongo,
   trechosDaRota,
-  type ModoNoMapa,
   type Passeio,
 } from '../../features/transportes/rota'
-import MapaMundi from '../../features/mapa/MapaMundi'
-import MapaGoogle from '../../features/mapa/MapaGoogle'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
 import ChegadasESaidas from '../../features/transportes/ChegadasESaidas'
 import { formatarData } from '../../lib/datas'
@@ -38,7 +29,6 @@ import './transportes.css'
 type Destino = Tables<'destinos'>
 type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string; tipo?: 'chegada' | 'saida' } | null
 type GastoDoTrajeto = Trajeto | null
-type Selecao = { tipo: 'tudo' } | { tipo: 'trecho'; indice: number } | { tipo: 'passeio'; id: string }
 
 // Transportes (spec 004): mapa do Google com o caminho, a rota cidade a cidade e os passeios (bate-e-volta).
 export default function Transportes() {
@@ -49,11 +39,6 @@ export default function Transportes() {
   const { estado, recarregar } = useTrajetos(viagem.id)
   const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
   const [janela, setJanela] = useState<Janela>(null)
-  const [selecao, setSelecao] = useState<Selecao>({ tipo: 'tudo' })
-  // Viagem com voo (ex.: Galeão → Paris) abre no modo avião, que mostra a rota inteira no mapa-múndi
-  const [modo, setModo] = useState<ModoNoMapa>(() =>
-    trechosDaRota(destinos).some(({ de, para }) => trechoLongo(de, para)) ? 'aviao' : 'transporte',
-  )
 
   const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
   const carregados = estado.status === 'pronto' ? estado.trajetos : []
@@ -86,34 +71,6 @@ export default function Transportes() {
 
   const porDia = new Map<string, Trajeto[]>()
   for (const t of trajetos) if (t.partida) porDia.set(diaLocal(t.partida), [...(porDia.get(diaLocal(t.partida)) ?? []), t])
-
-  // Seleção atual (se o trecho/passeio sumiu, volta pra viagem inteira)
-  const trechoSel = selecao.tipo === 'trecho' ? trechos[selecao.indice] : undefined
-  const passeioSel = selecao.tipo === 'passeio' ? passeios.find((p) => p.ida.id === selecao.id) : undefined
-  const atual: Selecao = (selecao.tipo === 'trecho' && !trechoSel) || (selecao.tipo === 'passeio' && !passeioSel) ? { tipo: 'tudo' } : selecao
-
-  // Modo do mapa ao trocar de seleção: o meio do trajeto cadastrado; sem trajeto, avião se for longe
-  function selecionar(nova: Selecao, meioPadrao?: string, lugares?: Destino[]) {
-    setSelecao(nova)
-    if (meioPadrao) return setModo(modoDoMeio(meioPadrao))
-    const pares = trechosDaRota(lugares ?? destinos)
-    setModo(pares.some(({ de, para }) => trechoLongo(de, para)) ? 'aviao' : 'transporte')
-  }
-
-  const lugaresNoMapa: Destino[] =
-    atual.tipo === 'trecho' && trechoSel
-      ? [trechoSel.de, trechoSel.para]
-      : atual.tipo === 'passeio' && passeioSel
-        ? [destinoDe(passeioSel.ida.origem_id), destinoDe(passeioSel.ida.destino_id)].filter((d): d is Destino => d !== null)
-        : destinos
-  // Por terra, o Google não atravessa o oceano: na viagem inteira, mostra só a parte da Europa (sem os voos das pontas)
-  const lugaresPorTerra = atual.tipo === 'tudo' ? parteTerrestre(lugaresNoMapa) : lugaresNoMapa
-  // O mapa do Google fica montado mesmo no modo avião (escondido), pra alternar sem recarregar
-  const mapa = linkDoMapaRota(lugaresPorTerra, modo === 'aviao' ? 'transporte' : modo)
-  const pontosDoVoo = lugaresNoMapa
-    .filter((d) => d.latitude !== null && d.longitude !== null)
-    .map((d) => ({ nome: d.nome, latitude: d.latitude!, longitude: d.longitude! }))
-  const linkVooAtual = lugaresNoMapa.length === 2 && atual.tipo !== 'tudo' ? linkDeVoo(lugaresNoMapa[0], lugaresNoMapa[1], lugaresNoMapa[0].saida) : null
 
   const fechar = () => setJanela(null)
 
@@ -215,10 +172,10 @@ export default function Transportes() {
 
   // ---------- Painéis ----------
   const painelTudo = () => (
-    <section className="hosp-painel" aria-label="Viagem inteira">
+    <section className="hosp-painel" aria-label="Entre cidades">
       <header className="hosp-painel-topo">
         <div>
-          <h2>Viagem inteira</h2>
+          <h2>Entre cidades</h2>
           <p>
             {destinos.length} {destinos.length === 1 ? 'parada' : 'paradas'} · {trajetos.length}{' '}
             {trajetos.length === 1 ? 'trajeto cadastrado' : 'trajetos cadastrados'}
@@ -249,65 +206,16 @@ export default function Transportes() {
           )}
         </div>
       </header>
-      {trechos.length === 0 ? (
-        <p className="hosp-vazio">Quando a viagem tiver mais de um destino, a rota aparece aqui.</p>
-      ) : (
-        <ol className="rota-lista">
-          {trechos.map(({ de, para }, indice) => {
-            const lista = doTrecho(de, para)
-            const passeio = passeioDoTrecho(de, para)
-            const primeiro = lista[0] ?? passeio?.ida
-            const longo = trechoLongo(de, para)
-            const Icone = primeiro ? meio(primeiro.meio).icone : longo ? Plane : Route
-            return (
-              <li key={`${de.id}-${para.id}`}>
-                <button type="button" onClick={() => selecionar({ tipo: 'trecho', indice }, primeiro?.meio, [de, para])}>
-                  <span className={primeiro ? 'rota-icone feito' : 'rota-icone'}>
-                    <Icone size={16} aria-hidden="true" />
-                  </span>
-                  <span className="rota-texto">
-                    <strong>
-                      {de.nome} <ArrowRight size={13} aria-hidden="true" /> {para.nome}
-                    </strong>
-                    <small>
-                      {lista.length > 0
-                        ? `${meio(lista[0].meio).nome}${lista[0].partida ? ` · ${formatarData(diaLocal(lista[0].partida))} ${hora(lista[0].partida)}` : ''}${lista.length > 1 ? ` + ${lista.length - 1}` : ''}`
-                        : passeio
-                          ? 'Feito como passeio (bate-e-volta)'
-                          : longo
-                            ? 'Provavelmente voo · ainda sem trajeto'
-                            : 'Como vocês vão? Ainda sem trajeto'}
-                    </small>
-                  </span>
-                  <ArrowRight size={16} aria-hidden="true" className="rota-seta" />
-                </button>
-              </li>
-            )
-          })}
-        </ol>
-      )}
-      {porDia.size > 0 && (
-        <details className="rota-agenda">
-          <summary>Agenda por dia ({porDia.size})</summary>
-          <ol className="linha-do-tempo">
-            {[...porDia].map(([d, lista]) => (
-              <li key={d}>
-                <h3>{formatarData(d, true)}</h3>
-                <ul className="trajetos">{lista.map((t) => linha(t))}</ul>
-              </li>
-            ))}
-          </ol>
-          <p className="form-dica">Horários no fuso do seu celular.</p>
-        </details>
-      )}
+      {trechos.length === 0 && <p className="hosp-vazio">Quando a viagem tiver mais de um destino, os trechos aparecem aqui.</p>}
     </section>
   )
 
   const painelTrecho = (de: Destino, para: Destino) => {
     const lista = doTrecho(de, para)
     const passeio = passeioDoTrecho(de, para)
+    const vazio = lista.length === 0 && !passeio
     return (
-      <section className="hosp-painel" aria-label={`${de.nome} para ${para.nome}`}>
+      <section className={vazio ? 'hosp-painel trecho-compacto' : 'hosp-painel'} aria-label={`${de.nome} para ${para.nome}`}>
         <header className="hosp-painel-topo">
           <div>
             <h2 className="rota-titulo">
@@ -322,14 +230,14 @@ export default function Transportes() {
           </span>
         </header>
         {passeio && (
-          <button type="button" className="rota-aviso-passeio" onClick={() => selecionar({ tipo: 'passeio', id: passeio.ida.id }, passeio.ida.meio)}>
-            <ArrowRightLeft size={15} aria-hidden="true" /> Esse trecho está como passeio (bate-e-volta). Ver passeio
-          </button>
+          <p className="rota-aviso-passeio">
+            <ArrowRightLeft size={15} aria-hidden="true" /> Esse trecho está como passeio (bate-e-volta): veja logo abaixo.
+          </p>
         )}
         {lista.length > 0 ? (
           <ul className="trajetos">{lista.map((t) => linha(t))}</ul>
         ) : (
-          !passeio && <p className="hosp-vazio">Ainda sem trajeto. Compare as opções abaixo e cadastre o escolhido.</p>
+          null
         )}
         {comparar(de, para)}
         {euSouAdm && (
@@ -370,15 +278,12 @@ export default function Transportes() {
     )
   }
 
-  const painel =
-    atual.tipo === 'trecho' && trechoSel ? painelTrecho(trechoSel.de, trechoSel.para) : atual.tipo === 'passeio' && passeioSel ? painelPasseio(passeioSel) : painelTudo()
-
   return (
     <>
       <CabecalhoPagina
         acima={viagem.nome}
         titulo="Transportes"
-        subtitulo="A rota cidade a cidade e os passeios de ida e volta, com o caminho no mapa."
+        subtitulo="Quem chega quando e como vocês vão de uma cidade pra outra."
         acao={
           euSouAdm &&
           destinos.length > 0 && (
@@ -427,88 +332,13 @@ export default function Transportes() {
         <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra montar a rota.</p>
       ) : (
         <>
-          <nav className="hosp-seletor" aria-label="Escolha o trecho">
-            <button type="button" aria-pressed={atual.tipo === 'tudo'} onClick={() => selecionar({ tipo: 'tudo' })}>
-              <span className="hosp-seletor-marca" aria-hidden="true">
-                <Route size={14} />
-              </span>
-              Viagem inteira
-            </button>
-            {trechos.map(({ de, para }, indice) => {
-              const feito = doTrecho(de, para).length > 0 || Boolean(passeioDoTrecho(de, para))
-              return (
-                <button
-                  key={`${de.id}-${para.id}`}
-                  type="button"
-                  aria-pressed={atual.tipo === 'trecho' && atual.indice === indice}
-                  className={feito ? 'seletor-resolvido' : 'seletor-precisa'}
-                  onClick={() => selecionar({ tipo: 'trecho', indice }, doTrecho(de, para)[0]?.meio, [de, para])}
-                >
-                  <span className="hosp-seletor-marca" aria-hidden="true">
-                    {feito ? <Check size={12} /> : indice + 1}
-                  </span>
-                  {de.nome} → {para.nome}
-                </button>
-              )
-            })}
-            {passeios.map((p) => (
-              <button
-                key={p.ida.id}
-                type="button"
-                aria-pressed={atual.tipo === 'passeio' && atual.id === p.ida.id}
-                className="seletor-passeio"
-                onClick={() => selecionar({ tipo: 'passeio', id: p.ida.id }, p.ida.meio)}
-              >
-                <span className="hosp-seletor-marca" aria-hidden="true">
-                  <ArrowRightLeft size={12} />
-                </span>
-                {nomeDe(p.ida.origem_id)} ⇄ {nomeDe(p.ida.destino_id)}
-              </button>
-            ))}
-          </nav>
-
-          <div className="hosp-palco">
-            {(mapa || modo === 'aviao') && (
-              <section className={modo === 'aviao' ? 'hosp-mapa mapa-voo' : 'hosp-mapa'} aria-label="Mapa do caminho">
-                {mapa && (
-                  <div className="mapa-camada" hidden={modo === 'aviao'}>
-                    <MapaGoogle url={mapa.embed} titulo="Google Maps: caminho da viagem" />
-                  </div>
-                )}
-                {modo === 'aviao' && <MapaMundi pontos={pontosDoVoo} zoomMaximo={6} />}
-                {lugaresNoMapa.length > 1 && (
-                  <div className="hosp-mapa-filtros" role="group" aria-label="Como ir">
-                    {MODOS_NO_MAPA.map((m) => (
-                      <button key={m.chave} type="button" aria-pressed={modo === m.chave} onClick={() => setModo(m.chave)}>
-                        {m.nome}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {lugaresNoMapa.length > 1 && (
-                  <p className="mapa-legenda mapa-legenda-topo">
-                    {modo === 'aviao'
-                      ? 'Linha reta só pra mostrar o trecho: não é a rota do voo.'
-                      : 'Caminho sugerido pelo Google: não é a passagem nem o horário reservado.'}
-                  </p>
-                )}
-                {modo === 'aviao' ? (
-                  linkVooAtual && (
-                    <a className="hosp-mapa-abrir" href={linkVooAtual} target="_blank" rel="noreferrer noopener">
-                      <Plane size={14} aria-hidden="true" /> Ver voos no Google
-                    </a>
-                  )
-                ) : (
-                  mapa && (
-                    <a className="hosp-mapa-abrir" href={mapa.abrir} target="_blank" rel="noreferrer noopener">
-                      <Maximize2 size={14} aria-hidden="true" /> Abrir no Google Maps
-                    </a>
-                  )
-                )}
-              </section>
-            )}
-            {painel}
-          </div>
+          {painelTudo()}
+          {trechos.map(({ de, para }) => (
+            <div key={`${de.id}-${para.id}`}>{painelTrecho(de, para)}</div>
+          ))}
+          {passeios.map((p) => (
+            <div key={p.ida.id}>{painelPasseio(p)}</div>
+          ))}
         </>
       )}
 
