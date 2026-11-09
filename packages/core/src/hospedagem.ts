@@ -49,10 +49,16 @@ export type Opcao = {
   fotoUrl?: string | null // spec 072
   nota?: number | null
   escolhida: boolean
+  reserva?: Reserva // spec 123: 'nao' | 'reservada' | 'paga'
+  selfCheckin?: boolean
+  lat?: number | null // spec 123: pra distância a pé da estação
+  lon?: number | null
   criadoPor: string
   votos: string[] // ids de quem votou
   guia?: GuiaDaCasa // spec 026: só faz sentido na escolhida
 }
+
+export type Reserva = 'nao' | 'reservada' | 'paga'
 
 // Guia da casa (spec 026): o que o comboio precisa saber ao chegar
 export type GuiaDaCasa = {
@@ -380,6 +386,11 @@ export type DadosDaOpcao = {
   etiquetas: string[] // spec 063
   nota: number | null
   fotoUrl?: string | null // spec 072
+  horaCheckinLimite?: string | null // spec 123
+  selfCheckin?: boolean
+  endereco?: string | null
+  lat?: number | null
+  lon?: number | null
 }
 
 // Opções de hospedagem da viagem, com quem votou em cada uma (spec 011)
@@ -408,6 +419,10 @@ export async function buscarOpcoesDeHospedagem(cli: ClienteTogether, viagemId: s
     fotoUrl: h.foto_url,
     nota: h.nota === null ? null : Number(h.nota),
     escolhida: h.escolhida,
+    reserva: (h.reserva ?? 'nao') as Reserva,
+    selfCheckin: h.self_checkin,
+    lat: h.lat,
+    lon: h.lon,
     criadoPor: h.criado_por,
     votos: (h.hospedagem_votos ?? []).map((v) => v.usuario_id),
     guia: {
@@ -440,6 +455,10 @@ export function linhaDaOpcao(d: DadosDaOpcao) {
     ...(d.fotoUrl !== undefined ? { foto_url: d.fotoUrl } : {}),
     ...(d.contatoAnfitriao !== undefined ? { contato_anfitriao: d.contatoAnfitriao?.trim() || null } : {}),
     nota: d.nota,
+    ...(d.horaCheckinLimite !== undefined ? { hora_checkin_limite: d.horaCheckinLimite || null } : {}),
+    ...(d.selfCheckin !== undefined ? { self_checkin: d.selfCheckin } : {}),
+    ...(d.endereco !== undefined ? { endereco: d.endereco?.trim() || null } : {}),
+    ...(d.lat !== undefined ? { lat: d.lat, lon: d.lon ?? null } : {}),
   }
 }
 
@@ -459,5 +478,22 @@ export async function votarNaHospedagem(cli: ClienteTogether, hospedagemId: stri
 // Só o ADM (o banco confere)
 export async function escolherHospedagem(cli: ClienteTogether, id: string, escolher: boolean) {
   const { error } = await cli.rpc('escolher_hospedagem', { p_hospedagem: id, p_escolher: escolher })
+  if (error) throw error
+}
+
+// Spec 123: editar e apagar (autor ou ADM; o banco confere)
+export async function atualizarOpcaoDeHospedagem(cli: ClienteTogether, id: string, dados: DadosDaOpcao) {
+  const { error } = await cli.from('hospedagens').update(linhaDaOpcao(dados)).eq('id', id)
+  if (error) throw error
+}
+
+export async function apagarOpcaoDeHospedagem(cli: ClienteTogether, id: string) {
+  const { error } = await cli.from('hospedagens').delete().eq('id', id)
+  if (error) throw error
+}
+
+// Spec 123: reservada ou paga (só o ADM; o banco confere)
+export async function marcarReservaDaHospedagem(cli: ClienteTogether, id: string, reserva: Reserva) {
+  const { error } = await cli.from('hospedagens').update({ reserva }).eq('id', id)
   if (error) throw error
 }

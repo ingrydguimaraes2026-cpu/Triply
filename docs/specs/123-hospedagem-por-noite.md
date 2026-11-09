@@ -1,6 +1,6 @@
 # 123. Hospedagem por noite
 
-**Fase:** 1 · **Tamanho:** M · **Depende de:** 011 (hospedagem), 122 (deslocamentos no dia), 122d (aba Reservas) · **Status:** Proposta (protótipo em `docs/design/hospedagem-v2.html`, falta o OK do Victor)
+**Fase:** 1 · **Tamanho:** M · **Depende de:** 011 (hospedagem), 122 (deslocamentos no dia), 122d (aba Reservas) · **Status:** Pronta pra testar no app (09/11; protótipo aprovado: `docs/design/hospedagem-v2.html`)
 
 ## Objetivo
 Abrir Reservas → Hospedagem e ver, **noite por noite**, onde o grupo dorme, o que falta decidir e quanto custa tudo. Cada opção mostra só o que o grupo compara de verdade: preço, distância da estação onde chegam e se dá pra entrar no horário em que chegam.
@@ -55,7 +55,7 @@ A tela de hoje é uma lista por destino, com botões de busca no topo e muitos c
 - Tabela `hospedagens` (já existe): `preco_total`, `endereco`, `hora_checkin_limite`, `checkin`, `checkout`, `escolhida`, `link`, `foto_url`. Votos em `hospedagem_votos`.
 - **Migration nova (pequena):**
   - `lat` e `lon` em `hospedagens`, pra calcular a distância. Preenchidos ao salvar o endereço (geocodificação, como no Novo deslocamento).
-  - `situacao` (`opcao` | `reservada` | `paga`), pra separar "escolhida" de "reservada". Hoje só existe `escolhida`.
+  - `reserva` (`nao` | `reservada` | `paga`), pra separar "escolhida" de "reservada". Só o ADM muda (gatilho no banco). Migration `20261109120000_hospedagem_por_noite.sql`, aplicada.
 - Distância a pé: em linha reta × 1,3 ÷ 80 m/min. É suficiente pra comparar e não precisa de API. A estação vem do destino do último trajeto do dia.
 
 ## Quem pode o quê
@@ -89,3 +89,14 @@ A tela de hoje é uma lista por destino, com botões de busca no topo e muitos c
 - **App:** reescrever o `TelaDeHospedagem` em `apps/mobile/app/hospedagem.tsx`, que já é usado em Reservas com `naAba`. Copiar a estrutura do `TelaDePassagens` (`Contador`, `Lista`, recarregar com `useFocusEffect`). O Comparar copia o `apps/mobile/app/comparar.tsx`.
 - **Geocodificar o endereço** com o mesmo helper do Novo deslocamento.
 - Não rodar prettier. Nada de emoji. Ícones só de `src/ui/icones`.
+
+## Como ficou (09/11)
+- **Core:** `packages/core/src/noites.ts` (`noitesDaViagem`, `fatosDaOpcao`, `checkinContraChegada`, `minutosAPe`, `textoDasNoites`). Teste: `apps/web/tests/noites.test.mjs` (4 passam). Em `hospedagem.ts`: `reserva`, `selfCheckin`, `lat/lon` na opção; `atualizarOpcaoDeHospedagem`, `apagarOpcaoDeHospedagem`, `marcarReservaDaHospedagem`.
+- **App:**
+  - `app/hospedagem.tsx`: as noites (aba Reservas → Hospedagem).
+  - `app/cidade-hospedagem.tsx`: as opções da cidade, voto, Comparar e as ações do ADM.
+  - `app/opcao-hospedagem.tsx`: pôr ou editar uma opção. O endereço vira ponto no mapa (Transitous) pra calcular a distância.
+  - Carregador comum: `src/dados/hospedagemDaViagem.ts`.
+- Bate-e-volta aparece como linha fina: "Mônaco (sáb 5): só de dia, dormem em Nice".
+- **Não testado:** salvar opção, votar e as ações do ADM (não gravei dado de teste na Eurotrip). Na Eurotrip, Veneza, Roma e Paris (volta) estão sem data de saída, então aparecem como "Sem datas no roteiro".
+- **Respostas às perguntas:** o link preenche nome e foto. Marcar reservada **não** lança gasto sozinho.

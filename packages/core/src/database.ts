@@ -1886,6 +1886,9 @@ export type Database = {
           hora_checkin: string | null
           hora_checkin_limite: string | null
           hora_checkout: string | null
+          lat: number | null
+          lon: number | null
+          reserva: string
           id: string
           link: string | null
           moeda: string
@@ -1918,6 +1921,9 @@ export type Database = {
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
           hora_checkout?: string | null
+          lat?: number | null
+          lon?: number | null
+          reserva?: string
           id?: string
           link?: string | null
           moeda?: string
@@ -1950,6 +1956,9 @@ export type Database = {
           hora_checkin?: string | null
           hora_checkin_limite?: string | null
           hora_checkout?: string | null
+          lat?: number | null
+          lon?: number | null
+          reserva?: string
           id?: string
           link?: string | null
           moeda?: string

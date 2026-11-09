@@ -33,7 +33,8 @@ Ou seja: a pergunta deles não é "qual Airbnb é mais bonito", e sim **"onde do
 6. Mesmas regras de permissão da spec 122: membro sugere opção e vota; ADM escolhe e marca como reservado/pago.
 
 ## Andamento
-- 09/11: spec 123 e protótipo `docs/design/hospedagem-v2.html` escritos. Esperando o OK do Victor pra codar.
+- 09/11: spec 123 e protótipo `docs/design/hospedagem-v2.html` escritos. Aprovados pelo Victor.
+- 09/11: **codado no app** (ver "Como ficou" na spec 123). Migration aplicada. Falta: testar salvar/votar/ADM com dado real; levar pro site se o Victor quiser.
 
 ## Próximo passo exato
 1. Ler `AGENTS.md`, este HANDOFF, `docs/RUMO.md` e a spec 011.
