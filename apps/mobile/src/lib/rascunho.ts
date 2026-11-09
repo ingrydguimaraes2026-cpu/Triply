@@ -12,6 +12,7 @@ export type RascunhoDaViagem = {
   dias: number
   estilos: EstiloId[]
   escolhas: Record<string, Escolha> // id do catálogo → escolha (o "gostinho" do deslize)
+  grupo?: string // com quem vai (amigos, casal, familia, sozinho): muda os textos do onboarding
 }
 
 const CHAVE = 'tripwave.rascunho'

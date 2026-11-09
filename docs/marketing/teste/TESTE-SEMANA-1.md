@@ -1,5 +1,7 @@
 # Teste da semana 1: F1 x F2 x F3
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. Este teste está **cancelado**: os 6 posts foram reprovados e o tema (pix) saiu do centro.
+
 *03/11/2026. Decisão da dupla: testar os 3 formatos do benchmark (`benchmark/PADROES.md`), 2 posts de cada. Substitui a semana 1 do `CALENDARIO-2-SEMANAS.md`, que tinha o S1 e os 4 formatos antigos.*
 
 ## Os 6 posts (todos prontos)

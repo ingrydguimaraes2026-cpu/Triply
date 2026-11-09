@@ -46,7 +46,8 @@
           "photosPermission": "A Norti usa suas fotos pra você postar no feed da viagem.",
           "cameraPermission": "A Norti usa a câmera pra você tirar fotos e postar no feed da viagem."
         }
-      ]
+      ],
+      "expo-image"
     ]
   }
 }

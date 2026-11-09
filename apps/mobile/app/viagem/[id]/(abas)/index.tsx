@@ -165,7 +165,7 @@ export default function AbaViagem() {
             <ResumoDasContas total={contas.total} meuSaldo={contas.saldos.get(meuId) ?? 0} moeda={viagem.moeda} aoAbrir={() => ir('contas')} />
           </Secao>
 
-          {/* ❄ congelado pelo RUMO (03/11/2026): documentos de entrada */}
+          {/* Congelado pelo RUMO (03/11/2026): documentos de entrada */}
           {CONGELADO.documentos ? null : (
             <Secao indice={6} titulo="Antes de embarcar">
               <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />

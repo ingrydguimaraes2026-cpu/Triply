@@ -33,7 +33,7 @@ export function VerReserva({ caminho, link }: { caminho: string | null; link?: s
   )
 }
 
-export function BilheteDoTrajeto({ m, caminhoNoCofre }: { m: Movimento; caminhoNoCofre: string | null }) {
+export function BilheteDoTrajeto({ m, caminhoNoCofre, children }: { m: Movimento; caminhoNoCofre: string | null; children?: React.ReactNode }) {
   const Icone = ICONE_DO_MEIO[m.meio] ?? Ticket
   const chega = m.tipo === 'chega'
 
@@ -71,6 +71,8 @@ export function BilheteDoTrajeto({ m, caminhoNoCofre }: { m: Movimento; caminhoN
         </View>
         <VerReserva caminho={caminhoNoCofre} link={m.linkReserva} />
       </View>
+      {/* Spec 121: "saia às", dividir o transfer, do aeroporto até a casa */}
+      {children ? <View className="gap-2 px-4 pb-4">{children}</View> : null}
     </View>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
-import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Foto, FotoDeFundo } from '../Foto'
 import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, type SharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -50,9 +51,9 @@ export function Capa({ foto, nome, linha, rolagem }: { foto: { uri: string } | u
   return (
     <View style={{ height: ALTURA_DA_CAPA }} className="overflow-hidden bg-couro">
       <Animated.View style={[StyleSheet.absoluteFill, estiloDaFoto]}>
-        <ImageBackground source={foto} resizeMode="cover" style={StyleSheet.absoluteFill}>
+        <FotoDeFundo source={foto} style={StyleSheet.absoluteFill}>
           <LinearGradient colors={['rgba(74,46,20,0.35)', 'rgba(74,46,20,0)', 'rgba(74,46,20,0.85)']} locations={[0, 0.35, 1]} style={StyleSheet.absoluteFill} />
-        </ImageBackground>
+        </FotoDeFundo>
       </Animated.View>
       <Animated.View className="absolute bottom-6 left-5 right-5" style={estiloDoTitulo}>
         <Text className="font-body-bold text-[12px] uppercase tracking-wider text-creme">{linha}</Text>
@@ -137,7 +138,7 @@ export function CarrosselDoRoteiro({ dias, aoAbrir, aoMontar }: { dias: DiaDoCar
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingHorizontal: 20 }} style={{ marginHorizontal: -20 }}>
       {dias.map((d) => (
         <Pressable key={d.numero} onPress={aoAbrir} className="w-[150px] active:opacity-90">
-          {d.foto ? <Image source={{ uri: d.foto }} className="h-[110px] w-[150px] rounded-2xl bg-areia" /> : <View className="h-[110px] w-[150px] items-center justify-center rounded-2xl bg-areia"><Selo nome="caminho" tamanho={40} /></View>}
+          {d.foto ? <Foto source={{ uri: d.foto }} className="h-[110px] w-[150px] rounded-2xl bg-areia" /> : <View className="h-[110px] w-[150px] items-center justify-center rounded-2xl bg-areia"><Selo nome="caminho" tamanho={40} /></View>}
           <Text className="mt-2 font-body-bold text-[11px] uppercase tracking-wider text-suave">Dia {d.numero}</Text>
           <Text className="font-body-semibold text-[14px] text-texto" numberOfLines={2}>
             {d.titulo}

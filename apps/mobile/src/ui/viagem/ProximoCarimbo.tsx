@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Image, Pressable, Text, View } from 'react-native'
+import { Foto } from '../Foto'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import { formatarDinheiro, votarNaHospedagem, type Opcao, type Pessoa } from '@together/core'
 import { Check, ChevronRight, Megaphone } from '../icones'
@@ -130,7 +131,7 @@ function LadoDoDuelo({ opcao, votos, fracao, votei, moeda, aoVotar }: { opcao: O
       accessibilityLabel={`Votar em ${opcao.nome}`}
       accessibilityState={{ selected: votei }}
     >
-      {opcao.fotoUrl ? <Image source={{ uri: opcao.fotoUrl }} className="h-24 w-full bg-areia" /> : <View className="h-24 w-full items-center justify-center bg-areia"><Selo nome="barraca" tamanho={40} /></View>}
+      {opcao.fotoUrl ? <Foto source={{ uri: opcao.fotoUrl }} className="h-24 w-full bg-areia" /> : <View className="h-24 w-full items-center justify-center bg-areia"><Selo nome="barraca" tamanho={40} /></View>}
       <View className="gap-1 p-2.5">
         <Text className="font-body-bold text-[13px] text-texto" numberOfLines={1}>
           {opcao.nome}

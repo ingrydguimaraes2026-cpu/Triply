@@ -1,5 +1,7 @@
 # Teste do réveillon: 5 grupos reais no app
 
+> **Superado pelo RUMO (04/11/2026) em parte.** A ideia de pôr o app na mão de grupos reais no réveillon continua boa, mas a validação que vale agora é a do RUMO: 3 telas falsas para 10 organizadores (`docs/marketing/teste/ancora/`). E o que medir muda: carimbos ganhos sem digitar, mapa e retrospectiva postados, convidados que topam pelo link sem instalar. Não medir mais "gastos lançados" como sinal principal.
+
 *03/11/2026. Plano de produto, sem código. Liga com `JORNADA.md` (a aposta central) e `PRECO.md` (vontade de pagar).*
 
 ## Por que esse teste

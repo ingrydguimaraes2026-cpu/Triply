@@ -1,5 +1,7 @@
 # Benchmark: o que roda em "viagem com amigos" (TikTok e Shorts)
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. Os padrões continuam valendo como linguagem dos posts; o F1 a F3 foram reprovados.
+
 *03/11/2026. 108 posts na `posts.csv`: 72 do TikTok, 6 do YouTube Shorts e 30 do X (grupo D, no fim do arquivo), mais a busca na Biblioteca de Anúncios da Meta. Os prints estão em `index.html` (abrir com duplo clique).*
 
 **Como os números foram coletados:** pelo navegador do app, só lendo, sem curtir, seguir nem comentar. Views, curtidas, comentários, compartilhamentos e salvos são os que o TikTok mostrava em 03/11/2026. Nos perfis de marca e na busca de apps só aparece um número na tela (views no perfil, curtidas na busca), e as outras colunas ficaram vazias. O gancho é o texto da capa. Quando a capa não tinha texto legível, uso a legenda e aviso entre parênteses.

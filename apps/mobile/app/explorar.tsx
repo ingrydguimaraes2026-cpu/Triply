@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, CalendarPlus, Heart, SlidersHorizontal, Star, Undo2, X } from '../src/ui/icones'
 import {
   ESTILOS,
+  semAcento,
   ORCAMENTOS,
   RITMOS,
   acabou,
@@ -51,6 +52,7 @@ import { Comemoracao } from '../src/ui/Comemoracao'
 import { buscarMatches, ehMatch } from '../src/dados/matches'
 import { primeiroNome } from '../src/lib/formato'
 import { CartaoDoExplorar } from '../src/ui/CartaoDoExplorar'
+import { Foto } from '../src/ui/Foto'
 import { RoteiroDoExplorar } from '../src/ui/RoteiroDoExplorar'
 import { cor, sombra } from '../theme'
 
@@ -139,9 +141,20 @@ function ExplorarDestino({
   const rotulos = useMemo(() => (destino.chegada ? dias.map(diaPorExtenso) : dias), [destino.chegada, dias])
   const porDia = porDiaDoRitmo(ritmo)
   const porId = useMemo(() => new Map(catalogo.map((l) => [l.id, l])), [catalogo])
+  // Foto de cada lugar do roteiro: acha no catálogo pelo Wikidata (ou pelo nome, sem acento)
+  const fotosDosLugares = useMemo(() => {
+    const porWikidata = new Map(catalogo.filter((c) => c.wikidata && c.fotoUrl).map((c) => [c.wikidata!, c.fotoUrl!]))
+    const porNome = new Map(catalogo.filter((c) => c.fotoUrl).map((c) => [semAcento(c.nome), c.fotoUrl!]))
+    const fotos: Record<string, string> = {}
+    for (const l of lugaresDoGrupo) {
+      const f = (l.wikidata && porWikidata.get(l.wikidata)) || porNome.get(semAcento(l.nome))
+      if (f) fotos[l.id] = f
+    }
+    return fotos
+  }, [catalogo, lugaresDoGrupo])
   const atual = porId.get(deslize.pilha[deslize.posicao] ?? '') ?? null
   const proximo = porId.get(deslize.pilha[deslize.posicao + 1] ?? '') ?? null
-  const alturaCartao = Math.round(Math.min(560, Math.max(380, height - insets.top - insets.bottom - 290)))
+  const alturaCartao = Math.round(Math.min(600, Math.max(400, height - insets.top - insets.bottom - 240)))
   const pessoas = viagem?.membros.length ?? 1
   const euSouAdm = !!viagem?.membros.some((m) => m.id === meuId && m.papel === 'adm')
 
@@ -293,6 +306,12 @@ function ExplorarDestino({
       setLugaresDoGrupo(doGrupo)
       setDiasSalvos(diasDoRoteiro)
       setEtapa('roteiro')
+      // Abriu direto no roteiro (onboarding, link): busca o catálogo só pras fotos dos lugares, sem travar a tela
+      if (catalogo.length === 0) {
+        carregarCatalogoDaCidade(supabase, destino)
+          .then((cat) => setCatalogo(cat.lugares))
+          .catch((e) => console.warn('Roteiro sem fotos do catálogo:', e))
+      }
     } catch (e) {
       console.error('Erro ao montar:', e)
       setErro('Não deu pra montar o roteiro agora. Suas escolhas estão salvas: tente de novo.')
@@ -414,9 +433,6 @@ function ExplorarDestino({
         <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
           {topo}
           <View className="gap-3 px-5 pt-4">
-            <Text className="font-display text-[22px] text-texto">
-              {destino.nome} em {rotulos.length} {rotulos.length === 1 ? 'dia' : 'dias'}
-            </Text>
             {aviso ? <Aviso texto={aviso} /> : null}
             <RoteiroDoExplorar
               destinoNome={destino.nome}
@@ -429,6 +445,8 @@ function ExplorarDestino({
               aoReorganizar={() => mudarRoteiro(propor(lugaresDoGrupo))}
               aoVerMais={comecar}
               aoConvidar={() => void convidarProComboio(viagem.id, viagem.nome)}
+              fotos={fotosDosLugares}
+              mostrarConvite={!guiado}
             />
           </View>
         </ScrollView>
@@ -453,9 +471,8 @@ function ExplorarDestino({
       .map((q) => ({ nome: primeiroNome(membros.find((m) => m.id === q)?.nome ?? 'Alguém'), indice: Math.max(0, membros.findIndex((m) => m.id === q)) }))
   const faltamNoMatch = deuMatch ? membros.filter((m) => m.id !== meuId && !(querem[deuMatch.id] ?? []).includes(m.id)) : []
   const naoAbroMaoLiberado = podeNaoAbrirMao(deslize, jaTenho)
-  // Primeira viagem (spec 116): dica de como deslizar até o primeiro cartão sair
-  const comDica = guiado && total > 0 && deslize.posicao === 0
-  const altura = comDica ? alturaCartao - 64 : alturaCartao
+  // Sem fileira de botões: o gesto decide. Embaixo só a dica das direções e o "Desfazer"
+  const altura = alturaCartao
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
@@ -472,14 +489,6 @@ function ExplorarDestino({
             <Text className="font-body-bold text-[14px] text-couro">Pronto</Text>
           </Pressable>
         </View>
-
-        {comDica ? (
-          <View className="mb-3 flex-row items-center justify-around rounded-2xl bg-areia px-3 py-2.5">
-            <Dica Icone={X} cor={cor.vermelho} texto="← passo" />
-            <Dica Icone={Star} cor={cor.caramelo} texto="↑ não abro mão" />
-            <Dica Icone={Heart} cor={cor.verde} texto="quero →" />
-          </View>
-        ) : null}
 
         {total === 0 ? (
           <View className="items-center gap-3 rounded-[20px] border-[1.5px] border-dashed border-tracejado p-8">
@@ -507,19 +516,24 @@ function ExplorarDestino({
         {aviso ? <Aviso texto={aviso} /> : null}
 
         {total > 0 ? (
-          <View className="mt-4 flex-row items-start justify-center gap-3.5">
-            <BotaoDeAcao rotulo="Desfazer" tamanho={44} aoTocar={voltarUm} apagado={!deslize.historico.length}>
-              <Undo2 size={18} color={cor.suave} />
-            </BotaoDeAcao>
-            <BotaoDeAcao rotulo="Passo" tamanho={62} aoTocar={() => pedir('passo')}>
-              <X size={26} color={cor.vermelho} strokeWidth={2.6} />
-            </BotaoDeAcao>
-            <BotaoDeAcao rotulo="Não abro mão" tamanho={52} aoTocar={() => pedir('nao_abro_mao')} apagado={!naoAbroMaoLiberado}>
-              <Star size={22} color={cor.caramelo} fill={cor.dourado} />
-            </BotaoDeAcao>
-            <BotaoDeAcao rotulo="Quero" tamanho={62} aoTocar={() => pedir('quero')} principal>
-              <Heart size={26} color="#fff" fill="#fff" />
-            </BotaoDeAcao>
+          <View className="mt-4 flex-row items-center justify-between px-1">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Desfazer"
+              onPress={voltarUm}
+              disabled={!deslize.historico.length}
+              hitSlop={10}
+              className="min-h-[40px] flex-row items-center gap-1.5 px-1"
+              style={{ opacity: deslize.historico.length ? 1 : 0.35 }}
+            >
+              <Undo2 size={18} color={cor.couro} />
+              <Text className="font-body-bold text-[14px] text-couro">Desfazer</Text>
+            </Pressable>
+            <View className="flex-row items-center gap-3">
+              <Dica Icone={X} cor={cor.vermelho} texto="passo" />
+              <Dica Icone={Star} cor={naoAbroMaoLiberado ? cor.caramelo : cor.apagado} texto="↑" />
+              <Dica Icone={Heart} cor={cor.verde} texto="quero" />
+            </View>
           </View>
         ) : null}
       </View>
@@ -533,7 +547,7 @@ function ExplorarDestino({
           deuMatch ? (
             <View className="items-center">
               <View className="h-[150px] w-[150px] overflow-hidden rounded-full border-4 border-dourado bg-couro">
-                {deuMatch.fotoUrl ? <Image source={{ uri: deuMatch.fotoUrl }} style={{ width: '100%', height: '100%' }} /> : null}
+                {deuMatch.fotoUrl ? <Foto source={{ uri: deuMatch.fotoUrl }} style={{ width: '100%', height: '100%' }} /> : null}
               </View>
               <View className="-mt-5 flex-row" style={{ paddingLeft: 8 }}>
                 {[meuId, ...(querem[deuMatch.id] ?? []).filter((q) => q !== meuId)].slice(0, 5).map((q) => {
@@ -566,7 +580,7 @@ function ExplorarDestino({
         {atual ? (
           <View className="max-h-[80%] rounded-t-[26px] bg-fundo" style={{ paddingBottom: insets.bottom + 16 }}>
             <ScrollView contentContainerStyle={{ padding: 20, gap: 12 }}>
-              {atual.fotoUrl ? <Image source={{ uri: atual.fotoUrl }} style={{ width: '100%', height: 220, borderRadius: 16 }} resizeMode="cover" /> : null}
+              {atual.fotoUrl ? <Foto source={{ uri: atual.fotoUrl }} style={{ width: '100%', height: 220, borderRadius: 16 }} /> : null}
               <Text className="font-display text-[24px] text-texto">{atual.nome}</Text>
               {atual.bairro ? <Text className="font-body text-[13px] text-suave">{atual.bairro}</Text> : null}
               <Text className="font-body text-[15px] leading-[22px] text-corpo">{atual.sobre ?? atual.porQue ?? 'Sem descrição ainda.'}</Text>
@@ -640,24 +654,6 @@ function Fato({ titulo, valor }: { titulo: string; valor: string }) {
     <View className="flex-1 gap-0.5 rounded-[14px] bg-cartao p-2.5">
       <Text className="font-body text-[11px] text-suave">{titulo}</Text>
       <Text className="font-body-bold text-[14px] text-texto">{valor}</Text>
-    </View>
-  )
-}
-
-function BotaoDeAcao({ rotulo, tamanho, aoTocar, principal, apagado, children }: { rotulo: string; tamanho: number; aoTocar: () => void; principal?: boolean; apagado?: boolean; children: ReactNode }) {
-  return (
-    <View className="items-center gap-1.5" style={{ marginTop: (62 - tamanho) / 2 }}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={rotulo}
-        accessibilityState={{ disabled: apagado }}
-        onPress={apagado ? undefined : aoTocar}
-        className={`items-center justify-center rounded-full ${principal ? 'bg-couro' : 'bg-cartao'}`}
-        style={[{ width: tamanho, height: tamanho, opacity: apagado ? 0.4 : 1 }, principal ? sombra.botao : sombra.flutuante]}
-      >
-        {children}
-      </Pressable>
-      <Text className="font-body-semibold text-[12px] text-corpo">{rotulo}</Text>
     </View>
   )
 }

@@ -42,7 +42,7 @@ export function FerramentasDoDia({ destino, moedaViagem, enderecoHospedagem }: {
       <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-suave">Ferramentas do dia</Text>
       <Conversor moeda={moedaLocal === 'BRL' ? moedaViagem : moedaLocal} />
       <Gorjeta pais={pais} moeda={moedaLocal} />
-      {/* ❄ congelado pelo RUMO (03/11/2026): frases úteis */}
+      {/* Congelado pelo RUMO (03/11/2026): frases úteis */}
       {idioma && !CONGELADO.frasesUteis ? <Frases idioma={idioma} /> : null}
       {enderecoHospedagem ? <MostrarProMotorista endereco={enderecoHospedagem} /> : null}
       {destino ? (

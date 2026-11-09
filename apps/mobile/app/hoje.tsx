@@ -4,7 +4,11 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, MoreHorizontal, Plus, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
 import {
+  aeroportosDoVoo,
   agoraEProximo,
+  antecedenciaDoEmbarque,
+  chegadasPerto,
+  horaDeSair,
   arquivoDeCada,
   buscarDestinos,
   buscarEventosDaAgenda,
@@ -32,6 +36,7 @@ import { PontoDeEncontro } from '../src/ui/PontoDeEncontro'
 import { supabase } from '../src/lib/supabase'
 import { useSessao } from '../src/lib/sessao'
 import { BilheteDoTrajeto, ItemDoPlanoDoDia, VerReserva } from '../src/ui/BilheteDoDia'
+import { DividirTransfer, DoAeroporto, SaiaAs, useTemposAteOEmbarque } from '../src/ui/AjudaDoTrajeto'
 import { diaLongo, hojeIso, lerData } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
 import { BotaoIr } from '../src/ui/BotaoIr'
@@ -103,6 +108,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   // Só em desenvolvimento: /hoje?dia=2027-06-07T10:00 simula outro dia (pra testar fora da viagem)
   const { dia: simulado } = useLocalSearchParams<{ dia?: string }>()
   const carga = useCarregar(viagem ? () => buscarTudo(viagem.id) : null, [viagem?.id])
+  const { tempos, escolher } = useTemposAteOEmbarque()
   // O relógio anda a cada minuto (o "próximo" e o "em 20 min" se atualizam sozinhos)
   const relogio = () => (__DEV__ && simulado ? new Date(simulado) : new Date())
   const [agora, setAgora] = useState(relogio)
@@ -285,9 +291,31 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
               <Plane size={16} color={cor.couro} />
               <Text className="font-body-bold text-[15px] text-texto">Quem chega e quem sai hoje</Text>
             </View>
-            {movimentos.map((m) => (
-              <BilheteDoTrajeto key={m.chave} m={m} caminhoNoCofre={arquivos.trajeto.get(m.trajetoId)?.caminho ?? null} />
-            ))}
+            {movimentos.map((m) => {
+              const t = trajetos.find((x) => x.id === m.trajetoId)
+              const chegaEm = t && m.tipo === 'chega' ? aeroportosDoVoo(t, destinos).chegada : null
+              const perto = t && m.tipo === 'chega' ? chegadasPerto(t, trajetos, destinos)[0] : undefined
+              const casa = t ? hospedagens.find((h) => h.destino_id === t.destino_id) : undefined
+              return (
+                <BilheteDoTrajeto key={m.chave} m={m} caminhoNoCofre={arquivos.trajeto.get(m.trajetoId)?.caminho ?? null}>
+                  {t?.partida && m.tipo === 'sai' && antecedenciaDoEmbarque(t.meio, true) !== null ? (
+                    <SaiaAs saida={horaDeSair(t, destinos, tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(x) => escolher(t.id, x)} />
+                  ) : null}
+                  {t && perto ? (
+                    <DividirTransfer
+                      nomes={perto.pessoas.map((id) => membros.find((p) => p.id === id)?.nome.split(' ')[0] ?? 'Alguém')}
+                      minutos={perto.minutos}
+                      aeroporto={chegaEm}
+                      pessoas={t.passageiros.length + perto.pessoas.length}
+                    />
+                  ) : null}
+                  {/* Sem o "como chegar" escrito no guia da casa (062), a tabela ajuda */}
+                  {chegaEm && !casa?.como_chegar ? (
+                    <DoAeroporto aeroporto={chegaEm} nomeDaCasa={casa?.nome ?? null} ate={casa?.endereco || m.para} />
+                  ) : null}
+                </BilheteDoTrajeto>
+              )
+            })}
           </View>
         ) : null}
 

@@ -1,5 +1,7 @@
 # HANDOFF: sessão de produto (jornada, teste do réveillon, preço)
 
+> **Superado pelo RUMO (04/11/2026).** Este doc propõe o dinheiro ("ninguém fica devendo") como aposta central e o Passe por viagem. O Victor rejeitou os dois em `docs/RUMO.md`: a âncora é o **Passaporte da galera**, o Pix é só um detalhe do acerto e a cobrança é a **assinatura do organizador**. Use este arquivo só como histórico.
+
 Data: 03/11/2026. Branch `monorepo-split`. Só documentos: nada de código, banco ou migration.
 
 ## Pronto

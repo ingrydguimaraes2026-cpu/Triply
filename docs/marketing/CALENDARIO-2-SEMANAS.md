@@ -1,5 +1,7 @@
 # Calendário: as 2 primeiras semanas de conteúdo (sem rosto)
 
+> **Rumo novo (04/11/2026):** o app virou **o Passaporte da galera** (`docs/RUMO.md`). O conteúdo agora mostra carimbos, o mapa da galera e a retrospectiva; pix e "organizar a viagem" saem do centro. O que vale hoje está em `CONTEUDO-PASSAPORTE.md`. Este calendário está **cancelado**.
+
 *03/11/2026. Refeito depois da decisão da dupla: **ninguém mostra o rosto**. Base: `PESQUISA-SEM-ROSTO.md` (o que funciona sem aparecer), `CONTEUDO-INICIAL.md` (roteiros R1 a R8 e posts P1 a P8) e o tom de `NOME-E-VOZ.md`. Versão pra abrir no navegador: `calendario-2-semanas.html`.*
 
 ## Como funciona

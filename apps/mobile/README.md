@@ -11,6 +11,9 @@ compartilhada de `@together/core` (dinheiro, câmbio, client do Supabase).
 4. Inicie: `pnpm --filter @together/mobile start` (ou `cd apps/mobile && pnpm start`).
 5. Abra no **Expo Go** (celular) lendo o QR, ou num emulador Android / simulador iOS.
 
+**Conta de teste (dev):** na tela de login aparece "Nova conta de teste" / "Voltar pra última conta de teste"
+(só em modo dev). Roteiros Playwright: veja `docs/HANDOFF-contas-de-teste.md`.
+
 > Se o Metro reclamar de módulo não encontrado (pnpm é estrito), crie um `.npmrc`
 > na raiz com `node-linker=hoisted` e rode `pnpm install` de novo.
 

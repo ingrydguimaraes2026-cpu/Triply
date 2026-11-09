@@ -178,7 +178,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                   <Text className={`mt-0.5 font-body text-[12px] ${meu ? 'text-creme' : 'text-suave'}`}>
                     {e.pessoal ? 'só seu' : pessoas ? `dividido em ${pessoas} · ${formatarDinheiro(Math.round(e.valor / pessoas), e.moeda)} cada` : ''}
                   </Text>
-                  {/* ❄ comentários soltos congelados pelo RUMO (03/11/2026) */}
+                  {/* comentários soltos congelados pelo RUMO (03/11/2026) */}
                   {comentarios[e.id] && !CONGELADO.comentarios ? (
                     <View className={`absolute -bottom-2.5 ${meu ? 'left-3' : 'right-3'} flex-row items-center gap-1 rounded-full border border-linha bg-cartao px-2 py-0.5`}>
                       <MessageCircle size={11} color={cor.caramelo} />
@@ -187,7 +187,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
                   ) : null}
                 </Pressable>
               </View>
-              {/* Spec 025: comentários do gasto. ❄ congelado pelo RUMO (03/11/2026) */}
+              {/* Spec 025: comentários do gasto. Congelado pelo RUMO (03/11/2026) */}
               {aberto === e.id && !CONGELADO.comentarios ? (
                 <View className="mt-2 rounded-2xl bg-cartao px-3" style={sombra.cartao}>
                   <ComentariosDoItem

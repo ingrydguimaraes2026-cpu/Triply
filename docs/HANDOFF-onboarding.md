@@ -19,3 +19,12 @@
 - Cada gostinho cria um usuário anônimo; quem desiste deixa um usuário anônimo sobrando no Auth (dá pra limpar depois por data).
 - Sem mudança no banco.
 - Fora daqui: visual do login e o site.
+
+## Consertos de 04/11 (app mais leve e completo)
+- **Bibliotecas que faltavam:** Reanimated/Gesture Handler/Worklets (spec 117) estavam no package.json mas não instaladas nesta máquina; `pnpm install` resolveu (o app não abria).
+- **Deslize do Explorar refeito** (`src/ui/CartaoDoExplorar.tsx`): Gesture Handler + Reanimated (roda na thread nativa, segue o dedo), peteleco decide (velocidade medida por nós, 500 px/s), vibra ao passar do ponto, toque abre o "ver mais". **Saiu a fileira de botões** no Explorar e no `/comecar`: embaixo só "Desfazer" e a dica das direções; cartão maior.
+- **Lentidão:** `useCarregar` agora guarda a última resposta por tela (volta instantânea, atualiza por trás; limpa ao trocar de conta). Fotos com cache no aparelho: `src/ui/Foto.tsx` (`Foto`, `FotoDeFundo`, expo-image).
+- **Transportes no app:** antes só mostrava. Agora "Adicionar trajeto" (`src/ui/NovoTrajeto.tsx`: como, de onde, pra onde, dia, horários, preço, link) e segurar pra apagar. Core: `criarTrajeto` e `apagarTrajeto`.
+- **Testes:** 460 de 462 passavam; consertado o "nenhum emoji" (❄ em comentários). Sobra só o `zip` antigo (nome com acento).
+- **Roteiro de teste sem login:** `docs/marketing/video/demo/testar-gestos.mjs` (modo demonstração): arrasto, peteleco e folha do trajeto → PASSOU.
+- **Pendências pequenas:** registrar a migration `convidado_sem_conta` no histórico do Supabase (já está aplicada); ligar "leaked password protection" no painel; `npx expo install --check` (patches do Expo).

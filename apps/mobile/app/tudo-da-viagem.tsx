@@ -35,7 +35,7 @@ export default function TudoDaViagem() {
     { Icone: BedDouble, t: 'Hospedagem', s: 'Onde dormir cada noite', rota: '/hospedagem' },
     { Icone: Car, t: 'Passagens', s: 'O que falta decidir e comprar', rota: '/transportes' },
     { Icone: Users, t: 'Comboio', s: 'Quem vai e papéis', rota: '/comboio' },
-    // ❄ congelado pelo RUMO (03/11/2026): documentos de entrada
+    // Congelado pelo RUMO (03/11/2026): documentos de entrada
     ...(CONGELADO.documentos ? [] : [{ Icone: FileCheck, t: 'Documentos', s: 'Visto e passaporte', rota: '/documentos' }]),
     { Icone: Sparkles, t: 'Retrospectiva', s: 'A viagem em números', rota: '/retrospectiva' },
     { Icone: FileText, t: 'PDF', s: 'Roteiro e livro', rota: '/pdf-da-viagem' },
@@ -68,7 +68,7 @@ export default function TudoDaViagem() {
           ))}
         </View>
 
-        {/* Spec 117: extras do Passe da viagem (cadeado abre a tela do Passe). ❄ congelado pelo RUMO (03/11/2026) */}
+        {/* Spec 117: extras do Passe da viagem (cadeado abre a tela do Passe). Congelado pelo RUMO (03/11/2026) */}
         {CONGELADO.passe ? null : (
           <>
             <RotuloDeSecao>Extras do Passe</RotuloDeSecao>
@@ -96,7 +96,7 @@ export default function TudoDaViagem() {
         <RotuloDeSecao>Do comboio</RotuloDeSecao>
         {/* Spec 019, 031, 020, 021 e roadmap #7 */}
         <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />
-        {/* ❄ congelado pelo RUMO (03/11/2026): central de novidades */}
+        {/* Congelado pelo RUMO (03/11/2026): central de novidades */}
         {CONGELADO.notificacoes ? null : <Novidades viagemId={viagem.id} meuId={meuId} membros={viagem.membros} />}
         <Tarefas viagemId={viagem.id} membros={viagem.membros} meuId={meuId} euSouAdm={euSouAdm} />
         <Enquetes viagemId={viagem.id} meuId={meuId} euSouAdm={euSouAdm} />
@@ -104,7 +104,7 @@ export default function TudoDaViagem() {
         {/* Spec 029, 022, 026 e 028 */}
         <AgendaDeHoje viagemId={viagem.id} inicio={viagem.dataInicio} fim={viagem.dataFim} />
         <Clima viagemId={viagem.id} />
-        {/* ❄ congelado pelo RUMO (03/11/2026): guia da casa */}
+        {/* Congelado pelo RUMO (03/11/2026): guia da casa */}
         {CONGELADO.guiaDaCasa ? null : <GuiaDaCasa viagemId={viagem.id} />}
         <Cofre viagemId={viagem.id} />
       </ScrollView>

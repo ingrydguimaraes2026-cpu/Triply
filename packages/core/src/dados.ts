@@ -1,5 +1,5 @@
 import type { ClienteTogether } from './supabase'
-import type { Tables, TablesUpdate } from './database'
+import type { Tables, TablesInsert, TablesUpdate } from './database'
 import type { Divisao } from './acertos'
 import { deBanco, paraBanco } from './dinheiro'
 import { opcoesNoDia } from './agenda'
@@ -147,6 +147,20 @@ export async function buscarTrajetos(cli: ClienteTogether, viagemId: string, { c
   if (comOpcoes || !todos.some((t) => t.grupo_opcoes)) return todos
   const ficam = new Set(opcoesNoDia(todos).map((t) => t.id))
   return todos.filter((t) => ficam.has(t.id))
+}
+
+// Trajeto novo (app). Só o ADM ou quem ele liberou consegue: o banco recusa os outros.
+export type TrajetoNovo = Pick<TablesInsert<'trajetos'>, 'meio' | 'origem_id' | 'destino_id' | 'partida' | 'chegada' | 'preco' | 'moeda' | 'link_reserva' | 'observacao'>
+
+export async function criarTrajeto(cli: ClienteTogether, viagemId: string, dados: TrajetoNovo): Promise<string> {
+  const { data, error } = await cli.from('trajetos').insert({ ...dados, viagem_id: viagemId }).select('id').single()
+  if (error) throw error
+  return data.id
+}
+
+export async function apagarTrajeto(cli: ClienteTogether, id: string): Promise<void> {
+  const { error } = await cli.from('trajetos').delete().eq('id', id)
+  if (error) throw error
 }
 
 // Gasto com valores em centavos (igual a web).
