@@ -25,6 +25,7 @@ import type { Destino } from '../../features/destinos/api'
 import DiarioDoDia from '../../features/diario/DiarioDoDia'
 import FormEvento from '../../features/agenda/FormEvento'
 import { baixarCalendario } from '../../features/agenda/calendario'
+import { useLugaresDosDias } from '../../features/roteiro/lugaresDoDia'
 import TituloDaTela from '../../components/ui/TituloDaTela'
 import TelaVazia from '../../components/ui/TelaVazia'
 import Gaveta from '../../components/ui/Gaveta'
@@ -36,7 +37,7 @@ type Janela = { tipo: 'novo' } | { tipo: 'editar'; evento: EventoDaAgenda } | nu
 // Agenda do dia (spec 029): o que acontece em cada dia, com horário.
 // Junta sozinha os trajetos e as chegadas/saídas; o comboio acrescenta os eventos livres.
 // Dentro do Roteiro (como no app), vem com o dia escolhido nas pílulas: sem título e sem a fileira de dias.
-export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {}) {
+export default function Agenda({ diaDoRoteiro, aoTrocarDia }: { diaDoRoteiro?: string; aoTrocarDia?: (dia: string) => void } = {}) {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
@@ -73,6 +74,9 @@ export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {})
   const feriados = useFeriados(destinos) // spec 095
   const feriadosDoDia = feriados.filter((f) => f.data === dia)
   const apertos = useMemo(() => compromissosApertados(itens), [itens]) // spec 077
+  // Os lugares do dia (montados no Explorar ou as ideias da cidade), como no Roteiro do app
+  const lugaresDosDias = useLugaresDosDias(viagem.id)
+  const cidadesDoDia = dia ? lugaresDosDias.doDia(dia, destinos) : []
   // Quantos itens cada dia tem (bolinha no botão do dia)
   const temAlgo = useMemo(
     () => new Set(dias.filter((d) => montarAgendaDoDia(d, { destinos, trajetos, eventos: eventos ?? [] }).length > 0)),
@@ -95,6 +99,7 @@ export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {})
         observacao: evento.observacao,
       })
       setEscolhido(novo)
+      aoTrocarDia?.(novo) // dentro do Roteiro: a pílula vai junto pro dia novo
       recarregar()
     } catch (e) {
       console.error('Erro ao mover o evento:', e)
@@ -190,7 +195,7 @@ export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {})
           </header>
 
           {erro && <p className="form-erro">Não deu pra carregar os eventos agora.</p>}
-          {itens.length === 0 ? (
+          {itens.length === 0 && cidadesDoDia.length === 0 ? (
             <TelaVazia
               humor="parada"
               titulo="Nada marcado nesse dia"
@@ -215,6 +220,29 @@ export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {})
               ))}
             </ol>
           )}
+          {cidadesDoDia.map(({ destino, montado, lugares }) => (
+            <div key={destino.id} className="agenda-lugares">
+              <h3>
+                {montado ? 'No roteiro' : 'Ideias'} em {destino.nome}
+                <Link to={`../explorar?destino=${destino.id}`} relative="path">
+                  {montado ? 'Mudar os dias' : 'Montar os dias'}
+                </Link>
+              </h3>
+              <ol>
+                {lugares.map((l) => (
+                  <li key={l.id}>
+                    <span className="agenda-icone">
+                      <MapPin size={16} aria-hidden="true" />
+                    </span>
+                    <span className="agenda-texto">
+                      <strong>{l.nome}</strong>
+                      {l.horario && <small>{l.horario}</small>}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
           <div className="agenda-dia-acoes">
             <button type="button" className="agenda-botao-pequeno" onClick={() => setJanela({ tipo: 'novo' })}>
               <Plus size={14} aria-hidden="true" /> Adicionar neste dia

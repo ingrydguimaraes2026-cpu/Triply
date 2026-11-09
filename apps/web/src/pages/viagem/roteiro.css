@@ -314,3 +314,71 @@
   border-radius: 0;
   background: none;
 }
+
+/* Dia montado numa viagem sem datas */
+.roteiro-dia-sem-data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+}
+
+.roteiro-dia-sem-data h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.roteiro-dia-sem-data header p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.roteiro-dia-sem-data ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roteiro-dia-sem-data li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.roteiro-dia-sem-data li span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.roteiro-dia-sem-data small {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.roteiro-dia-numero {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--couro);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.roteiro-dia-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -197,9 +197,14 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [etapa, deslize])
 
-  // Ao abrir: destino com roteiro abre nele; sem roteiro, começa a deslizar
+  // Ao abrir: destino com roteiro abre nele; sem roteiro, começa a deslizar.
+  // `?roteiro=1` (vindo dos Matches, como no app): monta os dias direto com o que já foi escolhido.
   useEffect(() => {
     let vivo = true
+    if (params.get('roteiro') === '1') {
+      void abrirRoteiro(true)
+      return
+    }
     api
       .buscarRoteiro(destino.id)
       .then((salvo) => {

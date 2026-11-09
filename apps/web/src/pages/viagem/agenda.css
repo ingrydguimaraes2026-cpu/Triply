@@ -424,3 +424,44 @@ html[data-tema='escuro'] .agenda-neste-dia {
   font-size: 13px;
   color: var(--cor-texto-suave);
 }
+
+/* Lugares do dia (montados no Explorar ou ideias da cidade), como no Roteiro do app */
+.agenda-lugares {
+  margin-top: 12px;
+}
+
+.agenda-lugares h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+}
+
+.agenda-lugares h3 a {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--couro);
+  white-space: nowrap;
+}
+
+.agenda-lugares ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agenda-lugares li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cor-borda);
+}

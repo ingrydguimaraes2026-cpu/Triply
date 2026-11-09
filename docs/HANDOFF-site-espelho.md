@@ -125,4 +125,13 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - Menu: a aba Roteiro aponta pra `roteiro` e fica acesa no `explorar` e na `agenda`. A seta do baralho volta pro Roteiro.
 - `features/roteiro/matches.ts`: cópia de `apps/mobile/src/dados/matches.ts` (RPC `matches_da_viagem`).
 - **Falta:** o mapa ilustrado do dia (folha que sobe por cima) e os avisos do dia (spec 122b) do app. Matches com dados de verdade não conferido (as viagens da conta de teste não tinham match); vazio, dias, 375px e 1366px conferidos na 5173.
+- **Teste completo (09/11, conta do Paulo, Eurotrip e Lisboa) e consertos:**
+  - Matches com dados (simulei 3 "quero" da Ingryd): grupos, fotos, contador na pílula, "No dia" depois de montar. OK.
+  - "Montar os dias" e "Adicionar ao dia" só abriam o baralho → agora abrem os dias montados (`explorar?destino=…&roteiro=1`, como o app). "Opinar" continua abrindo o baralho.
+  - O dia não mostrava os lugares montados no Explorar → agora mostra "No roteiro em <cidade>" (ou "Ideias em <cidade>") com "Mudar os dias" (`features/roteiro/lugaresDoDia.ts`, igual ao `montarDia` do app). Vale também na `/agenda`.
+  - Viagem sem datas escondia os dias montados → agora vira "Dia 1, Dia 2..." com a cidade e os lugares, e "Definir as datas".
+  - Passar evento pro dia seguinte/anterior deixava a tela no dia velho → a pílula vai junto.
+  - O dia escolhido fica no endereço (`?dia=`): o "voltar" do navegador volta pro mesmo dia.
+  - Testado e ok: criar, editar (hora), mover e apagar evento; "Adicionar neste dia"; links PDF, Cidades, Lugares, Hospedagem, Mudar os dias; baralho (Quero, Passo, Não abro mão, Desfazer, seta e Z do teclado, Ajustar, trocar de cidade, Pronto sem escolhas, "Agora, escolher em…", seta de voltar); vazio de 1 pessoa; 375px sem rolagem pro lado; `/agenda` sozinha.
+  - **Sobrou no banco (limpeza recusada):** na Eurotrip, 3 escolhas de teste da Ingryd (Torre Eiffel, Louvre, Notre-Dame) e os roteiros de Paris (Dia 1 com 3 lugares) e de Nice (4 dias vazios) criados no teste. O evento de teste já foi apagado.
 
