@@ -1,44 +1,15 @@
 import { Pressable, Text, View } from 'react-native'
 import { ChevronRight } from './icones'
 import { Cartao } from './pecas'
-import { Selo, type NomeDoSelo } from './Selos'
+import { Selo } from './Selos'
+import { montarPassos, type DestinoDoPasso, type EstadoDosPassos } from '@together/core'
 import { cor } from '../../theme'
 
 // "Montem a viagem" (spec 116): checklist no topo da viagem que apresenta o que o app faz,
 // na ordem certa, e marca o que já foi feito. Some quando tudo está feito ou a viagem começou.
 
-export type EstadoDosPassos = {
-  lugares: number
-  pessoas: number
-  temDatas: boolean
-  hospedagens: number
-  trajetos: number
-  gastos: number
-  euSouAdm: boolean
-}
-
-export type ChaveDoPasso = 'roteiro' | 'galera' | 'datas' | 'hospedagem' | 'transporte' | 'gastos'
-export type DestinoDoPasso = 'explorar' | 'convidar' | 'configuracoes' | 'hospedagem' | 'transportes' | 'contas'
-export type Passo = { chave: ChaveDoPasso; selo: NomeDoSelo; rotulo: string; titulo: string; sub: string; feito: boolean; destino: DestinoDoPasso; soAdm?: boolean }
-
-// Os 6 passos (= os 6 carimbos do passaporte da spec 117), na ordem certa.
-// `soAdm`: só o ADM resolve (datas); pra quem não é ADM ele não vira o "próximo".
-export function montarPassos(estado: EstadoDosPassos): Passo[] {
-  return [
-    { chave: 'roteiro', selo: 'mapa', rotulo: 'Roteiro', titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, destino: 'explorar' },
-    { chave: 'galera', selo: 'galera', rotulo: 'Galera', titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, destino: 'convidar' },
-    { chave: 'datas', selo: 'calendario', rotulo: 'Datas', titulo: 'Definir as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, destino: 'configuracoes', soAdm: true },
-    { chave: 'hospedagem', selo: 'barraca', rotulo: 'Dormir', titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, destino: 'hospedagem' },
-    { chave: 'transporte', selo: 'passagem', rotulo: 'Chegar', titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, destino: 'transportes' },
-    { chave: 'gastos', selo: 'moedas', rotulo: 'Contas', titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, destino: 'contas' },
-  ]
-}
-
-// O próximo carimbo a conquistar. Comboio de 1 pessoa: chamar a galera vem primeiro (spec 117).
-export function proximoCarimbo(estado: EstadoDosPassos): Passo | null {
-  const abertos = montarPassos(estado).filter((p) => !p.feito && (!p.soAdm || estado.euSouAdm))
-  return abertos.find((p) => p.chave === 'galera') ?? abertos[0] ?? null
-}
+// Os passos e o próximo carimbo foram pro @together/core (o site usa os mesmos).
+export { montarPassos, proximoCarimbo, type ChaveDoPasso, type DestinoDoPasso, type EstadoDosPassos, type Passo } from '@together/core'
 
 export function PassosDaViagem({ estado, ir }: { estado: EstadoDosPassos; ir: (chave: DestinoDoPasso) => void }) {
   // Só o ADM muda as datas: pra quem não é ADM o passo nem aparece

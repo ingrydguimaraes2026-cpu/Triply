@@ -20,8 +20,8 @@
 
 | # | Etapa | O que muda | Estado |
 |---|---|---|---|
-| 1 | **Navegação e nomes** | `apps/web/src/pages/viagem/ViagemLayout.tsx`: as 5 partes do app (Viagem, Roteiro, Reservas, Contas, Fotos) e "Tudo da viagem" com o resto (Hoje, Lugares, Cidades, Comboio, Retrospectiva, PDF, Configurações). Sai o "Overview" (inglês), "Estadia", "Passag." e "Finanças". "Reservas" junta Passagens e Hospedagem com as duas pílulas, como no app | A fazer |
-| 2 | **Tela da viagem** | `Overview.tsx` vira a aba Viagem do app (`apps/mobile/app/viagem/[id]/(abas)/index.tsx` + `src/ui/viagem/Secoes.tsx`): capa, rostos, próximo carimbo, passaporte do comboio, carrossel dos dias, passagens, contas. Sai a grade de 11 botões | A fazer (depois da 1) |
+| 1 | **Navegação e nomes** | `apps/web/src/pages/viagem/ViagemLayout.tsx`: as 5 partes do app (Viagem, Roteiro, Reservas, Contas, Fotos) e "Tudo da viagem" com o resto (Hoje, Lugares, Cidades, Comboio, Retrospectiva, PDF, Configurações). Sai o "Overview" (inglês), "Estadia", "Passag." e "Finanças". "Reservas" junta Passagens e Hospedagem com as duas pílulas, como no app | **Feito (09/11)** |
+| 2 | **Tela da viagem** | `Overview.tsx` vira a aba Viagem do app (`apps/mobile/app/viagem/[id]/(abas)/index.tsx` + `src/ui/viagem/Secoes.tsx`): capa, rostos, próximo carimbo, passaporte do comboio, carrossel dos dias, passagens, contas. Sai a grade de 11 botões | **Feito (09/11)** |
 | 3 | **Hospedagem por noite** | `Hospedagem.tsx` segue a spec 123 (`docs/specs/123-hospedagem-por-noite.md`): `noitesDaViagem` e `fatosDaOpcao` já estão no core. Modelo: `apps/mobile/app/hospedagem.tsx`, `cidade-hospedagem.tsx`, `opcao-hospedagem.tsx` | Feita (09/11), ver abaixo |
 | 4 | **Contas** | `Financeiro.tsx` no estilo da aba Contas do app: saldo grande, lista e lançamento rápido. O orçamento e a carteira vão pra uma linha ou um painel lateral, não 8 cartões | A fazer |
 | 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções, votos e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | A fazer |
@@ -30,16 +30,27 @@
 As etapas 3, 4 e 5 mexem em arquivos separados e podem andar em paralelo, cada uma na sua sessão ou worktree. A 2 depende da 1.
 
 ## Onde parou
-Nada do site mudou ainda. Commit da decisão: este arquivo, o RUMO e o AGENTS.
+Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 
-### Etapa 3: Hospedagem por noite (feita em 09/11)
-- `apps/web/src/pages/viagem/Hospedagem.tsx` reescrita igual ao app: três números (sem cama, pra reservar, reservadas), cidades na ordem do roteiro com as barrinhas das noites, linhas finas de "só de dia", total por pessoa e do grupo (já pago).
-- Cidade aberta: cartões das opções (preço por pessoa, a pé da chegada, check-in contra a hora da chegada, votos), malas no check-out, Comparar (tabela, melhor da linha em verde) e as ações do ADM (Ficar com esta, Marcar reservada, Marcar paga, Ainda não reservei, Desmarcar). Busca Airbnb/Booking/Maps virou chips na paleta Couro, dentro da cidade.
-- Celular: lista OU cidade (`?cidade=<id>` na URL, o voltar do navegador funciona). Computador (1024px+): lista à esquerda, cidade num painel à direita (abre sozinha a primeira que precisa de algo).
-- Formulário curto novo: `apps/web/src/features/hospedagem/FormOpcaoCurta.tsx` (link, nome, preço, endereço, self check-in, check-in até; o resto em "Mais detalhes"). Endereço vira ponto no mapa com `acharLugar` (Transitous), como no app.
-- Hook novo `useNoitesDaViagem` em `features/hospedagem/hooks.ts` (opções + deslocamentos, tempo real). O `useHospedagem` antigo continua (Agenda, Imprimir e Overview usam).
-- `hospedagem.css`: seção nova `hn-*`; saíram as cores de marca. As regras `hosp-*` antigas ficam porque Lugares e Transportes usam o seletor e o painel.
-- **Ficou de fora da tela nova:** mapa do Google embutido, Guia da casa, Quem dorme onde, "Lançar como gasto" e comentários (o app também não tem na hospedagem). `FormOpcao.tsx` antigo não é mais usado por esta tela.
-- **Conferido** na Eurotrip em 1366px e 360px (logado como membro): números, cidades, só de dia, Nice aberta, formulário e voltar; sem rolagem lateral. Dentro de Reservas a URL fica `?parte=hospedagem&cidade=<id>`.
-- **Não testado:** salvar, votar e as ações do ADM (não gravei dado de teste na Eurotrip; o login era de membro).
+**Etapa 1 (navegação):**
+- Menu = as 5 partes do app: Viagem (`/viagem/<id>`), Roteiro (`explorar`), Reservas (`reservas`), Contas (`contas`), Fotos. No celular, a barra de baixo tem só essas 5; o "..." do topo abre "Tudo da viagem".
+- "Tudo da viagem" (`/tudo`, `TudoDaViagem.tsx`): no computador fica no menu, embaixo das 5 partes (Hoje, Lugares, Cidades, Agenda, Comboio, Retrospectiva, PDF, Configurações só pro ADM). A página tem os atalhos e, embaixo, os cartões do comboio que estavam na tela antiga (furos, tarefas, enquetes, ponto de encontro, clima, cofre, orçamento combinado, cheguei bem, mala, listas...). Nada foi apagado.
+- A Agenda ficou em "Tudo da viagem" até a etapa 6 juntar ela no Roteiro.
+- Lista das partes: `apps/web/src/features/viagens/partes.ts`.
+- `Reservas.tsx`: pílulas Passagens | Hospedagem, cada parte é a tela de antes (`Transportes.tsx`, `Hospedagem.tsx`). Endereço `reservas?parte=hospedagem`.
+- Endereços antigos continuam abrindo e caem no novo (`Redirecionar.tsx`, mantém `?foco=` e o resto): `/hospedagem` → `reservas?parte=hospedagem`, `/transportes` → `reservas?parte=transporte`, `/financeiro` → `contas`.
+- Core: modo simples agora usa `contas` (`ABAS_DO_MODO_SIMPLES`); link de compartilhar gasto vai pra `contas`, enquete e ponto de encontro vão pra `tudo` (link antigo `/viagem/<id>?foco=` a tela da viagem manda pra `tudo`). Testes `acessibilidade` e `compartilhar` atualizados.
 
+**Etapa 2 (tela da viagem):**
+- `Overview.tsx` = aba Viagem do app: capa, rostos do comboio (anel = novidade), próximo carimbo (com duelo de votos quando "onde dormir" tem 2 opções), passaporte do comboio (6 selos), carimbos dos lugares (spec 118a), carrossel dos dias montados, passagens e contas. No computador: coluna larga + passagens e contas numa coluna ao lado.
+- Peças: `apps/web/src/features/viagens/SecoesDaViagem.tsx`; dados: `features/viagens/abaViagem.ts`.
+- Lógica movida pro core em `packages/core/src/aba-viagem.ts`: `carregarAbaViagem`, `montarPassos`, `proximoCarimbo`, `estadoDosPassos`, `textoDoBotaoDoPasso`, `resumoDasContas`, `CATEGORIAS`. Os arquivos do app (`src/dados/abaViagem.ts`, `contas.ts`, `ui/PassosDaViagem.tsx`) só reexportam do core.
+- O mapa e a edição das cidades (ordem, datas, adicionar) saíram da tela da viagem e foram pra **Cidades** (`/cidades`, `Cidades.tsx`), como a tela "Cidades do roteiro" do app.
+
+**Ficou de fora (de propósito):**
+- A comemoração da Norti quando cai um carimbo.
+- A fase "voltou" (Lembranças) do app: o site mostra a mesma tela.
+- Na fase "na viagem", o site continua levando pro Hoje uma vez por aba, como antes.
+- "Antes de embarcar" está congelado no RUMO.
+
+**Pra etapa 3 e 5:** dentro de Reservas, `Hospedagem.tsx` e `Transportes.tsx` ainda mostram o título grande de cada um embaixo das pílulas. O app esconde esse título quando a tela está dentro da aba (`naAba`). Dá pra fazer igual quando mexerem nelas.

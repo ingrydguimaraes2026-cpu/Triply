@@ -9,11 +9,13 @@ import NovaViagem from './pages/NovaViagem'
 import Perdido, { ErroNaTela } from './pages/Perdido'
 import ViagemLayout from './pages/viagem/ViagemLayout'
 import Overview from './pages/viagem/Overview'
-import Hospedagem from './pages/viagem/Hospedagem'
 import Lugares from './pages/viagem/Lugares'
 import Explorar from './pages/viagem/Explorar'
 import Agenda from './pages/viagem/Agenda'
-import Transportes from './pages/viagem/Transportes'
+import Reservas from './pages/viagem/Reservas'
+import Redirecionar from './pages/viagem/Redirecionar'
+import Cidades from './pages/viagem/Cidades'
+import TudoDaViagem from './pages/viagem/TudoDaViagem'
 import Financeiro from './pages/viagem/Financeiro'
 import Fotos from './pages/viagem/Fotos'
 import Comboio from './pages/viagem/Comboio'
@@ -55,12 +57,17 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <Overview /> },
               { path: 'hoje', element: <Hoje /> },
-              { path: 'hospedagem', element: <Hospedagem /> },
+              // Reservas = Passagens + Hospedagem (como no app). Os endereços antigos continuam abrindo.
+              { path: 'reservas', element: <Reservas /> },
+              { path: 'hospedagem', element: <Redirecionar para="reservas" parte="hospedagem" /> },
+              { path: 'transportes', element: <Redirecionar para="reservas" parte="transporte" /> },
+              { path: 'cidades', element: <Cidades /> }, // ordem e datas das cidades (saiu da tela da viagem)
+              { path: 'tudo', element: <TudoDaViagem /> }, // "Tudo da viagem", como no app
               { path: 'agenda', element: <Agenda /> },
               { path: 'lugares', element: <Lugares /> },
               { path: 'explorar', element: <Explorar /> }, // spec 114
-              { path: 'transportes', element: <Transportes /> },
-              { path: 'financeiro', element: <Financeiro /> },
+              { path: 'contas', element: <Financeiro /> },
+              { path: 'financeiro', element: <Redirecionar para="contas" /> },
               { path: 'fotos', element: <Fotos /> },
               { path: 'comboio', element: <Comboio /> },
               { path: 'configuracoes', element: <Configuracoes /> },

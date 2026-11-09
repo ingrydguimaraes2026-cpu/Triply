@@ -10,12 +10,13 @@ export type ItemCompartilhavel = {
   titulo?: string // nome do item, se houver (deixa a mensagem mais clara)
 }
 
-// Qual aba abre cada tipo. '' = a Overview (raiz da viagem).
+// Qual aba abre cada tipo. Enquete e ponto de encontro ficam em "Tudo da viagem" (desde 09/11/2026;
+// links antigos, sem aba, a tela da viagem manda pra lá).
 const ABA: Record<TipoCompartilhavel, string> = {
-  gasto: 'financeiro',
+  gasto: 'contas',
   lugar: 'lugares',
-  enquete: '',
-  ponto: '',
+  enquete: 'tudo',
+  ponto: 'tudo',
 }
 
 const ROTULO: Record<TipoCompartilhavel, string> = {

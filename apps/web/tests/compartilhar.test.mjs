@@ -7,15 +7,15 @@ const { linkDoItem, textoDoItem } = await import(new URL('../../../packages/core
 const V = '11111111-1111-1111-1111-111111111111'
 
 test('link abre na aba certa de cada tipo', () => {
-  assert.equal(linkDoItem('https://app', V, { tipo: 'gasto', id: 'g1' }), `https://app/viagem/${V}/financeiro?foco=g1`)
+  assert.equal(linkDoItem('https://app', V, { tipo: 'gasto', id: 'g1' }), `https://app/viagem/${V}/contas?foco=g1`)
   assert.equal(linkDoItem('https://app', V, { tipo: 'lugar', id: 'l1' }), `https://app/viagem/${V}/lugares?foco=l1`)
-  // enquete e ponto ficam na Overview (sem sub-aba)
-  assert.equal(linkDoItem('https://app', V, { tipo: 'enquete', id: 'e1' }), `https://app/viagem/${V}?foco=e1`)
-  assert.equal(linkDoItem('https://app', V, { tipo: 'ponto', id: 'p1' }), `https://app/viagem/${V}?foco=p1`)
+  // enquete e ponto ficam em "Tudo da viagem"
+  assert.equal(linkDoItem('https://app', V, { tipo: 'enquete', id: 'e1' }), `https://app/viagem/${V}/tudo?foco=e1`)
+  assert.equal(linkDoItem('https://app', V, { tipo: 'ponto', id: 'p1' }), `https://app/viagem/${V}/tudo?foco=p1`)
 })
 
 test('tira a barra do fim da base e escapa o id', () => {
-  assert.equal(linkDoItem('http://localhost:5173/', V, { tipo: 'gasto', id: 'a b' }), `http://localhost:5173/viagem/${V}/financeiro?foco=a%20b`)
+  assert.equal(linkDoItem('http://localhost:5173/', V, { tipo: 'gasto', id: 'a b' }), `http://localhost:5173/viagem/${V}/contas?foco=a%20b`)
 })
 
 test('texto usa o título quando tem, senão o rótulo do tipo', () => {

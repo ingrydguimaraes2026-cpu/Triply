@@ -9,8 +9,8 @@ export type Preferencias = {
 
 export const PREFERENCIAS_PADRAO: Preferencias = { fonte: 'normal', contraste: false, simples: false, escuro: false }
 
-// Abas que ficam no modo simples: Início, Hoje, Financeiro, Fotos, Comboio
-export const ABAS_DO_MODO_SIMPLES = ['', 'hoje', 'financeiro', 'fotos', 'comboio']
+// Abas que ficam no modo simples: Viagem, Hoje, Contas, Fotos, Comboio
+export const ABAS_DO_MODO_SIMPLES = ['', 'hoje', 'contas', 'fotos', 'comboio']
 
 export function abasVisiveis<A extends { para: string }>(abas: A[], simples: boolean): A[] {
   return simples ? abas.filter((a) => ABAS_DO_MODO_SIMPLES.includes(a.para)) : abas

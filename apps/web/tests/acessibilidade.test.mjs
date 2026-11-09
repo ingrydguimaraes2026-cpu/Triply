@@ -5,8 +5,8 @@ import { test } from 'node:test'
 const { abasVisiveis, lerPreferencias } = await import(new URL('../../../packages/core/src/acessibilidade.ts', import.meta.url))
 
 test('090: modo simples deixa só as abas essenciais', () => {
-  const abas = [{ para: '' }, { para: 'hoje' }, { para: 'agenda' }, { para: 'hospedagem' }, { para: 'financeiro' }, { para: 'fotos' }, { para: 'comboio' }]
-  assert.deepEqual(abasVisiveis(abas, true).map((a) => a.para), ['', 'hoje', 'financeiro', 'fotos', 'comboio'])
+  const abas = [{ para: '' }, { para: 'hoje' }, { para: 'agenda' }, { para: 'reservas' }, { para: 'contas' }, { para: 'fotos' }, { para: 'comboio' }]
+  assert.deepEqual(abasVisiveis(abas, true).map((a) => a.para), ['', 'hoje', 'contas', 'fotos', 'comboio'])
   assert.equal(abasVisiveis(abas, false).length, 7)
 })
 

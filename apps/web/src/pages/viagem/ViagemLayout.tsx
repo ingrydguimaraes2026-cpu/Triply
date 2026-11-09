@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { ArrowLeftRight, BedDouble, CalendarDays, Camera, ChevronRight, Compass, LifeBuoy, MapPinned, MoreHorizontal, PanelLeft, Plus, Printer, Route, Search, Settings, Sparkles, Sun, TrainFront, Users, Wallet } from '../../components/ui/icones'
+import { ArrowLeftRight, ChevronRight, LifeBuoy, MoreHorizontal, PanelLeft, Plus, Search } from '../../components/ui/icones'
+import { ABAS, TUDO_DA_VIAGEM } from '../../features/viagens/partes'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
 import { avisarQueGastosMudaram, type DadosDoGasto } from '../../features/financeiro/api'
@@ -15,8 +16,7 @@ import FaixaOffline from '../../features/offline/FaixaOffline'
 import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis, CONGELADO, faseDaViagem, separarAbas } from '@together/core'
-import { hojeTexto } from '../../features/destinos/datas'
+import { abasVisiveis, CONGELADO } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -24,34 +24,10 @@ import Norti from '../../components/ui/Norti'
 import Gaveta from '../../components/ui/Gaveta'
 import Perdido from '../Perdido'
 import Overview from './Overview'
-import Hospedagem from './Hospedagem'
-import Transportes from './Transportes'
+import Reservas from './Reservas'
 import '../../components/ui/ui.css'
 import './viagem.css'
 import { useCapas } from '../../features/viagens/capas'
-
-// Abas da viagem. Pra criar uma aba nova: adicione aqui e no src/router.tsx
-// `curto`: nome menor pro menu de baixo do celular (8 abas em 360px)
-const ABAS = [
-  { para: '', rotulo: 'Overview', curto: 'Início', icone: Compass },
-  // Spec 115: o Explorar (escolher lugares e montar os dias) vira o "Roteiro" da viagem
-  { para: 'explorar', rotulo: 'Roteiro', icone: Route },
-  { para: 'hoje', rotulo: 'Hoje', icone: Sun },
-  { para: 'agenda', rotulo: 'Agenda', icone: CalendarDays },
-  { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
-  { para: 'lugares', rotulo: 'Lugares', icone: MapPinned },
-  { para: 'transportes', rotulo: 'Passagens', curto: 'Passag.', icone: TrainFront },
-  { para: 'financeiro', rotulo: 'Financeiro', curto: 'Finanças', icone: Wallet },
-  { para: 'fotos', rotulo: 'Fotos', icone: Camera },
-  { para: 'comboio', rotulo: 'Comboio', icone: Users },
-]
-
-// "Depois da viagem" (spec 113): só no menu do computador. No celular ficam no Overview e no topo.
-const ABAS_DEPOIS = [
-  { para: 'retrospectiva', rotulo: 'Retrospectiva', icone: Sparkles },
-  { para: 'imprimir', rotulo: 'Imprimir e PDF', icone: Printer },
-  { para: 'configuracoes', rotulo: 'Configurações', icone: Settings },
-]
 
 // Menu recolhido (só ícones) fica lembrado neste navegador
 const CHAVE_MENU = 'together:menu-recolhido'
@@ -67,8 +43,7 @@ function lerRecolhido() {
 // voltar nelas é instantâneo e o mapa não carrega de novo.
 const ABAS_GUARDADAS = [
   { para: '', Tela: Overview },
-  { para: 'hospedagem', Tela: Hospedagem },
-  { para: 'transportes', Tela: Transportes },
+  { para: 'reservas', Tela: Reservas },
 ]
 
 type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<DadosDoGasto> } | null
@@ -99,7 +74,6 @@ export default function ViagemLayout() {
   const [vendoNovidades, setVendoNovidades] = useState(false)
   const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
   const [buscando, setBuscando] = useState(false) // spec 053
-  const [vendoMais, setVendoMais] = useState(false) // spec 115: "Mais" do menu no celular
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
   const { simples } = useAcessibilidade() // spec 090: modo simples mostra menos abas
   // Spec 085: mudança de outra pessoa aparece na hora (só escuta depois que a viagem carregou)
@@ -148,12 +122,9 @@ export default function ViagemLayout() {
 
   const { viagem, destinos, membros, meuId, euSouAdm } = estado.dados
   const eu = membros.find((m) => m.id === meuId)
-  // Spec 115: o menu mostra o que serve na fase da viagem; o resto fica em "Mais".
-  // Modo simples (spec 090) continua com as 5 abas dele, sem "Mais".
-  const { principais, mais } = simples
-    ? { principais: abasVisiveis(ABAS, true), mais: [] }
-    : separarAbas(ABAS, faseDaViagem(hojeTexto(), viagem.data_inicio, viagem.data_fim))
-  const abaEstaNoMais = mais.some((a) => a.para === aba)
+  // As 5 partes sempre iguais (como no app). Modo simples (spec 090): só as abas dele, sem "Tudo da viagem".
+  const tudo = TUDO_DA_VIAGEM.filter((a) => !a.soAdm || euSouAdm)
+  const principais = simples ? abasVisiveis([...ABAS, ...tudo], true) : ABAS
 
   return (
     <div className={recolhido ? 'viagem menu-recolhido' : 'viagem'}>
@@ -172,11 +143,10 @@ export default function ViagemLayout() {
         </button>
         {/* Sino de novidades (spec 031). ❄ congelado pelo RUMO (03/11/2026) */}
         {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} />}
-        {euSouAdm && (
-          <Link to="configuracoes" className="viagem-topo-icone" aria-label="Configurações da viagem">
-            <Settings size={20} aria-hidden="true" />
-          </Link>
-        )}
+        {/* "Tudo da viagem" (o "..." do app): o que não está nas 5 partes */}
+        <Link to="tudo" className="viagem-topo-icone" aria-label="Tudo da viagem">
+          <MoreHorizontal size={20} aria-hidden="true" />
+        </Link>
         <Link to="/perfil" aria-label="Seu perfil">
           <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={32} />
         </Link>
@@ -206,45 +176,18 @@ export default function ViagemLayout() {
         </Link>
 
         <nav className={simples ? 'viagem-abas simples' : 'viagem-abas'} aria-label="Abas da viagem">
-          {principais.map(({ para, rotulo, curto, icone: Icone }) => (
+          {principais.map(({ para, rotulo, icone: Icone }) => (
             <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo} title={rotulo}>
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
-              {curto && <span className="aba-curto" aria-hidden="true">{curto}</span>}
             </NavLink>
           ))}
-          {mais.length > 0 && (
-            <>
-              {/* Celular: um botão "Mais" abre a lista. Computador: a lista fica embaixo, com título. */}
-              <button
-                type="button"
-                className={abaEstaNoMais ? 'aba-mais so-celular active' : 'aba-mais so-celular'}
-                onClick={() => setVendoMais(true)}
-                aria-label="Mais abas"
-              >
-                <MoreHorizontal size={19} aria-hidden="true" />
-                <span className="aba-nome" aria-hidden="true">
-                  Mais
-                </span>
-              </button>
-              <span className="viagem-abas-titulo so-computador" aria-hidden="true">
-                Mais
-              </span>
-              {mais.map(({ para, rotulo, icone: Icone }) => (
-                <NavLink key={para} to={para} className="so-computador" aria-label={rotulo} title={rotulo}>
-                  <Icone size={19} aria-hidden="true" />
-                  <span className="aba-nome" aria-hidden="true">{rotulo}</span>
-                </NavLink>
-              ))}
-            </>
-          )}
-          {/* Modo simples (spec 090) esconde o "Depois da viagem", como no design */}
           {!simples && (
             <>
-              <span className="viagem-abas-titulo so-computador" aria-hidden="true">
-                Depois da viagem
-              </span>
-              {ABAS_DEPOIS.map(({ para, rotulo, icone: Icone }) => (
+              <NavLink to="tudo" className="viagem-abas-titulo so-computador" title="Ver tudo da viagem">
+                Tudo da viagem
+              </NavLink>
+              {tudo.map(({ para, rotulo, icone: Icone }) => (
                 <NavLink key={para} to={para} className="so-computador" aria-label={rotulo} title={rotulo}>
                   <Icone size={19} aria-hidden="true" />
                   <span className="aba-nome" aria-hidden="true">{rotulo}</span>
@@ -306,19 +249,6 @@ export default function ViagemLayout() {
       {buscando && (
         <Gaveta titulo="Buscar na viagem" aoFechar={() => setBuscando(false)}>
           <BuscaNaViagem viagemId={viagem.id} destinos={destinos} aoEscolher={() => setBuscando(false)} />
-        </Gaveta>
-      )}
-
-      {vendoMais && (
-        <Gaveta titulo="Mais da viagem" aoFechar={() => setVendoMais(false)}>
-          <nav className="mais-lista" aria-label="Mais abas da viagem">
-            {[...mais, ...ABAS_DEPOIS].map(({ para, rotulo, icone: Icone }) => (
-              <Link key={para} to={para} onClick={() => setVendoMais(false)}>
-                <Icone size={20} aria-hidden="true" />
-                {rotulo}
-              </Link>
-            ))}
-          </nav>
         </Gaveta>
       )}
 
