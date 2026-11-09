@@ -4,6 +4,7 @@ import {
   buscarLugaresComVotos,
   enquadrarNoMapa,
   mapaDaHospedagem,
+  rotulosQueCabem,
   textoDosMinutos,
   type CidadeDaNoite,
   type LugarParaMapa,
@@ -54,7 +55,8 @@ export default function MapaDaHospedagem({ viagemId, cidade, pessoas }: { viagem
   }, [carregou])
 
   const mapa = useMemo(() => mapaDaHospedagem(cidade, lugares ?? [], pessoas, pontoId), [cidade, lugares, pessoas, pontoId])
-  const altura = Math.round(Math.min(Math.max(largura * 0.62, 240), 480))
+  // Celular: quase quadrado (os pinos ficam juntos perto da estação); tela larga: mais baixo
+  const altura = Math.round(Math.min(Math.max(largura * (largura < 600 ? 1 : 0.62), 240), 480))
   const quadro = useMemo(() => {
     const pontos = [...mapa.pinos, ...(mapa.chegada ? [mapa.chegada] : []), ...(mapa.ponto ? [mapa.ponto] : [])]
     return enquadrarNoMapa(pontos, largura, altura)
@@ -65,6 +67,7 @@ export default function MapaDaHospedagem({ viagemId, cidade, pessoas }: { viagem
 
   const selecionada = escolhido ?? cidade.escolhida?.id ?? cidade.opcoes[0]?.id ?? null
   const destaque = mapa.pinos.find((p) => p.opcao.id === selecionada) ?? null
+  const cabem = quadro ? rotulosQueCabem(mapa.pinos.map((p) => ({ xy: quadro.xy(p), rotulo: p.rotulo, destaque: p.opcao.id === selecionada }))) : []
   const IconeDaChegada = /aeroporto|airport|aeroport/i.test(mapa.chegada?.nome ?? '') ? Plane : TrainFront
 
   return (
@@ -103,9 +106,10 @@ export default function MapaDaHospedagem({ viagemId, cidade, pessoas }: { viagem
               </Marco>
             )}
 
-            {mapa.pinos.map((p) => {
+            {mapa.pinos.map((p, i) => {
               const [x, y] = quadro.xy(p)
               const ativo = p.opcao.id === selecionada
+              const mostraRotulo = cabem[i]
               return (
                 <button
                   key={p.opcao.id}
@@ -116,7 +120,9 @@ export default function MapaDaHospedagem({ viagemId, cidade, pessoas }: { viagem
                   aria-label={`${p.numero}. ${p.opcao.nome}, ${p.rotulo}`}
                   aria-pressed={ativo}
                 >
-                  <span className="mh-pino-rotulo">{p.rotulo}</span>
+                  <span className="mh-pino-rotulo" style={mostraRotulo ? undefined : { visibility: 'hidden' }}>
+                    {p.rotulo}
+                  </span>
                   <span className="mh-pino-numero">{p.numero}</span>
                 </button>
               )

@@ -121,7 +121,12 @@ export function enquadrarNoMapa(
     const ys = px.map((p) => p[1])
     if (Math.max(...xs) - Math.min(...xs) <= uteis.l && Math.max(...ys) - Math.min(...ys) <= uteis.a) break
   }
-  const px = pontos.map((p) => noMundo(p, zoom))
+  // Zoom "quebrado": aumenta os azulejos até os pontos ocuparem o espaço (no máximo 1,9×, pra não borrar)
+  const px0 = pontos.map((p) => noMundo(p, zoom))
+  const larguraDosPontos = Math.max(...px0.map((p) => p[0])) - Math.min(...px0.map((p) => p[0]))
+  const alturaDosPontos = Math.max(...px0.map((p) => p[1])) - Math.min(...px0.map((p) => p[1]))
+  const escala = zoom >= zoomMaximo ? 1 : Math.max(1, Math.min(1.9, uteis.l / Math.max(1, larguraDosPontos), uteis.a / Math.max(1, alturaDosPontos)))
+  const px = px0.map(([x, y]) => [x * escala, y * escala])
   const xs = px.map((p) => p[0])
   const ys = px.map((p) => p[1])
   const meioX = (Math.min(...xs) + Math.max(...xs)) / 2
@@ -130,12 +135,14 @@ export function enquadrarNoMapa(
   const origem = [meioX - largura / 2, meioY - altura / 2]
 
   const limite = 2 ** zoom
+  const lado = AZULEJO * escala
   const azulejos: Azulejo[] = []
-  for (let tx = Math.floor(origem[0] / AZULEJO); tx * AZULEJO < origem[0] + largura; tx++) {
-    for (let ty = Math.floor(origem[1] / AZULEJO); ty * AZULEJO < origem[1] + altura; ty++) {
+  for (let tx = Math.floor(origem[0] / lado); tx * lado < origem[0] + largura; tx++) {
+    for (let ty = Math.floor(origem[1] / lado); ty * lado < origem[1] + altura; ty++) {
       if (ty < 0 || ty >= limite) continue
       const x = ((tx % limite) + limite) % limite
-      azulejos.push({ chave: `${zoom}/${tx}/${ty}`, url: URL_DO_AZULEJO(zoom, x, ty), esquerda: tx * AZULEJO - origem[0], topo: ty * AZULEJO - origem[1], tamanho: AZULEJO })
+      // +0,5 px tapa a fresta entre azulejos quando a escala não é inteira
+      azulejos.push({ chave: `${zoom}/${tx}/${ty}`, url: URL_DO_AZULEJO(zoom, x, ty), esquerda: tx * lado - origem[0], topo: ty * lado - origem[1], tamanho: lado + (escala === 1 ? 0 : 0.5) })
     }
   }
   return {
@@ -143,9 +150,32 @@ export function enquadrarNoMapa(
     azulejos,
     xy: (p) => {
       const [x, y] = noMundo(p, zoom)
-      return [x - origem[0], y - origem[1]]
+      return [x * escala - origem[0], y * escala - origem[1]]
     },
   }
+}
+
+// Quais rótulos de preço cabem sem cobrir outro. O da opção destacada entra primeiro; os outros, na ordem.
+// Rótulo: caixa acima do pino (largura ~ 6,2 px por letra). Também evita a bolinha dos outros pinos.
+export function rotulosQueCabem(pinos: { xy: [number, number]; rotulo: string; destaque: boolean }[]): boolean[] {
+  const caixa = ({ xy: [x, y], rotulo }: { xy: [number, number]; rotulo: string }) => {
+    const l = rotulo.length * 6.2 + 12
+    return { x1: x - l / 2, x2: x + l / 2, y1: y - 38, y2: y - 18 }
+  }
+  const bateu = (a: ReturnType<typeof caixa>, b: { x1: number; x2: number; y1: number; y2: number }) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2
+  const bolinhas = pinos.map(({ xy: [x, y] }) => ({ x1: x - 14, x2: x + 14, y1: y - 14, y2: y + 14 }))
+  const ordem = pinos.map((_, i) => i).sort((a, b) => Number(pinos[b].destaque) - Number(pinos[a].destaque))
+  const postas: ReturnType<typeof caixa>[] = []
+  const cabe = pinos.map(() => false)
+  for (const i of ordem) {
+    const c = caixa(pinos[i])
+    const livre = postas.every((p) => !bateu(c, p)) && bolinhas.every((b, j) => j === i || !bateu(c, b))
+    if (livre || pinos[i].destaque) {
+      cabe[i] = true
+      postas.push(c)
+    }
+  }
+  return cabe
 }
 
 // "6 min da Roma Termini · 12 min do Coliseu"

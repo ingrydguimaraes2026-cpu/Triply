@@ -37,15 +37,16 @@ Na Eurotrip, a escolha de Roma foi decidida pela distância da estação Termini
 Igual à 123: todo mundo do comboio vê. Trocar o ponto principal é só da tela (não grava nada).
 
 ## Critérios de aceite
-- [ ] Na Eurotrip, Roma → Mapa mostra os 5 pinos, a Roma Termini e o Coliseu.
-- [ ] Cada opção mostra os minutos a pé da Termini e até o Coliseu.
-- [ ] Tocar num pino destaca a opção e desenha as retas.
-- [ ] Trocar "Medir até" pra Fontana di Trevi refaz os minutos.
-- [ ] Colar um link do Airbnb preenche o lugar da opção sem digitar endereço.
-- [ ] Funciona a 360px e no desktop.
+- [x] Na Eurotrip, Roma → Mapa mostra os 5 pinos, a Roma Termini e o Coliseu.
+- [x] Cada opção mostra os minutos a pé da Termini e até o Coliseu.
+- [x] Tocar num pino destaca a opção e desenha as retas.
+- [x] Trocar "Medir até" pra Fontana di Trevi refaz os minutos.
+- [ ] Colar um link do Airbnb preenche o lugar da opção sem digitar endereço. (A função lê o lugar das páginas reais; salvar pela tela não foi testado pra não gravar opção de teste na Eurotrip.)
+- [x] Funciona a 360px e no desktop.
 
 ## Como ficou (09/11)
 - **Core:** `packages/core/src/mapa-da-hospedagem.ts` (`mapaDaHospedagem`, `pontoPrincipal`, `enquadrarNoMapa`). Teste: `apps/web/tests/mapa-da-hospedagem.test.mjs`. Em `previa.ts`: `lerPontoDaPagina` (lat/lon da página), copiado na função `previa-link`.
 - **App:** `src/ui/MapaDaHospedagem.tsx`, usado em `app/cidade-hospedagem.tsx` (Lista/Mapa). `app/opcao-hospedagem.tsx` usa o lugar que vem da prévia do link.
+- **Conferido (09/11):** site a 360px e no desktop, app (Expo web) a 360px. Zoom fracionado pra os pontos ocuparem o quadro; rótulo de preço que cobriria outro fica escondido (o da opção destacada sempre aparece); o nome da estação e do ponto fica à direita da bolinha.
 - **Site:** `apps/web/src/features/hospedagem/MapaDaHospedagem.tsx`, na cidade aberta da Hospedagem.
 - **Dados da Eurotrip (09/11):** o trem que chega em Roma passou a apontar pra Roma Termini (41.9010, 12.5016); Coliseu, Trevi, Panteão, Vaticano e o Buraco da Fechadura ganharam coordenada; a Just Chilling Suites ganhou o lugar do site dela (Largo Brancaccio, 83).

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Image, Pressable, ScrollView, Text, View } from 'react-native'
 import Svg, { Circle, Line } from 'react-native-svg'
-import { ATRIBUICAO_DO_MAPA, enquadrarNoMapa, textoDosMinutos, type MapaDaHospedagem as Mapa } from '@together/core'
+import { ATRIBUICAO_DO_MAPA, enquadrarNoMapa, rotulosQueCabem, textoDosMinutos, type MapaDaHospedagem as Mapa } from '@together/core'
 import { Footprints, Plane, Star, TrainFront } from './icones'
 import { cor, sombra } from '../../theme'
 
@@ -20,13 +20,15 @@ const PINO = 28
 
 export function MapaDaHospedagem({ mapa, selecionada, aoSelecionar, aoTrocarPonto }: Props) {
   const [largura, setLargura] = useState(0)
-  const altura = Math.round(Math.min(largura * 0.8, 460))
+  // Celular: quase quadrado (os pinos ficam juntos perto da estação); tela larga: mais baixo
+  const altura = Math.round(Math.min(largura * (largura < 600 ? 1 : 0.62), 480))
   const quadro = useMemo(() => {
     const pontos = [...mapa.pinos, ...(mapa.chegada ? [mapa.chegada] : []), ...(mapa.ponto ? [mapa.ponto] : [])]
     return enquadrarNoMapa(pontos, largura, altura)
   }, [mapa, largura, altura])
 
   const destaque = mapa.pinos.find((p) => p.opcao.id === selecionada) ?? null
+  const cabem = quadro ? rotulosQueCabem(mapa.pinos.map((p) => ({ xy: quadro.xy(p), rotulo: p.rotulo, destaque: p.opcao.id === selecionada }))) : []
   const ehAeroporto = /aeroporto|airport|aeroport/i.test(mapa.chegada?.nome ?? '')
   const IconeDaChegada = ehAeroporto ? Plane : TrainFront
 
@@ -70,7 +72,7 @@ export function MapaDaHospedagem({ mapa, selecionada, aoSelecionar, aoTrocarPont
               </Marco>
             ) : null}
 
-            {mapa.pinos.map((p) => {
+            {mapa.pinos.map((p, i) => {
               const [x, y] = quadro.xy(p)
               const ativo = p.opcao.id === selecionada
               const escura = p.opcao.escolhida
@@ -82,7 +84,7 @@ export function MapaDaHospedagem({ mapa, selecionada, aoSelecionar, aoTrocarPont
                   accessibilityLabel={`${p.numero}. ${p.opcao.nome}, ${p.rotulo}`}
                   style={{ position: 'absolute', left: x - 60, top: y - PINO / 2 - 22, width: 120, alignItems: 'center', zIndex: ativo ? 3 : 2 }}
                 >
-                  <View className="rounded-md px-1.5 py-0.5" style={[{ backgroundColor: ativo ? cor.texto : cor.cartao }, sombra.flutuante]}>
+                  <View className="rounded-md px-1.5 py-0.5" style={[{ backgroundColor: ativo ? cor.texto : cor.cartao, opacity: cabem[i] ? 1 : 0 }, sombra.flutuante]}>
                     <Text numberOfLines={1} className="font-body-bold text-[10.5px]" style={{ color: ativo ? cor.cartao : cor.texto }}>
                       {p.rotulo}
                     </Text>
@@ -181,14 +183,14 @@ function Reta({ de, ate }: { de: [number, number]; ate: [number, number] }) {
   return <Line x1={de[0]} y1={de[1]} x2={ate[0]} y2={ate[1]} stroke={cor.texto} strokeWidth={2.5} strokeDasharray="6 5" strokeLinecap="round" />
 }
 
-// Estação/aeroporto e ponto principal: bolinha com ícone e o nome embaixo
+// Estação/aeroporto e ponto principal: bolinha com ícone e o nome à direita (em cima ficam os preços dos pinos)
 function Marco({ xy: [x, y], fundo, rotulo, children }: { xy: [number, number]; fundo: string; rotulo: string; children: React.ReactNode }) {
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', left: x - 70, top: y - 15, width: 140, alignItems: 'center', zIndex: 1 }}>
+    <View pointerEvents="none" style={{ position: 'absolute', left: x - 15, top: y - 15, width: 170, flexDirection: 'row', alignItems: 'center', gap: 3, zIndex: 1 }}>
       <View style={[{ width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: fundo, borderWidth: 2, borderColor: cor.cartao }, sombra.flutuante]}>
         {children}
       </View>
-      <Text numberOfLines={1} className="mt-0.5 rounded px-1 font-body-bold text-[10.5px] text-texto" style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}>
+      <Text numberOfLines={1} className="max-w-[136px] rounded px-1 font-body-bold text-[10.5px] text-texto" style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}>
         {rotulo}
       </Text>
     </View>
