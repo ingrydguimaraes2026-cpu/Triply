@@ -41,7 +41,7 @@ O Victor viu as etapas 1 a 4 e não gostou: "muita coisa do site ainda está ant
 **Tela por tela:**
 | Tela | Site hoje | App |
 |---|---|---|
-| Início (`/`) | Pula direto pra uma viagem. `/viagens`: topo com Perfil e Sair, "Minhas viagens", mapa escuro | "Bom dia, Paulo", avatar, mapa da galera claro, cartão grande da próxima viagem com "Faltam N dias" e carimbos |
+| Início (`/`) | **Feito (09/11)**: `/` e `/viagens` mostram o Início igual ao app (ver "Início do site" abaixo) | "Bom dia, Paulo", avatar, mapa da galera claro, cartão grande da próxima viagem com "Faltam N dias" e carimbos |
 | Roteiro | Abre no baralho do Explorar (cartão "Lutécia", "1 de 6", Ajustar/Pronto) | Abre em Matches + pílulas Dia 1, Dia 2...; "Descobrir mais lugares" leva ao baralho |
 | Reservas → Passagens | Versão antiga: "Entre cidades", trechos com "Falta definir", links Rome2Rio e Google Maps | Deslocamentos (spec 122): vazio com a Norti e "Novo deslocamento"; opções, votos e comparar |
 | Fotos | Caixa "Compartilhe uma foto", 4 abas (Feed, Grade, Por dia, Melhores), vazio tracejado | "0 fotos · 0 pessoas", botão "Postar", 2 pílulas, Norti dormindo |
@@ -88,3 +88,11 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - Saldo de cada um vem de `calcularSaldos` do core. A tela não tem conta de dinheiro nova (o "X cada" do app virou "sua parte", que já vem da divisão).
 - Testado em 360 px e 1366 px na Eurotrip (sem gastos: só o estado vazio e a frase abrindo o formulário). **As bolhas com gastos de verdade não foram vistas no navegador:** o banco não tem nenhum gasto. Vale olhar quando houver.
 - `npm test`: falham `zip` (antiga), `icones` (❄ de outros arquivos; o Financeiro já não tem) e `078` (membro conseguiu inserir trajeto; provável efeito da regra nova da spec 122, não desta etapa).
+
+## Início do site (09/11/2026, commit local)
+- **`/` agora mostra o Início** (antes pulava direto pra última viagem). Igual ao app: num dia de viagem abre direto no Hoje (uma vez por abertura do site), conta sem viagem vai pra `/nova-viagem`, e `/?lancar=1` continua abrindo o lançamento rápido. `/viagens` mostra a mesma tela. **Victor: mudança de comportamento do `/`.**
+- Tela: "Bom dia, <nome>" com o avatar (abre o Perfil; Sair fica no Perfil), mapa da galera **claro** (SVG parado como o do app, não o mapa escuro com zoom), cartão grande da próxima viagem com a capa, "Faltam N dias", "N de 6 carimbos" e a barra, "No comboio agora", Próximas, Viagens passadas, Arquivadas, Nova viagem tracejado, Rolê hoje e "Já fomos pra..." (gavetas).
+- Computador (≥1024px): coluna larga com as viagens + mapa fixo à direita. Celular: uma coluna, mapa em cima.
+- Novos: `features/carimbos/RoleHoje.tsx` (Rolê hoje no site: tipo, "Usar onde estou" pelo navegador ou busca) e `features/viagens/resumoDoInicio.ts` (carimbos + atividades, igual ao app).
+- **Não conferido no navegador logado**: a porta 5174 pede login e não há conta de teste. Falta abrir `/` em 375px e 1366px e comparar com o app (porta 8089).
+
