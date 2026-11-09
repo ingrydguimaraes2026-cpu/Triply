@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Tables } from '@together/core'
 import * as api from './api'
 import { montarHospedagem, resumoDaHospedagem, type Opcao } from './regras'
+import { buscarTrajetos } from '../transportes/api'
 import { useAoMudar } from '../tempo-real/avisos'
 
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; opcoes: Opcao[] }
@@ -83,4 +84,43 @@ export function useHospedagem(viagemId: string, destinos: Tables<'destinos'>[], 
     escolher: comRecarga(api.escolherOpcao),
     salvarGuia: comRecarga(api.salvarGuiaDaCasa),
   }
+}
+
+// ---------------- Spec 123: hospedagem por noite ----------------
+// Opções + deslocamentos (a chegada em cada cidade vem do último deslocamento do dia).
+// `opcoes` pode ser trocado na hora (voto, escolher, reservada) antes do banco responder.
+type EstadoDasNoites = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; opcoes: Opcao[]; trajetos: Tables<'trajetos'>[] }
+
+export function useNoitesDaViagem(viagemId: string) {
+  const [estado, setEstado] = useState<EstadoDasNoites>({ status: 'carregando' })
+
+  const buscar = useCallback(async (): Promise<EstadoDasNoites> => {
+    try {
+      const [opcoes, trajetos] = await Promise.all([api.buscarOpcoes(viagemId), buscarTrajetos(viagemId, { comOpcoes: true })])
+      // Chegada e volta de cada um não contam como "o grupo chega na cidade" (igual ao app)
+      return { status: 'pronto', opcoes, trajetos: trajetos.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida') }
+    } catch (erro) {
+      console.error('Erro ao carregar as noites:', erro)
+      return { status: 'erro' }
+    }
+  }, [viagemId])
+
+  useEffect(() => {
+    let ativo = true
+    buscar().then((novo) => {
+      if (ativo) setEstado(novo)
+    })
+    return () => {
+      ativo = false
+    }
+  }, [buscar])
+
+  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  useAoMudar(['hospedagens', 'trajetos'], recarregar)
+
+  const trocarOpcoes = useCallback((mudar: (opcoes: Opcao[]) => Opcao[]) => {
+    setEstado((atual) => (atual.status === 'pronto' ? { ...atual, opcoes: mudar(atual.opcoes) } : atual))
+  }, [])
+
+  return { estado, recarregar, trocarOpcoes }
 }
