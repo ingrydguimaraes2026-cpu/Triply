@@ -23,7 +23,10 @@ export type ItemDaAgenda =
       // Spec 122a: o deslocamento no dia
       situacao: SituacaoDoDeslocamento
       opcoes: number // quantas opções o deslocamento tem (1 = só ele)
+      partida: string // horário completo da saída
       chegada: string | null // horário completo da chegada (pode ser no dia seguinte)
+      para: string // pra onde (texto)
+      ultimo: boolean // é o último do dia
     }
   | { tipo: 'evento'; chave: string; hora: string; titulo: string; detalhe: string; evento: EventoDaAgenda }
 
@@ -92,7 +95,10 @@ export function montarAgendaDoDia(
       ...(t.chegada && diaNoFuso(t.chegada) === dia ? { fim: horaNoFuso(t.chegada) } : {}),
       situacao: t.opcoes > 1 && !t.temEscolhida ? 'comparando' : ((t.situacao ?? 'sugestao') as SituacaoDoDeslocamento),
       opcoes: t.opcoes,
+      partida: t.partida,
       chegada: t.chegada,
+      para,
+      ultimo: !!t.ultimo_do_dia,
     })
   }
 

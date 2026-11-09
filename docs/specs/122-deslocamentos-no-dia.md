@@ -168,9 +168,18 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - Preço continua sendo o do grupo todo (como já era em `trajetos.preco`).
 - Respostas assumidas pras perguntas (dá pra mudar): só ADM ou liberado põe deslocamento (a regra de antes); a folga mínima fica pra 122b.
 
+## Como ficou a 122b (08/11/2026)
+- Core: `packages/core/src/avisos-do-dia.ts` (`avisosDoDia`, `linkDoGuardaVolumes`), função pura com teste em `apps/web/tests/avisos-do-dia.test.mjs` (8 casos).
+- Avisos:
+  - **folga** entre dois deslocamentos seguidos: menos de 30 min (45 se é dia de mudar de casa) é "Folga curta" em vermelho; se o próximo é o último do dia, o texto diz; horários que se cruzam também avisam; folga de até 3h aparece discreta ("1h20 de folga até o próximo");
+  - **check-in**: o último deslocamento do dia chega depois do "check-in até" da casa escolhida (inclusive de madrugada). Botão "Mandar mensagem pro anfitrião": WhatsApp se o contato for telefone, senão o compartilhar do celular. Chegar antes do check-in abrir vira dica;
+  - **malas**: dia de check-out, 2 ou mais deslocamentos e 3h ou mais entre o primeiro e o último. Botão "Achar guarda-volumes" abre o Google Maps.
+- App: os avisos aparecem entre os passos do dia, no Roteiro. Lê as casas escolhidas da Hospedagem; sem casa, só a folga funciona.
+- Ficou de fora: "buraco no dia" (dois passeios em lugares diferentes sem deslocamento). Precisa saber onde fica cada evento; volta quando os eventos tiverem lugar com coordenada.
+
 ## Perguntas em aberto
 - Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
-- Folga mínima: 30 min sem malas e 45 com malas está bom?
+- Folga mínima: 30 min sem malas e 45 com malas (assumido na 122b; dá pra mudar em `FOLGA_MINIMA`).
 - O "Hoje" mostra só o próximo deslocamento ou o dia todo dali pra frente?
 - Arrumar os destinos da Eurotrip (tirar o Mônaco repetido, transformar Bernina e Como em passeio do dia) fica com vocês ou eu proponho no app?
 

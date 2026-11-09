@@ -39,6 +39,7 @@ export type Opcao = {
   checkout: string | null
   horaCheckin?: string | null // "15:00" (a partir de)
   horaCheckout?: string | null // "10:00" (até)
+  horaCheckinLimite?: string | null // "00:00" (check-in até; spec 122b avisa quem chega depois)
   contatoAnfitriao?: string | null // spec 120a
   observacao: string | null
   cancelamentoGratisAte?: string | null // spec 041
@@ -397,6 +398,7 @@ export async function buscarOpcoesDeHospedagem(cli: ClienteTogether, viagemId: s
     // O banco devolve "22:00:00": a tela usa "22:00"
     horaCheckin: h.hora_checkin?.slice(0, 5) ?? null,
     horaCheckout: h.hora_checkout?.slice(0, 5) ?? null,
+    horaCheckinLimite: h.hora_checkin_limite?.slice(0, 5) ?? null,
     contatoAnfitriao: h.contato_anfitriao,
     observacao: h.observacao,
     cancelamentoGratisAte: h.cancelamento_gratis_ate,
