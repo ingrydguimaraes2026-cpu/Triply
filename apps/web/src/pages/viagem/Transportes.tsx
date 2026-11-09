@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertTriangle, ArrowRight, ArrowRightLeft, ExternalLink, Pencil, Plus, Wallet } from '../../components/ui/icones'
-import { conexoes, formatarDinheiro, linkDoCaminho, meioComCaminho, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, resumoDosTrajetos, rodizio, type Tables } from '@together/core'
+import { conexoes, formatarDinheiro, linkDoCaminho, meioComCaminho, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, nomeDaSituacaoDoDeslocamento, opcoesNoDia, passagensDaViagem, resumoDosTrajetos, rodizio, type CasaDoDia, type ItemDaPassagem, type Tables } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { useViagemAtual } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -15,6 +15,7 @@ import {
   type Passeio,
 } from '../../features/transportes/rota'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
+import { buscarOpcoes } from '../../features/hospedagem/api'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Carregando from '../../components/ui/Carregando'
@@ -29,18 +30,31 @@ type Destino = Tables<'destinos'>
 type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string; tipo?: 'chegada' | 'saida' } | null
 type GastoDoTrajeto = Trajeto | null
 
-// Transportes (spec 004): mapa do Google com o caminho, a rota cidade a cidade e os passeios (bate-e-volta).
+// Passagens (spec 122d, antes "Transportes", spec 004): no topo, o que falta decidir, o que falta comprar,
+// o que já foi comprado, os avisos sérios e o total; embaixo, a rota cidade a cidade pra editar no PC.
 export default function Transportes() {
   const { viagem, destinos, membros, meuId, euSouAdm: souAdmDeVerdade } = useViagemAtual()
   // Spec 078: com transportes liberados, o membro edita trajetos como o ADM
   const euSouAdm = souAdmDeVerdade || viagem.membro_edita_transportes
   const [gastoDe, setGastoDe] = useState<GastoDoTrajeto>(null) // spec 035: lançar o trajeto como gasto
-  const { estado, recarregar } = useTrajetos(viagem.id)
+  const { estado, recarregar } = useTrajetos(viagem.id, true) // spec 122d: com as opções, pra contar o "comparando"
+  const [casas, setCasas] = useState<CasaDoDia[]>([]) // casas escolhidas: avisos de check-in
+  useEffect(() => {
+    buscarOpcoes(viagem.id)
+      .then((ops) => setCasas(ops.filter((o) => o.escolhida)))
+      .catch(() => setCasas([]))
+  }, [viagem.id])
   const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
   const [janela, setJanela] = useState<Janela>(null)
 
   const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
-  const todosTrajetos = estado.status === 'pronto' ? estado.trajetos : []
+  const comOpcoes = estado.status === 'pronto' ? estado.trajetos : []
+  const todosTrajetos = opcoesNoDia(comOpcoes) // das opções de um deslocamento, só a que vale
+  const passagens = passagensDaViagem(comOpcoes.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida'), destinos, casas)
+  const abrirPassagem = (i: ItemDaPassagem) => {
+    const t = comOpcoes.find((x) => x.id === i.id)
+    if (t) setJanela({ trajeto: t })
+  }
   const trajetos = soOsMeus ? todosTrajetos.filter((t) => vouNesse(t, meuId)) : todosTrajetos
   const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
   const nomeDe = (id: string | null) => destinoDe(id)?.nome ?? 'Sem destino'
@@ -279,8 +293,8 @@ export default function Transportes() {
     <>
       <CabecalhoPagina
         acima={viagem.nome}
-        titulo="Transportes"
-        subtitulo="Como vocês vão de uma cidade pra outra."
+        titulo="Passagens"
+        subtitulo="O que falta decidir, o que falta comprar e o que já está garantido."
         acao={
           euSouAdm &&
           destinos.length > 0 && (
@@ -294,6 +308,86 @@ export default function Transportes() {
       {estado.status === 'carregando' && <Carregando texto="Carregando os trajetos…" compacto />}
       {estado.status === 'erro' && (
         <ErroNaTela titulo="Não deu pra carregar os trajetos" aoTentar={recarregar} />
+      )}
+
+      {estado.status === 'pronto' && comOpcoes.length > 0 && (
+        <section className="passagens" aria-label="Passagens">
+          <div className="passagens-contadores">
+            <p className="passagens-contador decidir">
+              <strong>{passagens.decidir.length}</strong> pra decidir
+            </p>
+            <p className="passagens-contador comprar">
+              <strong>{passagens.comprar.length}</strong> pra comprar
+            </p>
+            <p className="passagens-contador compradas">
+              <strong>{passagens.compradas.length}</strong> {passagens.compradas.length === 1 ? 'comprada' : 'compradas'}
+            </p>
+          </div>
+          {passagens.avisos.length > 0 && (
+            <div className="passagens-avisos">
+              {passagens.avisos.map((a) => (
+                <p key={`${a.dia}-${a.chave}`}>
+                  <AlertTriangle size={16} aria-hidden="true" />
+                  <span>
+                    <strong>
+                      {formatarData(a.dia)} · {a.titulo}
+                    </strong>{' '}
+                    {a.texto}
+                  </span>
+                </p>
+              ))}
+            </div>
+          )}
+          {(
+            [
+              ['Pra decidir', passagens.decidir],
+              ['Pra comprar', passagens.comprar],
+              ['Compradas', passagens.compradas],
+            ] as const
+          ).map(([titulo, itens]) =>
+            itens.length ? (
+              <div key={titulo} className="passagens-lista">
+                <h2>{titulo}</h2>
+                <ul>
+                  {itens.map((i) => {
+                    const { icone: Icone, nome } = meio(i.meio)
+                    const linha = [
+                      i.dia ? formatarData(i.dia) : 'Sem data',
+                      i.hora,
+                      i.situacao === 'comparando' ? `${i.opcoes} opções (compare no app)` : nome,
+                      i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
+                      i.naHora ? 'compra na hora' : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')
+                    return (
+                      <li key={i.id}>
+                        <button type="button" onClick={() => abrirPassagem(i)} disabled={!euSouAdm}>
+                          <Icone size={18} aria-hidden="true" />
+                          <span className="passagens-texto">
+                            <strong>{i.titulo}</strong>
+                            <small>{linha}</small>
+                          </span>
+                          {i.preco != null && i.moeda && <span className="passagens-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</span>}
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ) : null,
+          )}
+          {Object.keys(passagens.total).length > 0 && (
+            <p className="passagens-total">
+              <span>Transporte da viagem</span>
+              {Object.keys(passagens.total).map((m) => (
+                <strong key={m}>
+                  {formatarDinheiro(Math.round(passagens.total[m] * 100), m)} <small>({formatarDinheiro(Math.round((passagens.pago[m] ?? 0) * 100), m)} já pago)</small>
+                </strong>
+              ))}
+            </p>
+          )}
+        </section>
       )}
 
       {avisos.length > 0 && (

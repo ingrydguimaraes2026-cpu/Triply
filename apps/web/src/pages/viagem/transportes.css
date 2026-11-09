@@ -332,3 +332,28 @@
 .trecho-compacto .rota-comparar { display: flex; flex-wrap: wrap; gap: 6px; }
 .trecho-compacto .rota-link { min-height: 34px; padding: 0 10px; font-size: 13px; background: none; color: var(--couro); border: 1px solid var(--cor-borda); }
 .trecho-compacto .hosp-adicionar { align-self: flex-start; }
+
+/* ---------- Passagens (spec 122d) ---------- */
+.passagens { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.passagens-contadores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.passagens-contador { margin: 0; padding: 12px 8px; border-radius: 16px; text-align: center; font-weight: 700; font-size: 13px; }
+.passagens-contador strong { display: block; font-family: var(--fonte-titulo); font-size: 26px; line-height: 1.1; }
+.passagens-contador.decidir { background: var(--cor-pessoal-fundo); color: var(--escuro); }
+.passagens-contador.comprar { background: var(--dourado-claro); color: var(--couro); }
+.passagens-contador.compradas { background: var(--cor-sucesso-fundo); color: var(--cor-sucesso); }
+.passagens-avisos { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 16px; background: var(--cor-erro-fundo); }
+.passagens-avisos p { display: flex; gap: 8px; margin: 0; font-size: 14px; color: var(--cor-texto); }
+.passagens-avisos svg { flex-shrink: 0; margin-top: 2px; color: var(--cor-erro); }
+.passagens-lista h2 { margin: 0 0 8px; font-family: inherit; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--caramelo); }
+.passagens-lista ul { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.passagens-lista button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-cartao); color: var(--cor-texto); text-align: left; cursor: pointer; font: inherit; }
+.passagens-lista button:disabled { cursor: default; opacity: 1; }
+.passagens-lista button svg { flex-shrink: 0; color: var(--couro); }
+.passagens-texto { display: flex; flex: 1; min-width: 0; flex-direction: column; }
+.passagens-texto strong, .passagens-texto small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.passagens-texto small { color: var(--cor-texto-suave); font-size: 13px; }
+.passagens-preco { font-weight: 700; white-space: nowrap; }
+.passagens-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; padding: 14px 16px; border-radius: 16px; background: var(--cor-cartao); border: 1px solid var(--cor-borda); }
+.passagens-total span { width: 100%; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--caramelo); }
+.passagens-total strong { font-size: 20px; }
+.passagens-total small { font-size: 13px; font-weight: 400; color: var(--cor-texto-suave); }

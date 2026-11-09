@@ -32,7 +32,7 @@ export default function TudoDaViagem() {
     { Icone: Sun, t: 'Hoje', s: 'Agora e próximo', rota: '/hoje' },
     { Icone: MapPin, t: 'Lugares', s: 'Ideias salvas', rota: '/lugares' },
     { Icone: BedDouble, t: 'Hospedagem', s: 'Opções e votos', rota: '/hospedagem' },
-    { Icone: Car, t: 'Transporte', s: 'Voos, ônibus e carro', rota: '/transportes' },
+    { Icone: Car, t: 'Passagens', s: 'O que falta decidir e comprar', rota: '/transportes' },
     { Icone: Users, t: 'Comboio', s: 'Quem vai e papéis', rota: '/comboio' },
     // ❄ congelado pelo RUMO (03/11/2026): documentos de entrada
     ...(CONGELADO.documentos ? [] : [{ Icone: FileCheck, t: 'Documentos', s: 'Visto e passaporte', rota: '/documentos' }]),

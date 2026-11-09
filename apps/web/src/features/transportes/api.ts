@@ -1,6 +1,6 @@
 import { Bus, Car, Footprints, Plane, Route, Ship, TrainFront, type LucideIcon } from '../../components/ui/icones'
 import { supabase } from '../../lib/supabase'
-import type { Tables } from '@together/core'
+import { opcoesNoDia, type Tables } from '@together/core'
 
 // passageiros: spec 067 (lista vazia = o comboio inteiro vai)
 export type Trajeto = Tables<'trajetos'> & { passageiros: string[] }
@@ -21,15 +21,17 @@ export function meio(chave: string) {
   return MEIOS.find((m) => m.chave === chave) ?? MEIOS[MEIOS.length - 1]
 }
 
-// Trajetos da viagem em ordem de partida (os sem horário no fim)
-export async function buscarTrajetos(viagemId: string): Promise<Trajeto[]> {
+// Trajetos da viagem em ordem de partida (os sem horário no fim). Spec 122a: das opções de um mesmo
+// deslocamento, vem só a que vale (a escolhida ou a primeira); com `comOpcoes`, vêm todas.
+export async function buscarTrajetos(viagemId: string, { comOpcoes = false } = {}): Promise<Trajeto[]> {
   const { data, error } = await supabase
     .from('trajetos')
     .select('*, trajeto_passageiros (usuario_id)')
     .eq('viagem_id', viagemId)
     .order('partida', { ascending: true, nullsFirst: false })
   if (error) throw error
-  return data.map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) }))
+  const todos: Trajeto[] = data.map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) }))
+  return comOpcoes ? todos : opcoesNoDia(todos)
 }
 
 // Spec 067: troca a lista de passageiros do trajeto (vazia = todo mundo). Só o ADM (o banco confere).

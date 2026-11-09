@@ -40,7 +40,7 @@ const ABAS = [
   { para: 'agenda', rotulo: 'Agenda', icone: CalendarDays },
   { para: 'hospedagem', rotulo: 'Hospedagem', curto: 'Estadia', icone: BedDouble },
   { para: 'lugares', rotulo: 'Lugares', icone: MapPinned },
-  { para: 'transportes', rotulo: 'Transportes', curto: 'Transp.', icone: TrainFront },
+  { para: 'transportes', rotulo: 'Passagens', curto: 'Passag.', icone: TrainFront },
   { para: 'financeiro', rotulo: 'Financeiro', curto: 'Finanças', icone: Wallet },
   { para: 'fotos', rotulo: 'Fotos', icone: Camera },
   { para: 'comboio', rotulo: 'Comboio', icone: Users },

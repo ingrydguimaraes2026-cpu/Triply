@@ -196,7 +196,19 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - `buscarTrajetos` devolve só a opção que vale de cada grupo (a escolhida, ou a 1ª enquanto comparam), pra não repetir no Hoje e no PDF. Quem precisa de todas passa `{ comOpcoes: true }` (Roteiro, Novo deslocamento, Comparar, agenda de hoje).
 - Ficou de fora:
   - "último do dia" automático (o Transitous não diz; a pessoa marca);
-  - o site ainda lista as opções separadas na tela de Transportes, até a 122d.
+  - o site ainda listava as opções separadas na tela de Transportes (resolvido na 122d).
+
+## Como ficou a 122d (08/11/2026)
+- Core: `passagensDaViagem(trajetos, destinos, casas)` em `packages/core/src/passagens.ts`:
+  - separa em **pra decidir** (sugestão ou comparando), **pra comprar** (decidido ou reservado) e **compradas**;
+  - cada deslocamento conta uma vez (as opções viram um item "comparando" com o número de opções);
+  - marca "compra na hora" quando a observação fala em cais, estação, a bordo ou na hora;
+  - junta os avisos sérios (vermelhos) de todos os dias, com o dia e o deslocamento;
+  - soma o transporte por moeda (sem converter câmbio) e quanto já foi pago (comprados);
+  - teste em `apps/web/tests/passagens.test.mjs`.
+- App: a tela `/transportes` virou **Passagens**: contadores, "coisas pra olhar", as três listas e o total. Tocar num item abre o Comparar (se tem opções) ou o deslocamento. "Novo deslocamento" no rodapé. A chegada e a volta de cada um (lançadas pela reserva) continuam no fim, com o cartão completo. Em "Tudo da viagem" o atalho se chama Passagens.
+- Site: a aba se chama **Passagens**. No topo, o mesmo resumo (contadores, avisos, listas, total); tocar abre o formulário do trajeto (comparar fica no app). Embaixo continua a rota cidade a cidade, pra editar no PC. `buscarTrajetos` do site também só traz a opção que vale de cada grupo (`comOpcoes` pra todas).
+- Ficou de fora: o endereço continua `/transportes` (não quebra link salvo); o total não entra nos gastos sozinho; comparar opções no site.
 
 ## Perguntas em aberto
 - Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
