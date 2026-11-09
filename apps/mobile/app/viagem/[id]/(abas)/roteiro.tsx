@@ -186,16 +186,18 @@ function Tela({
   const largura = width
   const alturaDoMapa = Math.round(height * 0.66)
 
+  // Viagem sem datas: um "Dia 1" sem data (antes mostrava a data de hoje, como se a viagem fosse hoje)
+  const semDatas = diasDaViagem(viagem.dataInicio, viagem.dataFim).length === 0
   const dias = useMemo(() => {
     const d = diasDaViagem(viagem.dataInicio, viagem.dataFim)
     return d.length ? d : [new Date()]
   }, [viagem.dataInicio, viagem.dataFim])
   const [diaEscolhido, setDiaEscolhido] = useState(diaInicial)
   const dia = dias[Math.min(diaEscolhido, dias.length - 1)]
-  const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos, eventos), [dia, destinos, lugares, trajetos, eventos])
+  const itens = useMemo(() => (semDatas ? [] : montarDia(paraIso(dia), destinos, lugares, trajetos, eventos)), [semDatas, dia, destinos, lugares, trajetos, eventos])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
   const onde = destinoDoDia(paraIso(dia), destinos)
-  const agenda = useMemo(() => montarAgendaDoDia(paraIso(dia), { destinos, trajetos, eventos }), [dia, destinos, trajetos, eventos])
+  const agenda = useMemo(() => (semDatas ? [] : montarAgendaDoDia(paraIso(dia), { destinos, trajetos, eventos })), [semDatas, dia, destinos, trajetos, eventos])
   const resumo = useMemo(() => resumoDoDia(agenda), [agenda])
   // Spec 122b: avisos entre os passos (folga, check-in, malas)
   const avisos = useMemo(() => avisosDoDia(paraIso(dia), agenda, casas), [dia, agenda, casas])
@@ -267,17 +269,18 @@ function Tela({
             return (
               <Pressable key={i} onPress={() => setDiaEscolhido(i)} className={`items-center rounded-xl border px-3.5 py-2 ${ativo ? 'border-couro bg-couro' : 'border-borda bg-cartao'}`}>
                 <Text className={`font-body-bold text-[13px] ${ativo ? 'text-white' : 'text-texto'}`}>Dia {i + 1}</Text>
-                <Text className={`font-body text-[11px] ${ativo ? 'text-white/85' : 'text-texto/85'}`}>{diaCurto(d)}</Text>
+                <Text className={`font-body text-[11px] ${ativo ? 'text-white/85' : 'text-texto/85'}`}>{semDatas ? 'sem data' : diaCurto(d)}</Text>
               </Pressable>
             )
           })}
         </ScrollView>
         <View className="flex-row items-center justify-between gap-3 px-5 pb-2 pt-3.5">
           <View className="min-w-0 flex-1">
-            <Text className="font-display text-[22px] text-texto">{diaLongo(dia)}</Text>
-            <Text className="font-body text-[13px] text-suave">{onde ? onde.nome : `${itens.length} paradas`}</Text>
+            <Text className="font-display text-[22px] text-texto">{semDatas ? 'Sem datas ainda' : diaLongo(dia)}</Text>
+            <Text className="font-body text-[13px] text-suave">{semDatas ? destinos.map((d) => d.nome).join(', ') : onde ? onde.nome : `${itens.length} paradas`}</Text>
           </View>
           {/* Spec 029: evento livre do comboio · Spec 122a: deslocamento de qualquer lugar pra qualquer lugar */}
+          {semDatas ? null : (
           <View className="flex-row gap-2">
             <Pressable onPress={() => setForm({})} accessibilityLabel="Novo evento" className="h-10 flex-row items-center gap-1 rounded-xl border border-borda bg-cartao px-3 active:opacity-80">
               <Plus size={16} color={cor.couro} />
@@ -288,6 +291,7 @@ function Tela({
               <Text className="font-body-bold text-[13px] text-white">Ir</Text>
             </Pressable>
           </View>
+          )}
         </View>
         {resumo.comprados + resumo.prontos + resumo.pendentes > 0 ? (
           <View className="flex-row flex-wrap gap-1.5 px-5 pb-2">
@@ -308,7 +312,21 @@ function Tela({
           </View>
         ) : null}
         <ScrollView refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
-          {itens.length === 0 ? (
+          {semDatas ? (
+            <View className="mt-4 items-center gap-3">
+              <Text className="text-center font-body text-[14px] leading-5 text-corpo">
+                A viagem ainda não tem datas.{'\n'}Com as datas, cada dia mostra os deslocamentos, os eventos e onde vocês dormem.
+              </Text>
+              {euSouAdm ? (
+                <Pressable onPress={() => router.push('/configuracoes' as Href)} accessibilityRole="button" className="h-10 flex-row items-center gap-1.5 rounded-xl bg-couro px-4 active:opacity-80">
+                  <CalendarDays size={16} color="#fff" />
+                  <Text className="font-body-bold text-[13px] text-white">Definir as datas</Text>
+                </Pressable>
+              ) : (
+                <Text className="text-center font-body text-[13px] text-suave">Peça pro ADM definir as datas.</Text>
+              )}
+            </View>
+          ) : itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
               Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra adicionar um deslocamento ou em "Evento".
             </Text>
