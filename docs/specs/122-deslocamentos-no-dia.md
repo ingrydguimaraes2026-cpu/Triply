@@ -210,6 +210,13 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - Site: a aba se chama **Passagens**. No topo, o mesmo resumo (contadores, avisos, listas, total); tocar abre o formulário do trajeto (comparar fica no app). Embaixo continua a rota cidade a cidade, pra editar no PC. `buscarTrajetos` do site também só traz a opção que vale de cada grupo (`comOpcoes` pra todas).
 - Ficou de fora: o endereço continua `/transportes` (não quebra link salvo); o total não entra nos gastos sozinho; comparar opções no site.
 
+## Ajuste de UX do Novo deslocamento (08/11/2026, pedido do Victor: "muito complexo")
+- **Passo 1:** só "De onde?", "Pra onde?" e o dia (setas). As opções aparecem sozinhas quando os dois lugares estão preenchidos: sem botão "Achar jeitos de ir" e sem pedir hora antes (a busca começa quando o grupo fica livre no dia, ou às 6h30).
+- O meio (trem, ônibus, carro…) não é escolhido antes: ele vem da opção que a pessoa toca.
+- **Passo 2:** a opção escolhida vem pronta num cartão ("Trocar" volta pras opções). À vista só preço e "Já comprei". Meio, horários, trocas, situação, último do dia e observação ficam em "Mais detalhes" (abre sozinho quando falta a hora, ex.: carro e "pôr à mão").
+- Nome digitado igual a um destino ou lugar da viagem usa a coordenada que já temos (o mapa do mundo podia achar outro lugar).
+- Editar um deslocamento abre direto no passo 2.
+
 ## Perguntas em aberto
 - Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
 - Folga mínima: 30 min sem malas e 45 com malas (assumido na 122b; dá pra mudar em `FOLGA_MINIMA`).

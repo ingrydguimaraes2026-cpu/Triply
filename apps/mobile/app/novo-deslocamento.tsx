@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ActivityIndicator } from 'react-native'
-import { ArrowLeft, ArrowLeftRight, Bus, Car, Footprints, Plus, Search, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
+import { ArrowLeft, ArrowLeftRight, Bus, Car, ChevronDown, ChevronLeft, ChevronRight, Footprints, Plus, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
 import {
   acharLugar,
   buscarDestinos,
@@ -25,7 +25,7 @@ import {
 } from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
-import { diaLongo, lerData } from '../src/lib/formato'
+import { diaLongo, lerData, paraIso } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
 import { normalizarHora } from '../src/ui/FormEvento'
@@ -35,8 +35,9 @@ import { cor } from '../theme'
 // Spec 122a: novo deslocamento (ou editar um). De e para em texto livre: qualquer lugar pra qualquer
 // lugar ("Varenna → Bellagio"), com sugestões dos destinos e lugares da viagem.
 // Rota: /novo-deslocamento?dia=AAAA-MM-DD[&trajeto=<id>][&grupo=<id>&de=&para=]
-// Spec 122c: "Achar jeitos de ir" mostra cartões por meio (trem, ônibus, carro, táxi, a pé) e as saídas
-// exatas; tocar numa saída preenche tudo. "Guardar como opção" junta opções pra comparar (/comparar).
+// Spec 122c/122e: dois passos. 1) De, para e dia: as opções aparecem sozinhas, por meio (trem, ônibus,
+// carro, táxi, a pé), com as saídas exatas. 2) Tocou numa, ela vem preenchida: à vista só preço e "Já comprei";
+// meio, horários, trocas, situação e observação ficam em "Mais detalhes". "Guardar como opção" junta opções (/comparar).
 
 type Trajeto = Tables<'trajetos'>
 type Ponto = { nome: string; latitude: number | null; longitude: number | null }
@@ -112,7 +113,12 @@ function Formulario({
   const euSouAdm = !!atual?.membros.some((m) => m.id === meuId && m.papel === 'adm')
   const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? ''
 
-  const dia = trajeto?.partida ? diaNoFuso(trajeto.partida) : (diaInicial ?? diaNoFuso(new Date().toISOString()))
+  const [dia, setDia] = useState(trajeto?.partida ? diaNoFuso(trajeto.partida) : (diaInicial ?? atual?.dataInicio ??diaNoFuso(new Date().toISOString())))
+  // Dois passos: 1) de, para e dia → as opções aparecem sozinhas; 2) a escolhida, pronta pra editar.
+  // Editando um que já existe, abre direto no passo 2.
+  const [etapa, setEtapa] = useState<'buscar' | 'detalhes'>(trajeto ? 'detalhes' : 'buscar')
+  const [maisDetalhes, setMaisDetalhes] = useState(false)
+  const [escolhido, setEscolhido] = useState<string | null>(null) // "Trem · 6:10 → 9:30 · direto"
   const [de, setDe] = useState<Ponto>({ nome: trajeto?.de_texto ?? (nomeDoDestino(trajeto?.origem_id ?? null) || deInicial || ''), latitude: trajeto?.de_lat ?? null, longitude: trajeto?.de_lon ?? null })
   const [para, setPara] = useState<Ponto>({ nome: trajeto?.para_texto ?? (nomeDoDestino(trajeto?.destino_id ?? null) || paraInicial || ''), latitude: trajeto?.para_lat ?? null, longitude: trajeto?.para_lon ?? null })
   const [focado, setFocado] = useState<'de' | 'para' | null>(null)
@@ -181,14 +187,20 @@ function Formulario({
     try {
       const ponto = async (p: Ponto, setP: (p: Ponto) => void) => {
         if (p.latitude != null && p.longitude != null) return { latitude: p.latitude, longitude: p.longitude }
+        // Nome igual a um destino ou lugar da viagem: usa a coordenada que já temos (o mapa do mundo erra "Veneza")
+        const daViagem = pontos.find((x) => x.nome.trim().toLowerCase() === p.nome.trim().toLowerCase() && x.latitude != null && x.longitude != null)
+        if (daViagem) {
+          setP(daViagem)
+          return { latitude: daViagem.latitude!, longitude: daViagem.longitude! }
+        }
         const achado = await acharLugar(p.nome, referencia)
         if (achado) setP({ nome: p.nome, latitude: achado.latitude, longitude: achado.longitude })
         return achado
       }
       const [a, b] = await Promise.all([ponto(de, setDe), ponto(para, setPara)])
       if (!a || !b) return setSemJeito('Não achamos esses lugares no mapa. Confira os nomes ou cadastre à mão.')
-      // Busca a partir de meia hora antes de o grupo ficar livre (ou da hora digitada, ou das 8h)
-      const base = hSaida ? horario(hSaida) : livre ? livre.quando : horario('08:00')
+      // Busca a partir de meia hora antes de o grupo ficar livre (sem nada antes no dia, desde as 6h30)
+      const base = livre ? livre.quando : horario('07:00')
       const quando = new Date(new Date(base).getTime() - 30 * 60000).toISOString()
       const lista = await buscarJeitosDeIr(a, b, quando, moeda)
       setJeitos(lista)
@@ -201,8 +213,25 @@ function Formulario({
     }
   }
 
-  // Tocar numa saída preenche o formulário
+  // As opções aparecem sozinhas quando de, para e dia estão preenchidos (sem botão, sem pedir hora)
+  const chaveDaBusca = etapa === 'buscar' && !focado && de.nome.trim() && para.nome.trim() ? `${de.nome}|${para.nome}|${dia}` : null
+  useEffect(() => {
+    if (!chaveDaBusca) return
+    const t = setTimeout(() => void acharJeitos(), 400)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chaveDaBusca])
+
+  function mudarDia(passo: number) {
+    const d = lerData(dia)
+    d.setDate(d.getDate() + passo)
+    setDia(paraIso(d))
+  }
+
+  // Tocar numa saída preenche tudo e vai pro passo 2
   function usarSaida(s: Saida, jeito: JeitoDeIr) {
+    setEscolhido(`${NOME_DO_JEITO[s.meio]} · ${horaNoFuso(s.sai)} → ${horaNoFuso(s.chega)}${diaNoFuso(s.chega) !== diaNoFuso(s.sai) ? ' (+1 dia)' : ''} · ${s.trocas === 0 ? 'direto' : s.trocas === 1 ? '1 troca' : `${s.trocas} trocas`}`)
+    setEtapa('detalhes')
     setMeio(s.meio === 'metro' ? 'metro' : s.meio)
     setSaida(horaNoFuso(s.sai))
     setChegada(horaNoFuso(s.chega))
@@ -213,11 +242,15 @@ function Formulario({
     setObservacao(nota.slice(0, 200))
   }
   function usarRota(jeito: JeitoDeIr) {
+    setEscolhido(`${NOME_DO_JEITO[jeito.meio]} · ${duracaoCurta(jeito.minutos)}${jeito.preco ? ' · preço estimado' : ''}`)
+    setEtapa('detalhes')
+    // Carro, táxi e a pé não têm horário fixo: a pessoa diz que horas sai
+    if (!hSaida) setMaisDetalhes(true)
     setMeio(jeito.meio === 'a_pe' ? 'a_pe' : 'carro')
     setTrocas(0)
     if (hSaida) setChegada(horaNoFuso(new Date(new Date(horario(hSaida)).getTime() + jeito.minutos * 60000).toISOString()))
     if (jeito.preco) setPreco(String(jeito.preco.valor))
-    setObservacao(jeito.meio === 'taxi' ? 'Táxi · preço estimado' : jeito.meio === 'carro' ? `Carro · ${jeito.km} km · preço estimado` : '')
+    setObservacao(jeito.meio === 'taxi' ? 'Táxi' : jeito.meio === 'carro' && jeito.km != null ? `${String(jeito.km).replace('.', ',')} km` : '')
   }
 
   async function salvarComoOpcao() {
@@ -237,7 +270,8 @@ function Formulario({
 
   async function salvar(extra: Partial<Trajeto> = {}, novaMesmoEditando = false, irPraComparar?: string) {
     if (!de.nome.trim() || !para.nome.trim()) return setErro('Diga de onde e pra onde.')
-    if (!hSaida) return setErro(hSaida === undefined ? 'Hora de saída inválida. Ex.: 17:55' : 'Diga a hora de saída.')
+    if (!hSaida || hChegada === undefined) setMaisDetalhes(true)
+    if (!hSaida) return setErro(hSaida === undefined ? 'Hora de saída inválida. Ex.: 17:55' : 'Diga que horas sai (em "Mais detalhes").')
     if (hChegada === undefined) return setErro('Hora de chegada inválida. Ex.: 18:10')
     const valor = preco.trim() ? Number(preco.replace(/\./g, '').replace(',', '.')) : null
     if (valor != null && (Number.isNaN(valor) || valor < 0)) return setErro('Preço inválido. Ex.: 29,90')
@@ -302,18 +336,17 @@ function Formulario({
           <BotaoRedondo aoTocar={voltar}>
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
-          <Text className="font-body-medium text-[13px] text-suave">{diaLongo(lerData(dia))}</Text>
         </View>
-        <Text className="font-display text-[28px] leading-[32px] text-texto">{trajeto ? 'Deslocamento' : 'Novo deslocamento'}</Text>
+        <Text className="font-display text-[28px] leading-[32px] text-texto">{trajeto ? 'Deslocamento' : grupo ? 'Outra opção' : 'Como vocês vão?'}</Text>
 
+        {/* Passo 1: de onde, pra onde, que dia */}
         <View className="gap-2">
-          <Rotulo texto="De" />
           <Campo
             value={de.nome}
             onChangeText={(v) => setDe({ nome: v, latitude: null, longitude: null })}
             onFocus={() => setFocado('de')}
             onBlur={() => setTimeout(() => setFocado(null), 200)}
-            placeholder="Cidade, estação, lugar…"
+            placeholder="De onde? (cidade, estação, lugar)"
             direita={
               <Pressable onPress={trocar} accessibilityLabel="Trocar de e para" hitSlop={8}>
                 <ArrowLeftRight size={18} color={cor.couro} />
@@ -321,101 +354,177 @@ function Formulario({
             }
           />
           {focado === 'de' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setDe(p)} /> : null}
-          <Rotulo texto="Para" />
-          <Campo value={para.nome} onChangeText={(v) => setPara({ nome: v, latitude: null, longitude: null })} onFocus={() => setFocado('para')} onBlur={() => setTimeout(() => setFocado(null), 200)} placeholder="Cidade, estação, lugar…" />
-          {focado === 'para' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setPara(p)} /> : null}
-        </View>
-
-        {/* Spec 122c: jeitos de ir, no estilo do Rome2rio, tudo dentro do Norti */}
-        <Pressable
-          onPress={() => void acharJeitos()}
-          disabled={buscando}
-          accessibilityRole="button"
-          className="min-h-[48px] flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-couro bg-cartao active:opacity-80"
-        >
-          {buscando ? <ActivityIndicator color={cor.couro} /> : <Search size={17} color={cor.couro} />}
-          <Text className="font-body-bold text-[14px] text-couro">{buscando ? 'Procurando jeitos de ir…' : jeitos ? 'Procurar de novo' : 'Achar jeitos de ir'}</Text>
-        </Pressable>
-        {jeitos?.length && livre ? (
-          <Text className="font-body text-[13px] text-suave">{`Vocês ficam livres às ${horaNoFuso(livre.quando)}${livre.de ? ` (chegam de ${livre.de})` : ''}.`}</Text>
-        ) : null}
-        {jeitos?.map((j) => (
-          <CartaoDoJeito
-            key={j.meio}
-            jeito={j}
-            aberto={aberto === j.meio}
-            livreDesde={hSaida ? null : (livre?.quando ?? null)}
-            aoTocar={() => (j.saidas.length ? setAberto(aberto === j.meio ? null : j.meio) : usarRota(j))}
-            aoEscolher={(s) => usarSaida(s, j)}
-            horaEscolhida={saida}
+          <Campo
+            value={para.nome}
+            onChangeText={(v) => setPara({ nome: v, latitude: null, longitude: null })}
+            onFocus={() => setFocado('para')}
+            onBlur={() => setTimeout(() => setFocado(null), 200)}
+            placeholder="Pra onde?"
           />
-        ))}
-        {semJeito ? <Text className="rounded-2xl bg-areia p-3 font-body text-[13px] leading-5 text-corpo">{semJeito}</Text> : null}
-        {jeitos ? (
-          <Pressable onPress={() => setJeitos(null)} className="flex-row items-center gap-3 rounded-2xl border border-dashed border-borda px-3 py-3 active:opacity-80">
-            <Plus size={18} color={cor.couro} />
-            <View className="flex-1">
-              <Text className="font-body-bold text-[14px] text-texto">Cadastrar à mão</Text>
-              <Text className="font-body text-[12px] text-suave">Balsa, avião ou o que não apareceu</Text>
+          {focado === 'para' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setPara(p)} /> : null}
+          <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-2 py-1.5">
+            <Pressable onPress={() => mudarDia(-1)} accessibilityLabel="Dia anterior" hitSlop={8} className="p-2 active:opacity-70">
+              <ChevronLeft size={18} color={cor.couro} />
+            </Pressable>
+            <Text className="font-body-bold text-[14px] text-texto">{diaLongo(lerData(dia))}</Text>
+            <Pressable onPress={() => mudarDia(1)} accessibilityLabel="Próximo dia" hitSlop={8} className="p-2 active:opacity-70">
+              <ChevronRight size={18} color={cor.couro} />
+            </Pressable>
+          </View>
+        </View>
+
+        {etapa === 'buscar' ? (
+          <>
+            {/* As opções aparecem sozinhas, por meio (trem, ônibus, carro…), com os horários */}
+            {buscando ? (
+              <View className="flex-row items-center gap-2 py-2">
+                <ActivityIndicator color={cor.couro} />
+                <Text className="font-body text-[14px] text-suave">Procurando o que tem…</Text>
+              </View>
+            ) : null}
+            {!buscando && jeitos?.length && livre ? (
+              <Text className="font-body text-[13px] text-suave">{`Vocês ficam livres às ${horaNoFuso(livre.quando)}${livre.de ? ` (chegam de ${livre.de})` : ''}.`}</Text>
+            ) : null}
+            {!buscando
+              ? jeitos?.map((j) => (
+                  <CartaoDoJeito
+                    key={j.meio}
+                    jeito={j}
+                    aberto={aberto === j.meio}
+                    livreDesde={livre?.quando ?? null}
+                    aoTocar={() => (j.saidas.length ? setAberto(aberto === j.meio ? null : j.meio) : usarRota(j))}
+                    aoEscolher={(s) => usarSaida(s, j)}
+                    horaEscolhida={saida}
+                  />
+                ))
+              : null}
+            {semJeito && !buscando ? <Text className="rounded-2xl bg-areia p-3 font-body text-[13px] leading-5 text-corpo">{semJeito}</Text> : null}
+            {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
+            {de.nome.trim() && para.nome.trim() && !buscando ? (
+              <Pressable
+                onPress={() => {
+                  setEscolhido(null)
+                  setEtapa('detalhes')
+                  setMaisDetalhes(true)
+                }}
+                className="flex-row items-center gap-3 rounded-2xl border border-dashed border-borda px-3 py-3 active:opacity-80"
+              >
+                <Plus size={18} color={cor.couro} />
+                <View className="flex-1">
+                  <Text className="font-body-bold text-[14px] text-texto">Não achei, pôr à mão</Text>
+                  <Text className="font-body text-[12px] text-suave">Balsa, avião ou o que não apareceu</Text>
+                </View>
+              </Pressable>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {/* Passo 2: a escolhida, já preenchida. Só o essencial à vista; o resto em "Mais detalhes". */}
+            {escolhido || trajeto ? (
+              <View className="flex-row items-center gap-3 rounded-2xl border-[1.5px] border-couro bg-cartao px-4 py-3">
+                <View className="min-w-0 flex-1">
+                  <Text className="font-body-bold text-[15px] text-texto">
+                    {escolhido ?? `${MEIOS.find((m) => m.chave === meio)?.nome ?? 'Deslocamento'}${hSaida ? ` · ${hSaida}` : ''}${hChegada ? ` → ${hChegada}` : ''}`}
+                  </Text>
+                  {observacao ? (
+                    <Text className="font-body text-[12.5px] text-suave" numberOfLines={2}>
+                      {observacao}
+                    </Text>
+                  ) : null}
+                </View>
+                <Pressable
+                  onPress={() => {
+                    setEtapa('buscar')
+                    setErro(null)
+                  }}
+                  hitSlop={8}
+                  className="active:opacity-70"
+                >
+                  <Text className="font-body-bold text-[13px] text-couro">Trocar</Text>
+                </Pressable>
+              </View>
+            ) : null}
+
+            <View className="gap-2">
+              <Rotulo texto={`Preço do grupo todo (${trajeto?.moeda ?? moeda})`} />
+              <Campo value={preco} onChangeText={setPreco} placeholder="Opcional" keyboardType="decimal-pad" />
             </View>
-          </Pressable>
-        ) : null}
 
-        <Rotulo texto="Como" />
-        <Chips opcoes={MEIOS.map((m) => ({ chave: m.chave, nome: m.nome }))} valor={meio} aoMudar={setMeio} />
+            <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
+              <View className="min-w-0 flex-1 pr-3">
+                <Text className="font-body-bold text-[14px] text-texto">Já comprei</Text>
+                <Text className="font-body text-[12.5px] text-suave">Fica nas Passagens como garantido.</Text>
+              </View>
+              <Switch
+                value={situacao === 'comprado'}
+                onValueChange={(v) => setSituacao(v ? 'comprado' : trajeto?.situacao && trajeto.situacao !== 'comprado' ? trajeto.situacao : 'sugestao')}
+                trackColor={{ true: cor.couro, false: cor.borda }}
+              />
+            </View>
 
-        <View className="flex-row gap-3">
-          <View className="flex-1 gap-2">
-            <Rotulo texto="Sai" />
-            <Campo value={saida} onChangeText={setSaida} placeholder="17:55" keyboardType="numbers-and-punctuation" />
-          </View>
-          <View className="flex-1 gap-2">
-            <Rotulo texto="Chega" />
-            <Campo value={chegada} onChangeText={setChegada} placeholder="Opcional" keyboardType="numbers-and-punctuation" />
-          </View>
-        </View>
-        {diaSeguinte ? <Text className="font-body text-[13px] text-caramelo">Chega no dia seguinte.</Text> : null}
+            <Pressable onPress={() => setMaisDetalhes(!maisDetalhes)} accessibilityRole="button" className="flex-row items-center justify-between py-1 active:opacity-70">
+              <Text className="font-body-bold text-[14px] text-couro">Mais detalhes</Text>
+              <View style={{ transform: [{ rotate: maisDetalhes ? '180deg' : '0deg' }] }}>
+                <ChevronDown size={18} color={cor.couro} />
+              </View>
+            </Pressable>
 
-        <Rotulo texto="Trocas" />
-        <Chips opcoes={TROCAS.map((t) => ({ chave: String(t.valor), nome: t.nome }))} valor={String(trocas)} aoMudar={(v) => setTrocas(v === 'null' ? null : Number(v))} />
+            {maisDetalhes ? (
+              <View className="gap-3">
+                <Rotulo texto="Como" />
+                <Chips opcoes={MEIOS.map((m) => ({ chave: m.chave, nome: m.nome }))} valor={meio} aoMudar={setMeio} />
 
-        <Rotulo texto="Situação" />
-        <Chips opcoes={SITUACOES} valor={situacao} aoMudar={setSituacao} />
+                <View className="flex-row gap-3">
+                  <View className="flex-1 gap-2">
+                    <Rotulo texto="Sai" />
+                    <Campo value={saida} onChangeText={setSaida} placeholder="17:55" keyboardType="numbers-and-punctuation" />
+                  </View>
+                  <View className="flex-1 gap-2">
+                    <Rotulo texto="Chega" />
+                    <Campo value={chegada} onChangeText={setChegada} placeholder="Opcional" keyboardType="numbers-and-punctuation" />
+                  </View>
+                </View>
+                {diaSeguinte ? <Text className="font-body text-[13px] text-caramelo">Chega no dia seguinte.</Text> : null}
 
-        <View className="gap-2">
-          <Rotulo texto={`Preço do grupo todo (${trajeto?.moeda ?? moeda})`} />
-          <Campo value={preco} onChangeText={setPreco} placeholder="Opcional" keyboardType="decimal-pad" />
-        </View>
+                <Rotulo texto="Trocas" />
+                <Chips opcoes={TROCAS.map((t) => ({ chave: String(t.valor), nome: t.nome }))} valor={String(trocas)} aoMudar={(v) => setTrocas(v === 'null' ? null : Number(v))} />
 
-        <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
-          <View className="min-w-0 flex-1 pr-3">
-            <Text className="font-body-bold text-[14px] text-texto">É o último do dia</Text>
-            <Text className="font-body text-[12.5px] text-suave">Perdeu, não tem outro.</Text>
-          </View>
-          <Switch value={ultimo} onValueChange={setUltimo} trackColor={{ true: cor.couro, false: cor.borda }} />
-        </View>
+                <Rotulo texto="Situação" />
+                <Chips opcoes={SITUACOES} valor={situacao} aoMudar={setSituacao} />
 
-        <View className="gap-2">
-          <Rotulo texto="Observação" />
-          <Campo value={observacao} onChangeText={setObservacao} placeholder="Ex.: compra no cais, troca em Milão" />
-        </View>
+                <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
+                  <View className="min-w-0 flex-1 pr-3">
+                    <Text className="font-body-bold text-[14px] text-texto">É o último do dia</Text>
+                    <Text className="font-body text-[12.5px] text-suave">Perdeu, não tem outro.</Text>
+                  </View>
+                  <Switch value={ultimo} onValueChange={setUltimo} trackColor={{ true: cor.couro, false: cor.borda }} />
+                </View>
 
-        {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
-        <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : hSaida ? `Pôr no dia, ${hSaida}` : 'Pôr no dia'} aoTocar={() => void salvar()} carregando={salvando} />
-        {!grupo ? (
-          <Botao titulo={trajeto ? 'Adicionar outra opção pra comparar' : 'Guardar como opção pra comparar'} tipo="secundario" aoTocar={() => void salvarComoOpcao()} desabilitado={salvando} />
-        ) : null}
-        {grupoAtual && trajeto ? (
-          <Pressable onPress={() => router.push(`/comparar?grupo=${grupoAtual}` as never)} className="items-center py-1">
-            <Text className="font-body-bold text-[14px] text-couro">Ver as opções lado a lado</Text>
-          </Pressable>
-        ) : null}
-        {podeApagar ? (
-          <Pressable onPress={() => void apagar()} disabled={salvando} accessibilityRole="button" className="flex-row items-center justify-center gap-1.5 py-2 active:opacity-70">
-            <Trash2 size={15} color={cor.vermelho} />
-            <Text className="font-body-bold text-[14px] text-vermelho">Apagar deslocamento</Text>
-          </Pressable>
-        ) : null}
+                <View className="gap-2">
+                  <Rotulo texto="Observação" />
+                  <Campo value={observacao} onChangeText={setObservacao} placeholder="Ex.: compra no cais, troca em Milão" />
+                </View>
+              </View>
+            ) : null}
+
+            {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
+            <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : 'Pôr no dia'} aoTocar={() => void salvar()} carregando={salvando} />
+            {!grupo ? (
+              <Botao titulo={trajeto ? 'Adicionar outra opção pra comparar' : 'Guardar como opção pra comparar'} tipo="secundario" aoTocar={() => void salvarComoOpcao()} desabilitado={salvando} />
+            ) : null}
+            {grupoAtual && trajeto ? (
+              <Pressable onPress={() => router.push(`/comparar?grupo=${grupoAtual}` as never)} className="items-center py-1">
+                <Text className="font-body-bold text-[14px] text-couro">Ver as opções lado a lado</Text>
+              </Pressable>
+            ) : null}
+            {podeApagar ? (
+              <Pressable onPress={() => void apagar()} disabled={salvando} accessibilityRole="button" className="flex-row items-center justify-center gap-1.5 py-2 active:opacity-70">
+                <Trash2 size={15} color={cor.vermelho} />
+                <Text className="font-body-bold text-[14px] text-vermelho">Apagar deslocamento</Text>
+              </Pressable>
+            ) : null}
+          </>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   )
