@@ -172,6 +172,8 @@ function Formulario({
   const hSaida = normalizarHora(saida)
   const hChegada = normalizarHora(chegada)
   const diaSeguinte = !!hSaida && !!hChegada && hChegada < hSaida
+  // Sem hora escolhida (carro, à mão): vale a hora em que o grupo fica livre no dia, ou 9h
+  const horaPadrao = livre ? horaNoFuso(livre.quando) : '09:00'
 
   function horario(hora: string, maisUmDia = false) {
     const d = new Date(`${dia}T${hora}:00`)
@@ -265,10 +267,11 @@ function Formulario({
     setEscolhido(`${NOME_DO_JEITO[jeito.meio]} · ${duracaoCurta(jeito.minutos)}${jeito.preco ? ' · preço estimado' : ''}`)
     setEtapa('detalhes')
     // Carro, táxi e a pé não têm horário fixo: a pessoa diz que horas sai
-    if (!hSaida) setMaisDetalhes(true)
     setMeio(jeito.meio === 'a_pe' ? 'a_pe' : 'carro')
     setTrocas(0)
-    if (hSaida) setChegada(horaNoFuso(new Date(new Date(horario(hSaida)).getTime() + jeito.minutos * 60000).toISOString()))
+    const sai = hSaida || horaPadrao
+    setSaida(sai)
+    setChegada(horaNoFuso(new Date(new Date(horario(sai)).getTime() + jeito.minutos * 60000).toISOString()))
     if (jeito.preco) setPreco(String(jeito.preco.valor))
     setObservacao(jeito.meio === 'taxi' ? 'Táxi' : jeito.meio === 'carro' && jeito.km != null ? `${String(jeito.km).replace('.', ',')} km` : '')
   }
@@ -290,9 +293,6 @@ function Formulario({
 
   async function salvar(extra: Partial<Trajeto> = {}, novaMesmoEditando = false, irPraComparar?: string) {
     if (!de.nome.trim() || !para.nome.trim()) return setErro('Diga de onde e pra onde.')
-    if (!hSaida || hChegada === undefined) setMaisDetalhes(true)
-    if (!hSaida) return setErro(hSaida === undefined ? 'Hora de saída inválida. Ex.: 17:55' : 'Diga que horas sai (em "Mais detalhes").')
-    if (hChegada === undefined) return setErro('Hora de chegada inválida. Ex.: 18:10')
     const valor = preco.trim() ? Number(preco.replace(/\./g, '').replace(',', '.')) : null
     if (valor != null && (Number.isNaN(valor) || valor < 0)) return setErro('Preço inválido. Ex.: 29,90')
     setErro(null)
@@ -305,8 +305,8 @@ function Formulario({
       para_lat: para.latitude,
       para_lon: para.longitude,
       meio,
-      partida: horario(hSaida),
-      chegada: hChegada ? horario(hChegada, diaSeguinte) : null,
+      partida: horario(hSaida || horaPadrao),
+      chegada: hChegada && hSaida ? horario(hChegada, diaSeguinte) : null,
       situacao,
       trocas,
       preco: valor,
@@ -495,36 +495,12 @@ function Formulario({
                 <Rotulo texto="Transporte" />
                 <Chips opcoes={MEIOS.map((m) => ({ chave: m.chave, nome: m.nome }))} valor={meio} aoMudar={setMeio} />
 
-                <View className="flex-row gap-3">
-                  <View className="flex-1 gap-2">
-                    <Rotulo texto="Sai" />
-                    <Campo value={saida} onChangeText={setSaida} placeholder="17:55" keyboardType="numbers-and-punctuation" />
-                  </View>
-                  <View className="flex-1 gap-2">
-                    <Rotulo texto="Chega" />
-                    <Campo value={chegada} onChangeText={setChegada} placeholder="Opcional" keyboardType="numbers-and-punctuation" />
-                  </View>
-                </View>
-                {diaSeguinte ? <Text className="font-body text-[13px] text-caramelo">Chega no dia seguinte.</Text> : null}
-
                 <Rotulo texto="Trocas" />
                 <Chips opcoes={TROCAS.map((t) => ({ chave: String(t.valor), nome: t.nome }))} valor={String(trocas)} aoMudar={(v) => setTrocas(v === 'null' ? null : Number(v))} />
 
                 <Rotulo texto="Situação" />
                 <Chips opcoes={SITUACOES} valor={situacao} aoMudar={setSituacao} />
 
-                <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
-                  <View className="min-w-0 flex-1 pr-3">
-                    <Text className="font-body-bold text-[14px] text-texto">É o último do dia</Text>
-                    <Text className="font-body text-[12.5px] text-suave">Perdeu, não tem outro.</Text>
-                  </View>
-                  <Switch value={ultimo} onValueChange={setUltimo} trackColor={{ true: cor.couro, false: cor.borda }} />
-                </View>
-
-                <View className="gap-2">
-                  <Rotulo texto="Observação" />
-                  <Campo value={observacao} onChangeText={setObservacao} placeholder="Ex.: compra no cais, troca em Milão" />
-                </View>
               </View>
             ) : null}
 
