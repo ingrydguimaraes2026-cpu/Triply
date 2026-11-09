@@ -152,7 +152,15 @@ export default function ViagemLayout() {
 
         <nav className={simples ? 'viagem-abas simples' : 'viagem-abas'} aria-label="Abas da viagem">
           {principais.map(({ para, rotulo, icone: Icone }) => (
-            <NavLink key={rotulo} to={para} end={para === ''} aria-label={rotulo} title={rotulo}>
+            // O baralho do Explorar e a Agenda são parte do Roteiro: a aba fica acesa neles também
+            <NavLink
+              key={rotulo}
+              to={para}
+              end={para === ''}
+              className={({ isActive }) => (isActive || (para === 'roteiro' && /^(explorar|agenda)/.test(aba)) ? 'active' : undefined)}
+              aria-label={rotulo}
+              title={rotulo}
+            >
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
             </NavLink>

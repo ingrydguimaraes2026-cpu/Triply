@@ -282,7 +282,7 @@ function ExplorarDestino({ destino }: { destino: Tables<'destinos'> }) {
   // ---------- Telas ----------
   const cabecalho = (
     <header className="exp-topo">
-      <Link to=".." className="exp-voltar" aria-label="Voltar pra viagem">
+      <Link to="../roteiro" className="exp-voltar" aria-label="Voltar pro roteiro">
         <ChevronLeft size={20} aria-hidden="true" />
       </Link>
       <div className="exp-topo-titulo">

@@ -11,6 +11,7 @@ import ViagemLayout from './pages/viagem/ViagemLayout'
 import Overview from './pages/viagem/Overview'
 import Lugares from './pages/viagem/Lugares'
 import Explorar from './pages/viagem/Explorar'
+import Roteiro from './pages/viagem/Roteiro'
 import Agenda from './pages/viagem/Agenda'
 import Reservas from './pages/viagem/Reservas'
 import Redirecionar from './pages/viagem/Redirecionar'
@@ -63,6 +64,7 @@ export const router = createBrowserRouter([
               { path: 'transportes', element: <Redirecionar para="reservas" parte="transporte" /> },
               { path: 'cidades', element: <Cidades /> }, // ordem e datas das cidades (saiu da tela da viagem)
               { path: 'tudo', element: <TudoDaViagem /> }, // "Tudo da viagem", como no app
+              { path: 'roteiro', element: <Roteiro /> }, // Matches + dias (a Agenda entra aqui)
               { path: 'agenda', element: <Agenda /> },
               { path: 'lugares', element: <Lugares /> },
               { path: 'explorar', element: <Explorar /> }, // spec 114

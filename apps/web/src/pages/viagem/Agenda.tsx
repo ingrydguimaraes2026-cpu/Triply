@@ -35,7 +35,8 @@ type Janela = { tipo: 'novo' } | { tipo: 'editar'; evento: EventoDaAgenda } | nu
 
 // Agenda do dia (spec 029): o que acontece em cada dia, com horário.
 // Junta sozinha os trajetos e as chegadas/saídas; o comboio acrescenta os eventos livres.
-export default function Agenda() {
+// Dentro do Roteiro (como no app), vem com o dia escolhido nas pílulas: sem título e sem a fileira de dias.
+export default function Agenda({ diaDoRoteiro }: { diaDoRoteiro?: string } = {}) {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
@@ -47,7 +48,7 @@ export default function Agenda() {
     setRecadoCalendario(null)
     try {
       const n = await baixarCalendario(viagem, destinos)
-      setRecadoCalendario(n ? `Arquivo com ${n} ${n === 1 ? 'item' : 'itens'} baixado. Abra ele pra pôr na sua agenda.` : 'Ainda não há nada com data pra pôr na agenda.')
+      setRecadoCalendario(n ? `Arquivo com ${n} ${n === 1 ? 'item' : 'itens'} baixado. Abra ele pra adicionar na sua agenda.` : 'Ainda não há nada com data pra adicionar na agenda.')
     } catch (e) {
       console.error('Erro ao montar o calendário:', e)
       setRecadoCalendario('Não deu pra montar o calendário agora.')
@@ -61,7 +62,7 @@ export default function Agenda() {
   const hoje = hojeTexto()
   const [escolhido, setEscolhido] = useState<string | null>(null)
   // Sem escolha: hoje, se estiver na viagem; senão o primeiro dia
-  const dia = escolhido && dias.includes(escolhido) ? escolhido : dias.includes(hoje) ? hoje : dias[0]
+  const dia = diaDoRoteiro && dias.includes(diaDoRoteiro) ? diaDoRoteiro : escolhido && dias.includes(escolhido) ? escolhido : dias.includes(hoje) ? hoje : dias[0]
 
   const trajetos = useMemo(() => (estado.status === 'pronto' ? estado.trajetos : []), [estado])
   const itens = useMemo(
@@ -118,35 +119,34 @@ export default function Agenda() {
     )
   }
 
+  const acoes = (
+    <span className="agenda-acoes">
+      <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
+        <Printer size={16} aria-hidden="true" /> PDF
+      </Link>
+      {/* Baixar o .ics (spec 036). ❄ congelado pelo RUMO (03/11/2026) */}
+      {!CONGELADO.calendario && (
+        <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
+          <CalendarPlus size={16} aria-hidden="true" /> Calendário
+        </button>
+      )}
+      <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
+        <Plus size={16} aria-hidden="true" /> Evento
+      </button>
+    </span>
+  )
+
   return (
-    <div className="agenda">
-      <TituloDaTela
-        titulo="Agenda"
-        voltar="../tudo"
-        acao={
-          <span className="agenda-acoes">
-            <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
-              <Printer size={16} aria-hidden="true" /> PDF
-            </Link>
-            {/* Baixar o .ics (spec 036). ❄ congelado pelo RUMO (03/11/2026) */}
-            {!CONGELADO.calendario && (
-              <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
-                <CalendarPlus size={16} aria-hidden="true" /> Calendário
-              </button>
-            )}
-            <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
-              <Plus size={16} aria-hidden="true" /> Evento
-            </button>
-          </span>
-        }
-      />
+    <div className={diaDoRoteiro ? 'agenda no-roteiro' : 'agenda'}>
+      {diaDoRoteiro ? <div className="agenda-acoes-roteiro">{acoes}</div> : <TituloDaTela titulo="Agenda" voltar="../tudo" acao={acoes} />}
       {recadoCalendario && (
         <p className="recado" role="status">
           {recadoCalendario}
         </p>
       )}
 
-      <nav className="agenda-dias" aria-label="Dias da viagem">
+      {!diaDoRoteiro && (
+        <nav className="agenda-dias" aria-label="Dias da viagem">
         {dias.map((d) => {
           const { semana, numero } = diaCurtinho(d)
           return (
@@ -166,6 +166,7 @@ export default function Agenda() {
           )
         })}
       </nav>
+      )}
 
       {/* Design Plataforma (spec 113): o dia escolhido + "Neste dia" ao lado */}
       <div className="agenda-colunas">

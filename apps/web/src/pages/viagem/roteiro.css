@@ -1,0 +1,316 @@
+/* Roteiro (spec 117), espelho do app: Matches + pílulas dos dias */
+.roteiro {
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roteiro-cidades {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--couro);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.roteiro-cidades:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* Pílulas: Matches | Dia 1 | Dia 2... (rolam pro lado no celular) */
+.roteiro-pilulas {
+  display: flex;
+  gap: 8px;
+  margin: 0 -16px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.roteiro-pilulas::-webkit-scrollbar {
+  display: none;
+}
+
+.roteiro-pilulas button,
+.roteiro-sem-datas {
+  flex: none;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.roteiro-pilulas button[aria-pressed='true'] {
+  border-color: var(--couro);
+  background: var(--couro);
+  color: #fff;
+}
+
+.roteiro-sem-datas {
+  border-style: dashed;
+  color: var(--couro);
+}
+
+.roteiro-novos {
+  min-width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--laranja);
+  color: #2a1a0c;
+  font-size: 11px;
+}
+
+.roteiro-dica {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.roteiro-carregando {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.roteiro-carregando span {
+  height: 84px;
+  border-radius: 16px;
+  background: #f1e4cf;
+}
+
+.roteiro-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.roteiro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.roteiro-grupo h2 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+}
+
+.roteiro-grupo ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 10px;
+}
+
+/* Cartão de um lugar: foto, nome, quem quer e o selo à direita */
+.roteiro-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: var(--cor-cartao);
+  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow 0.15s;
+}
+
+.roteiro-linha:hover {
+  box-shadow: 0 10px 24px rgb(74 46 20 / 0.12);
+}
+
+.roteiro-linha > img,
+.roteiro-linha-sem-foto {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f1e4cf;
+}
+
+.roteiro-linha-sem-foto {
+  display: grid;
+  place-items: center;
+}
+
+.roteiro-linha-texto {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roteiro-linha-texto strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.25;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.roteiro-linha-quem {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.roteiro-linha-avatares {
+  flex: none;
+  display: flex;
+  padding-left: 6px;
+}
+
+.roteiro-linha-avatares .avatar {
+  margin-left: -6px;
+  border: 1.5px solid var(--cor-cartao);
+}
+
+.roteiro-linha-quem small {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.roteiro-selo {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.roteiro-selo.adicionar {
+  background: var(--couro);
+  color: #fff;
+}
+
+.roteiro-selo.opinar {
+  border: 1px solid var(--cor-borda-forte);
+  color: var(--couro);
+}
+
+.roteiro-selo.no-dia {
+  background: #eef0df;
+  color: #5e6b2e;
+}
+
+.roteiro-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  border: 1.5px dashed var(--cor-borda-forte);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.roteiro-vazio p {
+  max-width: 420px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* Botões do fim: lado a lado no computador */
+.roteiro-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.roteiro-montar,
+.roteiro-descobrir {
+  flex: 1 1 260px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.roteiro-montar {
+  background: var(--couro);
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(74 46 20 / 0.18);
+}
+
+.roteiro-descobrir {
+  border: 1.5px dashed var(--cor-borda-forte);
+  color: var(--couro);
+}
+
+.roteiro-descobrir:hover {
+  background: var(--cor-fundo-suave);
+}
+
+/* O dia (antiga Agenda) dentro do Roteiro: só os botões, à direita */
+.agenda.no-roteiro {
+  padding: 0;
+}
+
+.agenda-acoes-roteiro {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 480px) {
+  .agenda-acoes-roteiro .agenda-acoes {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+/* O ".selo" de abas.css empurra pra direita; aqui o selo fica no lugar */
+.roteiro .selo {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}

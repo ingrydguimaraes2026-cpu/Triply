@@ -1,11 +1,11 @@
-import { CalendarDays, Camera, Luggage, Map as Mapa, MapPinned, Printer, Route, Settings, Sparkles, Sun, Ticket, Users, Wallet } from '../../components/ui/icones'
+import { Camera, Luggage, Map as Mapa, MapPinned, Printer, Route, Settings, Sparkles, Sun, Ticket, Users, Wallet } from '../../components/ui/icones'
 
 // As 5 partes da viagem, iguais às abas do app (apps/mobile/app/viagem/[id]/(abas)/_layout.tsx).
 // Pra criar uma aba nova: adicione aqui e no src/router.tsx
 export const ABAS = [
   { para: '', rotulo: 'Viagem', icone: Luggage },
-  // Spec 115: o Explorar (escolher lugares e montar os dias) é o "Roteiro" da viagem
-  { para: 'explorar', rotulo: 'Roteiro', icone: Mapa },
+  // Roteiro como no app: Matches + Dia 1, Dia 2... O baralho do Explorar abre por "Descobrir mais lugares"
+  { para: 'roteiro', rotulo: 'Roteiro', icone: Mapa },
   // Reservas = Passagens + Hospedagem, com as duas pílulas (como no app)
   { para: 'reservas', rotulo: 'Reservas', icone: Ticket },
   { para: 'contas', rotulo: 'Contas', icone: Wallet },
@@ -19,8 +19,6 @@ export const TUDO_DA_VIAGEM = [
   { para: 'hoje', rotulo: 'Hoje', sub: 'Agora e próximo', icone: Sun },
   { para: 'lugares', rotulo: 'Lugares', sub: 'Ideias salvas', icone: MapPinned },
   { para: 'cidades', rotulo: 'Cidades', sub: 'Datas e ordem das cidades', icone: Route },
-  // Agenda entra no Roteiro na etapa 6 do docs/HANDOFF-site-espelho.md; até lá fica aqui
-  { para: 'agenda', rotulo: 'Agenda', sub: 'Dia a dia com horários', icone: CalendarDays },
   { para: 'comboio', rotulo: 'Comboio', sub: 'Quem vai e papéis', icone: Users },
   { para: 'retrospectiva', rotulo: 'Retrospectiva', sub: 'A viagem em números', icone: Sparkles },
   { para: 'imprimir', rotulo: 'PDF', sub: 'Roteiro e livro', icone: Printer },

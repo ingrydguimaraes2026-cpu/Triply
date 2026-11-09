@@ -25,7 +25,7 @@
 | 3 | **Hospedagem por noite** | `Hospedagem.tsx` segue a spec 123 (`docs/specs/123-hospedagem-por-noite.md`): `noitesDaViagem` e `fatosDaOpcao` já estão no core. Modelo: `apps/mobile/app/hospedagem.tsx`, `cidade-hospedagem.tsx`, `opcao-hospedagem.tsx` | Feita (09/11), ver abaixo |
 | 4 | **Contas** | `Financeiro.tsx` no estilo da aba Contas do app: saldo grande, lista e lançamento rápido. O orçamento e a carteira vão pra uma linha ou um painel lateral, não 8 cartões | Pronta (09/11) |
 | 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | **Feito (09/11)** |
-| 6 | Roteiro do dia e Agenda | Juntar Agenda no Roteiro como no app (dia a dia com mapa ilustrado) | A fazer |
+| 6 | Roteiro do dia e Agenda | Juntar Agenda no Roteiro como no app (dia a dia com mapa ilustrado) | **Feito (09/11)**, sem o mapa ilustrado (ver "Roteiro do site") |
 
 ## Auditoria com prints (09/11/2026, noite)
 O Victor viu as etapas 1 a 4 e não gostou: "muita coisa do site ainda está antiga, que no app já está nova". Comparei site e app lado a lado em 375 px, na Eurotrip. O que ainda foge do app:
@@ -42,7 +42,7 @@ O Victor viu as etapas 1 a 4 e não gostou: "muita coisa do site ainda está ant
 | Tela | Site hoje | App |
 |---|---|---|
 | Início (`/`) | **Feito (09/11)**: `/` e `/viagens` mostram o Início igual ao app (ver "Início do site" abaixo) | "Bom dia, Paulo", avatar, mapa da galera claro, cartão grande da próxima viagem com "Faltam N dias" e carimbos |
-| Roteiro | Abre no baralho do Explorar (cartão "Lutécia", "1 de 6", Ajustar/Pronto) | Abre em Matches + pílulas Dia 1, Dia 2...; "Descobrir mais lugares" leva ao baralho |
+| Roteiro | **Feito (09/11)**: abre em Matches + pílulas Dia 1, Dia 2...; o baralho fica em "Descobrir mais lugares" | Abre em Matches + pílulas Dia 1, Dia 2...; "Descobrir mais lugares" leva ao baralho |
 | Reservas → Passagens | Versão antiga: "Entre cidades", trechos com "Falta definir", links Rome2Rio e Google Maps | Deslocamentos (spec 122): vazio com a Norti e "Novo deslocamento"; opções, votos e comparar |
 | Fotos | Caixa "Compartilhe uma foto", 4 abas (Feed, Grade, Por dia, Melhores), vazio tracejado | "0 fotos · 0 pessoas", botão "Postar", 2 pílulas, Norti dormindo |
 | Comboio | "Quem vai" + "Histórico e lixeira" grande logo embaixo | Refeito no app; o histórico não é destaque |
@@ -117,3 +117,12 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - Conferido lado a lado com o app (porta 8089) em 375 px e no computador em 1366 px: Eurotrip (vazia, Norti dormindo) e "Galeão, Paris e mais 5" (1 deslocamento, aberto). Comparar não foi visto na tela: nenhuma viagem tem opções e não gravei dado de teste.
 - Ficaram sem uso: `features/transportes/FormTrajeto.tsx` e `rota.ts` (podem ser apagados depois).
 - `npm test`: 547 de 550. Falhas antigas: `078` (o teste espera que membro não grave trajeto nenhum, mas a spec 122 deixou o membro gravar sugestão: o teste precisa inserir com `situacao = 'decidido'`), emoji (arquivos de outras telas) e o zip do Windows.
+
+## Roteiro do site (09/11/2026, commit local)
+- Pedido da pessoa: a tela de Roteiro do site estava estranha (abria direto no baralho do Explorar).
+- Nova `pages/viagem/Roteiro.tsx` em `/viagem/<id>/roteiro`, igual à aba do app: título "Roteiro" + botão "Cidades", pílulas **Matches** (com o número de novos) e **Dia 1, Dia 2...**. Matches em 3 grupos (Todo mundo quer, Deu match, Quase) com "Adicionar ao dia", "Opinar" e "No dia"; botões "Montar os dias com os matches" e "Descobrir mais lugares" (este abre o baralho em `explorar`).
+- Tocar num dia mostra a antiga Agenda daquele dia dentro do Roteiro (`Agenda` aceita `diaDoRoteiro`: sem título e sem a fileira de dias). A Agenda saiu de "Tudo da viagem"; o endereço `/agenda` continua funcionando.
+- Menu: a aba Roteiro aponta pra `roteiro` e fica acesa no `explorar` e na `agenda`. A seta do baralho volta pro Roteiro.
+- `features/roteiro/matches.ts`: cópia de `apps/mobile/src/dados/matches.ts` (RPC `matches_da_viagem`).
+- **Falta:** o mapa ilustrado do dia (folha que sobe por cima) e os avisos do dia (spec 122b) do app. Matches com dados de verdade não conferido (as viagens da conta de teste não tinham match); vazio, dias, 375px e 1366px conferidos na 5173.
+
