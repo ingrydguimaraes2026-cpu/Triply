@@ -100,6 +100,8 @@ Cada pessoa vê, sem perguntar no grupo, **como todo mundo chega e vai embora**,
 - **Transitous:** conferido em 08/11: Roma → Florença devolve o trem com paradas e linha; Florianópolis → Garopaba (ônibus) não devolve nada, aí fica o link do Maps. Resposta do serviço é guardada em `trajetos.caminho` (quem não pode editar só vê, sem guardar).
 - **Não conferido:** o app no celular (precisa do build de desenvolvimento); salvar de verdade pelo site (gravaria no banco de produção).
 
+**Mudança (08/11, Victor):** a seção "Chegadas e saídas" por pessoa e o painel "Viagem inteira" com o mapa saíram da tela (app e site): ocupavam espaço e ele não gostou. A tela ficou só com os trechos em lista (vazios compactos). Chegada e volta lançadas pela reserva aparecem no fim, em "Outros trajetos". O banco (tipo, "Eu busco") continua.
+
 ## Perguntas em aberto
 - O "Falta o seu" vira um lembrete no celular antes da viagem (ex.: 7 dias antes)? Seria mais um tipo de aviso.
 - Transitous: confirmar a cobertura de trem e ônibus no Brasil e na Europa e o limite de uso antes de começar o passo 2 da 121c. Alternativa paga: Google Directions no modo transporte.

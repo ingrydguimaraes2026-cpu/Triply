@@ -7,7 +7,6 @@ import { ArrowLeft, Bus, Car, Footprints, Plane, Plus, Route, Ship, TrainFront, 
 import {
   arquivoDeCada,
   buscarDestinos,
-  chegadasPorPessoa,
   meioComCaminho,
   meioComMotorista,
   nomeDaSituacao,
@@ -26,8 +25,8 @@ import { VerReserva } from '../src/ui/BilheteDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
 import { cor } from '../theme'
 
-// Transporte v2 (spec 121a): "Chegadas e saídas" (uma linha por pessoa: cada um lança o seu)
-// e "Entre cidades" (os trechos do grupo, na ordem do roteiro). Em cada trajeto: estações,
+// Transportes (spec 121): os trechos do grupo na ordem do roteiro ("Entre cidades"); a chegada e a
+// volta de cada um, quando lançadas pela reserva, aparecem no fim. A seção por pessoa saiu (Victor, 08/11). Em cada trajeto: estações,
 // "ver reserva", "Como chegar na estação" e, em trem/ônibus, "Ver o caminho" (121c).
 const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, carona: Car, onibus: Bus, trem: TrainFront, barco: Ship, a_pe: Footprints }
 
@@ -57,13 +56,12 @@ export default function Transportes() {
   const { trajetos, destinos, cofre } = carga.dados
   const membros: Membro[] = viagem.membros.map((m) => ({ id: m.id, nome: m.nome, papel: m.papel }))
   const euSouAdm = membros.some((m) => m.id === meuId && m.papel === 'adm')
-  const pessoas = chegadasPorPessoa(trajetos, membros)
-  // Eu primeiro, depois quem já lançou, depois o resto
-  pessoas.sort((a, b) => Number(b.id === meuId) - Number(a.id === meuId) || Number(!!b.chegada) - Number(!!a.chegada))
   const { trechos, outros } = trechosDoGrupo(trajetos, destinos)
+  // Chegada e volta de cada um (lançadas pela reserva) entram no fim, junto com os outros trajetos
+  const pessoais = trajetos.filter((t) => t.tipo === 'chegada' || t.tipo === 'saida')
   const nada = trajetos.length === 0
   const ctx = { destinos, membros, meuId, euSouAdm, cofre, aoMudar: carga.recarregar }
-  const adicionar = (como?: 'chegada' | 'saida') => router.push(`/nova-reserva?voltar=transportes${como ? `&como=${como}` : ''}`)
+  const adicionar = () => router.push('/nova-reserva?voltar=transportes')
 
   return (
     <View className="flex-1 bg-fundo">
@@ -73,8 +71,8 @@ export default function Transportes() {
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View>
-          <Text className="font-display text-[32px] leading-[36px] text-texto">Como a galera se move</Text>
-          <Text className="mt-1 font-body text-[14px] text-suave">Quem chega quando, como vocês vão de uma cidade pra outra e como chegar em cada lugar.</Text>
+          <Text className="font-display text-[32px] leading-[36px] text-texto">Transportes</Text>
+          <Text className="mt-1 font-body text-[14px] text-suave">Como vocês vão de uma cidade pra outra.</Text>
         </View>
 
         {nada ? (
@@ -85,12 +83,7 @@ export default function Transportes() {
           </View>
         ) : null}
 
-        <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Chegadas e saídas</Text>
-        {pessoas.map((p) => (
-          <LinhaDaPessoa key={p.id} pessoa={p} souEu={p.id === meuId} ctx={ctx} aoAdicionar={adicionar} />
-        ))}
-
-        {trechos.length > 0 || outros.length > 0 ? <Text className="mt-4 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Entre cidades</Text> : null}
+        {trechos.length > 0 || outros.length > 0 ? <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Entre cidades</Text> : null}
         {trechos.map((t) => (
           <View key={t.chave} className="gap-2">
             <Text className="font-body-bold text-[15px] text-texto">
@@ -111,7 +104,7 @@ export default function Transportes() {
             )}
           </View>
         ))}
-        {outros.map((tr) => (
+        {[...outros, ...pessoais].map((tr) => (
           <Passagem key={tr.id} trajeto={tr} ctx={ctx} />
         ))}
       </ScrollView>
@@ -133,41 +126,6 @@ type Ctx = {
   euSouAdm: boolean
   cofre: Map<string, { caminho: string }>
   aoMudar: () => void
-}
-
-function LinhaDaPessoa({
-  pessoa,
-  souEu,
-  ctx,
-  aoAdicionar,
-}: {
-  pessoa: { id: string; nome: string; chegada: TrajetoComGente | null; saida: TrajetoComGente | null }
-  souEu: boolean
-  ctx: Ctx
-  aoAdicionar: (como: 'chegada' | 'saida') => void
-}) {
-  const nome = souEu ? 'Você' : primeiroNome(pessoa.nome)
-  return (
-    <Cartao className="gap-3 p-4">
-      <Text className="font-body-bold text-[15px] text-texto">{nome}</Text>
-      {(['chegada', 'saida'] as const).map((como) => {
-        const t = pessoa[como]
-        if (t) return <Passagem key={como} trajeto={t} ctx={ctx} compacto rotulo={como === 'chegada' ? 'Chega' : 'Volta'} />
-        if (souEu)
-          return (
-            <Pressable key={como} onPress={() => aoAdicionar(como)} accessibilityRole="button" className="min-h-[44px] flex-row items-center gap-2 rounded-xl border border-dashed border-tracejado px-3 active:opacity-80">
-              <Plus size={16} color={cor.couro} />
-              <Text className="font-body-bold text-[14px] text-couro">{como === 'chegada' ? 'Falta a sua chegada: adicionar' : 'Falta a sua volta: adicionar'}</Text>
-            </Pressable>
-          )
-        return (
-          <Text key={como} className="font-body text-[13px] text-suave">
-            {como === 'chegada' ? `${nome} ainda não pôs a chegada` : `${nome} ainda não pôs a volta`}
-          </Text>
-        )
-      })}
-    </Cartao>
-  )
 }
 
 function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: TrajetoComGente; ctx: Ctx; compacto?: boolean; rotulo?: string }) {
