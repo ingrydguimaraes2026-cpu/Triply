@@ -12,6 +12,8 @@ import {
   avisosDoDia,
   buscarEventosDaAgenda,
   buscarLugares,
+  indiceDoDia,
+  lerDiasDoRoteiro,
   buscarOpcoesDeHospedagem,
   linkDoGuardaVolumes,
   type AvisoDoDia,
@@ -144,13 +146,26 @@ function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComD
         buscarOpcoesDeHospedagem(supabase, viagem.id)
           .then((ops) => ops.filter((o) => o.escolhida))
           .catch(() => []),
+        // Os dias montados no Explorar ("Paris em 3 dias"): o mesmo que o resumo da aba Viagem e o Hoje usam
+        supabase
+          .from('roteiros')
+          .select('destino_id, dias')
+          .eq('viagem_id', viagem.id)
+          .then(({ data, error }) => {
+            if (error) throw error
+            return (data ?? []).map((r) => ({ destinoId: r.destino_id, dias: lerDiasDoRoteiro(r.dias) }))
+          })
+          .then(
+            (r) => r,
+            () => [], // sem os dias montados, o dia funciona igual (todos os lugares da cidade)
+          ),
       ]),
     [viagem.id],
   )
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const [destinos, lugares, trajetos, eventos, casas] = carga.dados
-  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} aoMudar={carga.recarregar} atualizando={carga.atualizando} diaInicial={diaInicial} aoMatches={aoMatches} />
+  const [destinos, lugares, trajetos, eventos, casas, roteiros] = carga.dados
+  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} roteiros={roteiros} aoMudar={carga.recarregar} atualizando={carga.atualizando} diaInicial={diaInicial} aoMatches={aoMatches} />
 }
 
 function Tela({
@@ -164,8 +179,10 @@ function Tela({
   aoMatches,
   casas,
   atualizando,
+  roteiros,
 }: {
   atualizando: boolean
+  roteiros: RoteiroMontado[]
   casas: CasaDoDia[]
   diaInicial: number
   aoMatches: () => void
@@ -194,7 +211,7 @@ function Tela({
   }, [viagem.dataInicio, viagem.dataFim])
   const [diaEscolhido, setDiaEscolhido] = useState(diaInicial)
   const dia = dias[Math.min(diaEscolhido, dias.length - 1)]
-  const itens = useMemo(() => (semDatas ? [] : montarDia(paraIso(dia), destinos, lugares, trajetos, eventos)), [semDatas, dia, destinos, lugares, trajetos, eventos])
+  const itens = useMemo(() => (semDatas ? [] : montarDia(paraIso(dia), destinos, lugares, trajetos, eventos, roteiros)), [semDatas, dia, destinos, lugares, trajetos, eventos, roteiros])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
   const onde = destinoDoDia(paraIso(dia), destinos)
   const agenda = useMemo(() => (semDatas ? [] : montarAgendaDoDia(paraIso(dia), { destinos, trajetos, eventos })), [semDatas, dia, destinos, trajetos, eventos])
@@ -202,6 +219,7 @@ function Tela({
   // Spec 122b: avisos entre os passos (folga, check-in, malas)
   const avisos = useMemo(() => avisosDoDia(paraIso(dia), agenda, casas), [dia, agenda, casas])
   const avisosDepoisDe = (chave: string) => avisos.filter((a) => a.depoisDe === chave).map((a) => <AvisoNoDia key={a.chave} aviso={a} />)
+  const diasMontados = useMemo(() => (semDatas ? diasDosRoteiros(destinos, lugares, roteiros) : []), [semDatas, destinos, lugares, roteiros])
   const novoDeslocamento = (extra = '') => router.push(`/novo-deslocamento?dia=${paraIso(dia)}${extra}` as Href)
 
   // Clima do destino de hoje (roadmap #8): busca a previsão do destino inteiro e
@@ -258,7 +276,7 @@ function Tela({
         <View {...arraste.panHandlers} className="items-center pb-1.5 pt-2.5" style={{ cursor: 'grab' } as object}>
           <View className="h-[5px] w-10 rounded-full bg-tracejado" />
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 }} style={{ flexGrow: 0 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 }} style={{ flexGrow: 0, flexShrink: 0 }}>
           {/* Spec 117: volta pros Matches do comboio */}
           <Pressable onPress={aoMatches} className="items-center justify-center rounded-xl border border-borda bg-cartao px-3.5 py-2">
             <Text className="font-body-bold text-[13px] text-texto">Matches</Text>
@@ -311,7 +329,7 @@ function Tela({
             </Text>
           </View>
         ) : null}
-        <ScrollView refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
+        <ScrollView style={{ flex: 1 }} refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {semDatas ? (
             <View className="mt-4 items-center gap-3">
               <Text className="text-center font-body text-[14px] leading-5 text-corpo">
@@ -325,6 +343,24 @@ function Tela({
               ) : (
                 <Text className="text-center font-body text-[13px] text-suave">Peça pro ADM definir as datas.</Text>
               )}
+              {diasMontados.length ? (
+                <View className="mt-2 w-full gap-2">
+                  <Text className="font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Dias montados no Explorar</Text>
+                  {diasMontados.map((d) => (
+                    <View key={d.numero} className="rounded-2xl bg-cartao p-3.5">
+                      <Text className="font-body-bold text-[11px] uppercase tracking-wider text-suave">
+                        Dia {d.numero} · {d.cidade}
+                      </Text>
+                      {d.lugares.map((nome, i) => (
+                        <View key={i} className="mt-1.5 flex-row items-center gap-2">
+                          <MapPin size={14} color={cor.couro} />
+                          <Text className="flex-1 font-body text-[14px] text-texto">{nome}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  ))}
+                </View>
+              ) : null}
             </View>
           ) : itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
@@ -495,7 +531,22 @@ function destinoDoDia(dia: string, destinos: Destino[]) {
 
 // Linha do tempo do dia (spec 029, igual à web): saídas, trajetos e eventos por hora, chegadas.
 // No fim, os lugares do destino (ideias do que fazer, sem hora).
-function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos: Trajeto[], eventos: EventoDaAgenda[]): Item[] {
+type RoteiroMontado = { destinoId: string; dias: string[][] }
+
+// Viagem sem datas: os dias montados no Explorar, na ordem do roteiro, numerados como no resumo da aba Viagem
+function diasDosRoteiros(destinos: Destino[], lugares: Lugar[], roteiros: RoteiroMontado[]) {
+  const nomeDo = new Map(lugares.map((l) => [l.id, l.nome]))
+  const saida: { numero: number; cidade: string; lugares: string[] }[] = []
+  for (const d of destinos) {
+    for (const ids of roteiros.find((r) => r.destinoId === d.id)?.dias ?? []) {
+      const nomes = ids.map((id) => nomeDo.get(id)).filter((n): n is string => !!n)
+      if (nomes.length) saida.push({ numero: saida.length + 1, cidade: d.nome, lugares: nomes })
+    }
+  }
+  return saida
+}
+
+function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos: Trajeto[], eventos: EventoDaAgenda[], roteiros: RoteiroMontado[]): Item[] {
   const itens: Item[] = montarAgendaDoDia(dia, { destinos, trajetos, eventos }).map((i) => {
     if (i.tipo === 'trajeto')
       return {
@@ -511,7 +562,14 @@ function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos:
   })
   const onde = destinoDoDia(dia, destinos)
   if (onde) {
-    for (const l of lugares.filter((x) => x.destino_id === onde.id)) {
+    // Com os dias montados no Explorar: só os lugares deste dia (igual ao Hoje).
+    // Sem roteiro montado na cidade: todos os lugares dela, como ideias.
+    const montado = roteiros.find((r) => r.destinoId === onde.id)
+    const doDia = montado && onde.chegada ? montado.dias[indiceDoDia(onde.chegada, dia)] ?? [] : null
+    const daCidade = doDia
+      ? doDia.map((id) => lugares.find((x) => x.id === id)).filter((x): x is Lugar => !!x)
+      : lugares.filter((x) => x.destino_id === onde.id)
+    for (const l of daCidade) {
       itens.push({ chave: 'l' + l.id, hora: '', Icone: ICONE_DO_LUGAR[l.tipo] ?? MapPin, titulo: l.nome, detalhe: [l.horario, l.observacao].filter(Boolean).join(' · ') })
     }
   }
