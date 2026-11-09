@@ -20,8 +20,10 @@ const ABAS = [
 ] as const
 
 export default function AbasDaViagem() {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const { id: idDaRota } = useLocalSearchParams<{ id: string }>()
   const { atual, viagens, status, escolher, recarregar } = useViagemAtual()
+  // No navegador o id da rota pode sumir ao voltar de outra tela: aí vale a viagem atual
+  const id = idDaRota || atual?.id || ''
   const existe = viagens.some((v) => v.id === id)
 
   useEffect(() => {

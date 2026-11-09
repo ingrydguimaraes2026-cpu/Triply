@@ -35,16 +35,19 @@ export default function AbaViagem() {
   const { id, fase: faseSimulada } = useLocalSearchParams<{ id: string; fase?: 'antes' | 'durante' | 'voltou' }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { meuId } = useViagemAtual()
+  const { meuId, atual } = useViagemAtual()
+  // No navegador, ao voltar de outra tela (ex.: Cidades), o id da rota pode vir vazio:
+  // aí vale a viagem atual (o _layout já escolheu ela). Sem id nenhum, não busca (evita "undefined" no banco).
+  const viagemId = id || atual?.id
   const [convite, setConvite] = useState<string | null>(null)
   const [carimbo, setCarimbo] = useState<Passo | null>(null)
-  const capa = useCapas(id ? [id] : [])
+  const capa = useCapas(viagemId ? [viagemId] : [])
   const rolagem = useSharedValue(0)
   const aoRolar = useAnimatedScrollHandler((e) => {
     rolagem.value = e.contentOffset.y
   })
 
-  const carga = useCarregar(() => carregarAbaViagem(id), [id])
+  const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId])
   // Volta de outra tela (votou, lançou gasto, pôs datas): busca de novo pra o carimbo cair
   const { recarregar } = carga
   const [primeiraVez, setPrimeiraVez] = useState(true)
@@ -77,7 +80,7 @@ export default function AbaViagem() {
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
   const linha = [periodo(viagem.dataInicio, viagem.dataFim), faltam != null && faltam > 0 ? `faltam ${faltam} ${faltam === 1 ? 'dia' : 'dias'}` : null].filter(Boolean).join(' · ') || 'Sem data ainda'
 
-  const ir = (rota: string) => router.push((['roteiro', 'reservas', 'contas', 'fotos'].includes(rota) ? `/viagem/${id}/${rota}` : `/${rota}`) as Href)
+  const ir = (rota: string) => router.push((['roteiro', 'reservas', 'contas', 'fotos'].includes(rota) ? `/viagem/${viagem.id}/${rota}` : `/${rota}`) as Href)
   const irProPasso = (destino: DestinoDoPasso) => (destino === 'convidar' ? void convidar() : ir(destino === 'explorar' ? `explorar` : destino))
 
   async function convidar() {
