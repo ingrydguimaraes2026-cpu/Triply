@@ -46,6 +46,11 @@ const SELO: Record<DestinoDaHospedagem['situacao'], { texto: string; classe: str
 const dataCurta = (d: string | null) => (d ? `${Number(d.slice(8, 10))}/${d.slice(5, 7)}` : '?')
 
 export default function Hospedagem() {
+  return <TelaDeHospedagem />
+}
+
+// Spec 122d: a mesma tela entra na aba Reservas (naAba: sem voltar, sem título grande, sem a margem de cima)
+export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
@@ -104,13 +109,15 @@ export default function Hospedagem() {
 
   return (
     <View className="flex-1 bg-fundo">
-      <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }} keyboardShouldPersistTaps="handled">
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
-          <ArrowLeft size={20} color={cor.texto} />
-        </BotaoRedondo>
+      {naAba ? null : <StatusBar style="dark" />}
+      <ScrollView contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 40, gap: 12 }} keyboardShouldPersistTaps="handled">
+        {naAba ? null : (
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+            <ArrowLeft size={20} color={cor.texto} />
+          </BotaoRedondo>
+        )}
         <View>
-          <Text className="font-display text-[32px] text-texto">Hospedagem</Text>
+          {naAba ? null : <Text className="font-display text-[32px] text-texto">Hospedagem</Text>}
           <Text className="mt-0.5 font-body text-[14px] text-suave">
             {resumo.total ? `${resumo.resolvidos} de ${resumo.total} destinos com hospedagem` : 'Onde o comboio vai dormir em cada destino.'}
           </Text>

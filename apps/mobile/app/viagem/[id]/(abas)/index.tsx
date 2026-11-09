@@ -77,7 +77,7 @@ export default function AbaViagem() {
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
   const linha = [periodo(viagem.dataInicio, viagem.dataFim), faltam != null && faltam > 0 ? `faltam ${faltam} ${faltam === 1 ? 'dia' : 'dias'}` : null].filter(Boolean).join(' · ') || 'Sem data ainda'
 
-  const ir = (rota: string) => router.push((['roteiro', 'contas', 'fotos'].includes(rota) ? `/viagem/${id}/${rota}` : `/${rota}`) as Href)
+  const ir = (rota: string) => router.push((['roteiro', 'reservas', 'contas', 'fotos'].includes(rota) ? `/viagem/${id}/${rota}` : `/${rota}`) as Href)
   const irProPasso = (destino: DestinoDoPasso) => (destino === 'convidar' ? void convidar() : ir(destino === 'explorar' ? `explorar` : destino))
 
   async function convidar() {
@@ -154,7 +154,7 @@ export default function AbaViagem() {
           </Secao>
 
           <Secao indice={4} titulo="Passagens">
-            <ResumoDasPassagens passagens={d.passagens} aoAbrir={() => ir('transportes')} />
+            <ResumoDasPassagens passagens={d.passagens} aoAbrir={() => ir('reservas')} />
           </Secao>
 
           <Secao indice={5} titulo="Contas">

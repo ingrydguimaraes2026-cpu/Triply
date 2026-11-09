@@ -54,6 +54,11 @@ async function carregar(viagemId: string) {
 }
 
 export default function Transportes() {
+  return <TelaDePassagens />
+}
+
+// Spec 122d: a mesma tela entra na aba Reservas (naAba: sem voltar, sem título, sem a margem de cima)
+export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
@@ -85,8 +90,10 @@ export default function Transportes() {
 
   return (
     <View className="flex-1 bg-fundo">
-      <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 100, gap: 12 }}>
+      {naAba ? null : <StatusBar style="dark" />}
+      <ScrollView contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 100, gap: 12 }}>
+        {naAba ? null : (
+        <>
         <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
@@ -94,12 +101,14 @@ export default function Transportes() {
           <Text className="font-display text-[32px] leading-[36px] text-texto">Passagens</Text>
           <Text className="mt-1 font-body text-[14px] text-suave">O que falta decidir, o que falta comprar e o que já está garantido.</Text>
         </View>
+        </>
+        )}
 
         {nada ? (
           <View className="mt-4 items-center gap-3 px-4">
             <Norti humor="dormindo" tamanho={110} />
             <Text className="text-center font-display text-[22px] text-texto">Nenhum deslocamento ainda</Text>
-            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Ponha no Roteiro, dia por dia, como vocês vão de um lugar pro outro. Ele aparece aqui.</Text>
+            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Toque em "Novo deslocamento", diga de onde e pra onde e veja as opções.</Text>
           </View>
         ) : (
           <View className="flex-row gap-2">
@@ -154,7 +163,7 @@ export default function Transportes() {
         ))}
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 px-5" style={{ paddingBottom: insets.bottom + 12 }}>
+      <View className="absolute bottom-0 left-0 right-0 px-5" style={{ paddingBottom: (naAba ? 0 : insets.bottom) + 12 }}>
         <Pressable onPress={() => router.push('/novo-deslocamento')} accessibilityRole="button" className="min-h-[54px] flex-row items-center justify-center gap-2 rounded-full bg-couro active:opacity-90">
           <Plus size={18} color={cor.creme} />
           <Text className="font-body-bold text-[15px] text-creme">Novo deslocamento</Text>

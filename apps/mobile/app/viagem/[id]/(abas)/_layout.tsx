@@ -2,17 +2,19 @@ import { useEffect, useRef } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { Tabs, useLocalSearchParams, usePathname, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Camera, Luggage, Map, Wallet } from '../../../../src/ui/icones'
+import { Camera, Luggage, Map, Ticket, Wallet } from '../../../../src/ui/icones'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { Carregando, ErroNaTela } from '../../../../src/ui/pecas'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { cor } from '../../../../theme'
 
-// Dentro de uma viagem (spec 117): 4 abas, Viagem · Roteiro · Contas · Fotos.
+// Dentro de uma viagem (spec 117): Viagem · Roteiro · Reservas · Contas · Fotos.
+// Reservas (spec 122d, Victor 08/11): transporte e hospedagem juntos, sempre a um toque.
 // A viagem do endereço vira a "viagem atual" que as abas leem com useViagemAtual().
 const ABAS = [
   { nome: 'index', fim: '', rotulo: 'Viagem', Icone: Luggage },
   { nome: 'roteiro', fim: '/roteiro', rotulo: 'Roteiro', Icone: Map },
+  { nome: 'reservas', fim: '/reservas', rotulo: 'Reservas', Icone: Ticket },
   { nome: 'contas', fim: '/contas', rotulo: 'Contas', Icone: Wallet },
   { nome: 'fotos', fim: '/fotos', rotulo: 'Fotos', Icone: Camera },
 ] as const
