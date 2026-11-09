@@ -23,7 +23,7 @@
 | 1 | **Navegação e nomes** | `apps/web/src/pages/viagem/ViagemLayout.tsx`: as 5 partes do app (Viagem, Roteiro, Reservas, Contas, Fotos) e "Tudo da viagem" com o resto (Hoje, Lugares, Cidades, Comboio, Retrospectiva, PDF, Configurações). Sai o "Overview" (inglês), "Estadia", "Passag." e "Finanças". "Reservas" junta Passagens e Hospedagem com as duas pílulas, como no app | **Feito (09/11)** |
 | 2 | **Tela da viagem** | `Overview.tsx` vira a aba Viagem do app (`apps/mobile/app/viagem/[id]/(abas)/index.tsx` + `src/ui/viagem/Secoes.tsx`): capa, rostos, próximo carimbo, passaporte do comboio, carrossel dos dias, passagens, contas. Sai a grade de 11 botões | **Feito (09/11)** |
 | 3 | **Hospedagem por noite** | `Hospedagem.tsx` segue a spec 123 (`docs/specs/123-hospedagem-por-noite.md`): `noitesDaViagem` e `fatosDaOpcao` já estão no core. Modelo: `apps/mobile/app/hospedagem.tsx`, `cidade-hospedagem.tsx`, `opcao-hospedagem.tsx` | Feita (09/11), ver abaixo |
-| 4 | **Contas** | `Financeiro.tsx` no estilo da aba Contas do app: saldo grande, lista e lançamento rápido. O orçamento e a carteira vão pra uma linha ou um painel lateral, não 8 cartões | A fazer |
+| 4 | **Contas** | `Financeiro.tsx` no estilo da aba Contas do app: saldo grande, lista e lançamento rápido. O orçamento e a carteira vão pra uma linha ou um painel lateral, não 8 cartões | Pronta (09/11) |
 | 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções, votos e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | A fazer |
 | 6 | Roteiro do dia e Agenda | Juntar Agenda no Roteiro como no app (dia a dia com mapa ilustrado) | A fazer |
 
@@ -54,3 +54,12 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - "Antes de embarcar" está congelado no RUMO.
 
 **Pra etapa 3 e 5:** dentro de Reservas, `Hospedagem.tsx` e `Transportes.tsx` ainda mostram o título grande de cada um embaixo das pílulas. O app esconde esse título quando a tela está dentro da aba (`naAba`). Dá pra fazer igual quando mexerem nelas.
+
+**Etapa 4 (Contas), pronta em 09/11/2026:**
+- `Financeiro.tsx` (endereço `contas`) segue a aba Contas do app: cartão couro com o saldo grande ("Tudo certo por aqui", "Você recebe", "Você deve"), linha "Euro hoje R$ ..." e, ao tocar, quem paga quem e o saldo de cada um.
+- Gastos como conversa: do mais antigo pro mais novo, os meus à direita (couro), dos outros à esquerda com o rosto. Tocar abre o gasto pra editar. Filtros, "só você vê", "completar", compartilhar e os recados verdes de quem paga quem continuam.
+- Barra de lançar presa embaixo: "jantar 84" + Enter abre o formulário completo já preenchido (`lerFraseDeGasto` do core). Nada é salvo sem a pessoa confirmar. O botão do recibo abre o formulário vazio. No Contas o botão flutuante "+" do layout some (CSS em `financeiro.css`), porque a barra faz o mesmo.
+- Painel "Orçamento, câmbio e carteira": no computador fica do lado (fixo ao rolar); no celular é uma linha que abre. Dentro: Orçamento (gasto de X, barra, por categoria dobrável), Meu orçamento, A pagar, Dinheiro na mão, Carteira de euro com o Gmail, Câmbio (média + compras dobráveis), Relatórios (dobrável). Saiu o cartão "Acertos" (foi pro saldo) e o "Meu euro" (virou a pílula "Euros na sua carteira").
+- Saldo de cada um vem de `calcularSaldos` do core. A tela não tem conta de dinheiro nova (o "X cada" do app virou "sua parte", que já vem da divisão).
+- Testado em 360 px e 1366 px na Eurotrip (sem gastos: só o estado vazio e a frase abrindo o formulário). **As bolhas com gastos de verdade não foram vistas no navegador:** o banco não tem nenhum gasto. Vale olhar quando houver.
+- `npm test`: falham `zip` (antiga), `icones` (❄ de outros arquivos; o Financeiro já não tem) e `078` (membro conseguiu inserir trajeto; provável efeito da regra nova da spec 122, não desta etapa).

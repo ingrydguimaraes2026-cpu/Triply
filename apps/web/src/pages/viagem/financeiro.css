@@ -27,18 +27,6 @@
   font-weight: 700;
 }
 
-.financeiro-grade {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-}
-
-@media (min-width: 1000px) {
-  .financeiro-grade {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 .acertos,
 .carteiras,
 .compras,
@@ -140,110 +128,6 @@
 .rendendo-mal {
   color: #a3330f;
   font-weight: 700;
-}
-
-/* Lista de gastos */
-.gastos {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.gastos-dia h3 {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 8px;
-  font-size: 14px;
-  color: var(--cor-texto-suave);
-}
-
-.gastos-dia h3 span {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.gastos-dia ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  border-radius: 20px;
-  border: 1px solid var(--cor-borda);
-  background: var(--cor-cartao);
-  overflow: hidden;
-}
-
-.gastos-dia li + li {
-  border-top: 1px solid #f5ead6;
-}
-
-/* Linha do gasto: o botão do gasto + o compartilhar ao lado (spec 025) */
-.gasto-linha {
-  display: flex;
-  align-items: center;
-}
-
-.gasto-linha .gasto {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Botões no fim da linha (comentários e compartilhar): o último encosta com folga na borda */
-.gasto-linha > :last-child:not(.gasto) {
-  margin-right: 10px;
-}
-
-.gasto {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 0;
-  background: transparent;
-  color: var(--cor-texto);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.gasto:hover {
-  background: var(--cor-fundo-suave);
-}
-
-.gasto-texto {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.gasto-texto strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.gasto-texto small {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  color: var(--cor-texto-suave);
-  font-size: 13px;
-}
-
-.gasto-texto .avatar {
-  border-width: 1px;
-}
-
-.gasto-valor {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 .form-apagar {
@@ -473,209 +357,285 @@
   white-space: nowrap;
 }
 
-/* ---------- Spec 112: no estilo das Contas do app ---------- */
-/* Meu saldo: verde se recebo, vermelho se devo, areia se está tudo certo */
+/* ---------- Contas no estilo do app (site espelho, etapa 4, 09/11/2026) ----------
+   Celular: saldo, painel dobrado, conversa e a barra de lançar presa embaixo.
+   Computador: saldo, conversa e barra numa coluna; o painel fica do lado. */
+.contas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'saldo'
+    'painel'
+    'conversa'
+    'barra';
+  gap: 14px;
+}
+
+@media (min-width: 1000px) {
+  .contas {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-areas:
+      'saldo painel'
+      'conversa painel'
+      'barra painel';
+    grid-template-rows: auto 1fr auto;
+    column-gap: 24px;
+    max-width: 1120px;
+  }
+}
+
+/* No Contas a barra de baixo já lança: o botão flutuante "+" ficaria em cima dela */
+body:has(.contas-barra) .botao-flutuante {
+  display: none;
+}
+
+/* Meu saldo: cartão couro com o número grande, como o do app */
 .meu-saldo {
+  grid-area: saldo;
+  border-radius: 24px;
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: var(--sombra-hero);
+  overflow: hidden;
+}
+
+.meu-saldo-botao {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 24px;
-  border-radius: 20px;
-  background: var(--cor-comboio-fundo);
-}
-
-.meu-saldo.recebe {
-  background: var(--cor-sucesso-fundo);
-}
-
-.meu-saldo.deve {
-  background: var(--cor-erro-fundo);
-}
-
-.meu-saldo p {
-  margin: 0;
+  padding: 20px 20px 18px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .meu-saldo-rotulo {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--cor-texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--creme);
 }
 
 .meu-saldo-valor {
   font-family: var(--fonte-titulo);
-  font-size: 46px;
+  font-size: 44px;
   font-weight: 600;
-  line-height: 1.05;
-  color: var(--cor-texto);
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-.meu-saldo.recebe .meu-saldo-rotulo,
-.meu-saldo.recebe .meu-saldo-valor {
-  color: var(--cor-sucesso);
+.meu-saldo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--creme);
 }
 
-.meu-saldo.deve .meu-saldo-rotulo,
-.meu-saldo.deve .meu-saldo-valor {
-  color: var(--cor-erro);
+.meu-saldo-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-weight: 600;
 }
 
 .meu-saldo-detalhe {
+  margin: 0;
+  padding: 0 20px 16px;
   font-size: 13px;
-  color: var(--cor-texto-suave);
+  color: var(--creme);
 }
 
-.meu-saldo-acertar {
-  align-self: stretch;
-  margin-top: 12px;
-  background: var(--cor-cartao);
-  color: var(--cor-texto);
-}
-
-.meu-saldo-rodape {
+.meu-saldo-acertos {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 12px !important;
-  padding-top: 12px;
-  border-top: 1px solid rgb(74 46 20 / 0.1);
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 20px;
+  padding: 16px 0 20px;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+  font-size: 14px;
+}
+
+.meu-saldo-acertos p {
+  margin: 0;
   font-size: 13px;
-  color: var(--cor-texto-suave);
+  color: var(--creme);
 }
 
-.meu-saldo-rodape strong {
-  color: var(--cor-texto);
+.meu-saldo-acertos ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-@media (min-width: 1000px) {
-  .meu-saldo-acertar {
-    align-self: flex-start;
-  }
+.meu-saldo-pessoas li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
 }
 
-/* Gastos por dia: rótulo em caixa alta e cartão branco com sombra, como no app */
-.gastos-dia h3 {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.meu-saldo-pessoas span {
+  flex: 1;
+  color: var(--creme);
+  font-weight: 600;
 }
 
-.gastos-dia h3 span {
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.gastos-dia ul {
-  border-color: transparent;
+/* Painel: no celular é uma linha que abre; no computador fica aberto do lado */
+.contas-painel {
+  grid-area: painel;
+  align-self: start;
+  border-radius: 20px;
+  background: var(--cor-cartao);
   box-shadow: var(--sombra-cartao);
 }
 
-html[data-tema='escuro'] .gastos-dia ul {
-  border-color: var(--cor-borda);
+.contas-painel-alternar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.gastos-dia li + li {
-  border-top-color: var(--cor-borda);
+.contas-painel-alternar > span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.gasto .categoria-icone {
-  width: 40px;
-  height: 40px;
-  background: var(--dourado-claro);
+.contas-painel-alternar strong {
+  font-size: 15px;
+}
+
+.contas-painel-alternar small {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.contas-painel-alternar > svg:first-child {
   color: var(--couro);
 }
 
-html[data-tema='escuro'] .gasto .categoria-icone {
-  background: var(--cor-comboio-fundo);
-  color: var(--cor-comboio);
+.contas-painel-seta {
+  transition: transform 0.15s;
 }
 
-/* ---------- Design Plataforma (spec 113) ----------
-   Em cima: saldo (1,4 parte) + números (2 partes). Embaixo: câmbio (2) + carteira, categorias e acertos (1).
-   Tudo quebra sozinho pra uma coluna no celular. */
-.fin-topo,
-.fin-colunas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
+.contas-painel.aberto .contas-painel-seta {
+  transform: rotate(180deg);
 }
 
-.fin-colunas {
-  align-items: flex-start;
+.contas-painel-corpo {
+  display: none;
+  padding: 0 16px 8px;
 }
 
-.fin-topo > .meu-saldo {
-  flex: 1.4 1 340px;
-  min-width: 0;
-  padding: 24px;
-  border-radius: 22px;
+.contas-painel.aberto .contas-painel-corpo {
+  display: block;
 }
 
-.fin-topo > .meu-saldo .meu-saldo-valor {
-  font-size: 52px;
-  line-height: 1;
+/* Cada pedaço do painel é um cartão sem moldura, separado por uma linha */
+.contas-painel .cartao-ui {
+  gap: 8px;
+  padding: 16px 0;
+  border: 0;
+  border-top: 1px solid var(--cor-borda);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.fin-topo > .numeros {
-  flex: 2 1 460px;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
+.contas-painel .cartao-ui-topo h2 {
+  font-size: 15px;
 }
 
-.fin-topo .numeros .cartao-ui {
-  gap: 6px;
-  padding: 16px;
+.contas-painel .numero,
+.contas-painel .carteira-saldo {
+  margin: 0;
+  font-size: 22px;
 }
 
-.fin-topo .numeros .numero {
-  font-size: 26px;
+.contas-painel .numero small {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
 }
 
-.fin-topo .numeros .numero-legenda {
+.contas-painel .numero-legenda {
   margin: 0;
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
-.fin-principal {
-  flex: 2 1 480px;
-  min-width: 0;
+.painel-barra {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--cor-fundo-suave);
+  overflow: hidden;
+}
+
+.painel-barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cor-comboio);
+}
+
+.painel-barra.alerta span {
+  background: var(--caramelo);
+}
+
+.painel-barra.estourou span {
+  background: var(--laranja);
+}
+
+.painel-dobra summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--couro);
+  cursor: pointer;
+  list-style: none;
+}
+
+.painel-dobra summary::-webkit-details-marker {
+  display: none;
+}
+
+.painel-dobra[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.painel-dobra > div {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
+  padding-top: 8px;
 }
 
-.fin-lateral {
-  flex: 1 1 320px;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-/* Acertos e câmbio, que eram uma grade de 2, ficam um embaixo do outro na lateral */
-.fin-lateral .financeiro-grade {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.fin-colunas .cartao-ui,
-.fin-topo .cartao-ui {
-  box-shadow: 0 4px 14px rgb(74 46 20 / 0.06);
-}
-
-.fin-principal > .cartao-ui,
-.fin-lateral .cartao-ui {
-  padding: 22px;
-}
-
-/* "Meu orçamento" num cartão estreito: o campo encolhe e o botão desce se não couber */
+/* "Meu orçamento" num painel estreito: o campo encolhe e o botão desce se não couber */
 .meu-orcamento-form {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -686,4 +646,252 @@ html[data-tema='escuro'] .gasto .categoria-icone {
 
 .meu-orcamento-form input {
   flex: 1 1 90px;
+}
+
+@media (min-width: 1000px) {
+  .contas-painel {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  .contas-painel-alternar {
+    display: none;
+  }
+
+  .contas-painel-corpo {
+    display: block;
+    padding: 0 18px 8px;
+  }
+
+  .contas-painel-corpo > .cartao-ui:first-child {
+    border-top: 0;
+  }
+}
+
+/* A conversa: os meus à direita (couro), dos outros à esquerda (cartão branco) */
+.contas-conversa {
+  grid-area: conversa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.contas-euro,
+.contas-recado {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.contas-euro {
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
+}
+
+.contas-euro svg {
+  color: var(--couro);
+}
+
+.contas-recado {
+  background: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso);
+}
+
+.conversa-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.conversa-dia h3 {
+  align-self: center;
+  margin: 8px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.conversa-dia h3 span {
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.conversa-dia ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bolha-linha {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bolha-linha.minha {
+  justify-content: flex-end;
+}
+
+.bolha-pilha {
+  max-width: min(78%, 460px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bolha-linha.minha .bolha-pilha {
+  align-items: flex-end;
+}
+
+.bolha {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 20px 20px 20px 6px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  color: var(--cor-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bolha-linha.minha .bolha {
+  border-radius: 20px 20px 6px 20px;
+  background: var(--couro);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.bolha:hover {
+  filter: brightness(0.97);
+}
+
+.bolha strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.bolha small {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.bolha-linha.minha .bolha small {
+  color: var(--creme);
+}
+
+.bolha-acoes {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bolha-acoes:empty {
+  display: none;
+}
+
+.contas-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+.contas-vazio svg {
+  color: var(--caramelo);
+}
+
+.contas-vazio h2 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  color: var(--cor-texto);
+}
+
+.contas-vazio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Barra de lançar: presa embaixo da tela enquanto a conversa rola */
+.contas-barra {
+  grid-area: barra;
+  position: sticky;
+  z-index: 5;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-flutuante);
+}
+
+.contas-barra input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: 999px;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 15px;
+}
+
+.contas-barra-completo,
+.contas-barra-enviar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.contas-barra-completo {
+  background: var(--cor-fundo-suave);
+  color: var(--couro);
+}
+
+.contas-barra-enviar {
+  background: var(--caramelo);
+  color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .contas-barra {
+    bottom: 16px;
+  }
 }
