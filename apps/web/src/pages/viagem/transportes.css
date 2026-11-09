@@ -325,17 +325,6 @@
   font-size: 26px;
 }
 
-/* Spec 121a: chegadas e saídas por pessoa */
-.chegadas-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.chegadas-pessoa { display: grid; gap: 8px; padding: 12px 14px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-cartao); }
-.chegadas-bilhete { display: grid; gap: 4px; padding-top: 8px; border-top: 1px dashed var(--cor-borda); }
-.chegadas-meio { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--cor-texto-suave); }
-.chegadas-rota { font-weight: 700; overflow-wrap: anywhere; }
-.chegadas-rota small { font-weight: 500; color: var(--cor-texto-suave); margin-left: 2px; }
-.chegadas-busca { color: var(--cor-sucesso); font-weight: 600; }
-.chegadas-acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.chegadas-falta { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1.5px dashed var(--cor-borda); border-radius: 12px; background: none; color: var(--couro); font-weight: 700; cursor: pointer; }
-.chegadas-ainda { color: var(--cor-texto-suave); }
 
 /* Trecho sem trajeto: uma faixa baixa, com os links pequenos (a tela não vira um paredão) */
 .trecho-compacto { gap: 8px; padding: 14px 16px; }

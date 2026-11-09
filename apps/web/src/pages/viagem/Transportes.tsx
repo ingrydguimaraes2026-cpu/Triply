@@ -15,7 +15,6 @@ import {
   type Passeio,
 } from '../../features/transportes/rota'
 import FormTrajeto from '../../features/transportes/FormTrajeto'
-import ChegadasESaidas from '../../features/transportes/ChegadasESaidas'
 import { formatarData } from '../../lib/datas'
 import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
 import Carregando from '../../components/ui/Carregando'
@@ -41,9 +40,7 @@ export default function Transportes() {
   const [janela, setJanela] = useState<Janela>(null)
 
   const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
-  const carregados = estado.status === 'pronto' ? estado.trajetos : []
-  // Spec 121: chegadas e saídas de cada um ficam na seção própria; o resto da tela é dos trechos do grupo
-  const todosTrajetos = carregados.filter((t) => (t.tipo ?? 'trecho') === 'trecho')
+  const todosTrajetos = estado.status === 'pronto' ? estado.trajetos : []
   const trajetos = soOsMeus ? todosTrajetos.filter((t) => vouNesse(t, meuId)) : todosTrajetos
   const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
   const nomeDe = (id: string | null) => destinoDe(id)?.nome ?? 'Sem destino'
@@ -283,7 +280,7 @@ export default function Transportes() {
       <CabecalhoPagina
         acima={viagem.nome}
         titulo="Transportes"
-        subtitulo="Quem chega quando e como vocês vão de uma cidade pra outra."
+        subtitulo="Como vocês vão de uma cidade pra outra."
         acao={
           euSouAdm &&
           destinos.length > 0 && (
@@ -313,19 +310,6 @@ export default function Transportes() {
             </p>
           ))}
         </section>
-      )}
-
-      {estado.status === 'pronto' && (
-        <ChegadasESaidas
-          trajetos={carregados}
-          membros={membros}
-          destinos={destinos}
-          meuId={meuId}
-          euSouAdm={souAdmDeVerdade}
-          aoAdicionar={(tipo) => setJanela({ tipo })}
-          aoEditar={(t) => setJanela({ trajeto: t })}
-          aoMudar={recarregar}
-        />
       )}
 
       {destinos.length === 0 ? (
