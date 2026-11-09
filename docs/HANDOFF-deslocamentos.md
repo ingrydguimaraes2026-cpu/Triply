@@ -4,7 +4,8 @@ Atualizado em 08/11/2026. Branch: `monorepo-split` (commits locais, **sem push**
 
 ## Onde estamos
 - **Pronto:** a spec [`docs/specs/122-deslocamentos-no-dia.md`](specs/122-deslocamentos-no-dia.md) e o protótipo [`docs/design/transporte-v3.html`](design/transporte-v3.html) (4 telas: o dia em horários, comparar, achar o jeito de ir, Passagens).
-- **Não começou:** nada de código nem banco da 122.
+- **Feito (08/11):** 122a, 122b e 122c no app (banco aplicado). Ver "Como ficou" na spec.
+- **Falta:** 122d (Passagens no lugar de Transportes, app e site).
 - **De onde veio:** reuniões noturnas de planejamento da Eurotrip (22/10, 27/10, 28/10, 06/11 no Humana). Eles planejam o dia horário por horário e comparam opções por folga, último do dia, trocas e preço. A tela de Transportes atual (trecho por par de cidades) foi chamada de "meio inútil".
 
 ## Decisões já tomadas (08/11)

@@ -84,6 +84,7 @@ export default function RootLayout() {
                 <Stack.Screen name="lembranca" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="caminho" />
                 <Stack.Screen name="novo-deslocamento" />
+                <Stack.Screen name="comparar" />
                 <Stack.Screen name="viagem-antiga" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="nova-reserva" options={{ presentation: 'modal' }} />
                 <Stack.Screen name="comecar" options={{ gestureEnabled: false, animation: 'fade' }} />

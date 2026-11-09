@@ -122,7 +122,7 @@ type Item = {
   titulo: string
   detalhe: string
   evento?: EventoDaAgenda
-  desl?: { trajetoId: string; situacao: SituacaoDoDeslocamento; opcoes: number; meio: string }
+  desl?: { trajetoId: string; situacao: SituacaoDoDeslocamento; opcoes: number; meio: string; grupo: string | null }
 }
 
 function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComDetalhes; diaInicial: number; aoMatches: () => void }) {
@@ -131,7 +131,7 @@ function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComD
       Promise.all([
         buscarDestinos(supabase, viagem.id),
         buscarLugares(supabase, viagem.id),
-        buscarTrajetos(supabase, viagem.id),
+        buscarTrajetos(supabase, viagem.id, { comOpcoes: true }),
         buscarEventosDaAgenda(supabase, viagem.id),
         // Spec 122b: as casas escolhidas (check-in e check-out) pros avisos. Sem elas, o dia funciona igual.
         buscarOpcoesDeHospedagem(supabase, viagem.id)
@@ -325,7 +325,7 @@ function Tela({
                       <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
                       {trilho}
                     <Pressable
-                      onPress={() => novoDeslocamento(`&trajeto=${d.trajetoId}`)}
+                      onPress={() => (d.grupo && d.opcoes > 1 ? router.push(`/comparar?grupo=${d.grupo}` as Href) : novoDeslocamento(`&trajeto=${d.trajetoId}`))}
                       accessibilityLabel={`Abrir ${it.titulo}`}
                       className="mb-2.5 min-w-0 flex-1 gap-2.5 rounded-2xl border bg-cartao p-3 active:opacity-80"
                       style={{ borderColor: pendente ? cor.dourado : cor.borda }}
@@ -477,7 +477,7 @@ function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos:
         Icone: ICONE_DO_MEIO[i.meio] ?? Route,
         titulo: i.titulo,
         detalhe: i.detalhe,
-        desl: { trajetoId: i.trajetoId, situacao: i.situacao, opcoes: i.opcoes, meio: i.meio },
+        desl: { trajetoId: i.trajetoId, situacao: i.situacao, opcoes: i.opcoes, meio: i.meio, grupo: i.grupo },
       }
     if (i.tipo === 'evento') return { chave: i.chave, hora: i.hora, Icone: CalendarDays, titulo: i.titulo, detalhe: i.detalhe, evento: i.evento }
     return { chave: i.chave, hora: '', Icone: i.tipo === 'chegada' ? Bed : MapPin, titulo: i.titulo, detalhe: i.detalhe }

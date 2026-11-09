@@ -27,6 +27,7 @@ export type ItemDaAgenda =
       chegada: string | null // horário completo da chegada (pode ser no dia seguinte)
       para: string // pra onde (texto)
       ultimo: boolean // é o último do dia
+      grupo: string | null // opções do mesmo deslocamento (122c)
     }
   | { tipo: 'evento'; chave: string; hora: string; titulo: string; detalhe: string; evento: EventoDaAgenda }
 
@@ -99,6 +100,7 @@ export function montarAgendaDoDia(
       chegada: t.chegada,
       para,
       ultimo: !!t.ultimo_do_dia,
+      grupo: t.grupo_opcoes ?? null,
     })
   }
 

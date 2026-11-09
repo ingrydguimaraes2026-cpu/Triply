@@ -2,8 +2,27 @@ import { useMemo, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, ArrowLeftRight, Trash2 } from '../src/ui/icones'
-import { buscarDestinos, buscarLugares, diaNoFuso, horaNoFuso, MEIOS_DE_TRANSPORTE, type Destino, type Lugar, type Tables } from '@together/core'
+import { ActivityIndicator } from 'react-native'
+import { ArrowLeft, ArrowLeftRight, Bus, Car, Footprints, Plus, Search, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
+import {
+  acharLugar,
+  buscarDestinos,
+  buscarJeitosDeIr,
+  buscarLugares,
+  buscarTrajetos,
+  diaNoFuso,
+  duracaoCurta,
+  frequenciaEstimada,
+  horaNoFuso,
+  MEIOS_DE_TRANSPORTE,
+  naoDaTempo,
+  type Destino,
+  type JeitoDeIr,
+  type Lugar,
+  type MeioDoJeito,
+  type Saida,
+  type Tables,
+} from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { diaLongo, lerData } from '../src/lib/formato'
@@ -15,8 +34,9 @@ import { cor } from '../theme'
 
 // Spec 122a: novo deslocamento (ou editar um). De e para em texto livre: qualquer lugar pra qualquer
 // lugar ("Varenna → Bellagio"), com sugestões dos destinos e lugares da viagem.
-// Rota: /novo-deslocamento?dia=AAAA-MM-DD[&trajeto=<id>]
-// Horários reais e comparar opções vêm na 122c.
+// Rota: /novo-deslocamento?dia=AAAA-MM-DD[&trajeto=<id>][&grupo=<id>&de=&para=]
+// Spec 122c: "Achar jeitos de ir" mostra cartões por meio (trem, ônibus, carro, táxi, a pé) e as saídas
+// exatas; tocar numa saída preenche tudo. "Guardar como opção" junta opções pra comparar (/comparar).
 
 type Trajeto = Tables<'trajetos'>
 type Ponto = { nome: string; latitude: number | null; longitude: number | null }
@@ -35,24 +55,32 @@ const TROCAS = [
   { valor: 2, nome: '2 trocas' },
   { valor: 3, nome: '3 ou mais' },
 ]
+const NOME_DO_JEITO: Record<MeioDoJeito, string> = { trem: 'Trem', onibus: 'Ônibus', barco: 'Barco', metro: 'Metrô', carro: 'Carro', taxi: 'Táxi', a_pe: 'A pé' }
+const ICONE_DO_JEITO: Record<MeioDoJeito, LucideIcon> = { trem: TrainFront, onibus: Bus, barco: Ship, metro: TrainFront, carro: Car, taxi: Car, a_pe: Footprints }
+const SIMBOLO: Record<string, string> = { EUR: '€', BRL: 'R$', USD: 'US$' }
+
+// Id novo pras opções do mesmo deslocamento (não precisa ser criptográfico)
+function idNovo() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
 
 async function carregar(viagemId: string, trajetoId: string | undefined) {
-  const [destinos, lugares, trajeto] = await Promise.all([
-    buscarDestinos(supabase, viagemId),
-    buscarLugares(supabase, viagemId),
-    trajetoId ? supabase.from('trajetos').select('*').eq('id', trajetoId).single().then((r) => (r.error ? Promise.reject(r.error) : r.data)) : Promise.resolve(null),
-  ])
-  return { destinos, lugares, trajeto }
+  const [destinos, lugares, trajetos] = await Promise.all([buscarDestinos(supabase, viagemId), buscarLugares(supabase, viagemId), buscarTrajetos(supabase, viagemId, { comOpcoes: true })])
+  const trajeto = trajetoId ? ((trajetos as Trajeto[]).find((t) => t.id === trajetoId) ?? null) : null
+  return { destinos, lugares, trajetos: trajetos as Trajeto[], trajeto }
 }
 
 export default function NovoDeslocamento() {
   const { atual: viagem } = useViagemAtual()
-  const params = useLocalSearchParams<{ dia?: string; trajeto?: string }>()
+  const params = useLocalSearchParams<{ dia?: string; trajeto?: string; grupo?: string; de?: string; para?: string }>()
   const carga = useCarregar(viagem ? () => carregar(viagem.id, params.trajeto) : null, [viagem?.id, params.trajeto])
   if (!viagem) return <ErroNaTela aoTentar={() => {}} />
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  return <Formulario {...carga.dados} viagemId={viagem.id} moeda={viagem.moeda} diaInicial={params.dia} />
+  return <Formulario {...carga.dados} viagemId={viagem.id} moeda={viagem.moeda} diaInicial={params.dia} grupo={params.grupo} deInicial={params.de} paraInicial={params.para} />
 }
 
 function Formulario({
@@ -62,13 +90,21 @@ function Formulario({
   viagemId,
   moeda,
   diaInicial,
+  trajetos,
+  grupo,
+  deInicial,
+  paraInicial,
 }: {
   destinos: Destino[]
   lugares: Lugar[]
   trajeto: Trajeto | null
+  trajetos: Trajeto[]
   viagemId: string
   moeda: string
   diaInicial?: string
+  grupo?: string
+  deInicial?: string
+  paraInicial?: string
 }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -77,8 +113,8 @@ function Formulario({
   const nomeDoDestino = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? ''
 
   const dia = trajeto?.partida ? diaNoFuso(trajeto.partida) : (diaInicial ?? diaNoFuso(new Date().toISOString()))
-  const [de, setDe] = useState<Ponto>({ nome: trajeto?.de_texto ?? nomeDoDestino(trajeto?.origem_id ?? null), latitude: trajeto?.de_lat ?? null, longitude: trajeto?.de_lon ?? null })
-  const [para, setPara] = useState<Ponto>({ nome: trajeto?.para_texto ?? nomeDoDestino(trajeto?.destino_id ?? null), latitude: trajeto?.para_lat ?? null, longitude: trajeto?.para_lon ?? null })
+  const [de, setDe] = useState<Ponto>({ nome: trajeto?.de_texto ?? (nomeDoDestino(trajeto?.origem_id ?? null) || deInicial || ''), latitude: trajeto?.de_lat ?? null, longitude: trajeto?.de_lon ?? null })
+  const [para, setPara] = useState<Ponto>({ nome: trajeto?.para_texto ?? (nomeDoDestino(trajeto?.destino_id ?? null) || paraInicial || ''), latitude: trajeto?.para_lat ?? null, longitude: trajeto?.para_lon ?? null })
   const [focado, setFocado] = useState<'de' | 'para' | null>(null)
   const [meio, setMeio] = useState(trajeto?.meio ?? 'trem')
   const [saida, setSaida] = useState(trajeto?.partida ? horaNoFuso(trajeto.partida) : '')
@@ -91,6 +127,25 @@ function Formulario({
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const podeApagar = !!trajeto && (euSouAdm || trajeto.criado_por === meuId)
+  const [frequencia, setFrequencia] = useState<number | null>(trajeto?.frequencia_min ?? null)
+  const grupoAtual = grupo ?? trajeto?.grupo_opcoes ?? null
+
+  // Spec 122c: jeitos de ir
+  const [jeitos, setJeitos] = useState<JeitoDeIr[] | null>(null)
+  const [buscando, setBuscando] = useState(false)
+  const [aberto, setAberto] = useState<MeioDoJeito | null>(null)
+  const [semJeito, setSemJeito] = useState<string | null>(null)
+  // A que horas o grupo fica livre: a última chegada de outro deslocamento nesse dia
+  const livre = useMemo(() => {
+    const doDia = trajetos.filter((t) => t.id !== trajeto?.id && t.chegada && t.partida && diaNoFuso(t.partida) === dia && t.grupo_opcoes !== grupoAtual)
+    const ultimo = doDia.sort((a, b) => b.chegada!.localeCompare(a.chegada!))[0]
+    return ultimo ? { quando: ultimo.chegada!, de: ultimo.de_texto ?? '' } : null
+  }, [trajetos, trajeto?.id, dia, grupoAtual])
+  // Ponto de referência pra achar lugar digitado: o destino do dia (ou o primeiro com coordenada)
+  const referencia = useMemo(() => {
+    const d = destinos.find((x) => x.chegada && x.chegada <= dia && (x.saida ?? x.chegada) >= dia && x.latitude != null) ?? destinos.find((x) => x.latitude != null)
+    return d && d.latitude != null && d.longitude != null ? { latitude: d.latitude, longitude: d.longitude } : null
+  }, [destinos, dia])
 
   // Sugestões: destinos e lugares da viagem (com coordenadas quando tiver)
   const pontos = useMemo<Ponto[]>(() => {
@@ -117,7 +172,70 @@ function Formulario({
     return d.toISOString()
   }
 
-  async function salvar() {
+  async function acharJeitos() {
+    if (!de.nome.trim() || !para.nome.trim()) return setErro('Diga de onde e pra onde.')
+    setErro(null)
+    setSemJeito(null)
+    setBuscando(true)
+    setAberto(null)
+    try {
+      const ponto = async (p: Ponto, setP: (p: Ponto) => void) => {
+        if (p.latitude != null && p.longitude != null) return { latitude: p.latitude, longitude: p.longitude }
+        const achado = await acharLugar(p.nome, referencia)
+        if (achado) setP({ nome: p.nome, latitude: achado.latitude, longitude: achado.longitude })
+        return achado
+      }
+      const [a, b] = await Promise.all([ponto(de, setDe), ponto(para, setPara)])
+      if (!a || !b) return setSemJeito('Não achamos esses lugares no mapa. Confira os nomes ou cadastre à mão.')
+      // Busca a partir de meia hora antes de o grupo ficar livre (ou da hora digitada, ou das 8h)
+      const base = hSaida ? horario(hSaida) : livre ? livre.quando : horario('08:00')
+      const quando = new Date(new Date(base).getTime() - 30 * 60000).toISOString()
+      const lista = await buscarJeitosDeIr(a, b, quando, moeda)
+      setJeitos(lista)
+      if (!lista.length) setSemJeito('Não achamos jeitos de ir entre esses lugares. Cadastre à mão.')
+      else if (!lista.some((j) => j.saidas.length)) setSemJeito('Sem horários de trem ou ônibus nesse trecho (balsa e ônibus local às vezes não aparecem). Cadastre à mão se for o caso.')
+    } catch {
+      setSemJeito('Não deu pra buscar agora. Confira a internet ou cadastre à mão.')
+    } finally {
+      setBuscando(false)
+    }
+  }
+
+  // Tocar numa saída preenche o formulário
+  function usarSaida(s: Saida, jeito: JeitoDeIr) {
+    setMeio(s.meio === 'metro' ? 'metro' : s.meio)
+    setSaida(horaNoFuso(s.sai))
+    setChegada(horaNoFuso(s.chega))
+    setTrocas(Math.min(s.trocas, 3))
+    setFrequencia(jeito.frequenciaMin ?? frequenciaEstimada(jeito.saidas))
+    setUltimo(false)
+    const nota = [s.linhas.slice(0, 2).join(' + '), s.trocaEm.length ? `troca em ${s.trocaEm.join(', ')}` : ''].filter(Boolean).join(' · ')
+    setObservacao(nota.slice(0, 200))
+  }
+  function usarRota(jeito: JeitoDeIr) {
+    setMeio(jeito.meio === 'a_pe' ? 'a_pe' : 'carro')
+    setTrocas(0)
+    if (hSaida) setChegada(horaNoFuso(new Date(new Date(horario(hSaida)).getTime() + jeito.minutos * 60000).toISOString()))
+    if (jeito.preco) setPreco(String(jeito.preco.valor))
+    setObservacao(jeito.meio === 'taxi' ? 'Táxi · preço estimado' : jeito.meio === 'carro' ? `Carro · ${jeito.km} km · preço estimado` : '')
+  }
+
+  async function salvarComoOpcao() {
+    // Opções do mesmo deslocamento dividem o `grupo_opcoes`; nenhuma escolhida = "comparando"
+    const g = grupoAtual ?? idNovo()
+    if (trajeto) {
+      // Editando: este vira a 1ª opção e abre uma opção nova, em branco, com o mesmo de/para
+      if (!trajeto.grupo_opcoes) {
+        const { error } = await supabase.from('trajetos').update({ grupo_opcoes: g, escolhida: false }).eq('id', trajeto.id)
+        if (error) return setErro('Não deu pra guardar. Tente de novo.')
+      }
+      const q = encodeURIComponent
+      return router.replace(`/novo-deslocamento?dia=${dia}&grupo=${g}&de=${q(de.nome)}&para=${q(para.nome)}` as never)
+    }
+    await salvar({ grupo_opcoes: g, escolhida: false, situacao: 'sugestao' }, false, g)
+  }
+
+  async function salvar(extra: Partial<Trajeto> = {}, novaMesmoEditando = false, irPraComparar?: string) {
     if (!de.nome.trim() || !para.nome.trim()) return setErro('Diga de onde e pra onde.')
     if (!hSaida) return setErro(hSaida === undefined ? 'Hora de saída inválida. Ex.: 17:55' : 'Diga a hora de saída.')
     if (hChegada === undefined) return setErro('Hora de chegada inválida. Ex.: 18:10')
@@ -141,8 +259,12 @@ function Formulario({
       moeda: valor != null ? (trajeto?.moeda ?? moeda) : null,
       ultimo_do_dia: ultimo,
       observacao: observacao.trim() || null,
+      frequencia_min: frequencia,
+      ...(grupo && !trajeto ? { grupo_opcoes: grupo, escolhida: false } : {}),
+      ...extra,
     }
-    const { error } = trajeto
+    const { error } =
+      trajeto && !novaMesmoEditando
       ? await supabase.from('trajetos').update(dados).eq('id', trajeto.id)
       : await supabase.from('trajetos').insert({ ...dados, viagem_id: viagemId, tipo: 'trecho' })
     setSalvando(false)
@@ -152,6 +274,8 @@ function Formulario({
         error.code === '42501' ? 'Deslocamento do grupo só o ADM (ou quem ele liberou) põe. Peça pra ele.' : 'Não deu pra salvar. Confira a internet e tente de novo.',
       )
     }
+    const g = irPraComparar ?? grupo
+    if (g) return router.replace(`/comparar?grupo=${g}` as never)
     voltar()
   }
 
@@ -202,6 +326,41 @@ function Formulario({
           {focado === 'para' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setPara(p)} /> : null}
         </View>
 
+        {/* Spec 122c: jeitos de ir, no estilo do Rome2rio, tudo dentro do Norti */}
+        <Pressable
+          onPress={() => void acharJeitos()}
+          disabled={buscando}
+          accessibilityRole="button"
+          className="min-h-[48px] flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-couro bg-cartao active:opacity-80"
+        >
+          {buscando ? <ActivityIndicator color={cor.couro} /> : <Search size={17} color={cor.couro} />}
+          <Text className="font-body-bold text-[14px] text-couro">{buscando ? 'Procurando jeitos de ir…' : jeitos ? 'Procurar de novo' : 'Achar jeitos de ir'}</Text>
+        </Pressable>
+        {jeitos?.length && livre ? (
+          <Text className="font-body text-[13px] text-suave">{`Vocês ficam livres às ${horaNoFuso(livre.quando)}${livre.de ? ` (chegam de ${livre.de})` : ''}.`}</Text>
+        ) : null}
+        {jeitos?.map((j) => (
+          <CartaoDoJeito
+            key={j.meio}
+            jeito={j}
+            aberto={aberto === j.meio}
+            livreDesde={hSaida ? null : (livre?.quando ?? null)}
+            aoTocar={() => (j.saidas.length ? setAberto(aberto === j.meio ? null : j.meio) : usarRota(j))}
+            aoEscolher={(s) => usarSaida(s, j)}
+            horaEscolhida={saida}
+          />
+        ))}
+        {semJeito ? <Text className="rounded-2xl bg-areia p-3 font-body text-[13px] leading-5 text-corpo">{semJeito}</Text> : null}
+        {jeitos ? (
+          <Pressable onPress={() => setJeitos(null)} className="flex-row items-center gap-3 rounded-2xl border border-dashed border-borda px-3 py-3 active:opacity-80">
+            <Plus size={18} color={cor.couro} />
+            <View className="flex-1">
+              <Text className="font-body-bold text-[14px] text-texto">Cadastrar à mão</Text>
+              <Text className="font-body text-[12px] text-suave">Balsa, avião ou o que não apareceu</Text>
+            </View>
+          </Pressable>
+        ) : null}
+
         <Rotulo texto="Como" />
         <Chips opcoes={MEIOS.map((m) => ({ chave: m.chave, nome: m.nome }))} valor={meio} aoMudar={setMeio} />
 
@@ -242,7 +401,15 @@ function Formulario({
         </View>
 
         {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
-        <Botao titulo={trajeto ? 'Salvar' : 'Pôr no dia'} aoTocar={() => void salvar()} carregando={salvando} />
+        <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : hSaida ? `Pôr no dia, ${hSaida}` : 'Pôr no dia'} aoTocar={() => void salvar()} carregando={salvando} />
+        {!grupo ? (
+          <Botao titulo={trajeto ? 'Adicionar outra opção pra comparar' : 'Guardar como opção pra comparar'} tipo="secundario" aoTocar={() => void salvarComoOpcao()} desabilitado={salvando} />
+        ) : null}
+        {grupoAtual && trajeto ? (
+          <Pressable onPress={() => router.push(`/comparar?grupo=${grupoAtual}` as never)} className="items-center py-1">
+            <Text className="font-body-bold text-[14px] text-couro">Ver as opções lado a lado</Text>
+          </Pressable>
+        ) : null}
         {podeApagar ? (
           <Pressable onPress={() => void apagar()} disabled={salvando} accessibilityRole="button" className="flex-row items-center justify-center gap-1.5 py-2 active:opacity-70">
             <Trash2 size={15} color={cor.vermelho} />
@@ -251,6 +418,98 @@ function Formulario({
         ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
+  )
+}
+
+// Spec 122c: um cartão por meio. Trem/ônibus/barco/metrô abrem as saídas; carro, táxi e a pé preenchem direto.
+function CartaoDoJeito({
+  jeito,
+  aberto,
+  livreDesde,
+  aoTocar,
+  aoEscolher,
+  horaEscolhida,
+}: {
+  jeito: JeitoDeIr
+  aberto: boolean
+  livreDesde: string | null
+  aoTocar: () => void
+  aoEscolher: (s: Saida) => void
+  horaEscolhida: string
+}) {
+  const Icone = ICONE_DO_JEITO[jeito.meio]
+  const partes = [duracaoCurta(jeito.minutos)]
+  if (jeito.trocas != null) partes.push(jeito.trocas === 0 ? 'direto' : jeito.trocas === 1 ? '1 troca' : `${jeito.trocas} trocas`)
+  if (jeito.frequenciaMin) partes.push(jeito.frequenciaMin >= 60 && jeito.frequenciaMin % 60 === 0 ? `a cada ${jeito.frequenciaMin / 60}h` : `a cada ${jeito.frequenciaMin} min`)
+  if (jeito.km != null && !jeito.saidas.length) partes.push(`${String(jeito.km).replace('.', ',')} km`)
+  // Mostra a partir da última que não dá tempo (pra contexto) e no máximo 6
+  const primeiraQueDa = jeito.saidas.findIndex((s) => !naoDaTempo(s, livreDesde))
+  const inicio = Math.max(0, (primeiraQueDa < 0 ? jeito.saidas.length : primeiraQueDa) - 1)
+  const saidas = jeito.saidas.slice(inicio, inicio + 6)
+  return (
+    <View className="rounded-2xl border bg-cartao px-3 py-2.5" style={{ borderColor: aberto ? cor.couro : cor.borda, borderWidth: aberto ? 1.5 : 1 }}>
+      <Pressable onPress={aoTocar} accessibilityRole="button" accessibilityLabel={`${NOME_DO_JEITO[jeito.meio]}: ${partes.join(', ')}`} className="flex-row items-center gap-3 active:opacity-80">
+        <View className="h-9 w-9 items-center justify-center rounded-xl bg-chip">
+          <Icone size={19} color={cor.couro} />
+        </View>
+        <View className="min-w-0 flex-1">
+          <View className="flex-row flex-wrap items-center gap-1.5">
+            <Text className="font-body-bold text-[14px] text-texto">{NOME_DO_JEITO[jeito.meio]}</Text>
+            {jeito.selos.includes('mais-rapido') ? <Selo texto="Mais rápido" /> : null}
+            {jeito.selos.includes('mais-barato') ? <Selo texto="Mais barato" /> : null}
+          </View>
+          <Text className="font-body text-[12px] text-suave">{partes.join(' · ')}</Text>
+        </View>
+        {jeito.preco ? (
+          <View className="items-end">
+            <Text className="font-body-bold text-[15px] text-texto">{`${SIMBOLO[jeito.preco.moeda] ?? jeito.preco.moeda} ${jeito.preco.valor}`}</Text>
+            <Text className="font-body text-[10.5px] text-suave">estimativa</Text>
+          </View>
+        ) : jeito.saidas.length ? (
+          <Text className="font-body-bold text-[12px] text-couro">{aberto ? 'fechar' : 'horários'}</Text>
+        ) : null}
+      </Pressable>
+      {aberto
+        ? saidas.map((s) => {
+            const tarde = naoDaTempo(s, livreDesde)
+            const escolhida = horaEscolhida === horaNoFuso(s.sai)
+            return (
+              <Pressable
+                key={`${s.sai}${s.chega}`}
+                onPress={() => aoEscolher(s)}
+                accessibilityRole="button"
+                className="mt-1.5 flex-row items-center gap-3 rounded-xl px-3 py-2 active:opacity-80"
+                style={{ backgroundColor: cor.fundo, borderWidth: escolhida ? 1.5 : 0, borderColor: cor.couro, opacity: tarde ? 0.65 : 1 }}
+              >
+                <Text className="w-12 font-body-bold text-[15px] text-texto">{horaNoFuso(s.sai)}</Text>
+                <View className="min-w-0 flex-1">
+                  <Text className="font-body-bold text-[13px] text-texto">{`Chega ${horaNoFuso(s.chega)}${diaNoFuso(s.chega) !== diaNoFuso(s.sai) ? ' (+1 dia)' : ''}`}</Text>
+                  <Text className="font-body text-[11.5px] text-suave" numberOfLines={1}>
+                    {s.trocas === 0 ? 'Direto' : `${s.trocas} ${s.trocas === 1 ? 'troca' : 'trocas'}${s.trocaEm[0] ? ` · ${s.trocaEm[0]}` : ''}`}
+                  </Text>
+                </View>
+                {tarde ? (
+                  <View className="rounded-full px-2 py-0.5" style={{ backgroundColor: cor.vermelhoFundo }}>
+                    <Text className="font-body-bold text-[10.5px]" style={{ color: cor.vermelho }}>
+                      Não dá tempo
+                    </Text>
+                  </View>
+                ) : null}
+              </Pressable>
+            )
+          })
+        : null}
+    </View>
+  )
+}
+
+function Selo({ texto }: { texto: string }) {
+  return (
+    <View className="rounded-full px-2 py-0.5" style={{ backgroundColor: '#EEF0DF' }}>
+      <Text className="font-body-bold text-[10.5px]" style={{ color: '#5E6B2E' }}>
+        {texto}
+      </Text>
+    </View>
   )
 }
 

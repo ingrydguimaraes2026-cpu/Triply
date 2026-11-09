@@ -21,7 +21,7 @@ export function AgendaDeHoje({ viagemId, inicio, fim }: { viagemId: string; inic
 
   useEffect(() => {
     let vivo = true
-    Promise.all([buscarDestinos(supabase, viagemId), buscarTrajetos(supabase, viagemId), buscarEventosDaAgenda(supabase, viagemId)])
+    Promise.all([buscarDestinos(supabase, viagemId), buscarTrajetos(supabase, viagemId, { comOpcoes: true }), buscarEventosDaAgenda(supabase, viagemId)])
       .then(([destinos, trajetos, eventos]) => {
         if (!vivo) return
         const dias = diasDoPeriodo(inicio, fim)

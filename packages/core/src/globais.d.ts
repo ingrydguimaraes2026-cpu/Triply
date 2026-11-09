@@ -6,7 +6,7 @@ interface RespostaFetch {
   json(): Promise<any>
 }
 
-declare function fetch(url: string, init?: { signal?: unknown }): Promise<RespostaFetch>
+declare function fetch(url: string, init?: { signal?: unknown; headers?: Record<string, string> }): Promise<RespostaFetch>
 
 // URL e URLSearchParams também existem igual na web e no app (o Expo traz a versão completa)
 declare class URL {

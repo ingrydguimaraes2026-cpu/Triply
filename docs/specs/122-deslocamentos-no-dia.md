@@ -177,6 +177,27 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - App: os avisos aparecem entre os passos do dia, no Roteiro. Lê as casas escolhidas da Hospedagem; sem casa, só a folga funciona.
 - Ficou de fora: "buraco no dia" (dois passeios em lugares diferentes sem deslocamento). Precisa saber onde fica cada evento; volta quando os eventos tiverem lugar com coordenada.
 
+## Como ficou a 122c (08/11/2026)
+- Core: `packages/core/src/jeitos-de-ir.ts`:
+  - `buscarJeitosDeIr` junta Transitous (todos os meios + só trilho, pra achar mais trens), OSRM (carro) e a distância (a pé);
+  - `montarJeitos` cria os cartões por meio com os selos "Mais rápido" e "Mais barato";
+  - `frequenciaEstimada` (mediana dos intervalos), `precoEstimado` (carro e táxi por km; EUR, BRL, USD), `naoDaTempo`, `acharLugar` (texto vira coordenada);
+  - teste em `apps/web/tests/jeitos-de-ir.test.mjs`.
+- **O Transitous recusa "User-Agent" genérico** (Node e celular): as chamadas mandam `Norti/1.0 (+https://together-viagem.vercel.app)`. Isso também corrigiu o "Ver o caminho" (121c) no celular.
+- App, Novo deslocamento:
+  - o botão "Achar jeitos de ir" mostra os cartões (Trem, Ônibus, Barco, Metrô, Carro, Táxi, A pé) e "Cadastrar à mão";
+  - trem e ônibus abrem as saídas a partir de quando o grupo fica livre (a última chegada do dia), com "Não dá tempo";
+  - tocar numa saída preenche meio, horários, trocas, frequência e observação (linhas e onde troca). Carro e táxi preenchem o preço estimado.
+- Comparar (`/comparar?grupo=`):
+  - "Guardar como opção pra comparar" junta opções no mesmo `grupo_opcoes`;
+  - a tela mostra cada opção com folga (do deslocamento anterior), último do dia, trocas, frequência, chegada no dia seguinte e preço, com os selos "Mais folga", "Mais rápido" e "Mais barato";
+  - "Ficar com esta" escolhe (e passa "pra decidir" a "decidido"); "Outra opção" acrescenta.
+  - No Roteiro, o cartão "Comparando" abre essa tela.
+- `buscarTrajetos` devolve só a opção que vale de cada grupo (a escolhida, ou a 1ª enquanto comparam), pra não repetir no Hoje e no PDF. Quem precisa de todas passa `{ comOpcoes: true }` (Roteiro, Novo deslocamento, Comparar, agenda de hoje).
+- Ficou de fora:
+  - "último do dia" automático (o Transitous não diz; a pessoa marca);
+  - o site ainda lista as opções separadas na tela de Transportes, até a 122d.
+
 ## Perguntas em aberto
 - Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
 - Folga mínima: 30 min sem malas e 45 com malas (assumido na 122b; dá pra mudar em `FOLGA_MINIMA`).

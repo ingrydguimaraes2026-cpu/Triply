@@ -176,12 +176,14 @@ export function lerCaminho(valor: unknown): Caminho | null {
 }
 
 const TRANSITOUS = 'https://api.transitous.org/api'
+// Sem "User-Agent" próprio o Transitous recusa (no celular). No navegador vale o do navegador.
+const CABECALHO = { headers: { 'User-Agent': 'Norti/1.0 (+https://together-viagem.vercel.app)' } }
 type Ponto = { latitude: number; longitude: number }
 
 // Acha a estação pelo nome (perto da cidade, quando dá)
 async function acharEstacao(nome: string, perto: Ponto | null): Promise<Ponto | null> {
   const lugar = perto ? `&place=${perto.latitude},${perto.longitude}` : ''
-  const r = await fetch(`${TRANSITOUS}/v1/geocode?text=${encodeURIComponent(nome)}&type=STOP${lugar}`)
+  const r = await fetch(`${TRANSITOUS}/v1/geocode?text=${encodeURIComponent(nome)}&type=STOP${lugar}`, CABECALHO)
   if (!r.ok) return null
   const achados = (await r.json()) as { lat: number; lon: number }[]
   return achados[0] ? { latitude: achados[0].lat, longitude: achados[0].lon } : null
@@ -202,7 +204,7 @@ export async function buscarCaminho(
     ])
     if (!a || !b) return null
     const quando = partida ? `&time=${encodeURIComponent(new Date(new Date(partida).getTime() - 30 * 60000).toISOString())}` : ''
-    const r = await fetch(`${TRANSITOUS}/v5/plan?fromPlace=${a.latitude},${a.longitude}&toPlace=${b.latitude},${b.longitude}${quando}&numItineraries=1`)
+    const r = await fetch(`${TRANSITOUS}/v5/plan?fromPlace=${a.latitude},${a.longitude}&toPlace=${b.latitude},${b.longitude}${quando}&numItineraries=1`, CABECALHO)
     if (!r.ok) return null
     return caminhoDaResposta(await r.json(), agora)
   } catch {

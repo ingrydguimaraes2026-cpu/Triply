@@ -2,6 +2,7 @@ import type { ClienteTogether } from './supabase'
 import type { Tables, TablesUpdate } from './database'
 import type { Divisao } from './acertos'
 import { deBanco, paraBanco } from './dinheiro'
+import { opcoesNoDia } from './agenda'
 
 // Consultas ao banco compartilhadas. Recebem o client (cada plataforma passa o seu),
 // então web e mobile leem os mesmos dados do mesmo jeito. O RLS do banco já filtra:
@@ -133,14 +134,19 @@ export async function buscarLugares(cli: ClienteTogether, viagemId: string): Pro
 }
 
 // Trajetos em ordem de partida (os sem horário no fim).
-export async function buscarTrajetos(cli: ClienteTogether, viagemId: string): Promise<Trajeto[]> {
+// Spec 122c: opções de um mesmo deslocamento (`grupo_opcoes`) voltam como um só (a escolhida, ou a 1ª
+// enquanto comparam), pra não aparecerem repetidas no Hoje, no PDF etc. `comOpcoes` traz todas.
+export async function buscarTrajetos(cli: ClienteTogether, viagemId: string, { comOpcoes = false }: { comOpcoes?: boolean } = {}): Promise<Trajeto[]> {
   const { data, error } = await cli
     .from('trajetos')
     .select('*')
     .eq('viagem_id', viagemId)
     .order('partida', { ascending: true, nullsFirst: false })
   if (error) throw error
-  return data ?? []
+  const todos = data ?? []
+  if (comOpcoes || !todos.some((t) => t.grupo_opcoes)) return todos
+  const ficam = new Set(opcoesNoDia(todos).map((t) => t.id))
+  return todos.filter((t) => ficam.has(t.id))
 }
 
 // Gasto com valores em centavos (igual a web).
