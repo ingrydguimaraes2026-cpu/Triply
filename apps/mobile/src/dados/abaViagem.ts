@@ -8,6 +8,8 @@ import {
   buscarViagemComDetalhes,
   buscarVistoEm,
   lerDiasDoRoteiro,
+  opcoesNoDia,
+  passagensDaViagem,
   semSeguro,
 } from '@together/core'
 import { supabase } from '../lib/supabase'
@@ -16,10 +18,10 @@ import { supabase } from '../lib/supabase'
 export type DiaDoCarrossel = { numero: number; titulo: string; foto: string | null; destinoId: string }
 
 export async function carregarAbaViagem(id: string) {
-  const [viagem, gastos, trajetos, lugares, opcoes, atividades, vistoEm, roteiros, alertas, seguros, fotos, visitados] = await Promise.all([
+  const [viagem, gastos, comOpcoes, lugares, opcoes, atividades, vistoEm, roteiros, alertas, seguros, fotos, visitados] = await Promise.all([
     buscarViagemComDetalhes(supabase, id),
     buscarGastos(supabase, id),
-    buscarTrajetos(supabase, id),
+    buscarTrajetos(supabase, id, { comOpcoes: true }),
     supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id),
     buscarOpcoesDeHospedagem(supabase, id),
     buscarAtividades(supabase, id, 30).catch(() => []),
@@ -32,6 +34,10 @@ export async function carregarAbaViagem(id: string) {
     supabase.from('lugares').select('id', { count: 'exact', head: true }).eq('viagem_id', id).not('visitado_em', 'is', null),
   ])
   if (!viagem) return null
+  const trajetos = opcoesNoDia(comOpcoes) // das opções de um deslocamento, só a que vale
+  // Spec 122d: o cartão Passagens (pra decidir, pra comprar, compradas e o aviso mais sério)
+  const doGrupo = comOpcoes.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida')
+  const passagens = passagensDaViagem(doGrupo, [], opcoes.filter((o) => o.escolhida))
 
   // Carrossel do roteiro: um cartão por dia montado, com a foto do 1º lugar do dia
   const porDestino = (roteiros.data ?? [])
@@ -61,6 +67,7 @@ export async function carregarAbaViagem(id: string) {
     fotos: fotos.count ?? 0,
     visitados: visitados.count ?? 0,
     opcoes,
+    passagens,
     atividades,
     vistoEm,
     dias,

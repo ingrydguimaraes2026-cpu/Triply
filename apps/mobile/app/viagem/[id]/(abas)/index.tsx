@@ -17,7 +17,7 @@ import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '.
 import { Passaporte } from '../../../../src/ui/viagem/Passaporte'
 import { CarimbosDaViagem } from '../../../../src/ui/viagem/CarimbosDaViagem'
 import { ProximoCarimbo } from '../../../../src/ui/viagem/ProximoCarimbo'
-import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
+import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, ResumoDasPassagens, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
 import { Lembrancas } from '../../../../src/ui/viagem/Lembrancas'
 import { Hoje } from '../../../hoje'
@@ -153,13 +153,17 @@ export default function AbaViagem() {
             <CarrosselDoRoteiro dias={d.dias} aoAbrir={() => ir('roteiro')} aoMontar={() => ir('explorar')} />
           </Secao>
 
-          <Secao indice={4} titulo="Contas">
+          <Secao indice={4} titulo="Passagens">
+            <ResumoDasPassagens passagens={d.passagens} aoAbrir={() => ir('transportes')} />
+          </Secao>
+
+          <Secao indice={5} titulo="Contas">
             <ResumoDasContas total={contas.total} meuSaldo={contas.saldos.get(meuId) ?? 0} moeda={viagem.moeda} aoAbrir={() => ir('contas')} />
           </Secao>
 
           {/* ❄ congelado pelo RUMO (03/11/2026): documentos de entrada */}
           {CONGELADO.documentos ? null : (
-            <Secao indice={5} titulo="Antes de embarcar">
+            <Secao indice={6} titulo="Antes de embarcar">
               <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />
             </Secao>
           )}

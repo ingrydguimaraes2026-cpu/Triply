@@ -3,8 +3,8 @@ import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View }
 import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, type SharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { formatarDinheiro, type Atividade, type Pessoa } from '@together/core'
-import { ArrowLeft, ChevronRight, FileCheck, MoreHorizontal, Plus, ShieldCheck, Share2 } from '../icones'
+import { formatarDinheiro, type Atividade, type Passagens, type Pessoa } from '@together/core'
+import { AlertTriangle, ArrowLeft, ChevronRight, FileCheck, MoreHorizontal, Plus, ShieldCheck, Share2 } from '../icones'
 import { Selo } from '../Selos'
 import { Avatar, BotaoRedondo } from '../pecas'
 import { mola, useCascata, useNumeroAnimado, useReducedMotion } from '../movimento'
@@ -162,6 +162,51 @@ export function ResumoDasContas({ total, meuSaldo, moeda, aoAbrir }: { total: nu
         <Text className="font-body text-[12px] text-suave">{meuSaldo > 0 ? 'Você recebe' : meuSaldo < 0 ? 'Você deve' : 'Seu saldo'}</Text>
         <Text className={`mt-0.5 font-display text-[24px] ${meuSaldo > 0 ? 'text-verde' : meuSaldo < 0 ? 'text-vermelho' : 'text-texto'}`}>{formatarDinheiro(Math.round(s), moeda)}</Text>
       </View>
+    </Pressable>
+  )
+}
+
+// Spec 122d: Passagens na aba Viagem (o que falta decidir, comprar e o que já foi comprado + o aviso mais sério)
+export function ResumoDasPassagens({ passagens: p, aoAbrir }: { passagens: Passagens; aoAbrir: () => void }) {
+  const nada = !p.decidir.length && !p.comprar.length && !p.compradas.length
+  const numeros = [
+    { n: p.decidir.length, t: 'pra decidir', c: 'text-caramelo' },
+    { n: p.comprar.length, t: 'pra comprar', c: 'text-couro' },
+    { n: p.compradas.length, t: p.compradas.length === 1 ? 'comprada' : 'compradas', c: 'text-verde' },
+  ]
+  const aviso = p.avisos[0]
+  return (
+    <Pressable onPress={aoAbrir} accessibilityRole="button" className="rounded-2xl bg-cartao p-4 active:opacity-90" style={sombra.cartao}>
+      {nada ? (
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1">
+            <Text className="font-body-bold text-[14px] text-texto">Nenhum deslocamento ainda</Text>
+            <Text className="font-body text-[13px] text-suave">Trem, ônibus, barco: ponha como vocês vão e compare as opções.</Text>
+          </View>
+          <ChevronRight size={18} color={cor.suave} />
+        </View>
+      ) : (
+        <>
+          <View className="flex-row items-center">
+            {numeros.map(({ n, t, c }) => (
+              <View key={t} className="flex-1">
+                <Text className={`font-display text-[24px] ${n ? c : 'text-suave'}`}>{n}</Text>
+                <Text className="font-body text-[12px] text-suave">{t}</Text>
+              </View>
+            ))}
+            <ChevronRight size={18} color={cor.suave} />
+          </View>
+          {aviso ? (
+            <View className="mt-3 flex-row items-start gap-2 border-t border-linha pt-3">
+              <AlertTriangle size={16} color={cor.vermelho} />
+              <Text className="flex-1 font-body-medium text-[13px] text-texto" numberOfLines={2}>
+                {aviso.titulo}
+                {p.avisos.length > 1 ? ` (e mais ${p.avisos.length - 1})` : ''}
+              </Text>
+            </View>
+          ) : null}
+        </>
+      )}
     </Pressable>
   )
 }
