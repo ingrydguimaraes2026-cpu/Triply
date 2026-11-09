@@ -181,7 +181,7 @@ export function ResumoDasPassagens({ passagens: p, aoAbrir }: { passagens: Passa
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
             <Text className="font-body-bold text-[14px] text-texto">Nenhum deslocamento ainda</Text>
-            <Text className="font-body text-[13px] text-suave">Trem, ônibus, barco: ponha como vocês vão e compare as opções.</Text>
+            <Text className="font-body text-[13px] text-suave">Trem, ônibus, barco: adicione como vocês vão e compare as opções.</Text>
           </View>
           <ChevronRight size={18} color={cor.suave} />
         </View>

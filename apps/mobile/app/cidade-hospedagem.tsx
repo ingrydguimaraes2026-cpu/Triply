@@ -28,7 +28,7 @@ import { cor } from '../theme'
 
 // Spec 123: as opções de hospedagem de uma cidade. Cada cartão mostra só o que o grupo compara:
 // preço por pessoa, minutos a pé de onde chegam e check-in contra a hora de chegada.
-// "Comparar" põe as opções lado a lado. Membro põe opção e vota; o ADM escolhe e marca reservada/paga.
+// "Comparar" põe as opções lado a lado. Membro adiciona opção e vota; o ADM escolhe e marca reservada/paga.
 // Rota: /cidade-hospedagem?destino=<id>
 
 const NOME_DA_RESERVA: Record<Reserva, string> = { nao: 'Escolhida', reservada: 'Reservada', paga: 'Reservada e paga' }
@@ -149,7 +149,7 @@ export default function CidadeHospedagem() {
             ) : null}
 
             {cidade.opcoes.length === 0 ? (
-              <Text className="font-body text-[14px] leading-6 text-corpo">Nenhuma opção ainda. Procure nos sites abaixo e toque em "Pôr opção" pra colar o link do que gostar.</Text>
+              <Text className="font-body text-[14px] leading-6 text-corpo">Nenhuma opção ainda. Procure nos sites abaixo e toque em "Adicionar opção" pra colar o link do que gostar.</Text>
             ) : null}
 
             {cidade.opcoes.map((o) => (
@@ -185,7 +185,7 @@ export default function CidadeHospedagem() {
         <View className="absolute bottom-0 left-0 right-0 px-5" style={{ paddingBottom: insets.bottom + 12 }}>
           <Pressable onPress={() => router.push(`/opcao-hospedagem?destino=${cidade.destino.id}`)} accessibilityRole="button" className="min-h-[54px] flex-row items-center justify-center gap-2 rounded-full bg-couro active:opacity-90">
             <Plus size={18} color={cor.creme} />
-            <Text className="font-body-bold text-[15px] text-creme">Pôr opção</Text>
+            <Text className="font-body-bold text-[15px] text-creme">Adicionar opção</Text>
           </Pressable>
         </View>
       )}
@@ -266,10 +266,10 @@ function CartaoDaOpcao({
         ) : (
           <Fato nivel="neutro" Icone={Footprints}>
             {!o.guia?.endereco
-              ? 'Ponha o endereço pra ver a distância'
+              ? 'Adicione o endereço pra ver a distância'
               : o.lat == null
                 ? 'Endereço não achado no mapa'
-                : 'Ponha no roteiro como vocês chegam pra ver a distância'}
+                : 'Adicione no roteiro como vocês chegam pra ver a distância'}
           </Fato>
         )}
         {f.checkin ? (

@@ -103,7 +103,7 @@ function Linha({ m, membros, meuId, opinar, aoTocar }: { m: Match; membros: Pess
         </View>
       ) : (
         <View className="rounded-full bg-couro px-3 py-1.5">
-          <Text className="font-body-bold text-[12px] text-white">Pôr no dia</Text>
+          <Text className="font-body-bold text-[12px] text-white">Adicionar ao dia</Text>
         </View>
       )}
     </Pressable>

@@ -286,7 +286,7 @@ function FormAjuste({ carteira, aoFechar, aoSalvar }: { carteira: TCarteira; aoF
     e.preventDefault()
     const campo = (e.currentTarget as HTMLFormElement).elements.namedItem('certo') as HTMLInputElement
     const centavos = lerValor(campo.value)
-    if (centavos === null) return setErro('Põe o saldo certo, tipo 480.')
+    if (centavos === null) return setErro('Digite o saldo certo, por exemplo 480.')
     // saldo_atual = saldo_inicial + ajuste + movimentos. Pra deixar o saldo = X:
     //   novoAjuste = ajusteAtual + (X - saldoAtual)
     const novoAjuste = carteira.ajuste + (centavos / 100 - carteira.saldo_atual)

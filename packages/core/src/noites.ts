@@ -118,7 +118,7 @@ export type FatoDoCheckin = { nivel: 'ok' | 'ruim' | 'neutro'; texto: string }
 export function checkinContraChegada(opcao: Pick<Opcao, 'horaCheckin' | 'horaCheckinLimite' | 'selfCheckin'>, chegada: ChegadaNaCidade | null): FatoDoCheckin | null {
   const chega = chegada?.hora ? `Chegam ${chegada.hora}` : null
   if (opcao.selfCheckin) return { nivel: 'ok', texto: `${chega ? `${chega} · ` : ''}self check-in, entra a qualquer hora` }
-  if (!opcao.horaCheckinLimite) return chega ? { nivel: 'neutro', texto: `${chega} · check-in até que horas? Pôr na opção` } : null
+  if (!opcao.horaCheckinLimite) return chega ? { nivel: 'neutro', texto: `${chega} · até que horas dá o check-in? Informe na opção` } : null
   const limite = opcao.horaCheckinLimite.slice(0, 5)
   if (!chegada?.hora) return { nivel: 'neutro', texto: `Check-in até ${limite}` }
   const [h, m] = chegada.hora.split(':').map(Number)

@@ -27,7 +27,7 @@ export function montarPassos(estado: EstadoDosPassos): Passo[] {
   return [
     { chave: 'roteiro', selo: 'mapa', rotulo: 'Roteiro', titulo: 'Montar o roteiro', sub: 'Deslize os lugares e o app monta os dias', feito: estado.lugares > 0, destino: 'explorar' },
     { chave: 'galera', selo: 'galera', rotulo: 'Galera', titulo: 'Chamar a galera', sub: 'Cada um escolhe o que quer fazer', feito: estado.pessoas > 1, destino: 'convidar' },
-    { chave: 'datas', selo: 'calendario', rotulo: 'Datas', titulo: 'Pôr as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, destino: 'configuracoes', soAdm: true },
+    { chave: 'datas', selo: 'calendario', rotulo: 'Datas', titulo: 'Definir as datas', sub: 'Quando vocês vão e voltam', feito: estado.temDatas, destino: 'configuracoes', soAdm: true },
     { chave: 'hospedagem', selo: 'barraca', rotulo: 'Dormir', titulo: 'Onde dormir', sub: 'Juntem opções e votem', feito: estado.hospedagens > 0, destino: 'hospedagem' },
     { chave: 'transporte', selo: 'passagem', rotulo: 'Chegar', titulo: 'Como chegar', sub: 'Voos, ônibus e carro de todo mundo', feito: estado.trajetos > 0, destino: 'transportes' },
     { chave: 'gastos', selo: 'moedas', rotulo: 'Contas', titulo: 'Dividir as contas', sub: 'Lance um gasto e o app faz a conta', feito: estado.gastos > 0, destino: 'contas' },

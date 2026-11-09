@@ -9,7 +9,7 @@ import Gaveta from '../../components/ui/Gaveta'
 import type { Lugar } from './regras'
 
 // Montar os dias pelos votos (spec 096): propõe o que fazer em cada dia do destino.
-// Nada muda até a pessoa tocar "Pôr na agenda".
+// Nada muda até a pessoa tocar "Adicionar à agenda".
 type Props = { viagemId: string; destino: Tables<'destinos'>; lugares: Lugar[] }
 export default function MontarDias({ viagemId, destino, lugares }: Props) {
   const [aberto, setAberto] = useState(false)
@@ -95,7 +95,7 @@ export default function MontarDias({ viagemId, destino, lugares }: Props) {
                   Descartar
                 </button>
                 <button type="button" className="botao" onClick={aplicar} disabled={salvando}>
-                  {salvando ? 'Pondo…' : 'Pôr na agenda'}
+                  {salvando ? 'Adicionando…' : 'Adicionar à agenda'}
                 </button>
               </div>
             </div>

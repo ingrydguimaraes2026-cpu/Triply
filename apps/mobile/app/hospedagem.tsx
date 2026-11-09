@@ -57,7 +57,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
           <View className="mt-4 items-center gap-3 px-4">
             <Norti humor="dormindo" tamanho={110} />
             <Text className="text-center font-display text-[22px] text-texto">Nenhuma noite ainda</Text>
-            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Ponha os destinos e as datas no roteiro pra ver as noites.</Text>
+            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Adicione os destinos e as datas no roteiro pra ver as noites.</Text>
           </View>
         ) : (
           <View className="flex-row gap-2">

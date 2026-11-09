@@ -554,7 +554,7 @@ function ExplorarDestino({
             : undefined
         }
         botoes={[
-          { titulo: 'Pôr num dia', icone: <CalendarPlus size={18} color={cor.escuro} />, principal: true, aoTocar: () => { setDeuMatch(null); void abrirRoteiro(true) } },
+          { titulo: 'Adicionar a um dia', icone: <CalendarPlus size={18} color={cor.escuro} />, principal: true, aoTocar: () => { setDeuMatch(null); void abrirRoteiro(true) } },
           { titulo: 'Continuar deslizando', aoTocar: () => { setDeuMatch(null); if (acabou(deslize)) void abrirRoteiro(true) } },
         ]}
         aoFechar={() => setDeuMatch(null)}

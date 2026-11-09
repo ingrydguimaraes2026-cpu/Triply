@@ -301,7 +301,7 @@ function Tela({
         <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
-              Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra pôr um deslocamento ou em "Evento".
+              Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra adicionar um deslocamento ou em "Evento".
             </Text>
           ) : (
             itens.map((it, i) => {

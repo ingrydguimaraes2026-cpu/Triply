@@ -269,7 +269,7 @@ export default function Comecar() {
                 <Plus size={22} color={cor.texto} />
               </BotaoMaisMenos>
             </View>
-            <Text className="mt-6 text-center font-body text-[14px] text-suave">Não sabe as datas? Tudo bem, dá pra pôr depois.</Text>
+            <Text className="mt-6 text-center font-body text-[14px] text-suave">Não sabe as datas? Tudo bem, dá pra definir depois.</Text>
           </Conversa>
           <Rodape>
             <Botao titulo="Continuar" aoTocar={() => setEtapa('gosto')} />

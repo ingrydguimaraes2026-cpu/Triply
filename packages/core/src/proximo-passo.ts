@@ -44,7 +44,7 @@ export function proximoPasso(e: EntradaDoProximoPasso): ProximoPasso | null {
   }
   // Só o ADM muda as datas
   if (!e.dataInicio && e.euSouAdm) {
-    return { chave: 'datas', titulo: 'Quando vocês vão?', botao: 'Pôr as datas', link: 'configuracoes' }
+    return { chave: 'datas', titulo: 'Quando vocês vão?', botao: 'Definir as datas', link: 'configuracoes' }
   }
   if (e.semHospedagem) {
     return { chave: 'hospedagem', titulo: `Onde vocês vão dormir em ${e.semHospedagem.nome}?`, botao: 'Ver hospedagem', link: 'hospedagem' }

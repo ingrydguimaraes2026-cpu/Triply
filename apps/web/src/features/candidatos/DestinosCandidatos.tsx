@@ -85,7 +85,7 @@ export default function DestinosCandidatos() {
               {c.votos.length > 0 && <small> · {c.votos.map(nome).join(', ')}</small>}
             </span>
             {euSouAdm && (
-              <button type="button" className="botao secundario pequeno" onClick={() => porNoRoteiro(c)} title="Pôr no roteiro">
+              <button type="button" className="botao secundario pequeno" onClick={() => porNoRoteiro(c)} title="Adicionar ao roteiro">
                 <MapPinPlus size={14} aria-hidden="true" />
               </button>
             )}

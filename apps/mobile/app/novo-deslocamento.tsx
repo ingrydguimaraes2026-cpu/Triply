@@ -439,7 +439,7 @@ function Formulario({
               >
                 <Plus size={18} color={cor.couro} />
                 <View className="flex-1">
-                  <Text className="font-body-bold text-[14px] text-texto">Não achei, pôr à mão</Text>
+                  <Text className="font-body-bold text-[14px] text-texto">Não achei, vou digitar</Text>
                   <Text className="font-body text-[12px] text-suave">Balsa, avião ou o que não apareceu</Text>
                 </View>
               </Pressable>
@@ -524,7 +524,7 @@ function Formulario({
             ) : null}
 
             {erro ? <Text className="font-body text-[13px] text-vermelho">{erro}</Text> : null}
-            {podeMexer ? <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Pôr como opção' : podeDecidir ? 'Pôr no dia' : 'Sugerir pro grupo'} aoTocar={() => void salvar()} carregando={salvando} /> : null}
+            {podeMexer ? <Botao titulo={trajeto ? 'Salvar' : grupo ? 'Adicionar como opção' : podeDecidir ? 'Adicionar ao dia' : 'Sugerir pro grupo'} aoTocar={() => void salvar()} carregando={salvando} /> : null}
             {!grupo && podeMexer ? (
               <Botao titulo={trajeto ? 'Adicionar outra opção pra comparar' : 'Guardar como opção pra comparar'} tipo="secundario" aoTocar={() => void salvarComoOpcao()} desabilitado={salvando} />
             ) : null}

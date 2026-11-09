@@ -267,7 +267,7 @@ export default function OpcaoDeHospedagem() {
             </Text>
           </View>
         ) : !chegada?.lat && endereco.trim() ? (
-          <Text className="px-1 font-body text-[12px] text-suave">Ponha o deslocamento de chegada no dia pra ver a distância.</Text>
+          <Text className="px-1 font-body text-[12px] text-suave">Adicione no roteiro como vocês chegam pra ver a distância.</Text>
         ) : null}
 
         <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-4 py-3">
@@ -307,7 +307,7 @@ export default function OpcaoDeHospedagem() {
         {erro ? <Text className="font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
         {podeMexer ? (
           <>
-            <Botao titulo={existente ? 'Salvar' : 'Pôr como opção'} carregando={salvando} aoTocar={salvar} />
+            <Botao titulo={existente ? 'Salvar' : 'Adicionar opção'} carregando={salvando} aoTocar={salvar} />
             {euSouAdm ? null : <Text className="text-center font-body text-[12.5px] text-suave">O grupo vota. Quem escolhe e reserva é o ADM.</Text>}
             {existente ? (
               <Pressable onPress={apagar} className="mt-1 flex-row items-center justify-center gap-1.5 py-2 active:opacity-80">

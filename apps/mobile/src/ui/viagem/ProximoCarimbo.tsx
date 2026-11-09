@@ -52,7 +52,7 @@ function textoDoBotao(p: Passo) {
   const textos: Record<Passo['chave'], string> = {
     roteiro: 'Começar a deslizar',
     galera: 'Chamar a galera',
-    datas: 'Pôr as datas',
+    datas: 'Definir as datas',
     hospedagem: 'Juntar opções',
     transporte: 'Lançar como chegar',
     gastos: 'Lançar o primeiro gasto',
