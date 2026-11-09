@@ -34,10 +34,13 @@ export function Botao({ titulo, aoTocar, icone, tipo = 'primario', desabilitado,
 }
 
 // Botão redondo de 44px (voltar, compartilhar, mais...)
-export function BotaoRedondo({ children, aoTocar, claro }: { children: ReactNode; aoTocar?: () => void; claro?: boolean }) {
+// `rotulo`: o que o botão faz ("Voltar", "Fechar"), lido pelo leitor de tela (só tem ícone)
+export function BotaoRedondo({ children, aoTocar, claro, rotulo }: { children: ReactNode; aoTocar?: () => void; claro?: boolean; rotulo?: string }) {
   return (
     <Pressable
       onPress={aoTocar}
+      accessibilityRole="button"
+      accessibilityLabel={rotulo}
       className={`h-11 w-11 items-center justify-center rounded-full ${claro ? 'bg-fundo/90' : 'bg-cartao'} active:opacity-80`}
       style={claro ? undefined : { boxShadow: '0 4px 12px rgba(74,46,20,0.08)' }}
     >

@@ -55,7 +55,7 @@ export default function CriarConta() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <View className="px-5" style={{ paddingTop: insets.top + 8 }}>
-        <BotaoRedondo aoTocar={fechar}>
+        <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
           <X size={20} color={cor.texto} />
         </BotaoRedondo>
       </View>

@@ -25,6 +25,7 @@ import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Botao, BotaoRedondo, Cartao, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Spec 123: as opções de hospedagem de uma cidade. Cada cartão mostra só o que o grupo compara:
 // preço por pessoa, minutos a pé de onde chegam e check-in contra a hora de chegada.
@@ -109,9 +110,9 @@ export default function CidadeHospedagem() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 110, gap: 12 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 110, gap: 12 }}>
         <View className="flex-row items-center justify-between">
-          <BotaoRedondo aoTocar={comparando ? () => setComparando(false) : voltar}>
+          <BotaoRedondo aoTocar={comparando ? () => setComparando(false) : voltar} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
           {cidade.opcoes.length >= 2 && !comparando ? (

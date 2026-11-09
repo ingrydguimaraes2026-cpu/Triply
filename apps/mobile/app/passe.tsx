@@ -60,7 +60,7 @@ export default function Passe() {
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 32, gap: 16 }}>
         <View className="flex-row justify-end">
-          <BotaoRedondo aoTocar={fechar}>
+          <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
             <X size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>

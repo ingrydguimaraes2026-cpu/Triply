@@ -117,13 +117,13 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
       <StatusBar style="dark" />
       <View className="flex-row items-center justify-between px-5 pt-2">
         {etapa === 1 ? (
-          <BotaoRedondo aoTocar={() => setEtapa(0)}>
+          <BotaoRedondo aoTocar={() => setEtapa(0)} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
         ) : primeira ? (
           <View className="h-11 w-11" />
         ) : (
-          <BotaoRedondo aoTocar={fechar}>
+          <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
             <X size={20} color={cor.texto} />
           </BotaoRedondo>
         )}
@@ -158,14 +158,14 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
             {!comDatas ? (
               <>
                 <View className="mt-8 flex-row items-center justify-center gap-6">
-                  <BotaoRedondo aoTocar={() => setDias(Math.max(1, dias - 1))}>
+                  <BotaoRedondo aoTocar={() => setDias(Math.max(1, dias - 1))} rotulo="Um dia a menos">
                     <Minus size={22} color={cor.texto} />
                   </BotaoRedondo>
                   <View className="w-32 items-center">
                     <Text className="font-display text-[72px] leading-[78px] text-texto">{dias}</Text>
                     <Text className="font-body-semibold text-[14px] text-suave">{dias === 1 ? 'dia' : 'dias'}</Text>
                   </View>
-                  <BotaoRedondo aoTocar={() => setDias(Math.min(30, dias + 1))}>
+                  <BotaoRedondo aoTocar={() => setDias(Math.min(30, dias + 1))} rotulo="Um dia a mais">
                     <Plus size={22} color={cor.texto} />
                   </BotaoRedondo>
                 </View>

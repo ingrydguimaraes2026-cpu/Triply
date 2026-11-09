@@ -113,7 +113,7 @@ export default function ViagemAntiga() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo" style={{ paddingTop: insets.top }}>
       <StatusBar style="dark" />
       <View className="px-5 pt-2">
-        <BotaoRedondo aoTocar={fechar}>
+        <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
           <X size={20} color={cor.texto} />
         </BotaoRedondo>
       </View>
@@ -155,11 +155,11 @@ export default function ViagemAntiga() {
         <View className="gap-3">
           <Text className="font-body-bold text-[13px] uppercase tracking-[1.2px] text-suave">Quando</Text>
           <View className="flex-row items-center justify-center gap-6">
-            <BotaoRedondo aoTocar={() => setAno(Math.max(1950, ano - 1))}>
+            <BotaoRedondo aoTocar={() => setAno(Math.max(1950, ano - 1))} rotulo="Ano anterior">
               <Minus size={20} color={cor.texto} />
             </BotaoRedondo>
             <Text className="w-24 text-center font-display text-[36px] text-texto">{ano}</Text>
-            <BotaoRedondo aoTocar={() => setAno(Math.min(anoDeHoje, ano + 1))}>
+            <BotaoRedondo aoTocar={() => setAno(Math.min(anoDeHoje, ano + 1))} rotulo="Próximo ano">
               <Plus size={20} color={cor.texto} />
             </BotaoRedondo>
           </View>

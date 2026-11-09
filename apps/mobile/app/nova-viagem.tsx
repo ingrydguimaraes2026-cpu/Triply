@@ -25,7 +25,7 @@ function ConvidadoSemConta() {
     <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
       <StatusBar style="dark" />
       <View className="px-5">
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Fechar">
           <X size={20} color={cor.texto} />
         </BotaoRedondo>
       </View>

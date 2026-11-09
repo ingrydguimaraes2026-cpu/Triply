@@ -29,6 +29,7 @@ import {
   TituloDaTela,
 } from "../../../../src/ui/pecas";
 import { SemViagem } from "../../../../src/ui/SemViagem";
+import { puxarPraAtualizar } from "../../../../src/ui/Puxar";
 
 // Fotos (spec 014 no mobile): "Feed" com posts, curtidas e comentários, e "Por dia" (tela "1l" do design)
 // com filtro por pessoa e grade em 2 colunas de alturas diferentes. O "+" abre o post novo.
@@ -84,6 +85,7 @@ function FotosDaViagem({
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView
+        refreshControl={puxarPraAtualizar(carga)}
         contentContainerStyle={{
           paddingTop: insets.top + 8,
           paddingHorizontal: 16,

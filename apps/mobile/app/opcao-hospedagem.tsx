@@ -223,7 +223,7 @@ export default function OpcaoDeHospedagem() {
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 10 }} keyboardShouldPersistTaps="handled">
-        <BotaoRedondo aoTocar={voltar}>
+        <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View>

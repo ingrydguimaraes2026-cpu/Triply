@@ -190,7 +190,7 @@ export default function NovoPost() {
       >
         <View className="flex-row items-center justify-between">
           <Text className="font-display text-[28px] text-texto">Novo post</Text>
-          <BotaoRedondo aoTocar={fechar}>
+          <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
             <X size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>

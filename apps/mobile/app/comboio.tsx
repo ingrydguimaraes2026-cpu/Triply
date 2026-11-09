@@ -21,6 +21,7 @@ import { convidarProComboio, linkDoConvite } from '../src/lib/convite'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Avatar, Botao, BotaoRedondo, Cartao, Carregando, ErroNaTela, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Comboio (spec 007 no mobile): quem vai, papéis, remover, convites ativos e sair da viagem.
 // O banco garante que a viagem nunca fica sem ADM; aqui a tela só explica.
@@ -105,8 +106,8 @@ export default function Comboio() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View className="flex-row items-end justify-between gap-3">

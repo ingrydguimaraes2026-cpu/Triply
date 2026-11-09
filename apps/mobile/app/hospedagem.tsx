@@ -9,6 +9,7 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { Norti } from '../src/ui/Norti'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Hospedagem por noite (spec 123): onde o grupo dorme cada noite, o que falta decidir e reservar,
 // e quanto custa tudo. Tocar numa cidade abre as opções dela (/cidade-hospedagem).
@@ -43,10 +44,10 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
   return (
     <View className="flex-1 bg-fundo">
       {naAba ? null : <StatusBar style="dark" />}
-      <ScrollView contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 40, gap: 10 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 40, gap: 10 }}>
         {naAba ? null : (
           <>
-            <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+            <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
               <ArrowLeft size={20} color={cor.texto} />
             </BotaoRedondo>
             <Text className="font-display text-[32px] leading-[36px] text-texto">Hospedagem</Text>

@@ -127,7 +127,7 @@ function Tela({
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 14 }}>
         <View className="flex-row items-center justify-between">
-          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
           <Pressable

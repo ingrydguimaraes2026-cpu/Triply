@@ -38,6 +38,7 @@ import { BotaoIr } from '../src/ui/BotaoIr'
 import { Bloco, FerramentasDoDia } from '../src/ui/FerramentasDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Tela Hoje (spec 058 no mobile, + 060, 062, 080 e 120a): o dia do grupo numa rolagem só.
 // Ordem da 120a: agora/próximo → onde dormimos → quem chega e sai → plano do dia. Depois o resto.
@@ -151,14 +152,14 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
         <View className="flex-row justify-between">
-          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
           {/* Na aba Viagem, o "Tudo da viagem" continua a 1 toque */}
           {naAba ? (
-            <BotaoRedondo aoTocar={() => router.push('/tudo-da-viagem')}>
+            <BotaoRedondo aoTocar={() => router.push('/tudo-da-viagem')} rotulo="Mais opções">
               <MoreHorizontal size={20} color={cor.texto} />
             </BotaoRedondo>
           ) : null}

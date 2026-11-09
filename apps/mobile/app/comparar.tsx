@@ -105,7 +105,7 @@ function Tela({ todos, opcoes, grupo, aoMudar, membroEdita }: { todos: Trajeto[]
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
         <View className="flex-row items-center justify-between">
-          <BotaoRedondo aoTocar={voltar}>
+          <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
           {dia ? <Text className="font-body-medium text-[13px] text-suave">{diaLongo(lerData(dia))}</Text> : null}

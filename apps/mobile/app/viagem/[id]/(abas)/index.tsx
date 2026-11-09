@@ -26,6 +26,7 @@ import { Selo } from '../../../../src/ui/Selos'
 import { ErroNaTela } from '../../../../src/ui/pecas'
 import { CONGELADO } from '@together/core'
 import { cor } from '../../../../theme'
+import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
 // Aba Viagem (spec 117): muda com a fase. Antes da viagem: capa, comboio, próximo carimbo,
 // passaporte e o resumo do roteiro, das contas e da papelada. Nada além disso.
@@ -99,7 +100,7 @@ export default function AbaViagem() {
     return (
       <View className="flex-1 bg-fundo">
         <StatusBar style="light" />
-        <Animated.ScrollView onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+        <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
           <Lembrancas
             viagem={viagem}
             foto={capa(viagem.id)}
@@ -121,7 +122,7 @@ export default function AbaViagem() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="light" />
-      <Animated.ScrollView onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+      <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
         <Capa foto={capa(viagem.id)} nome={viagem.nome} linha={linha} rolagem={rolagem} />
 
         <View className="gap-6 bg-fundo px-5 pt-5">

@@ -47,7 +47,7 @@ export default function TudoDaViagem() {
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 16 }}>
         <View className="flex-row">
-          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace(`/viagem/${viagem.id}` as Href))}>
+          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace(`/viagem/${viagem.id}` as Href))} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>

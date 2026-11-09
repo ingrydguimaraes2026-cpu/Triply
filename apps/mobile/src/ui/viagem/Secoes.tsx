@@ -76,17 +76,17 @@ export function Cabecalho({ nome, rolagem, aoVoltar, aoCompartilhar, aoMais }: {
     <View className="absolute left-0 right-0 top-0" style={{ paddingTop: insets.top + 6 }} pointerEvents="box-none">
       <Animated.View className="absolute inset-0 border-b border-linha bg-fundo" style={fundo} />
       <View className="flex-row items-center gap-3 px-4 pb-2">
-        <BotaoRedondo claro aoTocar={aoVoltar}>
+        <BotaoRedondo claro aoTocar={aoVoltar} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <Animated.Text style={titulo} className="flex-1 font-display text-[20px] text-texto" numberOfLines={1}>
           {nome}
         </Animated.Text>
-        <BotaoRedondo claro aoTocar={aoCompartilhar}>
+        <BotaoRedondo claro aoTocar={aoCompartilhar} rotulo="Compartilhar">
           <Share2 size={20} color={cor.texto} />
         </BotaoRedondo>
         {/* "Tudo da viagem": o que saiu da tela principal continua a 2 toques */}
-        <BotaoRedondo claro aoTocar={aoMais}>
+        <BotaoRedondo claro aoTocar={aoMais} rotulo="Mais opções">
           <MoreHorizontal size={20} color={cor.texto} />
         </BotaoRedondo>
       </View>

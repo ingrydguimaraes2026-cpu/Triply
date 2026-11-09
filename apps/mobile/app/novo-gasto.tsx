@@ -67,7 +67,7 @@ export default function NovoGasto() {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo">
       <View className="flex-row items-center justify-between px-5" style={{ paddingTop: insets.top + 8 }}>
-        <BotaoRedondo aoTocar={fechar}>
+        <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
           <X size={20} color={cor.texto} />
         </BotaoRedondo>
         <Text className="font-body-semibold text-[14px] text-suave">{viagem.nome}</Text>

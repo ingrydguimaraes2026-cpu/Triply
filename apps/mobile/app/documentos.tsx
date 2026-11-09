@@ -109,7 +109,7 @@ function Tela({
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
-        <BotaoRedondo aoTocar={voltar}>
+        <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View className="flex-row items-end justify-between gap-3">

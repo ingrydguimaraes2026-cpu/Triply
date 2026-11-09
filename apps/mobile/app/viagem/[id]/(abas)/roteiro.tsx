@@ -30,6 +30,7 @@ import {
   type ViagemComDetalhes,
 } from '@together/core'
 import { useCarregar } from '../../../../src/dados/useCarregar'
+import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
@@ -149,7 +150,7 @@ function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComD
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const [destinos, lugares, trajetos, eventos, casas] = carga.dados
-  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} aoMudar={carga.recarregar} diaInicial={diaInicial} aoMatches={aoMatches} />
+  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} aoMudar={carga.recarregar} atualizando={carga.atualizando} diaInicial={diaInicial} aoMatches={aoMatches} />
 }
 
 function Tela({
@@ -162,7 +163,9 @@ function Tela({
   diaInicial,
   aoMatches,
   casas,
+  atualizando,
 }: {
+  atualizando: boolean
   casas: CasaDoDia[]
   diaInicial: number
   aoMatches: () => void
@@ -304,7 +307,7 @@ function Tela({
             </Text>
           </View>
         ) : null}
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
+        <ScrollView refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
               Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra adicionar um deslocamento ou em "Evento".

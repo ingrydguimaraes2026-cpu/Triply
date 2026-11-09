@@ -16,6 +16,7 @@ import { useNumeroAnimado } from '../../../../src/ui/movimento'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { ComentariosDoItem } from '../../../../src/ui/ComentariosDoItem'
 import { cor, sombra } from '../../../../theme'
+import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
 // Contas (spec 117, tela 5): um número grande (meu saldo), o câmbio de hoje numa linha,
 // os gastos como conversa e a barra fixa embaixo pra lançar.
@@ -96,6 +97,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
       <StatusBar style="dark" />
       <ScrollView
         ref={rolagem}
+        refreshControl={puxarPraAtualizar(carga)}
         onContentSizeChange={() => rolagem.current?.scrollToEnd({ animated: false })}
         contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 16, paddingBottom: 96, gap: 12 }}
       >
@@ -141,7 +143,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
           <View className="flex-row items-center gap-2 self-center rounded-full bg-areia px-3.5 py-2">
             <Wallet size={15} color={cor.couro} />
             <Text className="font-body-semibold text-[12px] text-corpo">
-              Euro do comboio {formatarDinheiro(Math.round(euroDoComboio * 100), 'EUR')} · meu {formatarDinheiro(Math.round(meuEuro * 100), 'EUR')}
+              Euros na carteira: comboio {formatarDinheiro(Math.round(euroDoComboio * 100), 'EUR')} · você {formatarDinheiro(Math.round(meuEuro * 100), 'EUR')}
             </Text>
           </View>
         ) : null}

@@ -22,6 +22,7 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { Norti } from '../src/ui/Norti'
 import { Botao, BotaoRedondo, Campo, Cartao, Carregando, ErroNaTela, IconeQuadrado, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Lugares (specs 016 e 022 no mobile): as ideias do comboio pra cada destino,
 // com o coração pra votar. Tocar no lugar abre no Google Maps.
@@ -70,8 +71,8 @@ export default function Lugares() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }} keyboardShouldPersistTaps="handled">
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }} keyboardShouldPersistTaps="handled">
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View className="flex-row items-end justify-between gap-3">

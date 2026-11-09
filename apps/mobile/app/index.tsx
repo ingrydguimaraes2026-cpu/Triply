@@ -18,6 +18,7 @@ import { supabase } from '../src/lib/supabase'
 import { FaixaConvidado } from '../src/ui/FaixaConvidado'
 import { useCapas } from '../src/dados/useCapas'
 import { Norti } from '../src/ui/Norti'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 import { Avatar, Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
 import { cor, sombra } from '../theme'
 
@@ -32,6 +33,15 @@ export default function MinhasViagens() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { ehConvidado } = useSessao()
+  // Puxar pra atualizar: busca as viagens de novo e remonta o cartão e o mapa (que carregam sozinhos)
+  const [vezDoInicio, setVezDoInicio] = useState(0)
+  const [puxando, setPuxando] = useState(false)
+  useEffect(() => setPuxando(false), [viagens, status])
+  const atualizar = () => {
+    setPuxando(true)
+    recarregar()
+    setVezDoInicio((v) => v + 1)
+  }
 
   useEffect(() => {
     if (status !== 'pronto' || jaAbriuNaViagem) return
@@ -65,7 +75,7 @@ export default function MinhasViagens() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 40 }}>
+      <ScrollView refreshControl={puxarPraAtualizar({ atualizando: puxando, recarregar: atualizar })} contentContainerStyle={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 40 }}>
         <View className="mb-5 flex-row items-end justify-between gap-2">
           <View className="min-w-0 flex-1">
             <Text className="font-body-medium text-[14px] text-suave">{saudacao},</Text>
@@ -80,9 +90,9 @@ export default function MinhasViagens() {
         <FaixaConvidado />
 
         {/* Spec 118b: o mapa da galera em cima (convidado pelo link não tem) */}
-        {!ehConvidado ? <MapaDoInicio meuId={meuId} /> : null}
+        {!ehConvidado ? <MapaDoInicio key={vezDoInicio} meuId={meuId} /> : null}
 
-        <Destaque viagem={destaque} meuId={meuId} aoAbrir={() => abrir(destaque)} />
+        <Destaque key={`${destaque.id}-${vezDoInicio}`} viagem={destaque} meuId={meuId} aoAbrir={() => abrir(destaque)} />
 
         {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
         {passadas.length ? <Lista titulo="Viagens passadas" viagens={passadas} aoAbrir={abrir} /> : null}

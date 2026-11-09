@@ -66,7 +66,7 @@ function Tela({ config, euSouAdm }: { config: ConfiguracoesDaViagem; euSouAdm: b
       <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
         <StatusBar style="dark" />
         <View className="px-5">
-          <BotaoRedondo aoTocar={voltar}>
+          <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>
@@ -128,7 +128,7 @@ function Tela({ config, euSouAdm }: { config: ConfiguracoesDaViagem; euSouAdm: b
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }} keyboardShouldPersistTaps="handled">
-        <BotaoRedondo aoTocar={voltar}>
+        <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View>

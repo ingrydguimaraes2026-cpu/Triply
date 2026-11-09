@@ -29,6 +29,7 @@ import { BotaoIr } from '../src/ui/BotaoIr'
 import { VerReserva } from '../src/ui/BilheteDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Passagens (spec 122d, no lugar de Transportes): o que falta decidir, o que falta comprar e o que já foi
 // comprado, os avisos sérios da viagem toda e quanto custa o transporte. Tocar num item abre a comparação
@@ -91,10 +92,10 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   return (
     <View className="flex-1 bg-fundo">
       {naAba ? null : <StatusBar style="dark" />}
-      <ScrollView contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 100, gap: 12 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 100, gap: 12 }}>
         {naAba ? null : (
         <>
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))}>
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View>

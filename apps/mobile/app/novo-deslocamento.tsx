@@ -361,7 +361,7 @@ function Formulario({
       <StatusBar style="dark" />
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
         <View className="flex-row items-center justify-between">
-          <BotaoRedondo aoTocar={voltar}>
+          <BotaoRedondo aoTocar={voltar} rotulo="Voltar">
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>

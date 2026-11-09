@@ -84,7 +84,7 @@ function Tela({ trajeto, caminho, nomeDe, nomePara, link }: Awaited<ReturnType<t
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 14 }}>
-        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/transportes'))}>
+        <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/transportes'))} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
         <View>
