@@ -9,6 +9,7 @@ export type Trajeto = Tables<'trajetos'> & { passageiros: string[] }
 export const MEIOS: { chave: string; nome: string; icone: LucideIcon }[] = [
   { chave: 'trem', nome: 'Trem', icone: TrainFront },
   { chave: 'onibus', nome: 'Ônibus', icone: Bus },
+  { chave: 'metro', nome: 'Metrô', icone: TrainFront }, // spec 122: o app grava metrô também
   { chave: 'aviao', nome: 'Avião', icone: Plane },
   { chave: 'carro', nome: 'Carro', icone: Car },
   { chave: 'carona', nome: 'Carona', icone: Car },
@@ -105,5 +106,47 @@ export async function criarBateEVolta(viagemId: string, ida: DadosDoTrajeto, vol
 
 export async function apagarTrajeto(id: string) {
   const { error } = await supabase.from('trajetos').delete().eq('id', id)
+  if (error) throw error
+}
+
+// Spec 122a: deslocamento com "de" e "para" em texto livre (Novo deslocamento, igual ao app).
+// Membro só grava sugestão; decidir e comprar é do ADM ou de quem ele liberou (o banco confere: erro 42501).
+export type DadosDoDeslocamento = {
+  de_texto: string
+  para_texto: string
+  de_lat: number | null
+  de_lon: number | null
+  para_lat: number | null
+  para_lon: number | null
+  meio: string
+  partida: string
+  chegada: string | null
+  situacao: string
+  trocas: number | null
+  preco: number | null
+  moeda: string | null
+  ultimo_do_dia: boolean
+  observacao: string | null
+  frequencia_min: number | null
+  grupo_opcoes?: string | null
+  escolhida?: boolean
+}
+
+export async function salvarDeslocamento(viagemId: string, dados: DadosDoDeslocamento, id?: string) {
+  const { error } = id
+    ? await supabase.from('trajetos').update(dados).eq('id', id)
+    : await supabase.from('trajetos').insert({ ...dados, viagem_id: viagemId, tipo: 'trecho' })
+  if (error) throw error
+}
+
+// Transforma um deslocamento na 1ª opção de um grupo (pra comparar com outras)
+export async function virarOpcao(id: string, grupo: string) {
+  const { error } = await supabase.from('trajetos').update({ grupo_opcoes: grupo, escolhida: false }).eq('id', id)
+  if (error) throw error
+}
+
+// Spec 120a: "Eu busco" na chegada de alguém
+export async function vouBuscar(trajetoId: string, buscar: boolean) {
+  const { error } = await supabase.rpc('vou_buscar', { p_trajeto: trajetoId, p_buscar: buscar })
   if (error) throw error
 }

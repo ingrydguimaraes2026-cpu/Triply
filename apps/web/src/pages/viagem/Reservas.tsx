@@ -11,7 +11,7 @@ import './viagem-tela.css'
 // Endereço: /viagem/<id>/reservas[?parte=hospedagem]. Os antigos /transportes e /hospedagem caem aqui.
 type Parte = 'transporte' | 'hospedagem'
 const PARTES: { chave: Parte; nome: string }[] = [
-  { chave: 'transporte', nome: 'Passagens' },
+  { chave: 'transporte', nome: 'Transporte' },
   { chave: 'hospedagem', nome: 'Hospedagem' },
 ]
 

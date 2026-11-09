@@ -1,470 +1,442 @@
 import { useEffect, useState } from 'react'
-import { AlertTriangle, ArrowRight, ArrowRightLeft, ExternalLink, Pencil, Plus, Wallet } from '../../components/ui/icones'
-import { conexoes, formatarDinheiro, linkDoCaminho, meioComCaminho, kmEstimados, lerEscalas, textoDaConexao, nomeDaSituacao, nomeDaSituacaoDoDeslocamento, opcoesNoDia, passagensDaViagem, resumoDosTrajetos, rodizio, type CasaDoDia, type ItemDaPassagem, type Tables } from '@together/core'
-import FormGasto from '../../features/financeiro/FormGasto'
-import { useViagemAtual } from '../../features/viagens/hooks'
+import { useSearchParams } from 'react-router'
+import { AlertTriangle, ArrowLeft, ChevronRight, Plus, Route, Trash2 } from '../../components/ui/icones'
+import {
+  diaNoFuso,
+  formatarDinheiro,
+  meioComCaminho,
+  meioComMotorista,
+  nomeDaSituacao,
+  nomeDaSituacaoDoDeslocamento,
+  passagensDaViagem,
+  textoDoDia,
+  type CasaDoDia,
+  type ItemDaPassagem,
+  type Tables,
+} from '@together/core'
+import { useViagemAtual, type Membro } from '../../features/viagens/hooks'
 import { useTrajetos } from '../../features/transportes/hooks'
 import { useCofre } from '../../features/cofre/hooks'
 import BilheteDoTrajeto from '../../features/cofre/BilheteDoTrajeto'
-import { meio, vouNesse, type Trajeto } from '../../features/transportes/api'
-import { avisosDoTrajeto, diaLocal, hora, proximoDeslocamento } from '../../features/transportes/avisos'
-import {
-  agruparPasseios,
-  linksDoTrecho,
-  trechosDaRota,
-  type Passeio,
-} from '../../features/transportes/rota'
-import FormTrajeto from '../../features/transportes/FormTrajeto'
+import { apagarTrajeto, meio, vouBuscar, type Trajeto } from '../../features/transportes/api'
+import FormDeslocamento from '../../features/transportes/FormDeslocamento'
+import CompararOpcoes from '../../features/transportes/CompararOpcoes'
+import CaminhoDoTrajeto from '../../features/transportes/CaminhoDoTrajeto'
 import { buscarOpcoes } from '../../features/hospedagem/api'
-import { formatarData } from '../../lib/datas'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import BotaoIr from '../../components/ui/BotaoIr'
+import BotaoRedondo from '../../components/ui/BotaoRedondo'
 import Carregando from '../../components/ui/Carregando'
 import ErroNaTela from '../../components/ui/ErroNaTela'
-import Cartao from '../../components/ui/Cartao'
-import Gaveta from '../../components/ui/Gaveta'
-import './abas.css'
-import './hospedagem.css'
+import Norti from '../../components/ui/Norti'
+import RotuloDeSecao from '../../components/ui/RotuloDeSecao'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import './transportes.css'
 
-type Destino = Tables<'destinos'>
-type Janela = { trajeto?: Trajeto; origemId?: string; destinoId?: string; tipo?: 'chegada' | 'saida' } | null
-type GastoDoTrajeto = Trajeto | null
+// Passagens (spec 122d), espelho do app (apps/mobile/app/transportes.tsx, novo-deslocamento.tsx,
+// comparar.tsx e caminho.tsx). O que falta decidir, o que falta comprar e o que já está garantido,
+// os avisos sérios da viagem toda e quanto custa o transporte. A chegada e a volta de cada um ficam no fim.
+// Celular: a lista OU o painel aberto (?passagem=). Computador: lista à esquerda, painel à direita.
+// ?passagem=novo | opcoes:<grupo> | caminho:<id> | <id do deslocamento>
 
-// Passagens (spec 122d, antes "Transportes", spec 004): no topo, o que falta decidir, o que falta comprar,
-// o que já foi comprado, os avisos sérios e o total; embaixo, a rota cidade a cidade pra editar no PC.
-export default function Transportes() {
-  const { viagem, destinos, membros, meuId, euSouAdm: souAdmDeVerdade } = useViagemAtual()
-  // Spec 078: com transportes liberados, o membro edita trajetos como o ADM
-  const euSouAdm = souAdmDeVerdade || viagem.membro_edita_transportes
-  const [gastoDe, setGastoDe] = useState<GastoDoTrajeto>(null) // spec 035: lançar o trajeto como gasto
-  const { estado, recarregar } = useTrajetos(viagem.id, true) // spec 122d: com as opções, pra contar o "comparando"
+type Destino = Tables<'destinos'>
+type Prefill = { grupo: string | null; dia: string | null; de: string; para: string }
+
+function diaDeHoje() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+export default function Transportes({ naAba = false }: { naAba?: boolean }) {
+  const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
+  // Spec 078/122: decidir e comprar é do ADM ou de quem ele liberou; membro sugere
+  const podeDecidir = euSouAdm || viagem.membro_edita_transportes
+  const { estado, recarregar } = useTrajetos(viagem.id, true)
+  const cofre = useCofre(viagem.id)
   const [casas, setCasas] = useState<CasaDoDia[]>([]) // casas escolhidas: avisos de check-in
   useEffect(() => {
     buscarOpcoes(viagem.id)
       .then((ops) => setCasas(ops.filter((o) => o.escolhida)))
       .catch(() => setCasas([]))
   }, [viagem.id])
-  const cofre = useCofre(viagem.id) // spec 028: bilhetes dos trajetos
-  const [janela, setJanela] = useState<Janela>(null)
+  const [busca, setBusca] = useSearchParams()
+  const [prefill, setPrefill] = useState<Prefill | null>(null)
 
-  const [soOsMeus, setSoOsMeus] = useState(false) // spec 067: "meu itinerário"
-  const comOpcoes = estado.status === 'pronto' ? estado.trajetos : []
-  const todosTrajetos = opcoesNoDia(comOpcoes) // das opções de um deslocamento, só a que vale
-  const passagens = passagensDaViagem(comOpcoes.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida'), destinos, casas)
-  const abrirPassagem = (i: ItemDaPassagem) => {
-    const t = comOpcoes.find((x) => x.id === i.id)
-    if (t) setJanela({ trajeto: t })
-  }
-  const trajetos = soOsMeus ? todosTrajetos.filter((t) => vouNesse(t, meuId)) : todosTrajetos
-  const destinoDe = (id: string | null) => destinos.find((d) => d.id === id) ?? null
-  const nomeDe = (id: string | null) => destinoDe(id)?.nome ?? 'Sem destino'
+  const cabecalho = naAba ? null : <TituloDaTela titulo="Passagens" />
 
-  const trechos = trechosDaRota(destinos)
-  const passeios = agruparPasseios(trajetos, diaLocal)
-  const doTrecho = (de: Destino, para: Destino) => trajetos.filter((t) => !t.bate_e_volta && t.origem_id === de.id && t.destino_id === para.id)
-  // Trecho feito como passeio (ex.: Nice → Mônaco, voltando pra Nice no mesmo dia)
-  const passeioDoTrecho = (de: Destino, para: Destino) =>
-    passeios.find((p) => (p.ida.origem_id === de.id && p.ida.destino_id === para.id) || (p.ida.origem_id === para.id && p.ida.destino_id === de.id))
-  const usados = new Set(trechos.flatMap(({ de, para }) => doTrecho(de, para).map((t) => t.id)))
-  const outros = trajetos.filter((t) => !t.bate_e_volta && !usados.has(t.id))
-
-  const todosAvisos = trajetos.flatMap((t) => avisosDoTrajeto(t, destinos, trajetos).map((texto) => ({ texto, trajeto: t })))
-  const avisos = todosAvisos.filter((a, i) => todosAvisos.findIndex((b) => b.texto === a.texto) === i)
-  const resumo = resumoDosTrajetos(trajetos)
-  // Spec 073: km estimados de cada trecho de carro e o rodízio de motoristas
-  const kmDoTrajeto = (t: Trajeto) => {
-    const de = destinoDe(t.origem_id)
-    const para = destinoDe(t.destino_id)
-    return de && para ? kmEstimados(de, para) : null
-  }
-  const motoristas = rodizio(trajetos.filter((t) => t.meio === 'carro').map((t) => ({ motorista_id: t.motorista_id ?? null, km: kmDoTrajeto(t) })))
-  const proximo = proximoDeslocamento(trajetos, destinos.map((d) => d.id))
-
-  const porDia = new Map<string, Trajeto[]>()
-  for (const t of trajetos) if (t.partida) porDia.set(diaLocal(t.partida), [...(porDia.get(diaLocal(t.partida)) ?? []), t])
-
-  const fechar = () => setJanela(null)
-
-  const linha = (t: Trajeto, rotulo?: string) => {
-    const { icone: Icone, nome } = meio(t.meio)
+  if (estado.status === 'carregando')
     return (
-      <li key={t.id} className={proximo?.id === t.id ? 'trajeto proximo' : 'trajeto'}>
-        <span className="trajeto-icone" title={nome}>
-          <Icone size={18} aria-hidden="true" />
-        </span>
-        <span className="trajeto-texto">
-          <strong>
-            {rotulo && <span className="selo-suave">{rotulo}</span>}
-            {nomeDe(t.origem_id)} <ArrowRight size={14} aria-hidden="true" /> {nomeDe(t.destino_id)}
-            {proximo?.id === t.id && <span className="selo-completar">próximo</span>}
-          </strong>
-          <small>
-            {nome}
-            {t.partida ? ` · ${formatarData(diaLocal(t.partida))} ${hora(t.partida)}` : ' · sem horário'}
-            {t.chegada && ` → ${diaLocal(t.chegada) !== (t.partida && diaLocal(t.partida)) ? `${formatarData(diaLocal(t.chegada))} ` : ''}${hora(t.chegada)}`}
-          </small>
-          <span className="trajeto-situacao">
-            {/* Spec 067: quem vai */}
-            {t.passageiros.length > 0 && (
-              <span className={t.passageiros.includes(meuId) ? 'selo-passageiros meu' : 'selo-passageiros'}>
-                {t.passageiros.map((id) => (id === meuId ? 'você' : (membros.find((m) => m.id === id)?.nome.split(' ')[0] ?? '?'))).join(', ')}
-              </span>
-            )}
-            <span className={`selo-situacao situacao-${t.situacao}`}>{nomeDaSituacao(t.situacao)}</span>
-            {/* Spec 073: carro, quem dirige e km estimados */}
-            {t.meio === 'carro' && (t.motorista_id || kmDoTrajeto(t)) && (
-              <span className="trajeto-carro">
-                {t.motorista_id && `${t.motorista_id === meuId ? 'Você dirige' : `${membros.find((m) => m.id === t.motorista_id)?.nome.split(' ')[0] ?? '?'} dirige`}`}
-                {t.motorista_id && kmDoTrajeto(t) && ' · '}
-                {kmDoTrajeto(t) && `~${kmDoTrajeto(t)} km`}
-              </span>
-            )}
-            {t.preco !== null && t.moeda && <span className="trajeto-preco">{formatarDinheiro(Math.round(Number(t.preco) * 100), t.moeda)}</span>}
-            {t.preco !== null && t.moeda && t.situacao !== 'sugestao' && (
-              <button type="button" className="botao-texto" onClick={() => setGastoDe(t)}>
-                <Wallet size={14} aria-hidden="true" /> Lançar como gasto
-              </button>
-            )}
-          </span>
-          {/* Spec 074: estações e escalas */}
-          {(t.estacao_partida || t.estacao_chegada) && (
-            <small>
-              {t.estacao_partida ?? '?'} → {t.estacao_chegada ?? '?'}
-            </small>
-          )}
-          {conexoes(lerEscalas(t.escalas), t.meio).map((c) => (
-            <small key={c.local} className={c.curta ? 'trajeto-conexao curta' : 'trajeto-conexao'}>
-              Escala em {c.local}
-              {c.minutos !== null && ` · ${textoDaConexao(c.minutos)} de conexão`}
-              {c.curta && ' · conexão curta!'}
-            </small>
-          ))}
-          {t.observacao && <small className="trajeto-obs">{t.observacao}</small>}
-          {meioComCaminho(t.meio) && (
-            <a
-              href={linkDoCaminho(t.estacao_partida ?? nomeDe(t.origem_id), t.estacao_chegada ?? nomeDe(t.destino_id))}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="trajeto-link"
-            >
-              Ver o caminho <ExternalLink size={12} aria-hidden="true" />
-            </a>
-          )}
-          {t.link_reserva && (
-            <a href={t.link_reserva} target="_blank" rel="noreferrer noopener" className="trajeto-link">
-              Reserva <ExternalLink size={12} aria-hidden="true" />
-            </a>
-          )}
-          <BilheteDoTrajeto
-            viagemId={viagem.id}
-            trajetoId={t.id}
-            bilhete={cofre.arquivos?.find((a) => a.trajeto_id === t.id)}
-            aoMudar={cofre.recarregar}
-          />
-        </span>
-        {euSouAdm && (
-          <button type="button" className="botao-texto" onClick={() => setJanela({ trajeto: t })} aria-label="Editar trajeto">
-            <Pencil size={16} aria-hidden="true" />
-          </button>
-        )}
-      </li>
+      <>
+        {cabecalho}
+        <Carregando texto="Carregando as passagens…" compacto />
+      </>
     )
-  }
+  if (estado.status === 'erro')
+    return (
+      <>
+        {cabecalho}
+        <ErroNaTela titulo="Não deu pra carregar as passagens" aoTentar={recarregar} />
+      </>
+    )
 
-  const comparar = (de: Destino, para: Destino) => (
-    <div className="rota-comparar">
-      {linksDoTrecho(de, para, de.saida).map((l) => (
-        <a key={l.chave} href={l.url} target="_blank" rel="noreferrer noopener" className={`rota-link link-${l.chave}`}>
-          {l.nome} <ExternalLink size={12} aria-hidden="true" />
-        </a>
-      ))}
-    </div>
+  const trajetos = estado.trajetos
+  const pessoais = trajetos.filter((t) => t.tipo === 'chegada' || t.tipo === 'saida')
+  const p = passagensDaViagem(
+    trajetos.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida'),
+    destinos,
+    casas,
   )
+  const nada = trajetos.length === 0
+  const moedas = Object.keys(p.total)
 
-  // ---------- Painéis ----------
-  const painelTudo = () => (
-    <section className="hosp-painel" aria-label="Entre cidades">
-      <header className="hosp-painel-topo">
-        <div>
-          <h2>Entre cidades</h2>
-          <p>
-            {destinos.length} {destinos.length === 1 ? 'parada' : 'paradas'} · {trajetos.length}{' '}
-            {trajetos.length === 1 ? 'trajeto cadastrado' : 'trajetos cadastrados'}
-          </p>
-          {todosTrajetos.some((t) => t.passageiros.length > 0) && (
-            <label className="interruptor trajeto-meus">
-              <span>
-                <strong>Meu itinerário</strong>
-                <small>Só os trajetos em que você vai</small>
-              </span>
-              <input type="checkbox" checked={soOsMeus} onChange={(e) => setSoOsMeus(e.target.checked)} />
-            </label>
-          )}
-          {motoristas.length > 0 && (
-            <p className="trajeto-resumo">
-              Rodízio no volante:{' '}
-              {motoristas
-                .map((m) => `${m.motoristaId === meuId ? 'você' : (membros.find((x) => x.id === m.motoristaId)?.nome.split(' ')[0] ?? '?')} ~${m.km} km`)
-                .join(' · ')}
-            </p>
-          )}
-          {trajetos.length > 0 && (
-            <p className="trajeto-resumo">
-              {resumo.comprados} de {resumo.total} {resumo.total === 1 ? 'comprado' : 'comprados'}
-              {resumo.aPagar.length > 0 && ` · falta pagar ${resumo.aPagar.map((p) => formatarDinheiro(p.valor, p.moeda)).join(' + ')}`}
-              {resumo.semPreco > 0 && ` · ${resumo.semPreco} sem preço`}
-            </p>
-          )}
-        </div>
-      </header>
-      {trechos.length === 0 && <p className="hosp-vazio">Quando a viagem tiver mais de um destino, os trechos aparecem aqui.</p>}
-    </section>
-  )
-
-  const painelTrecho = (de: Destino, para: Destino) => {
-    const lista = doTrecho(de, para)
-    const passeio = passeioDoTrecho(de, para)
-    const vazio = lista.length === 0 && !passeio
-    return (
-      <section className={vazio ? 'hosp-painel trecho-compacto' : 'hosp-painel'} aria-label={`${de.nome} para ${para.nome}`}>
-        <header className="hosp-painel-topo">
-          <div>
-            <h2 className="rota-titulo">
-              {de.nome} <ArrowRight size={20} aria-hidden="true" /> {para.nome}
-            </h2>
-            <p>
-              {de.saida ? `Saída de ${de.nome}: ${formatarData(de.saida, true)}` : 'Data a definir no roteiro'}
-            </p>
-          </div>
-          <span className={lista.length || passeio ? 'hosp-selo selo-resolvido' : 'hosp-selo selo-precisa'}>
-            {lista.length || passeio ? 'Definido' : 'Falta definir'}
-          </span>
-        </header>
-        {passeio && (
-          <p className="rota-aviso-passeio">
-            <ArrowRightLeft size={15} aria-hidden="true" /> Esse trecho está como passeio (bate-e-volta): veja logo abaixo.
-          </p>
-        )}
-        {lista.length > 0 ? (
-          <ul className="trajetos">{lista.map((t) => linha(t))}</ul>
-        ) : (
-          null
-        )}
-        {comparar(de, para)}
-        {euSouAdm && (
-          <button type="button" className="hosp-adicionar" onClick={() => setJanela({ origemId: de.id, destinoId: para.id })}>
-            <Plus size={16} aria-hidden="true" /> {lista.length ? 'Outro trajeto' : 'Adicionar trajeto'}
-          </button>
-        )}
-      </section>
+  // Painel aberto (da URL)
+  const passagem = busca.get('passagem')
+  function abrir(valor: string | null, novoPrefill: Prefill | null = null) {
+    setPrefill(novoPrefill)
+    // Mantém o resto da URL (a aba Reservas usa ?parte=transporte)
+    setBusca(
+      (atual) => {
+        const nova = new URLSearchParams(atual)
+        if (valor) nova.set('passagem', valor)
+        else nova.delete('passagem')
+        return nova
+      },
+      { replace: !!passagem && !!valor },
     )
   }
-
-  const painelPasseio = (p: Passeio<Trajeto>) => {
-    const base = destinoDe(p.ida.origem_id)
-    const alvo = destinoDe(p.ida.destino_id)
-    return (
-      <section className="hosp-painel" aria-label="Passeio">
-        <header className="hosp-painel-topo">
-          <div>
-            <h2 className="rota-titulo">
-              {nomeDe(p.ida.origem_id)} <ArrowRightLeft size={20} aria-hidden="true" /> {nomeDe(p.ida.destino_id)}
-            </h2>
-            <p>Passeio de ida e volta{p.ida.partida ? ` · ${formatarData(diaLocal(p.ida.partida), true)}` : ''}</p>
-          </div>
-          <span className={p.volta ? 'hosp-selo selo-resolvido' : 'hosp-selo selo-precisa'}>{p.volta ? 'Ida e volta' : 'Falta a volta'}</span>
-        </header>
-        <ul className="trajetos">
-          {linha(p.ida, 'Ida')}
-          {p.volta && linha(p.volta, 'Volta')}
-        </ul>
-        {!p.volta && <p className="hosp-vazio">A volta ainda não foi cadastrada. Sem ela, vocês ficam em {nomeDe(p.ida.destino_id)}.</p>}
-        {base && alvo && comparar(base, alvo)}
-        {euSouAdm && !p.volta && (
-          <button type="button" className="hosp-adicionar" onClick={() => setJanela({ origemId: p.ida.destino_id ?? undefined, destinoId: p.ida.origem_id ?? undefined })}>
-            <Plus size={16} aria-hidden="true" /> Cadastrar a volta
-          </button>
-        )}
-      </section>
-    )
+  const abrirItem = (i: ItemDaPassagem) => abrir(i.grupo && i.opcoes > 1 ? `opcoes:${i.grupo}` : i.id)
+  const abrirNovo = () => abrir('novo')
+  const outraOpcao = (grupo: string, dia: string, de: string, para: string) => abrir('novo', { grupo, dia: dia || null, de, para })
+  async function depoisDeSalvar(grupo: string | null) {
+    await recarregar()
+    if (grupo) abrir(`opcoes:${grupo}`)
+    else abrir(null)
   }
+
+  const painel = (() => {
+    if (!passagem) return null
+    if (passagem === 'novo')
+      return (
+        <FormDeslocamento
+          key={`novo-${prefill?.grupo ?? ''}`}
+          viagemId={viagem.id}
+          moeda={viagem.moeda_principal}
+          destinos={destinos}
+          trajetos={trajetos}
+          trajeto={null}
+          grupo={prefill?.grupo ?? null}
+          diaInicial={prefill?.dia ?? viagem.data_inicio ?? diaDeHoje()}
+          deInicial={prefill?.de}
+          paraInicial={prefill?.para}
+          podeDecidir={podeDecidir}
+          meuId={meuId}
+          aoSalvar={(g) => void depoisDeSalvar(g)}
+          aoOutraOpcao={outraOpcao}
+          aoComparar={(g) => abrir(`opcoes:${g}`)}
+        />
+      )
+    if (passagem.startsWith('opcoes:'))
+      return (
+        <CompararOpcoes
+          grupo={passagem.slice(7)}
+          trajetos={trajetos}
+          podeDecidir={podeDecidir}
+          aoMudar={recarregar}
+          aoEditar={(id) => abrir(id)}
+          aoOutraOpcao={(dia, de, para) => outraOpcao(passagem.slice(7), dia, de, para)}
+        />
+      )
+    const id = passagem.startsWith('caminho:') ? passagem.slice(8) : passagem
+    const t = trajetos.find((x) => x.id === id)
+    if (!t) return <p className="ps-nota">Esse deslocamento não existe mais.</p>
+    if (passagem.startsWith('caminho:')) return <CaminhoDoTrajeto key={t.id} trajeto={t} destinos={destinos} />
+    return (
+      <FormDeslocamento
+        key={t.id}
+        viagemId={viagem.id}
+        moeda={viagem.moeda_principal}
+        destinos={destinos}
+        trajetos={trajetos}
+        trajeto={t}
+        grupo={null}
+        diaInicial={viagem.data_inicio ?? diaDeHoje()}
+        podeDecidir={podeDecidir}
+        meuId={meuId}
+        aoSalvar={(g) => void depoisDeSalvar(g)}
+        aoOutraOpcao={outraOpcao}
+        aoComparar={(g) => abrir(`opcoes:${g}`)}
+      />
+    )
+  })()
 
   return (
     <>
-      <CabecalhoPagina
-        acima={viagem.nome}
-        titulo="Passagens"
-        subtitulo="O que falta decidir, o que falta comprar e o que já está garantido."
-        acao={
-          euSouAdm &&
-          destinos.length > 0 && (
-            <button type="button" className="botao" onClick={() => setJanela({})}>
-              <Plus size={18} aria-hidden="true" /> Adicionar trajeto
-            </button>
-          )
-        }
-      />
+      {cabecalho}
+      <div className={painel ? 'ps com-painel' : 'ps'}>
+        <section className="ps-lista" aria-label="Passagens">
+          {nada ? (
+            <div className="ps-vazio">
+              <Norti humor="dormindo" tamanho={110} />
+              <h2>Nenhum deslocamento ainda</h2>
+              <p>Clique em "Novo deslocamento", diga de onde e pra onde e veja as opções.</p>
+            </div>
+          ) : (
+            <div className="ps-contadores">
+              <Contador numero={p.decidir.length} rotulo="pra decidir" tipo="decidir" />
+              <Contador numero={p.comprar.length} rotulo="pra comprar" tipo="comprar" />
+              <Contador numero={p.compradas.length} rotulo={p.compradas.length === 1 ? 'comprada' : 'compradas'} tipo="compradas" />
+            </div>
+          )}
 
-      {estado.status === 'carregando' && <Carregando texto="Carregando os trajetos…" compacto />}
-      {estado.status === 'erro' && (
-        <ErroNaTela titulo="Não deu pra carregar os trajetos" aoTentar={recarregar} />
-      )}
-
-      {estado.status === 'pronto' && comOpcoes.length > 0 && (
-        <section className="passagens" aria-label="Passagens">
-          <div className="passagens-contadores">
-            <p className="passagens-contador decidir">
-              <strong>{passagens.decidir.length}</strong> pra decidir
-            </p>
-            <p className="passagens-contador comprar">
-              <strong>{passagens.comprar.length}</strong> pra comprar
-            </p>
-            <p className="passagens-contador compradas">
-              <strong>{passagens.compradas.length}</strong> {passagens.compradas.length === 1 ? 'comprada' : 'compradas'}
-            </p>
-          </div>
-          {passagens.avisos.length > 0 && (
-            <div className="passagens-avisos">
-              {passagens.avisos.map((a) => (
-                <p key={`${a.dia}-${a.chave}`}>
-                  <AlertTriangle size={16} aria-hidden="true" />
-                  <span>
-                    <strong>
-                      {formatarData(a.dia)} · {a.titulo}
-                    </strong>{' '}
-                    {a.texto}
-                  </span>
-                </p>
+          {p.avisos.length > 0 && (
+            <div className="ps-avisos">
+              <p className="ps-avisos-titulo">
+                <AlertTriangle size={17} aria-hidden="true" /> {p.avisos.length === 1 ? '1 coisa pra olhar' : `${p.avisos.length} coisas pra olhar`}
+              </p>
+              {p.avisos.map((a) => (
+                <button key={`${a.dia}-${a.chave}`} type="button" className="ps-aviso" onClick={() => a.trajetoId && abrir(a.trajetoId)} disabled={!a.trajetoId}>
+                  <b>
+                    {textoDoDia(a.dia)} · {a.titulo}
+                  </b>
+                  <small>{a.texto}</small>
+                </button>
               ))}
             </div>
           )}
-          {(
-            [
-              ['Pra decidir', passagens.decidir],
-              ['Pra comprar', passagens.comprar],
-              ['Compradas', passagens.compradas],
-            ] as const
-          ).map(([titulo, itens]) =>
-            itens.length ? (
-              <div key={titulo} className="passagens-lista">
-                <h2>{titulo}</h2>
-                <ul>
-                  {itens.map((i) => {
-                    const { icone: Icone, nome } = meio(i.meio)
-                    const linha = [
-                      i.dia ? formatarData(i.dia) : 'Sem data',
-                      i.hora,
-                      i.situacao === 'comparando' ? `${i.opcoes} opções (compare no app)` : nome,
-                      i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
-                      i.naHora ? 'compra na hora' : null,
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')
-                    return (
-                      <li key={i.id}>
-                        <button type="button" onClick={() => abrirPassagem(i)} disabled={!euSouAdm}>
-                          <Icone size={18} aria-hidden="true" />
-                          <span className="passagens-texto">
-                            <strong>{i.titulo}</strong>
-                            <small>{linha}</small>
-                          </span>
-                          {i.preco != null && i.moeda && <span className="passagens-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</span>}
-                        </button>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            ) : null,
-          )}
-          {Object.keys(passagens.total).length > 0 && (
-            <p className="passagens-total">
-              <span>Transporte da viagem</span>
-              {Object.keys(passagens.total).map((m) => (
-                <strong key={m}>
-                  {formatarDinheiro(Math.round(passagens.total[m] * 100), m)} <small>({formatarDinheiro(Math.round((passagens.pago[m] ?? 0) * 100), m)} já pago)</small>
-                </strong>
+
+          <Lista titulo="Pra decidir" itens={p.decidir} aberto={passagem} aoAbrir={abrirItem} />
+          <Lista titulo="Pra comprar" itens={p.comprar} aberto={passagem} aoAbrir={abrirItem} />
+          <Lista titulo="Compradas" itens={p.compradas} aberto={passagem} aoAbrir={abrirItem} />
+
+          {moedas.length > 0 && (
+            <div className="ps-total">
+              <RotuloDeSecao>Transporte da viagem</RotuloDeSecao>
+              {moedas.map((m) => (
+                <div key={m} className="ps-total-linha">
+                  <strong>{formatarDinheiro(Math.round(p.total[m] * 100), m)}</strong>
+                  <small>{formatarDinheiro(Math.round((p.pago[m] ?? 0) * 100), m)} já pago</small>
+                </div>
               ))}
-            </p>
+              <small>Soma do preço de cada deslocamento (a opção escolhida). Não entra nos gastos sozinho.</small>
+            </div>
+          )}
+
+          {pessoais.length > 0 && <RotuloDeSecao>Chegada e volta de cada um</RotuloDeSecao>}
+          {pessoais.map((t) => (
+            <Passagem
+              key={t.id}
+              trajeto={t}
+              destinos={destinos}
+              membros={membros}
+              meuId={meuId}
+              podeMexer={podeDecidir || t.criado_por === meuId}
+              bilhete={cofre.arquivos?.find((a) => a.trajeto_id === t.id)}
+              viagemId={viagem.id}
+              aoMudarBilhete={cofre.recarregar}
+              aoMudar={recarregar}
+              aoVerCaminho={() => abrir(`caminho:${t.id}`)}
+            />
+          ))}
+
+          <div className="ps-novo">
+            <button type="button" className="botao" onClick={abrirNovo}>
+              <Plus size={18} aria-hidden="true" /> Novo deslocamento
+            </button>
+          </div>
+        </section>
+
+        <section className="ps-painel" aria-label="Deslocamento">
+          {painel ? (
+            <>
+              <div className="ps-painel-topo">
+                <BotaoRedondo rotulo="Voltar" aoClicar={() => abrir(null)}>
+                  <ArrowLeft size={20} />
+                </BotaoRedondo>
+              </div>
+              {painel}
+            </>
+          ) : (
+            <div className="ps-vazio">
+              <Norti humor="apontando" tamanho={96} />
+              <p>Escolha um deslocamento ao lado pra ver, comparar as opções ou mudar. Ou crie um novo.</p>
+              <button type="button" className="botao secundario" onClick={abrirNovo}>
+                <Plus size={18} aria-hidden="true" /> Novo deslocamento
+              </button>
+            </div>
           )}
         </section>
-      )}
-
-      {avisos.length > 0 && (
-        <section className="avisos-logistica" aria-label="Avisos de logística">
-          {avisos.map((a) => (
-            <p key={a.texto}>
-              <AlertTriangle size={16} aria-hidden="true" />
-              <span>
-                <strong>
-                  {nomeDe(a.trajeto.origem_id)} → {nomeDe(a.trajeto.destino_id)}:
-                </strong>{' '}
-                {a.texto}
-              </span>
-            </p>
-          ))}
-        </section>
-      )}
-
-      {destinos.length === 0 ? (
-        <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra montar a rota.</p>
-      ) : (
-        <>
-          {painelTudo()}
-          {trechos.map(({ de, para }) => (
-            <div key={`${de.id}-${para.id}`}>{painelTrecho(de, para)}</div>
-          ))}
-          {passeios.map((p) => (
-            <div key={p.ida.id}>{painelPasseio(p)}</div>
-          ))}
-        </>
-      )}
-
-      {outros.length > 0 && (
-        <Cartao titulo="Outros trajetos">
-          <p className="form-dica">Trajetos que não ligam dois destinos seguidos do roteiro, ou que ficaram sem destino.</p>
-          <ul className="trajetos">{outros.map((t) => linha(t))}</ul>
-        </Cartao>
-      )}
-
-      {janela && (
-        <Gaveta titulo={janela.trajeto ? 'Editar trajeto' : janela.tipo === 'chegada' ? 'Adicionar sua chegada' : janela.tipo === 'saida' ? 'Adicionar sua volta' : 'Adicionar trajeto'} aoFechar={fechar}>
-          <FormTrajeto
-            viagemId={viagem.id}
-            moedaViagem={viagem.moeda_principal}
-            membros={membros}
-            destinos={destinos}
-            trajeto={janela.trajeto}
-            origemId={janela.origemId}
-            destinoId={janela.destinoId}
-            tipo={janela.tipo}
-            aoTerminar={() => {
-              fechar()
-              recarregar()
-            }}
-          />
-        </Gaveta>
-      )}
-
-      {gastoDe && (
-        <Gaveta titulo="Lançar trajeto como gasto" aoFechar={() => setGastoDe(null)}>
-          <FormGasto
-            viagemId={viagem.id}
-            moedaViagem={viagem.moeda_principal}
-            membros={membros}
-            meuId={meuId}
-            euSouAdm={souAdmDeVerdade}
-            inicial={{
-              descricao: `${meio(gastoDe.meio).nome}: ${nomeDe(gastoDe.origem_id)} → ${nomeDe(gastoDe.destino_id)}`.slice(0, 200),
-              valor: gastoDe.preco !== null ? Math.round(Number(gastoDe.preco) * 100) : undefined,
-              moeda: gastoDe.moeda ?? undefined,
-              categoria: 'transporte',
-              ...(gastoDe.partida ? { data: diaLocal(gastoDe.partida) } : {}),
-            }}
-            aoTerminar={() => setGastoDe(null)}
-          />
-        </Gaveta>
-      )}
+      </div>
     </>
+  )
+}
+
+function Contador({ numero, rotulo, tipo }: { numero: number; rotulo: string; tipo: 'decidir' | 'comprar' | 'compradas' }) {
+  return (
+    <div className={`ps-contador ${tipo}`}>
+      <strong>{numero}</strong>
+      <span>{rotulo}</span>
+    </div>
+  )
+}
+
+function Lista({ titulo, itens, aberto, aoAbrir }: { titulo: string; itens: ItemDaPassagem[]; aberto: string | null; aoAbrir: (i: ItemDaPassagem) => void }) {
+  if (!itens.length) return null
+  return (
+    <div className="ps-grupo">
+      <RotuloDeSecao>{titulo}</RotuloDeSecao>
+      <ul className="ps-itens">
+        {itens.map((i) => {
+          const { icone: Icone, nome } = meio(i.meio)
+          const atual = aberto === i.id || (!!i.grupo && aberto === `opcoes:${i.grupo}`)
+          const linha = [
+            i.dia ? textoDoDia(i.dia) : 'Sem data',
+            i.hora,
+            i.situacao === 'comparando' ? `${i.opcoes} opções` : nome,
+            i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
+            i.naHora ? 'compra na hora' : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')
+          return (
+            <li key={i.id}>
+              <button type="button" className={atual ? 'ps-item atual' : 'ps-item'} onClick={() => aoAbrir(i)} aria-current={atual || undefined}>
+                <span className="ps-icone">
+                  <Icone size={19} aria-hidden="true" />
+                </span>
+                <span className="ps-texto">
+                  <b>{i.titulo}</b>
+                  <small>{linha}</small>
+                </span>
+                {i.preco != null && i.moeda && <b className="ps-item-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</b>}
+                <ChevronRight size={16} aria-hidden="true" className="ps-seta" />
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
+
+// Chegada ou volta de alguém (lançada pela reserva), com o cartão completo como no app
+function Passagem({
+  trajeto: t,
+  destinos,
+  membros,
+  meuId,
+  podeMexer,
+  bilhete,
+  viagemId,
+  aoMudarBilhete,
+  aoMudar,
+  aoVerCaminho,
+}: {
+  trajeto: Trajeto
+  destinos: Destino[]
+  membros: Membro[]
+  meuId: string
+  podeMexer: boolean
+  bilhete: Parameters<typeof BilheteDoTrajeto>[0]['bilhete']
+  viagemId: string
+  aoMudarBilhete: () => void
+  aoMudar: () => Promise<void> | void
+  aoVerCaminho: () => void
+}) {
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
+  const { icone: Icone, nome } = meio(t.meio)
+  const nomeDe = (id: string | null) => destinos.find((d) => d.id === id)?.nome ?? null
+  const nomeDo = (id: string | null) => membros.find((m) => m.id === id)?.nome ?? null
+  const primeiro = (n: string | null) => (n ?? '').split(' ')[0]
+  const origem = t.estacao_partida ?? nomeDe(t.origem_id) ?? 'De fora'
+  const destino = t.estacao_chegada ?? nomeDe(t.destino_id) ?? 'Pra casa'
+  const ehChegada = t.tipo === 'chegada'
+  const euBusco = t.quem_busca_id === meuId
+  const quemBusca = nomeDo(t.quem_busca_id)
+  const gente = t.passageiros.map((id) => primeiro(nomeDo(id))).filter(Boolean)
+  const detalhe = [t.partida ? textoDoDia(diaNoFuso(t.partida)) : null, t.observacao, t.situacao !== 'sugestao' ? nomeDaSituacao(t.situacao) : null].filter(Boolean).join(' · ')
+  const hora = (iso: string | null) => (iso ? new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—')
+
+  async function buscar() {
+    setOcupado(true)
+    setErro(null)
+    try {
+      await vouBuscar(t.id, !euBusco)
+      await aoMudar()
+    } catch {
+      setErro('Não deu. Confira a internet e tente de novo.')
+    } finally {
+      setOcupado(false)
+    }
+  }
+
+  async function apagar() {
+    if (!window.confirm('Apagar este transporte? Some pra todo mundo do comboio.')) return
+    try {
+      await apagarTrajeto(t.id)
+      await aoMudar()
+    } catch {
+      setErro('Não deu pra apagar. Só quem lançou ou o ADM apaga.')
+    }
+  }
+
+  return (
+    <article className="ps-passagem">
+      <div className="ps-passagem-topo">
+        <span className="ps-icone">
+          <Icone size={19} aria-hidden="true" />
+        </span>
+        <span className="ps-texto">
+          <b>
+            {nome}
+            {t.bate_e_volta ? ' · bate e volta' : ''}
+          </b>
+          {detalhe && <small>{detalhe}</small>}
+        </span>
+        {podeMexer && (
+          <button type="button" className="ps-editar" onClick={() => void apagar()} aria-label="Apagar transporte" title="Apagar transporte">
+            <Trash2 size={16} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+      <div className="ps-trecho">
+        <div>
+          <strong>{origem}</strong>
+          <small>{hora(t.partida)}</small>
+        </div>
+        <span className="ps-tracinho" aria-hidden="true">
+          <i />
+          <Icone size={16} />
+          <i />
+        </span>
+        <div className="fim">
+          <strong>{destino}</strong>
+          <small>{hora(t.chegada)}</small>
+        </div>
+      </div>
+      {gente.length > 0 && <small className="ps-suave">Vão: {gente.join(', ')}</small>}
+      {meioComMotorista(t.meio) && (t.motorista_id || t.lugares_livres != null) && (
+        <small className="ps-suave">
+          {[t.motorista_id ? `Dirige: ${primeiro(nomeDo(t.motorista_id))}` : null, t.lugares_livres != null ? `${t.lugares_livres} ${t.lugares_livres === 1 ? 'lugar sobrando' : 'lugares sobrando'}` : null]
+            .filter(Boolean)
+            .join(' · ')}
+        </small>
+      )}
+      {ehChegada && quemBusca && !euBusco && <small className="ps-verde">{primeiro(quemBusca)} vai buscar</small>}
+      <div className="ps-acoes">
+        <BilheteDoTrajeto viagemId={viagemId} trajetoId={t.id} bilhete={bilhete} aoMudar={aoMudarBilhete} />
+        {t.estacao_partida && <BotaoIr alvo={{ nome: t.estacao_partida, cidade: nomeDe(t.origem_id) }} rotulo="Como chegar na estação" />}
+        {meioComCaminho(t.meio) && (
+          <button type="button" className="ps-chip" onClick={aoVerCaminho}>
+            <Route size={15} aria-hidden="true" /> Ver o caminho
+          </button>
+        )}
+        {ehChegada && t.criado_por !== meuId && !t.passageiros.includes(meuId) && (
+          <button type="button" className={euBusco ? 'ps-chip verde' : 'ps-chip'} onClick={() => void buscar()} disabled={ocupado}>
+            {euBusco ? 'Você vai buscar' : 'Eu busco'}
+          </button>
+        )}
+      </div>
+      {erro && <p className="form-erro" role="alert">{erro}</p>}
+    </article>
   )
 }

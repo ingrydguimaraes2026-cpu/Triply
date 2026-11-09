@@ -24,7 +24,7 @@
 | 2 | **Tela da viagem** | `Overview.tsx` vira a aba Viagem do app (`apps/mobile/app/viagem/[id]/(abas)/index.tsx` + `src/ui/viagem/Secoes.tsx`): capa, rostos, próximo carimbo, passaporte do comboio, carrossel dos dias, passagens, contas. Sai a grade de 11 botões | **Feito (09/11)** |
 | 3 | **Hospedagem por noite** | `Hospedagem.tsx` segue a spec 123 (`docs/specs/123-hospedagem-por-noite.md`): `noitesDaViagem` e `fatosDaOpcao` já estão no core. Modelo: `apps/mobile/app/hospedagem.tsx`, `cidade-hospedagem.tsx`, `opcao-hospedagem.tsx` | Feita (09/11), ver abaixo |
 | 4 | **Contas** | `Financeiro.tsx` no estilo da aba Contas do app: saldo grande, lista e lançamento rápido. O orçamento e a carteira vão pra uma linha ou um painel lateral, não 8 cartões | Pronta (09/11) |
-| 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções, votos e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | A fazer |
+| 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | **Feito (09/11)** |
 | 6 | Roteiro do dia e Agenda | Juntar Agenda no Roteiro como no app (dia a dia com mapa ilustrado) | A fazer |
 
 ## Auditoria com prints (09/11/2026, noite)
@@ -56,7 +56,7 @@ Consertado já: Comboio dizia "pode pôr de volta" (regra de texto) → "pode re
 - Buscar e Emergência saíram da barra e do menu do computador: viraram itens em "Tudo da viagem" (abrem na gaveta, como antes). Nada foi apagado.
 - Peças novas em `components/ui`: `TituloDaTela` (título grande + no máximo uma linha pequena + botão; `voltar` só no celular) e `TelaVazia` (Norti + frase + botão). Aplicadas em Fotos, Comboio, Hoje, Lugares, Agenda, Cidades, Tudo da viagem, Configurações, Retrospectiva, Reservas (título "Reservas" em cima das pílulas, como no app) e Hospedagem (`naAba`: sem título duplicado dentro de Reservas). As telas de "Tudo" têm o voltar pra `/tudo`.
 - Fotos igual ao app: "N fotos · N pessoas", botão "Postar" no cabeçalho, pílulas Feed | Por dia, Norti dormindo no vazio. "Por dia" tem o filtro por pessoa do app e o "Baixar fotos". Saíram a barra "Compartilhe uma foto", a Grade, os Melhores (spec 098) e o filtro "Fotos em que estou" (spec 100), porque o app não tem.
-- **Falta:** `Transportes.tsx` (outra sessão) ainda usa o `CabecalhoPagina` antigo e mostra o título "Passagens" embaixo das pílulas. Quem mexer nela: trocar por `TituloDaTela`/`TelaVazia` e aceitar `naAba` (igual à `Hospedagem`), e passar `<Transportes naAba />` no `Reservas.tsx`. O Contas (`Financeiro.tsx`) também ainda usa o `CabecalhoPagina` com "Eurotrip".
+- **Falta:** o Contas (`Financeiro.tsx`) também ainda usa o `CabecalhoPagina` com "Eurotrip".
 - Conferido no navegador em 375 px e 1366 px (Fotos, Viagem, Reservas, Tudo, Comboio, Lugares, Agenda). O app (preview "mobile") não foi aberto lado a lado: comparei com o código das telas do app.
 
 **Ordem sugerida:** casca primeiro (muda a sensação de todas as telas), depois Roteiro, Passagens, Fotos, Início, e por fim Hoje, Lugares, Comboio, Configurações e Perfil.
@@ -105,3 +105,15 @@ Etapas 1 e 2 prontas (09/11/2026), commit local na `monorepo-split`, sem push.
 - Novos: `features/carimbos/RoleHoje.tsx` (Rolê hoje no site: tipo, "Usar onde estou" pelo navegador ou busca) e `features/viagens/resumoDoInicio.ts` (carimbos + atividades, igual ao app).
 - Conferido logado na 5173 (medidas pela página, sem print: janela do Claude escondida): 375px sem rolagem pro lado, mapa em cima, cartão 400px, barra em 3/6; 1366px coluna de 680px + mapa de 400px à direita. Mesmos dados do app (Paulo, 204 dias, 3 de 6 carimbos).
 
+
+## Etapa 5 feita: Passagens (09/11/2026)
+
+- `pages/viagem/Transportes.tsx` refeita igual ao app (`transportes.tsx`, `novo-deslocamento.tsx`, `comparar.tsx`, `caminho.tsx`). Saíram "Entre cidades", "Falta definir", Rome2Rio, "Meu itinerário", rodízio e "Lançar como gasto" (o app não tem).
+- Celular: a lista OU o painel aberto (`?passagem=novo | opcoes:<grupo> | caminho:<id> | <id>`). Computador: lista à esquerda, painel à direita (mesmo esquema da Hospedagem).
+- Peças novas em `features/transportes/`: `FormDeslocamento` (de/para/dia, jeitos de ir sozinhos, "Já comprei", "Mais detalhes", guardar como opção), `CompararOpcoes` (folga, selos, "Ficar com esta") e `CaminhoDoTrajeto` (paradas + mapinha, link do Google Maps quando não tem dado).
+- Lógica nova no core: `packages/core/src/opcoes-do-deslocamento.ts` (`compararOpcoes`, `folgaDaOpcao`, `livreNoDia`, `escolherOpcaoDoDeslocamento`). O app (`comparar.tsx`, `novo-deslocamento.tsx`) passou a usar ela. Teste: `apps/web/tests/opcoes-do-deslocamento.test.mjs`.
+- `naAba` dentro de Reservas (sem título duplicado); pílula renomeada pra "Transporte", igual ao app.
+- "Votos" nas opções de deslocamento: o app não tem (só a Hospedagem tem), então o site também não.
+- Conferido lado a lado com o app (porta 8089) em 375 px e no computador em 1366 px: Eurotrip (vazia, Norti dormindo) e "Galeão, Paris e mais 5" (1 deslocamento, aberto). Comparar não foi visto na tela: nenhuma viagem tem opções e não gravei dado de teste.
+- Ficaram sem uso: `features/transportes/FormTrajeto.tsx` e `rota.ts` (podem ser apagados depois).
+- `npm test`: 547 de 550. Falhas antigas: `078` (o teste espera que membro não grave trajeto nenhum, mas a spec 122 deixou o membro gravar sugestão: o teste precisa inserir com `situacao = 'decidido'`), emoji (arquivos de outras telas) e o zip do Windows.

@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Check, Pencil, Plus } from '../src/ui/icones'
-import { buscarTrajetos, diaNoFuso, duracaoCurta, FOLGA_MINIMA, horaNoFuso, nomeDoMeio, type Tables } from '@together/core'
+import { buscarTrajetos, compararOpcoes, diaNoFuso, duracaoCurta, escolherOpcaoDoDeslocamento, horaNoFuso, nomeDoMeio, type Tables } from '@together/core'
 import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { diaLongo, lerData } from '../src/lib/formato'
@@ -24,16 +24,6 @@ async function carregar(viagemId: string, grupo: string) {
   const opcoes = todos.filter((t) => t.grupo_opcoes === grupo).sort((a, b) => (a.partida ?? '9').localeCompare(b.partida ?? '9'))
   const { data: v } = await supabase.from('viagens').select('membro_edita_transportes').eq('id', viagemId).maybeSingle()
   return { todos, opcoes, membroEdita: !!v?.membro_edita_transportes }
-}
-
-// Folga de cada opção: do deslocamento anterior no mesmo dia (fora do grupo) até a saída da opção
-function folgaDa(opcao: Trajeto, todos: Trajeto[]): { minutos: number; de: string } | null {
-  if (!opcao.partida) return null
-  const dia = diaNoFuso(opcao.partida)
-  const anteriores = todos.filter((t) => t.grupo_opcoes !== opcao.grupo_opcoes && t.chegada && t.partida && diaNoFuso(t.partida) === dia && t.chegada <= opcao.partida!)
-  const anterior = anteriores.sort((a, b) => b.chegada!.localeCompare(a.chegada!))[0]
-  if (!anterior) return null
-  return { minutos: Math.round((new Date(opcao.partida).getTime() - new Date(anterior.chegada!).getTime()) / 60000), de: anterior.de_texto ?? '' }
 }
 
 export default function Comparar() {
@@ -76,26 +66,22 @@ function Tela({ todos, opcoes, grupo, aoMudar, membroEdita }: { todos: Trajeto[]
 
   const base = opcoes[0]
   const dia = base.partida ? diaNoFuso(base.partida) : null
-  const folgas = opcoes.map((o) => folgaDa(o, todos))
-  const duracoes = opcoes.map((o) => (o.partida && o.chegada ? Math.round((new Date(o.chegada).getTime() - new Date(o.partida).getTime()) / 60000) : null))
-  // Selos: só quando dá pra comparar (2 ou mais com o dado)
-  const melhor = (valores: (number | null)[], maior: boolean) => {
-    const com = valores.map((v, i) => ({ v, i })).filter((x) => x.v != null) as { v: number; i: number }[]
-    if (com.length < 2) return -1
-    return com.sort((a, b) => (maior ? b.v - a.v : a.v - b.v))[0].i
-  }
-  const maisFolga = melhor(folgas.map((f) => f?.minutos ?? null), true)
-  const maisBarato = melhor(opcoes.map((o) => (o.preco != null ? Number(o.preco) : null)), false)
-  const maisRapido = melhor(duracoes, false)
-  const escolhida = opcoes.length > 1 && opcoes.some((o) => o.escolhida) && opcoes.some((o) => !o.escolhida) ? opcoes.find((o) => o.escolhida) : undefined
+  // Folga, duração, selos e a escolhida: lógica no @together/core (o site usa a mesma)
+  const linhas = compararOpcoes(opcoes, todos)
+  const folgas = linhas.map((l) => l.folga)
+  const duracoes = linhas.map((l) => l.duracao)
+  const escolhida = linhas.find((l) => l.escolhida)?.opcao
 
   async function escolher(o: Trajeto) {
     setSalvando(o.id)
     setErro(null)
-    const a = await supabase.from('trajetos').update({ escolhida: false }).eq('grupo_opcoes', grupo)
-    const b = a.error ? a : await supabase.from('trajetos').update({ escolhida: true, situacao: o.situacao === 'sugestao' ? 'decidido' : o.situacao }).eq('id', o.id)
+    try {
+      await escolherOpcaoDoDeslocamento(supabase, grupo, o)
+    } catch (e) {
+      setSalvando(null)
+      return setErro((e as { code?: string }).code === '42501' ? 'Só o ADM escolhe (ou quem ele liberou).' : 'Não deu pra escolher. Tente de novo.')
+    }
     setSalvando(null)
-    if (b.error) return setErro(b.error.code === '42501' ? 'Só o ADM escolhe (ou quem ele liberou).' : 'Não deu pra escolher. Tente de novo.')
     aoMudar()
   }
 
@@ -117,9 +103,9 @@ function Tela({ todos, opcoes, grupo, aoMudar, membroEdita }: { todos: Trajeto[]
 
         {opcoes.map((o, i) => {
           const folga = folgas[i]
-          const curta = folga != null && folga.minutos < FOLGA_MINIMA
+          const curta = linhas[i].folgaCurta
           const eEscolhida = escolhida?.id === o.id
-          const selos = [i === maisFolga ? 'Mais folga' : null, i === maisRapido ? 'Mais rápido' : null, i === maisBarato ? 'Mais barato' : null].filter(Boolean) as string[]
+          const selos = linhas[i].selos
           return (
             <View key={o.id} className="gap-2.5 rounded-2xl bg-cartao p-3.5" style={{ borderWidth: eEscolhida ? 2 : 1.5, borderColor: eEscolhida ? cor.verde : cor.borda }}>
               {selos.length || eEscolhida ? (

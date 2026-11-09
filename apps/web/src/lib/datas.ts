@@ -33,3 +33,10 @@ export function diasAte(data: string) {
   hoje.setHours(0, 0, 0, 0)
   return Math.round((alvo.getTime() - hoje.getTime()) / 86_400_000)
 }
+
+// "Terça, 1 de jun" (igual ao diaLongo do app)
+const DIAS_DA_SEMANA = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
+export function diaComSemana(data: string) {
+  const { ano, mes, dia } = partes(data)
+  return `${DIAS_DA_SEMANA[new Date(ano, mes - 1, dia).getDay()]}, ${dia} de ${MESES[mes - 1]}`
+}

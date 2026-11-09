@@ -14,6 +14,7 @@ import {
   duracaoCurta,
   frequenciaEstimada,
   horaNoFuso,
+  livreNoDia,
   MEIOS_DE_TRANSPORTE,
   naoDaTempo,
   type Destino,
@@ -150,11 +151,7 @@ function Formulario({
   const [semJeito, setSemJeito] = useState<string | null>(null)
   const buscaAtual = useRef(0) // só a última busca vale (digitou de novo no meio de uma busca)
   // A que horas o grupo fica livre: a última chegada de outro deslocamento nesse dia
-  const livre = useMemo(() => {
-    const doDia = trajetos.filter((t) => t.id !== trajeto?.id && t.chegada && t.partida && diaNoFuso(t.partida) === dia && t.grupo_opcoes !== grupoAtual)
-    const ultimo = doDia.sort((a, b) => b.chegada!.localeCompare(a.chegada!))[0]
-    return ultimo ? { quando: ultimo.chegada!, de: ultimo.de_texto ?? '' } : null
-  }, [trajetos, trajeto?.id, dia, grupoAtual])
+  const livre = useMemo(() => livreNoDia(trajetos, dia, trajeto?.id ?? null, grupoAtual), [trajetos, trajeto?.id, dia, grupoAtual])
   // Ponto de referência pra achar lugar digitado: o destino do dia (ou o primeiro com coordenada)
   const referencia = useMemo(() => {
     const d = destinos.find((x) => x.chegada && x.chegada <= dia && (x.saida ?? x.chegada) >= dia && x.latitude != null) ?? destinos.find((x) => x.latitude != null)
