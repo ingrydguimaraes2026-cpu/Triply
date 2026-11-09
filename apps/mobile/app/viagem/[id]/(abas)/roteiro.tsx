@@ -78,7 +78,13 @@ function AbaMatches({ viagem, aoDia }: { viagem: ViagemComDetalhes; aoDia: (i: n
   return (
     <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
       <StatusBar style="dark" />
-      <Text className="px-5 font-display text-[32px] leading-[36px] text-texto">Roteiro</Text>
+      <View className="flex-row items-center justify-between px-5">
+        <Text className="font-display text-[32px] leading-[36px] text-texto">Roteiro</Text>
+        <Pressable onPress={() => router.push('/cidades' as Href)} accessibilityRole="button" className="flex-row items-center gap-1.5 rounded-full border border-borda bg-cartao px-3.5 py-2 active:opacity-80">
+          <MapPin size={15} color={cor.couro} />
+          <Text className="font-body-bold text-[13px] text-couro">Cidades</Text>
+        </Pressable>
+      </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingVertical: 12 }} style={{ flexGrow: 0 }}>
         <View className="h-10 flex-row items-center gap-1.5 rounded-full bg-couro px-4">
           <Text className="font-body-bold text-[14px] text-white">Matches</Text>

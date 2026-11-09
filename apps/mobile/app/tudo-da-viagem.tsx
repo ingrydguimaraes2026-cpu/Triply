@@ -2,7 +2,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../src/ui/StatusBar'
-import { ArrowLeft, BedDouble, Car, ChevronRight, Compass, FileCheck, FileText, Lock, Mail, Map, MapPin, ReceiptText, Settings, Sparkles, Sun, Users } from '../src/ui/icones'
+import { ArrowLeft, BedDouble, Car, ChevronRight, Compass, FileCheck, FileText, Lock, Mail, Map, MapPin, ReceiptText, Route, Settings, Sparkles, Sun, Users } from '../src/ui/icones'
 import { CONGELADO } from '@together/core'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Avisos } from '../src/ui/Avisos'
@@ -31,6 +31,7 @@ export default function TudoDaViagem() {
     { Icone: Compass, t: 'Explorar', s: 'Deslize e monte o roteiro', rota: '/explorar' },
     { Icone: Sun, t: 'Hoje', s: 'Agora e próximo', rota: '/hoje' },
     { Icone: MapPin, t: 'Lugares', s: 'Ideias salvas', rota: '/lugares' },
+    { Icone: Route, t: 'Cidades do roteiro', s: 'Datas e tirar cidade', rota: '/cidades' },
     { Icone: BedDouble, t: 'Hospedagem', s: 'Onde dormir cada noite', rota: '/hospedagem' },
     { Icone: Car, t: 'Passagens', s: 'O que falta decidir e comprar', rota: '/transportes' },
     { Icone: Users, t: 'Comboio', s: 'Quem vai e papéis', rota: '/comboio' },
