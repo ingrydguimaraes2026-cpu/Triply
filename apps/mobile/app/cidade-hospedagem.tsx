@@ -264,7 +264,13 @@ function CartaoDaOpcao({
         {f.minutos !== null ? (
           <Fato nivel={f.minutos <= 15 ? 'ok' : 'neutro'} Icone={Footprints}>{`${textoAPe(f.minutos)} de ${ondeChega}`}</Fato>
         ) : (
-          <Fato nivel="neutro" Icone={Footprints}>{o.guia?.endereco ? 'Endereço não achado no mapa' : 'Ponha o endereço pra ver a distância'}</Fato>
+          <Fato nivel="neutro" Icone={Footprints}>
+            {!o.guia?.endereco
+              ? 'Ponha o endereço pra ver a distância'
+              : o.lat == null
+                ? 'Endereço não achado no mapa'
+                : 'Ponha no roteiro como vocês chegam pra ver a distância'}
+          </Fato>
         )}
         {f.checkin ? (
           <Fato nivel={f.checkin.nivel} Icone={f.checkin.nivel === 'ruim' ? AlertTriangle : KeyRound}>
@@ -334,9 +340,11 @@ function Comparar({ cidade, pessoas, euSouAdm, aoEscolher }: { cidade: CidadeDaN
     const alvo = maior ? Math.max(...validos) : Math.min(...validos)
     return valores.filter((v) => v === alvo).length === 1 ? valores.indexOf(alvo) : -1
   }
+  // Preço só tem "melhor" quando todas estão na mesma moeda (€150 não é mais barato que R$424)
+  const mesmaMoeda = new Set(lista.map((o) => o.moeda)).size === 1
   const linhas: { rotulo: string; valores: string[]; melhor: number; ruins?: boolean[] }[] = [
-    { rotulo: 'Por pessoa', valores: fatos.map((f, i) => (f.porPessoa !== null ? formatarDinheiro(f.porPessoa, lista[i].moeda) : '?')), melhor: melhor(fatos.map((f) => f.porPessoa)) },
-    { rotulo: 'Total', valores: lista.map((o) => (o.precoTotal !== null ? formatarDinheiro(o.precoTotal, o.moeda) : '?')), melhor: melhor(lista.map((o) => o.precoTotal)) },
+    { rotulo: 'Por pessoa', valores: fatos.map((f, i) => (f.porPessoa !== null ? formatarDinheiro(f.porPessoa, lista[i].moeda) : '?')), melhor: mesmaMoeda ? melhor(fatos.map((f) => f.porPessoa)) : -1 },
+    { rotulo: 'Total', valores: lista.map((o) => (o.precoTotal !== null ? formatarDinheiro(o.precoTotal, o.moeda) : '?')), melhor: mesmaMoeda ? melhor(lista.map((o) => o.precoTotal)) : -1 },
     { rotulo: `De ${cidade.chegada?.lugar ?? 'onde chegam'}`, valores: fatos.map((f) => (f.minutos !== null ? textoAPe(f.minutos) : '?')), melhor: melhor(fatos.map((f) => f.minutos)) },
     {
       rotulo: 'Check-in',
