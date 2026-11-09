@@ -384,11 +384,6 @@
   }
 }
 
-/* No Contas a barra de baixo já lança: o botão flutuante "+" ficaria em cima dela */
-body:has(.contas-barra) .botao-flutuante {
-  display: none;
-}
-
 /* Meu saldo: cartão couro com o número grande, como o do app */
 .meu-saldo {
   grid-area: saldo;

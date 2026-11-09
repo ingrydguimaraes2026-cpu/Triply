@@ -17,7 +17,7 @@ import { useAbaAtiva, useViagemAtual } from '../../features/viagens/hooks'
 import { editarViagem } from '../../features/viagens/api'
 import { formatarData, formatarPeriodo } from '../../lib/datas'
 import Cartao from '../../components/ui/Cartao'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import './abas.css'
 import './viagem-tela.css'
 
@@ -157,7 +157,7 @@ export default function Cidades() {
 
   return (
     <div className="overview cidades">
-      <CabecalhoPagina acima={viagem.nome} titulo="Cidades" subtitulo="A ordem das cidades e quantas noites em cada uma." />
+      <TituloDaTela titulo="Cidades" voltar="../tudo" acima={destinos.length > 0 ? `${destinos.length} ${destinos.length === 1 ? 'cidade' : 'cidades'}` : undefined} />
       {/* Spec 046: viagem ainda sem destino ("sonhando") */}
       {destinos.length === 0 && (
         <section className="faixa-sonhando" aria-label="Modo sonhando">

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router'
 import { AbaAtivaContexto, useAbaAtiva } from '../../features/viagens/hooks'
 import Transportes from './Transportes'
 import Hospedagem from './Hospedagem'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import './viagem-tela.css'
 
 // Reservas (igual à aba do app, apps/mobile/app/viagem/[id]/(abas)/reservas.tsx):
@@ -35,6 +36,7 @@ export default function Reservas() {
 
   return (
     <div className="reservas">
+      <TituloDaTela titulo="Reservas" />
       <div className="reservas-pilulas" role="tablist" aria-label="Reservas">
         {PARTES.map((p) => (
           <button key={p.chave} type="button" role="tab" aria-selected={parte === p.chave} className={parte === p.chave ? 'ativa' : undefined} onClick={() => trocar(p.chave)}>
@@ -44,7 +46,7 @@ export default function Reservas() {
       </div>
       {PARTES.filter((p) => abertas.includes(p.chave)).map((p) => (
         <AbaAtivaContexto.Provider key={p.chave} value={ativa && parte === p.chave}>
-          <div className="reservas-parte" hidden={parte !== p.chave}>{p.chave === 'transporte' ? <Transportes /> : <Hospedagem />}</div>
+          <div className="reservas-parte" hidden={parte !== p.chave}>{p.chave === 'transporte' ? <Transportes naAba /> : <Hospedagem naAba />}</div>
         </AbaAtivaContexto.Provider>
       ))}
     </div>

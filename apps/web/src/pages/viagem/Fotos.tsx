@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { BellRing, CalendarDays, Camera, Heart, ImagePlus, Layers, LayoutGrid, LayoutList, MessageCircle, Plus, Star } from '../../components/ui/icones'
-import { albumPorDia, melhoresPosts } from '@together/core'
+import { BellRing, Heart, Layers, MessageCircle, Plus } from '../../components/ui/icones'
+import { albumPorDia } from '@together/core'
 import { diaPorExtenso } from '../../features/agenda/hooks'
 import BaixarFotos from '../../features/feed/BaixarFotos'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -13,7 +13,8 @@ import PostCard from '../../features/feed/PostCard'
 import Comentarios from '../../features/feed/Comentarios'
 import { ligarAvisos, situacaoDoAviso } from '../../features/cambio/avisos'
 import Avatar from '../../components/ui/Avatar'
-import EstadoVazio from '../../components/ui/EstadoVazio'
+import TelaVazia from '../../components/ui/TelaVazia'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -21,14 +22,16 @@ import './fotos.css'
 
 const CHAVE_SEM_AVISO = 'together:feed-sem-aviso'
 
-// Fotos (spec 014): o feed do comboio, estilo Instagram. Só quem viaja junto vê.
+// Fotos (spec 014), igual à aba do app (apps/mobile/app/viagem/[id]/(abas)/fotos.tsx):
+// "N fotos · N pessoas", o botão "Postar", 2 pílulas (Feed | Por dia) e a Norti quando está vazio.
+// "Por dia" tem o filtro por pessoa, como no app. Só quem viaja junto vê.
 export default function Fotos() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado, recarregar, mudarPost, tirarPost } = usePosts(viagem.id)
   const [busca] = useSearchParams()
-  const [modo, setModo] = useState<'feed' | 'grade' | 'dias' | 'melhores'>('feed')
+  const [modo, setModo] = useState<'feed' | 'dias'>('feed')
   const [postando, setPostando] = useState(false)
-  const [soComigo, setSoComigo] = useState(false) // spec 100
+  const [pessoa, setPessoa] = useState<string | null>(null) // Por dia: só as fotos de quem postou
   const [comentariosDe, setComentariosDe] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [pedirAviso, setPedirAviso] = useState(false)
@@ -143,8 +146,10 @@ export default function Fotos() {
 
   const eu = membros.find((m) => m.id === meuId)
   const totalDeFotos = posts.reduce((soma, p) => soma + p.fotos.length, 0)
+  const quemPostou = new Set(posts.map((p) => p.autor)).size
+  const doDia = pessoa ? posts.filter((p) => p.autor === pessoa) : posts
 
-  // Grade de fotos (usada na Grade, no Por dia e nos Melhores)
+  // Grade de fotos (usada no Por dia)
   const grade = (lista: typeof posts) => (
     <ul className="grade">
       {lista.map((p) => (
@@ -165,29 +170,18 @@ export default function Fotos() {
       ))}
     </ul>
   )
-  const melhores = melhoresPosts(posts) // spec 098
-  const comigo = posts.filter((p) => p.marcados.includes(meuId)) // spec 100
 
   return (
     <div className="feed-pagina">
-      <header className="feed-cabecalho">
-        <p className="feed-acima">{viagem.nome}</p>
-        <h1>Fotos</h1>
-        <p>
-          {estado.status === 'pronto' && posts.length > 0
-            ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} · ${totalDeFotos} ${totalDeFotos === 1 ? 'foto' : 'fotos'} · só o comboio vê`
-            : 'O feed da viagem. Só quem viaja junto vê.'}
-        </p>
-        {/* Spec 099: baixar tudo em .zip */}
-        {estado.status === 'pronto' && <BaixarFotos nomeDaViagem={viagem.nome} posts={posts} destinos={destinos} />}
-      </header>
-
-      {/* Barra de postar, como no Instagram/Facebook */}
-      <button type="button" className="feed-compor" onClick={() => setPostando(true)}>
-        <Avatar nome={eu?.nome ?? 'Você'} url={eu?.avatarUrl ?? null} tamanho={38} />
-        <span>Compartilhe uma foto da viagem…</span>
-        <ImagePlus size={22} aria-hidden="true" />
-      </button>
+      <TituloDaTela
+        titulo="Fotos"
+        acima={`${totalDeFotos} ${totalDeFotos === 1 ? 'foto' : 'fotos'} · ${quemPostou} ${quemPostou === 1 ? 'pessoa' : 'pessoas'}`}
+        acao={
+          <button type="button" className="botao compacto" onClick={() => setPostando(true)}>
+            <Plus size={17} aria-hidden="true" /> Postar
+          </button>
+        }
+      />
 
       {pedirAviso && (
         <div className="feed-aviso">
@@ -204,21 +198,12 @@ export default function Fotos() {
         </div>
       )}
 
-      {/* Abas Feed / Grade, como no perfil do Instagram */}
-      <div className="feed-abas" role="tablist" aria-label="Jeito de ver">
-        <button type="button" role="tab" aria-selected={modo === 'feed'} className={modo === 'feed' ? 'ativo' : undefined} onClick={() => setModo('feed')}>
-          <LayoutList size={18} aria-hidden="true" /> Feed
-        </button>
-        <button type="button" role="tab" aria-selected={modo === 'grade'} className={modo === 'grade' ? 'ativo' : undefined} onClick={() => setModo('grade')}>
-          <LayoutGrid size={18} aria-hidden="true" /> Grade
-        </button>
-        {/* Spec 098: álbum por dia e melhores */}
-        <button type="button" role="tab" aria-selected={modo === 'dias'} className={modo === 'dias' ? 'ativo' : undefined} onClick={() => setModo('dias')}>
-          <CalendarDays size={18} aria-hidden="true" /> Por dia
-        </button>
-        <button type="button" role="tab" aria-selected={modo === 'melhores'} className={modo === 'melhores' ? 'ativo' : undefined} onClick={() => setModo('melhores')}>
-          <Star size={18} aria-hidden="true" /> Melhores
-        </button>
+      <div className="fotos-pilulas" role="tablist" aria-label="Jeito de ver">
+        {(['feed', 'dias'] as const).map((m) => (
+          <button key={m} type="button" role="tab" aria-selected={modo === m} className={modo === m ? 'ativa' : undefined} onClick={() => setModo(m)}>
+            {m === 'feed' ? 'Feed' : 'Por dia'}
+          </button>
+        ))}
       </div>
 
       {erro && (
@@ -243,44 +228,40 @@ export default function Fotos() {
       {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar o feed" aoTentar={recarregar} />}
 
       {estado.status === 'pronto' &&
-        (posts.length === 0 ? (
-          <EstadoVazio
-            icone={Camera}
-            titulo="Nenhum post ainda"
-            texto="Poste as fotos da viagem. Todo o comboio vê, curte e comenta."
-            acao={
-              <button type="button" className="botao" onClick={() => setPostando(true)}>
-                <Plus size={18} aria-hidden="true" /> Primeiro post
-              </button>
-            }
-          />
-        ) : modo === 'grade' ? (
+        (modo === 'dias' ? (
           <>
-            {comigo.length > 0 && (
-              <button type="button" className={soComigo ? 'chip-filtro ativo' : 'chip-filtro'} aria-pressed={soComigo} onClick={() => setSoComigo(!soComigo)}>
-                Fotos em que estou ({comigo.length})
+            {/* Filtro por pessoa, como no app */}
+            <div className="fotos-pessoas" aria-label="Fotos de quem">
+              <button type="button" className={pessoa ? undefined : 'ativa'} aria-pressed={!pessoa} onClick={() => setPessoa(null)}>
+                Todos
               </button>
+              {membros.map((m) => (
+                <button key={m.id} type="button" className={pessoa === m.id ? 'ativa' : undefined} aria-pressed={pessoa === m.id} onClick={() => setPessoa(pessoa === m.id ? null : m.id)}>
+                  <Avatar nome={m.nome} url={m.avatarUrl} tamanho={26} />
+                  {m.id === meuId ? 'Você' : m.nome.split(' ')[0]}
+                </button>
+              ))}
+            </div>
+            {doDia.length === 0 ? (
+              <TelaVazia titulo="Nenhuma foto ainda" texto="As fotos que o comboio postar no feed aparecem aqui, separadas por dia." />
+            ) : (
+              <div className="album-dias">
+                {albumPorDia(doDia, destinos).map((g) => (
+                  <section key={g.dia}>
+                    <h2 className="album-dia">
+                      {diaPorExtenso(g.dia)}
+                      {g.destino && <small> · {g.destino}</small>}
+                    </h2>
+                    {grade(g.posts)}
+                  </section>
+                ))}
+              </div>
             )}
-            {grade(soComigo ? comigo : posts)}
+            {/* Spec 099: baixar tudo em .zip */}
+            <BaixarFotos nomeDaViagem={viagem.nome} posts={posts} destinos={destinos} />
           </>
-        ) : modo === 'dias' ? (
-          <div className="album-dias">
-            {albumPorDia(posts, destinos).map((g) => (
-              <section key={g.dia}>
-                <h2 className="album-dia">
-                  {diaPorExtenso(g.dia)}
-                  {g.destino && <small> · {g.destino}</small>}
-                </h2>
-                {grade(g.posts)}
-              </section>
-            ))}
-          </div>
-        ) : modo === 'melhores' ? (
-          melhores.length === 0 ? (
-            <p className="form-dica">Curta as fotos do feed: as mais curtidas aparecem aqui.</p>
-          ) : (
-            grade(melhores)
-          )
+        ) : posts.length === 0 ? (
+          <TelaVazia titulo="Nenhum post ainda" texto='Toque em "Postar" pra mandar as primeiras fotos pro comboio.' />
         ) : (
           <div className="feed">
             {posts.map((p) => (

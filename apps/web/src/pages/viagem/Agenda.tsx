@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, BedDouble, CalendarDays, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from '../../components/ui/icones'
+import { AlertTriangle, BedDouble, CalendarPlus, Clock, CloudSun, LogIn, LogOut, MapPin, Pencil, PartyPopper, Plus, Printer } from '../../components/ui/icones'
 import {
   CONGELADO,
   buscarClima,
@@ -25,8 +25,8 @@ import type { Destino } from '../../features/destinos/api'
 import DiarioDoDia from '../../features/diario/DiarioDoDia'
 import FormEvento from '../../features/agenda/FormEvento'
 import { baixarCalendario } from '../../features/agenda/calendario'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
-import EstadoVazio from '../../components/ui/EstadoVazio'
+import TituloDaTela from '../../components/ui/TituloDaTela'
+import TelaVazia from '../../components/ui/TelaVazia'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
 import './agenda.css'
@@ -104,11 +104,15 @@ export default function Agenda() {
   if (dias.length === 0) {
     return (
       <div className="agenda">
-        <CabecalhoPagina acima={viagem.nome} titulo="Agenda" subtitulo="O que acontece em cada dia, com horário." />
-        <EstadoVazio
-          icone={CalendarDays}
+        <TituloDaTela titulo="Agenda" voltar="../tudo" />
+        <TelaVazia
           titulo="Sem datas no roteiro"
-          texto="Coloque as datas da viagem (ou de cada destino) na Overview pra montar a agenda."
+          texto="Defina as datas das cidades pra montar a agenda."
+          acao={
+            <Link to="../cidades" relative="path" className="botao">
+              Definir datas
+            </Link>
+          }
         />
       </div>
     )
@@ -116,10 +120,9 @@ export default function Agenda() {
 
   return (
     <div className="agenda">
-      <CabecalhoPagina
-        acima={viagem.nome}
+      <TituloDaTela
         titulo="Agenda"
-        subtitulo="Trajetos e chegadas entram sozinhos. Acrescente o resto: jantar, passeio, reserva."
+        voltar="../tudo"
         acao={
           <span className="agenda-acoes">
             <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
@@ -187,7 +190,15 @@ export default function Agenda() {
 
           {erro && <p className="form-erro">Não deu pra carregar os eventos agora.</p>}
           {itens.length === 0 ? (
-            <EstadoVazio icone={CalendarPlus} titulo="Nada marcado nesse dia" texto="Adicione um evento ou um trajeto com horário." />
+            <TelaVazia
+              humor="parada"
+              titulo="Nada marcado nesse dia"
+              acao={
+                <button type="button" className="botao" onClick={() => setJanela({ tipo: 'novo' })}>
+                  <Plus size={16} aria-hidden="true" /> Evento
+                </button>
+              }
+            />
           ) : (
             <ol className="agenda-linha">
               {itens.map((item) => (

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
-import { MoreHorizontal } from '../../components/ui/icones'
+import { ArrowLeft, MoreHorizontal } from '../../components/ui/icones'
 import { estadoDosPassos, montarPassos, proximoCarimbo, resumoDasContas, viagemAcontecendo, type DadosDaAbaViagem, type DestinoDoPasso } from '@together/core'
 import { hojeTexto } from '../../features/destinos/datas'
 import { useAbaAtiva, useViagemAtual, type Membro } from '../../features/viagens/hooks'
@@ -74,7 +74,11 @@ export default function Overview() {
     <div className="vg">
       <section className="vg-capa">
         <img src={capa(viagem.id, 1600)} alt="" />
-        <Link to="tudo" className="vg-capa-mais" aria-label="Tudo da viagem" title="Tudo da viagem">
+        {/* Como no app: voltar (pras viagens) e "..." (Tudo da viagem) ficam em cima da capa */}
+        <Link to="/viagens" className="vg-capa-botao vg-capa-voltar" aria-label="Voltar pras viagens" title="Voltar">
+          <ArrowLeft size={20} aria-hidden="true" />
+        </Link>
+        <Link to="tudo" className="vg-capa-botao vg-capa-mais" aria-label="Tudo da viagem" title="Tudo da viagem">
           <MoreHorizontal size={20} aria-hidden="true" />
         </Link>
         <div className="vg-capa-texto">

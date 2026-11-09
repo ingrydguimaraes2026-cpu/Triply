@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, ArrowLeftRight, BedDouble, Check, ChevronRight, ExternalLink, Footprints, Heart, KeyRound, Luggage, Pencil, Plus, Repeat } from '../../components/ui/icones'
 import {
   detectarSite,
@@ -24,12 +24,12 @@ import { useViagemAtual } from '../../features/viagens/hooks'
 import { useNoitesDaViagem } from '../../features/hospedagem/hooks'
 import FormOpcaoCurta from '../../features/hospedagem/FormOpcaoCurta'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
+import TelaVazia from '../../components/ui/TelaVazia'
 import Carregando from '../../components/ui/Carregando'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import IconeQuadrado from '../../components/ui/IconeQuadrado'
-import Norti from '../../components/ui/Norti'
 import PilhaDeAvatares from '../../components/ui/PilhaDeAvatares'
 import RotuloDeSecao from '../../components/ui/RotuloDeSecao'
 import './abas.css'
@@ -45,7 +45,8 @@ const NOME_DA_RESERVA: Record<Reserva, string> = { nao: 'Escolhida', reservada: 
 
 type Janela = { destinoId: string; opcao?: Opcao } | null
 
-export default function Hospedagem() {
+// naAba: dentro de Reservas, o título já está em cima das pílulas (igual ao naAba do app)
+export default function Hospedagem({ naAba = false }: { naAba?: boolean }) {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const carga = useNoitesDaViagem(viagem.id)
   const [busca, setBusca] = useSearchParams()
@@ -54,7 +55,7 @@ export default function Hospedagem() {
   const [erro, setErro] = useState<string | null>(null)
 
   const pessoas = Math.max(1, membros.length)
-  const cabecalho = <CabecalhoPagina acima={viagem.nome} titulo="Hospedagem" subtitulo="Onde o grupo dorme cada noite, o que falta reservar e quanto custa." />
+  const cabecalho = naAba ? null : <TituloDaTela titulo="Hospedagem" />
 
   if (carga.estado.status === 'carregando') {
     return (
@@ -148,11 +149,15 @@ export default function Hospedagem() {
       {cabecalho}
 
       {n.cidades.length === 0 ? (
-        <div className="hn-vazio">
-          <Norti humor="dormindo" tamanho={110} />
-          <h2>Nenhuma noite ainda</h2>
-          <p>Adicione os destinos e as datas no roteiro pra ver as noites.</p>
-        </div>
+        <TelaVazia
+          titulo="Nenhuma noite ainda"
+          texto="Adicione as cidades e as datas pra ver as noites."
+          acao={
+            <Link to="../cidades" relative="path" className="botao">
+              Ver cidades
+            </Link>
+          }
+        />
       ) : (
         <div className={aberta ? 'hn com-cidade' : 'hn'}>
           <section className="hn-lista" aria-label="Noites da viagem">

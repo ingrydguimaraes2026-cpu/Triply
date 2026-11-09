@@ -13,7 +13,8 @@ import { useFocoDeItem } from '../../lib/foco'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
+import TelaVazia from '../../components/ui/TelaVazia'
 import Carregando from '../../components/ui/Carregando'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
@@ -261,25 +262,21 @@ export default function Lugares() {
 
   return (
     <>
-      <CabecalhoPagina
-        acima={viagem.nome}
+      <TituloDaTela
         titulo="Lugares"
-        subtitulo="Passeios, comida e guarda-volumes de cada destino, pro comboio inteiro ver."
+        voltar="../tudo"
+        acima={
+          l.total > 0
+            ? `${l.total} ${l.total === 1 ? 'lugar' : 'lugares'}${l.lugares.some((x) => x.visitadoEm) ? ` · ${l.lugares.filter((x) => x.visitadoEm).length} visitados` : ''}`
+            : undefined
+        }
         acao={
-          <div className="hosp-resumo" aria-label="Resumo dos lugares">
-            {l.total > 0 && (
-              <span>
-                <strong>{l.total}</strong> {l.total === 1 ? 'lugar anotado' : 'lugares anotados'}
-                {l.lugares.some((x) => x.visitadoEm) && ` · ${l.lugares.filter((x) => x.visitadoEm).length} visitados`}
-              </span>
-            )}
-            {l.total > 0 && <PertoDeMim lugares={l.lugares} destinos={destinos} />}
-            <button type="button" className="botao-texto" onClick={() => setImportando(true)}>
-              <Upload size={14} aria-hidden="true" /> Importar do Google Maps
-            </button>
-          </div>
+          <button type="button" className="botao secundario compacto" onClick={() => setImportando(true)} title="Importar do Google Maps">
+            <Upload size={16} aria-hidden="true" /> Importar
+          </button>
         }
       />
+      {l.total > 0 && <PertoDeMim lugares={l.lugares} destinos={destinos} />}
 
       {avisoPrioridade && (
         <p className="form-erro" role="alert" onClick={() => setAvisoPrioridade(null)}>
@@ -292,7 +289,15 @@ export default function Lugares() {
       )}
 
       {!item ? (
-        <p className="hosp-vazio">Adicione destinos no roteiro (na Overview) pra começar a anotar lugares.</p>
+        <TelaVazia
+          titulo="Nenhuma cidade ainda"
+          texto="Adicione as cidades da viagem pra começar a anotar lugares."
+          acao={
+            <Link to="../cidades" relative="path" className="botao">
+              Ver cidades
+            </Link>
+          }
+        />
       ) : (
         <>
           <nav className="hosp-seletor" aria-label="Escolha o destino">

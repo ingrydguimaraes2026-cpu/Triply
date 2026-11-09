@@ -24,7 +24,7 @@ import { codigoDoPais, nomeDoPais } from '../../features/documentos/paises'
 import { hojeTexto } from '../../features/destinos/datas'
 import { cartaoEmImagem } from '../../features/retrospectiva/cartaoEmImagem'
 import MapaMundi from '../../features/mapa/MapaMundi'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import './retrospectiva.css'
 
 // Retrospectiva (specs 105 e 118c): monta sozinha quando a viagem acaba. Moldura pela data,
@@ -117,10 +117,10 @@ export default function Retrospectiva() {
 
   return (
     <div className="retrospectiva" style={cores}>
-      <CabecalhoPagina
-        acima={viagem.nome}
+      <TituloDaTela
         titulo="Retrospectiva"
-        subtitulo={pronta ? 'A viagem acabou e a retrospectiva ficou pronta. Toque num cartão pra postar.' : 'Fica pronta sozinha quando a viagem acabar. Já dá pra ver como está ficando.'}
+        voltar="../tudo"
+        acima={pronta ? 'Pronta pra postar' : 'Fica pronta quando a viagem acabar'}
         acao={
           <Link to="../livro" className="botao secundario">
             <BookOpen size={16} aria-hidden="true" /> Caderno em PDF

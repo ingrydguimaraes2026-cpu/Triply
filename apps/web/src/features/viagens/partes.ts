@@ -13,7 +13,7 @@ export const ABAS = [
 ]
 
 // "Tudo da viagem": o resto, como na tela do app (apps/mobile/app/tudo-da-viagem.tsx).
-// No computador fica no menu, embaixo das 5 partes; no celular, no botão "..." do topo.
+// No computador fica no menu, embaixo das 5 partes; no celular, no "..." da capa da tela Viagem (igual ao app).
 // Os cartões do comboio (tarefas, enquetes, cofre...) ficam na página /tudo.
 export const TUDO_DA_VIAGEM = [
   { para: 'hoje', rotulo: 'Hoje', sub: 'Agora e próximo', icone: Sun },

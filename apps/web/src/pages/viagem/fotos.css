@@ -10,53 +10,6 @@
   margin: 0 auto;
 }
 
-/* ---------- Topo ---------- */
-.feed-cabecalho h1 {
-  margin: 0;
-  font-family: var(--fonte-titulo);
-  font-size: 30px;
-  line-height: 1.1;
-  color: var(--cor-texto);
-}
-
-.feed-cabecalho p {
-  margin: 4px 0 0;
-  color: var(--cor-texto-suave);
-  font-size: 14px;
-}
-
-/* Barra "Compartilhe uma foto…" */
-.feed-compor {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 16px 10px 10px;
-  border: 1px solid var(--cor-borda);
-  border-radius: 999px;
-  background: var(--cor-cartao);
-  color: var(--cor-texto-suave);
-  font: inherit;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgb(59 39 21 / 0.05);
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.feed-compor > span:not(.avatar) {
-  flex: 1;
-}
-
-.feed-compor svg {
-  color: var(--caramelo);
-}
-
-.feed-compor:hover {
-  border-color: #e3c99b;
-  box-shadow: 0 2px 8px rgb(59 39 21 / 0.08);
-}
-
 /* Cartão "avisar quando postarem" */
 .feed-aviso {
   display: flex;
@@ -83,35 +36,66 @@
   gap: 12px;
 }
 
-/* Abas Feed / Grade (como no perfil do Instagram) */
-.feed-abas {
+/* Pílulas Feed | Por dia, largas como no app */
+.fotos-pilulas {
   display: flex;
-  border-bottom: 1px solid var(--cor-borda);
+  padding: 4px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-cartao);
 }
 
-.feed-abas button {
+.fotos-pilulas button {
   flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 44px;
-  margin-bottom: -1px;
+  min-height: 36px;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: 8px;
   background: transparent;
-  color: var(--cor-texto-suave);
+  color: var(--cor-texto);
   font: inherit;
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   cursor: pointer;
 }
 
-.feed-abas button.ativo {
-  border-bottom-color: var(--cor-texto);
+.fotos-pilulas button.ativa {
+  background: var(--couro);
+  color: #fff;
+}
+
+/* Por dia: filtro por pessoa (Todos, Você, Ana...) */
+.fotos-pessoas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.fotos-pessoas button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  background: var(--cor-cartao);
   color: var(--cor-texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fotos-pessoas button:has(.avatar) {
+  padding-left: 4px;
+}
+
+.fotos-pessoas button.ativa {
+  border-color: var(--couro);
+  background: var(--couro);
+  color: #fff;
 }
 
 /* ---------- Feed ---------- */
@@ -722,15 +706,6 @@
   }
 }
 
-/* Spec 098: 4 abas (Feed, Grade, Por dia, Melhores) cabem em 360px */
-@media (max-width: 420px) {
-  .feed-abas button {
-    flex-direction: column;
-    gap: 2px;
-    font-size: 12px;
-    min-height: 52px;
-  }
-}
 .album-dias {
   display: flex;
   flex-direction: column;
@@ -768,8 +743,7 @@
   gap: 8px;
   margin-top: 6px;
 }
-.post-marcar-pessoas button,
-.chip-filtro {
+.post-marcar-pessoas button {
   min-height: 36px;
   padding: 0 14px;
   border-radius: 999px;
@@ -780,13 +754,9 @@
   font-size: 14px;
   cursor: pointer;
 }
-.post-marcar-pessoas button.ativo,
-.chip-filtro.ativo {
+.post-marcar-pessoas button.ativo {
   background: var(--laranja);
   border-color: var(--laranja);
-}
-.chip-filtro {
-  margin: 10px 0;
 }
 .post-sair-marcacao {
   font-size: 12px;
@@ -808,44 +778,6 @@
 }
 
 /* ---------- Spec 112: no estilo do app ---------- */
-.feed-cabecalho .feed-acima {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--cor-texto-suave);
-}
-
-/* Abas Feed / Grade / Por dia / Melhores: pílula bege com a ativa branca, como as abas do app */
-.feed-abas {
-  gap: 2px;
-  padding: 4px;
-  border-bottom: 0;
-  border-radius: 14px;
-  background: var(--cor-comboio-fundo);
-}
-
-.feed-abas button {
-  margin-bottom: 0;
-  border-bottom: 0;
-  border-radius: 11px;
-  font-weight: 700;
-}
-
-.feed-abas button.ativo {
-  background: var(--cor-cartao);
-  color: var(--cor-texto);
-  box-shadow: 0 2px 8px rgba(74, 46, 20, 0.1);
-}
-
-.feed-compor {
-  border-color: transparent;
-  box-shadow: var(--sombra-cartao);
-}
-
-html[data-tema='escuro'] .feed-compor {
-  border-color: var(--cor-borda);
-}
-
 @media (min-width: 641px) {
   .post {
     border-color: transparent;
@@ -856,11 +788,4 @@ html[data-tema='escuro'] .feed-compor {
   html[data-tema='escuro'] .post {
     border-color: var(--cor-borda);
   }
-}
-
-/* Design Plataforma (spec 113): estado vazio com borda tracejada mais clara */
-.feed-pagina .vazio {
-  padding: 44px 24px;
-  border: 1.5px dashed #e3d2b8;
-  border-radius: 20px;
 }

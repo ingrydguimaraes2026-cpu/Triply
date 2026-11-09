@@ -29,7 +29,7 @@ import { useTrajetos } from '../../features/transportes/hooks'
 import { useEventosDaAgenda, diaPorExtenso } from '../../features/agenda/hooks'
 import { hojeTexto } from '../../features/destinos/datas'
 import BotaoIr from '../../components/ui/BotaoIr'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import Cartao from '../../components/ui/Cartao'
 import Norti from '../../components/ui/Norti'
 import FerramentasDoDia from '../../features/hoje/FerramentasDoDia'
@@ -156,7 +156,7 @@ export default function Hoje() {
 
   return (
     <div className="hoje">
-      <CabecalhoPagina acima={viagem.nome} titulo={onde ? `Hoje em ${onde.nome}` : 'Hoje'} subtitulo={diaPorExtenso(hoje)} />
+      <TituloDaTela titulo={onde ? `Hoje em ${onde.nome}` : 'Hoje'} acima={diaPorExtenso(hoje)} voltar="../tudo" />
 
       {!naViagem && (
         <div className="hoje-fora">

@@ -19,7 +19,7 @@ import ApagarViagem from '../../features/viagens/ApagarViagem'
 import { formatarData } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
 import Norti from '../../components/ui/Norti'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import Cartao from '../../components/ui/Cartao'
 import Gaveta from '../../components/ui/Gaveta'
 import HistoricoDaViagem from '../../features/historico/HistoricoDaViagem'
@@ -148,10 +148,10 @@ export default function Comboio() {
 
   return (
     <>
-      <CabecalhoPagina
-        acima={viagem.nome}
+      <TituloDaTela
         titulo="Comboio"
-        subtitulo={`${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'} nessa viagem`}
+        voltar="../tudo"
+        acima={`${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}
         acao={
           euSouAdm && (
             <button type="button" className="botao" onClick={convidar}>

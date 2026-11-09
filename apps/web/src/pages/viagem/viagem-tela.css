@@ -15,7 +15,7 @@
   position: relative;
   overflow: hidden;
   height: 300px;
-  margin: -20px -16px 0;
+  margin: calc(-20px - env(safe-area-inset-top)) -16px 0;
   background: linear-gradient(165deg, #c99257, var(--couro) 70%, var(--escuro));
   animation: vg-sobe 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
@@ -61,30 +61,35 @@
   overflow-wrap: anywhere;
 }
 
-.vg-capa-mais {
-  display: none; /* no celular o "..." fica na barra de cima */
-}
-
-@media (min-width: 1024px) {
-  .vg-capa-mais {
-    display: grid;
-  }
-}
-
-.vg-capa .vg-capa-mais {
+.vg-capa .vg-capa-botao {
   position: absolute;
   z-index: 1;
-  top: 16px;
-  right: 16px;
+  top: calc(16px + env(safe-area-inset-top));
+  display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.92);
   color: var(--escuro);
 }
 
-.vg-capa-mais:hover {
+.vg-capa .vg-capa-voltar {
+  left: 16px;
+}
+
+.vg-capa .vg-capa-mais {
+  right: 16px;
+}
+
+/* No computador o menu já leva pras viagens */
+@media (min-width: 1024px) {
+  .vg-capa .vg-capa-voltar {
+    display: none;
+  }
+}
+
+.vg-capa-botao:hover {
   background: #fff;
 }
 
@@ -677,7 +682,8 @@
   box-shadow: var(--sombra-cartao);
 }
 
-.tudo-lista a {
+.tudo-lista a,
+.tudo-lista button {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -687,11 +693,21 @@
   text-decoration: none;
 }
 
-.tudo-lista a + a {
+.tudo-lista button {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tudo-lista > * + * {
   border-top: 1px solid var(--cor-borda);
 }
 
-.tudo-lista a > span:not(.icone-quadrado) {
+.tudo-lista a > span:not(.icone-quadrado),
+.tudo-lista button > span:not(.icone-quadrado) {
   flex: 1;
 }
 
@@ -709,7 +725,8 @@
   color: var(--cor-texto-suave);
 }
 
-.tudo-lista a > svg {
+.tudo-lista a > svg,
+.tudo-lista button > svg {
   color: var(--cor-texto-suave);
 }
 

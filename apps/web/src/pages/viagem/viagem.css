@@ -1,5 +1,5 @@
 /* Moldura da viagem no estilo do app (spec 112): tudo claro, sem faixa escura.
-   Computador: menu branco na lateral esquerda. Celular: barra de cima e abas fixas embaixo, como no app. */
+   Computador: menu branco na lateral esquerda. Celular: só as abas fixas embaixo, como no app (cada tela abre no título grande). */
 
 .viagem {
   min-height: 100vh;
@@ -89,7 +89,7 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
 }
 
 .viagem-conteudo {
-  padding: 20px 16px 160px;
+  padding: calc(20px + env(safe-area-inset-top)) 16px 100px;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -441,62 +441,6 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
   }
 }
 
-/* ---------- Celular: barra de cima clara (spec 008) ---------- */
-.viagem-topo-celular {
-  position: sticky;
-  z-index: 9;
-  top: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px;
-  border-bottom: 1px solid var(--cor-borda);
-  background: color-mix(in srgb, var(--cor-fundo) 94%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.viagem-topo-nome {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--cor-texto);
-  text-decoration: none;
-}
-
-.viagem-topo-nome strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--fonte-titulo);
-  font-size: 19px;
-  font-weight: 600;
-}
-
-.viagem-topo-nome svg,
-.viagem-topo-icone {
-  flex: none;
-  color: var(--cor-texto-suave);
-}
-
-.viagem-topo-icone {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-}
-
-.viagem-topo-icone:hover {
-  background: var(--cor-comboio-fundo);
-}
-
-.viagem-topo-celular .avatar {
-  border-color: var(--cor-fundo);
-}
-
 .viagem-abas .so-computador {
   display: none;
 }
@@ -505,34 +449,12 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
   text-decoration: none;
 }
 
-/* ---------- Lançamento rápido (spec 009): botão principal do app ---------- */
-.botao-flutuante {
-  position: fixed;
-  z-index: 11;
-  right: 16px;
-  bottom: calc(80px + env(safe-area-inset-bottom));
-  width: 58px;
-  height: 58px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 20px;
-  background: var(--couro);
-  color: #ffffff;
-  box-shadow: var(--sombra-botao);
-  cursor: pointer;
-}
-
-.botao-flutuante:active {
-  transform: scale(0.96);
-}
-
 .recado {
   position: fixed;
   z-index: 60;
   left: 16px;
   right: 16px;
-  bottom: calc(150px + env(safe-area-inset-bottom));
+  bottom: calc(84px + env(safe-area-inset-bottom));
   margin: 0 auto;
   max-width: 440px;
   padding: 12px 16px;
@@ -544,11 +466,6 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
 }
 
 @media (min-width: 1024px) {
-  .viagem-topo-celular,
-  .botao-flutuante {
-    display: none;
-  }
-
   .recado {
     bottom: 32px;
   }

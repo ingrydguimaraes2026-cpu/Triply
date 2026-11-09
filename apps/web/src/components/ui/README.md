@@ -5,8 +5,10 @@ Blocos reutilizáveis pra montar as telas com a mesma cara. Os estilos ficam em 
 | Peça | Pra quê | Exemplo |
 |---|---|---|
 | `Cartao` | Bloco branco arredondado com título e ícone | `<Cartao titulo="Orçamento" icone={Wallet}>...</Cartao>` |
-| `CabecalhoPagina` | Título grande no topo de cada aba | `<CabecalhoPagina titulo="Fotos" subtitulo="..." />` |
-| `EstadoVazio` | Tela/cartão sem dados ainda, explicando o próximo passo | `<EstadoVazio icone={Camera} titulo="..." texto="..." />` |
+| `TituloDaTela` | Cabeçalho das telas da viagem, igual ao do app: título grande, no máximo uma linha pequena em cima, botão à direita e `voltar` (só no celular). Sem frase explicando | `<TituloDaTela titulo="Fotos" acima="3 fotos · 2 pessoas" acao={<button className="botao">Postar</button>} />` |
+| `TelaVazia` | Tela sem nada ainda, igual à do app: a Norti, uma frase e o botão principal. Use no lugar do `EstadoVazio` em tela inteira | `<TelaVazia titulo="Nenhum post ainda" texto="..." acao={...} />` |
+| `CabecalhoPagina` | (antigo) Título com frase embaixo. Telas da viagem usam o `TituloDaTela` | `<CabecalhoPagina titulo="..." />` |
+| `EstadoVazio` | Vazio pequeno dentro de cartão (`compacto`) | `<EstadoVazio icone={Camera} titulo="..." texto="..." compacto />` |
 | `Avatar` | Foto ou iniciais da pessoa | `<Avatar nome="Ingryd" url={...} />` |
 | `Logo` | Logo da Norti como no app (Norti no quadradinho bege + nome). Pega a cor e o tamanho do texto em volta | `<Logo />` ou `<Logo comNome={false} />` |
 | `Norti` | Mascote (bússola em pino de mapa, animada pelo `<mascot-view>`). Humores: `parada`, `feliz`, `dormindo`, `pensando`, `oi`, `ops`, `apontando`, `amor` | `<Norti humor="dormindo" tamanho={120} />` |

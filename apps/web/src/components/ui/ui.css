@@ -73,6 +73,88 @@
   color: var(--cor-texto-suave);
 }
 
+/* Cabeçalho das telas da viagem (TituloDaTela), igual ao do app */
+.titulo-da-tela {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.titulo-da-tela-linha {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.titulo-da-tela-texto {
+  min-width: 0;
+}
+
+.titulo-da-tela h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 36px;
+  color: var(--cor-texto);
+}
+
+.titulo-da-tela p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+.titulo-da-tela-linha > :last-child:not(.titulo-da-tela-texto) {
+  flex: none;
+}
+
+/* Botões do cabeçalho: menores, como o "Postar" do app (h-10) */
+.titulo-da-tela-linha .botao {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  .titulo-da-tela-voltar {
+    display: none;
+  }
+}
+
+/* Tela vazia (TelaVazia): a Norti, uma frase e o botão, sem caixa */
+.tela-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 48px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.tela-vazia-titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.tela-vazia-texto {
+  margin: 0;
+  max-width: 360px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--cor-texto-suave);
+}
+
+.tela-vazia-acao {
+  margin-top: 8px;
+}
+
 /* Estado vazio */
 .vazio {
   display: flex;

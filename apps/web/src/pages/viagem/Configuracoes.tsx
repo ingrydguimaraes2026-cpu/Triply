@@ -6,9 +6,9 @@ import { editarViagem } from '../../features/viagens/api'
 import ApagarViagem from '../../features/viagens/ApagarViagem'
 import { moedasDaViagem } from '../../features/financeiro/categorias'
 import Avatar from '../../components/ui/Avatar'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import Cartao from '../../components/ui/Cartao'
-import EstadoVazio from '../../components/ui/EstadoVazio'
+import TelaVazia from '../../components/ui/TelaVazia'
 import './abas.css'
 
 const PERMISSOES = [
@@ -60,7 +60,7 @@ export default function Configuracoes() {
 
   return (
     <>
-      <CabecalhoPagina acima={viagem.nome} titulo="Configurações" subtitulo="Nome, datas e moeda da viagem. Só o ADM vê esta página." />
+      <TituloDaTela titulo="Configurações" voltar="../tudo" />
 
       <Cartao titulo="Viagem" icone={Settings}>
         <form className="form" onSubmit={salvar} noValidate>
@@ -154,8 +154,8 @@ function SoParaVer() {
 
   return (
     <div className="config-leitura">
-      <CabecalhoPagina acima={viagem.nome} titulo="Configurações" />
-      <EstadoVazio icone={Settings} titulo="Só quem organiza a viagem mexe aqui" texto="Peça pro ADM do comboio mudar o nome, as datas ou a moeda." />
+      <TituloDaTela titulo="Configurações" voltar="../tudo" />
+      <TelaVazia humor="parada" titulo="Só quem organiza a viagem mexe aqui" texto="Peça pro ADM do comboio mudar o nome, as datas ou a moeda." />
       {adms.length > 0 && (
         <p className="config-adms">
           {adms.map((a) => (

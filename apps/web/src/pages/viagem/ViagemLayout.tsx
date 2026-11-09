@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
-import { ArrowLeftRight, ChevronRight, LifeBuoy, MoreHorizontal, PanelLeft, Plus, Search } from '../../components/ui/icones'
+import { ArrowLeftRight, PanelLeft } from '../../components/ui/icones'
 import { ABAS, TUDO_DA_VIAGEM } from '../../features/viagens/partes'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -11,9 +11,7 @@ import LancamentoRapido from '../../features/financeiro/LancamentoRapido'
 import { useNovidades } from '../../features/notificacoes/hooks'
 import Novidades, { BotaoSino } from '../../features/notificacoes/Novidades'
 import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
-import Emergencia from '../../features/emergencia/Emergencia'
 import FaixaOffline from '../../features/offline/FaixaOffline'
-import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
 import { abasVisiveis, CONGELADO } from '@together/core'
@@ -49,6 +47,8 @@ const ABAS_GUARDADAS = [
 type Lancamento = { modo: 'rapido' } | { modo: 'completo'; inicial: Partial<DadosDoGasto> } | null
 
 // Moldura de todas as telas de uma viagem: menu + a aba escolhida (visual do app, spec 112).
+// Igual ao app: no celular não tem barra em cima nem botão "+" solto; cada tela abre no título grande
+// e tem o próprio botão. Buscar e Emergência ficam em "Tudo da viagem".
 // Carrega os dados da viagem uma vez e passa pras abas (veja useViagemAtual).
 // Função vazia fixa (não muda a cada render), pra quando a viagem ainda não carregou
 const semNada = async () => {}
@@ -72,8 +72,6 @@ export default function ViagemLayout() {
   const [recado, setRecado] = useState<string | null>(null)
   // Spec 031: sino de novidades (no topo do celular e no menu do computador)
   const [vendoNovidades, setVendoNovidades] = useState(false)
-  const [vendoEmergencia, setVendoEmergencia] = useState(false) // spec 037
-  const [buscando, setBuscando] = useState(false) // spec 053
   const novidades = useNovidades(id ?? '', estado.status === 'pronta' ? estado.dados.meuId : '')
   const { simples } = useAcessibilidade() // spec 090: modo simples mostra menos abas
   // Spec 085: mudança de outra pessoa aparece na hora (só escuta depois que a viagem carregou)
@@ -120,7 +118,7 @@ export default function ViagemLayout() {
   if (estado.status === 'carregando') return <div className="viagem-carregando" aria-busy="true" />
   if (estado.status === 'nao-encontrada') return <Perdido />
 
-  const { viagem, destinos, membros, meuId, euSouAdm } = estado.dados
+  const { viagem, membros, meuId, euSouAdm } = estado.dados
   const eu = membros.find((m) => m.id === meuId)
   // As 5 partes sempre iguais (como no app). Modo simples (spec 090): só as abas dele, sem "Tudo da viagem".
   const tudo = TUDO_DA_VIAGEM.filter((a) => !a.soAdm || euSouAdm)
@@ -129,29 +127,6 @@ export default function ViagemLayout() {
   return (
     <div className={recolhido ? 'viagem menu-recolhido' : 'viagem'}>
       <FaixaOffline />
-      {/* Celular: barra de cima com a viagem (leva pra Minhas viagens) e o perfil */}
-      <header className="viagem-topo-celular">
-        <Link to="/viagens" className="viagem-topo-nome">
-          <strong>{viagem.nome}</strong>
-          <ChevronRight size={16} aria-hidden="true" />
-        </Link>
-        <button type="button" className="viagem-topo-icone botao-sos" onClick={() => setBuscando(true)} aria-label="Buscar na viagem">
-          <Search size={20} aria-hidden="true" />
-        </button>
-        <button type="button" className="viagem-topo-icone botao-sos" onClick={() => setVendoEmergencia(true)} aria-label="Emergência">
-          <LifeBuoy size={20} aria-hidden="true" />
-        </button>
-        {/* Sino de novidades (spec 031). ❄ congelado pelo RUMO (03/11/2026) */}
-        {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} />}
-        {/* "Tudo da viagem" (o "..." do app): o que não está nas 5 partes */}
-        <Link to="tudo" className="viagem-topo-icone" aria-label="Tudo da viagem">
-          <MoreHorizontal size={20} aria-hidden="true" />
-        </Link>
-        <Link to="/perfil" aria-label="Seu perfil">
-          <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={32} />
-        </Link>
-      </header>
-
       <aside className="viagem-menu">
         <div className="viagem-menu-cabeca">
           <Link to="/viagens" className="viagem-logo" aria-label="Norti: ver todas as viagens">
@@ -200,12 +175,6 @@ export default function ViagemLayout() {
         <div className="viagem-menu-rodape">
           {/* ❄ congelado pelo RUMO (03/11/2026) */}
           {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />}
-          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setBuscando(true)} aria-label="Buscar na viagem" title="Buscar">
-            <Search size={19} aria-hidden="true" /> <span className="viagem-menu-texto">Buscar</span>
-          </button>
-          <button type="button" className="viagem-menu-acao botao-sos" onClick={() => setVendoEmergencia(true)} aria-label="Emergência" title="Emergência">
-            <LifeBuoy size={19} aria-hidden="true" /> <span className="viagem-menu-texto">Emergência</span>
-          </button>
           <Link to="/perfil" className="viagem-menu-perfil" aria-label="Seu perfil">
             <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={34} />
             <span className="viagem-menu-perfil-nome viagem-menu-texto">
@@ -235,30 +204,10 @@ export default function ViagemLayout() {
         {!abaGuardada && <Outlet context={estado.dados} />}
       </div>
 
-      {/* Spec 009: botão "+" pra lançar gasto rápido (celular) */}
-      <button type="button" className="botao-flutuante" onClick={() => setLancamento({ modo: 'rapido' })} aria-label="Lançar gasto rápido">
-        <Plus size={28} aria-hidden="true" />
-      </button>
-
       {recado && (
         <p className="recado" role="status">
           {recado}
         </p>
-      )}
-
-      {buscando && (
-        <Gaveta titulo="Buscar na viagem" aoFechar={() => setBuscando(false)}>
-          <BuscaNaViagem viagemId={viagem.id} destinos={destinos} aoEscolher={() => setBuscando(false)} />
-        </Gaveta>
-      )}
-
-      {vendoEmergencia && (
-        <Gaveta titulo="Emergência" aoFechar={() => setVendoEmergencia(false)}>
-          <Emergencia
-            destinos={destinos}
-            seguro={{ viagemId: viagem.id, meuId, euSouAdm, membros, inicio: viagem.data_inicio, fim: viagem.data_fim }}
-          />
-        </Gaveta>
       )}
 
       {vendoNovidades && (

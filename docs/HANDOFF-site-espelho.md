@@ -50,6 +50,15 @@ O Victor viu as etapas 1 a 4 e não gostou: "muita coisa do site ainda está ant
 
 Consertado já: Comboio dizia "pode pôr de volta" (regra de texto) → "pode restaurar".
 
+**Casca feita (09/11/2026, noite), commit local na `monorepo-split`:**
+- Celular sem a barra de cima ("Eurotrip >", lupa, emergência, "...", avatar) e sem o botão flutuante "+" em todas as abas (`ViagemLayout.tsx`). Cada aba abre no título grande. O atalho do app instalado (`?lancar=1`) continua abrindo o lançamento rápido.
+- Voltar e "..." (Tudo da viagem) ficam em cima da capa da tela Viagem, como no app (`Overview.tsx`; o voltar só aparece no celular).
+- Buscar e Emergência saíram da barra e do menu do computador: viraram itens em "Tudo da viagem" (abrem na gaveta, como antes). Nada foi apagado.
+- Peças novas em `components/ui`: `TituloDaTela` (título grande + no máximo uma linha pequena + botão; `voltar` só no celular) e `TelaVazia` (Norti + frase + botão). Aplicadas em Fotos, Comboio, Hoje, Lugares, Agenda, Cidades, Tudo da viagem, Configurações, Retrospectiva, Reservas (título "Reservas" em cima das pílulas, como no app) e Hospedagem (`naAba`: sem título duplicado dentro de Reservas). As telas de "Tudo" têm o voltar pra `/tudo`.
+- Fotos igual ao app: "N fotos · N pessoas", botão "Postar" no cabeçalho, pílulas Feed | Por dia, Norti dormindo no vazio. "Por dia" tem o filtro por pessoa do app e o "Baixar fotos". Saíram a barra "Compartilhe uma foto", a Grade, os Melhores (spec 098) e o filtro "Fotos em que estou" (spec 100), porque o app não tem.
+- **Falta:** `Transportes.tsx` (outra sessão) ainda usa o `CabecalhoPagina` antigo e mostra o título "Passagens" embaixo das pílulas. Quem mexer nela: trocar por `TituloDaTela`/`TelaVazia` e aceitar `naAba` (igual à `Hospedagem`), e passar `<Transportes naAba />` no `Reservas.tsx`. O Contas (`Financeiro.tsx`) também ainda usa o `CabecalhoPagina` com "Eurotrip".
+- Conferido no navegador em 375 px e 1366 px (Fotos, Viagem, Reservas, Tudo, Comboio, Lugares, Agenda). O app (preview "mobile") não foi aberto lado a lado: comparei com o código das telas do app.
+
 **Ordem sugerida:** casca primeiro (muda a sensação de todas as telas), depois Roteiro, Passagens, Fotos, Início, e por fim Hoje, Lugares, Comboio, Configurações e Perfil.
 
 As etapas 3, 4 e 5 mexem em arquivos separados e podem andar em paralelo, cada uma na sua sessão ou worktree. A 2 depende da 1.

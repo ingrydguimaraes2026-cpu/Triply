@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, BarChart3, CalendarRange, ChevronRight, CircleCheck, Globe, ListChecks, Lock, Luggage, MapPin, MapPinned, PiggyBank, ShoppingBasket } from '../../components/ui/icones'
+import { AlertTriangle, BarChart3, LifeBuoy, Search, CalendarRange, ChevronRight, CircleCheck, Globe, ListChecks, Lock, Luggage, MapPin, MapPinned, PiggyBank, ShoppingBasket } from '../../components/ui/icones'
 import { CONGELADO, encontrarFuros } from '@together/core'
 import { hojeTexto } from '../../features/destinos/datas'
 import { useTrajetos } from '../../features/transportes/hooks'
@@ -24,7 +24,10 @@ import { useViagemAtual } from '../../features/viagens/hooks'
 import { TUDO_DA_VIAGEM } from '../../features/viagens/partes'
 import { useFocoDeItem } from '../../lib/foco'
 import Cartao from '../../components/ui/Cartao'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
+import Gaveta from '../../components/ui/Gaveta'
+import Emergencia from '../../features/emergencia/Emergencia'
+import BuscaNaViagem from '../../features/busca/BuscaNaViagem'
 import IconeQuadrado from '../../components/ui/IconeQuadrado'
 import RotuloDeSecao from '../../components/ui/RotuloDeSecao'
 import './abas.css'
@@ -52,10 +55,13 @@ export default function TudoDaViagem() {
         })
       : []
   const [vendoTodosFuros, setVendoTodosFuros] = useState(false)
+  // Buscar (spec 053) e Emergência (spec 037) saíram da barra de cima e do menu: ficam aqui
+  const [buscando, setBuscando] = useState(false)
+  const [vendoEmergencia, setVendoEmergencia] = useState(false)
 
   return (
     <div className="tudo-da-viagem">
-      <CabecalhoPagina acima={viagem.nome} titulo="Tudo da viagem" />
+      <TituloDaTela acima={viagem.nome} titulo="Tudo da viagem" voltar=".." />
 
       <nav className="tudo-lista" aria-label="Tudo da viagem">
         {atalhos.map(({ para, rotulo, sub, icone }) => (
@@ -68,7 +74,34 @@ export default function TudoDaViagem() {
             <ChevronRight size={18} aria-hidden="true" />
           </Link>
         ))}
+        <button type="button" onClick={() => setBuscando(true)}>
+          <IconeQuadrado icone={Search} tamanho={36} />
+          <span>
+            <strong>Buscar</strong>
+            <small>Lugar, gasto, reserva, tarefa</small>
+          </span>
+          <ChevronRight size={18} aria-hidden="true" />
+        </button>
+        <button type="button" onClick={() => setVendoEmergencia(true)}>
+          <IconeQuadrado icone={LifeBuoy} tamanho={36} />
+          <span>
+            <strong>Emergência</strong>
+            <small>Números, hospital e consulado</small>
+          </span>
+          <ChevronRight size={18} aria-hidden="true" />
+        </button>
       </nav>
+
+      {buscando && (
+        <Gaveta titulo="Buscar na viagem" aoFechar={() => setBuscando(false)}>
+          <BuscaNaViagem viagemId={viagem.id} destinos={destinos} aoEscolher={() => setBuscando(false)} />
+        </Gaveta>
+      )}
+      {vendoEmergencia && (
+        <Gaveta titulo="Emergência" aoFechar={() => setVendoEmergencia(false)}>
+          <Emergencia destinos={destinos} seguro={{ viagemId: viagem.id, meuId, euSouAdm, membros, inicio: viagem.data_inicio, fim: viagem.data_fim }} />
+        </Gaveta>
+      )}
 
       <RotuloDeSecao>Do comboio</RotuloDeSecao>
       {/* Spec 019: recados do ADM fixados */}
