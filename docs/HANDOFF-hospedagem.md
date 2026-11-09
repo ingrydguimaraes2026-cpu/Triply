@@ -32,6 +32,9 @@ Ou seja: a pergunta deles não é "qual Airbnb é mais bonito", e sim **"onde do
 5. **Dia de check-out:** se o próximo deslocamento é bem depois, sugerir guarda-volumes perto da estação (já existe no aviso do dia).
 6. Mesmas regras de permissão da spec 122: membro sugere opção e vota; ADM escolhe e marca como reservado/pago.
 
+## Andamento
+- 09/11: spec 123 e protótipo `docs/design/hospedagem-v2.html` escritos. Esperando o OK do Victor pra codar.
+
 ## Próximo passo exato
 1. Ler `AGENTS.md`, este HANDOFF, `docs/RUMO.md` e a spec 011.
 2. Escrever a **spec 123 (hospedagem por noite)** com o que entra e o que não entra, e um protótipo HTML em `docs/design/` (como foi o `transporte-v3.html`). Mostrar pro Victor antes de codar.
