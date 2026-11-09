@@ -189,7 +189,7 @@ export default function Comboio() {
         {removendo ? (
           <Cartao className="gap-3 bg-vermelho-fundo p-4">
             <Text className="font-body-semibold text-[14px] leading-5 text-texto">
-              Remover {removendo.nome} da viagem? Os gastos dela continuam nas contas, mas ela perde o acesso.
+              Remover {removendo.nome} da viagem? Os gastos continuam nas contas, mas a pessoa perde o acesso.
             </Text>
             <View className="flex-row gap-2.5">
               <View className="flex-1">

@@ -17,7 +17,7 @@ import { cor } from '../../theme'
 // Jeito rápido de criar viagem (specs 115 v2 e 116): uma pergunta por tela.
 // 1. Pra onde? → 2. Quantos dias? → cria a viagem e abre o deslize do Explorar.
 // `primeira`: conta nova sem viagem (sem botão de fechar, com "Tenho um convite").
-// `comboioDe` (spec 118c, "Bora a próxima?"): ao criar, a galera dessa viagem já entra na nova.
+// `comboioDe` (spec 118c, "Bora pra próxima?"): ao criar, a galera dessa viagem já entra na nova.
 
 type Escolhido = { nome: string; pais: string | null }
 

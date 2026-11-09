@@ -120,7 +120,7 @@ export default function ViagemAntiga() {
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: insets.bottom + 32, gap: 22 }}>
         <View>
           <Text className="font-display text-[34px] leading-[38px] text-texto">A gente já foi pra...</Text>
-          <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">Conta uma viagem que já aconteceu. Ela vira um carimbo de memória e acende o mapa da galera.</Text>
+          <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">Conte uma viagem que já aconteceu. Ela vira um carimbo de memória e acende o mapa da galera.</Text>
         </View>
 
         {/* 1. Onde */}

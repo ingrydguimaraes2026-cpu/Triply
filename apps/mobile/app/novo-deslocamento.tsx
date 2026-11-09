@@ -480,7 +480,7 @@ function Formulario({
 
             {!podeDecidir ? (
               <Text className="rounded-2xl bg-areia p-3 font-body text-[13px] leading-5 text-corpo">
-                {podeMexer ? 'Vai como sugestão pro grupo. Quem decide e compra é o ADM.' : 'Só quem pôs essa sugestão ou o ADM mexe nela.'}
+                {podeMexer ? 'Vai como sugestão pro grupo. Quem decide e compra é o ADM.' : 'Só quem adicionou essa sugestão ou o ADM mexe nela.'}
               </Text>
             ) : null}
 

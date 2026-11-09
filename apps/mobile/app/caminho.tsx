@@ -150,7 +150,7 @@ function Tela({ trajeto, caminho, nomeDe, nomePara, link }: Awaited<ReturnType<t
         ) : (
           <Cartao className="gap-2 p-4">
             <Text className="font-body-bold text-[15px] text-texto">Ainda não temos as paradas desse trajeto</Text>
-            <Text className="font-body text-[14px] leading-5 text-corpo">Abre no Google Maps pra ver por onde passa. Ônibus de viagem no Brasil quase nunca tem esse dado aberto.</Text>
+            <Text className="font-body text-[14px] leading-5 text-corpo">Abra no Google Maps pra ver por onde passa. Ônibus de viagem no Brasil quase nunca tem esse dado aberto.</Text>
           </Cartao>
         )}
 

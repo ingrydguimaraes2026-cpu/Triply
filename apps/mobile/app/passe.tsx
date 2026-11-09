@@ -21,7 +21,7 @@ const PRECO_DO_PASSE = 3990 // centavos, uma vez por viagem
 const PRECO_DO_ANUAL = 9990
 
 const EXTRAS = [
-  { Icone: ReceiptText, texto: 'Scan de recibo: foto e já divide' },
+  { Icone: ReceiptText, texto: 'Leitura de recibo: foto e já divide' },
   { Icone: Map, texto: 'Mapa e roteiro sem internet' },
   { Icone: Mail, texto: 'Reservas lidas do e-mail' },
   { Icone: Camera, texto: 'Álbum sem limite e vídeo da viagem' },

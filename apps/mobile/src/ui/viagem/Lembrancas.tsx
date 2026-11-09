@@ -51,7 +51,7 @@ export function Lembrancas({ viagem, foto, numeros, passos, contasEmDia, ir, aoE
         <Secao indice={2}>
           <Pressable onPress={() => ir('contas')} className={`flex-row items-center justify-center gap-2 rounded-full py-2.5 active:opacity-80 ${contasEmDia ? 'bg-verde-fundo' : 'bg-vermelho-fundo'}`}>
             {contasEmDia ? <CheckCheck size={16} color={cor.verde} /> : <TriangleAlert size={16} color={cor.vermelho} />}
-            <Text className={`font-body-bold text-[13px] ${contasEmDia ? 'text-verde' : 'text-vermelho'}`}>{contasEmDia ? 'Contas em dia, ninguém deve ninguém' : 'Ainda tem conta pra acertar'}</Text>
+            <Text className={`font-body-bold text-[13px] ${contasEmDia ? 'text-verde' : 'text-vermelho'}`}>{contasEmDia ? 'Contas em dia, ninguém deve nada pra ninguém' : 'Ainda tem conta pra acertar'}</Text>
           </Pressable>
         </Secao>
 

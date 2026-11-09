@@ -25,7 +25,7 @@ export type TempoInfo = { rotulo: string; icone: NomeDoIcone }
 export function interpretarTempo(codigo: number): TempoInfo {
   if (codigo <= 0) return { rotulo: 'Céu limpo', icone: 'sol' }
   if (codigo === 1) return { rotulo: 'Quase limpo', icone: 'clima' }
-  if (codigo === 2) return { rotulo: 'Parcial nublado', icone: 'clima' }
+  if (codigo === 2) return { rotulo: 'Parcialmente nublado', icone: 'clima' }
   if (codigo === 3) return { rotulo: 'Nublado', icone: 'nublado' }
   if (codigo === 45 || codigo === 48) return { rotulo: 'Névoa', icone: 'nevoa' }
   if (codigo >= 51 && codigo <= 57) return { rotulo: 'Garoa', icone: 'chuva' }

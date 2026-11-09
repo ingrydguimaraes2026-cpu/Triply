@@ -69,13 +69,13 @@ test('118c: legenda pronta', () => {
   const reveillon = molduraDaViagem('2026-12-28', '2027-01-05')
   assert.equal(
     legendaDaRetrospectiva({ nome: 'Fim de ano', lugares: ['Florianópolis', 'Garopaba'], moldura: reveillon, dias: 9, pessoas: 4, carimbados: 2 }),
-    'Réveillon 2027 em Florianópolis e Garopaba: 9 dias, 4 pessoas e 2 carimbos no passaporte da galera. Bora a próxima?',
+    'Réveillon 2027 em Florianópolis e Garopaba: 9 dias, 4 pessoas e 2 carimbos no passaporte da galera. Bora pra próxima?',
   )
   const padrao = molduraDaViagem(null, null)
-  assert.equal(legendaDaRetrospectiva({ nome: 'Rolê', lugares: [], moldura: padrao, dias: 1, pessoas: 1, carimbados: 0 }), 'Rolê: 1 dia. Bora a próxima?')
+  assert.equal(legendaDaRetrospectiva({ nome: 'Rolê', lugares: [], moldura: padrao, dias: 1, pessoas: 1, carimbados: 0 }), 'Rolê: 1 dia. Bora pra próxima?')
   assert.equal(
     legendaDaRetrospectiva({ nome: 'Europa', lugares: ['Paris', 'Nice', 'Roma', 'Milão'], moldura: padrao, dias: 0, pessoas: 3, carimbados: 1 }),
-    'Paris, Nice e mais 2 lugares: 3 pessoas e 1 carimbo no passaporte da galera. Bora a próxima?',
+    'Paris, Nice e mais 2 lugares: 3 pessoas e 1 carimbo no passaporte da galera. Bora pra próxima?',
   )
 })
 

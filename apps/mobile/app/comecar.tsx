@@ -453,7 +453,7 @@ function Deslize({
         <View className="-ml-2">
           <Norti humor="feliz" tamanho={60} sombra={false} />
         </View>
-        <Bolha texto={posicao === 0 ? 'Curte ou passa? Arrasta pro lado.' : `Mais ${pilha.length - posicao}!`} grande />
+        <Bolha texto={posicao === 0 ? 'Curte ou passa? Arraste pro lado.' : `Mais ${pilha.length - posicao}!`} grande />
       </View>
       <View style={{ height: altura }}>
         {proximo ? <CartaoDoExplorar key={`b-${proximo.id}`} lugar={proximo} altura={altura} parado /> : null}

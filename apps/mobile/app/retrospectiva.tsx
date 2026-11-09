@@ -41,7 +41,7 @@ import { cor } from '../theme'
 // Retrospectiva (specs 105 e 118c no mobile): monta sozinha quando a viagem acaba.
 // Moldura pela data (Réveillon, Carnaval, São João, feriadão), capa com o mapa percorrido e os
 // carimbos, cartões com os números, as 3 fotos mais curtidas, legenda pronta (dá pra trocar),
-// caderno em PDF e "Bora a próxima?" (nova viagem com a mesma galera, spec 055).
+// caderno em PDF e "Bora pra próxima?" (nova viagem com a mesma galera, spec 055).
 // Cada cartão vira imagem (foto da tela do cartão) e abre o "compartilhar" pro Instagram/WhatsApp.
 
 type Capa = { moldura: Moldura; pontos: PontoDoTrajeto[]; carimbos: { nome: string; data: string; memoria: boolean }[]; resumo: string }
@@ -265,7 +265,7 @@ function Tela({
         <Cartao className="gap-2 p-4">
           <View className="flex-row items-center gap-2">
             <Users size={18} color={cor.couro} />
-            <Text className="font-display text-[22px] text-texto">Bora a próxima?</Text>
+            <Text className="font-display text-[22px] text-texto">Bora pra próxima?</Text>
           </View>
           <Text className="font-body text-[14px] leading-5 text-corpo">Uma viagem nova com a mesma galera: todo mundo já entra, sem convite.</Text>
           <Botao titulo="Criar a próxima viagem" aoTocar={() => router.push({ pathname: '/nova-viagem', params: { comboio: viagemId } })} />

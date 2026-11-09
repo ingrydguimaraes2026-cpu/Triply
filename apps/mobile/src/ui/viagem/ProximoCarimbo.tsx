@@ -54,7 +54,7 @@ function textoDoBotao(p: Passo) {
     galera: 'Chamar a galera',
     datas: 'Definir as datas',
     hospedagem: 'Juntar opções',
-    transporte: 'Lançar como chegar',
+    transporte: 'Adicionar o transporte',
     gastos: 'Lançar o primeiro gasto',
   }
   return textos[p.chave]

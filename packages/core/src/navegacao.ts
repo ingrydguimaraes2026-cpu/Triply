@@ -99,7 +99,7 @@ export function textoParaIndicar(destino: string, lugares: LugarParaIndicar[]): 
         ? `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}`
         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${l.nome} ${destino}`)}`
     const dica = l.observacao?.trim() ? ` (${l.observacao.trim().slice(0, 80)})` : ''
-    return `• ${l.nome}${l.visitado ? ' (fomos e recomendo)' : ''}${dica}\n${onde}`
+    return `• ${l.nome}${l.visitado ? ' (fui e recomendo)' : ''}${dica}\n${onde}`
   })
   return [`Minhas dicas em ${destino}:`, '', ...linhas.flatMap((l) => [l, '']), 'Montado na Norti'].join('\n')
 }

@@ -11,7 +11,7 @@ import { cor } from '../theme'
 
 // Nova viagem (specs 115 v2 e 116): jeito rápido, pra onde → quantos dias → deslize.
 // Convidado (spec 018) cria conta antes de criar viagem: o banco também recusa
-// `?comboio=<id>`: "Bora a próxima?" da retrospectiva (spec 118c) traz a mesma galera
+// `?comboio=<id>`: "Bora pra próxima?" da retrospectiva (spec 118c) traz a mesma galera
 export default function NovaViagem() {
   const { ehConvidado } = useSessao()
   const { comboio } = useLocalSearchParams<{ comboio?: string }>()

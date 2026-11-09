@@ -25,7 +25,7 @@ export type SituacaoDoPassaporte = { nivel: 'ok' | 'renovar' | 'vencido' | 'sem_
 
 // A regra mais comum (Schengen, EUA, muitos outros): passaporte válido por 6 meses depois da volta
 export function situacaoDoPassaporte(validade: string | null, volta: string | null, hoje: string): SituacaoDoPassaporte {
-  if (!validade) return { nivel: 'sem_data', texto: 'Informe a validade do passaporte no seu perfil pra o app avisar se precisa renovar.' }
+  if (!validade) return { nivel: 'sem_data', texto: 'Informe a validade do passaporte no seu perfil pro app avisar se precisa renovar.' }
   const [a, m, d] = validade.split('-')
   const dataBr = `${d}/${m}/${a}`
   if (validade < hoje) return { nivel: 'vencido', texto: `Seu passaporte venceu em ${dataBr}. Renove antes de viajar.` }

@@ -31,7 +31,7 @@ export default function CriarConta() {
         tipo: 'erro',
         texto:
           codigo === 'identity_already_exists'
-            ? 'Esse Google já tem conta na Norti. Entre com ele e abra o convite de novo.'
+            ? 'Essa conta Google já está na Norti. Entre com ela e abra o convite de novo.'
             : 'Não deu pra ligar o Google. Tente o e-mail.',
       })
     }

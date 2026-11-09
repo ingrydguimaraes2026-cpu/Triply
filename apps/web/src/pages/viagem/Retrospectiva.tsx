@@ -29,7 +29,7 @@ import './retrospectiva.css'
 
 // Retrospectiva (specs 105 e 118c): monta sozinha quando a viagem acaba. Moldura pela data,
 // mapa percorrido, carimbos, cartões "estilo story" (cada um vira PNG 1080×1920), as fotos
-// mais curtidas, legenda pronta (dá pra trocar), caderno e "Bora a próxima?" (mesma galera, 055).
+// mais curtidas, legenda pronta (dá pra trocar), caderno e "Bora pra próxima?" (mesma galera, 055).
 export default function Retrospectiva() {
   const { viagem, destinos, membros } = useViagemAtual()
   const moeda = viagem.moeda_principal
@@ -202,7 +202,7 @@ export default function Retrospectiva() {
 
       <section className="retro-bloco">
         <h2 className="retro-proxima">
-          <Users size={18} aria-hidden="true" /> Bora a próxima?
+          <Users size={18} aria-hidden="true" /> Bora pra próxima?
         </h2>
         <p className="form-dica">Uma viagem nova com a mesma galera: todo mundo já entra, sem convite.</p>
         <div className="retro-acoes">

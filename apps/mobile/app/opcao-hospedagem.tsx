@@ -211,7 +211,7 @@ export default function OpcaoDeHospedagem() {
         await apagarOpcaoDeHospedagem(supabase, existente!.id)
         voltar()
       } catch {
-        setErro('Não deu pra apagar. Só quem pôs a opção ou o ADM apaga.')
+        setErro('Não deu pra apagar. Só quem adicionou a opção ou o ADM apaga.')
       }
     }
     if (Platform.OS === 'web') {
@@ -317,7 +317,7 @@ export default function OpcaoDeHospedagem() {
             ) : null}
           </>
         ) : (
-          <Text className="text-center font-body text-[12.5px] text-suave">Só quem pôs essa opção ou o ADM mexe nela.</Text>
+          <Text className="text-center font-body text-[12.5px] text-suave">Só quem adicionou essa opção ou o ADM mexe nela.</Text>
         )}
       </ScrollView>
     </View>

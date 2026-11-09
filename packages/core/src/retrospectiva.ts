@@ -189,7 +189,7 @@ export function legendaDaRetrospectiva(d: { nome: string; lugares: string[]; mol
     d.carimbados > 0 ? `${n(d.carimbados)} ${d.carimbados === 1 ? 'carimbo' : 'carimbos'} no passaporte da galera` : null,
   ].filter(Boolean) as string[]
   const lista = numeros.length > 1 ? `${numeros.slice(0, -1).join(', ')} e ${numeros[numeros.length - 1]}` : (numeros[0] ?? '')
-  return lista ? `${abertura}: ${lista}. Bora a próxima?` : `${abertura}. Bora a próxima?`
+  return lista ? `${abertura}: ${lista}. Bora pra próxima?` : `${abertura}. Bora pra próxima?`
 }
 
 // ---- Mapa percorrido ----

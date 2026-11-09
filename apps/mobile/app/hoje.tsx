@@ -320,7 +320,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
               </Text>
             ) : (
               <Text className="font-body text-[14px] leading-5 text-corpo">
-                Bate-e-volta pra {nomeDo(bateEVolta.ida.destino_id)} sem volta marcada. Confira o último trem.
+                Bate e volta pra {nomeDo(bateEVolta.ida.destino_id)} sem volta marcada. Confira o último trem.
               </Text>
             )}
             <Link titulo="Último trem de hoje" url={linkUltimoTrem(nomeDo(bateEVolta.ida.destino_id), nomeDo(bateEVolta.ida.origem_id))} />

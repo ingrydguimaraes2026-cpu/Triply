@@ -326,7 +326,7 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
       {gente.length && !compacto ? <Text className="font-body text-[12.5px] text-suave">Vão: {gente.join(', ')}</Text> : null}
       {meioComMotorista(t.meio) && (t.motorista_id || t.lugares_livres != null) ? (
         <Text className="font-body text-[12.5px] text-suave">
-          {[t.motorista_id ? `Dirige: ${primeiroNome(nomeDo(t.motorista_id) ?? '')}` : null, t.lugares_livres != null ? `${t.lugares_livres} lugar(es) sobrando` : null].filter(Boolean).join(' · ')}
+          {[t.motorista_id ? `Dirige: ${primeiroNome(nomeDo(t.motorista_id) ?? '')}` : null, t.lugares_livres != null ? `${t.lugares_livres} ${t.lugares_livres === 1 ? 'lugar sobrando' : 'lugares sobrando'}` : null].filter(Boolean).join(' · ')}
         </Text>
       ) : null}
       {ehChegada && quemBusca && !euBusco ? <Text className="font-body-medium text-[12.5px] text-verde">{primeiroNome(quemBusca)} vai buscar</Text> : null}

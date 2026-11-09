@@ -77,7 +77,7 @@ export default function NovaReserva() {
     const leuAlgo = !!(rascunho.tipo || rascunho.data || rascunho.codigo)
     // Spec 120b: leitura que falha abre o formulário com o que deu pra ler, sem perder o arquivo
     const falhou = !leuAlgo || ('arquivo' in entrada && !lidoPelaIa)
-    setAviso(falhou ? 'Não consegui ler tudo. Preenche o que faltar; o arquivo vai junto pro cofre.' : null)
+    setAviso(falhou ? 'Não consegui ler tudo. Preencha o que faltar; o arquivo vai junto pro cofre.' : null)
     setEtapa('conferir')
   }
 
@@ -153,9 +153,9 @@ export default function NovaReserva() {
       </View>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: insets.bottom + 32, gap: 16 }}>
         <View>
-          <Text className="font-display text-[32px] leading-[36px] text-texto">{etapa === 'conferir' ? 'Confere a reserva' : 'Adicionar reserva'}</Text>
+          <Text className="font-display text-[32px] leading-[36px] text-texto">{etapa === 'conferir' ? 'Confira a reserva' : 'Adicionar reserva'}</Text>
           <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">
-            {etapa === 'conferir' ? 'Arruma o que estiver errado e confirma. Aparece no "Hoje" de todo mundo.' : 'Mande o print, o PDF ou cole o texto do e-mail. A Norti preenche o resto.'}
+            {etapa === 'conferir' ? 'Arrume o que estiver errado e confirme. Aparece no "Hoje" de todo mundo.' : 'Mande o print, o PDF ou cole o texto do e-mail. A Norti preenche o resto.'}
           </Text>
         </View>
 

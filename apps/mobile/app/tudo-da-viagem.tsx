@@ -73,7 +73,7 @@ export default function TudoDaViagem() {
             <RotuloDeSecao>Extras do Passe</RotuloDeSecao>
             <View className="rounded-2xl bg-cartao px-4" style={sombra.cartao}>
               {[
-                { Icone: ReceiptText, t: 'Scan de recibo', s: 'Foto do recibo e já divide', de: 'scan_recibo' },
+                { Icone: ReceiptText, t: 'Leitura de recibo', s: 'Foto do recibo e já divide', de: 'scan_recibo' },
                 { Icone: Map, t: 'Mapa sem internet', s: 'Roteiro e mapa offline', de: 'mapa_offline' },
                 { Icone: Mail, t: 'Reservas do e-mail', s: 'Voos e hotéis lidos sozinhos', de: 'reservas_email' },
               ].map(({ Icone, t, s, de }, i) => (

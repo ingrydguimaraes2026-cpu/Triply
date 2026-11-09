@@ -95,7 +95,7 @@ function Tela({ todos, opcoes, grupo, aoMudar, membroEdita }: { todos: Trajeto[]
     const a = await supabase.from('trajetos').update({ escolhida: false }).eq('grupo_opcoes', grupo)
     const b = a.error ? a : await supabase.from('trajetos').update({ escolhida: true, situacao: o.situacao === 'sugestao' ? 'decidido' : o.situacao }).eq('id', o.id)
     setSalvando(null)
-    if (b.error) return setErro(b.error.code === '42501' ? 'Escolher só o ADM (ou quem ele liberou).' : 'Não deu pra escolher. Tente de novo.')
+    if (b.error) return setErro(b.error.code === '42501' ? 'Só o ADM escolhe (ou quem ele liberou).' : 'Não deu pra escolher. Tente de novo.')
     aoMudar()
   }
 
