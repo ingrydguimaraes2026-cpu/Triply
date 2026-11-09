@@ -143,6 +143,8 @@ function MapaDesenhado({ pontos }: { pontos: Resumo['pontos'] }) {
   useEffect(() => {
     const el = caixa.current
     if (!el) return
+    // Mede já na montagem (o observador pode demorar) e depois a cada mudança de tamanho
+    setLargura(Math.round(el.getBoundingClientRect().width))
     const observador = new ResizeObserver(([e]) => setLargura(Math.round(e.contentRect.width)))
     observador.observe(el)
     return () => observador.disconnect()
