@@ -3197,10 +3197,16 @@ export type Database = {
           caminho: Json | null
           chegada: string | null
           criado_por: string | null
+          de_lat: number | null
+          de_lon: number | null
+          de_texto: string | null
           destino_id: string | null
           escalas: Json
+          escolhida: boolean
           estacao_chegada: string | null
           estacao_partida: string | null
+          frequencia_min: number | null
+          grupo_opcoes: string | null
           id: string
           link_reserva: string | null
           lugares_livres: number | null
@@ -3209,11 +3215,16 @@ export type Database = {
           motorista_id: string | null
           observacao: string | null
           origem_id: string | null
+          para_lat: number | null
+          para_lon: number | null
+          para_texto: string | null
           partida: string | null
           preco: number | null
           quem_busca_id: string | null
           situacao: string
           tipo: string
+          trocas: number | null
+          ultimo_do_dia: boolean
           viagem_id: string
         }
         Insert: {
@@ -3221,10 +3232,16 @@ export type Database = {
           caminho?: Json | null
           chegada?: string | null
           criado_por?: string | null
+          de_lat?: number | null
+          de_lon?: number | null
+          de_texto?: string | null
           destino_id?: string | null
           escalas?: Json
+          escolhida?: boolean
           estacao_chegada?: string | null
           estacao_partida?: string | null
+          frequencia_min?: number | null
+          grupo_opcoes?: string | null
           id?: string
           link_reserva?: string | null
           lugares_livres?: number | null
@@ -3233,11 +3250,16 @@ export type Database = {
           motorista_id?: string | null
           observacao?: string | null
           origem_id?: string | null
+          para_lat?: number | null
+          para_lon?: number | null
+          para_texto?: string | null
           partida?: string | null
           preco?: number | null
           quem_busca_id?: string | null
           situacao?: string
           tipo?: string
+          trocas?: number | null
+          ultimo_do_dia?: boolean
           viagem_id: string
         }
         Update: {
@@ -3245,10 +3267,16 @@ export type Database = {
           caminho?: Json | null
           chegada?: string | null
           criado_por?: string | null
+          de_lat?: number | null
+          de_lon?: number | null
+          de_texto?: string | null
           destino_id?: string | null
           escalas?: Json
+          escolhida?: boolean
           estacao_chegada?: string | null
           estacao_partida?: string | null
+          frequencia_min?: number | null
+          grupo_opcoes?: string | null
           id?: string
           link_reserva?: string | null
           lugares_livres?: number | null
@@ -3257,11 +3285,16 @@ export type Database = {
           motorista_id?: string | null
           observacao?: string | null
           origem_id?: string | null
+          para_lat?: number | null
+          para_lon?: number | null
+          para_texto?: string | null
           partida?: string | null
           preco?: number | null
           quem_busca_id?: string | null
           situacao?: string
           tipo?: string
+          trocas?: number | null
+          ultimo_do_dia?: boolean
           viagem_id?: string
         }
         Relationships: [

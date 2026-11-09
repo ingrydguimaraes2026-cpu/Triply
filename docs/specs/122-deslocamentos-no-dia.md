@@ -161,6 +161,13 @@ O protótipo tem as 4 telas. No app (Expo), onde fica cada uma:
 - [ ] Os trajetos que já existiam continuam aparecendo (no dia deles e em Passagens).
 - [ ] Teste de lógica dos avisos e da folga (`apps/web/tests/dia-com-deslocamentos.test.mjs`).
 
+## Como ficou a 122a (08/11/2026)
+- Banco: migration `20261109000000_deslocamentos_no_dia.sql` aplicada. `trajetos` ganhou `de_texto`/`para_texto` (+ coordenadas), `grupo_opcoes`, `escolhida`, `trocas`, `frequencia_min`, `ultimo_do_dia`. Situação ganhou 'decidido' e meio ganhou 'metro'. Trajetos antigos receberam o nome dos destinos (backfill). Os campos de horário e preço que já existiam (`partida`, `chegada`, `preco`, `moeda`, `situacao`) foram reaproveitados.
+- Core (`packages/core/src/agenda.ts`): o dia usa o texto livre; opções do mesmo grupo viram um passo só ("comparando" quando nenhuma foi escolhida); o detalhe mostra meio, duração, chegada (inclusive "do dia seguinte"), trocas, preço e "último do dia"; `resumoDoDia`. Teste em `apps/web/tests/agenda.test.mjs`.
+- App: a aba Roteiro, num dia, mostra os deslocamentos como cartões (situação colorida, "Paradas" pra trem e ônibus) e o resto como linha leve, com o resumo no topo. O botão "Ir" abre `/novo-deslocamento` (de/para livres com sugestões, meio, saída/chegada, trocas, situação, preço, último do dia, observação; editar e apagar).
+- Preço continua sendo o do grupo todo (como já era em `trajetos.preco`).
+- Respostas assumidas pras perguntas (dá pra mudar): só ADM ou liberado põe deslocamento (a regra de antes); a folga mínima fica pra 122b.
+
 ## Perguntas em aberto
 - Membro pode adicionar opção sem ser liberado? (Proposta: sim, opção é sugestão; escolher é do ADM ou de quem ele liberar.)
 - Folga mínima: 30 min sem malas e 45 com malas está bom?

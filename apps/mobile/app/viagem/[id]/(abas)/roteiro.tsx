@@ -14,7 +14,10 @@ import {
   buscarTrajetos,
   interpretarTempo,
   montarAgendaDoDia,
+  nomeDaSituacaoDoDeslocamento,
+  resumoDoDia,
   type Destino,
+  type SituacaoDoDeslocamento,
   type EventoDaAgenda,
   type Lugar,
   type PrevisaoDia,
@@ -35,7 +38,15 @@ import { cor } from '../../../../theme'
 
 // Roteiro (tela "1h" do design): mapa ilustrado com os destinos numerados e uma
 // folha que sobe por cima (arraste a alça) com a linha do tempo de cada dia.
-const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, onibus: Bus, trem: TrainFront, barco: Ship, a_pe: Footprints }
+const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, carona: Car, onibus: Bus, metro: TrainFront, trem: TrainFront, barco: Ship, a_pe: Footprints }
+// Spec 122a: cor da situação do deslocamento (fundo, texto)
+const COR_DA_SITUACAO: Record<SituacaoDoDeslocamento, [string, string]> = {
+  comprado: ['#EEF0DF', '#5E6B2E'],
+  reservado: ['#F6EAD7', '#7B542F'],
+  decidido: ['#F6EAD7', '#7B542F'],
+  sugestao: ['#FBEBD2', '#8A5A10'],
+  comparando: ['#FBEBD2', '#8A5A10'],
+}
 const ICONE_DO_LUGAR: Record<string, LucideIcon> = { passeio: Mountain, comida: Utensils }
 
 // Spec 117: a aba abre em Matches (o que o comboio quer); tocar num dia mostra o mapa e o dia.
@@ -99,7 +110,15 @@ function AbaMatches({ viagem, aoDia }: { viagem: ViagemComDetalhes; aoDia: (i: n
   )
 }
 
-type Item = { chave: string; hora: string; Icone: LucideIcon; titulo: string; detalhe: string; evento?: EventoDaAgenda }
+type Item = {
+  chave: string
+  hora: string
+  Icone: LucideIcon
+  titulo: string
+  detalhe: string
+  evento?: EventoDaAgenda
+  desl?: { trajetoId: string; situacao: SituacaoDoDeslocamento; opcoes: number; meio: string }
+}
 
 function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComDetalhes; diaInicial: number; aoMatches: () => void }) {
   const carga = useCarregar(
@@ -138,6 +157,7 @@ function Tela({
   aoMudar: () => void
 }) {
   const insets = useSafeAreaInsets()
+  const router = useRouter()
   const { meuId } = useViagemAtual()
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
   // Formulário aberto: novo evento (sem `evento`) ou editando um
@@ -155,6 +175,8 @@ function Tela({
   const itens = useMemo(() => montarDia(paraIso(dia), destinos, lugares, trajetos, eventos), [dia, destinos, lugares, trajetos, eventos])
   const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
   const onde = destinoDoDia(paraIso(dia), destinos)
+  const resumo = useMemo(() => resumoDoDia(montarAgendaDoDia(paraIso(dia), { destinos, trajetos, eventos })), [dia, destinos, trajetos, eventos])
+  const novoDeslocamento = (extra = '') => router.push(`/novo-deslocamento?dia=${paraIso(dia)}${extra}` as Href)
 
   // Clima do destino de hoje (roadmap #8): busca a previsão do destino inteiro e
   // guarda por data; o chip mostra a do dia escolhido. Sem coordenadas/datas → sem chip.
@@ -231,12 +253,25 @@ function Tela({
             <Text className="font-display text-[22px] text-texto">{diaLongo(dia)}</Text>
             <Text className="font-body text-[13px] text-suave">{onde ? onde.nome : `${itens.length} paradas`}</Text>
           </View>
-          {/* Spec 029: evento livre do comboio nesse dia */}
-          <Pressable onPress={() => setForm({})} className="h-10 flex-row items-center gap-1.5 rounded-xl bg-couro px-3.5 active:opacity-80">
-            <Plus size={17} color="#fff" />
-            <Text className="font-body-bold text-[14px] text-white">Evento</Text>
-          </Pressable>
+          {/* Spec 029: evento livre do comboio · Spec 122a: deslocamento de qualquer lugar pra qualquer lugar */}
+          <View className="flex-row gap-2">
+            <Pressable onPress={() => setForm({})} accessibilityLabel="Novo evento" className="h-10 flex-row items-center gap-1 rounded-xl border border-borda bg-cartao px-3 active:opacity-80">
+              <Plus size={16} color={cor.couro} />
+              <Text className="font-body-bold text-[13px] text-couro">Evento</Text>
+            </Pressable>
+            <Pressable onPress={() => novoDeslocamento()} accessibilityLabel="Novo deslocamento" className="h-10 flex-row items-center gap-1 rounded-xl bg-couro px-3 active:opacity-80">
+              <Route size={16} color="#fff" />
+              <Text className="font-body-bold text-[13px] text-white">Ir</Text>
+            </Pressable>
+          </View>
         </View>
+        {resumo.comprados + resumo.prontos + resumo.pendentes > 0 ? (
+          <View className="flex-row flex-wrap gap-1.5 px-5 pb-2">
+            {resumo.comprados ? <Pilula fundo="#EEF0DF" cor="#5E6B2E" texto={`${resumo.comprados} ${resumo.comprados === 1 ? 'comprado' : 'comprados'}`} /> : null}
+            {resumo.prontos ? <Pilula fundo="#F6EAD7" cor="#7B542F" texto={`${resumo.prontos} ${resumo.prontos === 1 ? 'decidido' : 'decididos'}`} /> : null}
+            {resumo.pendentes ? <Pilula fundo="#FBEBD2" cor="#8A5A10" texto={`${resumo.pendentes} pra decidir`} /> : null}
+          </View>
+        ) : null}
         {previsaoDoDia ? (
           <View className="flex-row items-center gap-1.5 px-5 pb-1">
             <Icone nome={interpretarTempo(previsaoDoDia.codigo).icone} tamanho={20} cor={cor.couro} />
@@ -251,30 +286,67 @@ function Tela({
         <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
           {itens.length === 0 ? (
             <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
-              Nada marcado pra esse dia ainda.{'\n'}Adicione um evento ou um trajeto com horário.
+              Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra pôr um deslocamento ou em "Evento".
             </Text>
           ) : (
             itens.map((it, i) => {
               // Lápis só nos eventos que eu criei (o ADM mexe em todos)
               const editavel = !!it.evento && (it.evento.criado_por === meuId || euSouAdm)
+              const trilho = (
+                <View className="w-3.5 items-center">
+                  <View className="h-5 w-0.5" style={{ backgroundColor: i === 0 ? 'transparent' : '#E3D2B8' }} />
+                  <View className="h-2.5 w-2.5 rounded-full border-2 border-fundo bg-couro" style={{ boxShadow: '0 0 0 1.5px #7B542F' }} />
+                  <View className="w-0.5 flex-1" style={{ backgroundColor: i === itens.length - 1 ? 'transparent' : '#E3D2B8' }} />
+                </View>
+              )
+              // Spec 122a: deslocamento é cartão (meio, de → para, detalhe, situação); o resto é linha leve
+              if (it.desl) {
+                const d = it.desl
+                const [fundo, corTexto] = COR_DA_SITUACAO[d.situacao] ?? COR_DA_SITUACAO.sugestao
+                const pendente = d.situacao === 'comparando' || d.situacao === 'sugestao'
+                return (
+                  <View key={it.chave} className="flex-row gap-3">
+                    <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
+                    {trilho}
+                    <Pressable
+                      onPress={() => novoDeslocamento(`&trajeto=${d.trajetoId}`)}
+                      accessibilityLabel={`Abrir ${it.titulo}`}
+                      className="mb-2.5 min-w-0 flex-1 gap-2.5 rounded-2xl border bg-cartao p-3 active:opacity-80"
+                      style={{ borderColor: pendente ? cor.dourado : cor.borda }}
+                    >
+                      <View className="flex-row items-center gap-2.5">
+                        <IconeQuadrado tamanho={34}>
+                          <it.Icone size={18} color={cor.couro} />
+                        </IconeQuadrado>
+                        <View className="min-w-0 flex-1">
+                          <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
+                          <Text className="mt-0.5 font-body text-[12px] leading-4 text-suave">{it.detalhe}</Text>
+                        </View>
+                      </View>
+                      <View className="flex-row items-center gap-2">
+                        <Pilula fundo={fundo} cor={corTexto} texto={d.situacao === 'comparando' ? `Comparando · ${d.opcoes} opções` : nomeDaSituacaoDoDeslocamento(d.situacao)} />
+                        {d.meio === 'trem' || d.meio === 'onibus' ? (
+                          <Pressable onPress={() => router.push(`/caminho?trajeto=${d.trajetoId}` as Href)} hitSlop={8} className="ml-auto flex-row items-center gap-1">
+                            <MapPin size={13} color={cor.couro} />
+                            <Text className="font-body-bold text-[12px] text-couro">Paradas</Text>
+                          </Pressable>
+                        ) : null}
+                      </View>
+                    </Pressable>
+                  </View>
+                )
+              }
               return (
                 <View key={it.chave} className="flex-row gap-3">
                   <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
-                  <View className="w-3.5 items-center">
-                    <View className="h-5 w-0.5" style={{ backgroundColor: i === 0 ? 'transparent' : '#E3D2B8' }} />
-                    <View className="h-2.5 w-2.5 rounded-full border-2 border-fundo bg-couro" style={{ boxShadow: '0 0 0 1.5px #7B542F' }} />
-                    <View className="w-0.5 flex-1" style={{ backgroundColor: i === itens.length - 1 ? 'transparent' : '#E3D2B8' }} />
-                  </View>
+                  {trilho}
                   <Pressable
                     onPress={editavel ? () => setForm({ evento: it.evento }) : undefined}
                     disabled={!editavel}
                     accessibilityLabel={editavel ? `Editar ${it.titulo}` : undefined}
-                    className="mb-2.5 min-w-0 flex-1 flex-row items-center gap-3 rounded-2xl bg-cartao p-3.5 active:opacity-80"
-                    style={{ boxShadow: '0 4px 14px rgba(74,46,20,0.06)' }}
+                    className="mb-1 min-w-0 flex-1 flex-row items-center gap-3 px-1 py-3 active:opacity-80"
                   >
-                    <IconeQuadrado tamanho={36}>
-                      <it.Icone size={19} color={cor.couro} />
-                    </IconeQuadrado>
+                    <it.Icone size={18} color={cor.caramelo} />
                     <View className="min-w-0 flex-1">
                       <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
                       {it.detalhe ? <Text className="mt-0.5 font-body text-[12.5px] text-suave">{it.detalhe}</Text> : null}
@@ -303,6 +375,16 @@ function Tela({
   )
 }
 
+function Pilula({ fundo, cor: corTexto, texto }: { fundo: string; cor: string; texto: string }) {
+  return (
+    <View className="rounded-full px-2.5 py-1" style={{ backgroundColor: fundo }}>
+      <Text className="font-body-bold text-[11.5px]" style={{ color: corTexto }}>
+        {texto}
+      </Text>
+    </View>
+  )
+}
+
 // Onde o comboio está nesse dia (o destino cujo período inclui o dia)
 function destinoDoDia(dia: string, destinos: Destino[]) {
   return destinos.find((d) => d.chegada && d.chegada <= dia && (d.saida ?? d.chegada) >= dia)
@@ -312,7 +394,15 @@ function destinoDoDia(dia: string, destinos: Destino[]) {
 // No fim, os lugares do destino (ideias do que fazer, sem hora).
 function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos: Trajeto[], eventos: EventoDaAgenda[]): Item[] {
   const itens: Item[] = montarAgendaDoDia(dia, { destinos, trajetos, eventos }).map((i) => {
-    if (i.tipo === 'trajeto') return { chave: i.chave, hora: i.hora, Icone: ICONE_DO_MEIO[i.meio] ?? Route, titulo: i.titulo, detalhe: i.detalhe }
+    if (i.tipo === 'trajeto')
+      return {
+        chave: i.chave,
+        hora: i.hora,
+        Icone: ICONE_DO_MEIO[i.meio] ?? Route,
+        titulo: i.titulo,
+        detalhe: i.detalhe,
+        desl: { trajetoId: i.trajetoId, situacao: i.situacao, opcoes: i.opcoes, meio: i.meio },
+      }
     if (i.tipo === 'evento') return { chave: i.chave, hora: i.hora, Icone: CalendarDays, titulo: i.titulo, detalhe: i.detalhe, evento: i.evento }
     return { chave: i.chave, hora: '', Icone: i.tipo === 'chegada' ? Bed : MapPin, titulo: i.titulo, detalhe: i.detalhe }
   })
