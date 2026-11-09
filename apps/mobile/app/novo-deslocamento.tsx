@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -141,6 +141,7 @@ function Formulario({
   const [buscando, setBuscando] = useState(false)
   const [aberto, setAberto] = useState<MeioDoJeito | null>(null)
   const [semJeito, setSemJeito] = useState<string | null>(null)
+  const buscaAtual = useRef(0) // só a última busca vale (digitou de novo no meio de uma busca)
   // A que horas o grupo fica livre: a última chegada de outro deslocamento nesse dia
   const livre = useMemo(() => {
     const doDia = trajetos.filter((t) => t.id !== trajeto?.id && t.chegada && t.partida && diaNoFuso(t.partida) === dia && t.grupo_opcoes !== grupoAtual)
@@ -180,6 +181,7 @@ function Formulario({
 
   async function acharJeitos() {
     if (!de.nome.trim() || !para.nome.trim()) return setErro('Diga de onde e pra onde.')
+    const minha = ++buscaAtual.current
     setErro(null)
     setSemJeito(null)
     setBuscando(true)
@@ -203,29 +205,47 @@ function Formulario({
       const base = livre ? livre.quando : horario('07:00')
       const quando = new Date(new Date(base).getTime() - 30 * 60000).toISOString()
       const lista = await buscarJeitosDeIr(a, b, quando, moeda)
+      if (minha !== buscaAtual.current) return
       setJeitos(lista)
       if (!lista.length) setSemJeito('Não achamos jeitos de ir entre esses lugares. Cadastre à mão.')
       else if (!lista.some((j) => j.saidas.length)) setSemJeito('Sem horários de trem ou ônibus nesse trecho (balsa e ônibus local às vezes não aparecem). Cadastre à mão se for o caso.')
     } catch {
       setSemJeito('Não deu pra buscar agora. Confira a internet ou cadastre à mão.')
     } finally {
-      setBuscando(false)
+      if (minha === buscaAtual.current) setBuscando(false)
     }
   }
 
   // As opções aparecem sozinhas quando de, para e dia estão preenchidos (sem botão, sem pedir hora)
-  const chaveDaBusca = etapa === 'buscar' && !focado && de.nome.trim() && para.nome.trim() ? `${de.nome}|${para.nome}|${dia}` : null
+  // Mudou de, para ou dia: as opções se atualizam sozinhas (espera a pessoa parar de digitar)
+  const chaveDaBusca = etapa === 'buscar' && de.nome.trim().length > 1 && para.nome.trim().length > 1 ? `${de.nome.trim()}|${para.nome.trim()}|${dia}` : null
   useEffect(() => {
     if (!chaveDaBusca) return
-    const t = setTimeout(() => void acharJeitos(), 400)
+    const t = setTimeout(() => void acharJeitos(), 900)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chaveDaBusca])
 
+  // Mexeu em de, para ou dia depois de escolher: volta pras opções (que já se atualizam)
+  function reabrirOpcoes() {
+    if (etapa === 'buscar') return
+    setEtapa('buscar')
+    setEscolhido(null)
+    setErro(null)
+  }
+  function mudarDe(p: Ponto) {
+    setDe(p)
+    reabrirOpcoes()
+  }
+  function mudarPara(p: Ponto) {
+    setPara(p)
+    reabrirOpcoes()
+  }
   function mudarDia(passo: number) {
     const d = lerData(dia)
     d.setDate(d.getDate() + passo)
     setDia(paraIso(d))
+    reabrirOpcoes()
   }
 
   // Tocar numa saída preenche tudo e vai pro passo 2
@@ -326,6 +346,7 @@ function Formulario({
   const trocar = () => {
     setDe(para)
     setPara(de)
+    reabrirOpcoes()
   }
 
   return (
@@ -337,13 +358,13 @@ function Formulario({
             <ArrowLeft size={20} color={cor.texto} />
           </BotaoRedondo>
         </View>
-        <Text className="font-display text-[28px] leading-[32px] text-texto">{trajeto ? 'Deslocamento' : grupo ? 'Outra opção' : 'Como vocês vão?'}</Text>
+        <Text className="font-display text-[28px] leading-[32px] text-texto">{trajeto ? 'Deslocamento' : grupo ? 'Outra opção' : 'Novo deslocamento'}</Text>
 
         {/* Passo 1: de onde, pra onde, que dia */}
         <View className="gap-2">
           <Campo
             value={de.nome}
-            onChangeText={(v) => setDe({ nome: v, latitude: null, longitude: null })}
+            onChangeText={(v) => mudarDe({ nome: v, latitude: null, longitude: null })}
             onFocus={() => setFocado('de')}
             onBlur={() => setTimeout(() => setFocado(null), 200)}
             placeholder="De onde? (cidade, estação, lugar)"
@@ -353,15 +374,15 @@ function Formulario({
               </Pressable>
             }
           />
-          {focado === 'de' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setDe(p)} /> : null}
+          {focado === 'de' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => mudarDe(p)} /> : null}
           <Campo
             value={para.nome}
-            onChangeText={(v) => setPara({ nome: v, latitude: null, longitude: null })}
+            onChangeText={(v) => mudarPara({ nome: v, latitude: null, longitude: null })}
             onFocus={() => setFocado('para')}
             onBlur={() => setTimeout(() => setFocado(null), 200)}
             placeholder="Pra onde?"
           />
-          {focado === 'para' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => setPara(p)} /> : null}
+          {focado === 'para' ? <Sugestoes lista={sugestoes} aoEscolher={(p) => mudarPara(p)} /> : null}
           <View className="flex-row items-center justify-between rounded-2xl border border-borda bg-cartao px-2 py-1.5">
             <Pressable onPress={() => mudarDia(-1)} accessibilityLabel="Dia anterior" hitSlop={8} className="p-2 active:opacity-70">
               <ChevronLeft size={18} color={cor.couro} />
@@ -471,7 +492,7 @@ function Formulario({
 
             {maisDetalhes ? (
               <View className="gap-3">
-                <Rotulo texto="Como" />
+                <Rotulo texto="Transporte" />
                 <Chips opcoes={MEIOS.map((m) => ({ chave: m.chave, nome: m.nome }))} valor={meio} aoMudar={setMeio} />
 
                 <View className="flex-row gap-3">
