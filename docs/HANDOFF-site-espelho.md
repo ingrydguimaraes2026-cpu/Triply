@@ -27,6 +27,31 @@
 | 5 | **Passagens** | `Transportes.tsx` segue a spec 122 (deslocamentos com opções, votos e comparar). Modelo: `apps/mobile/app/transportes.tsx` e `comparar.tsx` | A fazer |
 | 6 | Roteiro do dia e Agenda | Juntar Agenda no Roteiro como no app (dia a dia com mapa ilustrado) | A fazer |
 
+## Auditoria com prints (09/11/2026, noite)
+O Victor viu as etapas 1 a 4 e não gostou: "muita coisa do site ainda está antiga, que no app já está nova". Comparei site e app lado a lado em 375 px, na Eurotrip. O que ainda foge do app:
+
+**Em todas as telas (a "casca"), é o que mais faz parecer outro produto:**
+- O site tem uma barra no topo ("Eurotrip >", lupa, emergência, "...", avatar). O app não tem: cada aba abre direto no título grande.
+- O site tem o botão flutuante "+" em todas as abas. O app não tem: cada tela tem o seu botão ("Postar", "Novo deslocamento", a barra de lançar em Contas).
+- O cabeçalho das telas do site é "Eurotrip / Título / frase explicando". No app é só o título grande, com no máximo uma linha pequena ("0 fotos · 0 pessoas").
+- Tela vazia: o site usa ícone num quadrado e um cartão tracejado. O app usa a Norti (mascote) com uma frase e o botão principal embaixo.
+- Pílulas: o app usa 2 pílulas largas (Feed | Por dia; Transporte | Hospedagem). O site tem 4 abas em maiúsculas em Fotos.
+- Menu do computador ainda tem "Buscar" e "Emergência" soltos embaixo.
+
+**Tela por tela:**
+| Tela | Site hoje | App |
+|---|---|---|
+| Início (`/`) | Pula direto pra uma viagem. `/viagens`: topo com Perfil e Sair, "Minhas viagens", mapa escuro | "Bom dia, Paulo", avatar, mapa da galera claro, cartão grande da próxima viagem com "Faltam N dias" e carimbos |
+| Roteiro | Abre no baralho do Explorar (cartão "Lutécia", "1 de 6", Ajustar/Pronto) | Abre em Matches + pílulas Dia 1, Dia 2...; "Descobrir mais lugares" leva ao baralho |
+| Reservas → Passagens | Versão antiga: "Entre cidades", trechos com "Falta definir", links Rome2Rio e Google Maps | Deslocamentos (spec 122): vazio com a Norti e "Novo deslocamento"; opções, votos e comparar |
+| Fotos | Caixa "Compartilhe uma foto", 4 abas (Feed, Grade, Por dia, Melhores), vazio tracejado | "0 fotos · 0 pessoas", botão "Postar", 2 pílulas, Norti dormindo |
+| Comboio | "Quem vai" + "Histórico e lixeira" grande logo embaixo | Refeito no app; o histórico não é destaque |
+| Hoje, Lugares, Configurações, Perfil | Não comparadas ainda com print; código do site é de 02 a 08/11 | Refeitas no app |
+
+Consertado já: Comboio dizia "pode pôr de volta" (regra de texto) → "pode restaurar".
+
+**Ordem sugerida:** casca primeiro (muda a sensação de todas as telas), depois Roteiro, Passagens, Fotos, Início, e por fim Hoje, Lugares, Comboio, Configurações e Perfil.
+
 As etapas 3, 4 e 5 mexem em arquivos separados e podem andar em paralelo, cada uma na sua sessão ou worktree. A 2 depende da 1.
 
 ## Onde parou

@@ -58,7 +58,7 @@ export default function HistoricoDaViagem() {
 
   return (
     <Cartao titulo="Histórico e lixeira" icone={History}>
-      <p className="form-dica">Edições e itens apagados nos últimos 30 dias. Quem apagou (ou o ADM) pode pôr de volta.</p>
+      <p className="form-dica">Edições e itens apagados nos últimos 30 dias. Quem apagou (ou o ADM) pode restaurar.</p>
       {erro && (
         <p className="form-erro" role="alert">
           {erro}
