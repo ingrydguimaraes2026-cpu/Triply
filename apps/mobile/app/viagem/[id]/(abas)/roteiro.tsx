@@ -35,6 +35,7 @@ import {
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { ErroNaTela, PilhaDeAvatares } from '../../../../src/ui/pecas'
@@ -121,6 +122,7 @@ type PropsDaTela = {
 }
 
 function Tela({ viagem, destinos, lugares, trajetos, eventos, casas, roteiros, matches, aoMudar, atualizando }: PropsDaTela) {
+  const refDosDias = useAlvoDoTour('roteiro-dias') // o tour acende os dias
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { meuId } = useViagemAtual()
@@ -222,6 +224,7 @@ function Tela({ viagem, destinos, lugares, trajetos, eventos, casas, roteiros, m
         ) : (
           <>
             <Entra ordem={1}>
+              <View ref={refDosDias} collapsable={false}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingHorizontal: 18, paddingBottom: 4 }}>
                 {dias.map((d, i) => {
                   const ativo = i === diaEscolhido
@@ -242,6 +245,7 @@ function Tela({ viagem, destinos, lugares, trajetos, eventos, casas, roteiros, m
                   )
                 })}
               </ScrollView>
+              </View>
             </Entra>
 
             {/* Onde a galera está nesse dia e o tempo */}

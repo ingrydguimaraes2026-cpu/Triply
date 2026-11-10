@@ -69,6 +69,7 @@ const FOLGA_DA_BARRA = 12;
 export default function AbasDaViagem() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const caminho = usePathname();
   const { id: idDaRota } = useLocalSearchParams<{ id: string }>();
   const { atual, viagens, status, escolher, recarregar } = useViagemAtual();
   const reduzir = useReducedMotion();
@@ -102,10 +103,17 @@ export default function AbasDaViagem() {
   }
 
   const viagem = viagens.find((v) => v.id === id) ?? atual;
+  // Aba aberta agora (o tour anda quando a pessoa toca na aba pedida)
+  const abaAtiva =
+    ABAS_DA_VIAGEM.find(
+      (a) => a.fim && caminho.startsWith(`/viagem/${id}${a.fim}`),
+    )?.nome ?? "index";
   return (
     // Tour guiado na primeira vez (src/ui/tour/Tour.tsx): começa na aba Viagem
     <PalcoDoTour
+      aba={abaAtiva}
       aoComecar={() => router.navigate(`/viagem/${id}` as Href)}
+      aoTerminar={() => router.navigate(`/viagem/${id}` as Href)}
     >
     <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <CabecalhoDaViagem viagem={viagem} topo={insets.top} />

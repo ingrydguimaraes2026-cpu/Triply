@@ -37,7 +37,7 @@ export default function Reservas() {
     <div className="reservas">
       {/* Caminho B "Embarque" (10/11/2026): título grande e a troca Transporte / Hospedagem */}
       <h1 className="reservas-titulo">Reservas</h1>
-      <div className="reservas-pilulas" role="tablist" aria-label="Reservas">
+      <div className="reservas-pilulas" role="tablist" aria-label="Reservas" data-tour="reservas-troca">
         {PARTES.map((p) => (
           <button key={p.chave} type="button" role="tab" aria-selected={parte === p.chave} className={parte === p.chave ? 'ativa' : undefined} onClick={() => trocar(p.chave)}>
             {p.nome}

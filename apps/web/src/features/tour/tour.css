@@ -3,27 +3,50 @@
   position: fixed;
   inset: 0;
   z-index: 60;
+  /* O fundo deixa o toque passar; quem bloqueia são os .tour-bloqueio (em volta do buraco) */
+  pointer-events: none;
   animation: tour-entra 220ms ease-out;
 }
 
+.tour-bloqueio {
+  position: fixed;
+  pointer-events: auto;
+}
+
 /* O foco: um buraco aceso, e a sombra enorme em volta escurece o resto da tela.
-   Anda de uma peça pra outra com a curva "mola" (passa um tiquinho e volta). */
+   Sem transição de posição: o Tour.tsx segue a peça quadro a quadro (com transição, o foco ficava
+   atrasado e torto enquanto a aba ainda entrava). */
 .tour-foco {
   position: fixed;
   border-radius: 18px;
   border: 2px solid var(--laranja);
   box-shadow: 0 0 0 200vmax rgba(31, 18, 6, 0.66);
-  transition:
-    left 520ms var(--mola),
-    top 520ms var(--mola),
-    width 520ms var(--mola),
-    height 520ms var(--mola),
-    border-color 200ms;
   pointer-events: none;
 }
 
 .tour-foco.sem-peca {
   border-color: transparent;
+}
+
+/* Passo de tocar: um anel pulsa em volta, chamando o dedo */
+.tour-foco.tocar::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--laranja);
+  animation: tour-pulso 1400ms ease-out infinite;
+}
+
+@keyframes tour-pulso {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.25);
+    opacity: 0;
+  }
 }
 
 .tour-balao {
@@ -40,6 +63,7 @@
   background: var(--cor-fundo);
   border: 1px solid var(--cor-borda);
   box-shadow: 0 18px 40px rgba(31, 18, 6, 0.35);
+  pointer-events: auto;
   animation: tour-balao 460ms var(--macia) backwards;
 }
 
@@ -136,6 +160,10 @@
 @media (prefers-reduced-motion: reduce) {
   .tour-foco {
     transition: none;
+  }
+
+  .tour-foco.tocar::after {
+    animation: none;
   }
 
   .tour-balao {

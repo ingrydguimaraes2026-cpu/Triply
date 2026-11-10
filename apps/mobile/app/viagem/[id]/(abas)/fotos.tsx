@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { buscarDestinos, buscarFotos, buscarPostsDaViagem, type FotoDaViagem, type ViagemComDetalhes } from '@together/core'
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, diasDaViagem, paraIso, primeiroNome } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
@@ -28,6 +29,7 @@ export default function Fotos() {
 }
 
 function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: string }) {
+  const refDoPublicar = useAlvoDoTour('fotos-publicar') // o tour acende o Publicar
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const [modo, setModo] = useState<'feed' | 'dias'>('feed')
@@ -124,7 +126,7 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
       </ScrollView>
 
       {/* Um botão só, acima da barra de vidro */}
-      <View className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
+      <View ref={refDoPublicar} collapsable={false} className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
         <Pressable
           onPress={() => router.push('/novo-post')}
           accessibilityRole="button"

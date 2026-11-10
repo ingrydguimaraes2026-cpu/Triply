@@ -17,7 +17,6 @@ import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '.
 import { CarimbosDaViagem } from '../../../../src/ui/viagem/CarimbosDaViagem'
 import { Bilhete, codigoDoLugar } from '../../../../src/ui/viagem/Bilhete'
 import { ProximoPasso } from '../../../../src/ui/viagem/ProximoPasso'
-import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
 import { Lembrancas } from '../../../../src/ui/viagem/Lembrancas'
 import { Hoje } from '../../../hoje'
@@ -47,7 +46,6 @@ export default function AbaViagem() {
   const [convite, setConvite] = useState<string | null>(null)
   const [carimbo, setCarimbo] = useState<Passo | null>(null)
   const capa = useCapas(viagemId ? [viagemId] : [])
-  const refDoTour = useAlvoDoTour('proximo-passo') // o tour acende o Próximo passo
 
   const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId], 'aba-viagem')
   // Volta de outra tela (votou, lançou gasto, definiu datas): busca de novo pra o carimbo cair
@@ -161,9 +159,7 @@ export default function AbaViagem() {
         </Entra>
 
         <Entra indice={1} style={{ marginTop: 16 }}>
-          <View ref={refDoTour} collapsable={false}>
-            <ProximoPasso viagemId={viagem.id} passos={passos} proximo={proximo} aoAbrir={() => proximo && irProPasso(proximo.destino)} aoCarimbar={setCarimbo} />
-          </View>
+          <ProximoPasso viagemId={viagem.id} passos={passos} proximo={proximo} aoAbrir={() => proximo && irProPasso(proximo.destino)} aoCarimbar={setCarimbo} />
           {convite ? (
             <Text selectable className="mx-4 mt-2 font-body-medium text-[13px] text-verde">
               {convite}

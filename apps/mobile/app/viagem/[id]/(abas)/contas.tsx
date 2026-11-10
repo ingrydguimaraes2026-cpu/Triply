@@ -8,6 +8,7 @@ import { buscarGastos, CONGELADO, contarComentariosDaViagem, cotacoesDeHoje, for
 import { resumoDasContas } from '../../../../src/dados/contas'
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, hojeIso, lerData, primeiroNome } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
@@ -42,6 +43,7 @@ export default function Contas() {
 }
 
 function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: string }) {
+  const refDoLancar = useAlvoDoTour('contas-lancar') // o tour acende o Lançar gasto
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const [verSaldos, setVerSaldos] = useState(false)
@@ -296,7 +298,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
       </ScrollView>
 
       {/* Um botão só, acima da barra de vidro (o insets.bottom já conta a altura dela) */}
-      <View className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
+      <View ref={refDoLancar} collapsable={false} className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
         <Pressable
           onPress={adicionar}
           accessibilityRole="button"

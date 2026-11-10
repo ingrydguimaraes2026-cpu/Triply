@@ -6,7 +6,6 @@ import { Foto } from '../Foto'
 import { Avatar } from '../pecas'
 import { useCapas } from '../../dados/useCapas'
 import { cor, fonte, trabalho } from '../../../theme'
-import { useAlvoDoTour } from '../tour/Tour'
 
 // Cabeçalho igual em todas as abas da viagem (caminho B, mapa aprovado pelo Victor em 10/11/2026):
 // à esquerda a viagem (foto + nome, toque pra trocar de viagem), à direita os rostos da galera
@@ -17,7 +16,6 @@ export function CabecalhoDaViagem({ viagem, topo }: { viagem: ViagemComDetalhes;
   const foto = capa(viagem.id)
   const rostos = viagem.membros.slice(0, 4)
   const aMais = viagem.membros.length - rostos.length
-  const refDoTour = useAlvoDoTour('galera') // o tour acende os rostos
 
   return (
     <View style={{ paddingTop: topo + 6, backgroundColor: trabalho.fundo }} className="flex-row items-center gap-2 px-3.5 pb-2">
@@ -38,7 +36,6 @@ export function CabecalhoDaViagem({ viagem, topo }: { viagem: ViagemComDetalhes;
       <View className="flex-1" />
 
       <Pressable
-        ref={refDoTour}
         onPress={() => router.push('/comboio')}
         accessibilityRole="button"
         accessibilityLabel={`Galera: ${viagem.membros.length} ${viagem.membros.length === 1 ? 'pessoa' : 'pessoas'}`}

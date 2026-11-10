@@ -215,7 +215,7 @@ export default function ViagemLayout() {
             <Icone nome="seta-baixo" size={12} aria-hidden="true" />
           </Link>
           <span className="viagem-cab-esp" />
-          <Link to="comboio" className="viagem-cab-rostos" data-tour="galera" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
+          <Link to="comboio" className="viagem-cab-rostos" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
             {membros.slice(0, 4).map((m, i) => (
               <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} indice={i} />
             ))}
@@ -243,7 +243,7 @@ export default function ViagemLayout() {
         )}
       </div>
 
-      <TourDaViagem pronto aoComecar={voltarPraViagem} />
+      <TourDaViagem pronto aoComecar={voltarPraViagem} aoTerminar={voltarPraViagem} />
 
       {recado && (
         <p className="recado" role="status">

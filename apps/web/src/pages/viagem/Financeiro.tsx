@@ -548,7 +548,7 @@ export default function Financeiro() {
           </section>
 
           {/* Um botão só pra lançar: no canto, acima da barra de abas */}
-          <div className="ct-fab-lugar">
+          <div className="ct-fab-lugar" data-tour="contas-lancar">
             <button type="button" className="ct-fab" onClick={() => setJanela({ tipo: 'gasto' })}>
               <Icone nome="mais" size={20} aria-hidden="true" /> Lançar gasto
             </button>

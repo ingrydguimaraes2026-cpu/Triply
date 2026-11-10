@@ -67,7 +67,7 @@ export default function Roteiro() {
       </header>
 
       {dias.length > 0 && (
-        <nav className="rt-dias" aria-label="Dias da viagem">
+        <nav className="rt-dias" aria-label="Dias da viagem" data-tour="roteiro-dias">
           {dias.map((d, i) => {
             const { semana, numero } = diaCurtinho(d)
             return (
@@ -93,7 +93,7 @@ export default function Roteiro() {
           </div>
           {montados.length > 0 && (
             <>
-              <nav className="rt-dias" aria-label="Dias montados no Explorar">
+              <nav className="rt-dias" aria-label="Dias montados no Explorar" data-tour="roteiro-dias">
                 {montados.map((m) => (
                   <button key={m.numero} type="button" aria-pressed={montado?.numero === m.numero} onClick={() => setDia(String(m.numero))} title={m.destino.nome}>
                     <span>DIA</span>

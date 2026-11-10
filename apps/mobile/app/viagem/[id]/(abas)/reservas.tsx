@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../../../../src/ui/StatusBar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { fonte, titulo, trabalho } from '../../../../theme'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { TelaDePassagens } from '../../../transportes'
@@ -23,6 +24,7 @@ export default function Reservas() {
   const { atual } = useViagemAtual()
   const { parte } = useLocalSearchParams<{ parte?: string }>()
   const [aberta, setAberta] = useState<Parte>(parte === 'hospedagem' ? 'hospedagem' : 'transporte')
+  const refDaTroca = useAlvoDoTour('reservas-troca') // o tour acende a troca Transporte / Hospedagem
   if (!atual) return <SemViagem titulo="Reservas" />
 
   return (
@@ -31,7 +33,7 @@ export default function Reservas() {
       {/* Caminho B "Embarque" (10/11/2026): título grande e a troca Transporte / Hospedagem */}
       <View className="gap-3 pb-1" style={{ paddingTop: insets.top + 6, paddingHorizontal: 18 }}>
         <Text style={[titulo(32), { color: trabalho.texto }]}>Reservas</Text>
-        <View className="flex-row rounded-full border p-[3px]" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }} accessibilityRole="tablist">
+        <View ref={refDaTroca} collapsable={false} className="flex-row rounded-full border p-[3px]" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }} accessibilityRole="tablist">
           {PARTES.map((p) => {
             const ativa = aberta === p.chave
             return (

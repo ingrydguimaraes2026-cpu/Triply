@@ -287,7 +287,7 @@ export default function Fotos() {
         ))}
 
       {/* Um botão só, no canto, acima da barra de abas */}
-      <div className="ft-fab-lugar">
+      <div className="ft-fab-lugar" data-tour="fotos-publicar">
         <button type="button" className="ft-fab" onClick={() => setPostando(true)}>
           <Icone nome="nova-foto" size={20} aria-hidden="true" /> Publicar
         </button>
