@@ -42,6 +42,9 @@
 ## O que o app tem pra animar
 `apps/mobile` já tem `react-native-reanimated` 4.7, `react-native-gesture-handler`, `expo-haptics` e `expo-linear-gradient`. Não tem Lottie nem Skia.
 
+## Andamento
+- **10/11:** passos 1 e 2 feitos. Painel com 3 caminhos (A Diário de bordo, B Embarque, C Galera) em [`docs/design/direcao-redesenho/`](design/direcao-redesenho/README.md). **Esperando o Victor escolher.**
+
 ## Próximo passo exato (sessão nova)
 1. **Estudar com os olhos, não com texto.** Abrir no appllama e no Mobbin de 6 a 8 apps da coleção "High taste" (Airbnb, Duolingo, Opal, Wabi, CHANI, Partiful, Polarsteps) e capturar telas e fluxos. Nos vídeos, ver os quadros (no X, a função de "folha de quadros" com canvas funciona).
 2. Montar um **painel de direção**: 2 ou 3 caminhos visuais, cada um com prints reais de referência, as regras de tipografia, espaço e profundidade, e como seria o movimento. **Victor escolhe uma antes de qualquer tela.**
