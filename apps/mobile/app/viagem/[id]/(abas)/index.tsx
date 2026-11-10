@@ -15,23 +15,24 @@ import { compartilharTexto, linkDaViagem } from '../../../../src/lib/compartilha
 import { diasAte, diasDaViagem, hojeIso, periodo } from '../../../../src/lib/formato'
 import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '../../../../src/ui/PassosDaViagem'
 import { CarimbosDaViagem } from '../../../../src/ui/viagem/CarimbosDaViagem'
-import { Bilhete, codigoDoLugar } from '../../../../src/ui/viagem/Bilhete'
-import { ProximoPasso } from '../../../../src/ui/viagem/ProximoPasso'
+import { Capa } from '../../../../src/ui/viagem/Capa'
+import { FaixaDoProximoPasso, PassaporteDaGalera } from '../../../../src/ui/viagem/ProximoPasso'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
 import { Lembrancas } from '../../../../src/ui/viagem/Lembrancas'
 import { Hoje } from '../../../hoje'
 import { Comemoracao } from '../../../../src/ui/Comemoracao'
 import { Icone } from '../../../../src/ui/Icone'
 import { Selo } from '../../../../src/ui/Selos'
-import { ErroNaTela } from '../../../../src/ui/pecas'
+import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
 import { useCascata, useNumeroAnimado } from '../../../../src/ui/movimento'
 import { formatarDinheiro, type NomeDoIcone } from '@together/core'
 import { cor, fonte, rotulo, sombra, trabalho } from '../../../../theme'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
 // Aba Viagem (caminho B "Embarque", aprovado pelo Victor em 10/11/2026). Muda com a fase:
-// - antes: o bilhete da viagem, quantos dias faltam, UM próximo passo (com o passaporte da galera
-//   dentro) e o resumo das outras 4 abas, com os mesmos nomes e ícones da barra;
+// - antes: a capa com a foto do destino, quantos dias faltam (grande) com os rostos da galera,
+//   o passaporte da galera, o resumo das outras 4 abas e UM próximo passo numa faixa fixa no pé
+//   (refeito em 10/11 com as referências do App Store Tracker: Tripsy, Luggo, Wanderlog, Antigone);
 // - durante: o Hoje;
 // - depois: Lembranças (passaporte e história).
 // O cabeçalho (viagem, galera, ajustes) e a barra de abas ficam no _layout.
@@ -143,23 +144,28 @@ export default function AbaViagem() {
   return (
     <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <StatusBar style="dark" />
-      <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: 2, paddingBottom: insets.bottom + 16 }}>
-        <Bilhete
+      <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: 2, paddingBottom: insets.bottom + (proximo ? 92 : 16) }}>
+        <Capa
           foto={capa(viagem.id)}
-          de={destinos.length > 1 ? codigoDoLugar(destinos[0]) : 'IDA'}
-          para={codigoDoLugar(destinos[destinos.length - 1] ?? viagem.nome)}
-          data={viagem.dataInicio ? periodo(viagem.dataInicio, null).toUpperCase() : 'SEM DATA'}
-          noites={noites > 0 ? `${noites} ${noites === 1 ? 'NOITE' : 'NOITES'}` : ''}
-          pessoas={viagem.membros.map((m) => m.nome)}
+          nome={destinos.length === 1 ? destinos[0] : viagem.nome}
+          linha={[viagem.dataInicio ? periodo(viagem.dataInicio, viagem.dataFim) : '', noites > 0 ? `${noites} ${noites === 1 ? 'noite' : 'noites'}` : '', destinos.length > 1 ? destinos.join(', ') : '']
+            .filter(Boolean)
+            .join(' · ')}
           aoTocar={() => ir('roteiro')}
         />
 
         <Entra indice={0}>
-          <Contagem faltam={faltam} destino={destinos[0] ?? viagem.nome} podeDefinir={euSouAdm} aoDefinir={() => ir('configuracoes')} />
+          <Contagem
+            faltam={faltam}
+            pessoas={viagem.membros.map((m) => m.nome)}
+            podeDefinir={euSouAdm}
+            aoDefinir={() => ir('configuracoes')}
+            aoGalera={() => ir('comboio')}
+          />
         </Entra>
 
-        <Entra indice={1} style={{ marginTop: 16 }}>
-          <ProximoPasso viagemId={viagem.id} passos={passos} proximo={proximo} aoAbrir={() => proximo && irProPasso(proximo.destino)} aoCarimbar={setCarimbo} />
+        <Entra indice={1} style={{ marginTop: 18 }}>
+          <PassaporteDaGalera viagemId={viagem.id} passos={passos} aoCarimbar={setCarimbo} />
           {convite ? (
             <Text selectable className="mx-4 mt-2 font-body-medium text-[13px] text-verde">
               {convite}
@@ -200,6 +206,9 @@ export default function AbaViagem() {
         </Entra>
       </Animated.ScrollView>
 
+      {/* Um próximo passo só, sempre no mesmo lugar: logo acima da barra de abas */}
+      <FaixaDoProximoPasso proximo={proximo} aoAbrir={() => proximo && irProPasso(proximo.destino)} baixo={insets.bottom - 4} />
+
       {/* Carimbo novo: a Norti comemora o marco */}
       <Comemoracao
         visivel={!!carimbo}
@@ -229,26 +238,52 @@ function Entra({ indice, style, children }: { indice: number; style?: StyleProp<
   return <Animated.View style={[style, cascata]}>{children}</Animated.View>
 }
 
-// "23 dias pra Lisboa": o número corre do zero até o valor quando a tela abre
-function Contagem({ faltam, destino, podeDefinir, aoDefinir }: { faltam: number | null; destino: string; podeDefinir: boolean; aoDefinir: () => void }) {
+// "23 dias pra embarcar" bem grande na esquerda, os rostos da galera na direita.
+// O número corre do zero até o valor quando a tela abre.
+function Contagem({
+  faltam,
+  pessoas,
+  podeDefinir,
+  aoDefinir,
+  aoGalera,
+}: {
+  faltam: number | null
+  pessoas: string[]
+  podeDefinir: boolean
+  aoDefinir: () => void
+  aoGalera: () => void
+}) {
   const [alvo, setAlvo] = useState(0)
   useEffect(() => setAlvo(faltam ?? 0), [faltam])
   const mostrado = Math.round(useNumeroAnimado(alvo, 900))
-  if (faltam == null || faltam <= 0)
-    return (
-      <Pressable onPress={podeDefinir ? aoDefinir : undefined} accessibilityRole={podeDefinir ? 'button' : undefined} className="mt-3.5 items-center active:opacity-70">
-        <Text style={{ fontFamily: fonte.titulo, fontSize: 30, letterSpacing: -1, color: trabalho.texto }}>Sem data ainda</Text>
-        <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: podeDefinir ? cor.caramelo : trabalho.texto2, marginTop: 4 }}>
-          {podeDefinir ? 'Definir quando vai ser' : 'Quem organiza define as datas'}
+  const semData = faltam == null || faltam <= 0
+  return (
+    <View className="flex-row items-end justify-between px-[18px] pt-[18px]">
+      {semData ? (
+        <Pressable onPress={podeDefinir ? aoDefinir : undefined} accessibilityRole={podeDefinir ? 'button' : undefined} className="flex-1 active:opacity-70">
+          <Text style={{ fontFamily: fonte.titulo, fontSize: 30, letterSpacing: -1, color: trabalho.texto }}>Sem data ainda</Text>
+          <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: podeDefinir ? cor.caramelo : trabalho.texto2, marginTop: 4 }}>
+            {podeDefinir ? 'Definir quando vai ser' : 'Quem organiza define as datas'}
+          </Text>
+        </Pressable>
+      ) : (
+        <View className="flex-1" accessibilityLabel={`${faltam} ${faltam === 1 ? 'dia' : 'dias'} pra embarcar`}>
+          <Text style={{ fontFamily: fonte.titulo, fontSize: 76, lineHeight: 72, letterSpacing: -3.4, color: trabalho.texto, fontVariant: ['tabular-nums'] }}>{mostrado}</Text>
+          <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: trabalho.texto2, marginTop: 4 }}>{faltam === 1 ? 'dia' : 'dias'} pra embarcar</Text>
+        </View>
+      )}
+      <Pressable onPress={aoGalera} accessibilityRole="button" accessibilityLabel={`Galera: ${pessoas.length} ${pessoas.length === 1 ? 'pessoa' : 'pessoas'}`} className="items-end pb-1 active:opacity-70">
+        <View className="flex-row">
+          {pessoas.slice(0, 5).map((n, i) => (
+            <View key={i} style={{ marginLeft: i ? -8 : 0 }}>
+              <Avatar nome={n} indice={i} tamanho={30} borda={trabalho.fundo} />
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: trabalho.texto2, marginTop: 6 }}>
+          {pessoas.length} {pessoas.length === 1 ? 'vai' : 'vão'}
         </Text>
       </Pressable>
-    )
-  return (
-    <View className="mt-3.5 items-center" accessibilityLabel={`${faltam} ${faltam === 1 ? 'dia' : 'dias'} pra ${destino}`}>
-      <Text style={{ fontFamily: fonte.titulo, fontSize: 54, lineHeight: 56, letterSpacing: -2.4, color: trabalho.texto, fontVariant: ['tabular-nums'] }}>{mostrado}</Text>
-      <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: trabalho.texto2, marginTop: 2 }}>
-        {faltam === 1 ? 'dia' : 'dias'} pra {destino}
-      </Text>
     </View>
   )
 }

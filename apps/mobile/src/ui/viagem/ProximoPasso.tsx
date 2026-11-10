@@ -7,16 +7,8 @@ import { guardar, lerGuardado } from '../../lib/guardado'
 import { mola, tum, useReducedMotion } from '../movimento'
 import { cor, fonte, rotulo, sombra, trabalho } from '../../../theme'
 
-// "Próximo passo" (caminho B, regra "um próximo passo só"): junta o antigo Próximo carimbo
-// e o Passaporte num cartão só. Em cima, a única coisa pra fazer agora; embaixo, os selos
-// do passaporte da galera (os feitos acesos). Resolveu um passo: o selo cai e a tela comemora.
-type Props = {
-  viagemId: string
-  passos: Passo[]
-  proximo: Passo | null
-  aoAbrir: () => void
-  aoCarimbar?: (p: Passo) => void
-}
+// Aba Viagem (caminho B, regra "um próximo passo só"): a faixa do próximo passo no pé e o
+// passaporte da galera no meio da tela, separados (antes eram um cartão só).
 
 const BOTAO: Record<Passo['chave'], string> = {
   roteiro: 'Descobrir',
@@ -27,43 +19,58 @@ const BOTAO: Record<Passo['chave'], string> = {
   gastos: 'Lançar',
 }
 
-export function ProximoPasso({ viagemId, passos, proximo, aoAbrir, aoCarimbar }: Props) {
+// Faixa do próximo passo (referência: Wanderlog, 10/11): fica fixa no pé da aba Viagem, logo acima
+// da barra, sempre no mesmo lugar. Uma coisa só pra fazer agora, escura pra se destacar do creme.
+export function FaixaDoProximoPasso({ proximo, aoAbrir, baixo }: { proximo: Passo | null; aoAbrir: () => void; baixo: number }) {
+  if (!proximo) return null
+  return (
+    <Pressable
+      onPress={aoAbrir}
+      accessibilityRole="button"
+      accessibilityLabel={`Próximo passo: ${proximo.titulo}`}
+      className="absolute flex-row items-center gap-2.5 rounded-[20px] py-2.5 pl-3 pr-2.5 active:opacity-90"
+      style={[{ left: 10, right: 10, bottom: baixo, backgroundColor: cor.escuro }, sombra.cartao]}
+    >
+      <View style={{ transform: [{ rotate: '-8deg' }] }}>
+        <Selo nome={proximo.selo} tamanho={34} tom="escuro" />
+      </View>
+      <View className="flex-1">
+        <Text style={[rotulo, { fontSize: 9.5, color: cor.dourado }]}>Próximo passo</Text>
+        <Text numberOfLines={1} style={{ fontFamily: fonte.titulo, fontSize: 15, letterSpacing: -0.25, color: cor.creme, marginTop: 1 }}>
+          {proximo.titulo}
+        </Text>
+        <Text numberOfLines={1} style={{ fontFamily: fonte.corpoMedio, fontSize: 11.5, color: 'rgba(245,233,214,0.7)', marginTop: 1 }}>
+          {proximo.sub}
+        </Text>
+      </View>
+      <View className="h-9 items-center justify-center rounded-full px-3.5" style={{ backgroundColor: cor.dourado }}>
+        <Text style={{ fontFamily: fonte.item, fontSize: 13, color: cor.texto }}>{BOTAO[proximo.chave]}</Text>
+      </View>
+    </Pressable>
+  )
+}
+
+// Passaporte da galera (spec 118): os selos dos passos, os feitos acesos e os que faltam apagados,
+// com o contador (referências: Antigone "1/112", been "3/195"). Resolveu um passo: o selo cai e a tela comemora.
+export function PassaporteDaGalera({ viagemId, passos, aoCarimbar }: { viagemId: string; passos: Passo[]; aoCarimbar?: (p: Passo) => void }) {
   const novos = useSelosNovos(viagemId, passos, aoCarimbar)
   const feitos = passos.filter((p) => p.feito).length
-
   return (
-    <View className="mx-3.5 rounded-[20px] border" style={[{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }, sombra.cartao]}>
-      {proximo ? (
-        <Pressable onPress={aoAbrir} accessibilityRole="button" accessibilityLabel={`Próximo passo: ${proximo.titulo}`} className="flex-row items-center gap-3 p-3.5 active:opacity-80">
-          <View style={{ transform: [{ rotate: '-8deg' }] }}>
-            <Selo nome={proximo.selo} tamanho={44} />
-          </View>
-          <View className="flex-1">
-            <Text style={[rotulo, { color: cor.caramelo }]}>Próximo passo</Text>
-            <Text style={{ fontFamily: fonte.titulo, fontSize: 18, lineHeight: 20, letterSpacing: -0.4, color: trabalho.texto, marginTop: 3 }}>{proximo.titulo}</Text>
-            <Text style={{ fontFamily: fonte.corpo, fontSize: 12.5, color: trabalho.texto2, marginTop: 3 }}>{proximo.sub}</Text>
-          </View>
-          <View className="h-[38px] items-center justify-center rounded-full px-3.5" style={{ backgroundColor: trabalho.acento }}>
-            <Text style={{ fontFamily: fonte.item, fontSize: 13, color: trabalho.acentoTexto }}>{BOTAO[proximo.chave]}</Text>
-          </View>
-        </Pressable>
-      ) : (
-        <View className="p-3.5">
-          <Text style={[rotulo, { color: cor.caramelo }]}>Tudo pronto</Text>
-          <Text style={{ fontFamily: fonte.titulo, fontSize: 18, letterSpacing: -0.4, color: trabalho.texto, marginTop: 3 }}>Passaporte completo. Boa viagem!</Text>
-        </View>
-      )}
-
-      {/* Passaporte da galera, dentro do mesmo cartão */}
-      <View className="flex-row items-center gap-2 border-t px-3.5 py-2.5" style={{ borderColor: trabalho.linha }} accessibilityLabel={`Passaporte da galera: ${feitos} de ${passos.length}`}>
-        <View className="flex-1 flex-row gap-1.5">
-          {passos.map((p, i) => (
-            <SeloPequeno key={p.chave} passo={p} novo={novos.includes(p.chave)} ordem={novos.indexOf(p.chave)} inclinacao={i % 2 ? 5 : -6} />
-          ))}
-        </View>
-        <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11.5, color: trabalho.texto2 }}>
-          Passaporte {feitos} de {passos.length}
+    <View
+      className="mx-3.5 rounded-[20px] border px-3.5 py-3"
+      style={[{ backgroundColor: cor.areia, borderColor: trabalho.linha }]}
+      accessibilityLabel={`Passaporte da galera: ${feitos} de ${passos.length} carimbos`}
+    >
+      <View className="flex-row items-baseline justify-between">
+        <Text style={[rotulo, { color: cor.caramelo }]}>Passaporte da galera</Text>
+        <Text style={{ fontFamily: fonte.titulo, fontSize: 15, letterSpacing: -0.3, color: trabalho.texto }}>
+          {feitos}/{passos.length}
         </Text>
+      </View>
+      <View className="mt-2.5 flex-row flex-wrap gap-2">
+        {passos.map((p, i) => (
+          <SeloPequeno key={p.chave} passo={p} novo={novos.includes(p.chave)} ordem={novos.indexOf(p.chave)} inclinacao={i % 2 ? 5 : -6} />
+        ))}
       </View>
     </View>
   )
@@ -112,12 +119,12 @@ function SeloPequeno({ passo, novo, ordem, inclinacao }: { passo: Passo; novo: b
   if (!passo.feito)
     return (
       <View style={{ opacity: 0.25, transform: [{ rotate: `${inclinacao}deg` }] }}>
-        <Selo nome={passo.selo} tamanho={24} />
+        <Selo nome={passo.selo} tamanho={34} />
       </View>
     )
   return (
     <Animated.View style={estilo}>
-      <Selo nome={passo.selo} tamanho={24} />
+      <Selo nome={passo.selo} tamanho={34} />
     </Animated.View>
   )
 }
