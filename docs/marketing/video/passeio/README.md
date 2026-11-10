@@ -33,17 +33,30 @@ Isso roda `gravar.mjs` (Playwright grava o app) e depois `montar.mjs` (HyperFram
 
 ## Detalhes da gravação
 
-- Janela de 593×932 com DPR 3: a moldura de iPhone do app aparece em tamanho real e a tela sai em 1179×2556.
+- **Quadro a quadro, 60 fps.** Gravar em tempo real dava ~12 quadros por segundo e o vídeo pulava. Agora a página
+  roda com um relógio de mentira: `Date.now`, `performance.now`, `setTimeout`, `setInterval`,
+  `requestAnimationFrame` e as animações de CSS só andam quando o script manda. Ele anda 1/60 s, fotografa a tela
+  do iPhone e repete. Sai liso por mais pesado que o PC esteja (leva ~7 min pra gravar ~100 s).
+- Janela de 593×932 com DPR 2: a moldura de iPhone do app aparece em tamanho real e a tela sai em 786×1704.
 - O tour aparece porque cada gravação começa com o navegador limpo (sem `tripwave.tour.v1`).
 - Toques viram um círculo na tela; a rolagem é suave; a caixa "Modo teste" do login (só dev) fica escondida.
-- `gravacao/marcas.json` guarda quando cada parte começa; a montagem usa isso pros títulos do lado.
-- Com o PC pesado, o Chrome às vezes para de mandar quadros (já saiu vídeo com 20 s de tela parada). O script confere:
-  se ficar mais de 3,5 s sem quadro, ou uma rolagem começar sem mexer a tela, grava de novo (até 3 vezes).
-  Cada aba só rola depois que o endereço muda (`/roteiro`, `/contas`...), então a aba certa está aberta.
-- O render do HyperFrames sai com ~60 MB; a montagem recomprime (CRF 21) pra ~20 MB sem diferença visível.
+- Cada aba só rola depois que o endereço muda (`/roteiro`, `/contas`...), então a aba certa está aberta.
+- `gravacao/marcas.json` guarda quando cada parte começa e a hora de cada toque e tecla.
+- Testar só um pedaço: `node passeio/gravar.mjs --ate=tour-1` (grava até essa marca em `gravacao/teste.mp4`).
+
+## Trilha
+
+`trilha.py` faz a música na mão (sem música de terceiros, sem direito autoral): pop leve de viagem em Ré maior,
+~111 bpm. Cada instrumento entra numa parte do vídeo (arpejo no login, baixo no início, bateria no tour, tema de
+marimba nas 5 partes), e o andamento é ajustado pro acorde final cair quando o cartão da Norti aparece. Por cima:
+som leve de toque, de tecla, um "plim" a cada fala do tour e um sopro na troca de parte. O `montar.mjs` chama sozinho.
+
+## Montagem
+
+- HyperFrames + GSAP, 1920×1080 a 60 fps, com a trilha. O render sai pesado; a montagem recomprime (CRF 19).
 
 ## Cuidado antes da main
 
-- `docs/marketing/videos/norti-passeio.mp4` (~20 MB) está no repositório pra facilitar ver e baixar. Antes do PR pra
+- `docs/marketing/videos/norti-passeio.mp4` (~29 MB, 60 fps com som) está no repositório pra facilitar ver e baixar. Antes do PR pra
   `main`, decidir se fica (como o `docs/marketing/video/saida/tripwave-app.mp4`, que já está marcado pra sair).
 - As fotos dos posts são do Wikimedia Commons: pra divulgação, dar crédito (lista em `CREDITOS-FOTOS.md`).

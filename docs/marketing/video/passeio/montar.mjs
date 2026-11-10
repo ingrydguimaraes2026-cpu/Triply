@@ -47,6 +47,8 @@ await copyFile(require.resolve('gsap/dist/gsap.min.js'), path.join(PROJETO, 'ass
 await copyFile(path.join(RAIZ, 'docs/marketing/norti/recorte/norti-idle.png'), path.join(PROJETO, 'assets/norti-topo.png'))
 await copyFile(path.join(RAIZ, 'docs/marketing/norti/recorte/norti-celebrate.png'), path.join(PROJETO, 'assets/norti-fim.png'))
 await copyFile(path.join(AQUI, 'gravacao/app.mp4'), path.join(PROJETO, 'assets/app.mp4'))
+// Trilha feita na mão (passeio/trilha.py): música + sons leves de toque, teclas e falas do tour
+execFileSync('python', [path.join(AQUI, 'trilha.py'), path.join(PROJETO, 'assets/trilha.wav'), String(TOTAL)], { stdio: 'inherit' })
 
 // ---------- iPhone ----------
 // A gravação é a tela do iPhone da moldura do app (393×852, com a barra 9:41 e a Dynamic Island)
@@ -119,6 +121,7 @@ const html = `<!doctype html>
 </head>
 <body>
 <div id="root" data-composition-id="main" data-start="0" data-duration="${TOTAL}" data-width="${W}" data-height="${H}">
+  <audio id="trilha" class="clip" src="assets/trilha.wav" data-start="0" data-duration="${TOTAL}"></audio>
   <div id="fundo">
     <div class="luz" id="luz1" style="left:120px; top:60px; width:950px; height:760px; background:rgba(185,122,34,.22)"></div>
     <div class="luz" id="luz2" style="left:1050px; top:380px; width:950px; height:760px; background:rgba(123,84,47,.38)"></div>
@@ -221,12 +224,12 @@ console.log(`Composição: ${TOTAL}s, ${PARTES.length} partes ->`, path.join(PRO
 if (!process.argv.includes('--so-html')) {
   await mkdir(path.dirname(SAIDA), { recursive: true })
   const bruto = path.join(PROJETO, 'render.mp4')
-  execFileSync('npx', ['hyperframes', 'render', PROJETO, '-o', bruto, '-q', 'delivery', '--video-frame-format', 'png'], {
+  execFileSync('npx', ['hyperframes', 'render', PROJETO, '-o', bruto, '-q', 'delivery', '--fps', '60', '--video-frame-format', 'png'], {
     stdio: 'inherit', shell: true, cwd: path.resolve(AQUI, '..'),
     env: { ...process.env, HYPERFRAMES_NO_TELEMETRY: '1', DO_NOT_TRACK: '1', HYPERFRAMES_SKIP_SKILLS: '1' },
   })
-  // O render sai com ~60 MB; recomprimido (CRF 21) fica ~20 MB sem diferença visível
-  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', bruto, '-c:v', 'libx264', '-crf', '21', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', SAIDA])
+  // 60 fps (a gravação do app é quadro a quadro em 60 fps). O render sai pesado; recomprimido em CRF 19 fica bem menor sem diferença visível
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', bruto, '-c:v', 'libx264', '-crf', '19', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-c:a', 'aac', '-b:a', '192k', SAIDA])
   console.log('Vídeo:', SAIDA)
 }
 
