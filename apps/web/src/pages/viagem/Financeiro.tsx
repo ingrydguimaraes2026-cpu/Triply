@@ -27,7 +27,7 @@ import Avatar from '../../components/ui/Avatar'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import TituloDaTela from '../../components/ui/TituloDaTela'
 import Cartao from '../../components/ui/Cartao'
 import Carregando from '../../components/ui/Carregando'
 import ErroNaTela from '../../components/ui/ErroNaTela'
@@ -219,7 +219,7 @@ export default function Financeiro() {
 
   return (
     <>
-      <CabecalhoPagina acima={viagem.nome} titulo="Contas" subtitulo={`Quem pagou o quê · em ${moeda}`} acao={exportarMenu || undefined} />
+      <TituloDaTela titulo="Contas" acima={`Quem pagou o quê · em ${moeda}`} acao={exportarMenu || undefined} />
 
       {estado.status === 'carregando' && <Carregando texto="Somando as contas…" />}
       {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar as contas" aoTentar={recarregar} />}
