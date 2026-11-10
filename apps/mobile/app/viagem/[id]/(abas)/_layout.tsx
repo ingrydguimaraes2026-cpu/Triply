@@ -201,6 +201,7 @@ function BarraDeVidro({ id, baixo }: { id: string; baixo: number }) {
     ABAS_DA_VIAGEM.find((a) => a.fim && caminho.startsWith(base + a.fim))
       ?.nome ?? "index";
   const folga = Math.max(baixo, FOLGA_DA_BARRA);
+  const refDaBarra = useAlvoDoTour("barra"); // o tour acende a barra inteira ("as 5 partes")
   return (
     <>
       {/* Degradê creme da barra até a borda: o conteúdo some antes de chegar embaixo,
@@ -222,6 +223,8 @@ function BarraDeVidro({ id, baixo }: { id: string; baixo: number }) {
         style={{ position: "absolute", left: 10, right: 10, bottom: folga }}
       >
         <View
+          ref={refDaBarra}
+          collapsable={false}
           accessibilityRole="tablist"
           className="flex-row items-center justify-around rounded-[24px] border"
           style={[

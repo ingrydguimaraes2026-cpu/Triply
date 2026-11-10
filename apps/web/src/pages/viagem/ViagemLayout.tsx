@@ -167,6 +167,7 @@ export default function ViagemLayout() {
               aria-label={rotulo}
               title={rotulo}
               data-tour={para && ['roteiro', 'reservas', 'contas', 'fotos'].includes(para) ? `aba-${para}` : undefined}
+              data-tour-junto="barra" // o tour acende as 5 partes juntas ("Aqui ficam as 5 partes")
             >
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
