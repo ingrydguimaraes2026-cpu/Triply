@@ -2,7 +2,7 @@ import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native
 import { StatusBar } from '../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../src/ui/icones'
+import { ArrowLeft, BriefcaseBusiness, ChevronRight, Compass, LogOut, UserPlus, Users } from '../src/ui/icones'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
@@ -11,13 +11,14 @@ import { AvisosNoCelular } from '../src/ui/AvisosNoCelular'
 import { esquecerEsteAparelho } from '../src/lib/avisos'
 import { Avatar, BotaoRedondo, Cartao, IconeQuadrado, TituloDaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { verTourDeNovo } from '../src/ui/tour/Tour'
 
 // Perfil: quem sou, quantas viagens e com quantas pessoas, e o botão de sair.
 export default function Perfil() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { sessao, ehConvidado } = useSessao()
-  const { viagens, meuId } = useViagemAtual()
+  const { viagens, meuId, atual } = useViagemAtual()
   const eu = viagens.flatMap((v) => v.membros).find((m) => m.id === meuId)
   const nome = eu?.nome ?? sessao?.user.email?.split('@')[0] ?? 'Viajante'
   const companheiros = new Set(viagens.flatMap((v) => v.membros.map((m) => m.id)).filter((id) => id !== meuId)).size
@@ -65,6 +66,26 @@ export default function Perfil() {
                 <Text className="font-body-bold text-[15px] text-texto">Criar conta</Text>
                 <Text className="font-body text-[12px] text-suave">Pra não perder o acesso às viagens</Text>
               </View>
+              <ChevronRight size={20} color={cor.suave} />
+            </Cartao>
+          </Pressable>
+        ) : null}
+
+        {/* Tour guiado (src/ui/tour/Tour.tsx): marca como não visto e abre a viagem, onde ele começa sozinho */}
+        {atual ? (
+          <Pressable
+            onPress={async () => {
+              await verTourDeNovo()
+              router.push(`/viagem/${atual.id}`)
+            }}
+            accessibilityRole="button"
+            className="active:opacity-90"
+          >
+            <Cartao className="flex-row items-center gap-3 p-4">
+              <IconeQuadrado>
+                <Compass size={20} color={cor.couro} />
+              </IconeQuadrado>
+              <Text className="flex-1 font-body-bold text-[15px] text-texto">Ver o tour de novo</Text>
               <ChevronRight size={20} color={cor.suave} />
             </Cartao>
           </Pressable>

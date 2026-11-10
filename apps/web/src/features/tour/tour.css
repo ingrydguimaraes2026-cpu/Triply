@@ -1,0 +1,144 @@
+/* Tour guiado da viagem (features/tour/Tour.tsx) */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  animation: tour-entra 220ms ease-out;
+}
+
+/* O foco: um buraco aceso, e a sombra enorme em volta escurece o resto da tela.
+   Anda de uma peça pra outra com a curva "mola" (passa um tiquinho e volta). */
+.tour-foco {
+  position: fixed;
+  border-radius: 18px;
+  border: 2px solid var(--laranja);
+  box-shadow: 0 0 0 200vmax rgba(31, 18, 6, 0.66);
+  transition:
+    left 520ms var(--mola),
+    top 520ms var(--mola),
+    width 520ms var(--mola),
+    height 520ms var(--mola),
+    border-color 200ms;
+  pointer-events: none;
+}
+
+.tour-foco.sem-peca {
+  border-color: transparent;
+}
+
+.tour-balao {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 24px;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 18px 40px rgba(31, 18, 6, 0.35);
+  animation: tour-balao 460ms var(--macia) backwards;
+}
+
+.tour-balao-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tour-balao-topo h2 {
+  margin: 0 0 4px;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--junto);
+  font-size: 20px;
+  line-height: 1.05;
+  color: var(--cor-texto);
+}
+
+.tour-balao-topo p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cor-texto-suave);
+}
+
+.tour-balao-pe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-bolinhas {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+}
+
+.tour-bolinhas i {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cor-borda);
+  transition: width 260ms var(--macia);
+}
+
+.tour-bolinhas i.feito {
+  background: var(--couro);
+}
+
+.tour-bolinhas i.atual {
+  width: 16px;
+  background: var(--couro);
+}
+
+.tour-pular,
+.tour-proximo {
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tour-pular {
+  padding: 0 12px;
+  background: transparent;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.tour-proximo {
+  padding: 0 20px;
+  background: var(--couro);
+  color: var(--creme);
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+}
+
+@keyframes tour-entra {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tour-balao {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-foco {
+    transition: none;
+  }
+
+  .tour-balao {
+    animation: tour-entra 160ms ease-out backwards;
+  }
+}

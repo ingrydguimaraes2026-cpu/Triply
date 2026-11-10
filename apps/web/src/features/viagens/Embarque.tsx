@@ -112,7 +112,7 @@ export function ProximoPasso({ viagemId, passos, proximo, link }: { viagemId: st
   }, [chave, assinatura])
 
   return (
-    <section className="eb-cartao eb-proximo eb-entra" style={{ ['--i' as string]: 1 }} aria-label="Próximo passo">
+    <section className="eb-cartao eb-proximo eb-entra" style={{ ['--i' as string]: 1 }} aria-label="Próximo passo" data-tour="proximo-passo">
       {proximo ? (
         <Link to={link} className="eb-proximo-topo">
           <Selo nome={proximo.selo} tamanho={44} className="eb-proximo-selo" />

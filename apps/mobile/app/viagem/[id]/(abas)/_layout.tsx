@@ -23,7 +23,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import type { NomeDoIcone } from "@together/core";
+import type { AlvoDoTour, NomeDoIcone } from "@together/core";
+import { PalcoDoTour, useAlvoDoTour } from "../../../../src/ui/tour/Tour";
 import { Icone } from "../../../../src/ui/Icone";
 import { useViagemAtual } from "../../../../src/dados/viagemAtual";
 import { ErroNaTela } from "../../../../src/ui/pecas";
@@ -67,6 +68,7 @@ const FOLGA_DA_BARRA = 12;
 
 export default function AbasDaViagem() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { id: idDaRota } = useLocalSearchParams<{ id: string }>();
   const { atual, viagens, status, escolher, recarregar } = useViagemAtual();
   const reduzir = useReducedMotion();
@@ -101,6 +103,10 @@ export default function AbasDaViagem() {
 
   const viagem = viagens.find((v) => v.id === id) ?? atual;
   return (
+    // Tour guiado na primeira vez (src/ui/tour/Tour.tsx): começa na aba Viagem
+    <PalcoDoTour
+      aoComecar={() => router.navigate(`/viagem/${id}` as Href)}
+    >
     <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <CabecalhoDaViagem viagem={viagem} topo={insets.top} />
       {/* As abas não precisam mais da folga de cima (o cabeçalho já cuidou) e ganham folga
@@ -147,6 +153,7 @@ export default function AbasDaViagem() {
         </Tabs>
       </SafeAreaInsetsContext.Provider>
     </View>
+    </PalcoDoTour>
   );
 }
 
@@ -231,6 +238,7 @@ function BarraDeVidro({ id, baixo }: { id: string; baixo: number }) {
               rotulo={a.rotulo}
               icone={a.icone}
               ativa={ativa === a.nome}
+              alvo={a.fim ? (`aba-${a.nome}` as AlvoDoTour) : undefined}
               aoTocar={() => router.navigate((base + a.fim) as Href)}
             />
           ))}
@@ -245,13 +253,16 @@ function ItemDaBarra({
   icone,
   ativa,
   aoTocar,
+  alvo,
 }: {
   rotulo: string;
   icone: NomeDoIcone;
   ativa: boolean;
   aoTocar: () => void;
+  alvo?: AlvoDoTour;
 }) {
   const reduzir = useReducedMotion();
+  const refDoTour = useAlvoDoTour(alvo ?? null);
   const subida = useSharedValue(ativa ? 1 : 0);
   useEffect(() => {
     subida.value = reduzir
@@ -269,6 +280,7 @@ function ItemDaBarra({
   const tom = ativa ? cor.couro : trabalho.texto;
   return (
     <Pressable
+      ref={refDoTour}
       onPress={() => !ativa && aoTocar()}
       className="min-w-[56px] items-center gap-0.5 rounded-[14px] px-1.5 py-1.5"
       accessibilityRole="tab"

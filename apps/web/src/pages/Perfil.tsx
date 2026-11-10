@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link } from 'react-router'
-import { Accessibility, ArrowLeft, BookUser, Camera, Globe2, IdCard, ShieldCheck, UserRound } from '../components/ui/icones'
+import { Link, useNavigate } from 'react-router'
+import { Accessibility, ArrowLeft, BookUser, Camera, Compass, Globe2, IdCard, ShieldCheck, UserRound } from '../components/ui/icones'
 import { buscarMeuPerfil, salvarNome, tirarFoto, trocarFoto, type MeuPerfil } from '../features/perfil/api'
 import { ArquivoInvalido } from '../features/fotos/comprimir'
 import Avatar from '../components/ui/Avatar'
@@ -12,6 +12,7 @@ import FormFicha from '../features/ficha-pessoal/FormFicha'
 import MinhaPrivacidade from '../features/privacidade/MinhaPrivacidade'
 import FormAcessibilidade from '../features/acessibilidade/FormAcessibilidade'
 import OndeJaFui from '../features/perfil/OndeJaFui'
+import { verTourDeNovo } from '../features/tour/guardado'
 import './minhas-viagens.css'
 
 // Atalhos da coluna da esquerda (pulam pro cartão certo da direita)
@@ -27,6 +28,7 @@ const ATALHOS = [
 // "/perfil" (spec 008): nome e foto. Aparecem no comboio de todas as viagens.
 // Design Plataforma (spec 113): coluna fixa com foto e atalhos, cartões à direita.
 export default function Perfil() {
+  const navegarPraViagens = useNavigate()
   const [perfil, setPerfil] = useState<MeuPerfil | null | 'erro'>(null)
   const [nome, setNome] = useState('')
   const [salvando, setSalvando] = useState(false)
@@ -128,6 +130,18 @@ export default function Perfil() {
                 )}
               </div>
             </section>
+
+            {/* Tour guiado (features/tour): volta a aparecer na próxima viagem aberta */}
+            <button
+              type="button"
+              className="perfil-botao-pequeno"
+              onClick={() => {
+                verTourDeNovo()
+                navegarPraViagens('/viagens')
+              }}
+            >
+              <Compass size={15} aria-hidden="true" /> Ver o tour de novo
+            </button>
 
             <nav className="cartao-ui perfil-atalhos" aria-label="Partes do perfil">
               {ATALHOS.map(({ id, nome, Icone }) => (

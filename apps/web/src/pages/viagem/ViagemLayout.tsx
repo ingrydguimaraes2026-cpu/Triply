@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
+import { Link, NavLink, Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router'
 import { ArrowLeftRight, PanelLeft } from '../../components/ui/icones'
 import { Icone } from '../../components/ui/Icone'
 import { ABAS, TUDO_DA_VIAGEM } from '../../features/viagens/partes'
@@ -27,6 +27,7 @@ import Reservas from './Reservas'
 import '../../components/ui/ui.css'
 import './viagem.css'
 import { useCapas } from '../../features/viagens/capas'
+import TourDaViagem from '../../features/tour/Tour'
 
 // Menu recolhido (só ícones) fica lembrado neste navegador
 const CHAVE_MENU = 'together:menu-recolhido'
@@ -116,6 +117,10 @@ export default function ViagemLayout() {
 
   const fecharLancamento = useCallback(() => setLancamento(null), [])
 
+  // Tour guiado: começa na aba Viagem
+  const navegar = useNavigate()
+  const voltarPraViagem = useCallback(() => navegar(`/viagem/${id}`), [navegar, id])
+
   if (estado.status === 'carregando') return <div className="viagem-carregando" aria-busy="true" />
   if (estado.status === 'nao-encontrada') return <Perdido />
 
@@ -161,6 +166,7 @@ export default function ViagemLayout() {
               className={({ isActive }) => (isActive || (para === 'roteiro' && /^(explorar|agenda)/.test(aba)) ? 'active' : undefined)}
               aria-label={rotulo}
               title={rotulo}
+              data-tour={para && ['roteiro', 'reservas', 'contas', 'fotos'].includes(para) ? `aba-${para}` : undefined}
             >
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
@@ -209,7 +215,7 @@ export default function ViagemLayout() {
             <Icone nome="seta-baixo" size={12} aria-hidden="true" />
           </Link>
           <span className="viagem-cab-esp" />
-          <Link to="comboio" className="viagem-cab-rostos" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
+          <Link to="comboio" className="viagem-cab-rostos" data-tour="galera" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
             {membros.slice(0, 4).map((m, i) => (
               <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} indice={i} />
             ))}
@@ -236,6 +242,8 @@ export default function ViagemLayout() {
           </div>
         )}
       </div>
+
+      <TourDaViagem pronto aoComecar={voltarPraViagem} />
 
       {recado && (
         <p className="recado" role="status">
