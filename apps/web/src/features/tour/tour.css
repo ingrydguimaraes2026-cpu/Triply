@@ -20,7 +20,7 @@
   position: fixed;
   border-radius: 18px;
   border: 2px solid var(--laranja);
-  box-shadow: 0 0 0 200vmax rgba(14, 9, 4, 0.8); /* escuro firme: a peça acesa salta */
+  box-shadow: 0 0 0 200vmax rgba(12, 8, 4, 0.86); /* escuro firme: a peça acesa salta */
   pointer-events: none;
 }
 

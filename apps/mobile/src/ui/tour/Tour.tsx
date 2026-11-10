@@ -30,7 +30,7 @@ import { cor, fonte, titulo, trabalho } from '../../../theme'
 export const CHAVE_DO_TOUR = 'tripwave.tour.v1'
 const FOLGA = 4 // o foco fica um pouco maior que a peça
 const RAIO = 18
-const ESCURO = 'rgba(14,9,4,0.8)' // escuro firme: a peça acesa salta, o resto some
+const ESCURO = 'rgba(12,8,4,0.86)' // escuro firme: a peça acesa salta, o resto some
 const LARGURA_DO_BALAO = 340
 const MARGEM = 16
 const DISTANCIA = 14 // do balão até a peça (a setinha ocupa esse espaço)
@@ -142,16 +142,24 @@ export function PalcoDoTour({
       const peca = alvo ? alvos.current.get(alvo)?.current : null
       if (!alvo || !palco.current) return setCaixa(null)
       if (!peca) return tentarDeNovo(tentativa)
-      palco.current.measureInWindow((px: number, py: number) => {
-        peca.measureInWindow((x: number, y: number, w: number, h: number) => {
+      palco.current.measureInWindow((px: number, py: number, pw: number) => {
+        peca.measureInWindow((xv: number, yv: number, wv: number, hv: number) => {
           if (!vivo) return
-          if (!w || !h) return tentarDeNovo(tentativa)
-          // O foco não passa das bordas do palco
+          if (!wv || !hv) return tentarDeNovo(tentativa)
           const { w: largura, h: altura } = tamanhoRef.current
-          const esq = Math.max(4, x - px - FOLGA)
-          const topo = Math.max(4, y - py - FOLGA)
-          const dir = Math.min(largura - 4, x - px + w + FOLGA)
-          const fim = Math.min(altura - 4, y - py + h + FOLGA)
+          // No site do app (computador) a Moldura de iPhone encolhe a tela inteira (scale). A medida
+          // vem encolhida, mas o desenho do tour é em tamanho normal: divide pela escala, senão o foco
+          // fica fora do lugar. No celular a escala é 1.
+          const k = pw && largura ? pw / largura : 1
+          const x = (xv - px) / k
+          const y = (yv - py) / k
+          const w = wv / k
+          const h = hv / k
+          // O foco não passa das bordas do palco
+          const esq = Math.max(4, x - FOLGA)
+          const topo = Math.max(4, y - FOLGA)
+          const dir = Math.min(largura - 4, x + w + FOLGA)
+          const fim = Math.min(altura - 4, y + h + FOLGA)
           setCaixa({ x: esq, y: topo, w: dir - esq, h: fim - topo })
         })
       })
