@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router'
 import { AbaAtivaContexto, useAbaAtiva } from '../../features/viagens/hooks'
 import Transportes from './Transportes'
 import Hospedagem from './Hospedagem'
-import TituloDaTela from '../../components/ui/TituloDaTela'
 import './viagem-tela.css'
 
 // Reservas (igual à aba do app, apps/mobile/app/viagem/[id]/(abas)/reservas.tsx):
@@ -36,7 +35,8 @@ export default function Reservas() {
 
   return (
     <div className="reservas">
-      <TituloDaTela titulo="Reservas" />
+      {/* Caminho B "Embarque" (10/11/2026): título grande e a troca Transporte / Hospedagem */}
+      <h1 className="reservas-titulo">Reservas</h1>
       <div className="reservas-pilulas" role="tablist" aria-label="Reservas">
         {PARTES.map((p) => (
           <button key={p.chave} type="button" role="tab" aria-selected={parte === p.chave} className={parte === p.chave ? 'ativa' : undefined} onClick={() => trocar(p.chave)}>

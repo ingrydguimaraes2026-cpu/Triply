@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../../../../src/ui/StatusBar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { fonte, titulo, trabalho } from '../../../../theme'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { TelaDePassagens } from '../../../transportes'
 import { TelaDeHospedagem } from '../../../hospedagem'
@@ -27,9 +28,10 @@ export default function Reservas() {
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <View className="gap-3 px-5 pb-1" style={{ paddingTop: insets.top + 8 }}>
-        <Text className="font-display text-[32px] leading-[36px] text-texto">Reservas</Text>
-        <View className="flex-row rounded-full border border-borda bg-cartao p-1" accessibilityRole="tablist">
+      {/* Caminho B "Embarque" (10/11/2026): título grande e a troca Transporte / Hospedagem */}
+      <View className="gap-3 pb-1" style={{ paddingTop: insets.top + 6, paddingHorizontal: 18 }}>
+        <Text style={[titulo(32), { color: trabalho.texto }]}>Reservas</Text>
+        <View className="flex-row rounded-full border p-[3px]" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }} accessibilityRole="tablist">
           {PARTES.map((p) => {
             const ativa = aberta === p.chave
             return (
@@ -38,9 +40,10 @@ export default function Reservas() {
                 onPress={() => setAberta(p.chave)}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: ativa }}
-                className={`min-h-[40px] flex-1 items-center justify-center rounded-full ${ativa ? 'bg-couro' : ''}`}
+                className="min-h-[38px] flex-1 items-center justify-center rounded-full"
+                style={{ backgroundColor: ativa ? trabalho.acento : 'transparent' }}
               >
-                <Text className={`text-[14px] ${ativa ? 'font-body-bold text-creme' : 'font-body-semibold text-texto'}`}>{p.nome}</Text>
+                <Text style={{ fontFamily: fonte.item, fontSize: 13, color: ativa ? trabalho.acentoTexto : trabalho.texto2 }}>{p.nome}</Text>
               </Pressable>
             )
           })}

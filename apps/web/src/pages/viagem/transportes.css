@@ -233,3 +233,31 @@
   font-size: 13px;
   font-weight: 700;
 }
+
+/* ---------- Caminho B "Embarque" (10/11/2026): cada deslocamento é um bilhete, igual ao app ---------- */
+.ps-grupo-t { display: flex; align-items: baseline; justify-content: space-between; }
+.ps-grupo-t > span { font: 600 10.5px var(--fonte-corpo); letter-spacing: 0.14em; color: #a0701e; }
+.ps-item.ps-bilhete { flex-direction: column; align-items: stretch; gap: 0; padding: 0; overflow: hidden; }
+.ps-bilhete-topo { display: flex; align-items: flex-end; justify-content: space-between; padding: 14px 16px 10px; }
+.ps-ponta { display: flex; flex-direction: column; max-width: 38%; min-width: 0; }
+.ps-ponta.direita { align-items: flex-end; text-align: right; }
+.ps-ponta small { margin-bottom: 4px; overflow: hidden; color: var(--cor-texto-suave); font: 600 9px var(--fonte-corpo); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; }
+.ps-ponta b { font: 800 26px/1 var(--fonte-titulo); letter-spacing: -0.03em; }
+.ps-bilhete-meio { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-bottom: 4px; color: var(--cor-texto-suave); font: 600 10.5px var(--fonte-corpo); }
+.ps-bilhete-meio svg { color: #a0701e; }
+.ps-picote { position: relative; border-top: 2px dashed var(--cor-borda); }
+.ps-picote::before,
+.ps-picote::after { content: ''; position: absolute; top: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--cor-fundo); }
+.ps-picote::before { left: -9px; }
+.ps-picote::after { right: -9px; }
+.ps-bilhete-pe { display: flex; align-items: center; gap: 8px; padding: 10px 16px 12px; }
+.ps-bilhete-pe small { flex: 1; min-width: 0; overflow: hidden; color: var(--cor-texto-suave); font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+@media (min-width: 1024px) {
+  .ps-item.ps-bilhete.atual { padding: 0; }
+}
+
+/* No celular, o "Adicionar reserva" vira o botão do canto, acima da barra de vidro (igual ao Roteiro) */
+@media (max-width: 1023px) {
+  .ps-novo { position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); padding: 0; }
+  .ps-novo .botao { width: auto; min-height: 50px; padding: 0 18px 0 14px; font: 700 14.5px var(--fonte-titulo); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); }
+}

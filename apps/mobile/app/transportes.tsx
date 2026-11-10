@@ -33,7 +33,8 @@ import { Norti } from '../src/ui/Norti'
 import { BotaoIr } from '../src/ui/BotaoIr'
 import { VerReserva } from '../src/ui/BilheteDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
-import { cor } from '../theme'
+import { cor, fonte, rotulo as estiloRotulo, trabalho } from '../theme'
+import { codigoDoLugar } from '../src/ui/viagem/Bilhete'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
 import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs, useTemposAteOEmbarque } from '../src/ui/AjudaDoTrajeto'
 
@@ -103,7 +104,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   return (
     <View className="flex-1 bg-fundo">
       {naAba ? null : <StatusBar style="dark" />}
-      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 100, gap: 12 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 14, paddingBottom: insets.bottom + 80, gap: 12 }}>
         {naAba ? null : (
         <>
         <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
@@ -156,7 +157,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
         <Lista titulo="Pra comprar" itens={p.comprar} aoAbrir={abrir} />
         <Lista titulo="Compradas" itens={p.compradas} aoAbrir={abrir} />
 
-        {faltam.length ? <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Trechos sem deslocamento</Text> : null}
+        {faltam.length ? <Text style={[estiloRotulo, { color: trabalho.texto2, marginTop: 8 }]}>Trechos sem deslocamento</Text> : null}
         {faltam.map(({ de, para }) => (
           <ComoIrNoTrecho
             key={`${de.id}-${para.id}`}
@@ -180,16 +181,23 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
           </Cartao>
         ) : null}
 
-        {pessoais.length ? <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Chegada e volta de cada um</Text> : null}
+        {pessoais.length ? <Text style={[estiloRotulo, { color: trabalho.texto2, marginTop: 8 }]}>Chegada e volta de cada um</Text> : null}
         {pessoais.map((tr) => (
           <Passagem key={tr.id} trajeto={tr} ctx={ctx} />
         ))}
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 px-5" style={{ paddingBottom: (naAba ? 0 : insets.bottom) + 12 }}>
-        <Pressable onPress={() => router.push('/novo-deslocamento')} accessibilityRole="button" className="min-h-[54px] flex-row items-center justify-center gap-2 rounded-full bg-couro active:opacity-90">
-          <Plus size={18} color={cor.creme} />
-          <Text className="font-body-bold text-[15px] text-creme">Novo deslocamento</Text>
+      {/* Caminho B: um botão só, no canto, acima da barra de vidro */}
+      <View className="absolute right-4" style={{ bottom: insets.bottom + (naAba ? 4 : 12) }}>
+        <Pressable
+          onPress={() => router.push('/novo-deslocamento')}
+          accessibilityRole="button"
+          accessibilityLabel="Adicionar reserva de transporte"
+          className="h-[50px] flex-row items-center gap-1.5 rounded-full pl-3.5 pr-[18px] active:opacity-90"
+          style={{ backgroundColor: trabalho.acento, boxShadow: '0 10px 24px rgba(0,0,0,0.3)' }}
+        >
+          <Plus size={20} color={trabalho.acentoTexto} />
+          <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Adicionar reserva</Text>
         </Pressable>
       </View>
     </View>
@@ -212,39 +220,63 @@ function Contador({ numero, rotulo, fundo, corTexto }: { numero: number; rotulo:
 function Lista({ titulo, itens, aoAbrir }: { titulo: string; itens: ItemDaPassagem[]; aoAbrir: (i: ItemDaPassagem) => void }) {
   if (!itens.length) return null
   return (
-    <View className="gap-2">
-      <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">{titulo}</Text>
+    <View className="gap-2.5">
+      <View className="mt-2 flex-row items-baseline justify-between px-0.5">
+        <Text style={[estiloRotulo, { color: trabalho.texto2 }]}>{titulo}</Text>
+        <Text style={[estiloRotulo, { color: '#A0701E' }]}>{itens.length}</Text>
+      </View>
       {itens.map((i) => {
         const Icone = ICONE_DO_MEIO[i.meio] ?? Route
+        // "Como → Veneza" vira o bilhete: de onde e pra onde, com o código grande
+        const [de, para] = i.titulo.includes(' → ') ? i.titulo.split(' → ') : [i.titulo, '']
         const linha = [
           i.dia ? diaCurto(lerData(i.dia)) : 'Sem data',
           i.hora,
-          i.situacao === 'comparando' ? `${i.opcoes} opções` : nomeDoMeio(i.meio),
+          i.situacao === 'comparando' ? `${i.opcoes} opções` : null,
           i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
           i.naHora ? 'compra na hora' : null,
         ]
           .filter(Boolean)
           .join(' · ')
         return (
-          <Pressable key={i.id} onPress={() => aoAbrir(i)} accessibilityRole="button" className="active:opacity-80">
-            <Cartao className="flex-row items-center gap-3 p-3.5">
-              <IconeQuadrado tamanho={36}>
-                <Icone size={19} color={cor.couro} />
-              </IconeQuadrado>
-              <View className="flex-1">
-                <Text className="font-body-bold text-[14.5px] text-texto" numberOfLines={1}>
-                  {i.titulo}
-                </Text>
-                <Text className="font-body text-[12.5px] text-suave" numberOfLines={1}>
+          <Pressable key={i.id} onPress={() => aoAbrir(i)} accessibilityRole="button" accessibilityLabel={`Abrir ${i.titulo}`} className="active:opacity-90">
+            <View className="overflow-hidden rounded-[20px] border" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha, boxShadow: '0 2px 10px rgba(74,46,20,0.06)' }}>
+              <View className="flex-row items-end justify-between px-4 pb-2.5 pt-3.5">
+                <PontaDoBilhete cidade={de} />
+                <View className="items-center gap-0.5 pb-1">
+                  <Icone size={18} color="#A0701E" />
+                  <Text style={{ fontFamily: fonte.corpoForte, fontSize: 10.5, color: trabalho.texto2 }}>{nomeDoMeio(i.meio)}</Text>
+                </View>
+                {para ? <PontaDoBilhete cidade={para} direita /> : <View />}
+              </View>
+              {/* O picote do bilhete, com os furinhos dos lados */}
+              <View style={{ borderTopWidth: 2, borderStyle: 'dashed', borderColor: trabalho.linha }}>
+                <View className="absolute h-4 w-4 rounded-full" style={{ left: -9, top: -9, backgroundColor: trabalho.fundo }} />
+                <View className="absolute h-4 w-4 rounded-full" style={{ right: -9, top: -9, backgroundColor: trabalho.fundo }} />
+              </View>
+              <View className="flex-row items-center justify-between gap-2 px-4 pb-3 pt-2.5">
+                <Text className="flex-1" numberOfLines={1} style={{ fontFamily: fonte.corpo, fontSize: 12, color: trabalho.texto2 }}>
                   {linha}
                 </Text>
+                {i.preco != null && i.moeda ? <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</Text> : null}
+                <ChevronRight size={16} color={trabalho.texto2} />
               </View>
-              {i.preco != null && i.moeda ? <Text className="font-body-bold text-[14px] text-texto">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</Text> : null}
-              <ChevronRight size={16} color={cor.suave} />
-            </Cartao>
+            </View>
           </Pressable>
         )
       })}
+    </View>
+  )
+}
+
+// Um lado do bilhete: a cidade pequena em cima e o código grande (GRU, LIS)
+function PontaDoBilhete({ cidade, direita = false }: { cidade: string; direita?: boolean }) {
+  return (
+    <View style={{ maxWidth: '38%', alignItems: direita ? 'flex-end' : 'flex-start' }}>
+      <Text numberOfLines={1} style={{ fontFamily: fonte.corpoForte, fontSize: 9, letterSpacing: 1.3, color: trabalho.texto2, marginBottom: 4, textTransform: 'uppercase' }}>
+        {cidade}
+      </Text>
+      <Text style={{ fontFamily: fonte.titulo, fontSize: 26, lineHeight: 27, letterSpacing: -0.8, color: trabalho.texto }}>{codigoDoLugar(cidade) || '—'}</Text>
     </View>
   )
 }

@@ -1,3 +1,4 @@
+import { codigoDoLugar } from '../../features/viagens/codigoDoLugar'
 import { useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, ChevronRight, Plus, Route, Trash2 } from '../../components/ui/icones'
@@ -283,7 +284,7 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
 
           <div className="ps-novo">
             <button type="button" className="botao" onClick={abrirNovo}>
-              <Plus size={18} aria-hidden="true" /> Novo deslocamento
+              <Plus size={18} aria-hidden="true" /> Adicionar reserva
             </button>
           </div>
         </section>
@@ -322,19 +323,34 @@ function Contador({ numero, rotulo, tipo }: { numero: number; rotulo: string; ti
   )
 }
 
+// Um lado do bilhete: a cidade pequena em cima e o código grande (GRU, LIS)
+function PontaDoBilhete({ cidade, direita = false }: { cidade: string; direita?: boolean }) {
+  return (
+    <span className={direita ? 'ps-ponta direita' : 'ps-ponta'}>
+      <small>{cidade}</small>
+      <b>{codigoDoLugar(cidade) || '—'}</b>
+    </span>
+  )
+}
+
 function Lista({ titulo, itens, aberto, aoAbrir }: { titulo: string; itens: ItemDaPassagem[]; aberto: string | null; aoAbrir: (i: ItemDaPassagem) => void }) {
   if (!itens.length) return null
   return (
     <div className="ps-grupo">
-      <RotuloDeSecao>{titulo}</RotuloDeSecao>
+      <div className="ps-grupo-t">
+        <RotuloDeSecao>{titulo}</RotuloDeSecao>
+        <span>{itens.length}</span>
+      </div>
       <ul className="ps-itens">
         {itens.map((i) => {
           const { icone: Icone, nome } = meio(i.meio)
           const atual = aberto === i.id || (!!i.grupo && aberto === `opcoes:${i.grupo}`)
+          // "Como → Veneza" vira o bilhete: de onde e pra onde, com o código grande
+          const [de, para] = i.titulo.includes(' → ') ? i.titulo.split(' → ') : [i.titulo, '']
           const linha = [
             i.dia ? textoDoDia(i.dia) : 'Sem data',
             i.hora,
-            i.situacao === 'comparando' ? `${i.opcoes} opções` : nome,
+            i.situacao === 'comparando' ? `${i.opcoes} opções` : null,
             i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
             i.naHora ? 'compra na hora' : null,
           ]
@@ -342,16 +358,21 @@ function Lista({ titulo, itens, aberto, aoAbrir }: { titulo: string; itens: Item
             .join(' · ')
           return (
             <li key={i.id}>
-              <button type="button" className={atual ? 'ps-item atual' : 'ps-item'} onClick={() => aoAbrir(i)} aria-current={atual || undefined}>
-                <span className="ps-icone">
-                  <Icone size={19} aria-hidden="true" />
+              <button type="button" className={atual ? 'ps-item ps-bilhete atual' : 'ps-item ps-bilhete'} onClick={() => aoAbrir(i)} aria-current={atual || undefined} aria-label={`Abrir ${i.titulo}`}>
+                <span className="ps-bilhete-topo">
+                  <PontaDoBilhete cidade={de} />
+                  <span className="ps-bilhete-meio">
+                    <Icone size={18} aria-hidden="true" />
+                    {nome}
+                  </span>
+                  {para ? <PontaDoBilhete cidade={para} direita /> : <span />}
                 </span>
-                <span className="ps-texto">
-                  <b>{i.titulo}</b>
+                <span className="ps-picote" aria-hidden="true" />
+                <span className="ps-bilhete-pe">
                   <small>{linha}</small>
+                  {i.preco != null && i.moeda && <b className="ps-item-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</b>}
+                  <ChevronRight size={16} aria-hidden="true" className="ps-seta" />
                 </span>
-                {i.preco != null && i.moeda && <b className="ps-item-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</b>}
-                <ChevronRight size={16} aria-hidden="true" className="ps-seta" />
               </button>
             </li>
           )
