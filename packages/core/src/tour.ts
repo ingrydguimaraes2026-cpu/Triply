@@ -5,7 +5,7 @@
 // ensina fazendo, no lugar certo):
 // - a pessoa FAZ: "Toque em Roteiro" só anda quando ela toca na aba de verdade (`tocar`);
 // - cada parte é mostrada DENTRO da aba, apontando a peça principal dali (`alvo`);
-// - curto: uma frase por passo, "Pular" sempre à vista.
+// - curto: uma frase por passo. Sem "Pular" (10/11: o Victor clicava nele achando que era Próximo).
 // Sem alvo (ou peça fora da tela), o balão aparece no meio, sem foco.
 export type AlvoDoTour =
   | 'aba-roteiro'

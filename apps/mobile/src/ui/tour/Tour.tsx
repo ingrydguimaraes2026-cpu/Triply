@@ -195,7 +195,7 @@ export function PalcoDoTour({
       >
         {children}
         {passo !== null && caixa !== undefined && tamanho.h > 0 && (
-          <Cortina key={passo} passo={passo} caixa={caixa} tamanho={tamanho} aoAvancar={avancar} aoPular={fechar} />
+          <Cortina key={passo} passo={passo} caixa={caixa} tamanho={tamanho} aoAvancar={avancar} />
         )}
       </View>
     </Contexto.Provider>
@@ -213,13 +213,11 @@ function Cortina({
   caixa,
   tamanho,
   aoAvancar,
-  aoPular,
 }: {
   passo: number
   caixa: Caixa | null
   tamanho: { w: number; h: number }
   aoAvancar: () => void
-  aoPular: () => void
 }) {
   const reduzir = useReducedMotion()
   const p = PASSOS_DO_TOUR[passo]
@@ -382,11 +380,6 @@ function Cortina({
               <View style={{ width: `${((passo + 1) / total) * 100}%`, height: 4, borderRadius: 2, backgroundColor: trabalho.acento }} />
             </View>
           </View>
-          {!ultimo && (
-            <Pressable onPress={aoPular} accessibilityRole="button" hitSlop={8} className="h-10 justify-center px-2 active:opacity-70">
-              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 14, color: trabalho.texto2 }}>Pular</Text>
-            </Pressable>
-          )}
           {/* No passo de fazer não tem "Próximo": quem anda é o toque na peça acesa */}
           {fazer ? null : (
             <Pressable

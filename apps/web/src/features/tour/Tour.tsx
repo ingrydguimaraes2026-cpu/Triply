@@ -214,11 +214,6 @@ export default function TourDaViagem({
               <b style={{ width: `${((passo + 1) / total) * 100}%` }} />
             </i>
           </span>
-          {!ultimo && (
-            <button type="button" className="tour-pular" onClick={fechar}>
-              Pular
-            </button>
-          )}
           {!fazer && (
             <button type="button" className="tour-proximo" onClick={avancar} autoFocus>
               {passo === 0 ? 'Bora' : ultimo ? 'Começar' : 'Próximo'}

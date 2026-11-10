@@ -150,7 +150,6 @@
   background: var(--couro);
 }
 
-.tour-pular,
 .tour-proximo {
   height: 40px;
   border: 0;
@@ -158,13 +157,6 @@
   font: inherit;
   font-size: 14px;
   cursor: pointer;
-}
-
-.tour-pular {
-  padding: 0 12px;
-  background: transparent;
-  font-weight: 600;
-  color: var(--cor-texto-suave);
 }
 
 .tour-proximo {
