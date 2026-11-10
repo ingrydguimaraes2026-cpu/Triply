@@ -720,3 +720,19 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
     transform: translateY(-1.5px) scale(1.06);
   }
 }
+
+/* Degradê creme da barra de vidro até a borda: o conteúdo some antes de chegar embaixo,
+   então a barra parece presa no fundo da tela (igual ao app) */
+@media (max-width: 1023px) {
+  .viagem::after {
+    content: '';
+    position: fixed;
+    z-index: 9;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(64px + env(safe-area-inset-bottom));
+    background: linear-gradient(rgba(251, 243, 230, 0), var(--cor-fundo) 55%);
+    pointer-events: none;
+  }
+}
