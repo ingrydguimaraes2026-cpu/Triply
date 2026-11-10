@@ -29,6 +29,7 @@
   - **É a régua de gosto dele.**
 - Onde ver as telas e os fluxos: **appllama**, **Mobbin** e **60fps.design** (animações), indicados pelo Nero.
 - `docs/design/referencias/` tem 15 imagens de rodadas anteriores (Thomino, Satya, Tobi, Hilda...), com README.
+- `docs/design/referencias/appstoretracker/` (10/11): 28 telas reais (Partiful, Wanderlog, Tripsy, Rhyme, Stippl, Airbnb, Duolingo...) tiradas do MCP `appstoretracker`, com README dizendo pra qual parte da Norti cada uma serve.
 - Os quadros de vídeo vistos no X:
   - Satya, AI Companion: personagens em cartões grandes e contador gigante;
   - Satya, "anything app": fundo escuro, cartões do próprio produto flutuando em camadas, texto grande embaixo;
