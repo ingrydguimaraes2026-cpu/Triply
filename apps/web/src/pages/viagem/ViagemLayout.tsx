@@ -181,7 +181,7 @@ export default function ViagemLayout() {
         </nav>
 
         <div className="viagem-menu-rodape">
-          {/* ❄ congelado pelo RUMO (03/11/2026) */}
+          {/* congelado pelo RUMO (03/11/2026) */}
           {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />}
           <Link to="/perfil" className="viagem-menu-perfil" aria-label="Seu perfil">
             <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={34} />
