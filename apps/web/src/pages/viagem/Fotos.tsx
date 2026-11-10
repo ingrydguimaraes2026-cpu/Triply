@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { BellRing, Heart, Layers, MessageCircle, Plus } from '../../components/ui/icones'
+import { BellRing, Heart, Layers, MessageCircle } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import { albumPorDia } from '@together/core'
 import { diaPorExtenso } from '../../features/agenda/hooks'
 import BaixarFotos from '../../features/feed/BaixarFotos'
@@ -14,7 +15,6 @@ import Comentarios from '../../features/feed/Comentarios'
 import { ligarAvisos, situacaoDoAviso } from '../../features/cambio/avisos'
 import Avatar from '../../components/ui/Avatar'
 import TelaVazia from '../../components/ui/TelaVazia'
-import TituloDaTela from '../../components/ui/TituloDaTela'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -22,8 +22,9 @@ import './fotos.css'
 
 const CHAVE_SEM_AVISO = 'together:feed-sem-aviso'
 
-// Fotos (spec 014), igual à aba do app (apps/mobile/app/viagem/[id]/(abas)/fotos.tsx):
-// "N fotos · N pessoas", o botão "Postar", 2 pílulas (Feed | Por dia) e a Norti quando está vazio.
+// Fotos (spec 014), igual à aba do app (apps/mobile/app/viagem/[id]/(abas)/fotos.tsx), no caminho B
+// "Embarque" (10/11/2026): "N fotos · N pessoas", título grande, Feed | Por dia (o álbum em mosaico)
+// e um botão só, "Publicar", no canto.
 // "Por dia" tem o filtro por pessoa, como no app. Só quem viaja junto vê.
 export default function Fotos() {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
@@ -151,7 +152,7 @@ export default function Fotos() {
 
   // Grade de fotos (usada no Por dia)
   const grade = (lista: typeof posts) => (
-    <ul className="grade">
+    <ul className="grade ft-mosaico">
       {lista.map((p) => (
         <li key={p.id}>
           <button type="button" onClick={() => abrirNoFeed(p.id)} aria-label={`Abrir post de ${nomeDe(p.autor)}`}>
@@ -173,20 +174,17 @@ export default function Fotos() {
 
   return (
     <div className="feed-pagina">
-      <TituloDaTela
-        titulo="Fotos"
-        acima={`${totalDeFotos} ${totalDeFotos === 1 ? 'foto' : 'fotos'} · ${quemPostou} ${quemPostou === 1 ? 'pessoa' : 'pessoas'}`}
-        acao={
-          <button type="button" className="botao compacto" onClick={() => setPostando(true)}>
-            <Plus size={17} aria-hidden="true" /> Postar
-          </button>
-        }
-      />
+      <header className="ft-topo">
+        <small className="ft-rotulo">
+          {totalDeFotos} {totalDeFotos === 1 ? 'foto' : 'fotos'} · {quemPostou} {quemPostou === 1 ? 'pessoa' : 'pessoas'}
+        </small>
+        <h1>Fotos</h1>
+      </header>
 
       {pedirAviso && (
         <div className="feed-aviso">
           <BellRing size={18} aria-hidden="true" />
-          <p>Receber aviso no celular quando alguém do comboio postar ou comentar?</p>
+          <p>Receber aviso no celular quando alguém da galera postar ou comentar?</p>
           <div>
             <button type="button" className="botao pequeno" onClick={ligarAvisosDoFeed}>
               Avisar
@@ -243,7 +241,7 @@ export default function Fotos() {
               ))}
             </div>
             {doDia.length === 0 ? (
-              <TelaVazia titulo="Nenhuma foto ainda" texto="As fotos que o comboio postar no feed aparecem aqui, separadas por dia." />
+              <TelaVazia titulo="Nenhuma foto ainda" texto="As fotos que a galera publicar aparecem aqui, separadas por dia." />
             ) : (
               <div className="album-dias">
                 {albumPorDia(doDia, destinos).map((g) => (
@@ -261,7 +259,7 @@ export default function Fotos() {
             <BaixarFotos nomeDaViagem={viagem.nome} posts={posts} destinos={destinos} />
           </>
         ) : posts.length === 0 ? (
-          <TelaVazia titulo="Nenhum post ainda" texto='Toque em "Postar" pra mandar as primeiras fotos pro comboio.' />
+          <TelaVazia titulo="Nenhum post ainda" texto='Toque em "Publicar" pra mandar as primeiras fotos pra galera.' />
         ) : (
           <div className="feed">
             {posts.map((p) => (
@@ -287,6 +285,13 @@ export default function Fotos() {
             ))}
           </div>
         ))}
+
+      {/* Um botão só, no canto, acima da barra de abas */}
+      <div className="ft-fab-lugar">
+        <button type="button" className="ft-fab" onClick={() => setPostando(true)}>
+          <Icone nome="nova-foto" size={20} aria-hidden="true" /> Publicar
+        </button>
+      </div>
 
       {postando && (
         <Gaveta titulo="Novo post" aoFechar={() => setPostando(false)}>

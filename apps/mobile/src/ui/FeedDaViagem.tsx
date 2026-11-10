@@ -159,7 +159,7 @@ function PostCartao({
   );
 
   return (
-    <View className="overflow-hidden rounded-3xl border border-borda bg-cartao">
+    <View className="overflow-hidden rounded-[20px] border border-borda bg-cartao" style={{ boxShadow: "0 6px 18px rgba(74,46,20,0.08)" }}>
       <View className="flex-row items-center gap-2.5 px-3.5 py-3">
         <Avatar
           nome={membros.find((m) => m.id === post.autor)?.nome ?? "?"}

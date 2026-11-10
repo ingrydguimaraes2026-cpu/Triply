@@ -365,9 +365,9 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'saldo'
+    'quem'
     'painel'
-    'conversa'
-    'barra';
+    'conversa';
   gap: 14px;
 }
 
@@ -376,113 +376,149 @@
     grid-template-columns: minmax(0, 1fr) 340px;
     grid-template-areas:
       'saldo painel'
-      'conversa painel'
-      'barra painel';
-    grid-template-rows: auto 1fr auto;
+      'quem painel'
+      'conversa painel';
+    grid-template-rows: auto auto 1fr;
     column-gap: 24px;
     max-width: 1120px;
   }
 }
 
-/* Meu saldo: cartão couro com o número grande, como o do app */
-.meu-saldo {
-  grid-area: saldo;
-  border-radius: 24px;
-  background: var(--couro);
-  color: #ffffff;
-  box-shadow: var(--sombra-hero);
-  overflow: hidden;
+/* Caminho B "Embarque" (10/11/2026): título grande, rótulos em caixa alta e cartões em creme */
+.ct-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 2px 12px;
 }
 
-.meu-saldo-botao {
-  width: 100%;
+.ct-topo h1 {
+  margin: 6px 0 0;
+  font: 800 32px/1 var(--fonte-titulo);
+  letter-spacing: var(--junto);
+}
+
+.ct-rotulo {
+  display: block;
+  font: 600 10.5px var(--fonte-corpo);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.ct-secao-t {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 20px 20px 18px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 8px 2px 0;
+}
+
+.ct-link {
+  padding: 0;
   border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
+  background: none;
+  color: var(--couro);
+  font: 600 12.5px var(--fonte-corpo);
   cursor: pointer;
 }
 
-.meu-saldo-rotulo {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--creme);
+.ct-cartao {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: 0 6px 18px rgba(74, 46, 20, 0.08);
+}
+
+.ct-valor {
+  margin-left: auto;
+  flex: none;
+  font: 800 15px var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-texto);
+}
+
+.ct-valor.positivo {
+  color: var(--cor-sucesso);
+}
+
+/* Meu saldo: cartão creme com o número grande */
+.meu-saldo {
+  grid-area: saldo;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px 16px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  background: var(--cor-cartao);
+  box-shadow: 0 6px 18px rgba(74, 46, 20, 0.08);
+  color: var(--cor-texto);
 }
 
 .meu-saldo-valor {
-  font-family: var(--fonte-titulo);
-  font-size: 44px;
-  font-weight: 600;
-  line-height: 1.1;
+  margin-top: 8px;
+  font: 800 46px/0.95 var(--fonte-titulo);
+  letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
 }
 
 .meu-saldo-linha {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--creme);
-}
-
-.meu-saldo-ver {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  flex: none;
-  font-weight: 600;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
 }
 
 .meu-saldo-detalhe {
-  margin: 0;
-  padding: 0 20px 16px;
+  margin: 8px 0 0;
   font-size: 13px;
-  color: var(--creme);
+  color: var(--cor-texto-suave);
 }
 
-.meu-saldo-acertos {
+/* Quem deve quem */
+.ct-quem {
+  grid-area: quem;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 0 20px;
-  padding: 16px 0 20px;
-  border-top: 1px solid rgb(255 255 255 / 0.15);
-  font-size: 14px;
+  min-width: 0;
 }
 
-.meu-saldo-acertos p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--creme);
-}
-
-.meu-saldo-acertos ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.meu-saldo-pessoas li {
+.ct-quem-deve {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 13.5px;
+  color: var(--cor-texto-suave);
 }
 
-.meu-saldo-pessoas span {
-  flex: 1;
-  color: var(--creme);
+.ct-quem-deve:last-child {
+  border-bottom: 0;
+}
+
+.ct-quem-deve b {
+  font: 700 14px var(--fonte-titulo);
+  color: var(--cor-texto);
+}
+
+.ct-quem-para {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ct-saldo-pessoa {
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
   font-weight: 600;
 }
 
@@ -492,7 +528,8 @@
   align-self: start;
   border-radius: 20px;
   background: var(--cor-cartao);
-  box-shadow: var(--sombra-cartao);
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 6px 18px rgba(74, 46, 20, 0.08);
 }
 
 .contas-painel-alternar {
@@ -665,55 +702,60 @@
   }
 }
 
-/* A conversa: os meus à direita (couro), dos outros à esquerda (cartão branco) */
+/* Os gastos: lista em cartões creme, um cartão por dia (caminho B) */
 .contas-conversa {
   grid-area: conversa;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
+  padding-bottom: 72px; /* espaço pro botão do canto */
 }
 
-.contas-euro,
-.contas-recado {
-  align-self: center;
+.contas-euro {
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   margin: 0;
   padding: 8px 14px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.contas-euro {
   background: var(--cor-fundo-suave);
   color: var(--cor-texto);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .contas-euro svg {
   color: var(--couro);
 }
 
-.contas-recado {
-  background: var(--cor-sucesso-fundo);
-  color: var(--cor-sucesso);
+.ct-filtros {
+  flex-wrap: nowrap;
+  margin: 0 -16px;
+  padding: 0 16px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ct-filtros::-webkit-scrollbar {
+  display: none;
+}
+
+.ct-filtros button {
+  flex: none;
 }
 
 .conversa-dia {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .conversa-dia h3 {
-  align-self: center;
-  margin: 8px 0 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  margin: 6px 2px 0;
+  font: 600 10px var(--fonte-corpo);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cor-texto-suave);
 }
@@ -724,84 +766,76 @@
   font-variant-numeric: tabular-nums;
 }
 
-.conversa-dia ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.ct-gasto {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
-.bolha-linha {
+.ct-gasto:last-child {
+  border-bottom: 0;
+}
+
+.ct-gasto-botao {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.bolha-linha.minha {
-  justify-content: flex-end;
-}
-
-.bolha-pilha {
-  max-width: min(78%, 460px);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.bolha-linha.minha .bolha-pilha {
-  align-items: flex-end;
-}
-
-.bolha {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 12px 16px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 6px 12px 14px;
   border: 0;
-  border-radius: 20px 20px 20px 6px;
-  background: var(--cor-cartao);
-  box-shadow: var(--sombra-cartao);
+  background: none;
   color: var(--cor-texto);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-.bolha-linha.minha .bolha {
-  border-radius: 20px 20px 6px 20px;
-  background: var(--couro);
-  color: #ffffff;
-  box-shadow: none;
+.ct-gasto-botao:hover {
+  background: var(--cor-fundo-suave);
 }
 
-.bolha:hover {
-  filter: brightness(0.97);
+.ct-quad {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
 }
 
-.bolha strong {
-  font-size: 14px;
-  line-height: 1.35;
+.ct-gasto-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.bolha small {
+.ct-gasto-txt b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 14.5px var(--fonte-titulo);
+  letter-spacing: -0.01em;
+}
+
+.ct-gasto-txt small {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
-  font-size: 12px;
+  gap: 0 6px;
+  margin-top: 1px;
+  font-size: 12.5px;
   color: var(--cor-texto-suave);
-}
-
-.bolha-linha.minha .bolha small {
-  color: var(--creme);
 }
 
 .bolha-acoes {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0;
+  padding-right: 6px;
 }
 
 .bolha-acoes:empty {
@@ -813,7 +847,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 40px 16px;
+  padding: 32px 16px;
   text-align: center;
   color: var(--cor-texto-suave);
 }
@@ -824,8 +858,8 @@
 
 .contas-vazio h2 {
   margin: 0;
-  font-family: var(--fonte-titulo);
-  font-size: 24px;
+  font: 800 22px var(--fonte-titulo);
+  letter-spacing: var(--junto);
   color: var(--cor-texto);
 }
 
@@ -834,59 +868,74 @@
   font-size: 14px;
 }
 
-/* Barra de lançar: presa embaixo da tela enquanto a conversa rola */
+/* Lançar rápido: um campo no topo dos gastos */
 .contas-barra {
-  grid-area: barra;
-  position: sticky;
-  z-index: 5;
-  bottom: calc(72px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  height: 48px;
+  padding: 0 6px 0 14px;
   border: 1px solid var(--cor-borda);
-  border-radius: 999px;
+  border-radius: 18px;
   background: var(--cor-cartao);
-  box-shadow: var(--sombra-flutuante);
+}
+
+.contas-barra-icone {
+  flex: none;
+  color: var(--cor-texto-suave);
 }
 
 .contas-barra input {
   flex: 1;
   min-width: 0;
-  height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--cor-borda-forte);
-  border-radius: 999px;
-  background: var(--cor-fundo);
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
   color: var(--cor-texto);
   font: inherit;
   font-size: 15px;
 }
 
-.contas-barra-completo,
 .contas-barra-enviar {
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border: 0;
   border-radius: 999px;
+  background: var(--cor-fundo-suave);
+  color: var(--cor-texto);
   cursor: pointer;
 }
 
-.contas-barra-completo {
-  background: var(--cor-fundo-suave);
-  color: var(--couro);
+/* Um botão só, no canto, acima da barra de abas de vidro */
+.ct-fab-lugar {
+  position: fixed;
+  z-index: 12;
+  right: 16px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
 }
 
-.contas-barra-enviar {
-  background: var(--caramelo);
-  color: #ffffff;
+.ct-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 50px;
+  padding: 0 18px 0 14px;
+  border: 0;
+  border-radius: 25px;
+  background: var(--couro);
+  color: var(--creme);
+  font: 700 14.5px var(--fonte-titulo);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 @media (min-width: 1024px) {
-  .contas-barra {
-    bottom: 16px;
+  .ct-fab-lugar {
+    bottom: 24px;
   }
 }
