@@ -20,6 +20,7 @@ O Victor escolheu o **B · Embarque** e pediu pra ver todas as telas, porque dep
 ## Arquivos
 - `embarque.html`: o caminho B com todas as telas, clicável, e as regras de navegação.
 - `index.html`: o painel (lado a lado, tabela de comparação, regras de tipografia, espaço, profundidade e movimento de cada caminho, referências).
+- `tutorial-missoes.html`: proposta (10/11) de trocar o tour de 10 passos por missões no Passaporte ("a primeira viagem é a fase 1"). Arquivo sozinho (ícones e Norti embutidos), abre até no navegador do Claude.
 - `icones.js`: ícones e selos de verdade, gerados do core por `node docs/design/direcao-redesenho/gerar-icones.mjs`. Não editar à mão.
 - `refs/folha-*.jpg`: vídeos do [60fps.design](https://60fps.design) cortados em 8 quadros (da esquerda pra direita).
 - `refs/telas-*.jpg`: telas reais da loja e do primeiro uso, tiradas do [appllama](https://appllama.io/u/jaimin/high-taste-apps) (coleção "High taste apps" do jaimin) e, pra Partiful e Polarsteps, da App Store.
