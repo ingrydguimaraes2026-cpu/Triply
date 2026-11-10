@@ -5,8 +5,8 @@ const core = new URL('../../../packages/core/src/', import.meta.url).href
 const { DESENHOS_DOS_ICONES } = await import(core + 'icones-desenhos.ts')
 const { DESENHOS_DOS_SELOS } = await import(core + 'selos.ts')
 
-const icones = ['viagens', 'roteiro', 'hospedagem', 'contas', 'fotos', 'aviao', 'comboio', 'convidar', 'datas', 'seta-direita', 'feito', 'mais', 'menos', 'fechar', 'lugar', 'votar', 'dinheiro', 'compartilhar', 'curtir', 'info']
-const selos = ['mapa', 'galera', 'calendario', 'passagem', 'moedas', 'feito', 'cartas', 'barraca']
+const icones = Object.keys(DESENHOS_DOS_ICONES) // todos: o protótipo do caminho B usa muitos
+const selos = Object.keys(DESENHOS_DOS_SELOS)
 
 const saida = {
   icones: Object.fromEntries(icones.map((n) => [n, DESENHOS_DOS_ICONES[n].d])),

@@ -43,7 +43,8 @@
 `apps/mobile` já tem `react-native-reanimated` 4.7, `react-native-gesture-handler`, `expo-haptics` e `expo-linear-gradient`. Não tem Lottie nem Skia.
 
 ## Andamento
-- **10/11:** passos 1 e 2 feitos. Painel com 3 caminhos (A Diário de bordo, B Embarque, C Galera) em [`docs/design/direcao-redesenho/`](design/direcao-redesenho/README.md). **Esperando o Victor escolher.**
+- **10/11:** passos 1 e 2 feitos. Painel com 3 caminhos (A Diário de bordo, B Embarque, C Galera) em [`docs/design/direcao-redesenho/`](design/direcao-redesenho/README.md). Victor escolheu o **B (Embarque)** e pediu todas as telas, com a navegação, porque a pessoa se perde depois do primeiro uso.
+- **10/11:** [`docs/design/direcao-redesenho/embarque.html`](design/direcao-redesenho/embarque.html): 22 telas clicáveis + regras de navegação. **Falta o Victor decidir:** tudo escuro ou trabalho em creme; e se o mapa (5 abas, Galera nos rostos, fim do "Tudo da viagem") está certo. Depois: levar pro Expo, começando pela navegação e pela Viagem.
 
 ## Próximo passo exato (sessão nova)
 1. **Estudar com os olhos, não com texto.** Abrir no appllama e no Mobbin de 6 a 8 apps da coleção "High taste" (Airbnb, Duolingo, Opal, Wabi, CHANI, Partiful, Polarsteps) e capturar telas e fluxos. Nos vídeos, ver os quadros (no X, a função de "folha de quadros" com canvas funciona).
