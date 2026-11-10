@@ -1,0 +1,179 @@
+/* "Suas viagens" no caminho B "Embarque" (10/11/2026), igual ao app (apps/mobile/app/index.tsx).
+   Régua: docs/design/direcao-redesenho/embarque.html, tela "Suas viagens". */
+
+.sv-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sv-nova {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-cartao);
+  color: var(--cor-texto);
+  font: 600 13px var(--fonte-corpo);
+  text-decoration: none;
+}
+
+.sv-titulo {
+  margin: 16px 0 0;
+  font: 800 36px/1 var(--fonte-titulo);
+  letter-spacing: var(--junto);
+}
+
+.sv-sub {
+  margin: 6px 0 0;
+  font: 500 14px var(--fonte-corpo);
+  color: var(--cor-texto-suave);
+}
+
+/* Carteira: cada bilhete de trás mostra 62px; o da frente aparece inteiro */
+.sv-carteira {
+  --ponta: 62px;
+  position: relative;
+  height: calc((var(--n) - 1) * var(--ponta) + 212px);
+  margin: 18px 0 8px;
+  max-width: 560px;
+}
+
+.sv-bilhete {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--i) * var(--ponta));
+  z-index: var(--i);
+  display: block;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--creme);
+  color: var(--cor-texto);
+  text-decoration: none;
+  box-shadow: 0 -8px 24px rgba(74, 46, 20, 0.18);
+  animation: sv-sobe 0.7s var(--mola) both;
+  animation-delay: calc(0.15s + var(--i) * 0.09s);
+  transition: transform 0.25s var(--macia);
+}
+
+.sv-bilhete:not(.frente):hover {
+  transform: translateY(-6px);
+}
+
+.sv-foto {
+  position: relative;
+  display: block;
+  height: 150px;
+  background: var(--couro);
+}
+
+.sv-foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sv-bilhete.antiga .sv-foto img {
+  filter: saturate(0.6);
+  opacity: 0.75;
+}
+
+.sv-foto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(42, 27, 13, 0.65), transparent 45%);
+}
+
+.sv-foto b {
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  right: 110px;
+  top: 14px;
+  color: var(--creme);
+  font: 800 24px/1.05 var(--fonte-titulo);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sv-bilhete.frente .sv-foto b {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.sv-foto em {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  top: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--laranja);
+  color: var(--cor-texto);
+  font: 700 11px var(--fonte-corpo);
+  font-style: normal;
+}
+
+.sv-carimbo {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  top: 6px;
+  transform: rotate(-12deg);
+}
+
+.sv-inf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px 12px;
+}
+
+.sv-inf > span:first-child {
+  min-width: 0;
+}
+
+.sv-inf small {
+  display: block;
+  font: 600 11.5px var(--fonte-corpo);
+  letter-spacing: 0.03em;
+  color: var(--cor-texto-suave);
+}
+
+.sv-inf strong {
+  display: block;
+  margin-top: 1px;
+  font: 800 15px var(--fonte-titulo);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sv-mapa {
+  margin-top: 24px;
+}
+
+@keyframes sv-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(120px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-bilhete {
+    animation: none;
+  }
+}
