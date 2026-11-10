@@ -1,0 +1,35 @@
+/* Spec 121 (etapa 1): ajuda dentro da passagem e trechos sem deslocamento. Só as cores de global.css. */
+.aj-faixa {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px;
+  background: var(--dourado-claro); color: var(--couro);
+}
+.aj-faixa svg { flex: none; }
+.aj-faixa p { flex: 1; min-width: 0; margin: 0; font-size: 13px; line-height: 1.45; color: var(--cor-texto); }
+.aj-suave { color: var(--cor-texto-suave); }
+.aj-mudar { flex: none; border: 0; background: none; padding: 4px; font: inherit; font-size: 12px; font-weight: 700; color: var(--couro); cursor: pointer; }
+
+.aj-tempos { display: flex; flex-direction: column; gap: 8px; }
+.aj-tempos p { margin: 0; font-size: 13px; color: var(--cor-texto); }
+.aj-opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.aj-tempos .aj-opcoes button {
+  padding: 8px 12px; border-radius: 12px; border: 1px solid var(--cor-borda); background: var(--cor-cartao);
+  font: inherit; font-size: 13px; font-weight: 700; color: var(--cor-texto); cursor: pointer;
+}
+
+.aj-aeroporto { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; border: 1px solid var(--cor-borda); }
+.aj-aeroporto > b { font-size: 13px; }
+.aj-jeito { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+.aj-jeito span { min-width: 0; }
+.aj-jeito small { flex: none; font-size: 12.5px; color: var(--cor-texto-suave); }
+.aj-aeroporto > small { font-size: 11px; }
+
+.aj-trecho { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 20px; border: 1.5px dashed var(--cor-borda); }
+.aj-trecho > b { font-size: 14px; }
+.aj-trecho > small { font-size: 12.5px; }
+
+.aj-link, .aj-adicionar {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border: 0; border-radius: 12px;
+  font: inherit; font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.aj-link { background: var(--dourado-claro); color: var(--couro); }
+.aj-adicionar { background: var(--couro); color: #fff; }

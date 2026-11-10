@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, ChevronRight, Plus, Route, Trash2 } from '../../components/ui/icones'
 import {
+  aeroportosDoVoo,
+  antecedenciaDoEmbarque,
+  chegadasPerto,
   diaNoFuso,
   formatarDinheiro,
+  horaDeSair,
   meioComCaminho,
   meioComMotorista,
   nomeDaSituacao,
   nomeDaSituacaoDoDeslocamento,
   passagensDaViagem,
   textoDoDia,
-  type CasaDoDia,
+  trechosSemTrajeto,
+  type Aeroporto,
   type ItemDaPassagem,
   type Tables,
 } from '@together/core'
@@ -23,6 +28,9 @@ import FormDeslocamento from '../../features/transportes/FormDeslocamento'
 import CompararOpcoes from '../../features/transportes/CompararOpcoes'
 import CaminhoDoTrajeto from '../../features/transportes/CaminhoDoTrajeto'
 import { buscarOpcoes } from '../../features/hospedagem/api'
+import type { Opcao } from '../../features/hospedagem/regras'
+import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs } from '../../features/transportes/AjudaDoTrajeto'
+import { useTemposAteOEmbarque } from '../../features/transportes/temposAteOEmbarque'
 import BotaoIr from '../../components/ui/BotaoIr'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
 import Carregando from '../../components/ui/Carregando'
@@ -52,7 +60,9 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
   const podeDecidir = euSouAdm || viagem.membro_edita_transportes
   const { estado, recarregar } = useTrajetos(viagem.id, true)
   const cofre = useCofre(viagem.id)
-  const [casas, setCasas] = useState<CasaDoDia[]>([]) // casas escolhidas: avisos de check-in
+  const [casas, setCasas] = useState<Opcao[]>([]) // casas escolhidas: avisos de check-in e "do aeroporto até a casa"
+  // Spec 121 (etapa 1): o tempo até o embarque escolhido à mão fica neste navegador
+  const { tempos, escolher } = useTemposAteOEmbarque()
   useEffect(() => {
     buscarOpcoes(viagem.id)
       .then((ops) => setCasas(ops.filter((o) => o.escolhida)))
@@ -87,6 +97,28 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
   )
   const nada = trajetos.length === 0
   const moedas = Object.keys(p.total)
+  // Spec 121 (T4): trechos do roteiro sem nenhum deslocamento, com links pra descobrir como ir
+  const faltam = trechosSemTrajeto(destinos, trajetos)
+  // Spec 121 (etapa 1): saia às X, quem chega perto (dividir o carro) e do aeroporto até a casa
+  function ajudaDa(t: Trajeto) {
+    const ehChegada = t.tipo === 'chegada'
+    const chegaEm: Aeroporto | null = ehChegada ? aeroportosDoVoo(t, destinos).chegada : null
+    const perto = ehChegada ? chegadasPerto(t, trajetos, destinos)[0] : undefined
+    const casa = casas.find((c) => c.destinoId === t.destino_id)
+    const primeiro = (id: string) => (membros.find((m) => m.id === id)?.nome ?? '').split(' ')[0] || 'Alguém'
+    return (
+      <>
+        {t.partida && antecedenciaDoEmbarque(t.meio, true) !== null && (
+          <SaiaAs saida={horaDeSair(t, destinos, tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(x) => escolher(t.id, x)} />
+        )}
+        {perto && <DividirTransfer nomes={perto.pessoas.map(primeiro)} minutos={perto.minutos} aeroporto={chegaEm} pessoas={t.passageiros.length + perto.pessoas.length} />}
+        {/* Sem o "como chegar" escrito no guia da casa (062), a tabela ajuda */}
+        {chegaEm && !casa?.guia?.comoChegar && (
+          <DoAeroporto aeroporto={chegaEm} nomeDaCasa={casa?.nome ?? null} ate={casa?.guia?.endereco || destinos.find((d) => d.id === t.destino_id)?.nome || chegaEm.cidades[0]} />
+        )}
+      </>
+    )
+  }
 
   // Painel aberto (da URL)
   const passagem = busca.get('passagem')
@@ -207,6 +239,17 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
           <Lista titulo="Pra comprar" itens={p.comprar} aberto={passagem} aoAbrir={abrirItem} />
           <Lista titulo="Compradas" itens={p.compradas} aberto={passagem} aoAbrir={abrirItem} />
 
+          {faltam.length > 0 && <RotuloDeSecao>Trechos sem deslocamento</RotuloDeSecao>}
+          {faltam.map(({ de, para }) => (
+            <ComoIrNoTrecho
+              key={`${de.id}-${para.id}`}
+              de={de.nome}
+              para={para.nome}
+              data={de.saida ?? null}
+              aoAdicionar={() => abrir('novo', { grupo: null, dia: de.saida ?? null, de: de.nome, para: para.nome })}
+            />
+          ))}
+
           {moedas.length > 0 && (
             <div className="ps-total">
               <RotuloDeSecao>Transporte da viagem</RotuloDeSecao>
@@ -234,6 +277,7 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
               aoMudarBilhete={cofre.recarregar}
               aoMudar={recarregar}
               aoVerCaminho={() => abrir(`caminho:${t.id}`)}
+              ajuda={ajudaDa(t)}
             />
           ))}
 
@@ -329,6 +373,7 @@ function Passagem({
   aoMudarBilhete,
   aoMudar,
   aoVerCaminho,
+  ajuda,
 }: {
   trajeto: Trajeto
   destinos: Destino[]
@@ -340,6 +385,7 @@ function Passagem({
   aoMudarBilhete: () => void
   aoMudar: () => Promise<void> | void
   aoVerCaminho: () => void
+  ajuda: ReactNode
 }) {
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -421,6 +467,7 @@ function Passagem({
             .join(' · ')}
         </small>
       )}
+      {ajuda}
       {ehChegada && quemBusca && !euBusco && <small className="ps-verde">{primeiro(quemBusca)} vai buscar</small>}
       <div className="ps-acoes">
         <BilheteDoTrajeto viagemId={viagemId} trajetoId={t.id} bilhete={bilhete} aoMudar={aoMudarBilhete} />

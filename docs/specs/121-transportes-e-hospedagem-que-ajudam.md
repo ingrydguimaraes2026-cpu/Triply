@@ -1,6 +1,6 @@
 # 121. Transportes e Hospedagem que ajudam (não só organizam)
 
-**Fase:** 0/2 · **Tamanho:** M por etapa (3 etapas) · **Depende de:** 004, 011, 067, 120a · **Status:** Etapa 1 pronta pra testar (app, 04/11/2026) · etapas 2 e 3 a fazer
+**Fase:** 0/2 · **Tamanho:** M por etapa (3 etapas) · **Depende de:** 004, 011, 067, 120a · **Status:** Etapa 1 pronta pra testar (app 04/11/2026; levada pra Passagens no app e no site em 09/11/2026) · etapas 2 e 3 a fazer
 
 ## Objetivo
 Hoje as telas de Transportes e Hospedagem só guardam o que a pessoa já resolveu fora do app. A ideia é que elas ajudem a resolver: **como ir do aeroporto até a casa, que horas sair pra não perder o voo, com quem dividir o transfer, em que região ficar e até quanto pagar.** Tudo com regra simples no `@together/core`, links prontos e uma tabela feita à mão, **sem API paga**.
@@ -120,6 +120,15 @@ Esforço: **P** = poucos dias, **M** = cerca de uma semana, **G** = mais de uma 
   - No "Hoje", a tabela do aeroporto só aparece quando o guia da casa não tem o "Como chegar" escrito (062).
 - **Sem banco.** O tempo escolhido à mão fica no aparelho (`tempos_ate_embarque`).
 - **Testado:** `npx tsc --noEmit` (mobile e core), testes de lógica e o Transportes no navegador a 375 px (trechos e links). Os blocos dentro da passagem não foram vistos na tela porque a viagem de teste não tem trajeto: falta conferir no iPhone com um voo cadastrado.
+
+### Etapa 1 levada pra Passagens (09/11/2026)
+No merge de 09/11 a tela Transportes virou Passagens (spec 122d) e as peças ficaram só no "Hoje". Agora:
+- **App** (`apps/mobile/app/transportes.tsx`): no cartão de "Chegada e volta de cada um", "Saia às X", "dividir o carro" com quem chega perto e "do aeroporto até a casa" (só quando o guia da casa não tem o "Como chegar"). Depois de "Compradas", a seção **"Trechos sem deslocamento"** com os links (Google Maps, Rome2Rio, voo, carro) e o botão "Adicionar deslocamento", que abre o formulário já com de, para e o dia.
+- **Site** (espelho, `pages/viagem/Transportes.tsx`): as mesmas peças em `features/transportes/AjudaDoTrajeto.tsx` (+ `temposAteOEmbarque.ts`, o tempo escolhido fica no navegador). "Adicionar deslocamento" abre o painel do novo deslocamento preenchido.
+- **Core:** `trechosSemTrajeto` também conta o deslocamento gravado só pelo nome (`de_texto`/`para_texto`, como o formulário da 122 grava): "Roma Termini" cobre Roma. Teste novo em `como-ir.test.mjs`.
+- Os deslocamentos do grupo (pra decidir, pra comprar, compradas) continuam como linhas: a ajuda aparece só nos cartões completos (chegada e volta), como no "Hoje".
+- `apps/mobile/src/ui/NovoTrajeto.tsx` ficou sem uso (o "Novo deslocamento" substituiu): pode ser apagado.
+- **Não conferido na tela:** sem conta de teste, a Passagens logada não foi aberta (nem no site nem no app). Pra testar: viagem com 2 cidades e nenhum deslocamento entre elas → aparece "Trechos sem deslocamento"; "Adicionar deslocamento" abre o formulário com as cidades; lançar uma chegada de voo em FCO (pelo "Falta a sua chegada") → no cartão, "De Fiumicino (FCO) até ..." com 3 jeitos.
 
 ## Perguntas em aberto
 1. ~~Qual etapa vem primeiro?~~ Etapa 1 (Victor, 04/11/2026).

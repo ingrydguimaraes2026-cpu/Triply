@@ -5,16 +5,21 @@ import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AlertTriangle, ArrowLeft, Bus, Car, ChevronRight, Footprints, Plane, Plus, Route, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
 import {
+  aeroportosDoVoo,
+  antecedenciaDoEmbarque,
   arquivoDeCada,
   buscarDestinos,
   buscarOpcoesDeHospedagem,
+  chegadasPerto,
   formatarDinheiro,
+  horaDeSair,
   meioComCaminho,
   meioComMotorista,
   nomeDaSituacao,
   nomeDaSituacaoDoDeslocamento,
   nomeDoMeio,
   passagensDaViagem,
+  trechosSemTrajeto,
   type CasaDoDia,
   type Destino,
   type ItemDaPassagem,
@@ -30,6 +35,7 @@ import { VerReserva } from '../src/ui/BilheteDoDia'
 import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
 import { cor } from '../theme'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
+import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs, useTemposAteOEmbarque } from '../src/ui/AjudaDoTrajeto'
 
 // Passagens (spec 122d, no lugar de Transportes): o que falta decidir, o que falta comprar e o que já foi
 // comprado, os avisos sérios da viagem toda e quanto custa o transporte. Tocar num item abre a comparação
@@ -38,20 +44,21 @@ const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, ca
 
 type TrajetoComGente = Trajeto & { passageiros: string[] }
 type Membro = { id: string; nome: string; papel: string }
+type Casa = { nome: string; destinoId: string; guia: { endereco: string | null; comoChegar: string | null } }
 
 async function carregar(viagemId: string) {
   const [trajetos, destinos, arquivos, casas] = await Promise.all([
     supabase.from('trajetos').select('*, trajeto_passageiros (usuario_id)').eq('viagem_id', viagemId).order('partida', { ascending: true, nullsFirst: false }),
     buscarDestinos(supabase, viagemId),
     supabase.from('arquivos_viagem').select('id, caminho, trajeto_id, hospedagem_id, evento_id, criado_em').eq('viagem_id', viagemId).not('trajeto_id', 'is', null),
-    // As casas escolhidas entram nos avisos (check-in). Sem elas, a tela funciona igual.
+    // As casas escolhidas entram nos avisos (check-in) e no "do aeroporto até a casa". Sem elas, a tela funciona igual.
     buscarOpcoesDeHospedagem(supabase, viagemId)
-      .then((ops) => ops.filter((o) => o.escolhida) as CasaDoDia[])
-      .catch(() => [] as CasaDoDia[]),
+      .then((ops) => ops.filter((o) => o.escolhida))
+      .catch(() => []),
   ])
   if (trajetos.error) throw trajetos.error
   const lista: TrajetoComGente[] = (trajetos.data ?? []).map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) }))
-  return { trajetos: lista, destinos, casas, cofre: arquivoDeCada(arquivos.data ?? [], 'trajeto_id') }
+  return { trajetos: lista, destinos, casas: casas as (CasaDoDia & Casa)[], cofre: arquivoDeCada(arquivos.data ?? [], 'trajeto_id') }
 }
 
 export default function Transportes() {
@@ -67,6 +74,8 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   // Voltou do Novo deslocamento ou do Comparar: busca de novo pra mostrar o que mudou
   const primeiraVez = useRef(true)
   const { recarregar } = carga
+  // Spec 121 (etapa 1): o tempo até o embarque escolhido à mão fica no aparelho
+  const { tempos, escolher } = useTemposAteOEmbarque()
   useFocusEffect(
     useCallback(() => {
       if (primeiraVez.current) primeiraVez.current = false
@@ -85,7 +94,9 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const doGrupo = trajetos.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida')
   const p = passagensDaViagem(doGrupo, destinos, casas)
   const nada = trajetos.length === 0
-  const ctx = { destinos, membros, meuId, euSouAdm, cofre, aoMudar: carga.recarregar }
+  // Spec 121 (T4): trechos do roteiro sem nenhum deslocamento, com links pra descobrir como ir
+  const faltam = trechosSemTrajeto(destinos, trajetos)
+  const ctx = { destinos, membros, meuId, euSouAdm, cofre, aoMudar: carga.recarregar, trajetos, casas, tempos, escolher }
   const abrir = (i: ItemDaPassagem) => router.push(i.grupo && i.opcoes > 1 ? `/comparar?grupo=${i.grupo}` : `/novo-deslocamento?trajeto=${i.id}${i.dia ? `&dia=${i.dia}` : ''}`)
   const moedas = Object.keys(p.total)
 
@@ -144,6 +155,17 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
         <Lista titulo="Pra decidir" itens={p.decidir} aoAbrir={abrir} />
         <Lista titulo="Pra comprar" itens={p.comprar} aoAbrir={abrir} />
         <Lista titulo="Compradas" itens={p.compradas} aoAbrir={abrir} />
+
+        {faltam.length ? <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Trechos sem deslocamento</Text> : null}
+        {faltam.map(({ de, para }) => (
+          <ComoIrNoTrecho
+            key={`${de.id}-${para.id}`}
+            de={de.nome}
+            para={para.nome}
+            data={de.saida ?? null}
+            aoAdicionar={() => router.push(`/novo-deslocamento?de=${encodeURIComponent(de.nome)}&para=${encodeURIComponent(para.nome)}${de.saida ? `&dia=${de.saida}` : ''}`)}
+          />
+        ))}
 
         {moedas.length ? (
           <Cartao className="gap-1 p-4">
@@ -234,6 +256,10 @@ type Ctx = {
   euSouAdm: boolean
   cofre: Map<string, { caminho: string }>
   aoMudar: () => void
+  trajetos: TrajetoComGente[]
+  casas: Casa[]
+  tempos: Record<string, number>
+  escolher: (trajetoId: string, minutos: number) => void
 }
 
 function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: TrajetoComGente; ctx: Ctx; compacto?: boolean; rotulo?: string }) {
@@ -258,6 +284,10 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
     .filter(Boolean)
     .join(' · ')
   const estacao = t.estacao_partida ? { nome: t.estacao_partida, cidade: nomeDe(t.origem_id) } : null
+  // Spec 121 (etapa 1): saia às X, quem chega perto (dividir o carro) e do aeroporto até a casa
+  const chegaEm = ehChegada ? aeroportosDoVoo(t, ctx.destinos).chegada : null
+  const perto = ehChegada ? chegadasPerto(t, ctx.trajetos, ctx.destinos)[0] : undefined
+  const casa = ctx.casas.find((c) => c.destinoId === t.destino_id)
 
   async function buscar() {
     setOcupado(true)
@@ -329,6 +359,21 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
         <Text className="font-body text-[12.5px] text-suave">
           {[t.motorista_id ? `Dirige: ${primeiroNome(nomeDo(t.motorista_id) ?? '')}` : null, t.lugares_livres != null ? `${t.lugares_livres} ${t.lugares_livres === 1 ? 'lugar sobrando' : 'lugares sobrando'}` : null].filter(Boolean).join(' · ')}
         </Text>
+      ) : null}
+      {!compacto && t.partida && antecedenciaDoEmbarque(t.meio, true) !== null ? (
+        <SaiaAs saida={horaDeSair(t, ctx.destinos, ctx.tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(x) => ctx.escolher(t.id, x)} />
+      ) : null}
+      {!compacto && perto ? (
+        <DividirTransfer
+          nomes={perto.pessoas.map((id) => primeiroNome(nomeDo(id) ?? '') || 'Alguém')}
+          minutos={perto.minutos}
+          aeroporto={chegaEm}
+          pessoas={t.passageiros.length + perto.pessoas.length}
+        />
+      ) : null}
+      {/* Sem o "como chegar" escrito no guia da casa (062), a tabela ajuda */}
+      {!compacto && chegaEm && !casa?.guia.comoChegar ? (
+        <DoAeroporto aeroporto={chegaEm} nomeDaCasa={casa?.nome ?? null} ate={casa?.guia.endereco || nomeDe(t.destino_id) || chegaEm.cidades[0]} />
       ) : null}
       {ehChegada && quemBusca && !euBusco ? <Text className="font-body-medium text-[12.5px] text-verde">{primeiroNome(quemBusca)} vai buscar</Text> : null}
       <View className="flex-row flex-wrap gap-2">
