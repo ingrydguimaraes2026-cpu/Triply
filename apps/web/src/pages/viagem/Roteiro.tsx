@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { guardar, lembrar } from '../../lib/memoria'
 import { Link, useSearchParams } from 'react-router'
 import { diasDoPeriodo } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
@@ -19,7 +20,7 @@ import './roteiro.css'
 // Antes abria em "Matches" e o dia ficava escondido atrás de uma pílula.
 export default function Roteiro() {
   const { viagem, destinos, membros } = useViagemAtual()
-  const [matches, setMatches] = useState<Match[] | null>(null)
+  const [matches, setMatches] = useState<Match[] | null>(() => lembrar<Match[]>(`ideias:${viagem.id}`) ?? null)
   const [menu, setMenu] = useState(false)
   const [novo, setNovo] = useState(false)
   // O dia fica no endereço (?dia=2027-06-04): o "voltar" do navegador volta pro mesmo dia
@@ -31,7 +32,10 @@ export default function Roteiro() {
     // Sem internet (ou antes da migration do match) as ideias ficam vazias, sem quebrar a tela
     buscarMatches(viagem.id)
       .catch(() => [])
-      .then((m) => vivo && setMatches(m))
+      .then((m) => {
+        guardar(`ideias:${viagem.id}`, m)
+        if (vivo) setMatches(m)
+      })
     return () => {
       vivo = false
     }

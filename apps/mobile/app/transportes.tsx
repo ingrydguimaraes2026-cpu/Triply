@@ -32,7 +32,8 @@ import { supabase } from '../src/lib/supabase'
 import { Norti } from '../src/ui/Norti'
 import { BotaoIr } from '../src/ui/BotaoIr'
 import { VerReserva } from '../src/ui/BilheteDoDia'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { BotaoRedondo, Cartao, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { EsqueletoDaAba } from '../src/ui/viagem/Esqueleto'
 import { cor, fonte, rotulo as estiloRotulo, trabalho } from '../theme'
 import { codigoDoLugar } from '../src/ui/viagem/Bilhete'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
@@ -71,7 +72,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
-  const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id])
+  const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id], 'passagens')
   // Voltou do Novo deslocamento ou do Comparar: busca de novo pra mostrar o que mudou
   const primeiraVez = useRef(true)
   const { recarregar } = carga
@@ -85,7 +86,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   )
 
   if (!viagem) return null
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="passagens" titulo={!naAba} />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const { trajetos, destinos, casas, cofre } = carga.dados
   const membros: Membro[] = viagem.membros.map((m) => ({ id: m.id, nome: m.nome, papel: m.papel }))

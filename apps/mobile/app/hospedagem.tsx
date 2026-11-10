@@ -7,7 +7,8 @@ import { useHospedagemDaViagem } from '../src/dados/hospedagemDaViagem'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Norti } from '../src/ui/Norti'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { BotaoRedondo, Cartao, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { EsqueletoDaAba } from '../src/ui/viagem/Esqueleto'
 import { cor, fonte, rotulo, trabalho } from '../theme'
 import { FotoDeFundo } from '../src/ui/Foto'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -37,7 +38,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
   const carga = useHospedagemDaViagem(viagem?.id)
 
   if (!viagem) return null
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="hospedagem" titulo={!naAba} />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const { destinos, opcoes, trajetos } = carga.dados
   const pessoas = Math.max(1, viagem.membros.length)

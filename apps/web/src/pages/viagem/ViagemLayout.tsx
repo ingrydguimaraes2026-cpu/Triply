@@ -223,13 +223,18 @@ export default function ViagemLayout() {
         <ViagemContexto.Provider value={estado.dados}>
           {ABAS_GUARDADAS.filter((a) => visitadas.includes(`${viagem.id}:${a.para}`)).map(({ para, Tela }) => (
             <AbaAtivaContexto.Provider key={`${viagem.id}:${para}`} value={aba === para}>
-              <div className="aba-guardada" hidden={aba !== para}>
+              <div className="aba-guardada aba-entra" hidden={aba !== para}>
                 <Tela />
               </div>
             </AbaAtivaContexto.Provider>
           ))}
         </ViagemContexto.Provider>
-        {!abaGuardada && <Outlet context={estado.dados} />}
+        {/* A chave troca a cada aba: a nova monta com a animação de entrada (.aba-entra) */}
+        {!abaGuardada && (
+          <div className="aba-entra" key={aba}>
+            <Outlet context={estado.dados} />
+          </div>
+        )}
       </div>
 
       {recado && (

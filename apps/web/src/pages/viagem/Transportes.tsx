@@ -34,7 +34,7 @@ import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs } from '../../feat
 import { useTemposAteOEmbarque } from '../../features/transportes/temposAteOEmbarque'
 import BotaoIr from '../../components/ui/BotaoIr'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Norti from '../../components/ui/Norti'
 import RotuloDeSecao from '../../components/ui/RotuloDeSecao'
@@ -78,7 +78,7 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
     return (
       <>
         {cabecalho}
-        <Carregando texto="Carregando as passagens…" compacto />
+        <Esqueleto />
       </>
     )
   if (estado.status === 'erro')

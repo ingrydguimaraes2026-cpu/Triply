@@ -29,7 +29,7 @@ import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
 import { Icone } from '../../components/ui/Icone'
 import Cartao from '../../components/ui/Cartao'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -232,7 +232,7 @@ export default function Financeiro() {
         {exportarMenu || null}
       </header>
 
-      {estado.status === 'carregando' && <Carregando texto="Somando as contas…" />}
+      {estado.status === 'carregando' && <Esqueleto forma="contas" />}
       {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar as contas" aoTentar={recarregar} />}
 
       {dados && contas && (

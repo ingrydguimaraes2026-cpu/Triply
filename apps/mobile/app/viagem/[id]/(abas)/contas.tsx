@@ -11,7 +11,8 @@ import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { diaCurto, hojeIso, lerData, primeiroNome } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
-import { Avatar, Carregando, ErroNaTela } from '../../../../src/ui/pecas'
+import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
+import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { useNumeroAnimado } from '../../../../src/ui/movimento'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { ComentariosDoItem } from '../../../../src/ui/ComentariosDoItem'
@@ -75,13 +76,13 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
       euro ? saldoEuroDoComboio(supabase, viagem.id) : Promise.resolve(0),
     ])
     return { gastos, meuEuro, euroDoComboio }
-  }, [viagem.id, meuId])
+  }, [viagem.id, meuId], 'aba-contas')
 
   // Volta da tela de lançar gasto → recarrega
   const { recarregar } = carga
   useFocusEffect(useCallback(() => recarregar(), [recarregar]))
 
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="contas" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
 
   const { gastos, meuEuro, euroDoComboio } = carga.dados

@@ -1,3 +1,4 @@
+import { useEstadoGuardado } from '../../lib/memoria'
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { buscarCompras, cotacoesDeHoje, type CompraDeMoeda } from '../cambio/api'
@@ -18,7 +19,7 @@ type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'
 // Tudo que a aba Financeiro mostra, buscado em paralelo.
 // Atualiza sozinho quando um gasto é lançado em outro lugar (botão "+", fila offline).
 export function useFinanceiro(viagemId: string, membros: Membro[]) {
-  const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
+  const [estado, setEstado] = useEstadoGuardado<Estado>(`contas:${viagemId}`, { status: 'carregando' })
   const idsDoComboio = membros.map((m) => m.id).join()
 
   const buscar = useCallback(async (): Promise<Estado> => {
@@ -42,7 +43,7 @@ export function useFinanceiro(viagemId: string, membros: Membro[]) {
     }
   }, [viagemId, idsDoComboio])
 
-  const carregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  const carregar = useCallback(async () => setEstado(await buscar()), [buscar, setEstado])
 
   useEffect(() => {
     let ativo = true
@@ -56,7 +57,7 @@ export function useFinanceiro(viagemId: string, membros: Membro[]) {
       ativo = false
       window.removeEventListener(EVENTO_GASTOS, aoMudar)
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
   return { estado, recarregar: carregar }
 }

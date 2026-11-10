@@ -21,6 +21,7 @@ export function useHospedagemDaViagem(viagemId: string | undefined) {
         }
       : null,
     [viagemId],
+    'hospedagem',
   )
   const primeiraVez = useRef(true)
   const { recarregar } = carga

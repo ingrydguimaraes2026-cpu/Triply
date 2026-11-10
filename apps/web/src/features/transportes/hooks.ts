@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEstadoGuardado } from '../../lib/memoria'
+import { useCallback, useEffect } from 'react'
 import { buscarTrajetos, type Trajeto } from './api'
 import { useAoMudar } from '../tempo-real/avisos'
 
@@ -6,7 +7,7 @@ type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'
 
 // Trajetos da viagem (aba Transportes e cartão "Próximo trajeto" da Overview)
 export function useTrajetos(viagemId: string, comOpcoes = false) {
-  const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
+  const [estado, setEstado] = useEstadoGuardado<Estado>(`trajetos:${viagemId}:${comOpcoes}`, { status: 'carregando' })
 
   const buscar = useCallback(async (): Promise<Estado> => {
     try {
@@ -25,9 +26,9 @@ export function useTrajetos(viagemId: string, comOpcoes = false) {
     return () => {
       ativo = false
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
-  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar, setEstado])
   useAoMudar(['trajetos'], recarregar) // spec 085: outra pessoa mudou → recarrega
   return { estado, recarregar }
 }

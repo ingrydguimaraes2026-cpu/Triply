@@ -47,7 +47,7 @@ export default function AbaViagem() {
   const [carimbo, setCarimbo] = useState<Passo | null>(null)
   const capa = useCapas(viagemId ? [viagemId] : [])
 
-  const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId])
+  const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId], 'aba-viagem')
   // Volta de outra tela (votou, lançou gasto, definiu datas): busca de novo pra o carimbo cair
   const { recarregar } = carga
   const [primeiraVez, setPrimeiraVez] = useState(true)

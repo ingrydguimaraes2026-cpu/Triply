@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEstadoGuardado } from '../../lib/memoria'
+import { useCallback, useEffect } from 'react'
 import { buscarPosts, type Post } from './api'
 import { useAoMudar } from '../tempo-real/avisos'
 
@@ -6,7 +7,7 @@ type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'
 
 // Posts do feed da viagem. `mudarPost` atualiza um post na tela na hora (curtir, comentar), sem esperar o servidor.
 export function usePosts(viagemId: string) {
-  const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
+  const [estado, setEstado] = useEstadoGuardado<Estado>(`feed:${viagemId}`, { status: 'carregando' })
 
   const buscar = useCallback(async (): Promise<Estado> => {
     try {
@@ -25,18 +26,18 @@ export function usePosts(viagemId: string) {
     return () => {
       ativo = false
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
-  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar, setEstado])
   useAoMudar(['posts'], recarregar) // spec 085: outra pessoa mudou → recarrega
 
   const mudarPost = useCallback((id: string, mudar: (p: Post) => Post) => {
     setEstado((atual) => (atual.status === 'pronto' ? { ...atual, posts: atual.posts.map((p) => (p.id === id ? mudar(p) : p)) } : atual))
-  }, [])
+  }, [setEstado])
 
   const tirarPost = useCallback((id: string) => {
     setEstado((atual) => (atual.status === 'pronto' ? { ...atual, posts: atual.posts.filter((p) => p.id !== id) } : atual))
-  }, [])
+  }, [setEstado])
 
   return { estado, recarregar, mudarPost, tirarPost }
 }

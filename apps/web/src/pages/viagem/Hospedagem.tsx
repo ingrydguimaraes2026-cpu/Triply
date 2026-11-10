@@ -27,7 +27,7 @@ import FormOpcaoCurta from '../../features/hospedagem/FormOpcaoCurta'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
 import TituloDaTela from '../../components/ui/TituloDaTela'
 import TelaVazia from '../../components/ui/TelaVazia'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import IconeQuadrado from '../../components/ui/IconeQuadrado'
@@ -63,7 +63,7 @@ export default function Hospedagem({ naAba = false }: { naAba?: boolean }) {
     return (
       <>
         {cabecalho}
-        <Carregando texto="Carregando as noites…" compacto />
+        <Esqueleto />
       </>
     )
   }

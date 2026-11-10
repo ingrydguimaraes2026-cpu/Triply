@@ -10,7 +10,8 @@ import { diaCurto, diasDaViagem, paraIso, primeiroNome } from '../../../../src/l
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
 import { FeedDaViagem } from '../../../../src/ui/FeedDaViagem'
-import { Avatar, Carregando, ErroNaTela } from '../../../../src/ui/pecas'
+import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
+import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 import { Icone } from '../../../../src/ui/Icone'
@@ -34,11 +35,11 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
   const carga = useCarregar(async () => {
     const [fotos, posts, destinos] = await Promise.all([buscarFotos(supabase, viagem.id), buscarPostsDaViagem(supabase, viagem.id), buscarDestinos(supabase, viagem.id)])
     return { fotos, posts, destinos }
-  }, [viagem.id])
+  }, [viagem.id], 'aba-fotos')
   const { recarregar } = carga
   useFocusEffect(useCallback(() => recarregar(), [recarregar]))
 
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="fotos" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
 
   const todas = carga.dados.fotos

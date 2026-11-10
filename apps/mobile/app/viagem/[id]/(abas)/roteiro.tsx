@@ -37,7 +37,8 @@ import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
 import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
-import { Carregando, ErroNaTela, PilhaDeAvatares } from '../../../../src/ui/pecas'
+import { ErroNaTela, PilhaDeAvatares } from '../../../../src/ui/pecas'
+import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { buscarMatches, type Match } from '../../../../src/dados/matches'
 import { FormEvento } from '../../../../src/ui/FormEvento'
@@ -97,9 +98,10 @@ function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
         buscarMatches(viagem.id).catch(() => []),
       ]),
     [viagem.id],
+    'aba-roteiro',
   )
   useFocusEffect(useCallback(() => carga.recarregar(), [carga.recarregar]))
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="roteiro" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const [destinos, lugares, trajetos, eventos, casas, roteiros, matches] = carga.dados
   return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} roteiros={roteiros} matches={matches} aoMudar={carga.recarregar} atualizando={carga.atualizando} />

@@ -9,7 +9,7 @@ import { codigoDoLugar } from '../../features/viagens/codigoDoLugar'
 import CarimbosDaViagem from '../../features/carimbos/CarimbosDaViagem'
 import { useCapas } from '../../features/viagens/capas'
 import { diasAte, formatarData } from '../../lib/datas'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import './abas.css'
 import './viagem-tela.css'
@@ -67,7 +67,7 @@ export default function Overview() {
     if (ativa) recarregar()
   }, [ativa, recarregar])
 
-  if (estado.status === 'carregando') return <Carregando texto="Carregando a viagem…" compacto />
+  if (estado.status === 'carregando') return <Esqueleto forma="viagem" />
   if (estado.status === 'erro') return <ErroNaTela titulo="Não deu pra carregar a viagem" aoTentar={recarregar} />
   return <Embarque dados={estado.dados} foto={capa(viagem.id, 600)} meuId={meuId} euSouAdm={euSouAdm} moeda={viagem.moeda_principal} />
 }

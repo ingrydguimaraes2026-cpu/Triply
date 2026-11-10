@@ -1,5 +1,11 @@
 import { useEffect, useRef } from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import {
+  Animated as AnimatedNativo,
+  Platform,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   Tabs,
@@ -20,10 +26,16 @@ import Animated, {
 import type { NomeDoIcone } from "@together/core";
 import { Icone } from "../../../../src/ui/Icone";
 import { useViagemAtual } from "../../../../src/dados/viagemAtual";
-import { Carregando, ErroNaTela } from "../../../../src/ui/pecas";
+import { ErroNaTela } from "../../../../src/ui/pecas";
+import { EsqueletoDaViagem } from "../../../../src/ui/viagem/Esqueleto";
 import { SemViagem } from "../../../../src/ui/SemViagem";
 import { CabecalhoDaViagem } from "../../../../src/ui/viagem/CabecalhoDaViagem";
-import { mola, useReducedMotion } from "../../../../src/ui/movimento";
+import {
+  duracao,
+  mola,
+  SUBIDA_PX,
+  useReducedMotion,
+} from "../../../../src/ui/movimento";
 import { cor, fonte, trabalho } from "../../../../theme";
 
 // Dentro de uma viagem (caminho B "Embarque", mapa aprovado pelo Victor em 10/11/2026):
@@ -57,6 +69,7 @@ export default function AbasDaViagem() {
   const insets = useSafeAreaInsets();
   const { id: idDaRota } = useLocalSearchParams<{ id: string }>();
   const { atual, viagens, status, escolher, recarregar } = useViagemAtual();
+  const reduzir = useReducedMotion();
   // No navegador o id da rota pode sumir ao voltar de outra tela: aí vale a viagem atual
   const id = idDaRota || atual?.id || "";
   const existe = viagens.some((v) => v.id === id);
@@ -81,7 +94,8 @@ export default function AbasDaViagem() {
     return jaBuscouDeNovo && !existe ? (
       <SemViagem titulo="Viagem" />
     ) : (
-      <Carregando />
+      // Entrando na viagem: o formato da aba Viagem no lugar de "Carregando"
+      <EsqueletoDaViagem />
     );
   }
 
@@ -103,6 +117,27 @@ export default function AbasDaViagem() {
             headerShown: false,
             sceneStyle: { backgroundColor: trabalho.fundo },
             tabBarStyle: { position: "absolute" },
+            // Abas montam todas logo na entrada (cada uma busca o seu por trás):
+            // trocar depois é instantâneo, sem "Carregando".
+            lazy: false,
+            // A aba nova entra com mola curta: aparece e sobe uns 10px. A que sai some rápido.
+            // Com "Reduzir movimento" ligado, vira só um fade curto.
+            ...(reduzir
+              ? {
+                  animation: "fade" as const,
+                  transitionSpec: {
+                    animation: "timing" as const,
+                    config: { duration: duracao.rapida },
+                  },
+                }
+              : {
+                  animation: "fade" as const,
+                  sceneStyleInterpolator: entradaDaAba,
+                  transitionSpec: {
+                    animation: "spring" as const,
+                    config: mola.macia,
+                  },
+                }),
           }}
           tabBar={() => <BarraDeVidro id={id} baixo={insets.bottom} />}
         >
@@ -113,6 +148,31 @@ export default function AbasDaViagem() {
       </SafeAreaInsetsContext.Provider>
     </View>
   );
+}
+
+// Movimento da troca de aba (progress: 0 = aba na tela, -1/1 = aba fora, à esquerda/direita)
+function entradaDaAba({
+  current,
+}: {
+  current: { progress: AnimatedNativo.Value };
+}) {
+  return {
+    sceneStyle: {
+      opacity: current.progress.interpolate({
+        inputRange: [-1, -0.4, 0, 0.4, 1],
+        outputRange: [0, 0, 1, 0, 0],
+        extrapolate: "clamp",
+      }),
+      transform: [
+        {
+          translateY: current.progress.interpolate({
+            inputRange: [-1, 0, 1],
+            outputRange: [SUBIDA_PX - 2, 0, SUBIDA_PX - 2],
+          }),
+        },
+      ],
+    },
+  };
 }
 
 // Barra de vidro (a do embarque.html): flutua acima do conteúdo, a aba ativa fica em couro.

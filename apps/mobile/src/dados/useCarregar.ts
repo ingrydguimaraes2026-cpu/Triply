@@ -17,10 +17,15 @@ export type Carga<T> = { recarregar: () => void; atualizando: boolean } & (
 const guardado = new Map<string, unknown>()
 const LIMITE = 60 // respostas guardadas; a mais antiga sai primeiro
 
-function chaveDe(buscar: (() => unknown) | null, deps: unknown[]): string | null {
+// A chave é o `nome` dado pela tela + os parâmetros. Sem nome, usa o texto da função, mas só
+// quando ele existe de verdade: no celular (Hermes) toda função vira "[bytecode]" e duas telas
+// diferentes ficariam com a mesma chave (uma mostraria os dados da outra). Aí não guarda.
+function chaveDe(buscar: (() => unknown) | null, deps: unknown[], nome?: string): string | null {
   if (!buscar) return null
   try {
-    return `${buscar.toString()}|${JSON.stringify(deps)}`
+    const texto = nome ?? buscar.toString()
+    if (!nome && /\[(bytecode|native code)\]/.test(texto)) return null
+    return `${texto}|${JSON.stringify(deps)}`
   } catch {
     return null // parâmetro que não vira texto: não guarda
   }
@@ -40,8 +45,10 @@ supabase.auth.onAuthStateChange((_evento, sessao) => {
   ultimoUsuario = usuario
 })
 
-export function useCarregar<T>(buscar: (() => Promise<T>) | null, deps: unknown[]): Carga<T> {
-  const chave = chaveDe(buscar, deps)
+// `nome`: identifica o que a tela busca (ex.: 'aba-contas'). Dê um nome nas telas que precisam
+// abrir na hora ao voltar: é o que garante a memória também no celular.
+export function useCarregar<T>(buscar: (() => Promise<T>) | null, deps: unknown[], nome?: string): Carga<T> {
+  const chave = chaveDe(buscar, deps, nome)
   const [estado, setEstado] = useState<{ status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; dados: T }>(() =>
     chave && guardado.has(chave) ? { status: 'pronto', dados: guardado.get(chave) as T } : { status: 'carregando' },
   )
