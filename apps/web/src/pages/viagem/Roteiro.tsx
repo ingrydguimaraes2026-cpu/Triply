@@ -2,31 +2,33 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { diasDoPeriodo } from '@together/core'
 import { useViagemAtual } from '../../features/viagens/hooks'
-import { periodoDosDestinos } from '../../features/destinos/datas'
-import { diaCurtinho } from '../../features/agenda/hooks'
+import { hojeTexto, periodoDosDestinos } from '../../features/destinos/datas'
+import { diaCurtinho, diaPorExtenso } from '../../features/agenda/hooks'
 import { useLugaresDosDias } from '../../features/roteiro/lugaresDoDia'
-import { agruparMatches, buscarMatches, ehMatch, limiteDoMatch, quemFazMatch, type Match } from '../../features/roteiro/matches'
+import { buscarMatches, type Match } from '../../features/roteiro/matches'
 import type { Membro } from '../../features/viagens/hooks'
-import TituloDaTela from '../../components/ui/TituloDaTela'
 import Avatar from '../../components/ui/Avatar'
-import { Selo } from '../../components/ui/Icone'
-import { Check, Compass, MapPin, Wand2 } from '../../components/ui/icones'
+import { Icone, Selo } from '../../components/ui/Icone'
+import { CalendarDays, MapPin, Route } from '../../components/ui/icones'
 import Agenda from './Agenda'
 import './roteiro.css'
 
-// Roteiro (spec 117), espelho do app (apps/mobile/app/viagem/[id]/(abas)/roteiro.tsx):
-// abre em Matches (o que o comboio quer). As pílulas "Dia 1", "Dia 2"... mostram o dia com os horários
-// (a antiga Agenda). O baralho do Explorar fica em "Descobrir mais lugares".
+// Roteiro no caminho B "Embarque" (10/11/2026), igual ao app (apps/mobile/app/viagem/[id]/(abas)/roteiro.tsx).
+// Régua: docs/design/direcao-redesenho/embarque.html, tela "Roteiro": título grande, os dias em chips,
+// o dia em cartões (a Agenda), as ideias da galera com fotos e um botão só pra adicionar.
+// Antes abria em "Matches" e o dia ficava escondido atrás de uma pílula.
 export default function Roteiro() {
-  const { viagem, destinos, membros, meuId } = useViagemAtual()
+  const { viagem, destinos, membros } = useViagemAtual()
   const [matches, setMatches] = useState<Match[] | null>(null)
-  // O dia fica no endereço (?dia=2027-06-04): o "voltar" do navegador volta pro mesmo dia. Sem dia = Matches.
+  const [menu, setMenu] = useState(false)
+  const [novo, setNovo] = useState(false)
+  // O dia fica no endereço (?dia=2027-06-04): o "voltar" do navegador volta pro mesmo dia
   const [busca, setBusca] = useSearchParams()
-  const setDia = (d: string | null) => setBusca(d ? { dia: d } : {}, { replace: true })
+  const setDia = (d: string) => setBusca({ dia: d }, { replace: true })
 
   useEffect(() => {
     let vivo = true
-    // Sem internet (ou antes da migration do match) a lista fica vazia, sem quebrar a tela
+    // Sem internet (ou antes da migration do match) as ideias ficam vazias, sem quebrar a tela
     buscarMatches(viagem.id)
       .catch(() => [])
       .then((m) => vivo && setMatches(m))
@@ -39,171 +41,153 @@ export default function Roteiro() {
   const periodo = periodoDosDestinos(destinos) ?? (viagem.data_inicio ? { inicio: viagem.data_inicio, fim: viagem.data_fim ?? viagem.data_inicio } : null)
   const dias = useMemo(() => diasDoPeriodo(periodo?.inicio ?? null, periodo?.fim ?? null), [periodo?.inicio, periodo?.fim])
   const pedido = busca.get('dia')
-  const dia = pedido && dias.includes(pedido) ? pedido : null
+  const hoje = hojeTexto()
+  // Sem dia no endereço: hoje, se estiver na viagem; senão o primeiro dia
+  const dia = pedido && dias.includes(pedido) ? pedido : dias.includes(hoje) ? hoje : (dias[0] ?? null)
   // Viagem sem datas: os dias montados no Explorar viram "Dia 1", "Dia 2"... (como no app). ?dia=1, ?dia=2...
   const montados = useLugaresDosDias(viagem.id).semDatas(dias.length ? [] : destinos)
-  const montado = montados.find((m) => String(m.numero) === pedido) ?? null
-
-  const pessoas = membros.length
-  const lista = matches ?? []
-  const novos = lista.filter((m) => ehMatch(m.querem, pessoas) && !m.noDia).length
-  const principal = lista.find((m) => ehMatch(m.querem, pessoas))?.destinoId
+  const montado = montados.find((m) => String(m.numero) === pedido) ?? montados[0] ?? null
+  // Ideias da galera: o que alguém quer e ainda não entrou num dia (o mais querido primeiro)
+  const ideias = (matches ?? []).filter((m) => m.querem > 0 && !m.noDia)
 
   return (
-    <div className="roteiro">
-      <TituloDaTela
-        titulo="Roteiro"
-        acao={
-          <Link to="../cidades" relative="path" className="roteiro-cidades">
-            <MapPin size={15} aria-hidden="true" /> Cidades
-          </Link>
-        }
-      />
+    <div className="roteiro rt">
+      <header className="rt-topo">
+        <span>
+          <small className="rt-rotulo">{dias.length ? `${dias.length} ${dias.length === 1 ? 'dia' : 'dias'}` : 'Sem datas ainda'}</small>
+          <h1>Roteiro</h1>
+        </span>
+        <Link to="../cidades" relative="path" className="rt-cidades">
+          <MapPin size={14} aria-hidden="true" /> Cidades
+        </Link>
+      </header>
 
-      <nav className="roteiro-pilulas" aria-label="Matches e dias">
-        <button type="button" aria-pressed={dia === null && !montado} onClick={() => setDia(null)}>
-          Matches
-          {novos > 0 && <span className="roteiro-novos">{novos}</span>}
-        </button>
-        {dias.map((d, i) => {
-          const { semana, numero } = diaCurtinho(d)
-          return (
-            <button key={d} type="button" aria-pressed={dia === d} onClick={() => setDia(d)} title={`${semana} ${numero}`}>
-              Dia {i + 1}
-            </button>
-          )
-        })}
-        {montados.map((m) => (
-          <button key={m.numero} type="button" aria-pressed={montado?.numero === m.numero} onClick={() => setDia(String(m.numero))} title={m.destino.nome}>
-            Dia {m.numero}
-          </button>
-        ))}
-        {dias.length === 0 && (
-          <Link to="../cidades" relative="path" className="roteiro-sem-datas">
-            Definir as datas
-          </Link>
-        )}
-      </nav>
+      {dias.length > 0 && (
+        <nav className="rt-dias" aria-label="Dias da viagem">
+          {dias.map((d, i) => {
+            const { semana, numero } = diaCurtinho(d)
+            return (
+              <button key={d} type="button" aria-pressed={d === dia} onClick={() => setDia(d)} aria-label={`Dia ${i + 1}, ${diaPorExtenso(d)}`}>
+                <span>{semana.toUpperCase()}</span>
+                <b>{numero}</b>
+              </button>
+            )
+          })}
+        </nav>
+      )}
 
       {dia ? (
-        <Agenda diaDoRoteiro={dia} aoTrocarDia={setDia} />
-      ) : montado ? (
-        <DiaSemData numero={montado.numero} cidade={montado.destino.nome} destinoId={montado.destino.id} lugares={montado.lugares} />
+        <Agenda diaDoRoteiro={dia} aoTrocarDia={setDia} novoPedido={novo} aoFecharNovo={() => setNovo(false)} />
       ) : (
         <>
-          <p className="roteiro-dica">{`O que ${quemFazMatch(pessoas)} vira match e entra no dia.`}</p>
-          {matches === null ? (
-            <div className="roteiro-carregando" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
-          ) : (
-            <Matches matches={lista} membros={membros} meuId={meuId} principal={principal} />
+          <div className="rt-cartao rt-sem-datas">
+            <CalendarDays size={26} aria-hidden="true" />
+            <p>Com as datas, cada dia mostra os deslocamentos, os eventos e onde vocês dormem.</p>
+            <Link to="../cidades" relative="path" className="rt-botao">
+              Definir as datas
+            </Link>
+          </div>
+          {montados.length > 0 && (
+            <>
+              <nav className="rt-dias" aria-label="Dias montados no Explorar">
+                {montados.map((m) => (
+                  <button key={m.numero} type="button" aria-pressed={montado?.numero === m.numero} onClick={() => setDia(String(m.numero))} title={m.destino.nome}>
+                    <span>DIA</span>
+                    <b>{m.numero}</b>
+                  </button>
+                ))}
+              </nav>
+              {montado && <DiaSemData numero={montado.numero} cidade={montado.destino.nome} destinoId={montado.destino.id} lugares={montado.lugares} />}
+            </>
           )}
+        </>
+      )}
+
+      {/* Ideias da galera (spec 117): o que o grupo quer fazer */}
+      <section className="rt-ideias-secao">
+        <div className="rt-secao-t">
+          <small className="rt-rotulo">Ideias da galera</small>
+          <Link to="../explorar" relative="path">
+            Descobrir lugares
+          </Link>
+        </div>
+        {matches === null ? null : ideias.length ? (
+          <div className="rt-ideias">
+            {ideias.map((m) => (
+              <Ideia key={m.catalogoId} m={m} membros={membros} />
+            ))}
+          </div>
+        ) : (
+          <Link to="../explorar" relative="path" className="rt-cartao rt-ideia-vazia">
+            <Selo nome="museu" tamanho={40} />
+            <span>
+              <strong>Ninguém escolheu lugar ainda</strong>
+              <small>Veja os lugares de cada cidade e diga o que você quer.</small>
+            </span>
+          </Link>
+        )}
+      </section>
+
+      {/* Um botão só pra adicionar, acima da barra de vidro */}
+      {dia && (
+        <>
+          {menu && <button type="button" className="rt-fundo-menu" aria-label="Fechar" onClick={() => setMenu(false)} />}
+          <div className="rt-fab-lugar">
+            {menu && (
+              <div className="rt-menu" role="menu">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenu(false)
+                    setNovo(true)
+                  }}
+                >
+                  <span className="rt-quad">
+                    <CalendarDays size={17} aria-hidden="true" />
+                  </span>
+                  <span>
+                    <strong>Passeio ou evento</strong>
+                    <small>{diaPorExtenso(dia)}</small>
+                  </span>
+                </button>
+                <Link to="../transportes" relative="path" role="menuitem">
+                  <span className="rt-quad">
+                    <Route size={17} aria-hidden="true" />
+                  </span>
+                  <span>
+                    <strong>Ida pra outro lugar</strong>
+                    <small>Voo, ônibus, carro...</small>
+                  </span>
+                </Link>
+              </div>
+            )}
+            <button type="button" className="rt-fab" aria-expanded={menu} onClick={() => setMenu((m) => !m)}>
+              <Icone nome={menu ? 'fechar' : 'mais'} size={20} aria-hidden="true" /> {menu ? 'Fechar' : 'Adicionar'}
+            </button>
+          </div>
         </>
       )}
     </div>
   )
 }
 
-// Os 3 grupos (Todo mundo quer, Deu match, Quase), "Montar os dias" e "Descobrir mais lugares"
-function Matches({ matches, membros, meuId, principal }: { matches: Match[]; membros: Membro[]; meuId: string; principal?: string }) {
-  const pessoas = membros.length
-  const { todos, match, quase } = agruparMatches(matches, pessoas)
-  const grupos = [
-    { titulo: `Todo mundo quer · ${pessoas} de ${pessoas}`, lista: todos },
-    { titulo: `Deu match · ${limiteDoMatch(pessoas)} ou mais`, lista: match },
-    { titulo: 'Quase · 2 querem', lista: quase, opinar: true },
-  ].filter((g) => g.lista.length)
-
-  return (
-    <div className="roteiro-matches">
-      {pessoas < 2 ? (
-        <Vazio texto="Match é coisa de grupo: chame a galera e cada um desliza do seu jeito." />
-      ) : !grupos.length ? (
-        <Vazio
-          texto={`Ainda nada em comum. Quando ${limiteDoMatch(pessoas) >= pessoas ? 'todo mundo der' : `${limiteDoMatch(pessoas)} pessoas derem`} "quero" no mesmo lugar, ele aparece aqui.`}
-        />
-      ) : (
-        grupos.map((g) => (
-          <section key={g.titulo} className="roteiro-grupo">
-            <h2>{g.titulo}</h2>
-            <ul>
-              {g.lista.map((m) => (
-                <Linha key={m.catalogoId} m={m} membros={membros} meuId={meuId} opinar={!!g.opinar} />
-              ))}
-            </ul>
-          </section>
-        ))
-      )}
-
-      <div className="roteiro-botoes">
-        {match.length + todos.length > 0 && (
-          <Link to={principal ? `../explorar?destino=${principal}&roteiro=1` : '../explorar'} relative="path" className="roteiro-montar">
-            <Wand2 size={18} aria-hidden="true" /> Montar os dias com os matches
-          </Link>
-        )}
-        <Link to="../explorar" relative="path" className="roteiro-descobrir">
-          <Compass size={18} aria-hidden="true" /> Descobrir mais lugares
-        </Link>
-      </div>
-    </div>
-  )
-}
-
-function Linha({ m, membros, meuId, opinar }: { m: Match; membros: Membro[]; meuId: string; opinar: boolean }) {
+function Ideia({ m, membros }: { m: Match; membros: Membro[] }) {
   const quem = m.quem.map((id) => membros.findIndex((p) => p.id === id)).filter((i) => i >= 0)
-  const faltam = membros.filter((p) => !m.quem.includes(p.id))
-  const nome = (p: Membro) => (p.id === meuId ? 'você' : p.nome.trim().split(/\s+/)[0])
-  const falta = faltam.length
-    ? `falta ${faltam
-        .map(nome)
-        .join(', ')
-        .replace(/, ([^,]*)$/, ' e $1')}`
-    : 'todo mundo quer'
+  const texto = membros.length >= 2 && m.querem >= membros.length ? 'Todo mundo quer' : m.querem === 1 ? '1 quer' : `${m.querem} querem`
   return (
-    <li>
-      {/* Opinar: abre o baralho daquele destino. Adicionar ao dia / No dia: abre os dias montados (como "Montar os dias") */}
-      <Link to={`../explorar?destino=${m.destinoId}${opinar ? '' : '&roteiro=1'}`} relative="path" className="roteiro-linha">
-        {m.foto ? (
-          <img src={m.foto} alt="" loading="lazy" />
-        ) : (
-          <span className="roteiro-linha-sem-foto">
-            <Selo nome="museu" tamanho={34} />
-          </span>
-        )}
-        <span className="roteiro-linha-texto">
-          <strong>{m.nome}</strong>
-          <span className="roteiro-linha-quem">
-            <span className="roteiro-linha-avatares">
-              {quem.slice(0, 5).map((i) => (
-                <Avatar key={i} nome={membros[i].nome} url={membros[i].avatarUrl} indice={i} tamanho={20} />
-              ))}
-            </span>
-            <small>{falta}</small>
-          </span>
+    <Link to={`../explorar?destino=${m.destinoId}`} relative="path" className="rt-ideia" aria-label={`${m.nome}, ${texto}`}>
+      <span className="rt-ideia-foto">
+        {m.foto ? <img src={m.foto} alt="" loading="lazy" /> : <Selo nome="museu" tamanho={44} />}
+        <span className="rt-ideia-rostos">
+          {quem.slice(0, 4).map((i) => (
+            <Avatar key={i} nome={membros[i].nome} url={membros[i].avatarUrl} indice={i} tamanho={24} />
+          ))}
         </span>
-        {m.noDia ? (
-          <span className="roteiro-selo no-dia">
-            <Check size={13} aria-hidden="true" /> No dia
-          </span>
-        ) : opinar ? (
-          <span className="roteiro-selo opinar">Opinar</span>
-        ) : (
-          <span className="roteiro-selo adicionar">Adicionar ao dia</span>
-        )}
-      </Link>
-    </li>
-  )
-}
-
-function Vazio({ texto }: { texto: string }) {
-  return (
-    <div className="roteiro-vazio">
-      <Selo nome="coracoes" tamanho={52} />
-      <p>{texto}</p>
-    </div>
+      </span>
+      <strong>{m.nome}</strong>
+      <small>{texto}</small>
+    </Link>
   )
 }
 
@@ -231,9 +215,6 @@ function DiaSemData({ numero, cidade, destinoId, lugares }: { numero: number; ci
       <div className="roteiro-dia-acoes">
         <Link to={`../explorar?destino=${destinoId}`} relative="path" className="agenda-botao-pequeno">
           Mudar os dias
-        </Link>
-        <Link to="../cidades" relative="path" className="agenda-botao-pequeno sem-borda">
-          Definir as datas pra ver horários e eventos
         </Link>
       </div>
     </section>
