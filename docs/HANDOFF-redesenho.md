@@ -44,7 +44,16 @@
 
 ## Andamento
 - **10/11:** passos 1 e 2 feitos. Painel com 3 caminhos (A Diário de bordo, B Embarque, C Galera) em [`docs/design/direcao-redesenho/`](design/direcao-redesenho/README.md). Victor escolheu o **B (Embarque)** e pediu todas as telas, com a navegação, porque a pessoa se perde depois do primeiro uso.
-- **10/11:** [`docs/design/direcao-redesenho/embarque.html`](design/direcao-redesenho/embarque.html): 22 telas clicáveis + regras de navegação. **Decidido (10/11): trabalho em creme** (abas e listas em creme; escuro só nos momentos: abertura, viagem pronta, convite, carimbo, descobrir). **Falta o Victor confirmar** se o mapa (5 abas, Galera nos rostos, fim do "Tudo da viagem") está certo. Depois: levar pro Expo, começando pela navegação e pela Viagem.
+- **10/11:** [`docs/design/direcao-redesenho/embarque.html`](design/direcao-redesenho/embarque.html): 22 telas clicáveis + regras de navegação. **Decidido (10/11): trabalho em creme** (abas e listas em creme; escuro só nos momentos: abertura, viagem pronta, convite, carimbo, descobrir). **Mapa aprovado (10/11):** 5 abas (Viagem, Roteiro, Reservas, Contas, Fotos), cabeçalho igual em toda aba (viagem, rostos, ajustes), Galera aberta pelos rostos, um só "Próximo passo", fim do "Tudo da viagem".
+
+### Próximo passo exato: levar o B pro Expo (`apps/mobile`)
+Régua visual e de navegação: `docs/design/direcao-redesenho/embarque.html` (abrir no Chrome) e as regras da seção "Por que a pessoa não se perde" de lá.
+1. **Base visual:** tokens do B no `theme.ts`/`tailwind.config.js` (só a paleta atual): creme nas telas de trabalho, escuro (`#4A2E14` → `#3B2715`) nos momentos; fonte Inter Tight (títulos 800, letras juntas) + Inter (corpo), via `@expo-google-fonts`; molas no `src/ui/movimento.ts` (entrar: damping 16 / stiffness 220; macia: damping 18 / stiffness 160).
+2. **Navegação:** `app/viagem/[id]/(abas)/_layout.tsx` com a barra de vidro (ícone + nome nas 5), um cabeçalho comum (chip da viagem que troca de viagem, rostos que abrem a Galera, ajustes). Tirar o "Tudo da viagem" do caminho (o código fica; cada item vai pra aba do assunto, ver a tabela "De onde veio cada tela" no embarque.html).
+3. **Viagem (aba 1):** bilhete 3D (Reanimated: chega girando, inclina devagar, brilho), contagem de dias, um cartão "Próximo passo" (juntar ProximoCarimbo + Passaporte), resumo das 4 abas com os mesmos nomes e ícones. Fases: antes / durante (Hoje) / depois (passaporte + história).
+4. **Momentos:** carimbo (selo bate + `expo-haptics`), viagem pronta, chamar a galera.
+5. Depois: Roteiro, Reservas, Contas, Fotos, Galera, primeiro uso; o convite web (`/v/<código>`) com o "segure pra topar"; por último espelhar no site.
+Conferir cada etapa com `npx tsc --noEmit` em `apps/mobile` e no navegador/Expo em 360px. Textos: "galera" no lugar de "comboio", "quem organiza" no lugar de ADM, sem emoji, sem "ponha".
 
 ## Próximo passo exato (sessão nova)
 1. **Estudar com os olhos, não com texto.** Abrir no appllama e no Mobbin de 6 a 8 apps da coleção "High taste" (Airbnb, Duolingo, Opal, Wabi, CHANI, Partiful, Polarsteps) e capturar telas e fluxos. Nos vídeos, ver os quadros (no X, a função de "folha de quadros" com canvas funciona).
