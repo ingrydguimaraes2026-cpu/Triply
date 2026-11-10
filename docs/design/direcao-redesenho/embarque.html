@@ -305,6 +305,52 @@ a{color:var(--couro)}
 .primeira-vez b{display:block;font:800 15px 'Inter Tight';letter-spacing:-.01em}
 .primeira-vez small{display:block;font-size:12px;color:var(--suave);line-height:1.35;margin-top:2px}
 .primeira-vez .ok{font:700 12.5px 'Inter Tight';background:#3B2715;color:#F5E9D6;border-radius:14px;padding:8px 12px;cursor:pointer}
+
+/* ===== aplicado das referências do App Store Tracker (10/11) ===== */
+/* capa da viagem: foto do destino em tela cheia (Tripsy, Luggo) */
+.capa{position:relative;height:330px;margin-bottom:-6px}
+.capa .foto{position:absolute;inset:0}
+.capa:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(30,18,8,.45) 0%,transparent 30%,transparent 45%,rgba(30,18,8,.82) 100%)}
+.capa .tx{position:absolute;left:18px;right:18px;bottom:20px;z-index:2;color:#F5E9D6}
+.capa .tx h1{font:800 46px/.92 'Inter Tight';letter-spacing:-.045em;margin:0}
+.capa .tx p{margin:6px 0 0;font:600 13px Inter;color:rgba(245,233,214,.82)}
+.com-capa .cab{position:absolute;left:0;right:0;background:none}
+.contador{display:flex;align-items:flex-end;justify-content:space-between;padding:18px 18px 0}
+.contador .num{font-size:76px;line-height:.82}
+.contador .lead{margin-top:6px}
+.contador .vao{text-align:right;font:600 12px Inter;color:var(--tx2)}
+.contador .vao .rostos{justify-content:flex-end;margin-bottom:6px}
+.contador .vao .av{width:30px;height:30px;font-size:9.5px}
+/* próximo passo: faixa fixa no pé, sempre no mesmo lugar (Wanderlog) */
+.faixa-passo{position:absolute;left:10px;right:10px;bottom:78px;z-index:40;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:20px;background:#4A2E14;color:#F5E9D6;box-shadow:0 12px 28px rgba(74,46,20,.35);cursor:pointer}
+.faixa-passo .txt{flex:1;min-width:0}
+.faixa-passo small{display:block;font:600 9.5px Inter;letter-spacing:.14em;text-transform:uppercase;color:#E3A04A}
+.faixa-passo b{display:block;font:800 14.5px/1.15 'Inter Tight';letter-spacing:-.015em}
+.faixa-passo span.q{font:500 11.5px Inter;color:rgba(245,233,214,.7)}
+.faixa-passo .ir{height:36px;padding:0 14px;border-radius:18px;background:#E3A04A;color:#3B2715;display:flex;align-items:center;font:700 13px 'Inter Tight';flex:none}
+/* convite web: foto, rostos e três bolhas (Partiful, Howbout) */
+.conv-foto{position:absolute;left:0;right:0;top:0;height:380px}
+.conv-foto:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(30,18,8,.5),transparent 28%,rgba(59,39,21,.25) 55%,#3B2715 100%)}
+.conv-tx{position:absolute;left:20px;right:20px;top:240px;z-index:3}
+.conv-tx .quem{display:flex;align-items:center;gap:8px;font:600 13px Inter;color:rgba(245,233,214,.88)}
+.conv-tx h1{font:800 33px/.95 'Inter Tight';letter-spacing:-.04em;margin:10px 0 0;color:#F5E9D6}
+.conv-tx .qd{margin:8px 0 0;font:600 13px Inter;color:var(--dourado)}
+.toparam{position:absolute;left:20px;right:20px;top:420px;display:flex;align-items:center;gap:10px;font:500 13px/1.3 Inter;color:var(--tx2);z-index:3}
+.toparam .av{width:34px;height:34px;font-size:10.5px}
+.toparam b{color:var(--tx);font-weight:700}
+.bolhas{display:flex;gap:8px}
+.bolha{flex:1;height:84px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font:700 13.5px 'Inter Tight';background:rgba(245,233,214,.08);border:1px solid rgba(245,233,214,.14);color:var(--tx);cursor:pointer}
+.bolha .ic{width:24px;height:24px}
+.bolha.sim{flex:1.5;background:var(--dourado);color:#3B2715;border:0;box-shadow:0 10px 30px rgba(227,160,74,.45);font-size:16px}
+/* prévia do convite no chat da galera (Rhyme) */
+.chat{background:#2A1B0E;border-radius:20px;padding:12px;margin:0 0 14px}
+.chat .nome-grupo{font:600 10.5px Inter;color:rgba(245,233,214,.55);text-align:center;margin-bottom:8px;letter-spacing:.06em}
+.chat .msg{margin-left:auto;width:82%;background:#5A3A1C;border-radius:16px 16px 4px 16px;overflow:hidden}
+.chat .msg .foto{height:92px}
+.chat .msg .cp{padding:8px 10px}
+.chat .msg b{display:block;font:800 14px/1.15 'Inter Tight';color:#F5E9D6;letter-spacing:-.01em}
+.chat .msg small{display:block;font:500 11px Inter;color:rgba(245,233,214,.65);margin-top:2px}
+.chat .msg .url2{font:600 10.5px Inter;color:var(--dourado);margin-top:4px}
 </style>
 </head>
 <body class="creme">
@@ -334,7 +380,7 @@ a{color:var(--couro)}
     <h2>Mapa do app</h2>
     <p>Fora de uma viagem só existe a tela <b>Suas viagens</b>. Dentro dela, sempre as mesmas 5 abas, o mesmo cabeçalho (qual viagem, quem vai, ajustes) e um só "próximo passo". Toque pra abrir no celular.</p>
     <div class="grupo"><h3>1. Primeiro uso de quem organiza (app)</h3><p>Promessa, pra onde, quando, viagem pronta, chamar a galera. A conta só é pedida no fim, depois que a viagem já existe.</p><div class="botoes" data-grupo="entrada"></div></div>
-    <div class="grupo"><h3>2. Quem foi convidado (web leve, sem baixar)</h3><p>Abre o link, vê a viagem pronta, segura pra topar. Zero perguntas.</p><div class="botoes" data-grupo="convite"></div></div>
+    <div class="grupo"><h3>2. Quem foi convidado (web leve, sem baixar)</h3><p>Abre o link, vê quem já topou e responde com um toque (tô dentro, talvez, não dá). Zero perguntas.</p><div class="botoes" data-grupo="convite"></div></div>
     <div class="grupo"><h3>3. Fora da viagem</h3><p>As viagens como bilhetes numa carteira: a próxima na frente, as antigas carimbadas atrás.</p><div class="botoes" data-grupo="fora"></div></div>
     <div class="grupo"><h3>4. Viagem (a casa), em 3 fases</h3><p>Antes: o próximo passo. Durante: o "Hoje" com as reservas do grupo. Depois: o passaporte carimbado e a história pronta. A galera abre pelos rostos do cabeçalho.</p><div class="botoes" data-grupo="viagem"></div></div>
     <div class="grupo"><h3>5. As outras 4 abas</h3><p>Cada aba responde uma pergunta e tem um só botão principal, sempre no mesmo canto.</p><div class="botoes" data-grupo="abas"></div></div>
@@ -457,9 +503,15 @@ a{color:var(--couro)}
 <section class="t momento" data-tela="chamar" data-nome="Chamar a galera" data-grupo="entrada" data-folha>
   <div class="pegador"></div>
   <h2 class="tt" style="font-size:24px">Chamar a galera</h2>
-  <p class="lead" style="margin:6px 0 14px">Mande no grupo da viagem. Cada um topa pelo link.</p>
-  <div class="cartao link-conv"><span class="ic" data-ic="link" style="color:var(--dourado)"></span><span style="flex:1">norti.app/v/LIS-7K2</span><span class="chip">Copiar</span></div>
-  <div class="apps-comp" style="margin:16px 0 18px">
+  <p class="lead" style="margin:6px 0 12px">É assim que chega no grupo. Cada um topa com um toque.</p>
+  <div class="chat">
+    <div class="nome-grupo">GRUPO "LISBOA 2027"</div>
+    <div class="msg">
+      <div class="foto" data-foto="castelo"></div>
+      <div class="cp"><b>Bora pra Lisboa com a galera?</b><small>12 a 19 de março</small><div class="url2">norti.app/v/LIS-7K2</div></div>
+    </div>
+  </div>
+  <div class="apps-comp" style="margin:4px 0 16px">
     <div><span><i class="ic" data-ic="recado"></i></span>WhatsApp</div>
     <div><span><i class="ic" data-ic="enviar"></i></span>Instagram</div>
     <div><span><i class="ic" data-ic="copiar"></i></span>Copiar</div>
@@ -487,22 +539,21 @@ a{color:var(--couro)}
 
 <!-- ---------- Convite web ---------- -->
 <section class="t momento" data-tela="convite" data-nome="Convite (web)" data-grupo="convite">
+  <div class="conv-foto foto" data-foto="castelo"></div>
   <div class="url"><span class="ic" data-ic="trancado" style="width:12px;height:12px"></span>norti.app/v/LIS-7K2</div>
-  <div class="luz" style="top:190px"></div>
-  <div style="position:absolute;top:84px;left:22px;right:22px">
-    <p class="lead" data-in style="display:flex;gap:8px;align-items:center"><span class="av" style="background:#5E6B2E">AN</span>A Ana te chamou</p>
-    <h1 class="tt" data-in style="margin-top:10px">Bora pra Lisboa<br>com a galera?</h1>
+  <div class="conv-tx">
+    <div class="quem" data-in><span class="av" style="background:#5E6B2E">AN</span>A Ana te chamou</div>
+    <h1 data-in>Bora pra Lisboa<br>com a galera?</h1>
+    <p class="qd" data-in>12 a 19 de março · 7 noites</p>
   </div>
-  <div class="palco3d" style="position:absolute;top:200px;left:0;right:0"><div class="bilhete" data-heroi style="width:176px">
-    <div class="ft foto" data-foto="castelo" style="height:96px"></div>
-    <div class="lin"><div><small>DE</small><b>GRU</b></div><div style="text-align:right"><small>PARA</small><b>LIS</b></div></div>
-    <div class="picote"></div>
-    <div class="rd"><span>12 A 19 MAR</span><span class="rostos" data-rostos="4"></span></div>
-    <div class="brilho"></div>
-    <span class="carimbo selo" data-selo="passagem" data-carimbo></span>
-  </div></div>
-  <div style="position:absolute;top:468px;left:22px;right:22px;display:flex;justify-content:space-between;font:500 12px Inter;color:var(--tx2)" data-in><div>Quem vai<b style="display:block;font:700 16px 'Inter Tight';color:var(--tx);margin-top:2px">4 toparam</b></div><div>Contas<b style="display:block;font:700 16px 'Inter Tight';color:var(--tx);margin-top:2px">divididas aqui</b></div></div>
-  <div class="rodape-btn" data-in><div class="segurar" data-segurar><div class="enche"></div><div class="r">Segure pra topar</div></div></div>
+  <div class="toparam" data-in><span class="rostos" data-rostos="4"></span><span><b>Pedro, Ana, Ju e Bê</b><br>já toparam</span></div>
+  <div class="rodape-btn" data-in>
+    <div class="bolhas">
+      <div class="bolha sim" data-ir="dentro"><i class="ic" data-ic="ok"></i>Tô dentro</div>
+      <div class="bolha"><i class="ic" data-ic="ajuda"></i>Talvez</div>
+      <div class="bolha"><i class="ic" data-ic="fechar"></i>Não dá</div>
+    </div>
+  </div>
 </section>
 
 <section class="t momento" data-tela="dentro" data-nome="Tô dentro (web)" data-grupo="convite">
@@ -535,18 +586,14 @@ a{color:var(--couro)}
 </section>
 
 <!-- ---------- Viagem: antes, durante, depois ---------- -->
-<section class="t trab" data-tela="viagem" data-nome="Viagem (antes)" data-grupo="viagem" data-aba="viagem">
-  <div class="rola">
+<section class="t trab com-capa" data-tela="viagem" data-nome="Viagem (antes)" data-grupo="viagem" data-aba="viagem">
+  <div class="rola" style="padding-bottom:170px">
     <div data-cab></div>
-    <div class="palco3d" style="margin-top:2px"><div class="bilhete p" data-heroi data-ir="roteiro">
-      <div class="ft foto" data-foto="comercio"></div>
-      <div class="lin"><div><b>GRU</b></div><span class="ic" data-ic="aviao" style="width:16px;height:16px;color:#7B542F;margin-bottom:3px"></span><div><b>LIS</b></div></div><div class="picote"></div><div class="rd"><span>12 MAR</span><span>7 NOITES</span></div><div class="brilho"></div>
-    </div></div>
-    <div style="text-align:center;margin-top:14px" data-in><span class="num" data-conta="23">23</span><p class="lead" style="margin-top:4px">dias pra Lisboa</p></div>
-    <div class="cartao prox" data-in style="margin-top:16px" data-ir="hospedagem">
-      <span class="selo" data-selo="barraca" style="width:44px;height:44px"></span>
-      <div class="txt"><small>Próximo passo</small><b>Escolher onde ficar</b><span>2 de 5 já votaram</span></div>
-      <span class="ir">Votar</span>
+    <div class="capa" data-ir="roteiro"><div class="foto" data-foto="comercio"></div>
+      <div class="tx"><h1 data-in>Lisboa</h1><p data-in>12 a 19 de março · 7 noites</p></div></div>
+    <div class="contador" data-in>
+      <div><span class="num" data-conta="23">23</span><p class="lead">dias pra embarcar</p></div>
+      <div class="vao" data-ir="galera" style="cursor:pointer"><span class="rostos" data-rostos="5"></span>5 vão</div>
     </div>
     <div class="secao-t" data-in><span class="rot">A viagem</span></div>
     <div class="cartao" data-in style="margin:0 14px">
@@ -556,6 +603,7 @@ a{color:var(--couro)}
       <div class="linha-item" data-aba-ir="fotos"><span class="quad"><i class="ic" data-ic="fotos"></i></span><div class="txt"><b>Fotos</b><small>12 fotos da galera</small></div><span class="ic" data-ic="seta-direita" style="width:16px;height:16px;opacity:.5"></span></div>
     </div>
   </div>
+  <div class="faixa-passo" data-ir="hospedagem"><span class="selo" data-selo="barraca" style="width:34px;height:34px;color:#E3A04A"></span><div class="txt"><small>Próximo passo</small><b>Escolher onde ficar</b><span class="q">2 de 5 já votaram</span></div><span class="ir">Votar</span></div>
 </section>
 
 <section class="t trab" data-tela="hoje" data-nome="Viagem (durante): Hoje" data-grupo="viagem" data-aba="viagem">
@@ -918,7 +966,7 @@ function entrar(t){
   t.querySelectorAll('[data-digita-num]').forEach(e=>{ const s=e.dataset.digitaNum; e.textContent='0'; [...s].forEach((ch,i)=>depois(400+i*160,()=>{ e.textContent=s.slice(0,i+1); anima(e,[{transform:'scale(1.06)'},{transform:'none'}],{duration:200,fill:'none'}) })) })
   if(t.dataset.tela==='viagens'){ [...t.querySelectorAll('.carteira .bil')].forEach((b,i)=>anima(b,[{transform:'translateY(120px)',opacity:0},{transform:'none',opacity:1}],{duration:700,delay:150+i*120,easing:MOLA})) }
   if(t.dataset.tela==='descobrir') baralho(t)
-  if(t.dataset.tela==='convite') segurarPraTopar(t)
+  if(t.dataset.tela==='convite' && t.querySelector('[data-segurar]')) segurarPraTopar(t)
 }
 function carimbar(t,c){
   anima(c,[{opacity:0,transform:'scale(2.6) rotate(-35deg)'},{opacity:1,transform:'scale(1) rotate(-12deg)'}],{duration:380,easing:DURA})

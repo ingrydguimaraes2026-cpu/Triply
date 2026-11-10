@@ -26,7 +26,7 @@
     {
       "name": "referencias",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5181", "--directory", "docs/design/referencias"],
+      "runtimeArgs": ["-m", "http.server", "5181", "--directory", "docs/design"],
       "port": 5181
     },
     {
