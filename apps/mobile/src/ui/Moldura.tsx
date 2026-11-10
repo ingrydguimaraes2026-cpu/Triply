@@ -93,7 +93,7 @@ function BarraDeStatus({ cor }: { cor: string }) {
 
       } as object}
     >
-      <Text style={{ color: cor, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16 }}>9:41</Text>
+      <Text style={{ color: cor, fontFamily: 'Inter_600SemiBold', fontSize: 16 }}>9:41</Text>
       <Svg width={70} height={13} viewBox="0 0 70 13" fill={cor}>
         <Rect x={0} y={8} width={3} height={4} rx={1} />
         <Rect x={5} y={5.5} width={3} height={6.5} rx={1} />

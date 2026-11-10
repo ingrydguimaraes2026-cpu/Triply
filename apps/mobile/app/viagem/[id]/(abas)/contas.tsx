@@ -99,7 +99,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
         ref={rolagem}
         refreshControl={puxarPraAtualizar(carga)}
         onContentSizeChange={() => rolagem.current?.scrollToEnd({ animated: false })}
-        contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 16, paddingBottom: 96, gap: 12 }}
+        contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 16, paddingBottom: insets.bottom + 64, gap: 12 }}
       >
         {/* Um número grande: o meu saldo. Tocar mostra quem paga quem e o saldo de cada um */}
         <Pressable onPress={() => setVerAcertos((v) => !v)} className="rounded-3xl bg-couro p-5 active:opacity-95" style={sombra.hero}>
@@ -215,8 +215,9 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
         ))}
       </ScrollView>
 
-      {/* Barra fixa pra lançar: "€ 0,00 · o que foi?" (abre o novo-gasto já preenchido) */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center gap-2 border-t border-linha px-3 py-2.5" style={{ backgroundColor: 'rgba(251,243,230,0.97)' }}>
+      {/* Barra fixa pra lançar: "€ 0,00 · o que foi?" (abre o novo-gasto já preenchido).
+          Fica logo acima da barra de abas de vidro (o insets.bottom já conta a altura dela) */}
+      <View className="absolute left-0 right-0 flex-row items-center gap-2 px-3 py-2.5" style={{ bottom: insets.bottom - 10 }}>
         <Pressable onPress={adicionar} accessibilityLabel="Lançar gasto completo" className="h-11 w-11 items-center justify-center rounded-full bg-chip active:opacity-80">
           <Receipt size={20} color={cor.couro} />
         </Pressable>

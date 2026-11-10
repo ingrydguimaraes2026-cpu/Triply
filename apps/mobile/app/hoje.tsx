@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, MoreHorizontal, Plus, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
+import { ArrowLeft, Plus, BedDouble, CalendarDays, Clock, KeyRound, ListChecks, Luggage, MapPin, Phone, Plane, Sun, TrainFront, Wifi } from '../src/ui/icones'
 import {
   aeroportosDoVoo,
   agoraEProximo,
@@ -159,17 +159,14 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
       <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 20, paddingBottom: insets.bottom + 40, gap: 12 }}>
-        <View className="flex-row justify-between">
-          <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
-            <ArrowLeft size={20} color={cor.texto} />
-          </BotaoRedondo>
-          {/* Na aba Viagem, o "Tudo da viagem" continua a 1 toque */}
-          {naAba ? (
-            <BotaoRedondo aoTocar={() => router.push('/tudo-da-viagem')} rotulo="Mais opções">
-              <MoreHorizontal size={20} color={cor.texto} />
+        {/* Na aba Viagem o cabeçalho comum (viagem, galera, ajustes) já está em cima: sem voltar nem "..." */}
+        {!naAba ? (
+          <View className="flex-row justify-between">
+            <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
+              <ArrowLeft size={20} color={cor.texto} />
             </BotaoRedondo>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
         <View>
           <Text className="font-display text-[32px] text-texto">{onde ? `Hoje em ${onde.nome}` : 'Hoje'}</Text>
           <Text className="mt-0.5 font-body text-[14px] text-suave">{diaLongo(lerData(hoje))}</Text>

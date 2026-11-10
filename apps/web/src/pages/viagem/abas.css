@@ -1700,7 +1700,7 @@ html[data-tema='escuro'] .overview-atalho {
 
 /* Hospedagem: "0 de 5" com o "de 5" menor */
 .resumo-orcamento .numero small {
-  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  font-family: var(--fonte-corpo);
   font-size: 16px;
   font-weight: 400;
   color: var(--cor-texto-suave);

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
 import { ArrowLeftRight, PanelLeft } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import { ABAS, TUDO_DA_VIAGEM } from '../../features/viagens/partes'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -199,6 +200,25 @@ export default function ViagemLayout() {
       </aside>
 
       <div className="viagem-conteudo">
+        {/* Caminho B (10/11/2026): no celular, o mesmo cabeçalho em todas as abas, como no app.
+            A viagem (toque troca de viagem), os rostos da galera (abre a Galera) e os ajustes. */}
+        <header className="viagem-cab">
+          <Link to="/viagens" className="viagem-cab-viagem" aria-label={`${viagem.nome}: trocar de viagem`}>
+            <img src={capa(viagem.id, 120)} alt="" />
+            <span>{viagem.nome}</span>
+            <Icone nome="seta-baixo" size={12} aria-hidden="true" />
+          </Link>
+          <span className="viagem-cab-esp" />
+          <Link to="comboio" className="viagem-cab-rostos" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
+            {membros.slice(0, 4).map((m, i) => (
+              <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} indice={i} />
+            ))}
+            {membros.length > 4 && <span className="viagem-cab-mais">+{membros.length - 4}</span>}
+          </Link>
+          <Link to="configuracoes" className="viagem-cab-bt" aria-label="Ajustes da viagem">
+            <Icone nome="ajustes" size={17} aria-hidden="true" />
+          </Link>
+        </header>
         <FaixaConvidado />
         <ViagemContexto.Provider value={estado.dados}>
           {ABAS_GUARDADAS.filter((a) => visitadas.includes(`${viagem.id}:${a.para}`)).map(({ para, Tela }) => (

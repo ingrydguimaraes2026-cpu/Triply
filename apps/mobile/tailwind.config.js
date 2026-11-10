@@ -30,12 +30,15 @@ module.exports = {
         'vermelho-fundo': '#F6E2DA',
       },
       fontFamily: {
-        display: ['Fraunces_600SemiBold'],
-        'display-bold': ['Fraunces_700Bold'],
-        body: ['PlusJakartaSans_400Regular'],
-        'body-medium': ['PlusJakartaSans_500Medium'],
-        'body-semibold': ['PlusJakartaSans_600SemiBold'],
-        'body-bold': ['PlusJakartaSans_700Bold'],
+        // Caminho B (Embarque): títulos em Inter Tight 800, corpo em Inter.
+        // Os nomes antigos (display, body...) ficam, então todas as telas mudam juntas.
+        display: ['InterTight_800ExtraBold'],
+        'display-bold': ['InterTight_800ExtraBold'],
+        'titulo-item': ['InterTight_700Bold'],
+        body: ['Inter_400Regular'],
+        'body-medium': ['Inter_500Medium'],
+        'body-semibold': ['Inter_600SemiBold'],
+        'body-bold': ['Inter_700Bold'],
       },
     },
   },

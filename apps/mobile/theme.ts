@@ -33,3 +33,49 @@ export const sombra = {
 
 // Cores das bolinhas de iniciais (cada pessoa ganha uma fixa pela posição no comboio)
 export const coresDePessoa = ['#A8703F', '#8E6A3E', '#B5553A', '#6B7A3A', '#A07A2C', '#4A2E14', '#7B542F', '#C99257']
+
+// ---------------------------------------------------------------------------
+// Caminho B "Embarque" (decisão do Victor, 10/11/2026). Régua: docs/design/direcao-redesenho/embarque.html
+// Só a paleta de cima. Telas de trabalho (abas e listas) em creme; escuro só nos "momentos"
+// (abertura, viagem pronta, convite, carimbo, descobrir).
+export const trabalho = {
+  fundo: cor.fundo, // #FBF3E6
+  superficie: cor.cartao,
+  superficie2: cor.chip,
+  texto: cor.texto,
+  texto2: cor.suave,
+  linha: cor.borda,
+  acento: cor.couro,
+  acentoTexto: cor.creme,
+  vidro: 'rgba(255,253,248,0.78)',
+} as const
+
+export const momento = {
+  // Degradê de cima pra baixo: #4A2E14 → #3B2715
+  degrade: [cor.escuro, cor.texto] as const,
+  superficie: 'rgba(245,233,214,0.07)',
+  superficie2: 'rgba(245,233,214,0.12)',
+  texto: cor.creme,
+  texto2: 'rgba(245,233,214,0.64)',
+  linha: 'rgba(245,233,214,0.1)',
+  acento: cor.dourado,
+  acentoTexto: cor.texto,
+} as const
+
+// Tipografia B: títulos em Inter Tight 800 com as letras juntas (-0.035em), corpo em Inter.
+// letterSpacing no RN é em px: use titulo(tamanho) pra calcular.
+export const fonte = {
+  titulo: 'InterTight_800ExtraBold',
+  item: 'InterTight_700Bold',
+  corpo: 'Inter_400Regular',
+  corpoMedio: 'Inter_500Medium',
+  corpoForte: 'Inter_600SemiBold',
+  corpoNegrito: 'Inter_700Bold',
+} as const
+
+export function titulo(tamanho: number, junto = 0.035) {
+  return { fontFamily: fonte.titulo, fontSize: tamanho, letterSpacing: -tamanho * junto, lineHeight: Math.round(tamanho * 1.05) }
+}
+
+// Rótulo pequeno em caixa alta (ex.: "PRÓXIMO PASSO", "A VIAGEM")
+export const rotulo = { fontFamily: fonte.corpoForte, fontSize: 10.5, letterSpacing: 1.5, textTransform: 'uppercase' as const }

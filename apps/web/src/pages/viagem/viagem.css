@@ -569,3 +569,154 @@ html[data-tema='escuro'] .viagem-abas a:not(.active) {
 .mais-lista a:hover {
   background: var(--cor-fundo-suave);
 }
+
+/* ---------- Caminho B "Embarque" (10/11/2026), só no celular por enquanto ----------
+   Régua: docs/design/direcao-redesenho/embarque.html. O computador fica pra depois.
+   - cabeçalho igual em todas as abas: viagem (trocar), rostos (Galera), ajustes;
+   - barra de abas de vidro, flutuando, com ícone + nome nas 5 abas. */
+.viagem-cab {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .viagem-conteudo {
+    padding-top: 0;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .viagem-cab {
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 -16px -4px;
+    padding: calc(10px + env(safe-area-inset-top)) 14px 8px;
+    background: linear-gradient(var(--cor-fundo) 72%, transparent);
+  }
+
+  .viagem-cab-viagem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 5px 10px 5px 5px;
+    border-radius: 999px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-cartao);
+    color: var(--cor-texto);
+    font: 700 14px/1 var(--fonte-titulo);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .viagem-cab-viagem img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: none;
+  }
+
+  .viagem-cab-viagem span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .viagem-cab-viagem svg {
+    flex: none;
+    color: var(--cor-texto-suave);
+  }
+
+  .viagem-cab-esp {
+    flex: 1;
+  }
+
+  .viagem-cab-rostos {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .viagem-cab-rostos .avatar,
+  .viagem-cab-mais {
+    border: 2px solid var(--cor-fundo);
+    margin-left: -8px;
+  }
+
+  .viagem-cab-rostos > :first-child {
+    margin-left: 0;
+  }
+
+  .viagem-cab-mais {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    background: var(--dourado-claro);
+    color: var(--couro);
+    font: 700 10px var(--fonte-corpo);
+  }
+
+  .viagem-cab-bt {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-cartao);
+    color: var(--cor-texto);
+  }
+
+  /* Barra de vidro */
+  .viagem-menu {
+    left: 10px;
+    right: 10px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    padding-bottom: 0;
+    border: 1px solid var(--cor-borda);
+    border-radius: 24px;
+    background: var(--vidro);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(74, 46, 20, 0.14);
+  }
+
+  .viagem-abas {
+    height: 58px;
+    align-items: center;
+  }
+
+  .viagem-abas a,
+  .viagem-abas .aba-mais {
+    min-height: 0;
+    padding: 6px 4px;
+    gap: 2px;
+    color: var(--cor-texto);
+    opacity: 0.72;
+    font: 600 10.5px var(--fonte-corpo);
+    transition: opacity 0.2s;
+  }
+
+  .viagem-abas a svg {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.35s var(--mola);
+  }
+
+  .viagem-abas a.active,
+  .viagem-abas .aba-mais.active {
+    color: var(--couro);
+    opacity: 1;
+    font-weight: 700;
+  }
+
+  .viagem-abas a.active svg {
+    transform: translateY(-1.5px) scale(1.06);
+  }
+}

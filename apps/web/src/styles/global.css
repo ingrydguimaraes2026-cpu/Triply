@@ -35,8 +35,17 @@
   --sombra-flutuante: 0 4px 12px rgba(74, 46, 20, 0.15);
   --sombra-hero: 0 18px 40px rgba(74, 46, 20, 0.25);
   --raio: 18px;
-  --fonte-titulo: 'Fraunces Variable', Georgia, serif;
-  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  /* Caminho B "Embarque" (10/11/2026): títulos em Inter Tight 800 com as letras juntas, corpo em Inter.
+     Telas de trabalho em creme; escuro (--momento) só nos momentos (abertura, convite, carimbo). */
+  --fonte-titulo: 'Inter Tight Variable', 'Inter Variable', system-ui, sans-serif;
+  --fonte-corpo: 'Inter Variable', system-ui, sans-serif;
+  --peso-titulo: 800;
+  --junto: -0.035em;
+  --momento: radial-gradient(120% 70% at 50% 30%, #7b542f 0%, #4a2e14 46%, #3b2715 100%);
+  --vidro: rgba(255, 253, 248, 0.78);
+  --mola: cubic-bezier(0.34, 1.56, 0.64, 1); /* entrar */
+  --macia: cubic-bezier(0.2, 0.9, 0.25, 1); /* se ajeitar devagar */
+  font-family: var(--fonte-corpo);
   color: var(--cor-texto);
   background: var(--cor-fundo);
 }
@@ -53,8 +62,8 @@ body {
 h1,
 h2 {
   font-family: var(--fonte-titulo);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--junto);
 }
 
 a {

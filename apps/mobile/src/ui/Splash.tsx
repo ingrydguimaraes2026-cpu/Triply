@@ -31,10 +31,10 @@ export function Splash() {
         <Animated.View style={subir(mascote)}>
           <Norti tamanho={190} />
         </Animated.View>
-        <Animated.Text style={[{ fontFamily: 'Fraunces_600SemiBold', fontSize: 48, letterSpacing: -1, color: '#3B2715' }, subir(nome)]}>
+        <Animated.Text style={[{ fontFamily: 'InterTight_800ExtraBold', fontSize: 48, letterSpacing: -1.8, color: '#3B2715' }, subir(nome)]}>
           Norti
         </Animated.Text>
-        <Animated.Text style={[{ fontFamily: 'PlusJakartaSans_400Regular', fontSize: 15, color: '#6E5540' }, subir(frase)]}>
+        <Animated.Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 15, color: '#6E5540' }, subir(frase)]}>
           Viajem juntos.
         </Animated.Text>
       </View>
