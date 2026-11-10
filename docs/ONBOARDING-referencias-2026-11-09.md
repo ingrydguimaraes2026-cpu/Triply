@@ -142,4 +142,4 @@ Esboço do caminho, uma ação por tela, a Norti falando:
 1. Estudar, tela por tela, 4 onboardings: **Airbnb travel map**, **Partiful** (convite sem app), **Polarsteps** e **Duolingo** (entrevista + resultado). Fonte: Mobbin, appllama e 60fps.
 2. Conversar com a Ingryd: em que tela ela pensou "e agora?", que palavra não entendeu, o que esperava depois de criar a viagem.
 3. Decidir o momento de ativação (Victor).
-4. Desenhar o novo caminho no app primeiro e testar com 3 pessoas que nunca viram a Norti. **Rascunho 1 pronto:** [`docs/design/onboarding-v1.html`](design/onboarding-v1.html) (dá pra clicar; os dois caminhos).
+4. Desenhar o novo caminho no app primeiro e testar com 3 pessoas que nunca viram a Norti. **Rascunho 2 pronto (reescrito do zero depois que o Victor achou o 1 simples demais):** [`docs/design/onboarding-v2.html`](design/onboarding-v2.html). Abertura em stories, a Norti perguntando e reagindo, cartões-postal, calendário com contador, roda da galera, "montando a viagem", passaporte que abre, convite em cartaz com tema, casa da viagem com o momento "a Bia topou" e o caminho do convidado em cartaz.
