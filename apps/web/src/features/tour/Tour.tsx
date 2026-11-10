@@ -13,7 +13,7 @@ import './tour.css'
 // Textos no @together/core (PASSOS_DO_TOUR). A peça que acende tem data-tour="<alvo>".
 // Pra ver de novo: verTourDeNovo() (./guardado).
 
-const FOLGA = 6
+const FOLGA = 4
 const ESPERA_MAXIMA = 1800 // a aba nova pode demorar a desenhar: espera a peça por até 1,8 s
 
 // Primeira peça visível com esse alvo (a mesma aba pode estar na barra do celular e no menu do computador)
@@ -158,12 +158,20 @@ export default function TourDaViagem({
   const H = window.innerHeight
   // Sem peça: o foco vira um ponto no meio (a tela fica toda escura)
   const foco = caixa ?? { x: W / 2, y: H / 2, w: 0, h: 0 }
-  // Balão do lado que tem mais espaço: peça embaixo → balão em cima, e vice-versa
-  const lugar = !caixa
-    ? { top: Math.max(24, H / 2 - 110) }
-    : caixa.y + caixa.h / 2 > H / 2
-      ? { bottom: H - caixa.y + 14 }
-      : { top: caixa.y + caixa.h + 14 }
+  const total = PASSOS_DO_TOUR.length
+  // Balão (igual ao app): largura fixa, alinhado com a peça sem sair da tela, do lado que tem mais
+  // espaço, com uma setinha apontando pro meio da peça. Sem peça: no meio, sem seta.
+  const largura = Math.min(340, W - 32)
+  const meio = caixa ? caixa.x + caixa.w / 2 : W / 2
+  const esquerda = Math.min(Math.max(meio - largura / 2, 16), W - 16 - largura)
+  const emCima = caixa ? caixa.y + caixa.h / 2 > H / 2 : false
+  const lugar = {
+    left: esquerda,
+    width: largura,
+    ['--seta-x' as string]: `${Math.min(Math.max(meio - esquerda, 28), largura - 28)}px`,
+    ...(!caixa ? { top: Math.max(24, H / 2 - 110) } : emCima ? { bottom: H - caixa.y + 14 } : { top: caixa.y + caixa.h + 14 }),
+  }
+  const classeDoBalao = !caixa ? 'tour-balao' : emCima ? 'tour-balao seta-embaixo' : 'tour-balao seta-em-cima'
 
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-labelledby="tour-titulo">
@@ -186,19 +194,25 @@ export default function TourDaViagem({
         style={{ left: foco.x, top: foco.y, width: foco.w, height: foco.h }}
         aria-hidden="true"
       />
-      <div key={passo} className="tour-balao" style={lugar} aria-live="polite">
+      <div key={passo} className={classeDoBalao} style={lugar} aria-live="polite">
         <div className="tour-balao-topo">
-          <Norti humor={p.humor} tamanho={58} sombra={false} chegar={false} />
+          <span className="tour-norti">
+            <Norti humor={p.humor} tamanho={44} sombra={false} chegar={false} />
+          </span>
           <div>
             <h2 id="tour-titulo">{p.titulo}</h2>
             <p>{p.texto}</p>
           </div>
         </div>
         <div className="tour-balao-pe">
-          <span className="tour-bolinhas" aria-label={`Passo ${passo + 1} de ${PASSOS_DO_TOUR.length}`}>
-            {PASSOS_DO_TOUR.map((_, i) => (
-              <i key={i} className={i === passo ? 'atual' : i < passo ? 'feito' : undefined} />
-            ))}
+          {/* Progresso: "3 de 10" e uma barrinha */}
+          <span className="tour-progresso" aria-label={`Passo ${passo + 1} de ${total}`}>
+            <span aria-hidden="true">
+              {passo + 1} de {total}
+            </span>
+            <i aria-hidden="true">
+              <b style={{ width: `${((passo + 1) / total) * 100}%` }} />
+            </i>
           </span>
           {!ultimo && (
             <button type="button" className="tour-pular" onClick={fechar}>

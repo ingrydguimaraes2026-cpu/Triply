@@ -28,9 +28,13 @@ import { cor, fonte, titulo, trabalho } from '../../../theme'
 // Pra ver de novo: verTourDeNovo() (Perfil).
 
 export const CHAVE_DO_TOUR = 'tripwave.tour.v1'
-const FOLGA = 6 // o foco fica um pouco maior que a peça
+const FOLGA = 4 // o foco fica um pouco maior que a peça
 const RAIO = 18
-const ESCURO = 'rgba(31,18,6,0.72)'
+const ESCURO = 'rgba(14,9,4,0.8)' // escuro firme: a peça acesa salta, o resto some
+const LARGURA_DO_BALAO = 340
+const MARGEM = 16
+const DISTANCIA = 14 // do balão até a peça (a setinha ocupa esse espaço)
+const SETA = 12
 const ESPERA_DA_ABA = 420 // a aba nova termina de entrar antes de medir a peça
 
 type Peca = ComponentRef<typeof View>
@@ -235,12 +239,21 @@ function Cortina({
   }, [fazer, reduzir, pulso])
 
   const { w: W, h: H } = tamanho
-  // Balão do lado que tem mais espaço: peça embaixo → balão em cima, e vice-versa
+  const raio = caixa ? Math.min(RAIO, caixa.h / 2) : RAIO
+  const total = PASSOS_DO_TOUR.length
+
+  // Balão: largura fixa, alinhado com a peça (sem sair da tela), do lado que tem mais espaço,
+  // com uma setinha apontando pro meio da peça. Sem peça: no meio da tela, sem seta.
+  const largura = Math.min(LARGURA_DO_BALAO, W - MARGEM * 2)
+  const meio = caixa ? caixa.x + caixa.w / 2 : W / 2
+  const esquerda = Math.min(Math.max(meio - largura / 2, MARGEM), W - MARGEM - largura)
+  const emCima = caixa ? caixa.y + caixa.h / 2 > H / 2 : false
   const lugar = !caixa
-    ? { top: Math.max(24, H / 2 - 120) }
-    : caixa.y + caixa.h / 2 > H / 2
-      ? { bottom: H - caixa.y + 14 }
-      : { top: caixa.y + caixa.h + 14 }
+    ? { top: Math.max(24, H / 2 - 110) }
+    : emCima
+      ? { bottom: H - caixa.y + DISTANCIA }
+      : { top: caixa.y + caixa.h + DISTANCIA }
+  const setaX = Math.min(Math.max(meio - esquerda - SETA / 2, 22), largura - 22 - SETA)
 
   return (
     <Animated.View
@@ -251,7 +264,7 @@ function Cortina({
     >
       {/* O escuro com o buraco redondo do foco */}
       <Svg width={W} height={H} style={{ position: 'absolute', top: 0, left: 0 }} pointerEvents="none">
-        <Path d={`M0 0H${W}V${H}H0Z${caixa ? ` ${retanguloRedondo(caixa, RAIO)}` : ''}`} fill={ESCURO} fillRule="evenodd" />
+        <Path d={`M0 0H${W}V${H}H0Z${caixa ? ` ${retanguloRedondo(caixa, raio)}` : ''}`} fill={ESCURO} fillRule="evenodd" />
       </Svg>
 
       {/* Toques: fora do foco não fazem nada. No passo de fazer, o foco deixa o toque passar pra aba. */}
@@ -271,15 +284,16 @@ function Cortina({
 
       {caixa ? (
         <>
+          {/* Anel do foco, colado na borda do buraco */}
           <View
             pointerEvents="none"
             style={{
               position: 'absolute',
-              left: caixa.x,
-              top: caixa.y,
-              width: caixa.w,
-              height: caixa.h,
-              borderRadius: RAIO,
+              left: caixa.x - 1,
+              top: caixa.y - 1,
+              width: caixa.w + 2,
+              height: caixa.h + 2,
+              borderRadius: raio + 1,
               borderWidth: 2,
               borderColor: cor.dourado,
             }}
@@ -289,15 +303,15 @@ function Cortina({
               pointerEvents="none"
               style={{
                 position: 'absolute',
-                left: caixa.x,
-                top: caixa.y,
-                width: caixa.w,
-                height: caixa.h,
-                borderRadius: RAIO,
-                borderWidth: 3,
+                left: caixa.x - 1,
+                top: caixa.y - 1,
+                width: caixa.w + 2,
+                height: caixa.h + 2,
+                borderRadius: raio + 1,
+                borderWidth: 2,
                 borderColor: cor.dourado,
-                opacity: pulso.interpolate({ inputRange: [0, 1], outputRange: [0.9, 0] }),
-                transform: [{ scale: pulso.interpolate({ inputRange: [0, 1], outputRange: [1, 1.3] }) }],
+                opacity: pulso.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0] }),
+                transform: [{ scale: pulso.interpolate({ inputRange: [0, 1], outputRange: [1, 1.18] }) }],
               }}
             />
           ) : null}
@@ -309,39 +323,59 @@ function Cortina({
         style={[
           {
             position: 'absolute',
-            left: 14,
-            right: 14,
-            borderRadius: 24,
-            padding: 16,
-            gap: 12,
+            left: esquerda,
+            width: largura,
+            borderRadius: 22,
+            paddingHorizontal: 16,
+            paddingTop: 16,
+            paddingBottom: 12,
+            gap: 14,
             backgroundColor: trabalho.fundo,
-            borderWidth: 1,
-            borderColor: trabalho.linha,
-            boxShadow: '0 18px 40px rgba(31,18,6,0.35)',
-            transform: [{ translateY: entra.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+            boxShadow: '0 16px 36px rgba(0,0,0,0.35)',
+            transform: [{ translateY: entra.interpolate({ inputRange: [0, 1], outputRange: [emCima ? 10 : -10, 0] }) }],
           },
           lugar,
         ]}
       >
+        {/* Setinha apontando pra peça */}
+        {caixa ? (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: setaX,
+              width: SETA,
+              height: SETA,
+              borderRadius: 2,
+              backgroundColor: trabalho.fundo,
+              transform: [{ rotate: '45deg' }],
+              ...(emCima ? { bottom: -SETA / 2 + 1 } : { top: -SETA / 2 + 1 }),
+            }}
+          />
+        ) : null}
+
         <View className="flex-row items-center gap-3">
-          <Norti humor={p.humor} tamanho={64} sombra={false} />
-          <View className="flex-1 gap-1">
-            <Text style={[titulo(20), { color: trabalho.texto }]}>{p.titulo}</Text>
-            <Text style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 20, color: trabalho.texto2 }}>{p.texto}</Text>
+          <View className="items-center justify-center rounded-full" style={{ width: 52, height: 52, backgroundColor: trabalho.superficie2 }}>
+            <Norti humor={p.humor} tamanho={44} sombra={false} />
+          </View>
+          <View className="flex-1" style={{ gap: 3 }}>
+            <Text style={[titulo(19), { color: trabalho.texto }]}>{p.titulo}</Text>
+            <Text style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 19, color: trabalho.texto2 }}>{p.texto}</Text>
           </View>
         </View>
-        <View className="flex-row items-center gap-2" style={{ minHeight: 40 }}>
-          {/* Bolinhas: em que passo está */}
-          <View className="flex-1 flex-row items-center gap-1.5" accessibilityLabel={`Passo ${passo + 1} de ${PASSOS_DO_TOUR.length}`}>
-            {PASSOS_DO_TOUR.map((_, i) => (
-              <View
-                key={i}
-                style={{ width: i === passo ? 14 : 5, height: 5, borderRadius: 3, backgroundColor: i <= passo ? trabalho.acento : cor.borda }}
-              />
-            ))}
+
+        <View className="flex-row items-center" style={{ minHeight: 40, gap: 10 }}>
+          {/* Progresso: "3 de 10" e uma barrinha */}
+          <View className="flex-1 flex-row items-center" style={{ gap: 8 }} accessibilityLabel={`Passo ${passo + 1} de ${total}`}>
+            <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: trabalho.texto2, fontVariant: ['tabular-nums'] }}>
+              {passo + 1} de {total}
+            </Text>
+            <View style={{ flex: 1, maxWidth: 90, height: 4, borderRadius: 2, backgroundColor: cor.borda, overflow: 'hidden' }}>
+              <View style={{ width: `${((passo + 1) / total) * 100}%`, height: 4, borderRadius: 2, backgroundColor: trabalho.acento }} />
+            </View>
           </View>
           {!ultimo && (
-            <Pressable onPress={aoPular} accessibilityRole="button" className="h-10 justify-center px-3 active:opacity-70">
+            <Pressable onPress={aoPular} accessibilityRole="button" hitSlop={8} className="h-10 justify-center px-2 active:opacity-70">
               <Text style={{ fontFamily: fonte.corpoForte, fontSize: 14, color: trabalho.texto2 }}>Pular</Text>
             </Pressable>
           )}
