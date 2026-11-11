@@ -40,7 +40,9 @@ A coluna "Quem" é sugestão.
 
 | O quê | Quem | Pronto quando |
 |---|---|---|
-| Criar as contas de desenvolvedor: Apple (US$ 99 por ano) e Google Play (US$ 25, uma vez). Decidir se é **pessoa física ou CNPJ** (ver "Cuidados com as lojas"). | Victor | Contas ativas |
+| **Hoje, 10/11:** pedir o número D-U-N-S do CNPJ (grátis, pela página de consulta da Apple; demora alguns dias). As duas lojas pedem esse número pra conta de empresa. | Victor | Número D-U-N-S recebido |
+| Criar as contas de desenvolvedor **no CNPJ** (decidido em 10/11): Apple (US$ 99 por ano) e Google Play (US$ 25, uma vez). | Victor | Contas ativas |
+| Perguntar ao contador se o CNPJ (atividade e regime) cobre receber da Apple e do Google pela venda do app. | Victor | Resposta do contador |
 | Escolher o identificador do app (ex.: `app.norti`). **Não muda depois.** Ligar o EAS (a build na nuvem da Expo). | Victor | `eas.json` e `app.json` com o identificador |
 | Páginas `/termos` e `/privacidade` no site. As lojas pedem o link. | Victor (Claude escreve o rascunho) | Links abrindo no navegador |
 | Excluir conta dentro do app (Perfil). | Victor | Conta de teste excluída pelo app |
@@ -59,14 +61,14 @@ Roteiro completo em [`TESTE-REVEILLON.md`](TESTE-REVEILLON.md) (a parte de recru
 | Recrutar 7 grupos pra sobrarem 5. A lista de espera só tem 1 pessoa, então: amigos de amigos, colegas de trabalho e de faculdade, um post pedindo. | Ingryd | 7 organizadores toparam |
 | Conversa "antes" (30 min) com cada organizador. | Ingryd (Victor junto, se der) | Anotações no doc do teste |
 | O organizador cria a viagem e manda o convite no grupo do zap dele. | Organizadores | Até **27/11** |
-| Se a conta do Google for pessoal: começar o teste fechado (12 pessoas por 14 dias). Os grupos do réveillon podem ser os testadores. | Victor | Termina por volta de 08/12 |
+| Colocar os grupos no TestFlight e no teste do Google. Com a conta no CNPJ, o Google não exige o teste de 12 pessoas por 14 dias. | Victor | Grupos com o app instalado |
 
 ### Etapa 3 · 28/11 a 20/12 · Lojas e conteúdo
 
 | O quê | Quem | Pronto quando |
 |---|---|---|
 | Mandar pra revisão da Apple **até 15/12** (a Apple costuma pausar as revisões perto do Natal). | Victor | Aprovado |
-| Google: pedir a publicação depois do teste fechado. | Victor | No ar |
+| Google: mandar pra publicação junto com a Apple, até 15/12. | Victor | No ar |
 | TikTok e Reels sem rosto, **1 vídeo por dia a partir de 01/12**. Tema: "Réveillon 2027 carimbado". Os vídeos saem de `docs/marketing/video/`. | Ingryd | 20 vídeos no ar até 20/12 |
 | Grupo VIP no WhatsApp pro lançamento. | Ingryd | Grupo criado e divulgado nos vídeos |
 | Conserto só do que os grupos acharem. | Victor | Nada travando os grupos |
@@ -127,6 +129,11 @@ Assinatura imaginada de R$ 9,90 por mês. Menos 15% da loja e o imposto, sobram 
 Ou seja: o trabalho que mais pesa é fazer gente chegar (vídeo, convite, post), não construir tela. Nenhum desses números foi medido. Não usar em pitch (regra do `PRECO.md`).
 
 ## Cuidados com as lojas (conferir na hora de criar as contas: as regras mudam)
+
+**Decisão (10/11/2026): as duas contas ficam no CNPJ do Victor.** O que isso traz:
+- na loja, o vendedor aparece com a razão social do CNPJ, não "Norti" (o nome do app continua Norti);
+- a Apple pede um site público ligado à empresa; um e-mail no domínio ajuda na verificação;
+- o dinheiro das vendas cai na conta do CNPJ.
 
 - **Google Play, conta pessoal nova:** antes de publicar, precisa de um teste fechado com pelo menos 12 pessoas por 14 dias seguidos. **Conta de empresa** (CNPJ e número D-U-N-S, que é grátis mas demora alguns dias) não tem essa exigência.
 - **Apple, conta de empresa:** também pede o D-U-N-S. Na loja aparece o nome da empresa em vez do nome da pessoa.
