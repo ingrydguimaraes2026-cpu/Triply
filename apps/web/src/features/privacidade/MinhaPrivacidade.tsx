@@ -33,6 +33,13 @@ export default function MinhaPrivacidade() {
   async function excluirConta() {
     setErro(null)
     setTrabalhando(true)
+    // Os avisos do app (push_expo) não saem na função do banco: apaga os desta conta antes
+    const { data: sessao } = await supabase.auth.getSession()
+    const meuId = sessao.session?.user.id
+    if (meuId) {
+      const { error: erroAvisos } = await supabase.from('push_expo').delete().eq('usuario_id', meuId)
+      if (erroAvisos) console.error('Erro ao apagar os avisos do celular:', erroAvisos)
+    }
     const { data, error } = await supabase.functions.invoke('excluir-conta', { body: { confirmar: 'EXCLUIR' } })
     if (error || data?.erro) {
       setTrabalhando(false)

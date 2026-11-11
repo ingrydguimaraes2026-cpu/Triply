@@ -8,6 +8,7 @@ import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { Norti } from '../src/ui/Norti'
 import { AvisosNoCelular } from '../src/ui/AvisosNoCelular'
+import { ExcluirConta } from '../src/ui/ExcluirConta'
 import { esquecerEsteAparelho } from '../src/lib/avisos'
 import { Avatar, BotaoRedondo, Cartao, IconeQuadrado, TituloDaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
@@ -120,6 +121,9 @@ export default function Perfil() {
             <ChevronRight size={20} color={cor.suave} />
           </Cartao>
         </Pressable>
+
+        {/* Spec 089: excluir a conta sem precisar do site (a App Store e o Google Play exigem) */}
+        {sessao ? <ExcluirConta usuarioId={sessao.user.id} /> : null}
       </ScrollView>
     </View>
   )

@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import * as WebBrowser from 'expo-web-browser'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from '../src/ui/icones'
 import Svg, { Path } from 'react-native-svg'
@@ -16,6 +17,12 @@ import { MODO_TESTE, criarContaDeTeste, entrarNaUltimaContaDeTeste } from '../sr
 // Login / Cadastro (tela "1d" do design): faixa caramelo com a Norti de logo e uma
 // folha clara que sobe com as abas Entrar | Criar conta.
 type Modo = 'entrar' | 'criar'
+
+// Termos de uso e Política de privacidade moram no site (páginas públicas /termos e /privacidade)
+const SITE = process.env.EXPO_PUBLIC_SITE_URL ?? 'https://together-viagem.vercel.app'
+function abrirNoSite(caminho: string) {
+  WebBrowser.openBrowserAsync(`${SITE}${caminho}`).catch((e) => console.error('Erro ao abrir a página do site:', e))
+}
 
 export default function Login() {
   const params = useLocalSearchParams<{ modo?: Modo }>()
@@ -194,7 +201,15 @@ export default function Login() {
             <Botao titulo={entrar ? 'Entrar' : 'Criar conta'} aoTocar={continuar} carregando={enviando} />
           </View>
           <Text className="px-3 text-center font-body text-[12px] leading-[18px] text-suave">
-            Ao continuar, você concorda com os Termos de uso e a Política de privacidade.
+            Ao continuar, você concorda com os{' '}
+            <Text className="font-body-semibold text-couro underline" onPress={() => abrirNoSite('/termos')}>
+              Termos de uso
+            </Text>{' '}
+            e a{' '}
+            <Text className="font-body-semibold text-couro underline" onPress={() => abrirNoSite('/privacidade')}>
+              Política de privacidade
+            </Text>
+            .
           </Text>
           {MODO_TESTE ? (
             <View className="mt-2 rounded-2xl border border-dashed border-tracejado p-3" style={{ gap: 8 }}>

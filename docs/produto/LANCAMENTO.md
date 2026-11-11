@@ -43,10 +43,10 @@ A coluna "Quem" é sugestão.
 | **Hoje, 10/11:** pedir o número D-U-N-S do CNPJ (grátis, pela página de consulta da Apple; demora alguns dias). As duas lojas pedem esse número pra conta de empresa. | Victor | Número D-U-N-S recebido |
 | Criar as contas de desenvolvedor **no CNPJ** (decidido em 10/11): Apple (US$ 99 por ano) e Google Play (US$ 25, uma vez). | Victor | Contas ativas |
 | Perguntar ao contador se o CNPJ (atividade e regime) cobre receber da Apple e do Google pela venda do app. | Victor | Resposta do contador |
-| Escolher o identificador do app (ex.: `app.norti`). **Não muda depois.** Ligar o EAS (a build na nuvem da Expo). | Victor | `eas.json` e `app.json` com o identificador |
-| Páginas `/termos` e `/privacidade` no site. As lojas pedem o link. | Victor (Claude escreve o rascunho) | Links abrindo no navegador |
-| Excluir conta dentro do app (Perfil). | Victor | Conta de teste excluída pelo app |
-| Entrar com Apple no app. | Victor | Login pelo iPhone funcionando |
+| Escolher o identificador do app (ex.: `app.norti`). **Não muda depois.** Ligar o EAS (a build na nuvem da Expo). `eas.json` criado em 10/11 (perfis development, preview e production); falta o identificador e o `eas init` ([`HANDOFF-loja`](../HANDOFF-loja.md)). | Victor | `eas.json` e `app.json` com o identificador |
+| Páginas `/termos` e `/privacidade` no site. As lojas pedem o link. **Rascunho pronto em 10/11**, ligado no login do site e do app; falta o nome do responsável, o e-mail de contato e a revisão. | Victor (Claude escreve o rascunho) | Links abrindo no navegador |
+| Excluir conta dentro do app (Perfil). **Feito em 10/11:** conta de teste excluída pelo app. | Victor | Conta de teste excluída pelo app |
+| Entrar com Apple no app. O que precisa está levantado no [`HANDOFF-loja`](../HANDOFF-loja.md); espera a conta da Apple. | Victor | Login pelo iPhone funcionando |
 | Decidir o "Confirm email". | Victor | Decisão anotada no HANDOFF |
 | **Primeiro uso sem ajuda:** a Ingryd cria uma viagem do zero no celular e anota onde travou. Consertar só isso. | Ingryd, depois Victor | Ela cria a viagem e convida sem perguntar nada |
 | Publicar a `ler-reserva` (se o custo da IA couber). | Victor | Print de reserva vira item no "Hoje" |

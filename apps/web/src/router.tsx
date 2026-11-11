@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import NovaSenha from './pages/NovaSenha'
 import NovaViagem from './pages/NovaViagem'
 import Perdido, { ErroNaTela } from './pages/Perdido'
+import Privacidade from './pages/Privacidade'
+import Termos from './pages/Termos'
 import ViagemLayout from './pages/viagem/ViagemLayout'
 import Overview from './pages/viagem/Overview'
 import Lugares from './pages/viagem/Lugares'
@@ -38,6 +40,9 @@ export const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       // Lista de espera: página pública, sem login (docs/marketing/ESTRATEGIA-REDES.md)
       { path: '/espera', element: <ListaDeEspera /> },
+      // Termos de uso e Política de privacidade: públicas, as lojas pedem o link
+      { path: '/termos', element: <Termos /> },
+      { path: '/privacidade', element: <Privacidade /> },
       // Web leve do convite (spec 018, FILA 0.8): abre até sem login, o convidado topa, vota e vê o plano
       { path: '/v/:codigo', element: <Convite /> },
       // Link antigo do convite: cai na mesma página
