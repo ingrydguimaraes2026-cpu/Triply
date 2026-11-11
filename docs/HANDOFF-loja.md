@@ -21,6 +21,17 @@ Atualizado: 10/11/2026. Plano geral em [`produto/LANCAMENTO.md`](produto/LANCAME
   - `preview`: instalação interna (APK no Android), com o modo teste ligado;
   - `production`: o que vai pra loja (TestFlight e Google), **sem** modo teste, versão sobe sozinha.
 
+## Contas das lojas no CNPJ (decidido pelo Victor em 10/11)
+
+As contas da Apple e do Google ficam no CNPJ do Victor (conta de empresa, com o número D-U-N-S).
+O que isso muda aqui:
+
+- **Entrar com Apple e a build de produção esperam a conta de empresa da Apple**, que depende do
+  D-U-N-S (pedido em 10/11; demora alguns dias). Até lá, dá pra testar no Expo Go e no Expo web.
+- **Google:** com conta de empresa, não precisa do teste fechado de 12 pessoas por 14 dias.
+- **Apple:** pede um site público ligado à empresa. As páginas `/termos` e `/privacidade` ajudam
+  nisso, desde que o nome da empresa e o e-mail de contato (item 2 abaixo) estejam preenchidos.
+
 ## O que falta o Victor decidir ou fazer
 
 1. **Identificador do app** (`ios.bundleIdentifier` e `android.package` no `apps/mobile/app.json`).
