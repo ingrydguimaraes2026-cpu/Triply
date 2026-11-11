@@ -34,8 +34,9 @@ O que isso muda aqui:
 
 ## O que falta o Victor decidir ou fazer
 
-1. **Identificador do app** (`ios.bundleIdentifier` e `android.package` no `apps/mobile/app.json`).
-   **Não muda depois.** Sugestão: `app.norti`. Ainda não foi gravado: esperando a resposta.
+1. **Identificador do app: `app.norti`** (escolhido pelo Victor em 10/11, gravado em
+   `ios.bundleIdentifier` e `android.package` no `apps/mobile/app.json`). **Não muda depois.**
+   É esse que vai no App ID da Apple, no app do Google Play e nos Client IDs do Apple no Supabase.
 2. **Preencher na página** (`apps/web/src/pages/PaginaLegal.tsx`, constantes no topo):
    - `RESPONSAVEL`: razão social e CNPJ da empresa (as contas das lojas vão no CNPJ, decidido em 10/11);
    - `EMAIL_CONTATO`: e-mail de contato e de pedidos sobre dados (LGPD).
