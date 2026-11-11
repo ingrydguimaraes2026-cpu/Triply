@@ -3,6 +3,8 @@
 Este é o documento que manda. Quando a FILA, o ROADMAP ou uma spec antiga brigar com ele, **vale o RUMO**.
 De onde veio: o benchmark de 11/2026, principalmente a conclusão [`09-ancora-opcoes.md`](benchmark-2026-11/09-ancora-opcoes.md) (com as partes [06](benchmark-2026-11/06-ancoras-eua-europa.md), [07](benchmark-2026-11/07-ancoras-asia-e-mundo.md) e [08](benchmark-2026-11/08-ancoras-fora-de-viagem.md)). A decisão do Victor está registrada em [`HANDOFF-rumo-ancora.md`](HANDOFF-rumo-ancora.md).
 
+> **Até o Carnaval 2027 (decisão do Victor, 10/11/2026):** o calendário está em [`produto/LANCAMENTO.md`](produto/LANCAMENTO.md): parar de construir, ir pra loja, levar grupos reais no réveillon e cobrar até o Carnaval. Nada de funcionalidade nova até lá.
+
 > **O que mudou na revisão:** a primeira versão punha a cobrança do Pix como âncora ("viagem sem climão"). O Victor rejeitou. O Pix virou só um detalhe do Financeiro.
 
 ## Em uma frase
