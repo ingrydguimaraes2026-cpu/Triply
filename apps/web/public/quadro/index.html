@@ -101,6 +101,16 @@ button{font:inherit;cursor:pointer}
 .play{width:38px;height:38px;border-radius:50%;border:0;background:var(--azul);color:#fff;font-size:14px;flex:none}
 .demo-pe .spec{color:#777;font-size:12px;line-height:1.35}.demo-pe .spec b{color:#222;display:block;font-size:13px}
 .bloco{background:#fff;border-radius:14px;height:54px;margin:10px 14px;box-shadow:0 4px 14px rgba(74,46,20,.06)}
+.so-cel{display:none!important}
+@media (max-width:860px){
+ .so-cel{display:inline-block!important}
+ #topo .arq,#topo .salvo,#zmenos,#zmais{display:none}
+ #topo .ferr{margin-left:4px}
+ #esq,#dir{transition:transform .25s;box-shadow:0 0 30px rgba(0,0,0,.18)}
+ #esq{transform:translateX(-102%);width:250px}#dir{transform:translateX(102%);width:290px}
+ #esq.aberto,#dir.aberto{transform:none}
+ #tela{left:0;right:0}
+}
 #luz{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:50}
 #luz img{max-height:94vh;border-radius:20px}
 /* inspetor */
@@ -134,6 +144,7 @@ input[type=range]{width:100%}
   <button data-f="mao" title="Mão (H ou segure espaço)">✋</button>
   <button data-f="nota" title="Nota adesiva (N)">▢ Nota</button>
   <button id="bpins" title="Mostrar todos os defeitos">! Defeitos</button>
+  <button id="bcam" class="so-cel" title="Páginas e camadas">☰</button><button id="binsp" class="so-cel" title="Detalhes">ⓘ</button>
  </div>
  <div class="esp"></div>
  <span class="salvo" id="salvo"></span>
@@ -194,7 +205,7 @@ function render(enquadrarDepois) {
   if (pagina === 'animacoes') renderAnimacoes();
   S.notas.filter((n) => n.pagina === pagina).forEach(criarNota);
   ligacoes(); camadas(); inspetor(); aplicar();
-  if (enquadrarDepois) requestAnimationFrame(() => { if (pagina === 'fluxos' || pagina === 'telas') { const gs = [...new Set(framesDaPagina().map((f) => f.grupo))].slice(0, 2); enquadrar(itensDaPagina().filter((i) => { const f = D.frames.find((x) => x.id === i.el.dataset.id); return f && gs.includes(f.grupo) }), 0.6) } else ajustar() });
+  if (enquadrarDepois) requestAnimationFrame(() => { if (pagina === 'fluxos' || pagina === 'telas') { const gs = [...new Set(framesDaPagina().map((f) => f.grupo))].slice(0, 2); const its = itensDaPagina().filter((i) => { const f = D.frames.find((x) => x.id === i.el.dataset.id); return f && gs.includes(f.grupo) }); enquadrar(matchMedia('(max-width:860px)').matches ? its.slice(0, 2) : its, 0.6) } else ajustar() });
 }
 function irPara(p) { pagina = p; sel = null; parar(); render(!vistas[p]) ; $('#topo').dataset.p = p }
 
@@ -246,8 +257,13 @@ function novaNota(x, y) { const n = {id: 'n' + Date.now(), pagina, x, y, texto: 
 // ---------- seleção, arrastar ----------
 function selecionar(s) { sel = s; $$('.frame.sel,.board.sel,.nota.sel', mundo).forEach((e) => e.classList.remove('sel')); if (s && s.id) $(`[data-id="${CSS.escape(s.id)}"]`, mundo)?.classList.add('sel'); $$('.sw.on').forEach((e) => e.classList.remove('on')); if (s && s.tipo === 'cor') $(`.sw[data-cor="${s.cor}"]`)?.classList.add('on'); camadas(); inspetor() }
 function pontoNoMundo(e) { const r = tela.getBoundingClientRect(), v = vista(); return {x: (e.clientX - r.left - v.x) / v.z, y: (e.clientY - r.top - v.y) / v.z} }
-let gesto = null, quadroPendente = false;
+let gesto = null, quadroPendente = false; const toques = new Map();
+const celular = () => matchMedia('(max-width:860px)').matches;
+$('#bcam').onclick = () => { $('#esq').classList.toggle('aberto'); $('#dir').classList.remove('aberto') };
+$('#binsp').onclick = () => { $('#dir').classList.toggle('aberto'); $('#esq').classList.remove('aberto') };
+tela.addEventListener('pointerdown', (e) => { if (celular()) { $('#esq').classList.remove('aberto'); $('#dir').classList.remove('aberto') } toques.set(e.pointerId, {x: e.clientX, y: e.clientY}); if (toques.size === 2) { const [a, b] = [...toques.values()]; const v = vista(); gesto = {tipo: 'pinca', d0: Math.hypot(a.x - b.x, a.y - b.y), z0: v.z, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2} } }, true);
 tela.addEventListener('pointerdown', (e) => {
+  if (gesto && gesto.tipo === 'pinca') return;
   if (e.target.closest('.interativo')) return; // gestos dentro das demos
   const item = e.target.closest('.frame,.board,.nota');
   const panear = e.button === 1 || espaco || ferramenta === 'mao' || (!item && ferramenta !== 'nota');
@@ -266,6 +282,8 @@ tela.addEventListener('pointerdown', (e) => {
   gesto = {tipo: 'item', el: item, x: e.clientX, y: e.clientY, ox: item.offsetLeft, oy: item.offsetTop, comecou: false}; tela.setPointerCapture(e.pointerId);
 });
 tela.addEventListener('pointermove', (e) => {
+  if (toques.has(e.pointerId)) toques.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (gesto && gesto.tipo === 'pinca') { if (toques.size < 2) return; const [a, b] = [...toques.values()]; const r = tela.getBoundingClientRect(), v = vista(); const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2; v.x += mx - gesto.mx; v.y += my - gesto.my; gesto.mx = mx; gesto.my = my; const alvo = gesto.z0 * Math.hypot(a.x - b.x, a.y - b.y) / gesto.d0; zoomEm(alvo / v.z, mx - r.left, my - r.top); return }
   if (!gesto) return; const v = vista();
   if (gesto.tipo === 'pan') { v.x += e.clientX - gesto.x; v.y += e.clientY - gesto.y; gesto.x = e.clientX; gesto.y = e.clientY; aplicar(); return }
   const dx = (e.clientX - gesto.x) / v.z, dy = (e.clientY - gesto.y) / v.z;
@@ -274,7 +292,7 @@ tela.addEventListener('pointermove', (e) => {
   const id = gesto.el.dataset.id; const nota = S.notas.find((n) => n.id === id); if (nota) { nota.x = x; nota.y = y } else S.pos[id] = {x, y};
   if (!quadroPendente) { quadroPendente = true; requestAnimationFrame(() => { quadroPendente = false; ligacoes(); if (sel && sel.id === id) atualizarXY(x, y) }) }
 });
-const fimGesto = () => { if (gesto && gesto.tipo === 'item' && gesto.comecou) salvar(); gesto = null; tela.classList.remove('arrastando') };
+const fimGesto = (e) => { if (e && e.pointerId !== undefined) toques.delete(e.pointerId); if (gesto && gesto.tipo === 'pinca') { if (toques.size < 2) gesto = null; return } if (gesto && gesto.tipo === 'item' && gesto.comecou) salvar(); gesto = null; tela.classList.remove('arrastando') };
 tela.addEventListener('pointerup', fimGesto); tela.addEventListener('pointercancel', fimGesto);
 tela.addEventListener('dblclick', (e) => { const f = e.target.closest('.frame'); if (f && !e.target.closest('.pin')) abrirGrande(D.frames.find((x) => x.id === f.dataset.id).tela) });
 function abrirGrande(t) { const l = $('#luz'); $('img', l).src = IMG[t]; l.style.display = 'flex' }
@@ -305,7 +323,7 @@ function camadas() {
   const notas = S.notas.filter((n) => n.pagina === pagina);
   if (notas.length) { h += '<div class="cam g"><span class="ic">▾</span>Notas</div>'; notas.forEach((n) => h += `<div class="cam f ${sel && sel.id === n.id ? 'on' : ''}" data-id="${n.id}"><span class="ic">▢</span>${esc((n.texto || 'Nota vazia').slice(0, 26))}</div>`) }
   c.innerHTML = h;
-  $$('.cam[data-id]', c).forEach((d) => d.onclick = () => { const el = $(`[data-id="${CSS.escape(d.dataset.id)}"]`, mundo); if (!el) return; const tipo = el.dataset.tipo; selecionar({tipo: tipo === 'board' ? 'board' : tipo, id: d.dataset.id}); enquadrar([{x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight}], 1.2) });
+  $$('.cam[data-id]', c).forEach((d) => d.onclick = () => { const el = $(`[data-id="${CSS.escape(d.dataset.id)}"]`, mundo); if (!el) return; const tipo = el.dataset.tipo; selecionar({tipo: tipo === 'board' ? 'board' : tipo, id: d.dataset.id}); if (celular()) $('#esq').classList.remove('aberto'); enquadrar([{x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight}], 1.2) });
 }
 
 // ---------- inspetor ----------
