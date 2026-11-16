@@ -14,6 +14,10 @@ export default defineConfig({
         importScripts: ['sw-push.js'],
         // O padrão (js, css, html) + as poses da Norti, pra mascote aparecer também offline
         globPatterns: ['**/*.{js,css,html}', 'norti/*'],
+        // /quadro: mapa das telas pra reunião (página solta, 3 MB). Fica fora do cache offline
+        // e o service worker não troca por index.html, senão o site instalado abriria o app no lugar.
+        globIgnores: ['quadro/**'],
+        navigateFallbackDenylist: [/^\/quadro/],
         // Offline de leitura (spec 034): o que a pessoa já abriu continua abrindo sem internet.
         // Com internet: busca na rede (até 6 s) e guarda a cópia. Sem internet: mostra a última cópia.
         // Ao sair da conta, as cópias são apagadas (features/offline/cache.ts).
