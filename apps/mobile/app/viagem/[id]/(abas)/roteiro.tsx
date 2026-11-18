@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
 import Reanimated, { useAnimatedStyle, useReducedMotion, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 import { StatusBar } from '../../../../src/ui/StatusBar'
-import { useFocusEffect, useRouter, type Href } from 'expo-router'
+import { useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AlertTriangle, Bed, Bus, CalendarDays, Car, Clock, Luggage, Footprints, MapPin, Mountain, Pencil, Plane, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../../../src/ui/icones'
 import { Icone } from '../../../../src/ui/Icone'
@@ -101,7 +101,7 @@ function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
     [viagem.id],
     'aba-roteiro',
   )
-  useFocusEffect(useCallback(() => carga.recarregar(), [carga.recarregar]))
+  // Ao voltar pra aba, o useCarregar recarrega sozinho
   if (carga.status === 'carregando') return <EsqueletoDaAba forma="roteiro" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const [destinos, lugares, trajetos, eventos, casas, roteiros, matches] = carga.dados

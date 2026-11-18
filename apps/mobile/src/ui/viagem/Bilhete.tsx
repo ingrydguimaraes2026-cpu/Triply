@@ -60,12 +60,16 @@ export function Bilhete({ foto, de, para, data, noites, pessoas, aoTocar }: Prop
       ],
     }
   })
-  const estiloDoBrilho = useAnimatedStyle(() => ({ transform: [{ translateX: interpolate(brilho.value, [0, 1], [-LARGURA * 1.4, LARGURA * 1.4]) }, { rotate: '15deg' }] }))
+  // `flex: 1` vem no próprio estilo animado: o brilho preenche a faixa (View comum por fora)
+  const estiloDoBrilho = useAnimatedStyle(() => ({ flex: 1, transform: [{ translateX: interpolate(brilho.value, [0, 1], [-LARGURA * 1.4, LARGURA * 1.4]) }, { rotate: '15deg' }] }))
 
   return (
     <View className="items-center" style={{ paddingVertical: 6 }}>
       <Pressable onPress={aoTocar} accessibilityRole="button" accessibilityLabel={`Bilhete: ${de} para ${para}, ${data}`}>
-        <Animated.View style={[{ width: LARGURA, borderRadius: 22, backgroundColor: cor.creme, overflow: 'hidden', boxShadow: '0 24px 44px rgba(74,46,20,0.32)' }, estilo]}>
+        {/* Android (teste 17/11): num Animated.View do Reanimated, `style={[fixo, animado]}` perde a
+            parte fixa. O giro fica no Animated.View; a forma do bilhete numa View comum por dentro. */}
+        <Animated.View style={estilo}>
+        <View style={{ width: LARGURA, borderRadius: 22, backgroundColor: cor.creme, overflow: 'hidden', boxShadow: '0 24px 44px rgba(74,46,20,0.32)' }}>
           {foto ? <Foto source={foto} style={{ height: 100, width: '100%' }} /> : <LinearGradient colors={[cor.couro, cor.escuro]} style={{ height: 100 }} />}
           <View className="flex-row items-end justify-between px-3.5 pt-2.5">
             <Codigo texto={de} />
@@ -94,9 +98,12 @@ export function Bilhete({ foto, de, para, data, noites, pessoas, aoTocar }: Prop
             )}
           </View>
           {/* Brilho que atravessa o bilhete */}
-          <Animated.View pointerEvents="none" style={[{ position: 'absolute', top: -60, bottom: -60, width: 70, left: LARGURA / 2 - 35 }, estiloDoBrilho]}>
-            <LinearGradient colors={['rgba(255,246,232,0)', 'rgba(255,246,232,0.55)', 'rgba(255,246,232,0)']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ flex: 1 }} />
-          </Animated.View>
+          <View pointerEvents="none" style={{ position: 'absolute', top: -60, bottom: -60, width: 70, left: LARGURA / 2 - 35 }}>
+            <Animated.View style={estiloDoBrilho}>
+              <LinearGradient colors={['rgba(255,246,232,0)', 'rgba(255,246,232,0.55)', 'rgba(255,246,232,0)']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ flex: 1 }} />
+            </Animated.View>
+          </View>
+        </View>
         </Animated.View>
       </Pressable>
     </View>

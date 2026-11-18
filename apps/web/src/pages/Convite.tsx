@@ -119,6 +119,9 @@ export default function Convite() {
   const periodo = formatarPeriodo(previa.dataInicio, previa.dataFim)
   const quem = previa.membros.slice(0, 3).join(', ') + (previa.membros.length > 3 ? ` e mais ${previa.membros.length - 3}` : '')
   const quemChamou = previa.membros[0]
+  // Viagem que já passou (viagem antiga): o convite chama pra completar o mapa, não pra topar
+  const jaFoi = !!previa.dataFim && previa.dataFim < hojeIso()
+  const lugar = previa.nome.replace(/^viagem pra /i, '')
   const foto = capas(previa.viagemId, 900)
 
   return (
@@ -139,7 +142,7 @@ export default function Convite() {
               'Te chamaram pra'
             )}
           </p>
-          <h1>{dentro ? previa.nome : `Bora pra ${previa.nome.replace(/^viagem pra /i, '')} com a galera?`}</h1>
+          <h1>{dentro ? previa.nome : jaFoi ? `A galera já foi pra ${lugar}. Você foi?` : `Bora pra ${lugar} com a galera?`}</h1>
           {(periodo || previa.destinos.length > 0) && <p className="cv-quando">{[periodo, previa.destinos.join(' → ')].filter(Boolean).join(' · ')}</p>}
         </div>
       </header>
@@ -164,7 +167,7 @@ export default function Convite() {
       {dentro ? (
         <>
           <FaixaConvidado />
-          <DentroDaViagem viagemId={previa.viagemId} meuId={sessao?.user.id ?? ''} previa={previa} />
+          <DentroDaViagem viagemId={previa.viagemId} meuId={sessao?.user.id ?? ''} previa={previa} jaFoi={jaFoi} />
         </>
       ) : (
         <form className="cv-resposta" onSubmit={toparViagem}>
@@ -191,16 +194,21 @@ export default function Convite() {
           <div className="cv-bolhas">
             <button type="submit" className="cv-bolha sim" disabled={entrando || (!sessao && !nome.trim())}>
               <Icone nome="ok" size={24} aria-hidden="true" />
-              {entrando ? 'Entrando…' : 'Tô dentro'}
+              {entrando ? 'Entrando…' : jaFoi ? 'Eu fui também' : 'Tô dentro'}
             </button>
-            <button type="button" className={`cv-bolha ${resposta === 'talvez' ? 'on' : ''}`} onClick={() => setResposta('talvez')}>
-              <Icone nome="ajuda" size={24} aria-hidden="true" />
-              Talvez
-            </button>
-            <button type="button" className={`cv-bolha ${resposta === 'nao' ? 'on' : ''}`} onClick={() => setResposta('nao')}>
-              <Icone nome="fechar" size={24} aria-hidden="true" />
-              Não dá
-            </button>
+            {/* Viagem que já passou: um botão só (Talvez e Não dá não fazem sentido) */}
+            {!jaFoi && (
+              <>
+                <button type="button" className={`cv-bolha ${resposta === 'talvez' ? 'on' : ''}`} onClick={() => setResposta('talvez')}>
+                  <Icone nome="ajuda" size={24} aria-hidden="true" />
+                  Talvez
+                </button>
+                <button type="button" className={`cv-bolha ${resposta === 'nao' ? 'on' : ''}`} onClick={() => setResposta('nao')}>
+                  <Icone nome="fechar" size={24} aria-hidden="true" />
+                  Não dá
+                </button>
+              </>
+            )}
           </div>
           {resposta && (
             <p className="cv-aviso" role="status">
@@ -224,9 +232,15 @@ export default function Convite() {
         </form>
       )}
 
-      <Vitrine previa={previa} />
+      <Vitrine previa={previa} jaFoi={jaFoi} />
     </Pagina>
   )
+}
+
+// Data de hoje no fuso do aparelho, no formato do banco (AAAA-MM-DD)
+function hojeIso() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 // Rostos da galera: iniciais em círculos coloridos (as mesmas cores do app)
@@ -274,7 +288,7 @@ async function buscarDadosDaViagem(viagemId: string): Promise<Dados> {
   return { destinos, opcoes, enquetes, eventos, roteiros, lugares: l?.data ?? [] }
 }
 
-function DentroDaViagem({ viagemId, meuId, previa }: { viagemId: string; meuId: string; previa: PreviaDoConvite }) {
+function DentroDaViagem({ viagemId, meuId, previa, jaFoi }: { viagemId: string; meuId: string; previa: PreviaDoConvite; jaFoi: boolean }) {
   const [dados, setDados] = useState<Dados | null>(null)
   const [falhou, setFalhou] = useState(false)
   const [votando, setVotando] = useState<string | null>(null)
@@ -406,6 +420,12 @@ function DentroDaViagem({ viagemId, meuId, previa }: { viagemId: string; meuId: 
         </section>
       )}
 
+      {/* M4 (QA 16/11): viagem que já passou não tem plano a mostrar ("Dia livre"), só o link */}
+      {jaFoi ? (
+        <Link to={`/viagem/${viagemId}`} className="convite-link leve-completa">
+          Abrir a viagem completa
+        </Link>
+      ) : (
       <section className="leve-cartao" aria-labelledby="leve-plano">
         <h2 id="leve-plano">
           <Icone nome="roteiro" size={20} aria-hidden="true" /> O plano
@@ -440,6 +460,7 @@ function DentroDaViagem({ viagemId, meuId, previa }: { viagemId: string; meuId: 
           Abrir a viagem completa
         </Link>
       </section>
+      )}
     </>
   )
 }
@@ -454,7 +475,7 @@ function precoDa(o: Opcao): string | null {
 }
 
 // ---------- Vitrine do passaporte (todo estado) ----------
-function Vitrine({ previa }: { previa: PreviaDoConvite }) {
+function Vitrine({ previa, jaFoi }: { previa: PreviaDoConvite; jaFoi: boolean }) {
   const v = vitrineDoPassaporte(previa.passaporte)
   return (
     <section className="leve-cartao leve-vitrine" aria-labelledby="leve-passaporte">
@@ -484,7 +505,15 @@ function Vitrine({ previa }: { previa: PreviaDoConvite }) {
       <div className="leve-app">
         <Norti humor="apontando" tamanho={56} />
         <p>
-          <strong>Ganhe o seu carimbo.</strong> Com o app da Norti, cada lugar onde a galera chega vira carimbo sozinho, e no fim sai a retrospectiva pronta pra postar.
+          {jaFoi ? (
+            <>
+              <strong>Vem completar o mapa da galera.</strong> Com o app da Norti, você marca os lugares onde vocês já foram e cada um vira um carimbo.
+            </>
+          ) : (
+            <>
+              <strong>Ganhe o seu carimbo.</strong> Com o app da Norti, cada lugar onde a galera chega vira carimbo sozinho, e no fim sai a retrospectiva pronta pra postar.
+            </>
+          )}
         </p>
       </div>
       <Link to="/espera" className="botao secundario leve-largo">

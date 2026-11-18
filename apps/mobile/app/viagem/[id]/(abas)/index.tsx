@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
-import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router'
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../../../../src/ui/StatusBar'
 import { Share2 } from '../../../../src/ui/icones'
@@ -25,7 +25,8 @@ import { Icone } from '../../../../src/ui/Icone'
 import { Selo } from '../../../../src/ui/Selos'
 import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
 import { useCascata, useNumeroAnimado } from '../../../../src/ui/movimento'
-import { formatarDinheiro, type NomeDoIcone } from '@together/core'
+import { buscarConvitesAtivos, formatarDinheiro, type NomeDoIcone } from '@together/core'
+import { supabase } from '../../../../src/lib/supabase'
 import { cor, fonte, rotulo, sombra, trabalho } from '../../../../theme'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
@@ -49,16 +50,11 @@ export default function AbaViagem() {
   const capa = useCapas(viagemId ? [viagemId] : [])
 
   const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId], 'aba-viagem')
-  // Volta de outra tela (votou, lançou gasto, definiu datas): busca de novo pra o carimbo cair
-  const { recarregar } = carga
-  const [primeiraVez, setPrimeiraVez] = useState(true)
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez) setPrimeiraVez(false)
-      else recarregar()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [recarregar]),
-  )
+  // O link já saiu? (convite ativo ou compartilhado agora): a faixa para de pedir "Chamar a galera"
+  const convitesAtivos = useCarregar(viagemId ? () => buscarConvitesAtivos(supabase, viagemId).catch(() => []) : null, [viagemId])
+  const [chamouAgora, setChamouAgora] = useState(false)
+  // Volta de outra tela (votou, lançou gasto, definiu datas): o useCarregar busca de novo sozinho.
+  // (Aqui tinha um useFocusEffect com `primeiraVez` preso no 1º render: nunca recarregava.)
 
   if (carga.status === 'carregando') return <EsqueletoDaViagem />
   if (carga.status === 'erro' || !carga.dados) return <ErroNaTela aoTentar={carga.recarregar} />
@@ -75,6 +71,7 @@ export default function AbaViagem() {
     trajetos: d.trajetos.length,
     gastos: d.gastos.length,
     euSouAdm,
+    jaChamou: chamouAgora || (convitesAtivos.status === 'pronto' && (convitesAtivos.dados?.length ?? 0) > 0),
   }
   const passos = montarPassos(estado)
   const proximo = proximoCarimbo(estado)
@@ -84,7 +81,9 @@ export default function AbaViagem() {
   const irProPasso = (destino: DestinoDoPasso) => (destino === 'convidar' ? void convidar() : ir(destino === 'explorar' ? `explorar` : destino))
 
   async function convidar() {
-    setConvite((await convidarProComboio(viagem.id, viagem.nome))?.texto ?? null)
+    const r = await convidarProComboio(viagem.id, viagem.nome, !!viagem.dataFim && viagem.dataFim < hojeIso())
+    setConvite(r?.texto ?? null)
+    if (!r?.erro) setChamouAgora(true)
   }
 
   // Fase da viagem: antes → na viagem (vira o "Hoje") → voltou (Lembranças)
@@ -235,7 +234,14 @@ export default function AbaViagem() {
 // (começa no 3, pra dar tempo do bilhete chegar primeiro)
 function Entra({ indice, style, children }: { indice: number; style?: StyleProp<ViewStyle>; children: ReactNode }) {
   const cascata = useCascata(indice + 3)
-  return <Animated.View style={[style, cascata]}>{children}</Animated.View>
+  // Android (teste 17/11): em `style={[style, cascata]}` a margem não chegava ("Carimbos" colado
+  // na borda). Fixo por fora, animação por dentro.
+  if (!style) return <Animated.View style={cascata}>{children}</Animated.View>
+  return (
+    <View style={style}>
+      <Animated.View style={cascata}>{children}</Animated.View>
+    </View>
+  )
 }
 
 // "23 dias pra embarcar" bem grande na esquerda, os rostos da galera na direita.

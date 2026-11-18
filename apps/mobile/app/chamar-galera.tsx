@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Link } from '../src/ui/icones'
 import { useViagemAtual } from '../src/dados/viagemAtual'
@@ -14,7 +14,7 @@ import { StatusBar } from '../src/ui/StatusBar'
 import { Botao } from '../src/ui/pecas'
 import { cor, fonte } from '../theme'
 
-// Primeira viagem guiada (spec 116), passo depois do roteiro: chamar a galera (pode pular).
+// Chamar a galera (pode pular): vem depois de criar a viagem (primeiro minuto, 16/11/2026) ou do roteiro guiado.
 // Depois daqui, a pessoa cai no dashboard da viagem.
 // 10/11: no lugar da lista de vantagens, a prévia de como o convite chega no grupo
 // (referência: Rhyme). Ver antes o que a galera vai receber tira o medo de mandar.
@@ -27,6 +27,8 @@ export default function ChamarGalera() {
   const [aviso, setAviso] = useState<string | null>(null)
   const [mandou, setMandou] = useState(false)
   const capa = useCapas(id ? [id] : [])
+  // Endereço sem viagem (caso de borda, QA 16/11): não há o que convidar, volta pro Início
+  if (!id) return <Redirect href="/" />
 
   const seguir = () => router.replace(`/viagem/${id}`)
 
@@ -43,17 +45,17 @@ export default function ChamarGalera() {
         <View className="-ml-1.5">
           <Norti humor="feliz" tamanho={88} />
         </View>
-        <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">Roteiro de {viagem?.nome ?? 'viagem'} montado</Text>
+        <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">{viagem ? `Viagem pra ${viagem.nome.replace(/^viagem pra /i, '')} criada` : 'Viagem criada'}</Text>
         <Text className="font-display text-[40px] leading-[43px] text-fundo">Agora, chame a galera</Text>
         <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 15, lineHeight: 21, color: 'rgba(245,233,214,0.85)' }}>É assim que chega no grupo. Cada um topa com um toque, sem baixar nada.</Text>
 
         {/* Prévia da mensagem no grupo */}
         <View className="rounded-[20px] p-3" style={{ backgroundColor: 'rgba(42,27,14,0.55)' }}>
-          <Text style={{ fontFamily: fonte.corpoForte, fontSize: 10.5, letterSpacing: 0.6, color: 'rgba(245,233,214,0.55)', textAlign: 'center', marginBottom: 8 }}>GRUPO DA VIAGEM</Text>
+          <Text style={{ fontFamily: fonte.corpoForte, fontSize: 10.5, letterSpacing: 0.6, color: 'rgba(245,233,214,0.55)', textAlign: 'center', marginBottom: 8 }}>GRUPO DA GALERA</Text>
           <View className="self-end overflow-hidden" style={{ width: '84%', backgroundColor: '#5A3A1C', borderTopLeftRadius: 16, borderTopRightRadius: 16, borderBottomLeftRadius: 16, borderBottomRightRadius: 4 }}>
             {id && capa(id) ? <Foto source={capa(id)} style={{ height: 96, width: '100%' }} /> : <LinearGradient colors={[cor.couro, cor.escuro]} style={{ height: 96 }} />}
             <View className="px-2.5 py-2">
-              <Text style={{ fontFamily: fonte.titulo, fontSize: 15, lineHeight: 17, letterSpacing: -0.2, color: cor.creme }}>Bora pra {(viagem?.nome ?? 'viagem').replace(/^viagem pra /i, '')} com a galera?</Text>
+              <Text style={{ fontFamily: fonte.titulo, fontSize: 15, lineHeight: 17, letterSpacing: -0.2, color: cor.creme }}>{viagem ? `Bora pra ${viagem.nome.replace(/^viagem pra /i, '')} com a galera?` : 'Bora com a galera?'}</Text>
               {viagem?.dataInicio ? (
                 <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 11.5, color: 'rgba(245,233,214,0.65)', marginTop: 2 }}>{periodo(viagem.dataInicio, viagem.dataFim)}</Text>
               ) : null}

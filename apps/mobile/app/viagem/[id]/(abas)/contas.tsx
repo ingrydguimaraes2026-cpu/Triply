@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { StatusBar } from '../../../../src/ui/StatusBar'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeftRight, Bed, Car, MessageCircle, Receipt, Send, ShoppingBag, Ticket, Utensils, Wallet, type LucideIcon } from '../../../../src/ui/icones'
 import { buscarGastos, CONGELADO, contarComentariosDaViagem, cotacoesDeHoje, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type GastoDaViagem, type ViagemComDetalhes } from '@together/core'
@@ -80,9 +80,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
     return { gastos, meuEuro, euroDoComboio }
   }, [viagem.id, meuId], 'aba-contas')
 
-  // Volta da tela de lançar gasto → recarrega
-  const { recarregar } = carga
-  useFocusEffect(useCallback(() => recarregar(), [recarregar]))
+  // Volta da tela de lançar gasto → o useCarregar recarrega sozinho
 
   if (carga.status === 'carregando') return <EsqueletoDaAba forma="contas" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
@@ -230,7 +228,7 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
 
           {vazio ? (
             <View className="items-center gap-2 px-6 py-8">
-              <Norti humor="dormindo" tamanho={100} />
+              <Norti humor="apontando" tamanho={100} />
               <Text style={[titulo(22), { color: trabalho.texto }]}>Lance o primeiro gasto</Text>
               <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 20, color: trabalho.texto2 }}>
                 Toque em &quot;Lançar gasto&quot; ou escreva aí em cima, tipo &quot;jantar 84&quot;. A Norti divide na hora.

@@ -87,7 +87,7 @@ export const TIPOS_DE_AVISO: { tipo: TipoAviso; nome: string; explica: string }[
   { tipo: 'lembretes', nome: 'Lembretes de horário', explica: '1 hora antes de cada trajeto e ponto de encontro' },
   { tipo: 'resumo', nome: 'Resumo da noite', explica: 'Às 21h, o que acontece amanhã' },
   { tipo: 'lembrancas', nome: 'Lembranças', explica: '"Há 1 ano vocês estavam em..." no dia certo' },
-  { tipo: 'fotos', nome: 'Fotos do comboio', explica: 'Post novo e comentário nas suas fotos' },
+  { tipo: 'fotos', nome: 'Fotos da galera', explica: 'Post novo e comentário nas suas fotos' },
 ]
 
 export async function buscarPreferenciasDeAviso(cli: ClienteTogether): Promise<Record<TipoAviso, boolean>> {

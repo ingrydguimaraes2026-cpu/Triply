@@ -23,7 +23,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import type { AlvoDoTour, NomeDoIcone } from "@together/core";
+import { tourCabeNaViagem, type AlvoDoTour, type NomeDoIcone } from "@together/core";
 import { PalcoDoTour, useAlvoDoTour } from "../../../../src/ui/tour/Tour";
 import { Icone } from "../../../../src/ui/Icone";
 import { useViagemAtual } from "../../../../src/dados/viagemAtual";
@@ -112,6 +112,7 @@ export default function AbasDaViagem() {
     // Tour guiado na primeira vez (src/ui/tour/Tour.tsx): começa na aba Viagem
     <PalcoDoTour
       aba={abaAtiva}
+      ligado={tourCabeNaViagem(viagem.tipo)}
       aoComecar={() => router.navigate(`/viagem/${id}` as Href)}
       aoTerminar={() => router.navigate(`/viagem/${id}` as Href)}
     >
@@ -234,13 +235,14 @@ function BarraDeVidro({ id, baixo }: { id: string; baixo: number }) {
               borderColor: trabalho.linha,
               boxShadow: "0 10px 30px rgba(74,46,20,0.14)",
             },
-            // No navegador dá pra borrar o que passa atrás (vidro de verdade); no celular fica o creme translúcido
+            // No navegador dá pra borrar o que passa atrás (vidro de verdade); no celular, creme opaco
+            // (Android 17/11: com 95% o texto de trás vazava na barra)
             Platform.OS === "web"
               ? ({
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
                 } as object)
-              : { backgroundColor: "rgba(255,253,248,0.95)" },
+              : { backgroundColor: "#FFFDF8" },
           ]}
         >
           {ABAS_DA_VIAGEM.map((a) => (

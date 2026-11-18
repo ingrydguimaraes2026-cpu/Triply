@@ -1,7 +1,7 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AlertTriangle, ArrowLeft, Bus, Car, ChevronRight, Footprints, Plane, Plus, Route, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
 import {
@@ -73,17 +73,9 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
   const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id], 'passagens')
-  // Voltou do Novo deslocamento ou do Comparar: busca de novo pra mostrar o que mudou
-  const primeiraVez = useRef(true)
-  const { recarregar } = carga
+  // Voltou do Novo deslocamento ou do Comparar: o useCarregar busca de novo sozinho
   // Spec 121 (etapa 1): o tempo até o embarque escolhido à mão fica no aparelho
   const { tempos, escolher } = useTemposAteOEmbarque()
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez.current) primeiraVez.current = false
-      else recarregar()
-    }, [recarregar]),
-  )
 
   if (!viagem) return null
   if (carga.status === 'carregando') return <EsqueletoDaAba forma="passagens" titulo={!naAba} />
@@ -120,7 +112,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
 
         {nada ? (
           <View className="mt-4 items-center gap-3 px-4">
-            <Norti humor="dormindo" tamanho={110} />
+            <Norti humor="apontando" tamanho={110} />
             <Text className="text-center font-display text-[22px] text-texto">Nenhum deslocamento ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Toque em "Novo deslocamento", diga de onde e pra onde e veja as opções.</Text>
           </View>
@@ -193,12 +185,13 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
         <Pressable
           onPress={() => router.push('/novo-deslocamento')}
           accessibilityRole="button"
-          accessibilityLabel="Adicionar reserva de transporte"
+          // Android 17/11: o botão dizia "Adicionar reserva" e abria a tela "Novo deslocamento"
+          accessibilityLabel="Novo deslocamento"
           className="h-[50px] flex-row items-center gap-1.5 rounded-full pl-3.5 pr-[18px] active:opacity-90"
           style={{ backgroundColor: trabalho.acento, boxShadow: '0 10px 24px rgba(0,0,0,0.3)' }}
         >
           <Plus size={20} color={trabalho.acentoTexto} />
-          <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Adicionar reserva</Text>
+          <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Novo deslocamento</Text>
         </Pressable>
       </View>
     </View>
@@ -331,7 +324,7 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
   }
 
   function apagar() {
-    Alert.alert('Apagar este transporte?', 'Some pra todo mundo do comboio.', [
+    Alert.alert('Apagar este transporte?', 'Some pra toda a galera.', [
       { text: 'Manter', style: 'cancel' },
       {
         text: 'Apagar',

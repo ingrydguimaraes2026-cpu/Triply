@@ -159,7 +159,7 @@ export function RoteiroDoExplorar({ destinoNome, rotulos, lugares, salvo, pessoa
           </View>
         ) : null}
       </Modal>
-      <Text className="text-center font-body text-[12px] text-suave">Roteiro de {destinoNome}: todo mundo do comboio pode arrumar</Text>
+      <Text className="text-center font-body text-[12px] text-suave">Roteiro de {destinoNome}: todo mundo da galera pode arrumar</Text>
     </View>
   )
 }

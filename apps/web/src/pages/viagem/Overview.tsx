@@ -80,6 +80,8 @@ function Embarque({ dados: d, foto, meuId, euSouAdm, moeda }: { dados: DadosDaAb
   const { viagem } = d
   const destinos = viagem.destinos
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
+  // Viagem que já passou: sem "Sem data ainda" e sem "Próximo passo" de planejar (M4, QA 16/11)
+  const jaFoi = !!viagem.dataFim && diasAte(viagem.dataFim) < 0
   const noites = viagem.dataInicio && viagem.dataFim ? diasAte(viagem.dataFim) - diasAte(viagem.dataInicio) : 0
   const meuSaldo = contas.saldos.get(meuId) ?? 0
   const reservasFeitas = d.passagens.compradas.length
@@ -112,8 +114,8 @@ function Embarque({ dados: d, foto, meuId, euSouAdm, moeda }: { dados: DadosDaAb
         pessoas={viagem.membros.map((m) => m.nome)}
         link="roteiro"
       />
-      <Contagem faltam={faltam} destino={destinos[0] ?? viagem.nome} podeDefinir={euSouAdm} />
-      <ProximoPasso viagemId={viagem.id} passos={passos} proximo={proximo} link={proximo ? LINK_DO_PASSO[proximo.destino] : ''} />
+      <Contagem faltam={faltam} destino={destinos[0] ?? viagem.nome} podeDefinir={euSouAdm} jaFoi={jaFoi} />
+      {!jaFoi && <ProximoPasso viagemId={viagem.id} passos={passos} proximo={proximo} link={proximo ? LINK_DO_PASSO[proximo.destino] : ''} />}
       <ResumoDasAbas itens={resumo} />
       {/* Spec 118a: os carimbos dos lugares (apagados até a galera chegar lá) */}
       <div className="eb-entra" style={{ ['--i' as string]: 3 }}>

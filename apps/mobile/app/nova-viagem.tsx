@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { X } from '../src/ui/icones'
 import { useSessao } from '../src/lib/sessao'
+import { useViagemAtual } from '../src/dados/viagemAtual'
 import { Norti } from '../src/ui/Norti'
 import { CriarViagemRapida } from '../src/ui/CriarViagemRapida'
 import { Botao, BotaoRedondo } from '../src/ui/pecas'
@@ -15,7 +16,12 @@ import { cor } from '../theme'
 export default function NovaViagem() {
   const { ehConvidado } = useSessao()
   const { comboio } = useLocalSearchParams<{ comboio?: string }>()
-  return ehConvidado ? <ConvidadoSemConta /> : <CriarViagemRapida primeira={false} comboioDe={comboio} />
+  // Conta sem nenhuma viagem (Android 17/11): o X levava pro Início, que manda pra "A gente já foi
+  // pra…", cujo "Pular" trazia de volta pra cá, num ciclo. Sem viagem, esta é a primeira: sem X,
+  // com "Recebi um convite".
+  const { status, viagens } = useViagemAtual()
+  const primeira = status === 'pronto' && viagens.length === 0
+  return ehConvidado ? <ConvidadoSemConta /> : <CriarViagemRapida primeira={primeira} comboioDe={comboio} />
 }
 
 function ConvidadoSemConta() {

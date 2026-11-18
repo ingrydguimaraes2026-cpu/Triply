@@ -7,7 +7,7 @@ import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ChevronRight, History, Locate, Plus, Ticket } from '../src/ui/icones'
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
-import { buscarMapaDaGalera, lembrancasDeHoje, textoDaLembranca, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { buscarMapaDaGalera, lembrancasDeHoje, mesEAno, textoDaLembranca, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
 import { Icone } from '../src/ui/Icone'
 import { Selo } from '../src/ui/Selos'
 import { MapaDaGalera } from '../src/ui/MapaDaGalera'
@@ -71,8 +71,8 @@ export default function MinhasViagens() {
     router.push(`/viagem/${v.id}`)
   }
 
-  // Spec 116: conta sem nenhuma viagem vai direto montar a primeira (em vez da home vazia)
-  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/comecar" />
+  // Primeiro minuto (16/11/2026): conta sem nenhuma viagem começa contando onde a galera já foi
+  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/viagem-antiga" />
   if (!destaque) return <Vazio ola={ola} aoCriar={() => router.push('/nova-viagem')} aoEntrar={recarregar} />
 
   // Caminho B "Embarque" (aprovado pelo Victor em 10/11/2026): fora de uma viagem só existe
@@ -112,18 +112,19 @@ export default function MinhasViagens() {
           <FaixaConvidado />
         </View>
 
-        <Carteira key={vezDoInicio} pilha={pilha} meuId={meuId} aoAbrir={abrir} />
-
-        {/* Atalhos e o mapa da galera ficam embaixo da carteira: o principal é abrir a viagem */}
+        {/* Primeiro minuto (16/11/2026): o Início abre pelo mapa da galera; a carteira vem embaixo */}
         {!ehConvidado ? (
-          <View className="px-5">
+          <View className="mt-4 px-5">
+            <MapaDoInicio key={vezDoInicio} meuId={meuId} />
             <AtalhosDoPassaporte />
-            <View className="mt-6">
-              <MapaDoInicio key={vezDoInicio} meuId={meuId} />
-            </View>
           </View>
         ) : null}
+
+        <Carteira key={vezDoInicio} pilha={pilha} meuId={meuId} aoAbrir={abrir} />
       </ScrollView>
+      {/* Android (reteste 17/11): ao rolar, o avatar e "Nova viagem" passavam por baixo do relógio.
+          Faixa fixa na cor do fundo atrás da barra de status (igual ao login), sem receber toque. */}
+      <View pointerEvents="none" className="absolute left-0 right-0 top-0 bg-fundo" style={{ height: insets.top }} />
     </View>
   )
 }
@@ -188,7 +189,10 @@ function BilheteDaCarteira({ viagem, foto, topo, ordem, naFrente, resumo, aoAbri
   const etiqueta = etiquetaDoBilhete(viagem)
   const antiga = etiqueta === null
   return (
-    <Animated.View style={[{ position: 'absolute', left: 0, right: 0, top: topo, zIndex: ordem }, entrada]}>
+    // Android (teste 17/11): a posição fixa dentro de `style={[fixo, animado]}` não chegava à tela.
+    // Lugar na carteira por fora, subida animada por dentro.
+    <View style={{ position: 'absolute', left: 0, right: 0, top: topo, zIndex: ordem }}>
+    <Animated.View style={entrada}>
       <Pressable
         onPress={aoAbrir}
         accessibilityRole="button"
@@ -214,9 +218,12 @@ function BilheteDaCarteira({ viagem, foto, topo, ordem, naFrente, resumo, aoAbri
         {naFrente ? (
           <View className="flex-row items-center justify-between gap-2 px-3.5 pb-3 pt-2.5">
             <View className="min-w-0 flex-1">
-              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11.5, letterSpacing: 0.4, color: cor.suave }}>{periodo(viagem.dataInicio, viagem.dataFim).toUpperCase()}</Text>
+              {/* Android 17/11: a viagem antiga (só mês) aparecia "1–1 MAI · Próximo: Montar o roteiro" */}
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11.5, letterSpacing: 0.4, color: cor.suave }}>
+                {(viagem.tipo === 'antiga' && viagem.dataInicio ? mesEAno(viagem.dataInicio) : periodo(viagem.dataInicio, viagem.dataFim)).toUpperCase()}
+              </Text>
               <Text numberOfLines={1} style={{ fontFamily: fonte.titulo, fontSize: 15, letterSpacing: -0.2, color: cor.texto, marginTop: 1 }}>
-                {resumo ? (resumo.proximo ? `Próximo: ${resumo.proximo}` : 'Tudo pronto pra viagem') : ' '}
+                {antiga ? 'Viagem que já passou' : resumo ? (resumo.proximo ? `Próximo: ${resumo.proximo}` : 'Tudo pronto pra viagem') : ' '}
               </Text>
             </View>
             <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={26} borda={cor.creme} max={4} />
@@ -224,6 +231,7 @@ function BilheteDaCarteira({ viagem, foto, topo, ordem, naFrente, resumo, aoAbri
         ) : null}
       </Pressable>
     </Animated.View>
+    </View>
   )
 }
 
@@ -256,7 +264,7 @@ function MapaDoInicio({ meuId }: { meuId: string }) {
   )
 }
 
-// Estado vazio: Norti dormindo esperando a primeira viagem
+// Estado vazio: Norti apontando pra primeira viagem
 function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; aoEntrar: () => void }) {
   const insets = useSafeAreaInsets()
   const [comCodigo, setComCodigo] = useState(false)
@@ -282,9 +290,9 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
       <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
       <Text className="font-display text-[32px] leading-[36px] text-texto">Minhas viagens</Text>
       <View className="mt-6 flex-1 items-center justify-center gap-3 rounded-3xl border-[1.5px] border-dashed border-tracejado px-7 py-8">
-        <Norti humor="dormindo" tamanho={140} />
-        <Text className="text-center font-display text-[28px] leading-[31px] text-texto">A primeira viagem do grupo começa aqui</Text>
-        <Text className="text-center font-body text-[15px] leading-6 text-corpo">Crie a viagem, convide a turma e montem o roteiro juntos.</Text>
+        <Norti humor="apontando" tamanho={140} />
+        <Text className="text-center font-display text-[28px] leading-[31px] text-texto">O mapa da galera começa aqui</Text>
+        <Text className="text-center font-body text-[15px] leading-6 text-corpo">Conte onde vocês já foram ou crie a próxima viagem e chame a galera.</Text>
         <View className="mt-3 self-stretch">
           <Botao titulo="Nova viagem" icone={<Plus size={20} color="#fff" />} aoTocar={aoCriar} />
         </View>

@@ -53,8 +53,14 @@ export function ExcluirConta({ usuarioId }: { usuarioId: string }) {
 
     const { data, error } = await supabase.functions.invoke('excluir-conta', { body: { confirmar: 'EXCLUIR' } })
     if (error || data?.erro) {
-      console.error('Erro ao excluir a conta:', error ?? data?.erro)
-      setErro((await mensagemDoErro(error)) ?? data?.erro ?? 'Não deu pra excluir a conta agora. Tente de novo.')
+      const amigavel = (await mensagemDoErro(error)) ?? data?.erro ?? null
+      // B2 (QA 16/11): com frase pronta pra pessoa (ex.: só sobram convidados), não é falha do app.
+      // Só registra, sem o aviso vermelho cru ("FunctionsHttpError…") por cima da tela.
+      if (amigavel) console.log('Exclusão da conta recusada:', amigavel)
+      else console.error('Erro ao excluir a conta:', error ?? data?.erro)
+      // Saída que existe hoje no app: tirar o convidado sem conta pela tela Galera da viagem
+      const saida = amigavel && /convidad/i.test(amigavel) ? ' Pelo app: abra a viagem, toque em Galera, no ⋯ do convidado e em Remover. Depois volte aqui.' : ''
+      setErro(amigavel ? `${amigavel}${saida}` : 'Não deu pra excluir a conta agora. Tente de novo.')
       setTrabalhando(false)
       return
     }
@@ -116,7 +122,7 @@ export function ExcluirConta({ usuarioId }: { usuarioId: string }) {
                       <Botao compacto tipo="secundario" titulo="Manter conta" aoTocar={fechar} desabilitado={trabalhando} />
                     </View>
                     <View className="flex-1">
-                      <Botao compacto titulo={trabalhando ? 'Excluindo…' : 'Excluir de vez'} aoTocar={excluir} desabilitado={!confirmou} carregando={trabalhando} />
+                      <Botao compacto tipo="perigo" titulo={trabalhando ? 'Excluindo…' : 'Excluir de vez'} aoTocar={excluir} desabilitado={!confirmou} carregando={trabalhando} />
                     </View>
                   </View>
                 </View>

@@ -67,7 +67,8 @@ export function PassaporteDaGalera({ viagemId, passos, aoCarimbar }: { viagemId:
           {feitos}/{passos.length}
         </Text>
       </View>
-      <View className="mt-2.5 flex-row flex-wrap gap-2">
+      {/* Cada selo com o nome embaixo (sem nome, ninguém sabe o que cada ícone quer dizer) */}
+      <View className="mt-2.5 flex-row justify-between">
         {passos.map((p, i) => (
           <SeloPequeno key={p.chave} passo={p} novo={novos.includes(p.chave)} ordem={novos.indexOf(p.chave)} inclinacao={i % 2 ? 5 : -6} />
         ))}
@@ -116,15 +117,20 @@ function SeloPequeno({ passo, novo, ordem, inclinacao }: { passo: Passo; novo: b
     opacity: Math.min(1, p.value),
     transform: [{ scale: 1 + (1 - p.value) * 1.6 }, { rotate: `${inclinacao - (1 - p.value) * 30}deg` }],
   }))
-  if (!passo.feito)
-    return (
-      <View style={{ opacity: 0.25, transform: [{ rotate: `${inclinacao}deg` }] }}>
-        <Selo nome={passo.selo} tamanho={34} />
-      </View>
-    )
   return (
-    <Animated.View style={estilo}>
-      <Selo nome={passo.selo} tamanho={34} />
-    </Animated.View>
+    <View className="items-center gap-1" style={{ width: 48 }} accessibilityLabel={`${passo.rotulo}: ${passo.feito ? 'carimbado' : 'falta'}`}>
+      {passo.feito ? (
+        <Animated.View style={estilo}>
+          <Selo nome={passo.selo} tamanho={34} />
+        </Animated.View>
+      ) : (
+        <View style={{ opacity: 0.25, transform: [{ rotate: `${inclinacao}deg` }] }}>
+          <Selo nome={passo.selo} tamanho={34} />
+        </View>
+      )}
+      <Text numberOfLines={1} style={{ fontFamily: fonte.corpoForte, fontSize: 10, color: passo.feito ? trabalho.texto : cor.suave }}>
+        {passo.rotulo}
+      </Text>
+    </View>
   )
 }

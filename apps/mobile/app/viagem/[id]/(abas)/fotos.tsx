@@ -1,7 +1,7 @@
-import { useCallback, useState, type ReactNode } from 'react'
-import { Image, Pressable, ScrollView, Text, View } from 'react-native'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { StatusBar as BarraDeStatus, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type ScrollViewInstance } from 'react-native'
 import { StatusBar } from '../../../../src/ui/StatusBar'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { buscarDestinos, buscarFotos, buscarPostsDaViagem, type FotoDaViagem, type ViagemComDetalhes } from '@together/core'
 import { useCarregar } from '../../../../src/dados/useCarregar'
@@ -10,7 +10,7 @@ import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, diasDaViagem, paraIso, primeiroNome } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
-import { FeedDaViagem } from '../../../../src/ui/FeedDaViagem'
+import { FeedDaViagem, urlEstavel, type LinhaDoComentario } from '../../../../src/ui/FeedDaViagem'
 import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
 import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { SemViagem } from '../../../../src/ui/SemViagem'
@@ -38,8 +38,66 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
     const [fotos, posts, destinos] = await Promise.all([buscarFotos(supabase, viagem.id), buscarPostsDaViagem(supabase, viagem.id), buscarDestinos(supabase, viagem.id)])
     return { fotos, posts, destinos }
   }, [viagem.id], 'aba-fotos')
-  const { recarregar } = carga
-  useFocusEffect(useCallback(() => recarregar(), [recarregar]))
+
+  // Android (teste 17/11): o teclado cobria o campo de comentário e o "Publicar" ficava por cima
+  // dele. Com o teclado aberto: a rolagem encolhe acima dele (KeyboardAvoidingView), rola até o
+  // campo focado e o "Publicar" some.
+  // Rodada 3 (reteste 17/11): a 1ª versão media o campo em relação ao conteúdo da rolagem e não
+  // rolava. Agora compara posições na janela: o fim do campo com o topo do teclado (que vem no
+  // evento), e rola a diferença a partir de onde a rolagem está. Com o teclado aberto, o fim da
+  // lista ganha a altura do teclado de folga, pra dar pra rolar mesmo com um post só.
+  // Ajuste final (log no emulador, 17/11): o measureInWindow conta a partir de baixo da barra de
+  // status e o screenY do teclado conta do topo da tela. A diferença é a barra de status (24 dp):
+  // por isso parava sempre ~70 px curto. O campo é convertido pra coordenada de tela antes de comparar.
+  const rolagem = useRef<ScrollViewInstance>(null)
+  const posicao = useRef(0) // quanto já rolou
+  const topoDoTeclado = useRef(0) // na tela (screenY do evento)
+  const comentarioFocado = useRef<LinhaDoComentario | null>(null)
+  const espera = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const [alturaDoTeclado, setAlturaDoTeclado] = useState(0) // 0 = fechado
+  const comTeclado = alturaDoTeclado > 0
+  // Última volta (reteste r3b): com rolagem longa (post de cima), a 2ª medida saía no meio da
+  // animação, com a posição velha, e parava curto. Agora a rolagem se corrige sozinha: mede, rola,
+  // espera a animação acabar, mede de novo e corrige a diferença (no máximo 2 correções).
+  const ajustarRolagem = useCallback((tentativa: number) => {
+    const campo = comentarioFocado.current
+    if (!campo || !topoDoTeclado.current) return
+    campo.measureInWindow((_x, y, _w, h) => {
+      const fimDoCampoNaTela = y + (BarraDeStatus.currentHeight ?? 0) + h
+      const sobra = fimDoCampoNaTela + 16 - topoDoTeclado.current
+      if (sobra <= 1) return
+      // 1ª vez anima; as correções vão direto
+      rolagem.current?.scrollTo({ y: posicao.current + sobra, animated: tentativa === 0 })
+      if (tentativa < 2) espera.current = setTimeout(() => ajustarRolagem(tentativa + 1), tentativa === 0 ? 400 : 120)
+    })
+  }, [])
+  const rolarAteOComentario = useCallback(() => {
+    if (Platform.OS !== 'android' || !topoDoTeclado.current || !comentarioFocado.current) return
+    clearTimeout(espera.current)
+    // Espera a tela se ajustar ao teclado (o 'padding' e a folga entram depois do keyboardDidShow)
+    espera.current = setTimeout(() => ajustarRolagem(0), 150)
+  }, [ajustarRolagem])
+  useEffect(() => {
+    if (Platform.OS !== 'android') return
+    const abriu = Keyboard.addListener('keyboardDidShow', (e) => {
+      topoDoTeclado.current = e.endCoordinates.screenY
+      setAlturaDoTeclado(e.endCoordinates.height)
+      rolarAteOComentario()
+    })
+    // O campo continua guardado ao fechar o teclado (o voltar fecha o teclado mas o campo segue
+    // focado; tocar de novo só reabre o teclado). Quem limpa é o campo ao perder o foco.
+    const fechou = Keyboard.addListener('keyboardDidHide', () => {
+      topoDoTeclado.current = 0
+      clearTimeout(espera.current)
+      setAlturaDoTeclado(0)
+    })
+    return () => {
+      abriu.remove()
+      fechou.remove()
+      clearTimeout(espera.current)
+    }
+  }, [rolarAteOComentario])
+  const { recarregar } = carga // ao voltar pra aba, o useCarregar recarrega sozinho
 
   if (carga.status === 'carregando') return <EsqueletoDaAba forma="fotos" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
@@ -52,9 +110,19 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
   const nome = (id: string) => (id === meuId ? 'Você' : primeiroNome(viagem.membros.find((m) => m.id === id)?.nome ?? '?'))
 
   return (
-    <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'padding' : undefined} className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <StatusBar style="dark" />
-      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}>
+      <ScrollView
+        ref={rolagem}
+        onLayout={rolarAteOComentario}
+        onScroll={(e) => {
+          posicao.current = e.nativeEvent.contentOffset.y
+        }}
+        scrollEventThrottle={32}
+        keyboardShouldPersistTaps="handled"
+        refreshControl={puxarPraAtualizar(carga)}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 80 + alturaDoTeclado }}
+      >
         <Entra ordem={0}>
           <View style={{ paddingHorizontal: 18, paddingTop: 6, paddingBottom: 12 }}>
             <Text style={[rotulo, { color: trabalho.texto2 }]}>
@@ -90,7 +158,17 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
             <Vazio titulo="Nenhum post ainda" texto={'Toque em "Publicar" pra mandar as primeiras fotos pra galera.'} />
           ) : (
             <Entra ordem={2} style={{ marginTop: 14, paddingHorizontal: 14 }}>
-              <FeedDaViagem posts={carga.dados.posts} membros={viagem.membros} meuId={meuId} destinos={carga.dados.destinos} aoMudar={recarregar} />
+              <FeedDaViagem posts={carga.dados.posts} membros={viagem.membros} meuId={meuId} destinos={carga.dados.destinos}
+                aoMudar={recarregar}
+                aoFocarComentario={(linha) => {
+                  comentarioFocado.current = linha
+                  rolarAteOComentario()
+                }}
+                aoSairDoComentario={(linha) => {
+                  // Só esquece se for o mesmo campo (ao trocar de campo, o novo já chegou)
+                  if (comentarioFocado.current === linha) comentarioFocado.current = null
+                }}
+              />
             </Entra>
           )
         ) : null}
@@ -125,8 +203,8 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
         ) : null}
       </ScrollView>
 
-      {/* Um botão só, acima da barra de vidro */}
-      <View ref={refDoPublicar} collapsable={false} className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
+      {/* Um botão só, acima da barra de vidro (some com o teclado aberto pra não tapar o comentário) */}
+      <View ref={refDoPublicar} collapsable={false} className="absolute" style={{ right: 16, bottom: insets.bottom + 4, display: comTeclado ? 'none' : 'flex' }}>
         <Pressable
           onPress={() => router.push('/novo-post')}
           accessibilityRole="button"
@@ -138,14 +216,14 @@ function FotosDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: st
           <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Publicar</Text>
         </Pressable>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
 function Vazio({ titulo: t, texto }: { titulo: string; texto: string }) {
   return (
     <View className="mt-12 items-center gap-2 px-8">
-      <Norti humor="dormindo" tamanho={110} />
+      <Norti humor="apontando" tamanho={110} />
       <Text style={[titulo(22), { color: trabalho.texto }]}>{t}</Text>
       <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 20, color: trabalho.texto2 }}>
         {texto}
@@ -175,7 +253,7 @@ function Mosaico({ fotos, nome, nomeCompleto, indice }: { fotos: FotoDaViagem[];
   for (let i = 0; i < fotos.length; i += 3) blocos.push(fotos.slice(i, i + 3))
   const foto = (f: FotoDaViagem, altura: number) => (
     <View key={f.id} className="overflow-hidden rounded-[14px]" style={{ height: altura, backgroundColor: trabalho.superficie2 }}>
-      {f.url ? <Image source={{ uri: f.url }} className="h-full w-full" resizeMode="cover" /> : null}
+      {f.url ? <Image source={{ uri: urlEstavel(f.caminho, f.url) }} className="h-full w-full" resizeMode="cover" /> : null}
       <View className="absolute left-2 top-2 flex-row items-center gap-1.5 rounded-full py-[3px] pl-[3px] pr-2" style={{ backgroundColor: 'rgba(251,243,230,0.92)' }}>
         <Avatar nome={nomeCompleto(f.enviada_por)} indice={indice(f.enviada_por)} tamanho={18} />
         <Text style={{ fontFamily: fonte.corpoNegrito, fontSize: 11, color: trabalho.texto }}>{nome(f.enviada_por)}</Text>

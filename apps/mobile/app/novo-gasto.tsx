@@ -6,6 +6,7 @@ import { Check, X } from '../src/ui/icones'
 import { dividirIgual, formatarDinheiro, lerFraseDeGasto, lerValor, salvarGasto } from '@together/core'
 import { CATEGORIAS } from '../src/dados/contas'
 import { useViagemAtual } from '../src/dados/viagemAtual'
+import { marcarVelho } from '../src/dados/useCarregar'
 import { hojeIso, primeiroNome } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { novoId } from '../src/lib/id'
@@ -54,6 +55,8 @@ export default function NovoGasto() {
         pessoal,
         divisoes: pessoal ? [] : dividirIgual(valor, entre, pagoPor),
       })
+      // Reteste final: Contas e a aba Viagem voltam mostrando que estão atualizando, não a cópia velha
+      marcarVelho('aba-contas', 'aba-viagem')
       fechar()
     } catch {
       setErro('Não deu pra salvar o gasto. Confira a internet e tente de novo.')
@@ -140,10 +143,11 @@ export default function NovoGasto() {
           </>
         ) : null}
 
-        {erro ? <Text className="font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
       </ScrollView>
 
       <View className="px-5 pt-3" style={{ paddingBottom: insets.bottom + 16 }}>
+        {/* Sem rede (Android 17/11): o erro ficava no fim da rolagem, escondido; agora fica colado no botão */}
+        {erro ? <Text accessibilityLiveRegion="polite" className="mb-2 text-center font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
         <Botao titulo="Salvar gasto" aoTocar={salvar} desabilitado={!pronto} carregando={salvando} />
       </View>
     </KeyboardAvoidingView>

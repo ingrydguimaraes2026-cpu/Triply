@@ -73,7 +73,7 @@ function Tela({ config, euSouAdm }: { config: ConfiguracoesDaViagem; euSouAdm: b
         <View className="flex-1 items-center justify-center gap-3 px-8">
           <Settings size={36} color={cor.suave} />
           <Text className="text-center font-display text-[24px] text-texto">Só quem organiza a viagem mexe aqui</Text>
-          <Text className="text-center font-body text-[14px] leading-5 text-corpo">Peça pro ADM do comboio mudar o nome, as datas ou a moeda.</Text>
+          <Text className="text-center font-body text-[14px] leading-5 text-corpo">Peça pro ADM da galera mudar o nome, as datas ou a moeda.</Text>
         </View>
       </View>
     )
@@ -181,7 +181,7 @@ function Tela({ config, euSouAdm }: { config: ConfiguracoesDaViagem; euSouAdm: b
 
         {/* Spec 078: o que o comboio também pode editar */}
         <View className="mt-4">
-          <RotuloDeSecao>O que o comboio pode editar</RotuloDeSecao>
+          <RotuloDeSecao>O que a galera pode editar</RotuloDeSecao>
         </View>
         <Text className="font-body text-[13px] leading-5 text-suave">Desligado = só quem é ADM edita. Ver e comentar continua liberado pra todo mundo.</Text>
         <Cartao className="px-4">
@@ -195,7 +195,7 @@ function Tela({ config, euSouAdm }: { config: ConfiguracoesDaViagem; euSouAdm: b
                 value={salvo[p.campo]}
                 onValueChange={(v) => mudarPermissao(p.campo, v)}
                 trackColor={{ true: cor.couro, false: '#E3D2B8' }}
-                accessibilityLabel={`Comboio pode editar ${p.nome}`}
+                accessibilityLabel={`A galera pode editar ${p.nome}`}
               />
             </View>
           ))}

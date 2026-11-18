@@ -141,17 +141,19 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
   const info = INFO_DO_TIPO[lugar.tipo] ?? INFO_DO_TIPO.outro
   const alturaFoto = Math.round(altura * 0.6)
 
+  // Android (teste 17/11): com posição, altura e raio no mesmo Animated.View que o GestureDetector
+  // clona, o cartão caía no fluxo normal (um embaixo do outro, cantos retos, o de baixo por cima).
+  // Agora: lugar fixo numa View comum por fora; o Animated.View só mexe (estiloDoCartao);
+  // a forma do cartão numa View comum por dentro. O de cima fica sempre na frente (zIndex).
   return (
+    <View pointerEvents={parado ? 'none' : 'box-none'} style={{ position: 'absolute', left: 0, right: 0, top: 0, height: altura, zIndex: parado ? 1 : 2 }}>
     <GestureDetector gesture={gesto}>
       <Animated.View
         importantForAccessibility={parado ? 'no-hide-descendants' : 'auto'}
         accessibilityHint={parado ? undefined : 'Arraste pra direita se quer, pra esquerda se passa, pra cima se não abre mão. Toque pra ver mais.'}
-        style={[
-          { position: 'absolute', left: 0, right: 0, top: 0, height: altura, borderRadius: 26, overflow: 'hidden', backgroundColor: cor.cartao },
-          sombra.hero,
-          estiloDoCartao,
-        ]}
+        style={estiloDoCartao}
       >
+       <View style={[{ height: altura, borderRadius: 26, overflow: 'hidden', backgroundColor: cor.cartao }, sombra.hero]}>
         <View style={{ height: alturaFoto, backgroundColor: cor.areia }}>
           {lugar.fotoUrl ? (
             // pointerEvents none: no navegador a foto não "rouba" o arrasto (senão vira arrastar imagem)
@@ -185,21 +187,30 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
           ) : null}
           {!parado ? (
             <>
-              <Animated.View style={[{ position: 'absolute', left: 18, top: 56, transform: [{ rotate: '-12deg' }] }, estiloQuero]}>
-                <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[24px]" style={{ color: cor.verde, borderColor: cor.verde }}>
-                  QUERO
-                </Text>
-              </Animated.View>
-              <Animated.View style={[{ position: 'absolute', right: 18, top: 56, transform: [{ rotate: '12deg' }] }, estiloPasso]}>
-                <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[24px]" style={{ color: cor.vermelho, borderColor: cor.vermelho }}>
-                  PASSO
-                </Text>
-              </Animated.View>
-              <Animated.View style={[{ position: 'absolute', left: 0, right: 0, bottom: 24, alignItems: 'center' }, estiloEstrela]}>
-                <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[18px]" style={{ color: cor.couro, borderColor: cor.caramelo }}>
-                  NÃO ABRO MÃO
-                </Text>
-              </Animated.View>
+              {/* Android (teste 17/11): com posição e giro no mesmo Animated.View da opacidade, os selos
+                  caíam no fluxo, empilhados e visíveis sobre o cartão. Lugar e giro numa View comum por
+                  fora; o Animated.View só cuida da opacidade. */}
+              <View pointerEvents="none" style={{ position: 'absolute', left: 18, top: 56, transform: [{ rotate: '-12deg' }] }}>
+                <Animated.View style={estiloQuero}>
+                  <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[24px]" style={{ color: cor.verde, borderColor: cor.verde }}>
+                    QUERO
+                  </Text>
+                </Animated.View>
+              </View>
+              <View pointerEvents="none" style={{ position: 'absolute', right: 18, top: 56, transform: [{ rotate: '12deg' }] }}>
+                <Animated.View style={estiloPasso}>
+                  <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[24px]" style={{ color: cor.vermelho, borderColor: cor.vermelho }}>
+                    PASSO
+                  </Text>
+                </Animated.View>
+              </View>
+              <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, bottom: 24, alignItems: 'center' }}>
+                <Animated.View style={estiloEstrela}>
+                  <Text className="rounded-[10px] border-[3px] bg-white/90 px-3 py-1 font-body-bold text-[18px]" style={{ color: cor.couro, borderColor: cor.caramelo }}>
+                    NÃO ABRO MÃO
+                  </Text>
+                </Animated.View>
+              </View>
             </>
           ) : null}
         </View>
@@ -222,8 +233,10 @@ export function CartaoDoExplorar({ lugar, altura, parado, comando, podeDecidir, 
             {lugar.melhorHora ? <Chip Icone={Sun} texto={lugar.melhorHora} /> : null}
           </View>
         </View>
+       </View>
       </Animated.View>
     </GestureDetector>
+    </View>
   )
 }
 

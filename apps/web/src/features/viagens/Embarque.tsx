@@ -39,8 +39,16 @@ export function Bilhete({ foto, de, para, data, noites, pessoas, link }: { foto:
 }
 
 // "23 dias pra Lisboa": o número corre do zero até o valor quando a tela abre
-export function Contagem({ faltam, destino, podeDefinir }: { faltam: number | null; destino: string; podeDefinir: boolean }) {
+export function Contagem({ faltam, destino, podeDefinir, jaFoi = false }: { faltam: number | null; destino: string; podeDefinir: boolean; jaFoi?: boolean }) {
   const mostrado = useNumeroQueCorre(faltam ?? 0, 900)
+  // M4 (QA 16/11): viagem que já passou (ex.: viagem antiga) não pede data
+  if (jaFoi)
+    return (
+      <div className="eb-contagem eb-entra" style={{ ['--i' as string]: 0 }}>
+        <b className="eb-sem-data">Vocês já foram pra {destino}</b>
+        <p>Está carimbado no mapa da galera.</p>
+      </div>
+    )
   if (faltam == null || faltam <= 0)
     return (
       <div className="eb-contagem eb-entra" style={{ ['--i' as string]: 0 }}>

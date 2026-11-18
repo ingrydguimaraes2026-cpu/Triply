@@ -46,7 +46,7 @@ export default function Perfil() {
 
         <View className="flex-row gap-2.5">
           <Numero Icone={BriefcaseBusiness} valor={viagens.length} rotulo={viagens.length === 1 ? 'viagem' : 'viagens'} />
-          <Numero Icone={Users} valor={companheiros} rotulo={companheiros === 1 ? 'companheiro' : 'companheiros'} />
+          <Numero Icone={Users} valor={companheiros} rotulo="na galera" />
         </View>
 
         {/* Spec 110: lembretes e outros avisos no celular */}
@@ -93,6 +93,8 @@ export default function Perfil() {
         ) : null}
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Sair da conta"
           onPress={() => {
             const sairDeVez = async () => {
               await esquecerEsteAparelho().catch((e) => console.error('Erro ao esquecer o aparelho:', e))
@@ -125,6 +127,9 @@ export default function Perfil() {
         {/* Spec 089: excluir a conta sem precisar do site (a App Store e o Google Play exigem) */}
         {sessao ? <ExcluirConta usuarioId={sessao.user.id} /> : null}
       </ScrollView>
+      {/* Android (reteste r3b): ao rolar, o conteúdo passava por baixo do relógio. Faixa fixa na cor
+          do fundo atrás da barra de status (igual à lista de viagens), sem receber toque. */}
+      <View pointerEvents="none" className="absolute left-0 right-0 top-0 bg-fundo" style={{ height: insets.top }} />
     </View>
   )
 }

@@ -82,10 +82,12 @@ const falaLimpa = (fala: string) => fala.replace(/\*/g, '')
 // `pronto`: a tela da viagem já carregou. `aoComecar` e `aoTerminar`: voltam pra aba Viagem.
 export default function TourDaViagem({
   pronto,
+  usuarioId,
   aoComecar,
   aoTerminar,
 }: {
   pronto: boolean
+  usuarioId: string // a marca "já viu" é por pessoa (M7)
   aoComecar: () => void
   aoTerminar: () => void
 }) {
@@ -103,14 +105,14 @@ export default function TourDaViagem({
   })
 
   useEffect(() => {
-    if (!pronto || jaViu()) return
+    if (!pronto || jaViu(usuarioId)) return
     const t = setTimeout(() => {
       comecar.current()
       setMostrado(null)
       setPasso(0)
     }, 1100) // depois que o bilhete chegou
     return () => clearTimeout(t)
-  }, [pronto])
+  }, [pronto, usuarioId])
 
   // Passo de tocar: a pessoa abriu a aba certa, então anda
   useEffect(() => {
@@ -168,9 +170,9 @@ export default function TourDaViagem({
   const fechar = useCallback(() => {
     setPasso(null)
     setMostrado(null)
-    marcarVisto()
+    marcarVisto(usuarioId)
     aoTerminar()
-  }, [aoTerminar])
+  }, [aoTerminar, usuarioId])
 
   const avancar = useCallback(() => {
     if (passo === null) return

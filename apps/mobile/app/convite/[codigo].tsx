@@ -6,7 +6,7 @@ import { CalendarDays, MapPin, User, Users } from '../../src/ui/icones'
 import { aceitarConvite, entrarComoConvidado, verConvite, type PreviaDoConvite } from '@together/core'
 import { useViagemAtual } from '../../src/dados/viagemAtual'
 import { conviteDepoisDoLogin } from '../../src/lib/convite'
-import { periodo } from '../../src/lib/formato'
+import { hojeIso, periodo } from '../../src/lib/formato'
 import { useSessao } from '../../src/lib/sessao'
 import { supabase } from '../../src/lib/supabase'
 import { Norti } from '../../src/ui/Norti'
@@ -79,6 +79,9 @@ export default function Convite() {
   const { previa } = estado
   const quando = previa.dataInicio ? periodo(previa.dataInicio, previa.dataFim) : null
   const quem = previa.membros.slice(0, 3).join(', ') + (previa.membros.length > 3 ? ` e mais ${previa.membros.length - 3}` : '')
+  // Viagem que já passou (viagem antiga): o convite chama pra completar o mapa da galera
+  const jaFoi = !!previa.dataFim && previa.dataFim < hojeIso()
+  const lugar = previa.nome.replace(/^viagem pra /i, '')
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo">
@@ -91,15 +94,15 @@ export default function Convite() {
           <Norti tamanho={110} humor="feliz" />
         </View>
         <View className="gap-2">
-          <Text className="font-body-bold text-[12px] uppercase tracking-wider text-caramelo">Você foi convidado pra viagem</Text>
-          <Text className="font-display text-[34px] leading-[38px] text-texto">{previa.nome}</Text>
+          <Text className="font-body-bold text-[12px] uppercase tracking-wider text-caramelo">{jaFoi ? 'O mapa da galera' : 'Você foi convidado pra viagem'}</Text>
+          <Text className="font-display text-[34px] leading-[38px] text-texto">{jaFoi ? `A galera já foi pra ${lugar}. Você foi?` : previa.nome}</Text>
         </View>
 
         <View className="gap-2.5">
           {quando ? <Linha Icone={CalendarDays} texto={quando} /> : null}
           {previa.destinos.length > 0 ? <Linha Icone={MapPin} texto={previa.destinos.join(' → ')} /> : null}
           {previa.membros.length > 0 ? (
-            <Linha Icone={Users} texto={`${quem} já ${previa.membros.length === 1 ? 'está' : 'estão'} no comboio`} />
+            <Linha Icone={Users} texto={`${quem} já ${previa.membros.length === 1 ? 'está' : 'estão'} na galera`} />
           ) : null}
         </View>
 
@@ -125,7 +128,7 @@ export default function Convite() {
 
             {erro ? <Text className="font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
 
-            <Botao titulo="Entrar na viagem" aoTocar={entrar} carregando={entrando} desabilitado={!sessao && !nome.trim()} />
+            <Botao titulo={jaFoi ? 'Eu fui também' : 'Entrar na viagem'} aoTocar={entrar} carregando={entrando} desabilitado={!sessao && !nome.trim()} />
 
             {!sessao ? (
               <Pressable

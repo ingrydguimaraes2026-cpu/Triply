@@ -23,7 +23,7 @@ const COMO: Record<string, { verbo: string; aba: string; comFoco?: boolean }> = 
   evento: { verbo: 'marcou na agenda', aba: 'agenda' },
   trajeto: { verbo: 'adicionou o trajeto', aba: 'transportes' },
   arquivo: { verbo: 'guardou no cofre', aba: '' },
-  membro: { verbo: 'entrou no comboio', aba: 'comboio' },
+  membro: { verbo: 'entrou na galera', aba: 'comboio' },
 }
 
 // "lançou o gasto" + título entre aspas (comentário mostra o texto) + caminho pra abrir o item

@@ -13,9 +13,12 @@ export function EsqueletoDaViagem() {
   useEffect(() => {
     if (!reduzir) brilho.value = withRepeat(withTiming(1, { duration: 700 }), -1, true)
   }, [brilho, reduzir])
-  const pulso = useAnimatedStyle(() => ({ opacity: brilho.value }))
+  // Android (teste 17/11): `className` + estilo animado no mesmo Animated.View perde a parte fixa no
+  // Reanimated. `flex: 1` vai no estilo animado; o fundo numa View comum por dentro.
+  const pulso = useAnimatedStyle(() => ({ flex: 1, opacity: brilho.value }))
   return (
-    <Animated.View className="flex-1 bg-fundo" style={pulso}>
+    <Animated.View style={pulso}>
+     <View className="flex-1 bg-fundo">
       <View className="bg-areia" style={{ height: ALTURA_DA_CAPA }} />
       <View className="gap-6 px-5 pt-5">
         <View className="flex-row gap-3.5">
@@ -30,6 +33,7 @@ export function EsqueletoDaViagem() {
           <View className="h-[140px] w-[150px] rounded-2xl bg-areia" />
         </View>
       </View>
+     </View>
     </Animated.View>
   )
 }
@@ -60,13 +64,17 @@ export function EsqueletoDaAba({ forma, titulo: comTitulo = true }: { forma: For
     <View className="flex-1" style={{ backgroundColor: trabalho.fundo, paddingTop: insets.top }} accessibilityLabel="Carregando" accessibilityRole="progressbar">
       {comTitulo ? (
         <View style={{ paddingHorizontal: 18, paddingTop: 6, paddingBottom: 12 }}>
-          <Animated.View className="h-[11px] w-[110px] rounded-full" style={[bloco, pulso]} />
+          {/* Android 17/11: forma numa View comum; o Animated.View só pulsa (ver EsqueletoDaViagem) */}
+          <Animated.View style={pulso}>
+            <View className="h-[11px] w-[110px] rounded-full" style={bloco} />
+          </Animated.View>
           <Text style={[titulo(32), { color: trabalho.texto, marginTop: 6 }]}>{TITULO_DA_FORMA[forma]}</Text>
         </View>
       ) : (
         <View style={{ height: 8 }} />
       )}
-      <Animated.View className="gap-3 px-[14px]" style={pulso}>
+      <Animated.View style={pulso}>
+       <View className="gap-3 px-[14px]">
         {forma === 'roteiro' ? (
           <>
             <View className="flex-row gap-2">
@@ -106,6 +114,7 @@ export function EsqueletoDaAba({ forma, titulo: comTitulo = true }: { forma: For
         ) : (
           [0, 1, 2].map((i) => <View key={i} className="h-[120px] rounded-[22px]" style={cartao} />)
         )}
+       </View>
       </Animated.View>
     </View>
   )

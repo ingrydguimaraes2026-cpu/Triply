@@ -219,10 +219,14 @@ export default function Comecar() {
         <StatusBar style="dark" />
         <View className="flex-1 items-center justify-center gap-4">
           <Norti humor="oi" tamanho={170} />
-          <Text className="mt-2 text-center font-display text-[36px] leading-[40px] text-texto">Oi, eu sou a Norti</Text>
-          <Text className="text-center font-body text-[17px] leading-[25px] text-corpo">Em 1 minuto eu monto o roteiro da sua próxima viagem. Bora?</Text>
+          <Text className="mt-2 text-center font-display text-[36px] leading-[40px] text-texto">Pra onde a sua galera já foi?</Text>
+          <Text className="text-center font-body text-[17px] leading-[25px] text-corpo">Oi, eu sou a Norti! Cada lugar vira um carimbo e acende o mapa da galera. Bora?</Text>
         </View>
-        <Botao titulo="Bora" aoTocar={() => setEtapa('destino')} />
+        {/* Primeiro minuto (16/11/2026): pergunta do mapa → conta → viagem antiga. O deslize mora no Roteiro. */}
+        <Botao
+          titulo="Bora"
+          aoTocar={() => (temConta ? router.replace('/viagem-antiga') : router.replace({ pathname: '/login', params: { modo: 'criar' } }))}
+        />
         {!temConta ? (
           <Pressable onPress={() => router.replace({ pathname: '/login', params: { modo: 'entrar' } })} className="mt-1 h-12 items-center justify-center">
             <Text className="font-body-semibold text-[15px] text-couro">Já tenho conta</Text>

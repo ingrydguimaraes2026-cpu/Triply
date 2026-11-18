@@ -46,10 +46,14 @@ function Conteudo({ acima, titulo, texto, topo, desenho, botoes }: Omit<Props, '
   return (
     <View className="flex-1 items-center justify-center px-7" style={{ backgroundColor: '#3B2715' }}>
       {reduzir ? null : <Confete />}
-      <Animated.View style={estiloDoTopo} className="items-center">
-        {topo ?? <Norti humor="feliz" tamanho={150} />}
+      {/* Android (teste 17/11): `className` + estilo animado no mesmo Animated.View perde a parte
+          fixa no Reanimated. Fixo numa View comum; o Animated.View só anima. */}
+      <Animated.View style={estiloDoTopo}>
+        <View className="items-center">{topo ?? <Norti humor="feliz" tamanho={150} />}</View>
       </Animated.View>
-      <Animated.View style={estiloDoTexto} className="mt-5 items-center self-stretch">
+      <View className="mt-5 self-stretch">
+      <Animated.View style={estiloDoTexto}>
+       <View className="items-center">
         <Text className="font-body-bold text-[12px] uppercase tracking-widest" style={{ color: cor.dourado }}>
           {acima}
         </Text>
@@ -68,7 +72,9 @@ function Conteudo({ acima, titulo, texto, topo, desenho, botoes }: Omit<Props, '
             </Pressable>
           ))}
         </View>
+       </View>
       </Animated.View>
+      </View>
     </View>
   )
 }
@@ -103,8 +109,11 @@ function Papel({ i, largura, altura }: { i: number; largura: number; altura: num
     ],
   }))
   return (
-    <Animated.View
-      style={[{ position: 'absolute', width: i % 3 ? 7 : 10, height: i % 3 ? 12 : 6, borderRadius: 2, backgroundColor: CORES_DO_CONFETE[i % CORES_DO_CONFETE.length] }, estilo]}
-    />
+    // Android (teste 17/11): `style={[fixo, animado]}` perde a parte fixa no Reanimated
+    <View pointerEvents="none" style={{ position: 'absolute' }}>
+      <Animated.View style={estilo}>
+        <View style={{ width: i % 3 ? 7 : 10, height: i % 3 ? 12 : 6, borderRadius: 2, backgroundColor: CORES_DO_CONFETE[i % CORES_DO_CONFETE.length] }} />
+      </Animated.View>
+    </View>
   )
 }

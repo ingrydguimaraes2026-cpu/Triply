@@ -15,7 +15,7 @@ import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import FaixaOffline from '../../features/offline/FaixaOffline'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis, CONGELADO } from '@together/core'
+import { abasVisiveis, CONGELADO, tourCabeNaViagem } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -244,7 +244,8 @@ export default function ViagemLayout() {
         )}
       </div>
 
-      <TourDaViagem pronto aoComecar={voltarPraViagem} aoTerminar={voltarPraViagem} />
+      {/* Sem tour em viagem antiga nem em rolê (primeiro minuto, 16/11/2026) */}
+      <TourDaViagem pronto={tourCabeNaViagem(viagem.tipo)} usuarioId={meuId} aoComecar={voltarPraViagem} aoTerminar={voltarPraViagem} />
 
       {recado && (
         <p className="recado" role="status">

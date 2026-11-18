@@ -86,9 +86,11 @@ function Numeros({ m, claro = false }: { m: Resumo; claro?: boolean }) {
     [m.diasJuntos, 'dias juntos'],
     [m.km, 'km'],
   ]
+  // Número zero (ex.: "0 km" com 1 lugar só) não aparece: o mapa abre forte, não vazio
+  const comValor = itens.filter(([n]) => n > 0)
   return (
-    <View className="flex-row justify-between">
-      {itens.map(([n, rotulo]) => (
+    <View className="flex-row justify-around">
+      {comValor.map(([n, rotulo]) => (
         <View key={rotulo} className="items-center">
           <Text className={`font-display text-[22px] ${claro ? 'text-creme' : 'text-texto'}`}>{n.toLocaleString('pt-BR')}</Text>
           <Text className={`font-body text-[11px] ${claro ? 'text-dourado' : 'text-suave'}`}>{rotulo}</Text>

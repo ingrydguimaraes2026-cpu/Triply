@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
+import { File, Paths } from 'expo-file-system'
 import { ArrowLeft, BookOpen, FileText } from '../src/ui/icones'
 import {
   buscarCarimbos,
@@ -152,10 +153,34 @@ async function montarLivro(viagem: ViagemComDetalhes) {
   })
 }
 
-// HTML → PDF → "compartilhar". No navegador (teste na web), abre o imprimir.
-async function entregarPdf(html: string, titulo: string) {
-  if (Platform.OS === 'web') return Print.printAsync({ html })
-  const { uri } = await Print.printToFileAsync({ html })
+// Montar e gerar o PDF não pode girar pra sempre (Android 17/11: mais de 2 min sem resposta)
+const LIMITE_DO_PDF_MS = 60_000
+class DemorouDemais extends Error {}
+function comLimite<T>(promessa: Promise<T>, ms: number): Promise<T> {
+  let t: ReturnType<typeof setTimeout> | undefined
+  const limite = new Promise<never>((_ok, falha) => {
+    t = setTimeout(() => falha(new DemorouDemais()), ms)
+  })
+  return Promise.race([promessa, limite]).finally(() => clearTimeout(t))
+}
+
+// HTML → PDF (arquivo). No navegador (teste na web) não gera arquivo: abre o imprimir.
+// Android (teste 17/11): o expo-print grava na pasta de cache do Android, fora das pastas que o
+// expo-sharing deixa ler ("Not allowed to read file under given URL"; no Expo Go a pasta liberada
+// é só a da experiência). O PDF vem em base64 e é regravado na pasta de cache do app.
+async function gerarArquivoPdf(html: string, nome: string): Promise<string | null> {
+  if (Platform.OS === 'web') {
+    await Print.printAsync({ html })
+    return null
+  }
+  const { base64 } = await Print.printToFileAsync({ html, base64: true })
+  if (!base64) throw new Error('PDF sem conteúdo')
+  const arquivo = new File(Paths.cache, `${nome.replace(/[\\/:*?"<>|]/g, '').trim() || 'Viagem'} ${Date.now()}.pdf`)
+  await arquivo.write(base64, { encoding: 'base64' })
+  return arquivo.uri
+}
+
+async function compartilharPdf(uri: string, titulo: string) {
   if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf', dialogTitle: titulo })
 }
 
@@ -172,12 +197,21 @@ export default function PdfDaViagem() {
   async function gerar(tipo: 'resumo' | 'livro') {
     setGerando(tipo)
     setErro(null)
+    const titulo = tipo === 'resumo' ? `Roteiro de ${atual!.nome}` : `Livro de ${atual!.nome}`
     try {
-      const html = tipo === 'resumo' ? await montarResumo(atual!, comSegredos) : await montarLivro(atual!)
-      await entregarPdf(html, tipo === 'resumo' ? `Roteiro de ${atual!.nome}` : `Livro de ${atual!.nome}`)
+      // O limite vale pra montar e gerar; a folha de compartilhar fica fora (a pessoa leva o tempo que quiser)
+      const uri = await comLimite(
+        (async () => gerarArquivoPdf(tipo === 'resumo' ? await montarResumo(atual!, comSegredos) : await montarLivro(atual!), titulo))(),
+        LIMITE_DO_PDF_MS,
+      )
+      if (uri) await compartilharPdf(uri, titulo)
     } catch (e) {
       console.error('Erro ao gerar o PDF:', e)
-      setErro('Não deu pra gerar o PDF. Confira a internet e tente de novo.')
+      setErro(
+        e instanceof DemorouDemais
+          ? 'O PDF demorou demais pra ficar pronto. Confira a internet e tente de novo.'
+          : 'Não deu pra gerar o PDF. Confira a internet e tente de novo.',
+      )
     }
     setGerando(null)
   }
@@ -201,7 +235,7 @@ export default function PdfDaViagem() {
             </View>
             <View className="flex-1">
               <Text className="font-body-bold text-[16px] text-texto">Roteiro pra imprimir</Text>
-              <Text className="font-body text-[13px] leading-5 text-suave">Dia a dia, transportes, hospedagens e telefones do comboio.</Text>
+              <Text className="font-body text-[13px] leading-5 text-suave">Dia a dia, transportes, hospedagens e telefones da galera.</Text>
             </View>
           </View>
           <View className="flex-row items-center justify-between gap-3">
@@ -218,7 +252,7 @@ export default function PdfDaViagem() {
             </View>
             <View className="flex-1">
               <Text className="font-body-bold text-[16px] text-texto">Livro da viagem</Text>
-              <Text className="font-body text-[13px] leading-5 text-suave">Uma página por dia com a agenda, o diário do comboio e as fotos mais curtidas.</Text>
+              <Text className="font-body text-[13px] leading-5 text-suave">Uma página por dia com a agenda, o diário da galera e as fotos mais curtidas.</Text>
             </View>
           </View>
           <Botao titulo="Gerar livro" tipo="secundario" carregando={gerando === 'livro'} desabilitado={gerando !== null} aoTocar={() => gerar('livro')} />

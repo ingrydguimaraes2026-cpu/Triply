@@ -65,7 +65,7 @@ export function BilheteDoTrajeto({ m, caminhoNoCofre, children }: { m: Movimento
             {[m.saiAs ? `sai ${m.saiAs}` : null, m.chegaAs ? `chega ${m.chegaAs}` : null].filter(Boolean).join(' · ')}
           </Text>
           <Text className="font-body-semibold text-[13px] text-corpo" numberOfLines={2}>
-            {m.pessoas.length ? m.pessoas.join(', ') : 'O comboio inteiro'}
+            {m.pessoas.length ? m.pessoas.join(', ') : 'A galera inteira'}
           </Text>
           {m.quemBusca ? <Text className="font-body text-[12px] text-caramelo">{m.quemBusca} vai buscar</Text> : null}
         </View>

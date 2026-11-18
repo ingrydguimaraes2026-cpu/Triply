@@ -16,6 +16,7 @@ import Svg, { Path } from 'react-native-svg'
 import { CORES_DOS_EFEITOS, PASSOS_DO_TOUR, pedacosDaFala, tamanhoDaFala, type AlvoDoTour } from '@together/core'
 import { Norti, type Humor } from '../Norti'
 import { guardar, lerGuardado } from '../../lib/guardado'
+import { supabase } from '../../lib/supabase'
 import { tum, useReducedMotion } from '../movimento'
 import { cor, fonte } from '../../../theme'
 
@@ -34,6 +35,12 @@ import { cor, fonte } from '../../../theme'
 // Pra ver de novo: verTourDeNovo() (Perfil).
 
 export const CHAVE_DO_TOUR = 'tripwave.tour.v1'
+// M7 (QA 16/11): a marca "já viu o tour" é por pessoa, não por aparelho.
+// Antes, uma conta nova no mesmo celular nunca via o tour.
+async function chaveDoTour() {
+  const { data } = await supabase.auth.getSession()
+  return `${CHAVE_DO_TOUR}.${data.session?.user.id ?? 'sem-conta'}`
+}
 const FOLGA = 4 // o foco fica um pouco maior que a peça
 const RAIO = 18
 const ESCURO = 'rgba(18,11,4,0.66)'
@@ -56,7 +63,7 @@ const Contexto = createContext<Registro | null>(null)
 // Quem já está com a viagem aberta por baixo (o Perfil empilhado em cima) também fica sabendo
 const ouvintes = new Set<() => void>()
 export async function verTourDeNovo() {
-  await guardar(CHAVE_DO_TOUR, false)
+  await guardar(await chaveDoTour(), false)
   ouvintes.forEach((f) => f())
 }
 
@@ -79,8 +86,10 @@ export function PalcoDoTour({
   aba,
   aoComecar,
   aoTerminar,
+  ligado = true,
 }: {
   children: ReactNode
+  ligado?: boolean // false: não começa (viagem antiga ou rolê)
   aba: string // aba aberta agora ('index', 'roteiro', 'reservas', 'contas', 'fotos')
   aoComecar?: () => void // volta pra aba Viagem
   aoTerminar?: () => void
@@ -106,6 +115,10 @@ export function PalcoDoTour({
   useEffect(() => {
     funcoes.current = { aoComecar, aoTerminar }
   }, [aoComecar, aoTerminar])
+  const ligadoRef = useRef(ligado)
+  useEffect(() => {
+    ligadoRef.current = ligado
+  }, [ligado])
 
   // Primeira vez numa viagem: começa sozinho, depois que o bilhete chegou.
   // Também começa quando alguém pede "Ver o tour de novo" com esta viagem aberta.
@@ -115,8 +128,8 @@ export function PalcoDoTour({
     const tentar = () => {
       clearTimeout(t)
       t = setTimeout(() => {
-        void lerGuardado<boolean>(CHAVE_DO_TOUR).then((visto) => {
-          if (!vivo || visto) return
+        void chaveDoTour().then((chave) => lerGuardado<boolean>(chave)).then((visto) => {
+          if (!vivo || visto || !ligadoRef.current) return
           funcoes.current.aoComecar?.()
           setMostrado(null)
           setPasso(0)
@@ -216,7 +229,7 @@ export function PalcoDoTour({
   const fechar = useCallback(() => {
     setPasso(null)
     setMostrado(null)
-    void guardar(CHAVE_DO_TOUR, true)
+    void chaveDoTour().then((chave) => guardar(chave, true))
     funcoes.current.aoTerminar?.()
   }, [])
   const avancar = useCallback(() => {
@@ -242,6 +255,7 @@ export function PalcoDoTour({
             esperando={passo !== mostrado.passo}
             tamanho={tamanho}
             aoAvancar={avancar}
+            aoPular={fechar}
           />
         )}
       </View>
@@ -258,12 +272,14 @@ function Cortina({
   esperando,
   tamanho,
   aoAvancar,
+  aoPular,
 }: {
   passo: number
   caixa: Caixa | null
   esperando: boolean // a aba nova está entrando: a fala anterior fica parada na tela
   tamanho: { w: number; h: number }
   aoAvancar: () => void
+  aoPular: () => void // encerra o tour e marca como visto (igual ao fim)
 }) {
   const reduzir = useReducedMotion()
   const insets = useSafeAreaInsets()
@@ -673,9 +689,17 @@ function Cortina({
           </Text>
 
           <View className="flex-row items-center justify-between" style={{ marginTop: 6 }}>
-            <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11, color: 'rgba(245,233,214,0.6)', fontVariant: ['tabular-nums'] }}>
-              {passo + 1}/{total}
-            </Text>
+            <View className="flex-row items-center" style={{ gap: 14 }}>
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11, color: 'rgba(245,233,214,0.6)', fontVariant: ['tabular-nums'] }}>
+                {passo + 1}/{total}
+              </Text>
+              {/* Android (teste 17/11): não dava pra sair do tour. "Pular" encerra e marca como visto. */}
+              {!ultimo ? (
+                <Pressable onPress={aoPular} disabled={saindo} accessibilityRole="button" accessibilityLabel="Pular o tour" hitSlop={14}>
+                  <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: cor.dourado }}>Pular</Text>
+                </Pressable>
+              ) : null}
+            </View>
             {podeSeguir ? (
               <View className="flex-row items-center" style={{ gap: 6 }}>
                 <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11, color: 'rgba(245,233,214,0.6)' }}>toque pra seguir</Text>

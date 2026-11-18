@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useCallback, useState } from 'react'
+import { ActivityIndicator, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
 import {
@@ -32,7 +32,7 @@ export default function ViagemAntiga() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { ehConvidado } = useSessao()
-  const { recarregar } = useViagemAtual()
+  const { recarregar, viagens } = useViagemAtual()
   const hoje = hojeIso()
   const anoDeHoje = Number(hoje.slice(0, 4))
   const [lugar, setLugar] = useState<LugarAchado | null>(null)
@@ -46,7 +46,24 @@ export default function ViagemAntiga() {
   const [feita, setFeita] = useState<{ viagemId: string; nome: string; chamados: number } | null>(null)
   const galera = useCarregar(() => buscarMinhaGalera(supabase), [])
 
+  // Android (teste 17/11): em "<Lugar> acendeu no mapa", o voltar do sistema fechava o app
+  // (a tela chega por replace). Agora leva pro mapa, igual ao "Ver o mapa".
+  useFocusEffect(
+    useCallback(() => {
+      if (!feita) return
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        router.replace('/')
+        return true
+      })
+      return () => sub.remove()
+    }, [feita, router]),
+  )
+
   const fechar = () => (router.canGoBack() ? router.back() : router.replace('/'))
+  // Primeiro minuto: quem ainda não tem viagem chega aqui pelo Início. Fechar voltaria pra cá,
+  // então no lugar do X vem "Pular", que leva pra criar a próxima viagem.
+  const semViagem = viagens.length === 0
+  const pular = () => router.replace('/nova-viagem')
 
   async function puxarDaFoto() {
     setAvisoDaFoto(null)
@@ -105,22 +122,35 @@ export default function ViagemAntiga() {
       </View>
     )
 
-  if (feita) return <Feita feita={feita} aoMaisUma={maisUma} aoVerMapa={() => router.replace('/')} topo={insets.top} />
+  if (feita) return <Feita feita={feita} aoMaisUma={maisUma} aoVerMapa={() => router.replace('/')} aoProxima={() => router.replace('/nova-viagem')} topo={insets.top} />
 
   const problemaDaData = mes ? conferirViagemAntiga(mes, ano, hoje) : null
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-fundo" style={{ paddingTop: insets.top }}>
       <StatusBar style="dark" />
-      <View className="px-5 pt-2">
-        <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
-          <X size={20} color={cor.texto} />
-        </BotaoRedondo>
+      <View className="flex-row justify-between px-5 pt-2">
+        {semViagem ? (
+          <>
+            <View className="h-11 w-11" />
+            <Pressable onPress={pular} accessibilityRole="button" className="h-11 justify-center px-2 active:opacity-70">
+              <Text className="font-body-bold text-[15px] text-couro">Pular</Text>
+            </Pressable>
+          </>
+        ) : (
+          <BotaoRedondo aoTocar={fechar} rotulo="Fechar">
+            <X size={20} color={cor.texto} />
+          </BotaoRedondo>
+        )}
       </View>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: insets.bottom + 32, gap: 22 }}>
         <View>
+          {/* A Norti puxa a conversa (pose que já existe) */}
+          <View className="-ml-2 mb-1">
+            <Norti humor="apontando" tamanho={84} sombra={false} />
+          </View>
           <Text className="font-display text-[34px] leading-[38px] text-texto">A gente já foi pra...</Text>
-          <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">Conte uma viagem que já aconteceu. Ela vira um carimbo de memória e acende o mapa da galera.</Text>
+          <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">Conte uma viagem ou rolê que já aconteceu. Vira um carimbo e acende o mapa da galera.</Text>
         </View>
 
         {/* 1. Onde */}
@@ -158,7 +188,8 @@ export default function ViagemAntiga() {
             <BotaoRedondo aoTocar={() => setAno(Math.max(1950, ano - 1))} rotulo="Ano anterior">
               <Minus size={20} color={cor.texto} />
             </BotaoRedondo>
-            <Text className="w-24 text-center font-display text-[36px] text-texto">{ano}</Text>
+            {/* Android (teste 17/11): w-24 quebrava o ano em "202 / 5"; largura mínima segura o +/- no lugar */}
+            <Text numberOfLines={1} className="min-w-[120px] text-center font-display text-[36px] text-texto">{ano}</Text>
             <BotaoRedondo aoTocar={() => setAno(Math.min(anoDeHoje, ano + 1))} rotulo="Próximo ano">
               <Plus size={20} color={cor.texto} />
             </BotaoRedondo>
@@ -218,7 +249,7 @@ export default function ViagemAntiga() {
   )
 }
 
-function Feita({ feita, aoMaisUma, aoVerMapa, topo }: { feita: { viagemId: string; nome: string; chamados: number }; aoMaisUma: () => void; aoVerMapa: () => void; topo: number }) {
+function Feita({ feita, aoMaisUma, aoVerMapa, aoProxima, topo }: { feita: { viagemId: string; nome: string; chamados: number }; aoMaisUma: () => void; aoVerMapa: () => void; aoProxima: () => void; topo: number }) {
   const [convite, setConvite] = useState<{ texto: string; erro: boolean } | null>(null)
   const [chamando, setChamando] = useState(false)
   return (
@@ -230,22 +261,29 @@ function Feita({ feita, aoMaisUma, aoVerMapa, topo }: { feita: { viagemId: strin
         Carimbo de memória guardado
         {feita.chamados ? ` e ${feita.chamados} ${feita.chamados === 1 ? 'pessoa da galera entrou' : 'pessoas da galera entraram'}` : ''}.
       </Text>
+      {/* Primeiro minuto: chamar a galera pra completar o mapa é o passo principal; depois, a próxima viagem */}
       <View className="mt-3 gap-2.5 self-stretch">
-        <Botao titulo="Ver o mapa da galera" aoTocar={aoVerMapa} />
         <Botao
-          titulo="Chamar mais gente pelo link"
-          tipo="secundario"
+          titulo="Chamar a galera"
           carregando={chamando}
           aoTocar={async () => {
             setChamando(true)
-            setConvite(await convidarProComboio(feita.viagemId, feita.nome))
+            // M2 (QA 16/11): quando o compartilhar do aparelho/navegador abre, a função não devolve aviso;
+            // mesmo assim a pessoa vê que deu certo
+            setConvite((await convidarProComboio(feita.viagemId, feita.nome, true)) ?? { texto: 'Convite pronto! Agora é só mandar no grupo da galera.', erro: false })
             setChamando(false)
           }}
         />
         {convite ? <Text className={`text-center font-body-medium text-[13px] ${convite.erro ? 'text-vermelho' : 'text-corpo'}`}>{convite.texto}</Text> : null}
-        <Pressable onPress={aoMaisUma} accessibilityRole="button" className="h-11 items-center justify-center">
-          <Text className="font-body-bold text-[15px] text-couro">Contar mais uma</Text>
-        </Pressable>
+        <Botao titulo="E a próxima? Criar a viagem" tipo="secundario" aoTocar={aoProxima} />
+        <View className="flex-row justify-center gap-6">
+          <Pressable onPress={aoVerMapa} accessibilityRole="button" className="h-11 items-center justify-center">
+            <Text className="font-body-bold text-[15px] text-couro">Ver o mapa</Text>
+          </Pressable>
+          <Pressable onPress={aoMaisUma} accessibilityRole="button" className="h-11 items-center justify-center">
+            <Text className="font-body-bold text-[15px] text-couro">Contar mais uma</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   )

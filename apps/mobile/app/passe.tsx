@@ -25,7 +25,7 @@ const EXTRAS = [
   { Icone: Map, texto: 'Mapa e roteiro sem internet' },
   { Icone: Mail, texto: 'Reservas lidas do e-mail' },
   { Icone: Camera, texto: 'Álbum sem limite e vídeo da viagem' },
-  { Icone: Printer, texto: 'Livro impresso do comboio' },
+  { Icone: Printer, texto: 'Livro impresso da galera' },
 ]
 
 export default function Passe() {
@@ -74,7 +74,7 @@ export default function Passe() {
             </View>
           ))}
         </View>
-        <Text className="text-center font-display text-[30px] leading-[34px] text-texto">Um paga, o comboio todo ganha</Text>
+        <Text className="text-center font-display text-[30px] leading-[34px] text-texto">Um paga, a galera toda ganha</Text>
 
         <View className="gap-3">
           {EXTRAS.map(({ Icone, texto }) => (
@@ -104,7 +104,7 @@ export default function Passe() {
           </View>
         ) : (
           <Pressable onPress={liberar} className="h-14 items-center justify-center rounded-2xl bg-couro active:opacity-90" style={sombra.botao}>
-            <Text className="font-body-bold text-[16px] text-white">Liberar e dividir no comboio</Text>
+            <Text className="font-body-bold text-[16px] text-white">Liberar e dividir com a galera</Text>
           </Pressable>
         )}
 

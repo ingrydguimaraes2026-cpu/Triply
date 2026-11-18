@@ -12,6 +12,7 @@ import {
   carimbosPelaLocalizacao,
   dataDaArte,
   dentroDaViagem,
+  fonteDoNomeNoCarimbo,
   iconeDoTipo,
   liberarCarimbo,
   textoDoComo,
@@ -121,7 +122,7 @@ export function CarimbosDaViagem({ viagem, meuId, chegada = null }: { viagem: Vi
   const lista = carimbosDaViagem(destinos, carimbos)
   const acesos = lista.filter((x) => x.carimbo).length
   const item = lista.find((x) => x.destino.id === aberto) ?? null
-  const nomeDe = (id: string) => (id === meuId ? 'você' : (viagem.membros.find((m) => m.id === id)?.nome ?? 'alguém do comboio'))
+  const nomeDe = (id: string) => (id === meuId ? 'você' : (viagem.membros.find((m) => m.id === id)?.nome ?? 'alguém da galera'))
 
   function apagar(c: Carimbo) {
     Alert.alert('Apagar carimbo?', `O carimbo de ${c.nome} volta a ficar apagado. Dá pra liberar de novo depois.`, [
@@ -181,7 +182,7 @@ export function CarimbosDaViagem({ viagem, meuId, chegada = null }: { viagem: Vi
           ) : podeLiberar ? (
             <>
               <Text className="font-body text-[14px] leading-5 text-corpo">
-                O carimbo de {item.destino.nome} cai sozinho quando alguém do comboio estiver lá ou postar uma foto de lá.
+                O carimbo de {item.destino.nome} cai sozinho quando alguém da galera estiver lá ou postar uma foto de lá.
               </Text>
               <View className="flex-row flex-wrap items-center gap-3">
                 {naViagem && Platform.OS !== 'web' ? <Botao titulo={procurando ? 'Procurando...' : 'Estou aqui'} principal aoTocar={() => void procurar(true)} /> : null}
@@ -231,7 +232,9 @@ function ArteDoCarimbo({ nome, carimbo, giro, novo, grande = false }: { nome: st
     const t = setTimeout(() => tum(), 120)
     return () => clearTimeout(t)
   }, [novo, reduzir, p])
+  // `flex: 1` vem no estilo animado: o carimbo preenche o quadrado de fora (ver o return)
   const estilo = useAnimatedStyle(() => ({
+    flex: 1,
     opacity: Math.min(1, p.value),
     transform: reduzir ? [{ rotate: `${giro}deg` }] : [{ scale: 1 + (1 - p.value) * 1.2 }, { rotate: `${giro - (1 - p.value) * 30}deg` }],
   }))
@@ -239,7 +242,10 @@ function ArteDoCarimbo({ nome, carimbo, giro, novo, grande = false }: { nome: st
   const tinta = carimbo ? cor.couro : cor.suave
   const traco = carimbo ? (carimbo.como === 'memoria' ? 'dotted' : 'solid') : 'dashed'
   return (
-    <Animated.View style={[{ width: lado, height: lado, opacity: carimbo ? 1 : 0.35 }, estilo]}>
+    // Android (teste 17/11): `style={[fixo, animado]}` perde a parte fixa no Reanimated. Tamanho e
+    // "apagado" (0.35) numa View comum por fora; a chegada (opacidade, escala, giro) por dentro.
+    <View style={{ width: lado, height: lado, opacity: carimbo ? 1 : 0.35 }}>
+    <Animated.View style={estilo}>
       <View
         style={{ flex: 1, borderRadius: lado / 2, borderWidth: grande ? 6 : 4, borderColor: tinta, borderStyle: traco, padding: grande ? 6 : 4 }}
       >
@@ -247,7 +253,17 @@ function ArteDoCarimbo({ nome, carimbo, giro, novo, grande = false }: { nome: st
           style={{ flex: 1, borderRadius: lado / 2, borderWidth: carimbo ? 1.5 : 0, borderColor: tinta, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}
         >
           <Icone nome={iconeDoTipo(carimbo?.tipo ?? tipoDoLugar(nome))} tamanho={grande ? 30 : 20} cor={tinta} />
-          <Text numberOfLines={2} className="text-center font-display" style={{ color: tinta, fontSize: grande ? 17 : 12, lineHeight: grande ? 20 : 14 }}>
+          {/* Nome comprido ("Copacabana") diminui em vez de quebrar no meio da palavra (QA 16/11).
+              Largura útil: o círculo menos as duas bordas, o respiro e o padding do texto. */}
+          <Text
+            numberOfLines={2}
+            className="text-center font-display"
+            style={{
+              color: tinta,
+              fontSize: fonteDoNomeNoCarimbo(nome, lado - (grande ? 24 : 16) - 12, grande ? 17 : 12),
+              lineHeight: Math.round(fonteDoNomeNoCarimbo(nome, lado - (grande ? 24 : 16) - 12, grande ? 17 : 12) * 1.2),
+            }}
+          >
             {nome}
           </Text>
           {carimbo ? (
@@ -258,6 +274,7 @@ function ArteDoCarimbo({ nome, carimbo, giro, novo, grande = false }: { nome: st
         </View>
       </View>
     </Animated.View>
+    </View>
   )
 }
 

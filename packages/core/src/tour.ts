@@ -30,19 +30,19 @@ export type PassoDoTour = {
   tocar?: AbaDoTour
 }
 
+// Versão 4, 16/11/2026 (primeiro minuto novo): 4 passos, sem exigir toque nas abas.
+// Oi → as 5 partes → Contas → fim. Não roda em viagem antiga nem em rolê (ver `tourCabeNaViagem`).
 export const PASSOS_DO_TOUR: PassoDoTour[] = [
   { alvo: null, humor: 'oi', fala: 'Oi! Eu sou a *Norti*. Bora dar uma volta rápida pela viagem?' },
-  { alvo: 'barra', humor: 'apontando', fala: 'Aqui ficam as *5 partes* da viagem.' },
-  { alvo: 'aba-roteiro', humor: 'apontando', fala: 'Toque em *Roteiro*.', tocar: 'roteiro' },
-  { alvo: 'roteiro-dias', humor: 'apontando', fala: 'Cada dia tem o seu plano. É só tocar num dia pra ver.' },
-  { alvo: 'aba-reservas', humor: 'apontando', fala: 'Agora, *Reservas*.', tocar: 'reservas' },
-  { alvo: 'reservas-troca', humor: 'apontando', fala: 'Passagens de um lado, hospedagem do outro.' },
-  { alvo: 'aba-contas', humor: 'apontando', fala: 'Agora, *Contas*.', tocar: 'contas' },
-  { alvo: 'contas-lancar', humor: 'apontando', fala: 'Pagou algo? Lança aqui que eu divido pra galera.' },
-  { alvo: 'aba-fotos', humor: 'apontando', fala: 'Por último, *Fotos*.', tocar: 'fotos' },
-  { alvo: 'fotos-publicar', humor: 'apontando', fala: 'As fotos de todo mundo, juntas e organizadas por dia.' },
-  { alvo: null, humor: 'feliz', fala: 'Pronto! Agora a viagem é de vocês.' },
+  { alvo: 'barra', humor: 'apontando', fala: 'Aqui ficam as *5 partes* da viagem: Viagem, Roteiro, Reservas, Contas e Fotos.' },
+  { alvo: 'aba-contas', humor: 'apontando', fala: 'Pagou algo? Lança em *Contas* que eu divido pra galera.' },
+  { alvo: null, humor: 'feliz', fala: 'Pronto! Cada lugar que vocês chegarem vira um carimbo no mapa da galera.' },
 ]
+
+// Viagem antiga (de memória) e rolê não têm roteiro, reservas nem contas pra mostrar
+export function tourCabeNaViagem(tipo: string | null | undefined): boolean {
+  return tipo !== 'antiga' && tipo !== 'role'
+}
 
 // Quebra a fala em pedaços normais e destacados: 'Toque em *Roteiro*.' →
 // [{texto:'Toque em ', destaque:false}, {texto:'Roteiro', destaque:true}, {texto:'.', destaque:false}]

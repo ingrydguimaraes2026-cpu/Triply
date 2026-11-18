@@ -136,6 +136,9 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
   const membros = viagem.membros.map((m) => ({ id: m.id, nome: m.nome }))
   const movimentos = quemChegaESaiHoje(hoje, trajetos, destinos, membros, diaNoFuso, horaNoFuso)
   const plano = planoDoDia(hoje, { destinos, eventos, roteiros, lugares })
+  // Rolê (spec 118f): viagem de 1 dia sem roteiro nem hospedagem. Os blocos de planejar
+  // (reserva, onde dormir, plano do dia, malas, ferramentas) só fazem barulho: ficam escondidos.
+  const planeja = viagem.tipo !== 'role'
 
   // "Cheguei" (spec 120a): avisa o grupo (chegadas, spec 051), marca o lugar como visitado
   // e libera o carimbo do destino de hoje (120c). Serve pro plano do dia e pra casa.
@@ -173,7 +176,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         </View>
 
         {/* Spec 120b: reserva entra sem digitar (print, PDF ou texto) */}
-        {!ehConvidado ? (
+        {planeja && !ehConvidado ? (
           <Pressable
             onPress={() => router.push('/nova-reserva')}
             accessibilityRole="button"
@@ -184,7 +187,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
           </Pressable>
         ) : null}
 
-        {!onde ? (
+        {!planeja ? null : !onde ? (
           <Cartao className="flex-row items-center gap-3 p-4">
             <Sun size={20} color={cor.caramelo} />
             <Text className="flex-1 font-body text-[14px] leading-5 text-corpo">
@@ -210,7 +213,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         <CarimbosDaViagem viagem={viagem} meuId={meuId} chegada={chegada} />
 
         {/* Spec 120a: convidado pelo link não vê endereço nem código */}
-        {onde && !ehConvidado ? (
+        {planeja && onde && !ehConvidado ? (
           <Bloco Icone={BedDouble} titulo="Onde dormimos hoje">
             {dormimos ? (
               <>
@@ -282,7 +285,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         ) : null}
 
         {/* Spec 120a: quem chega e quem sai hoje, como bilhetes */}
-        {movimentos.length > 0 && !ehConvidado ? (
+        {planeja && movimentos.length > 0 && !ehConvidado ? (
           <View className="gap-2">
             <View className="flex-row items-center gap-2 px-1">
               <Plane size={16} color={cor.couro} />
@@ -317,7 +320,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         ) : null}
 
         {/* Spec 120a: plano do dia (roteiro + agenda), cada um com "Ir" e "Cheguei" */}
-        {onde ? (
+        {planeja && onde ? (
           <Bloco Icone={ListChecks} titulo="Plano do dia">
             {plano.length ? (
               plano.map((item) => (
@@ -337,7 +340,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         ) : null}
 
         {/* Spec 080: bate-e-volta hoje → hora da volta pra base */}
-        {bateEVolta ? (
+        {planeja && bateEVolta ? (
           <Bloco Icone={TrainFront} titulo="Volta pra base">
             {bateEVolta.volta?.partida ? (
               <Text className="font-body text-[14px] leading-5 text-corpo">
@@ -354,7 +357,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         ) : null}
 
         {/* Spec 060: dia de passagem ou de trocar de cidade → malas e hora de sair */}
-        {passagem && onde ? (
+        {planeja && passagem && onde ? (
           <Bloco Icone={Luggage} titulo={passagem.tipo === 'passagem' ? 'Dia de passagem' : 'Dia de trocar de cidade'}>
             {passagem.saida ? (
               <Text className="font-body text-[14px] leading-5 text-corpo">
@@ -391,7 +394,7 @@ export function Hoje({ naAba = false }: { naAba?: boolean }) {
         ) : null}
 
         {/* Spec 059: as ferramentas valem até fora da viagem (o destino é o de hoje ou o primeiro) */}
-        <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda} enderecoHospedagem={dormimos?.endereco ?? null} />
+        {planeja ? <FerramentasDoDia destino={onde ?? destinos[0] ?? null} moedaViagem={viagem.moeda} enderecoHospedagem={dormimos?.endereco ?? null} /> : null}
 
         {/* Na aba Viagem (spec 117): clima e ponto de encontro do comboio ficam aqui também */}
         {naAba ? (

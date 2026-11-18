@@ -8,7 +8,7 @@ import { Botao, Cartao, IconeQuadrado } from './pecas'
 import { cor } from '../../theme'
 
 const EXPLICA: Record<EstadoDosAvisos, string> = {
-  ligado: 'Este celular recebe os avisos do comboio.',
+  ligado: 'Este celular recebe os avisos da galera.',
   pedir: 'Ligue pra receber lembretes 1 hora antes de cada trajeto e encontro.',
   bloqueado: 'As notificações da Norti estão bloqueadas nos ajustes do celular.',
   'sem-suporte': 'Os avisos chegam só no app instalado no celular. No navegador, use o site.',

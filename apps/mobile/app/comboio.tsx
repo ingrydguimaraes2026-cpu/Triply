@@ -18,6 +18,7 @@ import { useCarregar } from '../src/dados/useCarregar'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { supabase } from '../src/lib/supabase'
 import { convidarProComboio, linkDoConvite } from '../src/lib/convite'
+import { hojeIso } from '../src/lib/formato'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Avatar, Botao, BotaoRedondo, Cartao, Carregando, ErroNaTela, RotuloDeSecao } from '../src/ui/pecas'
 import { cor } from '../theme'
@@ -99,7 +100,7 @@ export default function Comboio() {
   }
 
   async function convidar() {
-    setAviso(await convidarProComboio(viagem!.id, viagem!.nome))
+    setAviso(await convidarProComboio(viagem!.id, viagem!.nome, !!viagem!.dataFim && viagem!.dataFim < hojeIso()))
     carga.recarregar() // o convite novo entra em "Convites ativos"
   }
 
@@ -112,7 +113,7 @@ export default function Comboio() {
         </BotaoRedondo>
         <View className="flex-row items-end justify-between gap-3">
           <View className="flex-1">
-            <Text className="font-display text-[32px] text-texto">Comboio</Text>
+            <Text className="font-display text-[32px] text-texto">Galera</Text>
             <Text className="mt-0.5 font-body text-[14px] text-suave">
               {membros.length} {membros.length === 1 ? 'pessoa' : 'pessoas'} em {viagem.nome}
             </Text>

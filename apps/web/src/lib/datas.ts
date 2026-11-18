@@ -19,6 +19,8 @@ export function formatarPeriodo(inicio: string | null, fim: string | null) {
   if (!inicio && !fim) return 'Datas a definir'
   if (inicio && !fim) return `A partir de ${formatarData(inicio, true)}`
   if (!inicio && fim) return `Até ${formatarData(fim, true)}`
+  // Um dia só (ex.: viagem antiga, rolê): "1 jul 2025", não "1 – 1 jul 2025"
+  if (inicio === fim) return formatarData(inicio!, true)
   const a = partes(inicio!)
   const b = partes(fim!)
   if (a.ano === b.ano && a.mes === b.mes) return `${a.dia} – ${b.dia} ${MESES[b.mes - 1]} ${b.ano}`

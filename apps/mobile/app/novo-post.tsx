@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Image,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -21,8 +22,9 @@ import {
   MAX_FOTOS_POR_POST,
   type FotoParaEnviar,
 } from "@together/core";
-import { useCarregar } from "../src/dados/useCarregar";
+import { marcarVelho, useCarregar } from "../src/dados/useCarregar";
 import { useViagemAtual } from "../src/dados/viagemAtual";
+import { ArquivoVazio, lerArquivoLocal } from "../src/lib/arquivoLocal";
 import { hojeIso, primeiroNome } from "../src/lib/formato";
 import { supabase } from "../src/lib/supabase";
 import { StatusBar } from "../src/ui/StatusBar";
@@ -74,7 +76,7 @@ async function comprimir(f: Escolhida): Promise<FotoParaEnviar> {
     compress: 0.75,
     format: SaveFormat.JPEG,
   });
-  const corpo = await (await fetch(salva.uri)).arrayBuffer();
+  const corpo = await lerArquivoLocal(salva.uri);
   return { corpo, tipo: "image/jpeg", ponto: f.ponto };
 }
 
@@ -92,6 +94,8 @@ export default function NovoPost() {
   const [legenda, setLegenda] = useState("");
   const [enviadas, setEnviadas] = useState<number | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Android (teste 17/11): permissão negada sem botão pra liberar. Mesmo "Abrir ajustes" dos avisos.
+  const [pedirAjustes, setPedirAjustes] = useState(false);
 
   if (!atual) return null;
   const viagem = atual;
@@ -101,10 +105,12 @@ export default function NovoPost() {
 
   async function escolher(daCamera: boolean) {
     setErro(null);
+    setPedirAjustes(false);
     const permissao = daCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
+      setPedirAjustes(Platform.OS !== "web");
       setErro(
         daCamera
           ? "Sem acesso à câmera. Libere nas configurações do celular."
@@ -164,11 +170,15 @@ export default function NovoPost() {
           { data_inicio: viagem.dataInicio, data_fim: viagem.dataFim },
           hojeIso(),
         ).catch((e) => console.error("Erro ao carimbar pela foto:", e));
+      // Fotos e a aba Viagem voltam mostrando que estão atualizando, não a cópia velha
+      marcarVelho("aba-fotos", "aba-viagem");
       fechar();
     } catch (e) {
       console.error("Erro ao postar:", e);
       setErro(
-        "Não deu pra postar. Confira a internet e tente de novo (nada ficou pela metade).",
+        e instanceof ArquivoVazio
+          ? "Não deu pra ler uma das fotos. Tire ela e escolha de novo (nada foi postado)."
+          : "Não deu pra postar. Confira a internet e tente de novo (nada ficou pela metade).",
       );
       setEnviadas(null);
     }
@@ -322,6 +332,14 @@ export default function NovoPost() {
           <Text className="font-body-medium text-[13px] text-vermelho">
             {erro}
           </Text>
+        ) : null}
+        {pedirAjustes ? (
+          <Botao
+            compacto
+            tipo="secundario"
+            titulo="Abrir ajustes"
+            aoTocar={() => Linking.openSettings()}
+          />
         ) : null}
         <Botao
           titulo={

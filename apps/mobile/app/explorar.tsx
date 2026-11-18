@@ -541,7 +541,7 @@ function ExplorarDestino({
       {/* Deu match! (spec 117, tela B): eu dei o "quero" que fechou o match */}
       <Comemoracao
         visivel={!!deuMatch}
-        acima="Deu match no comboio"
+        acima="Deu match na galera"
         titulo={deuMatch?.nome ?? ''}
         topo={
           deuMatch ? (
