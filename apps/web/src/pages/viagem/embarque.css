@@ -1,0 +1,401 @@
+/* Aba Viagem no caminho B "Embarque" (10/11/2026). Régua: docs/design/direcao-redesenho/embarque.html
+   Só cores da paleta (global.css). Trabalho em creme; o bilhete é sempre creme. */
+
+.eb {
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 8px;
+}
+
+/* ---------- Bilhete 3D ---------- */
+.eb-palco {
+  perspective: 900px;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 4px;
+}
+
+.eb-bilhete {
+  --descanso: rotateX(10deg) rotateY(-10deg) rotateZ(-3deg);
+  width: 176px;
+  border-radius: 22px;
+  background: var(--creme);
+  color: var(--cor-texto);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 24px 44px rgba(74, 46, 20, 0.32);
+  text-decoration: none;
+  transform: var(--descanso);
+  animation:
+    eb-chega 0.9s cubic-bezier(0.16, 1.12, 0.3, 1) both,
+    eb-balanca 4.2s ease-in-out 0.9s infinite;
+}
+
+.eb-bilhete-foto {
+  display: block;
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.eb-bilhete-lin {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px 14px 0;
+  color: var(--couro);
+}
+
+.eb-bilhete-lin b {
+  font: 800 24px/1 var(--fonte-titulo);
+  letter-spacing: -0.03em;
+  color: var(--cor-texto);
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eb-bilhete-lin b.longo {
+  font-size: 18px;
+}
+
+.eb-bilhete-lin svg {
+  margin-bottom: 3px;
+}
+
+.eb-picote {
+  margin-top: 11px;
+  border-top: 2px dashed var(--cor-borda);
+  position: relative;
+}
+
+.eb-picote::before,
+.eb-picote::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cor-fundo);
+}
+
+.eb-picote::before {
+  left: -9px;
+}
+
+.eb-picote::after {
+  right: -9px;
+}
+
+.eb-bilhete-rd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px 12px;
+  font: 600 10.5px var(--fonte-corpo);
+  letter-spacing: 0.04em;
+  color: var(--cor-texto-suave);
+}
+
+.eb-bilhete-rostos {
+  display: flex;
+  padding-left: 7px;
+}
+
+.eb-bilhete-rostos .avatar {
+  margin-left: -7px;
+  border: 2px solid var(--creme);
+}
+
+.eb-brilho {
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 246, 232, 0.75) 50%, transparent 60%);
+  transform: translateX(-120%);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  animation: eb-brilho 3.9s ease-in-out 0.8s infinite;
+}
+
+@keyframes eb-chega {
+  0% {
+    transform: translateY(300px) rotateX(55deg) rotateZ(-24deg) scale(0.7);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: var(--descanso);
+  }
+}
+
+@keyframes eb-balanca {
+  0%,
+  100% {
+    transform: var(--descanso);
+  }
+  50% {
+    transform: rotateX(-4deg) rotateY(12deg) rotateZ(-2deg);
+  }
+}
+
+@keyframes eb-brilho {
+  0% {
+    transform: translateX(-120%);
+  }
+  28%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* ---------- Contagem ---------- */
+.eb-contagem {
+  text-align: center;
+  margin-top: 14px;
+}
+
+.eb-num {
+  display: block;
+  font: 800 54px/1 var(--fonte-titulo);
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-texto);
+}
+
+.eb-sem-data {
+  display: block;
+  font: 800 30px/1.1 var(--fonte-titulo);
+  letter-spacing: -0.035em;
+}
+
+.eb-contagem p,
+.eb-contagem a {
+  display: block;
+  margin: 4px 0 0;
+  font: 500 14px var(--fonte-corpo);
+  color: var(--cor-texto-suave);
+}
+
+.eb-contagem a {
+  color: var(--caramelo);
+  text-decoration: none;
+}
+
+/* ---------- Cartões ---------- */
+.eb-cartao {
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  box-shadow: var(--sombra-cartao);
+  overflow: hidden;
+}
+
+.eb-rotulo {
+  margin: 22px 4px 10px;
+  font: 600 10.5px var(--fonte-corpo);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+/* Próximo passo */
+.eb-proximo {
+  margin-top: 16px;
+}
+
+.eb-proximo-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.eb-proximo-selo {
+  flex: none;
+  transform: rotate(-8deg);
+}
+
+.eb-proximo-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.eb-proximo-txt small {
+  display: block;
+  font: 600 10px var(--fonte-corpo);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--caramelo);
+  margin-bottom: 3px;
+}
+
+.eb-proximo-txt b {
+  display: block;
+  font: 800 18px/1.1 var(--fonte-titulo);
+  letter-spacing: -0.02em;
+  color: var(--cor-texto);
+}
+
+.eb-proximo-txt > span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--cor-texto-suave);
+  margin-top: 3px;
+}
+
+.eb-ir {
+  flex: none;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 19px;
+  background: var(--couro);
+  color: var(--creme);
+  display: flex;
+  align-items: center;
+  font: 700 13px var(--fonte-titulo);
+  box-shadow: var(--sombra-botao);
+}
+
+.eb-passaporte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.eb-passaporte ul {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eb-passaporte li {
+  display: flex;
+  opacity: 0.25;
+  transform: rotate(var(--giro));
+}
+
+.eb-passaporte li.feito {
+  opacity: 1;
+}
+
+.eb-passaporte li.novo {
+  animation: eb-carimbo 0.45s cubic-bezier(0.2, 1.8, 0.4, 1) var(--atraso) both;
+}
+
+@keyframes eb-carimbo {
+  from {
+    opacity: 0;
+    transform: scale(2.6) rotate(calc(var(--giro) - 30deg));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(var(--giro));
+  }
+}
+
+.eb-passaporte > span {
+  font: 600 11.5px var(--fonte-corpo);
+  color: var(--cor-texto-suave);
+  white-space: nowrap;
+}
+
+/* Resumo das 4 abas */
+.eb-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.eb-linha:last-child {
+  border-bottom: 0;
+}
+
+.eb-linha:hover {
+  background: var(--cor-fundo-suave);
+}
+
+.eb-quad {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--dourado-claro);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.eb-linha-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.eb-linha-txt b {
+  display: block;
+  font: 700 14.5px var(--fonte-titulo);
+  letter-spacing: -0.01em;
+}
+
+.eb-linha-txt small {
+  display: block;
+  font-size: 12.5px;
+  color: var(--cor-texto-suave);
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eb-seta {
+  flex: none;
+  color: var(--cor-texto-suave);
+}
+
+/* Entrada em cascata: cada seção sobe 16 px e aparece um tiquinho depois da anterior */
+.eb-entra {
+  animation: eb-entra 0.56s var(--macia) both;
+  animation-delay: calc(0.3s + var(--i, 0) * 0.06s);
+}
+
+.eb > .eb-entra:last-child {
+  margin-top: 22px;
+}
+
+@keyframes eb-entra {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eb-bilhete,
+  .eb-brilho,
+  .eb-entra,
+  .eb-passaporte li.novo {
+    animation: none;
+  }
+}
+
+span.eb-bilhete-foto {
+  display: block;
+  background: linear-gradient(var(--couro), var(--escuro));
+}

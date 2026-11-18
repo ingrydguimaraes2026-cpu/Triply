@@ -22,6 +22,10 @@ export const mola = {
   padrao: { damping: 18, stiffness: 180, mass: 1 } satisfies WithSpringConfig,
   firme: { damping: 20, stiffness: 320, mass: 0.8 } satisfies WithSpringConfig,
   solta: { damping: 16, stiffness: 120, mass: 1 } satisfies WithSpringConfig,
+  // Caminho B (Embarque, 10/11/2026): `entrar` pra o que chega na tela (bilhete, cartão, aba),
+  // `macia` pra o que se ajeita devagar (inclinar, voltar pro lugar).
+  entrar: { damping: 16, stiffness: 220, mass: 1 } satisfies WithSpringConfig,
+  macia: { damping: 18, stiffness: 160, mass: 1 } satisfies WithSpringConfig,
 }
 
 // Durações em ms (fade de quem pediu menos movimento, e transições curtas)

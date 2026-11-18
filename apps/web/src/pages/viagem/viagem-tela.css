@@ -750,3 +750,24 @@
 .cidades .overview-mapa {
   height: 360px;
 }
+
+/* ---------- Reservas no caminho B "Embarque" (10/11/2026), igual ao app ---------- */
+.reservas-titulo {
+  margin: 6px 2px 0;
+  font: 800 32px/1 var(--fonte-titulo);
+  letter-spacing: var(--junto);
+}
+
+.reservas .reservas-pilulas {
+  padding: 3px;
+}
+
+.reservas .reservas-pilulas button {
+  min-height: 38px;
+  color: var(--cor-texto-suave);
+  font: 700 13px var(--fonte-titulo);
+}
+
+.reservas .reservas-pilulas button.ativa {
+  color: var(--creme);
+}

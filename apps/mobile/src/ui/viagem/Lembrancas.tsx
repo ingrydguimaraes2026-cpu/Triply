@@ -30,17 +30,18 @@ export function Lembrancas({ viagem, foto, numeros, passos, contasEmDia, ir, aoE
         </ImageBackground>
         <View className="absolute bottom-[58px] left-5 right-5">
           <Text className="font-body-bold text-[12px] uppercase tracking-widest text-creme">Vocês voltaram</Text>
-          <Text className="mt-1 font-display text-[34px] leading-[38px] text-white">{viagem.nome}, do jeito do comboio</Text>
+          <Text className="mt-1 font-display text-[34px] leading-[38px] text-white">{viagem.nome}, do jeito da galera</Text>
         </View>
       </View>
 
       <View className="-mt-9 gap-6 px-5">
         <Secao indice={0}>
           <View className="flex-row rounded-2xl bg-cartao py-3.5" style={sombra.cartao}>
-            <Numero valor={numeros.dias} rotulo="dias" />
-            <Numero valor={numeros.fotos} rotulo="fotos" />
-            <Numero valor={numeros.lugares} rotulo="lugares" />
-            <Numero valor={numeros.gasto} rotulo="no total" dinheiro={viagem.moeda} />
+            {/* Sem zeros (QA 16/11): viagem antiga não tem fotos, lugares nem gastos ainda */}
+            <Numero valor={numeros.dias} rotulo={numeros.dias === 1 ? 'dia' : 'dias'} />
+            {numeros.fotos > 0 ? <Numero valor={numeros.fotos} rotulo={numeros.fotos === 1 ? 'foto' : 'fotos'} /> : null}
+            {numeros.lugares > 0 ? <Numero valor={numeros.lugares} rotulo={numeros.lugares === 1 ? 'lugar' : 'lugares'} /> : null}
+            {numeros.gasto > 0 ? <Numero valor={numeros.gasto} rotulo="no total" dinheiro={viagem.moeda} /> : null}
           </View>
         </Secao>
 
@@ -62,7 +63,7 @@ export function Lembrancas({ viagem, foto, numeros, passos, contasEmDia, ir, aoE
             {/* Extras do Passe. Congelado pelo RUMO (03/11/2026) */}
             {CONGELADO.passe ? null : (
               <>
-                <Linha Icone={Printer} titulo="Livro impresso do comboio" sub="As fotos e o roteiro, em casa" aoTocar={() => aoExtra('livro_impresso')} borda trancado />
+                <Linha Icone={Printer} titulo="Livro impresso da galera" sub="As fotos e o roteiro, em casa" aoTocar={() => aoExtra('livro_impresso')} borda trancado />
                 <Linha Icone={Camera} titulo="Vídeo da viagem" sub="Um minuto com o melhor de tudo" aoTocar={() => aoExtra('video')} borda trancado />
               </>
             )}

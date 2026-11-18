@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode, type Ref } from 'react'
 import { ActivityIndicator, Pressable, Text, TextInput, View, type TextInputInstance, type TextInputProps } from 'react-native'
+import { useRouter } from 'expo-router'
 import { coresDePessoa, cor, sombra } from '../../theme'
 import { iniciais } from '../lib/formato'
 import { Norti } from './Norti'
@@ -10,7 +11,7 @@ type BotaoProps = {
   titulo: string
   aoTocar?: () => void
   icone?: ReactNode
-  tipo?: 'primario' | 'secundario' | 'claro'
+  tipo?: 'primario' | 'secundario' | 'claro' | 'perigo' // perigo: ação sem volta (ex.: excluir a conta)
   desabilitado?: boolean
   carregando?: boolean
   compacto?: boolean
@@ -18,12 +19,14 @@ type BotaoProps = {
 
 export function Botao({ titulo, aoTocar, icone, tipo = 'primario', desabilitado, carregando, compacto }: BotaoProps) {
   const apagado = desabilitado || carregando
-  const fundo = apagado ? 'bg-borda' : tipo === 'primario' ? 'bg-couro' : tipo === 'claro' ? 'bg-fundo' : 'bg-cartao border border-tracejado'
-  const texto = apagado ? 'text-[#9A8268]' : tipo === 'primario' ? 'text-white' : tipo === 'claro' ? 'text-escuro' : 'text-couro'
+  const fundo = apagado ? 'bg-borda' : tipo === 'primario' ? 'bg-couro' : tipo === 'perigo' ? 'bg-vermelho' : tipo === 'claro' ? 'bg-fundo' : 'bg-cartao border border-tracejado'
+  const texto = apagado ? 'text-[#9A8268]' : tipo === 'primario' || tipo === 'perigo' ? 'text-white' : tipo === 'claro' ? 'text-escuro' : 'text-couro'
   return (
     <Pressable
       onPress={aoTocar}
       disabled={apagado}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!apagado }}
       className={`flex-row items-center justify-center gap-2 ${compacto ? 'h-11 rounded-[14px] px-4' : 'h-14 rounded-2xl'} ${fundo} active:opacity-90`}
       style={tipo === 'primario' && !apagado ? sombra.botao : undefined}
     >
@@ -158,6 +161,21 @@ export function Carregando({ texto = 'Carregando…' }: { texto?: string }) {
     <View className="flex-1 items-center justify-center gap-3 bg-fundo">
       <Norti humor="pensando" tamanho={96} />
       <Text className="font-body-medium text-[14px] text-suave">{texto}</Text>
+    </View>
+  )
+}
+
+// Link sem o que abrir (ex.: /lembranca ou /caminho sem viagem): não é erro de internet
+export function NadaPraMostrar({ texto }: { texto: string }) {
+  const router = useRouter()
+  return (
+    <View className="flex-1 items-center justify-center gap-3 bg-fundo px-8">
+      <Norti humor="apontando" tamanho={96} />
+      <Text className="text-center font-display text-[22px] text-texto">Nada pra mostrar aqui</Text>
+      <Text className="text-center font-body text-[14px] text-corpo">{texto}</Text>
+      <View className="mt-2 self-stretch">
+        <Botao titulo="Voltar pro início" aoTocar={() => router.replace('/')} tipo="secundario" />
+      </View>
     </View>
   )
 }

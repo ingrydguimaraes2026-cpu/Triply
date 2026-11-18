@@ -11,7 +11,7 @@ import { hojeIso, paraIso } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Icone } from '../src/ui/Icone'
-import { BotaoRedondo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
+import { BotaoRedondo, Carregando, ErroNaTela, NadaPraMostrar, PilhaDeAvatares } from '../src/ui/pecas'
 import { cor } from '../theme'
 
 // Lembrança (spec 118d): abre pelo aviso "Há 1 ano vocês estavam em..." ou pelo cartão "Neste dia"
@@ -22,7 +22,7 @@ export default function TelaDaLembranca() {
   const { viagem, dia } = useLocalSearchParams<{ viagem: string; dia: string }>()
   const valido = !!viagem && /^\d{4}-\d{2}-\d{2}$/.test(dia ?? '')
   const carga = useCarregar(valido ? () => buscarLembranca(supabase, viagem, dia, hojeIso()) : null, [viagem, dia])
-  if (!valido) return <ErroNaTela aoTentar={() => {}} />
+  if (!valido) return <NadaPraMostrar texto="Essa lembrança abre pelo mapa da galera, no Início." />
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   return <Tela dia={dia} {...carga.dados} />

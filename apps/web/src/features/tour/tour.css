@@ -1,0 +1,279 @@
+/* Tour guiado da viagem (features/tour/Tour.tsx), com cara de jogo.
+   Régua: docs/design/direcao-redesenho/tour-jogo.html (aprovado pelo Victor em 10/11/2026). */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  /* O fundo deixa o toque passar; quem segura são os .tour-bloqueio (em volta do buraco) e a caixa */
+  pointer-events: none;
+  animation: tour-entra 300ms ease-out;
+  transition: opacity 260ms ease-out;
+}
+
+.tour.saindo {
+  opacity: 0;
+}
+
+.tour-bloqueio {
+  position: fixed;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* O foco: um buraco aceso com anel dourado; a sombra enorme em volta escurece o resto da tela.
+   Desliza de uma peça pra outra com mola (passa um pouquinho do ponto e volta). */
+.tour-foco {
+  position: fixed;
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px var(--laranja),
+    0 0 0 200vmax rgba(18, 11, 4, 0.66);
+  pointer-events: none;
+  transition:
+    left 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    top 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    width 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    height 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    border-radius 500ms,
+    box-shadow 300ms;
+}
+
+/* Sem peça: só o escuro, sem anel */
+.tour-foco.sem-peca {
+  box-shadow:
+    0 0 0 0 transparent,
+    0 0 0 200vmax rgba(18, 11, 4, 0.66);
+}
+
+/* Passo de tocar: um anel pulsa em volta, chamando o dedo */
+.tour-foco.tocar::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--laranja);
+  animation: tour-pulso 1300ms ease-out infinite;
+}
+
+@keyframes tour-pulso {
+  to {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}
+
+/* Seta quicando em cima da peça (passo de tocar) */
+.tour-dedo {
+  position: fixed;
+  width: 26px;
+  height: 26px;
+  color: var(--laranja);
+  pointer-events: none;
+  transition:
+    left 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    top 500ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    opacity 200ms;
+  animation: tour-quica 800ms ease-in-out infinite;
+}
+
+.tour-dedo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes tour-quica {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Caixa de diálogo de jogo. O padding de cima é o espaço da plaquinha com o nome. */
+.tour-dialogo {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  pointer-events: auto;
+  animation: tour-dialogo-entra 450ms cubic-bezier(0.3, 1.3, 0.5, 1) backwards;
+}
+
+.tour-dialogo.desliza {
+  transition: top 450ms cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+
+.tour-caixa {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  min-height: 104px;
+  padding: 14px 16px 12px 96px;
+  border: 2px solid var(--laranja);
+  border-radius: 20px;
+  background: var(--escuro);
+  color: var(--creme);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tour-caixa:focus-visible {
+  outline: 3px solid var(--creme);
+  outline-offset: 3px;
+}
+
+/* Linha fina por dentro, como moldura de jogo */
+.tour-caixa::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(227, 160, 74, 0.25);
+  border-radius: 15px;
+  pointer-events: none;
+}
+
+/* A Norti, grande, saindo da caixa */
+.tour-retrato {
+  position: absolute;
+  left: 4px;
+  bottom: 6px;
+  width: 92px;
+  height: 104px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.35));
+}
+
+.tour-nome {
+  position: absolute;
+  top: -12px;
+  left: 92px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--laranja);
+  color: var(--escuro);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tour-fala {
+  display: block;
+  min-height: 44px;
+  margin-top: 4px;
+  font-weight: 500;
+  font-size: 15.5px;
+  line-height: 1.4;
+}
+
+.tour-fala em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--laranja);
+}
+
+/* O que a Norti ainda não "escreveu": ocupa o lugar, mas não aparece (a caixa não muda de tamanho) */
+.tour-falta {
+  color: transparent;
+}
+
+.tour-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(245, 233, 214, 0.6);
+}
+
+.tour-seguir {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: tour-entra 200ms ease-out;
+}
+
+.tour-seguir i {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--laranja);
+  animation: tour-pisca 900ms steps(2) infinite;
+}
+
+@keyframes tour-pisca {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Confete no fim */
+.tour-confete {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tour-confete i {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  animation: tour-cai 2600ms cubic-bezier(0.3, 0.6, 0.6, 1) forwards;
+}
+
+@keyframes tour-cai {
+  to {
+    transform: translateY(calc(100vh + 24px)) rotate(620deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes tour-entra {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tour-dialogo-entra {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-foco,
+  .tour-dedo,
+  .tour-dialogo.desliza {
+    transition: none;
+  }
+
+  .tour-foco.tocar::after,
+  .tour-dedo,
+  .tour-seguir i,
+  .tour-confete {
+    animation: none;
+  }
+
+  .tour-confete {
+    display: none;
+  }
+
+  .tour-dialogo {
+    animation: tour-entra 160ms ease-out backwards;
+  }
+}

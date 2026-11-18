@@ -37,7 +37,8 @@ type Janela = { tipo: 'novo' } | { tipo: 'editar'; evento: EventoDaAgenda } | nu
 // Agenda do dia (spec 029): o que acontece em cada dia, com horário.
 // Junta sozinha os trajetos e as chegadas/saídas; o comboio acrescenta os eventos livres.
 // Dentro do Roteiro (como no app), vem com o dia escolhido nas pílulas: sem título e sem a fileira de dias.
-export default function Agenda({ diaDoRoteiro, aoTrocarDia }: { diaDoRoteiro?: string; aoTrocarDia?: (dia: string) => void } = {}) {
+// novoPedido: o botão "Adicionar" do Roteiro (caminho B) abre o formulário de evento novo daqui
+export default function Agenda({ diaDoRoteiro, aoTrocarDia, novoPedido, aoFecharNovo }: { diaDoRoteiro?: string; aoTrocarDia?: (dia: string) => void; novoPedido?: boolean; aoFecharNovo?: () => void } = {}) {
   const { viagem, destinos, membros, meuId, euSouAdm } = useViagemAtual()
   const { estado } = useTrajetos(viagem.id)
   const { eventos, erro, recarregar } = useEventosDaAgenda(viagem.id)
@@ -83,7 +84,11 @@ export default function Agenda({ diaDoRoteiro, aoTrocarDia }: { diaDoRoteiro?: s
     [dias, destinos, trajetos, eventos],
   )
 
-  const fechar = () => setJanela(null)
+  const aberta: Janela = janela ?? (novoPedido ? { tipo: 'novo' } : null)
+  const fechar = () => {
+    setJanela(null)
+    aoFecharNovo?.()
+  }
 
   // Spec 071: passa o evento pro dia anterior/seguinte (sem sair do período da viagem) e vai junto pro dia novo
   async function mover(evento: EventoDaAgenda, direcao: -1 | 1) {
@@ -129,7 +134,7 @@ export default function Agenda({ diaDoRoteiro, aoTrocarDia }: { diaDoRoteiro?: s
       <Link to={`/viagem/${viagem.id}/imprimir`} className="botao secundario" title="Roteiro, transportes e hospedagens numa folha">
         <Printer size={16} aria-hidden="true" /> PDF
       </Link>
-      {/* Baixar o .ics (spec 036). ❄ congelado pelo RUMO (03/11/2026) */}
+      {/* Baixar o .ics (spec 036). congelado pelo RUMO (03/11/2026) */}
       {!CONGELADO.calendario && (
         <button type="button" className="botao secundario" onClick={calendario} title="Baixar pro Google Agenda, iPhone ou Outlook">
           <CalendarPlus size={16} aria-hidden="true" /> Calendário
@@ -259,13 +264,13 @@ export default function Agenda({ diaDoRoteiro, aoTrocarDia }: { diaDoRoteiro?: s
         <NesteDia dia={dia} onde={onde} />
       </div>
 
-      {janela && (
-        <Gaveta titulo={janela.tipo === 'novo' ? 'Novo evento' : 'Editar evento'} aoFechar={fechar}>
+      {aberta && (
+        <Gaveta titulo={aberta.tipo === 'novo' ? 'Novo evento' : 'Editar evento'} aoFechar={fechar}>
           <FormEvento
             viagemId={viagem.id}
             dias={dias}
             diaInicial={dia}
-            evento={janela.tipo === 'editar' ? janela.evento : undefined}
+            evento={aberta.tipo === 'editar' ? aberta.evento : undefined}
             membros={membros}
             aoTerminar={() => {
               fechar()

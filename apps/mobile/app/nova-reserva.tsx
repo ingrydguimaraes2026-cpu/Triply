@@ -23,9 +23,10 @@ import {
   type TipoDoTrajeto,
 } from '@together/core'
 import { useViagemAtual } from '../src/dados/viagemAtual'
-import { useCarregar } from '../src/dados/useCarregar'
+import { marcarVelho, useCarregar } from '../src/dados/useCarregar'
 import { useSessao } from '../src/lib/sessao'
 import { guardarNoCofre } from '../src/lib/cofre'
+import { lerArquivoLocal } from '../src/lib/arquivoLocal'
 import { hojeIso } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { FileText, Image as IconeImagem, ScrollText, X } from '../src/ui/icones'
@@ -88,7 +89,8 @@ export default function NovaReserva() {
     const a = res.canceled ? null : res.assets[0]
     if (!a?.base64) return
     const tipo = a.mimeType && ['image/jpeg', 'image/png', 'image/webp'].includes(a.mimeType) ? a.mimeType : 'image/jpeg'
-    const bytes = new Uint8Array(await (await fetch(a.uri)).arrayBuffer())
+    const bytes = await lerArquivoLocal(a.uri).catch(() => null)
+    if (!bytes) return setErro('Não deu pra ler esse print. Escolha de novo.')
     setArquivo({ bytes, tipo, nome: a.fileName ?? 'Reserva' })
     await ler({ arquivo: a.base64, tipo })
   }
@@ -98,7 +100,8 @@ export default function NovaReserva() {
     const a = res.canceled ? null : res.assets[0]
     if (!a) return
     if ((a.size ?? 0) > 10 * 1024 * 1024) return setErro('PDF muito grande: o limite é 10 MB.')
-    const bytes = new Uint8Array(await (await fetch(a.uri)).arrayBuffer())
+    const bytes = await lerArquivoLocal(a.uri).catch(() => null)
+    if (!bytes) return setErro('Não deu pra ler esse PDF. Escolha de novo.')
     setArquivo({ bytes, tipo: 'application/pdf', nome: a.name })
     await ler({ arquivo: paraBase64(bytes), tipo: 'application/pdf' })
   }
@@ -125,6 +128,9 @@ export default function NovaReserva() {
         tipoDoTrajeto: tipoDoTrajeto ?? undefined,
       })
       if (arquivo) await guardarNoCofre(viagem.id, arquivo, ligacaoNoCofre(salva)).catch((e) => console.error('Reserva salva, mas o arquivo não foi pro cofre:', e))
+      // Passagens e a aba Viagem abrem com a cópia guardada: mostram que estão atualizando.
+      // (O Hoje não guarda cópia: abre buscando de novo.)
+      marcarVelho('passagens', 'aba-viagem', 'hospedagem')
       router.replace(params.voltar === 'transportes' ? '/transportes' : '/hoje')
     } catch (e) {
       console.error('Erro ao salvar a reserva:', e)

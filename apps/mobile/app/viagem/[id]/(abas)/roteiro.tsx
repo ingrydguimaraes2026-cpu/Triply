@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Animated, Linking, PanResponder, Pressable, ScrollView, Share, Text, View } from 'react-native'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
+import Reanimated, { useAnimatedStyle, useReducedMotion, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 import { StatusBar } from '../../../../src/ui/StatusBar'
-import { useFocusEffect, useRouter, type Href } from 'expo-router'
+import { useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Svg, { Ellipse, Path, Polyline, Rect } from 'react-native-svg'
-import { AlertTriangle, Bed, Bus, CalendarDays, Car, Clock, Luggage, Footprints, MapPin, Mountain, Pencil, Plane, Plus, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../../../src/ui/icones'
+import { AlertTriangle, Bed, Bus, CalendarDays, Car, Clock, Luggage, Footprints, MapPin, Mountain, Pencil, Plane, Route, Ship, TrainFront, Utensils, type LucideIcon } from '../../../../src/ui/icones'
 import { Icone } from '../../../../src/ui/Icone'
+import { Selo } from '../../../../src/ui/Selos'
+import { FotoDeFundo } from '../../../../src/ui/Foto'
 import {
   buscarClima,
   buscarDestinos,
@@ -22,7 +24,6 @@ import {
   interpretarTempo,
   montarAgendaDoDia,
   nomeDaSituacaoDoDeslocamento,
-  resumoDoDia,
   type Destino,
   type SituacaoDoDeslocamento,
   type EventoDaAgenda,
@@ -34,94 +35,29 @@ import {
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, diaLongo, diasDaViagem, paraIso } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
-import { Carregando, ErroNaTela, IconeQuadrado } from '../../../../src/ui/pecas'
+import { ErroNaTela, PilhaDeAvatares } from '../../../../src/ui/pecas'
+import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { SemViagem } from '../../../../src/ui/SemViagem'
-import { Matches } from '../../../../src/ui/Matches'
-import { buscarMatches, ehMatch, quemFazMatch } from '../../../../src/dados/matches'
+import { buscarMatches, type Match } from '../../../../src/dados/matches'
 import { FormEvento } from '../../../../src/ui/FormEvento'
-import { useTamanhoDaTela } from '../../../../src/ui/Moldura'
-import { cor } from '../../../../theme'
+import { mola } from '../../../../src/ui/movimento'
+import { cor, fonte, momento, rotulo, titulo, trabalho } from '../../../../theme'
 
-// Roteiro (tela "1h" do design): mapa ilustrado com os destinos numerados e uma
-// folha que sobe por cima (arraste a alça) com a linha do tempo de cada dia.
+// Roteiro no caminho B "Embarque" (10/11/2026). Régua: docs/design/direcao-redesenho/embarque.html,
+// tela "Roteiro": título grande, os dias em chips, a linha do tempo do dia em cartões, as ideias
+// da galera (o que o grupo quer) com fotos, e um botão só pra adicionar, acima da barra.
+// Saiu o mapa ilustrado com a folha que arrastava: a pessoa se perdia entre os dois.
 const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, carona: Car, onibus: Bus, metro: TrainFront, trem: TrainFront, barco: Ship, a_pe: Footprints }
-// Spec 122a: cor da situação do deslocamento (fundo, texto)
-const COR_DA_SITUACAO: Record<SituacaoDoDeslocamento, [string, string]> = {
-  comprado: ['#EEF0DF', '#5E6B2E'],
-  reservado: ['#F6EAD7', '#7B542F'],
-  decidido: ['#F6EAD7', '#7B542F'],
-  sugestao: ['#FBEBD2', '#8A5A10'],
-  comparando: ['#FBEBD2', '#8A5A10'],
-}
 const ICONE_DO_LUGAR: Record<string, LucideIcon> = { passeio: Mountain, comida: Utensils }
+const HORA = 40 // largura da coluna da hora
 
-// Spec 117: a aba abre em Matches (o que o comboio quer); tocar num dia mostra o mapa e o dia.
 export default function Roteiro() {
   const { atual } = useViagemAtual()
-  const [dia, setDia] = useState<number | null>(null) // null = Matches
   if (!atual) return <SemViagem titulo="Roteiro" />
-  if (dia === null) return <AbaMatches viagem={atual} aoDia={setDia} />
-  return <RoteiroDaViagem viagem={atual} diaInicial={dia} aoMatches={() => setDia(null)} />
-}
-
-function AbaMatches({ viagem, aoDia }: { viagem: ViagemComDetalhes; aoDia: (i: number) => void }) {
-  const insets = useSafeAreaInsets()
-  const router = useRouter()
-  const { meuId } = useViagemAtual()
-  // Antes da migration do match (ou sem internet) a lista fica vazia, sem quebrar a aba
-  const carga = useCarregar(() => buscarMatches(viagem.id).catch(() => []), [viagem.id])
-  useFocusEffect(useCallback(() => carga.recarregar(), [carga.recarregar]))
-  const matches = carga.status === 'pronto' ? carga.dados : []
-  const novos = matches.filter((m) => ehMatch(m.querem, viagem.membros.length) && !m.noDia).length
-  const dias = diasDaViagem(viagem.dataInicio, viagem.dataFim)
-  const principal = matches.find((m) => ehMatch(m.querem, viagem.membros.length))?.destinoId
-
-  return (
-    <View className="flex-1 bg-fundo" style={{ paddingTop: insets.top + 8 }}>
-      <StatusBar style="dark" />
-      <View className="flex-row items-center justify-between px-5">
-        <Text className="font-display text-[32px] leading-[36px] text-texto">Roteiro</Text>
-        <Pressable onPress={() => router.push('/cidades' as Href)} accessibilityRole="button" className="flex-row items-center gap-1.5 rounded-full border border-borda bg-cartao px-3.5 py-2 active:opacity-80">
-          <MapPin size={15} color={cor.couro} />
-          <Text className="font-body-bold text-[13px] text-couro">Cidades</Text>
-        </Pressable>
-      </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingVertical: 12 }} style={{ flexGrow: 0 }}>
-        <View className="h-10 flex-row items-center gap-1.5 rounded-full bg-couro px-4">
-          <Text className="font-body-bold text-[14px] text-white">Matches</Text>
-          {novos ? (
-            <View className="h-5 min-w-5 items-center justify-center rounded-full bg-dourado px-1">
-              <Text className="font-body-bold text-[11px] text-escuro">{novos}</Text>
-            </View>
-          ) : null}
-        </View>
-        {(dias.length ? dias : [new Date()]).map((d, i) => (
-          <Pressable key={i} onPress={() => aoDia(i)} className="h-10 justify-center rounded-full border border-borda bg-cartao px-4 active:opacity-80">
-            <Text className="font-body-bold text-[14px] text-texto">Dia {i + 1}</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-      <Text className="mb-3 px-5 font-body text-[13px] text-suave">{`O que ${quemFazMatch(viagem.membros.length)} vira match e entra no dia.`}</Text>
-      {carga.status === 'carregando' ? (
-        <View className="gap-2.5 px-5">
-          {[0, 1, 2].map((i) => (
-            <View key={i} className="h-[84px] rounded-2xl bg-areia" />
-          ))}
-        </View>
-      ) : (
-        <Matches
-          matches={matches}
-          membros={viagem.membros}
-          meuId={meuId}
-          aoAbrirLugar={(m) => router.push(`/explorar?destino=${m.destinoId}` as Href)}
-          aoMontar={() => router.push((principal ? `/explorar?destino=${principal}&roteiro=1` : '/explorar') as Href)}
-          aoDescobrir={() => router.push('/explorar')}
-        />
-      )}
-    </View>
-  )
+  return <RoteiroDaViagem viagem={atual} />
 }
 
 type Item = {
@@ -134,7 +70,7 @@ type Item = {
   desl?: { trajetoId: string; situacao: SituacaoDoDeslocamento; opcoes: number; meio: string; grupo: string | null }
 }
 
-function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComDetalhes; diaInicial: number; aoMatches: () => void }) {
+function RoteiroDaViagem({ viagem }: { viagem: ViagemComDetalhes }) {
   const carga = useCarregar(
     () =>
       Promise.all([
@@ -159,71 +95,62 @@ function RoteiroDaViagem({ viagem, diaInicial, aoMatches }: { viagem: ViagemComD
             (r) => r,
             () => [], // sem os dias montados, o dia funciona igual (todos os lugares da cidade)
           ),
+        // Ideias da galera (spec 117). Antes da migration do match (ou sem internet), fica vazio.
+        buscarMatches(viagem.id).catch(() => []),
       ]),
     [viagem.id],
+    'aba-roteiro',
   )
-  if (carga.status === 'carregando') return <Carregando />
+  // Ao voltar pra aba, o useCarregar recarrega sozinho
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="roteiro" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
-  const [destinos, lugares, trajetos, eventos, casas, roteiros] = carga.dados
-  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} roteiros={roteiros} aoMudar={carga.recarregar} atualizando={carga.atualizando} diaInicial={diaInicial} aoMatches={aoMatches} />
+  const [destinos, lugares, trajetos, eventos, casas, roteiros, matches] = carga.dados
+  return <Tela viagem={viagem} destinos={destinos} lugares={lugares} trajetos={trajetos} eventos={eventos} casas={casas} roteiros={roteiros} matches={matches} aoMudar={carga.recarregar} atualizando={carga.atualizando} />
 }
 
-function Tela({
-  viagem,
-  destinos,
-  lugares,
-  trajetos,
-  eventos,
-  aoMudar,
-  diaInicial,
-  aoMatches,
-  casas,
-  atualizando,
-  roteiros,
-}: {
-  atualizando: boolean
-  roteiros: RoteiroMontado[]
-  casas: CasaDoDia[]
-  diaInicial: number
-  aoMatches: () => void
+type PropsDaTela = {
   viagem: ViagemComDetalhes
   destinos: Destino[]
   lugares: Lugar[]
   trajetos: Trajeto[]
   eventos: EventoDaAgenda[]
+  casas: CasaDoDia[]
+  roteiros: RoteiroMontado[]
+  matches: Match[]
   aoMudar: () => void
-}) {
+  atualizando: boolean
+}
+
+function Tela({ viagem, destinos, lugares, trajetos, eventos, casas, roteiros, matches, aoMudar, atualizando }: PropsDaTela) {
+  const refDosDias = useAlvoDoTour('roteiro-dias') // o tour acende os dias
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { meuId } = useViagemAtual()
   const euSouAdm = viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')
   // Formulário aberto: novo evento (sem `evento`) ou editando um
   const [form, setForm] = useState<{ evento?: EventoDaAgenda } | null>(null)
-  const { width, height } = useTamanhoDaTela()
-  const largura = width
-  const alturaDoMapa = Math.round(height * 0.66)
+  const [menu, setMenu] = useState(false)
 
-  // Viagem sem datas: um "Dia 1" sem data (antes mostrava a data de hoje, como se a viagem fosse hoje)
-  const semDatas = diasDaViagem(viagem.dataInicio, viagem.dataFim).length === 0
-  const dias = useMemo(() => {
-    const d = diasDaViagem(viagem.dataInicio, viagem.dataFim)
-    return d.length ? d : [new Date()]
-  }, [viagem.dataInicio, viagem.dataFim])
-  const [diaEscolhido, setDiaEscolhido] = useState(diaInicial)
-  const dia = dias[Math.min(diaEscolhido, dias.length - 1)]
+  const dias = useMemo(() => diasDaViagem(viagem.dataInicio, viagem.dataFim), [viagem.dataInicio, viagem.dataFim])
+  const semDatas = dias.length === 0
+  // Durante a viagem, abre no dia de hoje; antes, no primeiro dia
+  const [diaEscolhido, setDiaEscolhido] = useState(() => Math.max(0, dias.findIndex((d) => paraIso(d) === paraIso(new Date()))))
+  const dia = semDatas ? new Date() : dias[Math.min(diaEscolhido, dias.length - 1)]
   const itens = useMemo(() => (semDatas ? [] : montarDia(paraIso(dia), destinos, lugares, trajetos, eventos, roteiros)), [semDatas, dia, destinos, lugares, trajetos, eventos, roteiros])
-  const pinos = useMemo(() => posicionarPinos(destinos, largura, insets.top + 80, Math.round(height * 0.38) - 36), [destinos, largura, insets.top, height])
+  // "7 dias · 4 com plano"
+  const comPlano = useMemo(() => dias.filter((d) => montarDia(paraIso(d), destinos, lugares, trajetos, eventos, roteiros).length > 0).length, [dias, destinos, lugares, trajetos, eventos, roteiros])
   const onde = destinoDoDia(paraIso(dia), destinos)
   const agenda = useMemo(() => (semDatas ? [] : montarAgendaDoDia(paraIso(dia), { destinos, trajetos, eventos })), [semDatas, dia, destinos, trajetos, eventos])
-  const resumo = useMemo(() => resumoDoDia(agenda), [agenda])
   // Spec 122b: avisos entre os passos (folga, check-in, malas)
   const avisos = useMemo(() => avisosDoDia(paraIso(dia), agenda, casas), [dia, agenda, casas])
   const avisosDepoisDe = (chave: string) => avisos.filter((a) => a.depoisDe === chave).map((a) => <AvisoNoDia key={a.chave} aviso={a} />)
   const diasMontados = useMemo(() => (semDatas ? diasDosRoteiros(destinos, lugares, roteiros) : []), [semDatas, destinos, lugares, roteiros])
   const novoDeslocamento = (extra = '') => router.push(`/novo-deslocamento?dia=${paraIso(dia)}${extra}` as Href)
+  // Ideias da galera: o que alguém do grupo quer e ainda não entrou num dia, o mais querido primeiro
+  const ideias = matches.filter((m) => m.querem > 0 && !m.noDia)
+  const nomeDe = (id: string) => viagem.membros.find((m) => m.id === id)?.nome ?? 'Alguém'
 
-  // Clima do destino de hoje (roadmap #8): busca a previsão do destino inteiro e
-  // guarda por data; o chip mostra a do dia escolhido. Sem coordenadas/datas → sem chip.
+  // Clima do destino do dia (roadmap #8). Sem coordenadas/datas → sem clima.
   const [clima, setClima] = useState<Record<string, PrevisaoDia>>({})
   useEffect(() => {
     if (!onde?.chegada || onde.latitude == null || onde.longitude == null) {
@@ -239,210 +166,187 @@ function Tela({
     }
   }, [onde?.id, onde?.chegada, onde?.saida, onde?.latitude, onde?.longitude])
   const previsaoDoDia = clima[paraIso(dia)]
-
-  // Folha arrastável com 3 paradas: alta, média, baixa
-  const paradas = [insets.top + 90, Math.round(height * 0.38), Math.round(height * 0.66)]
-  const topo = useRef(new Animated.Value(paradas[1])).current
-  const atualTopo = useRef(paradas[1])
-  const arraste = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dy) > 4,
-      onPanResponderMove: (_e, g) => topo.setValue(Math.max(paradas[0], Math.min(paradas[2], atualTopo.current + g.dy))),
-      onPanResponderRelease: (_e, g) => {
-        const solto = atualTopo.current + g.dy
-        const alvo = paradas.reduce((a, b) => (Math.abs(b - solto) < Math.abs(a - solto) ? b : a))
-        atualTopo.current = alvo
-        Animated.spring(topo, { toValue: alvo, useNativeDriver: false, friction: 9 }).start()
-      },
-    }),
-  ).current
+  const tempo = previsaoDoDia ? interpretarTempo(previsaoDoDia.codigo) : null
 
   return (
-    <View className="flex-1" style={{ backgroundColor: '#EADBC2' }}>
+    <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <StatusBar style="dark" />
-      <MapaIlustrado largura={largura} altura={alturaDoMapa} pinos={pinos} destaque={onde ? destinos.indexOf(onde) : -1} />
-
-      <View className="absolute left-5 right-5 items-center" style={{ top: insets.top + 8 }}>
-        <View className="h-10 justify-center rounded-full bg-fundo px-4" style={{ boxShadow: '0 4px 12px rgba(74,46,20,0.15)' }}>
-          <Text className="font-body-bold text-[14px] text-texto" numberOfLines={1}>
-            Roteiro · {viagem.nome}
-          </Text>
-        </View>
-      </View>
-
-      <Animated.View
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: topo, backgroundColor: cor.fundo, borderTopLeftRadius: 28, borderTopRightRadius: 28, boxShadow: '0 -10px 30px rgba(74,46,20,0.15)' }}
-      >
-        <View {...arraste.panHandlers} className="items-center pb-1.5 pt-2.5" style={{ cursor: 'grab' } as object}>
-          <View className="h-[5px] w-10 rounded-full bg-tracejado" />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 }} style={{ flexGrow: 0, flexShrink: 0 }}>
-          {/* Spec 117: volta pros Matches do comboio */}
-          <Pressable onPress={aoMatches} className="items-center justify-center rounded-xl border border-borda bg-cartao px-3.5 py-2">
-            <Text className="font-body-bold text-[13px] text-texto">Matches</Text>
-            <Text className="font-body text-[11px] text-texto/85">do grupo</Text>
-          </Pressable>
-          {dias.map((d, i) => {
-            const ativo = i === diaEscolhido
-            return (
-              <Pressable key={i} onPress={() => setDiaEscolhido(i)} className={`items-center rounded-xl border px-3.5 py-2 ${ativo ? 'border-couro bg-couro' : 'border-borda bg-cartao'}`}>
-                <Text className={`font-body-bold text-[13px] ${ativo ? 'text-white' : 'text-texto'}`}>Dia {i + 1}</Text>
-                <Text className={`font-body text-[11px] ${ativo ? 'text-white/85' : 'text-texto/85'}`}>{semDatas ? 'sem data' : diaCurto(d)}</Text>
-              </Pressable>
-            )
-          })}
-        </ScrollView>
-        <View className="flex-row items-center justify-between gap-3 px-5 pb-2 pt-3.5">
-          <View className="min-w-0 flex-1">
-            <Text className="font-display text-[22px] text-texto">{semDatas ? 'Sem datas ainda' : diaLongo(dia)}</Text>
-            <Text className="font-body text-[13px] text-suave">{semDatas ? destinos.map((d) => d.nome).join(', ') : onde ? onde.nome : `${itens.length} paradas`}</Text>
-          </View>
-          {/* Spec 029: evento livre do comboio · Spec 122a: deslocamento de qualquer lugar pra qualquer lugar */}
-          {semDatas ? null : (
-          <View className="flex-row gap-2">
-            <Pressable onPress={() => setForm({})} accessibilityLabel="Novo evento" className="h-10 flex-row items-center gap-1 rounded-xl border border-borda bg-cartao px-3 active:opacity-80">
-              <Plus size={16} color={cor.couro} />
-              <Text className="font-body-bold text-[13px] text-couro">Evento</Text>
-            </Pressable>
-            <Pressable onPress={() => novoDeslocamento()} accessibilityLabel="Novo deslocamento" className="h-10 flex-row items-center gap-1 rounded-xl bg-couro px-3 active:opacity-80">
-              <Route size={16} color="#fff" />
-              <Text className="font-body-bold text-[13px] text-white">Ir</Text>
+      <ScrollView refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}>
+        <Entra ordem={0}>
+          <View className="flex-row items-end justify-between" style={{ paddingHorizontal: 18, paddingTop: 6, paddingBottom: 12 }}>
+            <View>
+              <Text style={[rotulo, { color: trabalho.texto2 }]}>{semDatas ? 'Sem datas ainda' : `${dias.length} ${dias.length === 1 ? 'dia' : 'dias'} · ${comPlano} com plano`}</Text>
+              <Text style={[titulo(32), { color: trabalho.texto, marginTop: 6 }]}>Roteiro</Text>
+            </View>
+            {/* As cidades da viagem e a ordem delas */}
+            <Pressable onPress={() => router.push('/cidades' as Href)} accessibilityRole="button" className="mb-1 flex-row items-center gap-1.5 rounded-full border px-3 py-1.5 active:opacity-80" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+              <MapPin size={14} color={trabalho.texto} />
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 13, color: trabalho.texto }}>Cidades</Text>
             </Pressable>
           </View>
-          )}
-        </View>
-        {resumo.comprados + resumo.prontos + resumo.pendentes > 0 ? (
-          <View className="flex-row flex-wrap gap-1.5 px-5 pb-2">
-            {resumo.comprados ? <Pilula fundo="#EEF0DF" cor="#5E6B2E" texto={`${resumo.comprados} ${resumo.comprados === 1 ? 'comprado' : 'comprados'}`} /> : null}
-            {resumo.prontos ? <Pilula fundo="#F6EAD7" cor="#7B542F" texto={`${resumo.prontos} ${resumo.prontos === 1 ? 'decidido' : 'decididos'}`} /> : null}
-            {resumo.pendentes ? <Pilula fundo="#FBEBD2" cor="#8A5A10" texto={`${resumo.pendentes} pra decidir`} /> : null}
-          </View>
-        ) : null}
-        {previsaoDoDia ? (
-          <View className="flex-row items-center gap-1.5 px-5 pb-1">
-            <Icone nome={interpretarTempo(previsaoDoDia.codigo).icone} tamanho={20} cor={cor.couro} />
-            <Text className="font-body-medium text-[13px] text-corpo">
-              {interpretarTempo(previsaoDoDia.codigo).rotulo}
-              {previsaoDoDia.tempMax != null ? ` · ${Math.round(previsaoDoDia.tempMax)}°` : ''}
-              {previsaoDoDia.tempMin != null ? ` / ${Math.round(previsaoDoDia.tempMin)}°` : ''}
-              {previsaoDoDia.tipo === 'estimativa' ? ' · estimativa' : ''}
-            </Text>
-          </View>
-        ) : null}
-        <ScrollView style={{ flex: 1 }} refreshControl={puxarPraAtualizar({ atualizando, recarregar: aoMudar })} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 120 }}>
-          {semDatas ? (
-            <View className="mt-4 items-center gap-3">
-              <Text className="text-center font-body text-[14px] leading-5 text-corpo">
-                A viagem ainda não tem datas.{'\n'}Com as datas, cada dia mostra os deslocamentos, os eventos e onde vocês dormem.
+        </Entra>
+
+        {semDatas ? (
+          <Entra ordem={1}>
+            <View className="mx-[14px] items-center gap-3 rounded-[20px] border p-5" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+              <CalendarDays size={26} color={trabalho.texto} />
+              <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 20, color: trabalho.texto }}>
+                Com as datas, cada dia mostra os deslocamentos, os eventos e onde vocês dormem.
               </Text>
               {euSouAdm ? (
-                <Pressable onPress={() => router.push('/configuracoes' as Href)} accessibilityRole="button" className="h-10 flex-row items-center gap-1.5 rounded-xl bg-couro px-4 active:opacity-80">
-                  <CalendarDays size={16} color="#fff" />
-                  <Text className="font-body-bold text-[13px] text-white">Definir as datas</Text>
+                <Pressable onPress={() => router.push('/configuracoes' as Href)} accessibilityRole="button" className="h-11 flex-row items-center gap-1.5 rounded-full px-5 active:opacity-80" style={{ backgroundColor: trabalho.acento }}>
+                  <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.acentoTexto }}>Definir as datas</Text>
                 </Pressable>
               ) : (
-                <Text className="text-center font-body text-[13px] text-suave">Peça pro ADM definir as datas.</Text>
+                <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 13, color: trabalho.texto2 }}>
+                  Quem organiza define as datas.
+                </Text>
               )}
-              {diasMontados.length ? (
-                <View className="mt-2 w-full gap-2">
-                  <Text className="font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Dias montados no Explorar</Text>
-                  {diasMontados.map((d) => (
-                    <View key={d.numero} className="rounded-2xl bg-cartao p-3.5">
-                      <Text className="font-body-bold text-[11px] uppercase tracking-wider text-suave">
-                        Dia {d.numero} · {d.cidade}
-                      </Text>
-                      {d.lugares.map((nome, i) => (
-                        <View key={i} className="mt-1.5 flex-row items-center gap-2">
-                          <MapPin size={14} color={cor.couro} />
-                          <Text className="flex-1 font-body text-[14px] text-texto">{nome}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  ))}
-                </View>
-              ) : null}
             </View>
-          ) : itens.length === 0 ? (
-            <Text className="mt-4 text-center font-body text-[14px] leading-5 text-corpo">
-              Nada marcado pra esse dia ainda.{'\n'}Toque em "Ir" pra adicionar um deslocamento ou em "Evento".
-            </Text>
-          ) : (
-            itens.map((it, i) => {
-              // Lápis só nos eventos que eu criei (o ADM mexe em todos)
-              const editavel = !!it.evento && (it.evento.criado_por === meuId || euSouAdm)
-              const trilho = (
-                <View className="w-3.5 items-center">
-                  <View className="h-5 w-0.5" style={{ backgroundColor: i === 0 ? 'transparent' : '#E3D2B8' }} />
-                  <View className="h-2.5 w-2.5 rounded-full border-2 border-fundo bg-couro" style={{ boxShadow: '0 0 0 1.5px #7B542F' }} />
-                  <View className="w-0.5 flex-1" style={{ backgroundColor: i === itens.length - 1 ? 'transparent' : '#E3D2B8' }} />
-                </View>
-              )
-              // Spec 122a: deslocamento é cartão (meio, de → para, detalhe, situação); o resto é linha leve
-              if (it.desl) {
-                const d = it.desl
-                const [fundo, corTexto] = COR_DA_SITUACAO[d.situacao] ?? COR_DA_SITUACAO.sugestao
-                const pendente = d.situacao === 'comparando' || d.situacao === 'sugestao'
-                return (
-                  <View key={it.chave}>
-                    <View className="flex-row gap-3">
-                      <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
-                      {trilho}
+            {diasMontados.length ? (
+              <View className="mt-5 gap-2 px-[14px]">
+                <Text style={[rotulo, { color: trabalho.texto2, marginLeft: 4 }]}>Dias montados no Explorar</Text>
+                {diasMontados.map((d) => (
+                  <View key={d.numero} className="rounded-[20px] border p-3.5" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+                    <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>
+                      Dia {d.numero} · {d.cidade}
+                    </Text>
+                    {d.lugares.map((nome, i) => (
+                      <Text key={i} style={{ fontFamily: fonte.corpo, fontSize: 13, color: trabalho.texto2, marginTop: 4 }}>
+                        {nome}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+              </View>
+            ) : null}
+          </Entra>
+        ) : (
+          <>
+            <Entra ordem={1}>
+              <View ref={refDosDias} collapsable={false}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingHorizontal: 18, paddingBottom: 4 }}>
+                {dias.map((d, i) => {
+                  const ativo = i === diaEscolhido
+                  const [semana, numero] = diaCurto(d).split(' ')
+                  return (
                     <Pressable
-                      onPress={() => (d.grupo && d.opcoes > 1 ? router.push(`/comparar?grupo=${d.grupo}` as Href) : novoDeslocamento(`&trajeto=${d.trajetoId}`))}
-                      accessibilityLabel={`Abrir ${it.titulo}`}
-                      className="mb-2.5 min-w-0 flex-1 gap-2.5 rounded-2xl border bg-cartao p-3 active:opacity-80"
-                      style={{ borderColor: pendente ? cor.dourado : cor.borda }}
+                      key={i}
+                      onPress={() => setDiaEscolhido(i)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Dia ${i + 1}, ${diaLongo(d)}`}
+                      accessibilityState={{ selected: ativo }}
+                      className="items-center justify-center gap-0.5 rounded-2xl border active:opacity-80"
+                      style={{ width: 48, height: 60, backgroundColor: ativo ? trabalho.acento : trabalho.superficie, borderColor: ativo ? 'transparent' : trabalho.linha }}
                     >
-                      <View className="flex-row items-center gap-2.5">
-                        <IconeQuadrado tamanho={34}>
-                          <it.Icone size={18} color={cor.couro} />
-                        </IconeQuadrado>
-                        <View className="min-w-0 flex-1">
-                          <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
-                          <Text className="mt-0.5 font-body text-[12px] leading-4 text-suave">{it.detalhe}</Text>
-                        </View>
-                      </View>
-                      <View className="flex-row items-center gap-2">
-                        <Pilula fundo={fundo} cor={corTexto} texto={d.situacao === 'comparando' ? `Comparando · ${d.opcoes} opções` : nomeDaSituacaoDoDeslocamento(d.situacao)} />
-                        {d.meio === 'trem' || d.meio === 'onibus' ? (
-                          <Pressable onPress={() => router.push(`/caminho?trajeto=${d.trajetoId}` as Href)} hitSlop={8} className="ml-auto flex-row items-center gap-1">
-                            <MapPin size={13} color={cor.couro} />
-                            <Text className="font-body-bold text-[12px] text-couro">Paradas</Text>
-                          </Pressable>
-                        ) : null}
-                      </View>
+                      <Text style={{ fontFamily: fonte.corpoForte, fontSize: 10, color: ativo ? trabalho.acentoTexto : trabalho.texto2 }}>{semana.toUpperCase()}</Text>
+                      <Text style={{ fontFamily: fonte.titulo, fontSize: 18, color: ativo ? trabalho.acentoTexto : trabalho.texto }}>{numero}</Text>
                     </Pressable>
-                    </View>
-                    {avisosDepoisDe(it.chave)}
+                  )
+                })}
+              </ScrollView>
+              </View>
+            </Entra>
+
+            {/* Onde a galera está nesse dia e o tempo */}
+            <Entra ordem={2}>
+              <View className="flex-row items-center gap-1.5" style={{ paddingHorizontal: 18, marginTop: 12 }}>
+                <Text style={{ fontFamily: fonte.item, fontSize: 15, color: trabalho.texto }}>{diaLongo(dia)}</Text>
+                <Text style={{ fontFamily: fonte.corpo, fontSize: 13, color: trabalho.texto2 }} numberOfLines={1} className="flex-1">
+                  {onde ? ` · ${onde.nome}` : ''}
+                  {tempo && previsaoDoDia?.tempMax != null ? ` · ${Math.round(previsaoDoDia.tempMax)}°` : ''}
+                </Text>
+                {tempo ? <Icone nome={tempo.icone} tamanho={18} cor={trabalho.texto2} /> : null}
+              </View>
+
+              <View style={{ marginHorizontal: 14, marginTop: 8 }}>
+                {itens.length === 0 ? (
+                  <View className="items-center gap-1 rounded-[20px] border p-5" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+                    <Text style={{ fontFamily: fonte.item, fontSize: 15, color: trabalho.texto }}>Dia livre por enquanto</Text>
+                    <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 13, lineHeight: 18, color: trabalho.texto2 }}>
+                      Toque em "Adicionar" pra marcar um passeio ou uma ida pra outro lugar.
+                    </Text>
                   </View>
-                )
-              }
-              return (
-                <View key={it.chave}>
-                  <View className="flex-row gap-3">
-                    <Text className="w-[52px] pt-4 font-display text-[17px] text-texto">{it.hora}</Text>
-                    {trilho}
-                  <Pressable
-                    onPress={editavel ? () => setForm({ evento: it.evento }) : undefined}
-                    disabled={!editavel}
-                    accessibilityLabel={editavel ? `Editar ${it.titulo}` : undefined}
-                    className="mb-1 min-w-0 flex-1 flex-row items-center gap-3 px-1 py-3 active:opacity-80"
-                  >
-                    <it.Icone size={18} color={cor.caramelo} />
-                    <View className="min-w-0 flex-1">
-                      <Text className="font-body-bold text-[14px] text-texto">{it.titulo}</Text>
-                      {it.detalhe ? <Text className="mt-0.5 font-body text-[12.5px] text-suave">{it.detalhe}</Text> : null}
+                ) : (
+                  itens.map((it) => (
+                    <View key={it.chave}>
+                      <Parada item={it} editavel={!!it.evento && (it.evento.criado_por === meuId || euSouAdm)} aoEditar={() => setForm({ evento: it.evento })} aoDeslocamento={novoDeslocamento} />
+                      {avisosDepoisDe(it.chave)}
                     </View>
-                    {editavel ? <Pencil size={15} color={cor.suave} /> : null}
-                  </Pressable>
-                  </View>
-                  {avisosDepoisDe(it.chave)}
-                </View>
-              )
-            })
+                  ))
+                )}
+              </View>
+            </Entra>
+          </>
+        )}
+
+        {/* Ideias da galera (spec 117): o que o grupo quer fazer */}
+        <Entra ordem={3}>
+          <View className="flex-row items-baseline justify-between" style={{ marginHorizontal: 18, marginTop: 22, marginBottom: 10 }}>
+            <Text style={[rotulo, { color: trabalho.texto2 }]}>Ideias da galera</Text>
+            <Pressable onPress={() => router.push('/explorar')} accessibilityRole="link" hitSlop={8}>
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12.5, color: trabalho.acento }}>Descobrir lugares</Text>
+            </Pressable>
+          </View>
+          {ideias.length ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingHorizontal: 18, paddingBottom: 4 }}>
+              {ideias.map((m) => (
+                <Pressable key={m.catalogoId} onPress={() => router.push(`/explorar?destino=${m.destinoId}` as Href)} accessibilityRole="button" accessibilityLabel={`${m.nome}, ${querem(m, viagem.membros.length)}`} style={{ width: 132 }} className="active:opacity-90">
+                  <FotoDeFundo source={m.foto ? { uri: m.foto } : undefined} style={{ height: 150, borderRadius: 18, overflow: 'hidden', backgroundColor: trabalho.superficie2 }}>
+                    {!m.foto ? (
+                      <View className="flex-1 items-center justify-center">
+                        <Selo nome="museu" tamanho={44} />
+                      </View>
+                    ) : null}
+                    <View style={{ position: 'absolute', left: 8, bottom: 8 }}>
+                      <PilhaDeAvatares nomes={m.quem.map(nomeDe)} tamanho={24} borda={momento.texto} max={4} />
+                    </View>
+                  </FotoDeFundo>
+                  <Text numberOfLines={2} style={{ fontFamily: fonte.item, fontSize: 13.5, letterSpacing: -0.1, color: trabalho.texto, marginTop: 6 }}>
+                    {m.nome}
+                  </Text>
+                  <Text style={{ fontFamily: fonte.corpo, fontSize: 11.5, color: trabalho.texto2 }}>{querem(m, viagem.membros.length)}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          ) : (
+            <Pressable onPress={() => router.push('/explorar')} accessibilityRole="button" className="flex-row items-center gap-3 rounded-[20px] border p-3.5 active:opacity-80" style={{ marginHorizontal: 14, backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+              <Selo nome="museu" tamanho={40} />
+              <View className="min-w-0 flex-1">
+                <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>Ninguém escolheu lugar ainda</Text>
+                <Text style={{ fontFamily: fonte.corpo, fontSize: 12.5, color: trabalho.texto2, marginTop: 1 }}>Veja os lugares de cada cidade e diga o que você quer.</Text>
+              </View>
+            </Pressable>
           )}
-        </ScrollView>
-      </Animated.View>
+        </Entra>
+      </ScrollView>
+
+      {/* Um botão só pra adicionar, acima da barra de vidro */}
+      {!semDatas ? (
+        <>
+          {menu ? <Pressable onPress={() => setMenu(false)} accessibilityLabel="Fechar" style={StyleSheet.absoluteFill} /> : null}
+          <View className="absolute items-end gap-2" style={{ right: 16, bottom: insets.bottom + 4 }}>
+            {menu ? (
+              <View className="overflow-hidden rounded-[20px] border" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha, boxShadow: '0 10px 24px rgba(74,46,20,0.18)' }}>
+                <OpcaoDoMenu Icone={CalendarDays} texto="Passeio ou evento" sub={diaLongo(dia)} aoTocar={() => (setMenu(false), setForm({}))} />
+                <View style={{ height: 1, backgroundColor: trabalho.linha }} />
+                <OpcaoDoMenu Icone={Route} texto="Ida pra outro lugar" sub="Voo, ônibus, carro..." aoTocar={() => (setMenu(false), novoDeslocamento())} />
+              </View>
+            ) : null}
+            <Pressable
+              onPress={() => setMenu((m) => !m)}
+              accessibilityRole="button"
+              accessibilityLabel={menu ? 'Fechar o menu de adicionar' : 'Adicionar no dia'}
+              className="h-[50px] flex-row items-center gap-1.5 rounded-full pl-3.5 pr-[18px] active:opacity-90"
+              style={{ backgroundColor: trabalho.acento, boxShadow: '0 10px 24px rgba(0,0,0,0.3)' }}
+            >
+              <Icone nome={menu ? 'fechar' : 'mais'} tamanho={20} cor={trabalho.acentoTexto} />
+              <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>{menu ? 'Fechar' : 'Adicionar'}</Text>
+            </Pressable>
+          </View>
+        </>
+      ) : null}
+
       {form ? (
         <FormEvento
           viagemId={viagem.id}
@@ -459,6 +363,82 @@ function Tela({
   )
 }
 
+// "Todo mundo quer", "2 querem", "Só você quer"... (contagem simples, sem o nome)
+function querem(m: Match, pessoas: number) {
+  if (pessoas >= 2 && m.querem >= pessoas) return 'Todo mundo quer'
+  return m.querem === 1 ? '1 quer' : `${m.querem} querem`
+}
+
+function OpcaoDoMenu({ Icone: Ic, texto, sub, aoTocar }: { Icone: LucideIcon; texto: string; sub: string; aoTocar: () => void }) {
+  return (
+    <Pressable onPress={aoTocar} accessibilityRole="button" className="flex-row items-center gap-3 px-3.5 py-3 active:opacity-80" style={{ minWidth: 220 }}>
+      <View className="h-[34px] w-[34px] items-center justify-center rounded-xl" style={{ backgroundColor: trabalho.superficie2 }}>
+        <Ic size={17} color={trabalho.texto} />
+      </View>
+      <View>
+        <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>{texto}</Text>
+        <Text style={{ fontFamily: fonte.corpo, fontSize: 12, color: trabalho.texto2 }}>{sub}</Text>
+      </View>
+    </Pressable>
+  )
+}
+
+// Uma parada do dia: a hora na esquerda e o cartão. Deslocamento abre a comparação ou a edição;
+// evento abre a edição (só pra quem criou ou quem organiza).
+function Parada({ item: it, editavel, aoEditar, aoDeslocamento }: { item: Item; editavel: boolean; aoEditar: () => void; aoDeslocamento: (extra?: string) => void }) {
+  const router = useRouter()
+  const d = it.desl
+  const pendente = d ? d.situacao === 'comparando' || d.situacao === 'sugestao' : false
+  const aoTocar = d ? () => (d.grupo && d.opcoes > 1 ? router.push(`/comparar?grupo=${d.grupo}` as Href) : aoDeslocamento(`&trajeto=${d.trajetoId}`)) : editavel ? aoEditar : undefined
+  const etiqueta = d ? (d.situacao === 'comparando' ? `Comparando ${d.opcoes} opções` : nomeDaSituacaoDoDeslocamento(d.situacao)) : it.evento ? 'Evento' : null
+  return (
+    <View className="flex-row items-center gap-3 py-1.5">
+      <Text style={{ width: HORA, textAlign: 'right', fontFamily: fonte.corpoNegrito, fontSize: 11.5, color: trabalho.texto2 }}>{it.hora}</Text>
+      <Pressable
+        onPress={aoTocar}
+        disabled={!aoTocar}
+        accessibilityLabel={aoTocar ? `Abrir ${it.titulo}` : undefined}
+        className="min-w-0 flex-1 flex-row items-center gap-2.5 rounded-[20px] border px-3 py-2.5 active:opacity-80"
+        style={{ backgroundColor: trabalho.superficie, borderColor: pendente ? cor.dourado : trabalho.linha, boxShadow: '0 2px 10px rgba(74,46,20,0.06)' }}
+      >
+        <View className="h-[38px] w-[38px] items-center justify-center rounded-xl" style={{ backgroundColor: trabalho.superficie2 }}>
+          <it.Icone size={18} color={trabalho.texto} />
+        </View>
+        <View className="min-w-0 flex-1">
+          <Text numberOfLines={2} style={{ fontFamily: fonte.item, fontSize: 14, letterSpacing: -0.1, color: trabalho.texto }}>
+            {it.titulo}
+          </Text>
+          {etiqueta || it.detalhe ? (
+            <Text numberOfLines={2} style={{ fontFamily: fonte.corpo, fontSize: 11.5, color: trabalho.texto2, marginTop: 1 }}>
+              {etiqueta ? <Text style={{ fontFamily: fonte.corpoNegrito, color: '#A0701E' }}>{etiqueta}</Text> : null}
+              {etiqueta && it.detalhe ? ' · ' : ''}
+              {it.detalhe}
+            </Text>
+          ) : null}
+        </View>
+        {d && (d.meio === 'trem' || d.meio === 'onibus') ? (
+          <Pressable onPress={() => router.push(`/caminho?trajeto=${d.trajetoId}` as Href)} hitSlop={8} accessibilityRole="link">
+            <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: trabalho.acento }}>Paradas</Text>
+          </Pressable>
+        ) : editavel ? (
+          <Pencil size={15} color={trabalho.texto2} />
+        ) : null}
+      </Pressable>
+    </View>
+  )
+}
+
+// Cascata de entrada: cada bloco sobe um pouco depois do outro
+function Entra({ ordem, children }: { ordem: number; children: ReactNode }) {
+  const reduzir = useReducedMotion()
+  const p = useSharedValue(reduzir ? 1 : 0)
+  useEffect(() => {
+    if (!reduzir) p.value = withDelay(ordem * 70, withSpring(1, mola.entrar))
+  }, [reduzir, ordem, p])
+  const estilo = useAnimatedStyle(() => ({ opacity: Math.min(1, p.value * 1.4), transform: [{ translateY: (1 - p.value) * 18 }] }))
+  return <Reanimated.View style={estilo}>{children}</Reanimated.View>
+}
+
 // Spec 122b: aviso entre os passos do dia (folga, check-in, malas), com a ação quando tem
 function AvisoNoDia({ aviso }: { aviso: AvisoDoDia }) {
   const acao = aviso.acao
@@ -470,14 +450,7 @@ function AvisoNoDia({ aviso }: { aviso: AvisoDoDia }) {
     if (fone.length >= 8) return void Linking.openURL(`https://wa.me/${fone}?text=${encodeURIComponent(acao.texto)}`)
     await Share.share({ message: acao.texto }).catch(() => undefined)
   }
-  const linha = (
-    <>
-      <View className="w-[52px]" />
-      <View className="w-3.5 items-center">
-        <View className="w-0.5 flex-1" style={{ backgroundColor: '#E3D2B8' }} />
-      </View>
-    </>
-  )
+  const linha = <View style={{ width: HORA }} />
   if (aviso.nivel === 'folga') {
     return (
       <View className="flex-row gap-3">
@@ -510,16 +483,6 @@ function AvisoNoDia({ aviso }: { aviso: AvisoDoDia }) {
           ) : null}
         </View>
       </View>
-    </View>
-  )
-}
-
-function Pilula({ fundo, cor: corTexto, texto }: { fundo: string; cor: string; texto: string }) {
-  return (
-    <View className="rounded-full px-2.5 py-1" style={{ backgroundColor: fundo }}>
-      <Text className="font-body-bold text-[11.5px]" style={{ color: corTexto }}>
-        {texto}
-      </Text>
     </View>
   )
 }
@@ -574,57 +537,4 @@ function montarDia(dia: string, destinos: Destino[], lugares: Lugar[], trajetos:
     }
   }
   return itens
-}
-
-// O mapa é ilustrado (não é geográfico): os destinos ficam espalhados numa curva, na ordem
-// do roteiro, entre o título e a folha. Com coordenadas reais, destinos perto uns dos
-// outros (ex.: 5 cidades na Itália + 1 no Brasil) ficariam empilhados.
-function posicionarPinos(destinos: Destino[], largura: number, topo: number, base: number) {
-  const area = { x0: 44, x1: largura - 44, y0: topo, y1: base }
-  return destinos.map((_d, i) => {
-    const t = destinos.length <= 1 ? 0.5 : i / (destinos.length - 1)
-    return { x: area.x0 + t * (area.x1 - area.x0), y: area.y0 + (area.y1 - area.y0) * (0.5 + 0.45 * Math.sin(t * Math.PI * 2)) }
-  })
-}
-
-function MapaIlustrado({ largura, altura, pinos, destaque }: { largura: number; altura: number; pinos: { x: number; y: number }[]; destaque: number }) {
-  return (
-    <View style={{ position: 'absolute', top: 0, left: 0, width: largura, height: altura }}>
-      <Svg width={largura} height={altura} viewBox="0 0 393 560" preserveAspectRatio="none">
-        <Rect width={393} height={560} fill="#EADBC2" />
-        <Path d="M-20 120 C60 80 120 140 200 100 S340 60 420 110 L420 -10 L-20 -10Z" fill="#E1CDAE" />
-        <Path d="M-20 300 C40 260 110 330 170 290 S300 250 420 300 L420 380 C320 340 220 400 120 360 S20 360 -20 380Z" fill="#E4D2B5" />
-        <Ellipse cx={300} cy={170} rx={70} ry={40} fill="#DCC6A3" />
-        <Ellipse cx={90} cy={220} rx={50} ry={28} fill="#DFCBAA" />
-        <Path d="M-10 250 C60 240 90 200 150 210 S250 260 300 230 S380 160 410 170" fill="none" stroke="#C9B79A" strokeWidth={7} strokeLinecap="round" />
-        <Path d="M40 -10 C60 80 30 160 70 260 S120 420 100 560" fill="none" stroke="#F6EEDF" strokeWidth={5} />
-        <Path d="M-10 160 L130 170 L240 120 L410 140" fill="none" stroke="#F6EEDF" strokeWidth={4} />
-        <Path d="M200 -10 L215 185 L250 560" fill="none" stroke="#F6EEDF" strokeWidth={3} />
-      </Svg>
-      {pinos.length > 1 ? (
-        <Svg width={largura} height={altura} style={{ position: 'absolute' }}>
-          <Polyline points={pinos.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#7B542F" strokeWidth={2.5} strokeDasharray="6 6" strokeLinecap="round" />
-        </Svg>
-      ) : null}
-      {pinos.map((p, i) => (
-        <View
-          key={i}
-          className="absolute h-[30px] w-[30px] items-center justify-center border-2 border-fundo"
-          style={{
-            left: p.x - 15,
-            top: p.y - 15,
-            borderRadius: 15,
-            borderBottomLeftRadius: 4,
-            transform: [{ rotate: '-45deg' }],
-            backgroundColor: i === destaque ? cor.caramelo : cor.couro,
-            boxShadow: '0 4px 10px rgba(74,46,20,0.3)',
-          }}
-        >
-          <Text className="font-body-bold text-[12px] text-white" style={{ transform: [{ rotate: '45deg' }] }}>
-            {i + 1}
-          </Text>
-        </View>
-      ))}
-    </View>
-  )
 }

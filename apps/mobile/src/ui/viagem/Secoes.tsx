@@ -41,7 +41,10 @@ export function Capa({ foto, nome, linha, rolagem }: { foto: { uri: string } | u
   useEffect(() => {
     chegada.value = reduzir ? 1 : withSpring(1, mola.solta)
   }, [chegada, reduzir])
+  // Android (teste 17/11): `style={[fixo, animado]}` e `className` + animado perdem a parte fixa no
+  // Reanimated. Lugar numa View comum por fora; `flex: 1` vai no estilo animado pra preencher.
   const estiloDaFoto = useAnimatedStyle(() => ({
+    flex: 1,
     transform: [
       { translateY: interpolate(rolagem.value, [-200, 0, ALTURA_DA_CAPA], [-100, 0, ALTURA_DA_CAPA * 0.45]) },
       { scale: interpolate(rolagem.value, [-200, 0], [1.6, 1], 'clamp') * (1.12 - chegada.value * 0.12) },
@@ -50,17 +53,21 @@ export function Capa({ foto, nome, linha, rolagem }: { foto: { uri: string } | u
   const estiloDoTitulo = useAnimatedStyle(() => ({ opacity: interpolate(rolagem.value, [0, ALTURA_DA_CAPA * 0.6], [1, 0], 'clamp') }))
   return (
     <View style={{ height: ALTURA_DA_CAPA }} className="overflow-hidden bg-couro">
-      <Animated.View style={[StyleSheet.absoluteFill, estiloDaFoto]}>
-        <FotoDeFundo source={foto} style={StyleSheet.absoluteFill}>
-          <LinearGradient colors={['rgba(74,46,20,0.35)', 'rgba(74,46,20,0)', 'rgba(74,46,20,0.85)']} locations={[0, 0.35, 1]} style={StyleSheet.absoluteFill} />
-        </FotoDeFundo>
-      </Animated.View>
-      <Animated.View className="absolute bottom-6 left-5 right-5" style={estiloDoTitulo}>
-        <Text className="font-body-bold text-[12px] uppercase tracking-wider text-creme">{linha}</Text>
-        <Text className="mt-1 font-display text-[40px] leading-[42px] text-white" numberOfLines={2}>
-          {nome}
-        </Text>
-      </Animated.View>
+      <View style={StyleSheet.absoluteFill}>
+        <Animated.View style={estiloDaFoto}>
+          <FotoDeFundo source={foto} style={StyleSheet.absoluteFill}>
+            <LinearGradient colors={['rgba(74,46,20,0.35)', 'rgba(74,46,20,0)', 'rgba(74,46,20,0.85)']} locations={[0, 0.35, 1]} style={StyleSheet.absoluteFill} />
+          </FotoDeFundo>
+        </Animated.View>
+      </View>
+      <View className="absolute bottom-6 left-5 right-5">
+        <Animated.View style={estiloDoTitulo}>
+          <Text className="font-body-bold text-[12px] uppercase tracking-wider text-creme">{linha}</Text>
+          <Text className="mt-1 font-display text-[40px] leading-[42px] text-white" numberOfLines={2}>
+            {nome}
+          </Text>
+        </Animated.View>
+      </View>
     </View>
   )
 }
@@ -68,21 +75,30 @@ export function Capa({ foto, nome, linha, rolagem }: { foto: { uri: string } | u
 // Cabeçalho fixo: botões sempre à mão; o nome e o fundo creme aparecem quando a capa sai da tela
 export function Cabecalho({ nome, rolagem, aoVoltar, aoCompartilhar, aoMais }: { nome: string; rolagem: SharedValue<number>; aoVoltar: () => void; aoCompartilhar: () => void; aoMais: () => void }) {
   const insets = useSafeAreaInsets()
-  const fundo = useAnimatedStyle(() => ({ opacity: interpolate(rolagem.value, [ALTURA_DA_CAPA * 0.55, ALTURA_DA_CAPA * 0.8], [0, 1], 'clamp') }))
+  // Fundo creme: lugar numa View comum por fora; `flex: 1` vem no estilo animado pra preencher
+  const fundo = useAnimatedStyle(() => ({ flex: 1, opacity: interpolate(rolagem.value, [ALTURA_DA_CAPA * 0.55, ALTURA_DA_CAPA * 0.8], [0, 1], 'clamp') }))
   const titulo = useAnimatedStyle(() => ({
     opacity: interpolate(rolagem.value, [ALTURA_DA_CAPA * 0.65, ALTURA_DA_CAPA * 0.85], [0, 1], 'clamp'),
     transform: [{ translateY: interpolate(rolagem.value, [ALTURA_DA_CAPA * 0.65, ALTURA_DA_CAPA * 0.85], [8, 0], 'clamp') }],
   }))
   return (
     <View className="absolute left-0 right-0 top-0" style={{ paddingTop: insets.top + 6 }} pointerEvents="box-none">
-      <Animated.View className="absolute inset-0 border-b border-linha bg-fundo" style={fundo} />
+      <View className="absolute inset-0" pointerEvents="none">
+        <Animated.View style={fundo}>
+          <View className="flex-1 border-b border-linha bg-fundo" />
+        </Animated.View>
+      </View>
       <View className="flex-row items-center gap-3 px-4 pb-2">
         <BotaoRedondo claro aoTocar={aoVoltar} rotulo="Voltar">
           <ArrowLeft size={20} color={cor.texto} />
         </BotaoRedondo>
-        <Animated.Text style={titulo} className="flex-1 font-display text-[20px] text-texto" numberOfLines={1}>
-          {nome}
-        </Animated.Text>
+        {/* Android 17/11: `className` + animado no mesmo Animated.Text perde a parte fixa. Espaço
+            numa View comum, fonte num Text comum por dentro; o Animated.Text só anima. */}
+        <View className="flex-1">
+          <Animated.Text style={titulo} numberOfLines={1}>
+            <Text className="font-display text-[20px] text-texto">{nome}</Text>
+          </Animated.Text>
+        </View>
         <BotaoRedondo claro aoTocar={aoCompartilhar} rotulo="Compartilhar">
           <Share2 size={20} color={cor.texto} />
         </BotaoRedondo>
@@ -101,7 +117,7 @@ export function Rostos({ membros, atividades, vistoEm, meuId, aoTocar, aoConvida
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14, paddingHorizontal: 20 }} style={{ marginHorizontal: -20 }}>
       {membros.map((m, i) => (
-        <Pressable key={m.id} onPress={aoTocar} className="items-center gap-1 active:opacity-80" accessibilityLabel={`Ver ${m.nome} no comboio`}>
+        <Pressable key={m.id} onPress={aoTocar} className="items-center gap-1 active:opacity-80" accessibilityLabel={`Ver ${m.nome} na galera`}>
           <View className="rounded-full p-[3px]" style={{ borderWidth: 2.5, borderColor: comNovidade.has(m.id) ? cor.dourado : 'transparent' }}>
             <Avatar nome={m.nome} indice={i} tamanho={52} />
           </View>
@@ -110,7 +126,7 @@ export function Rostos({ membros, atividades, vistoEm, meuId, aoTocar, aoConvida
           </Text>
         </Pressable>
       ))}
-      <Pressable onPress={aoConvidar} className="items-center gap-1 active:opacity-80" accessibilityLabel="Convidar pro comboio">
+      <Pressable onPress={aoConvidar} className="items-center gap-1 active:opacity-80" accessibilityLabel="Convidar pra galera">
         <View className="h-[63px] w-[63px] items-center justify-center rounded-full border-[1.5px] border-dashed border-tracejado">
           <Plus size={22} color={cor.couro} />
         </View>

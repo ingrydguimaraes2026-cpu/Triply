@@ -7,8 +7,12 @@ import { useHospedagemDaViagem } from '../src/dados/hospedagemDaViagem'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { StatusBar } from '../src/ui/StatusBar'
 import { Norti } from '../src/ui/Norti'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
-import { cor } from '../theme'
+import { BotaoRedondo, Cartao, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { EsqueletoDaAba } from '../src/ui/viagem/Esqueleto'
+import { cor, fonte, rotulo, trabalho } from '../theme'
+import { FotoDeFundo } from '../src/ui/Foto'
+import { LinearGradient } from 'expo-linear-gradient'
+import { StyleSheet } from 'react-native'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
 
 // Hospedagem por noite (spec 123): onde o grupo dorme cada noite, o que falta decidir e reservar,
@@ -34,7 +38,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
   const carga = useHospedagemDaViagem(viagem?.id)
 
   if (!viagem) return null
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="hospedagem" titulo={!naAba} />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const { destinos, opcoes, trajetos } = carga.dados
   const pessoas = Math.max(1, viagem.membros.length)
@@ -44,7 +48,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
   return (
     <View className="flex-1 bg-fundo">
       {naAba ? null : <StatusBar style="dark" />}
-      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 40, gap: 10 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 14, paddingBottom: insets.bottom + 40, gap: 10 }}>
         {naAba ? null : (
           <>
             <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
@@ -56,7 +60,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
 
         {n.cidades.length === 0 ? (
           <View className="mt-4 items-center gap-3 px-4">
-            <Norti humor="dormindo" tamanho={110} />
+            <Norti humor="apontando" tamanho={110} />
             <Text className="text-center font-display text-[22px] text-texto">Nenhuma noite ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Adicione os destinos e as datas no roteiro pra ver as noites.</Text>
           </View>
@@ -68,6 +72,7 @@ export function TelaDeHospedagem({ naAba = false }: { naAba?: boolean }) {
           </View>
         )}
 
+        {n.cidades.length ? <Text style={[rotulo, { color: trabalho.texto2, marginTop: 8, marginLeft: 2 }]}>Onde ficar · {n.cidades.length} {n.cidades.length === 1 ? 'cidade' : 'cidades'}</Text> : null}
         {/* Na ordem do roteiro: cidades com cama e, entre elas, os bate-e-voltas */}
         {destinos.map((d) => {
           const cidade = n.cidades.find((c) => c.destino.id === d.id)
@@ -126,15 +131,26 @@ function CartaoDaCidade({ cidade, pessoas, aoAbrir }: { cidade: CidadeDaNoite; p
   const precisa = cidade.estado === 'sem-cama' || cidade.estado === 'comparando'
   const textoSelo = cidade.estado === 'comparando' ? `${cidade.opcoes.length} ${cidade.opcoes.length === 1 ? 'opção' : 'opções'}` : selo.texto
   const barras = cidade.noites ?? 1
+  // Caminho B: a foto da casa escolhida (ou da opção mais votada) em cima do cartão
+  const foto = (e ?? cidade.opcoes[0])?.fotoUrl
   return (
-    <Pressable onPress={aoAbrir} accessibilityRole="button" accessibilityLabel={`Hospedagem em ${cidade.destino.nome}`} className="active:opacity-80">
-      <Cartao className={`gap-2.5 p-3.5 ${precisa ? 'border-dourado' : ''}`}>
+    <Pressable onPress={aoAbrir} accessibilityRole="button" accessibilityLabel={`Hospedagem em ${cidade.destino.nome}`} className="active:opacity-90">
+      <View className="overflow-hidden rounded-[20px] border" style={{ backgroundColor: trabalho.superficie, borderColor: precisa ? cor.dourado : trabalho.linha, boxShadow: '0 2px 10px rgba(74,46,20,0.06)' }}>
+        {foto ? (
+          <FotoDeFundo source={{ uri: foto }} style={{ height: 118, backgroundColor: trabalho.superficie2 }}>
+            <LinearGradient colors={['rgba(42,27,13,0)', 'rgba(42,27,13,0.55)']} style={StyleSheet.absoluteFill} />
+            <Text className="absolute left-2.5 top-2.5 overflow-hidden rounded-full px-2.5 py-1" style={{ backgroundColor: cor.dourado, color: '#3B2715', fontFamily: fonte.corpoNegrito, fontSize: 10.5 }}>
+              {e ? (cidade.estado === 'reservada' ? 'Reservada' : 'Escolhida') : 'Mais votada'}
+            </Text>
+          </FotoDeFundo>
+        ) : null}
+        <View className="gap-2.5 p-3.5">
         <View className="flex-row items-center gap-3">
           <IconeQuadrado tamanho={36}>
             <BedDouble size={19} color={cor.couro} />
           </IconeQuadrado>
           <View className="min-w-0 flex-1">
-            <Text className="font-body-bold text-[15px] text-texto">{cidade.destino.nome}</Text>
+            <Text style={{ fontFamily: fonte.item, fontSize: 15, letterSpacing: -0.15, color: trabalho.texto }}>{cidade.destino.nome}</Text>
             <Text className="font-body text-[12.5px] text-suave" numberOfLines={1}>
               {textoDasNoites(cidade)}
               {cidade.chegada?.hora ? ` · chegam ${cidade.chegada.hora}` : ''}
@@ -180,7 +196,8 @@ function CartaoDaCidade({ cidade, pessoas, aoAbrir }: { cidade: CidadeDaNoite; p
             </Text>
           </View>
         ) : null}
-      </Cartao>
+        </View>
+      </View>
     </Pressable>
   )
 }

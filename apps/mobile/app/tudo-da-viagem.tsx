@@ -34,7 +34,7 @@ export default function TudoDaViagem() {
     { Icone: Route, t: 'Cidades do roteiro', s: 'Datas e tirar cidade', rota: '/cidades' },
     { Icone: BedDouble, t: 'Hospedagem', s: 'Onde dormir cada noite', rota: '/hospedagem' },
     { Icone: Car, t: 'Passagens', s: 'O que falta decidir e comprar', rota: '/transportes' },
-    { Icone: Users, t: 'Comboio', s: 'Quem vai e papéis', rota: '/comboio' },
+    { Icone: Users, t: 'Galera', s: 'Quem vai e papéis', rota: '/comboio' },
     // Congelado pelo RUMO (03/11/2026): documentos de entrada
     ...(CONGELADO.documentos ? [] : [{ Icone: FileCheck, t: 'Documentos', s: 'Visto e passaporte', rota: '/documentos' }]),
     { Icone: Sparkles, t: 'Retrospectiva', s: 'A viagem em números', rota: '/retrospectiva' },
@@ -93,7 +93,7 @@ export default function TudoDaViagem() {
           </>
         )}
 
-        <RotuloDeSecao>Do comboio</RotuloDeSecao>
+        <RotuloDeSecao>Da galera</RotuloDeSecao>
         {/* Spec 019, 031, 020, 021 e roadmap #7 */}
         <Avisos viagemId={viagem.id} euSouAdm={euSouAdm} />
         {/* Congelado pelo RUMO (03/11/2026): central de novidades */}

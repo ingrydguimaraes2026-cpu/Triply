@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norti, caminho B (Embarque): todas as telas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="icones.js"></script>
+<style>
+/* Paleta Couro e laranja (apps/web/src/styles/global.css). Nada fora dela. */
+:root{--couro:#7B542F;--caramelo:#B97A22;--dourado:#E3A04A;--chip:#F6EAD7;--creme:#F5E9D6;--escuro:#4A2E14;--fundo:#FBF3E6;--texto:#3B2715;--suave:#7A5F45;--borda:#EADCC6;--areia:#F1E4CF;--verde:#5E6B2E;--vermelho:#A1442B}
+*{box-sizing:border-box}
+body{margin:0;background:#EFE3CF;color:var(--texto);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+code{background:var(--chip);border-radius:5px;padding:1px 5px;font-size:.9em}
+.pagina{max-width:1240px;margin:0 auto;padding:36px 16px 120px}
+.topo h1{font-family:Fraunces,serif;font-weight:600;font-size:clamp(30px,4.6vw,50px);letter-spacing:-.02em;margin:0 0 10px;line-height:1.04}
+.topo p{max-width:780px;font-size:16.5px;line-height:1.55;color:#6E5540;margin:0 0 10px}
+.aviso{background:var(--escuro);color:var(--creme);border-radius:16px;padding:12px 16px;margin:14px 0;max-width:780px;font-size:14.5px;line-height:1.5}
+.aviso b{color:var(--dourado)}
+a{color:var(--couro)}
+
+.palco-prot{display:grid;grid-template-columns:330px minmax(0,1fr);gap:28px;align-items:start;margin-top:22px}
+@media (max-width:900px){.palco-prot{grid-template-columns:minmax(0,1fr)}}
+.coluna-fone{position:sticky;top:16px;display:flex;flex-direction:column;align-items:center;gap:12px}
+@media (max-width:900px){.coluna-fone{position:static}}
+.controles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chave{display:inline-flex;background:#fff;border-radius:999px;padding:3px;border:1px solid var(--borda)}
+.chave button{border:0;background:transparent;font:600 12.5px Inter;color:var(--suave);padding:7px 12px;border-radius:999px;cursor:pointer}
+.chave button.on{background:var(--escuro);color:var(--creme)}
+.dica{font-size:12.5px;color:var(--suave);text-align:center;max-width:300px;line-height:1.4}
+
+.mapa h2,.secao h2{font-family:Fraunces,serif;font-weight:600;font-size:28px;margin:0 0 6px;letter-spacing:-.01em}
+.mapa > p{color:#6E5540;margin:0 0 14px;line-height:1.5}
+.grupo{background:#fff;border-radius:20px;padding:14px 16px;margin-bottom:12px}
+.grupo h3{margin:0 0 4px;font:700 15px 'Inter Tight';letter-spacing:-.01em}
+.grupo p{margin:0 0 10px;font-size:13.5px;color:var(--suave);line-height:1.45}
+.botoes{display:flex;flex-wrap:wrap;gap:6px}
+.botoes button{border:1px solid var(--borda);background:var(--fundo);color:var(--texto);font:600 12.5px Inter;padding:7px 11px;border-radius:999px;cursor:pointer}
+.botoes button.on{background:var(--dourado);border-color:var(--dourado)}
+.regras{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.regra{background:#fff;border-radius:18px;padding:14px 16px}
+.regra b{display:block;font:700 15px 'Inter Tight';margin-bottom:4px;letter-spacing:-.01em}
+.regra p{margin:0;font-size:13.8px;line-height:1.5;color:#6E5540}
+.regra .antes{display:block;margin-top:6px;font-size:12.5px;color:var(--vermelho)}
+.secao{margin-top:56px}
+.secao > p{color:#6E5540;margin:0 0 18px;max-width:800px;line-height:1.5}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(204px,1fr));gap:22px 14px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
+.mini .moldura{width:204px;height:436px;overflow:hidden;border-radius:30px}
+.mini .fone{transform:scale(.68);transform-origin:top left}
+.mini > span{font:600 12.5px Inter;color:var(--texto);text-align:center}
+
+.tabela{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:18px;overflow:hidden;min-width:640px}
+.tabela th,.tabela td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--borda);vertical-align:top;line-height:1.45}
+.tabela th{font:600 11px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);background:var(--fundo)}
+.rolar-tab{overflow-x:auto;border-radius:18px}
+.fim{background:var(--escuro);color:var(--creme);border-radius:26px;padding:24px;margin-top:44px}
+.fim h2{font-family:Fraunces,serif;font-weight:600;font-size:28px;margin:0 0 8px}
+.fim p{margin:0 0 6px;line-height:1.55;color:rgba(245,233,214,.85)}
+.fim b{color:var(--dourado)}
+
+/* ================= celular ================= */
+.fone{width:300px;height:640px;border-radius:46px;padding:9px;background:#1E150D;box-shadow:0 24px 48px rgba(74,46,20,.28),inset 0 0 0 2px #3a2a1b;position:relative;flex:none}
+.vista{width:282px;height:622px;border-radius:38px;overflow:hidden;position:relative;isolation:isolate;background:#3B2715}
+.ilha{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:86px;height:25px;border-radius:20px;background:#000;z-index:90;pointer-events:none}
+.t{position:absolute;inset:0;overflow:hidden;font-family:Inter,sans-serif;display:none}
+.t.ativa,.mini .t{display:block}
+.t .rola{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:96px}
+.t .rola::-webkit-scrollbar{display:none}
+.status{position:absolute;top:13px;left:26px;right:24px;display:flex;justify-content:space-between;font:600 12.5px Inter;z-index:80;color:var(--tx);pointer-events:none}
+.status i{width:22px;height:11px;border-radius:3px;border:1.5px solid currentColor;opacity:.8}
+.ic{display:inline-flex;flex:none;width:20px;height:20px}
+.ic svg,.selo svg{width:100%;height:100%;display:block}
+.selo{display:inline-flex;flex:none;color:var(--traco)}
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#FFF6E8;font:700 10px Inter;flex:none;width:26px;height:26px}
+.rostos{display:flex}.rostos .av{margin-left:-7px;border:2px solid var(--bg)}.rostos .av:first-child{margin-left:0}
+.foto{background-size:cover;background-position:center;background-color:var(--sup2)}
+[data-ir],[data-voltar],[data-aba-ir]{cursor:pointer}
+
+/* temas: momentos são sempre escuros; telas de trabalho seguem a chave */
+.t,.folha{--bg:#3B2715;--sup:rgba(245,233,214,.07);--sup2:rgba(245,233,214,.12);--tx:#F5E9D6;--tx2:rgba(245,233,214,.64);--linha:rgba(245,233,214,.1);--acento:#E3A04A;--acento-tx:#3B2715;--traco:#4A2E14;--vidro:rgba(36,23,11,.88);--sombra:0 10px 30px rgba(0,0,0,.35);
+  background:radial-gradient(120% 45% at 50% 0%,#4A2E14 0%,#3B2715 70%);color:var(--tx)}
+.creme .t.trab{--bg:#FBF3E6;--sup:#FFFFFF;--sup2:#F6EAD7;--tx:#3B2715;--tx2:#7A5F45;--linha:#EADCC6;--acento:#7B542F;--acento-tx:#F5E9D6;--vidro:rgba(255,253,248,.78);--sombra:0 6px 18px rgba(74,46,20,.08);background:#FBF3E6}
+.t.momento{background:radial-gradient(120% 70% at 50% 30%,#7B542F 0%,#4A2E14 46%,#3B2715 100%)}
+.luz{position:absolute;left:50%;width:320px;height:320px;margin-left:-160px;border-radius:50%;background:radial-gradient(circle,rgba(227,160,74,.5),rgba(227,160,74,0) 65%);pointer-events:none}
+
+/* tipografia B */
+.tt{font:800 30px/1 'Inter Tight';letter-spacing:-.035em;margin:0}
+.tt.g{font-size:36px}
+.rot{font:600 10.5px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2)}
+.lead{font:500 14px/1.45 Inter;color:var(--tx2);margin:0}
+.num{font:800 54px/.9 'Inter Tight';letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.pad{padding:0 18px}
+
+/* cabeçalho de dentro da viagem: o mesmo em todas as abas */
+.cab{position:sticky;top:0;z-index:20;padding:44px 14px 8px;display:flex;align-items:center;gap:8px;background:linear-gradient(var(--bg) 70%,transparent)}
+.cab .viagem{display:flex;align-items:center;gap:6px;background:var(--sup);border:1px solid var(--linha);border-radius:999px;padding:5px 10px 5px 5px;font:700 13px 'Inter Tight'}
+.cab .viagem .foto{width:22px;height:22px;border-radius:50%}
+.cab .esp{flex:1}
+.cab .bt{width:34px;height:34px;border-radius:50%;background:var(--sup);border:1px solid var(--linha);display:flex;align-items:center;justify-content:center}
+.titulo-aba{padding:6px 18px 12px}
+.titulo-aba .tt{font-size:32px}
+
+/* barra de abas: a mesma sempre, com nome embaixo de cada ícone */
+.abas{position:absolute;left:10px;right:10px;bottom:12px;height:58px;border-radius:24px;background:var(--vidro);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--linha);display:none;justify-content:space-around;align-items:center;z-index:70;color:var(--tx2)}
+.abas.mostra{display:flex}
+.abas span{display:flex;flex-direction:column;align-items:center;gap:2px;font:600 10px Inter;color:var(--tx);opacity:.72;padding:6px 6px;border-radius:14px;min-width:50px}
+.abas span.on{color:var(--acento);opacity:1}
+.abas span.on .ic{transform:translateY(-1px)}
+
+/* peças */
+.cartao{background:var(--sup);border:1px solid var(--linha);border-radius:20px;box-shadow:var(--sombra)}
+.linha-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--linha)}
+.linha-item:last-child{border-bottom:0}
+.linha-item .txt{flex:1;min-width:0}
+.linha-item .txt b{display:block;font:700 14.5px 'Inter Tight';letter-spacing:-.01em}
+.linha-item .txt small{display:block;font-size:12.5px;color:var(--tx2);margin-top:1px}
+.quad{width:38px;height:38px;border-radius:12px;background:var(--sup2);display:flex;align-items:center;justify-content:center;flex:none;color:var(--tx)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:27px;border:0;font:700 15.5px 'Inter Tight';letter-spacing:-.01em;width:100%;cursor:pointer}
+.btn.pri{background:var(--creme);color:#3B2715}
+.trab .btn.pri{background:var(--acento);color:var(--acento-tx)}
+.creme .trab .btn.pri{box-shadow:0 8px 20px rgba(123,84,47,.28)}
+.btn.sec{background:var(--sup);color:var(--tx);border:1px solid var(--linha)}
+.btn.fant{background:transparent;color:var(--tx2);height:44px}
+.rodape-btn{position:absolute;left:16px;right:16px;bottom:24px;display:flex;flex-direction:column;gap:6px;z-index:30}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--sup);border:1px solid var(--linha);border-radius:999px;padding:6px 11px;font:600 12.5px Inter;color:var(--tx)}
+.chip.on{background:var(--acento);color:var(--acento-tx);border-color:transparent}
+.seg{display:flex;gap:5px}
+.seg i{flex:1;height:4px;border-radius:3px;background:var(--sup2)}
+.seg i.on{background:var(--dourado)}
+.fab{position:absolute;right:16px;bottom:84px;height:50px;border-radius:25px;padding:0 18px 0 14px;background:var(--acento);color:var(--acento-tx);display:flex;align-items:center;gap:6px;font:700 14.5px 'Inter Tight';z-index:60;box-shadow:0 10px 24px rgba(0,0,0,.3);border:0}
+.secao-t{display:flex;justify-content:space-between;align-items:baseline;margin:22px 18px 10px}
+.secao-t a{font:600 12.5px Inter;color:var(--acento);text-decoration:none}
+.creme .secao-t a{color:var(--caramelo)}
+
+/* bilhete (objeto-herói, sempre creme) */
+.palco3d{perspective:900px;display:flex;justify-content:center}
+.bilhete{width:196px;border-radius:22px;background:var(--creme);color:#3B2715;position:relative;transform-style:preserve-3d;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.42)}
+.bilhete .ft{height:118px}
+.bilhete .lin{padding:10px 14px 0;display:flex;justify-content:space-between;align-items:flex-end}
+.bilhete .lin b{font:800 28px 'Inter Tight';letter-spacing:-.03em;line-height:1}
+.bilhete .lin small{display:block;font:600 8.5px Inter;letter-spacing:.14em;color:var(--suave);margin-bottom:3px}
+.bilhete .picote{margin:11px 0 0;border-top:2px dashed #EADCC6;position:relative}
+.bilhete .picote:before,.bilhete .picote:after{content:"";position:absolute;top:-10px;width:18px;height:18px;border-radius:50%;background:var(--bg)}
+.bilhete .picote:before{left:-9px}.bilhete .picote:after{right:-9px}
+.bilhete .rd{padding:9px 14px 12px;display:flex;justify-content:space-between;align-items:center;font:600 10.5px Inter;color:var(--suave)}
+.bilhete .rd .av{width:22px;height:22px;font-size:8px;border:2px solid var(--creme);margin-left:-7px}
+.bilhete .brilho{position:absolute;inset:-40%;background:linear-gradient(105deg,transparent 40%,rgba(255,246,232,.75) 50%,transparent 60%);transform:translateX(-120%);pointer-events:none;mix-blend-mode:soft-light}
+.bilhete .carimbo{position:absolute;right:8px;top:34px;width:72px;height:72px;opacity:0;color:#4A2E14;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.bilhete.p{width:150px}.bilhete.p .ft{height:84px}.bilhete.p .lin b{font-size:21px}
+
+/* telas específicas */
+.campo{display:flex;align-items:center;gap:10px;height:52px;border-radius:18px;background:var(--sup);border:1px solid var(--linha);padding:0 14px;color:var(--tx2);font-size:15px}
+.campo b{color:var(--tx);font-weight:600}
+.cursor{width:2px;height:20px;background:var(--dourado);animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+.destinos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.destino{height:104px;border-radius:18px;position:relative;overflow:hidden}
+.destino:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(42,27,13,.85))}
+.destino b{position:absolute;left:10px;bottom:9px;z-index:2;font:800 16px 'Inter Tight';color:#F5E9D6;letter-spacing:-.02em}
+.destino small{position:absolute;left:10px;bottom:28px;z-index:2;font:600 9.5px Inter;color:rgba(245,233,214,.75);letter-spacing:.1em}
+.mes{display:grid;grid-template-columns:repeat(7,1fr);gap:4px 0;text-align:center;font:600 13px Inter}
+.mes .s{font:600 10px Inter;color:var(--tx2);padding-bottom:6px}
+.mes .d{height:34px;display:flex;align-items:center;justify-content:center;color:var(--tx)}
+.mes .d.f{color:var(--tx2);opacity:.4}
+.mes .d.r{background:rgba(227,160,74,.22)}
+.mes .d.ini,.mes .d.fim2{background:var(--dourado);color:#3B2715;border-radius:12px}
+.mes .d.ini{border-radius:12px 0 0 12px}.mes .d.fim2{border-radius:0 12px 12px 0}
+.link-conv{display:flex;align-items:center;gap:10px;padding:12px 14px;font:700 15px 'Inter Tight'}
+.apps-comp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;font:600 11px Inter;color:var(--tx2)}
+.apps-comp div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.apps-comp span{width:50px;height:50px;border-radius:16px;background:var(--sup2);display:flex;align-items:center;justify-content:center;color:var(--tx)}
+.carteira{position:relative;height:430px;margin-top:10px}
+.carteira .bil{position:absolute;left:18px;right:18px;border-radius:22px;overflow:hidden;background:var(--creme);color:#3B2715;box-shadow:0 -8px 24px rgba(0,0,0,.3)}
+.carteira .bil .ft{height:150px;position:relative}
+.carteira .bil .ft:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(42,27,13,.65),transparent 45%)}
+.carteira .bil .ft b{position:absolute;left:14px;top:14px;z-index:2;color:#F5E9D6;font:800 26px 'Inter Tight';letter-spacing:-.03em}
+.carteira .bil .ft em{position:absolute;right:12px;top:12px;z-index:2;font:700 11px Inter;font-style:normal;background:var(--dourado);color:#3B2715;padding:4px 9px;border-radius:999px}
+.carteira .bil .inf{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 12px;font:600 11.5px Inter;color:var(--suave)}
+.carteira .bil .inf b{font:800 15px 'Inter Tight';color:#3B2715;letter-spacing:-.01em}
+.carteira .bil.passada{filter:saturate(.6)}
+.carteira .bil .sel{position:absolute;right:12px;top:6px;z-index:3;width:54px;height:54px;color:#4A2E14;transform:rotate(-12deg)}
+.prox{margin:0 14px;padding:14px;display:flex;gap:12px;align-items:center}
+.prox .txt{flex:1}
+.prox .txt small{display:block;font:600 10px Inter;letter-spacing:.14em;color:var(--dourado);text-transform:uppercase;margin-bottom:3px}
+.creme .trab .prox .txt small{color:var(--caramelo)}
+.prox .txt b{display:block;font:800 18px/1.1 'Inter Tight';letter-spacing:-.02em}
+.prox .txt span{display:block;font-size:12.5px;color:var(--tx2);margin-top:3px}
+.prox .ir{height:38px;padding:0 14px;border-radius:19px;background:var(--acento);color:var(--acento-tx);display:flex;align-items:center;font:700 13px 'Inter Tight'}
+.fases{display:flex;gap:6px;justify-content:center;margin:10px 0 0}
+.dias{display:flex;gap:6px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+.dias::-webkit-scrollbar{display:none}
+.dia{flex:none;width:48px;height:60px;border-radius:16px;background:var(--sup);border:1px solid var(--linha);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:600 10px Inter;color:var(--tx2)}
+.dia b{font:800 18px 'Inter Tight';color:var(--tx)}
+.dia.on{background:var(--acento);border-color:transparent;color:var(--acento-tx)}
+.dia.on b{color:var(--acento-tx)}
+.linhadotempo{margin:0 14px;position:relative}
+.linhadotempo:before{content:"";position:absolute;left:31px;top:20px;bottom:20px;width:2px;background:var(--linha)}
+.parada{display:flex;gap:12px;align-items:center;padding:8px 0;position:relative}
+.parada .hora{width:40px;text-align:right;font:700 11.5px Inter;color:var(--tx2)}
+.parada .pt{width:12px;height:12px;border-radius:50%;background:var(--bg);border:2.5px solid var(--dourado);flex:none;z-index:1;margin-left:-26px;margin-right:2px;display:none}
+.parada .cartao{flex:1;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.parada .cartao b{display:block;font:700 14px 'Inter Tight';letter-spacing:-.01em}
+.parada .cartao small{display:block;font-size:11.5px;color:var(--tx2)}
+.etq{font:700 9.5px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--dourado);background:rgba(227,160,74,.14);padding:3px 7px;border-radius:6px;margin-left:auto;flex:none}
+.creme .trab .etq{color:var(--caramelo)}
+.etq-t{color:var(--dourado);font-weight:700}
+.creme .trab .etq-t{color:var(--caramelo)}
+.ideias{display:flex;gap:10px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+.ideias::-webkit-scrollbar{display:none}
+.ideia{flex:none;width:132px}
+.ideia .foto{height:150px;border-radius:18px;position:relative}
+.ideia .foto .rostos{position:absolute;left:8px;bottom:8px}
+.ideia .foto .rostos .av{border-color:#3B2715}
+.ideia b{display:block;font:700 13.5px 'Inter Tight';margin-top:6px;letter-spacing:-.01em}
+.ideia small{font-size:11.5px;color:var(--tx2)}
+.baralho{position:relative;height:400px;margin:4px 18px 0}
+.carta{position:absolute;inset:0;isolation:isolate;border-radius:26px;overflow:hidden;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+.carta:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(42,27,13,.9))}
+.carta .tx{position:absolute;left:16px;right:16px;bottom:16px;z-index:2;color:#F5E9D6}
+.carta .tx b{display:block;font:800 26px/1 'Inter Tight';letter-spacing:-.03em}
+.carta .tx small{font:500 13px Inter;color:rgba(245,233,214,.78)}
+.carta .selo-quero{position:absolute;top:18px;left:16px;z-index:3;font:800 18px 'Inter Tight';color:#3B2715;background:var(--dourado);padding:6px 12px;border-radius:10px;transform:rotate(-10deg);opacity:0}
+.escolhas{display:flex;justify-content:center;gap:18px;margin-top:14px}
+.escolhas span{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--sup);border:1px solid var(--linha);color:var(--tx)}
+.escolhas span.q{background:var(--dourado);color:#3B2715;border:0;width:66px;height:66px}
+.segmento{display:flex;background:var(--sup);border:1px solid var(--linha);border-radius:999px;padding:3px;margin:0 18px}
+.segmento span{flex:1;text-align:center;padding:9px 0;border-radius:999px;font:700 13px 'Inter Tight';color:var(--tx2)}
+.segmento span.on{background:var(--acento);color:var(--acento-tx)}
+.passagem{margin:0 14px 10px;padding:0;overflow:hidden}
+.passagem .top{display:flex;justify-content:space-between;align-items:flex-end;padding:14px 16px 10px}
+.passagem .top b{font:800 26px/1 'Inter Tight';letter-spacing:-.03em}
+.passagem .top small{display:block;font:600 9px Inter;letter-spacing:.14em;color:var(--tx2);margin-bottom:4px}
+.passagem .meio{display:flex;flex-direction:column;align-items:center;color:var(--tx2);font:600 10.5px Inter;gap:2px;padding-bottom:4px}
+.passagem .pic{border-top:2px dashed var(--linha);position:relative}
+.passagem .pic:before,.passagem .pic:after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--bg)}
+.passagem .pic:before{left:-9px}.passagem .pic:after{right:-9px}
+.passagem .bx{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 12px;font-size:12px;color:var(--tx2)}
+.opcao{margin:0 14px 10px;overflow:hidden}
+.opcao .foto{height:118px;position:relative}
+.opcao .foto em{position:absolute;left:10px;top:10px;font:700 10.5px Inter;font-style:normal;background:var(--dourado);color:#3B2715;padding:4px 9px;border-radius:999px}
+.opcao .cp{padding:11px 14px;display:flex;align-items:center;gap:10px}
+.opcao .cp .txt{flex:1}
+.opcao .cp b{display:block;font:700 15px 'Inter Tight';letter-spacing:-.01em}
+.opcao .cp small{display:block;font-size:12px;color:var(--tx2)}
+.votar{height:36px;padding:0 14px;border-radius:18px;background:var(--sup2);color:var(--tx);font:700 13px 'Inter Tight';display:flex;align-items:center;gap:6px}
+.votar.on{background:var(--acento);color:var(--acento-tx)}
+.saldo{margin:2px 14px 0;padding:18px 16px 16px}
+.saldo .num{font-size:50px}
+.saldo .acoes{display:flex;gap:8px;margin-top:14px}
+.saldo .acoes .btn{height:44px;font-size:14px}
+.quem-deve{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--linha);font-size:13.5px}
+.quem-deve:last-child{border:0}
+.quem-deve b{font:700 14px 'Inter Tight'}
+.quem-deve .val{margin-left:auto;font:800 15px 'Inter Tight'}
+.visor{text-align:center;padding:20px 0 8px}
+.visor .num{font-size:60px}
+.visor .num small{font-size:26px;vertical-align:top;margin-right:4px;font-weight:700;opacity:.7}
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 18px;margin-top:6px}
+.teclado span{height:42px;display:flex;align-items:center;justify-content:center;font:600 20px 'Inter Tight';border-radius:14px;color:var(--tx)}
+.dividir{display:flex;gap:8px;justify-content:center;margin:6px 0 8px}
+.dividir .av{width:36px;height:36px;font-size:11px;position:relative}
+.dividir .av.fora{opacity:.3}
+.mosaico{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 14px}
+.mosaico .foto{border-radius:14px;height:120px}
+.mosaico .foto.alta{grid-row:span 2;height:244px}
+.post-cab{display:flex;align-items:center;gap:8px;margin:6px 18px 10px;font-size:13px}
+.post-cab b{font:700 13.5px 'Inter Tight'}
+.pessoa{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--linha)}
+.pessoa:last-child{border:0}
+.pessoa .av{width:40px;height:40px;font-size:13px}
+.pessoa .txt{flex:1}
+.pessoa .txt b{display:block;font:700 14.5px 'Inter Tight'}
+.pessoa .txt small{display:block;font-size:12px;color:var(--tx2)}
+.estado{font:700 11px Inter;padding:4px 9px;border-radius:999px;background:var(--sup2);color:var(--tx2)}
+.estado.ok{background:rgba(94,107,46,.25);color:#C9D39A}
+.creme .trab .estado.ok{background:#EEF0DF;color:#5E6B2E}
+.selos-grade{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 18px}
+.selos-grade div{aspect-ratio:1;border-radius:20px;background:var(--sup);border:1px solid var(--linha);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:600 10px Inter;color:var(--tx2)}
+.selos-grade .selo{width:52px;height:52px;color:var(--traco)}
+.selos-grade div.falta{border-style:dashed;opacity:.5}
+.retro{margin:0 14px;height:190px;border-radius:24px;overflow:hidden;position:relative}
+.retro .foto{position:absolute}
+.retro:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(42,27,13,.9))}
+.retro .tx{position:absolute;left:14px;bottom:12px;right:14px;z-index:2;color:#F5E9D6;display:flex;align-items:flex-end;justify-content:space-between}
+.retro .tx b{font:800 20px/1.05 'Inter Tight';letter-spacing:-.02em}
+.retro .play{width:44px;height:44px;border-radius:50%;background:var(--creme);color:#3B2715;display:flex;align-items:center;justify-content:center}
+.hoje-agora{margin:0 14px;padding:16px}
+.hoje-agora .hora{font:800 46px/.9 'Inter Tight';letter-spacing:-.04em}
+.clima{display:flex;gap:8px;margin:0 14px}
+.clima .cartao{flex:1;padding:12px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx2)}
+.clima .cartao b{display:block;font:800 18px 'Inter Tight';color:var(--tx)}
+.veu{position:absolute;inset:0;background:rgba(20,12,5,.55);z-index:75;display:none}
+.veu.mostra{display:block}
+.folha{position:absolute;left:0;right:0;bottom:0;z-index:76;border-radius:28px 28px 0 0;padding:10px 18px 26px;display:none;background:var(--bg);color:var(--tx)}
+.folha .pegador{width:38px;height:5px;border-radius:3px;background:var(--linha);margin:0 auto 14px}
+.faisca{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--dourado);left:50%;opacity:0;z-index:5}
+.segurar{position:relative;height:58px;border-radius:29px;background:rgba(245,233,214,.1);border:1px solid rgba(245,233,214,.18);overflow:hidden;cursor:pointer;user-select:none;touch-action:none}
+.segurar .enche{position:absolute;inset:0;background:linear-gradient(90deg,#B97A22,#E3A04A 70%,#F5E9D6);transform-origin:left;transform:scaleX(0);box-shadow:0 0 30px rgba(227,160,74,.8)}
+.segurar .r{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;font:700 16px 'Inter Tight';color:var(--creme)}
+.url{position:absolute;top:40px;left:14px;right:14px;height:30px;border-radius:10px;background:rgba(245,233,214,.08);display:flex;align-items:center;justify-content:center;gap:5px;font:500 11.5px Inter;color:rgba(245,233,214,.6);z-index:5}
+.primeira-vez{position:absolute;left:12px;right:12px;bottom:84px;z-index:65;padding:14px;display:none;gap:12px;align-items:center;background:var(--creme);color:#3B2715;border-radius:20px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.primeira-vez b{display:block;font:800 15px 'Inter Tight';letter-spacing:-.01em}
+.primeira-vez small{display:block;font-size:12px;color:var(--suave);line-height:1.35;margin-top:2px}
+.primeira-vez .ok{font:700 12.5px 'Inter Tight';background:#3B2715;color:#F5E9D6;border-radius:14px;padding:8px 12px;cursor:pointer}
+
+/* ===== aplicado das referências do App Store Tracker (10/11) ===== */
+/* capa da viagem: foto do destino em tela cheia (Tripsy, Luggo) */
+.capa{position:relative;height:330px;margin-bottom:-6px}
+.capa .foto{position:absolute;inset:0}
+.capa:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(30,18,8,.45) 0%,transparent 30%,transparent 45%,rgba(30,18,8,.82) 100%)}
+.capa .tx{position:absolute;left:18px;right:18px;bottom:20px;z-index:2;color:#F5E9D6}
+.capa .tx h1{font:800 46px/.92 'Inter Tight';letter-spacing:-.045em;margin:0}
+.capa .tx p{margin:6px 0 0;font:600 13px Inter;color:rgba(245,233,214,.82)}
+.com-capa .cab{position:absolute;left:0;right:0;background:none}
+.contador{display:flex;align-items:flex-end;justify-content:space-between;padding:18px 18px 0}
+.contador .num{font-size:76px;line-height:.82}
+.contador .lead{margin-top:6px}
+.contador .vao{text-align:right;font:600 12px Inter;color:var(--tx2)}
+.contador .vao .rostos{justify-content:flex-end;margin-bottom:6px}
+.contador .vao .av{width:30px;height:30px;font-size:9.5px}
+/* próximo passo: faixa fixa no pé, sempre no mesmo lugar (Wanderlog) */
+.faixa-passo{position:absolute;left:10px;right:10px;bottom:78px;z-index:40;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:20px;background:#4A2E14;color:#F5E9D6;box-shadow:0 12px 28px rgba(74,46,20,.35);cursor:pointer}
+.faixa-passo .txt{flex:1;min-width:0}
+.faixa-passo small{display:block;font:600 9.5px Inter;letter-spacing:.14em;text-transform:uppercase;color:#E3A04A}
+.faixa-passo b{display:block;font:800 14.5px/1.15 'Inter Tight';letter-spacing:-.015em}
+.faixa-passo span.q{font:500 11.5px Inter;color:rgba(245,233,214,.7)}
+.faixa-passo .ir{height:36px;padding:0 14px;border-radius:18px;background:#E3A04A;color:#3B2715;display:flex;align-items:center;font:700 13px 'Inter Tight';flex:none}
+/* convite web: foto, rostos e três bolhas (Partiful, Howbout) */
+.conv-foto{position:absolute;left:0;right:0;top:0;height:380px}
+.conv-foto:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(30,18,8,.5),transparent 28%,rgba(59,39,21,.25) 55%,#3B2715 100%)}
+.conv-tx{position:absolute;left:20px;right:20px;top:240px;z-index:3}
+.conv-tx .quem{display:flex;align-items:center;gap:8px;font:600 13px Inter;color:rgba(245,233,214,.88)}
+.conv-tx h1{font:800 33px/.95 'Inter Tight';letter-spacing:-.04em;margin:10px 0 0;color:#F5E9D6}
+.conv-tx .qd{margin:8px 0 0;font:600 13px Inter;color:var(--dourado)}
+.toparam{position:absolute;left:20px;right:20px;top:420px;display:flex;align-items:center;gap:10px;font:500 13px/1.3 Inter;color:var(--tx2);z-index:3}
+.toparam .av{width:34px;height:34px;font-size:10.5px}
+.toparam b{color:var(--tx);font-weight:700}
+.bolhas{display:flex;gap:8px}
+.bolha{flex:1;height:84px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font:700 13.5px 'Inter Tight';background:rgba(245,233,214,.08);border:1px solid rgba(245,233,214,.14);color:var(--tx);cursor:pointer}
+.bolha .ic{width:24px;height:24px}
+.bolha.sim{flex:1.5;background:var(--dourado);color:#3B2715;border:0;box-shadow:0 10px 30px rgba(227,160,74,.45);font-size:16px}
+/* prévia do convite no chat da galera (Rhyme) */
+.chat{background:#2A1B0E;border-radius:20px;padding:12px;margin:0 0 14px}
+.chat .nome-grupo{font:600 10.5px Inter;color:rgba(245,233,214,.55);text-align:center;margin-bottom:8px;letter-spacing:.06em}
+.chat .msg{margin-left:auto;width:82%;background:#5A3A1C;border-radius:16px 16px 4px 16px;overflow:hidden}
+.chat .msg .foto{height:92px}
+.chat .msg .cp{padding:8px 10px}
+.chat .msg b{display:block;font:800 14px/1.15 'Inter Tight';color:#F5E9D6;letter-spacing:-.01em}
+.chat .msg small{display:block;font:500 11px Inter;color:rgba(245,233,214,.65);margin-top:2px}
+.chat .msg .url2{font:600 10.5px Inter;color:var(--dourado);margin-top:4px}
+</style>
+</head>
+<body class="creme">
+<div class="pagina">
+<header class="topo">
+  <h1>Caminho B, Embarque:<br>todas as telas do app</h1>
+  <p>O app inteiro no caminho escolhido: o primeiro uso, o convite na web e as 5 partes da viagem (Viagem, Roteiro, Reservas, Contas, Fotos), com as telas que saem delas. O foco é o que a Ingryd apontou: <b>depois do primeiro uso a pessoa se perde</b>. Por isso a navegação também foi redesenhada, não só o visual.</p>
+  <div class="aviso"><b>Abra no Chrome.</b> O celular da esquerda é clicável: toque nos cartões, nas abas e nos botões como no app. À direita, os atalhos pulam direto pra qualquer tela. Mais embaixo estão todas as telas lado a lado.</div>
+</header>
+
+<div class="palco-prot">
+  <div class="coluna-fone">
+    <div class="fone"><div class="vista" id="vista">
+      <div class="ilha"></div>
+      <div class="status"><span>9:41</span><i></i></div>
+      <div class="veu" id="veu"></div>
+      <div class="abas" id="abas"></div>
+      <div class="primeira-vez" id="primeiraVez"></div>
+    </div></div>
+    <div class="controles">
+      <div class="chave" id="chaveTema"><button data-tema="creme" class="on">Trabalho em creme</button><button data-tema="escuro">Tudo escuro</button></div>
+    </div>
+    <p class="dica"><b>Decidido (10/11): trabalho em creme.</b> Escuro só nos momentos (abertura, viagem pronta, convite, carimbo, descobrir); as abas e listas em creme. "Tudo escuro" fica só pra comparar.</p>
+  </div>
+
+  <div class="mapa">
+    <h2>Mapa do app</h2>
+    <p>Fora de uma viagem só existe a tela <b>Suas viagens</b>. Dentro dela, sempre as mesmas 5 abas, o mesmo cabeçalho (qual viagem, quem vai, ajustes) e um só "próximo passo". Toque pra abrir no celular.</p>
+    <div class="grupo"><h3>1. Primeiro uso de quem organiza (app)</h3><p>Promessa, pra onde, quando, viagem pronta, chamar a galera. A conta só é pedida no fim, depois que a viagem já existe.</p><div class="botoes" data-grupo="entrada"></div></div>
+    <div class="grupo"><h3>2. Quem foi convidado (web leve, sem baixar)</h3><p>Abre o link, vê quem já topou e responde com um toque (tô dentro, talvez, não dá). Zero perguntas.</p><div class="botoes" data-grupo="convite"></div></div>
+    <div class="grupo"><h3>3. Fora da viagem</h3><p>As viagens como bilhetes numa carteira: a próxima na frente, as antigas carimbadas atrás.</p><div class="botoes" data-grupo="fora"></div></div>
+    <div class="grupo"><h3>4. Viagem (a casa), em 3 fases</h3><p>Antes: o próximo passo. Durante: o "Hoje" com as reservas do grupo. Depois: o passaporte carimbado e a história pronta. A galera abre pelos rostos do cabeçalho.</p><div class="botoes" data-grupo="viagem"></div></div>
+    <div class="grupo"><h3>5. As outras 4 abas</h3><p>Cada aba responde uma pergunta e tem um só botão principal, sempre no mesmo canto.</p><div class="botoes" data-grupo="abas"></div></div>
+  </div>
+</div>
+
+<section class="secao">
+  <h2>Por que a pessoa não se perde</h2>
+  <p>Cada regra resolve uma confusão que já vimos no primeiro uso (<code>docs/PRIMEIRO-USO-2026-11-09.md</code>).</p>
+  <div class="regras">
+    <div class="regra"><b>Um assunto, um nome, um ícone</b><p>Os nomes das abas são os únicos nomes. A Viagem resume as outras 4 abas com o mesmo ícone e o mesmo nome, e tocar no resumo leva pra aba.</p><span class="antes">Hoje: Passagens, Transporte, Deslocamento e Chegar são a mesma coisa.</span></div>
+    <div class="regra"><b>Um próximo passo só</b><p>A Viagem mostra uma coisa pra fazer agora, num cartão só. Resolveu, o carimbo bate e aparece o próximo.</p><span class="antes">Hoje: "Próximo carimbo", "Passaporte (0 de 6)" e "Carimbos" na mesma tela.</span></div>
+    <div class="regra"><b>Sempre sabe onde está</b><p>O cabeçalho é igual em toda aba: o nome e a foto da viagem (toque pra trocar de viagem), os rostos da galera e os ajustes. O título grande diz a aba.</p><span class="antes">Hoje: Roteiro, Contas e Fotos mostram "a viagem escolhida" sem dizer qual.</span></div>
+    <div class="regra"><b>Nada escondido no "..."</b><p>O "Tudo da viagem" acaba. Cada coisa mora dentro da aba do assunto dela (papéis na Galera, hospedagem em Reservas, recibo em Contas).</p><span class="antes">Hoje: uns 20 itens de uma vez atrás do "...".</span></div>
+    <div class="regra"><b>Um botão principal por aba, no mesmo lugar</b><p>Embaixo, à direita, acima das abas: Adicionar (Roteiro), Adicionar reserva, Lançar gasto, Publicar. O convite é sempre "Chamar a galera".</p><span class="antes">Hoje: "+ Convidar", "Chamar a galera" e "Comboio" fazem a mesma coisa.</span></div>
+    <div class="regra"><b>Ensina na hora, não antes</b><p>Na primeira vez em cada aba sobe um aviso de uma linha dizendo pra que ela serve, com um "Entendi". Sem tour no começo.</p><span class="antes">Hoje: a pessoa cai no baralho de lugares sem saber que a viagem foi criada.</span></div>
+    <div class="regra"><b>O movimento mostra o caminho</b><p>Entrar numa tela desliza da direita; voltar desliza pra direita; trocar de aba só troca o conteúdo; folha sobe de baixo. A pessoa sente onde está.</p></div>
+  </div>
+</section>
+
+<section class="secao">
+  <h2>Todas as telas</h2>
+  <p>As mesmas telas do celular de cima, paradas. Toque numa pra abrir no celular e mexer.</p>
+  <div class="grade" id="grade"></div>
+</section>
+
+<section class="secao">
+  <h2>De onde veio cada tela de hoje</h2>
+  <p>Nada novo de funcionalidade: só onde cada coisa passa a morar.</p>
+  <div class="rolar-tab"><table class="tabela">
+    <tr><th>Hoje no app</th><th>Passa a morar em</th></tr>
+    <tr><td>Tela da viagem (17 blocos), Hoje</td><td><b>Viagem</b>: 1 próximo passo + resumo das 4 abas (antes), Hoje (durante), passaporte e história (depois)</td></tr>
+    <tr><td>Próximo carimbo, Passaporte do comboio, Carimbos</td><td>Um cartão <b>Próximo passo</b> na Viagem; a coleção de selos aparece completa no "depois"</td></tr>
+    <tr><td>Comboio, Chamar a galera, Tarefas, Documentos (passaporte e visto)</td><td><b>Galera</b>, aberta pelos rostos do cabeçalho: quem topou, o que falta cada um</td></tr>
+    <tr><td>Explorar, Roteiro, Lugares, Ideias salvas</td><td><b>Roteiro</b>: os dias com as paradas, as ideias da galera e o "Descobrir lugares"</td></tr>
+    <tr><td>Passagens, Transportes, Hospedagem, Cofre</td><td><b>Reservas</b>: Transporte e Hospedagem; as reservas aparecem sozinhas no Roteiro e no Hoje</td></tr>
+    <tr><td>Contas, Novo gasto, Orçamento, Leitura de recibo</td><td><b>Contas</b>: meu saldo, quem deve quem, os gastos; "Lançar gasto" com foto do recibo</td></tr>
+    <tr><td>Fotos, Novo post</td><td><b>Fotos</b>: o álbum da galera e "Publicar"</td></tr>
+    <tr><td>Retrospectiva, PDF, Lembrança</td><td><b>Viagem</b> na fase "depois"</td></tr>
+    <tr><td>Tudo da viagem</td><td>Sai</td></tr>
+    <tr><td>Configurações, Perfil</td><td>Ajustes no cabeçalho; perfil pela sua foto em "Suas viagens"</td></tr>
+  </table></div>
+</section>
+
+<section class="fim">
+  <h2>O que falta você decidir</h2>
+  <p><b>1. Escuro ou creme:</b> decidido em 10/11, trabalho em creme e escuro só nos momentos.</p>
+  <p><b>2. O mapa do app está certo?</b> As 5 abas, a Galera nos rostos e o fim do "Tudo da viagem".</p>
+  <p>Com isso aprovado, o próximo passo é levar pro Expo (Reanimated + haptics), começando pela navegação e pela Viagem, e depois espelhar no site.</p>
+</section>
+</div>
+
+<!-- ======================= TELAS (modelo) ======================= -->
+<template id="telas">
+
+<!-- ---------- Entrada ---------- -->
+<section class="t momento" data-tela="abertura" data-nome="Abertura" data-grupo="entrada">
+  <div class="luz" style="top:50px"></div>
+  <div class="palco3d" style="position:absolute;top:70px;left:0;right:0"><div class="bilhete" data-heroi>
+    <div class="ft foto" data-foto="comercio"></div>
+    <div class="lin"><div><small>DE</small><b>VOCÊ</b></div><span class="ic" data-ic="aviao" style="color:#7B542F;margin-bottom:4px"></span><div style="text-align:right"><small>PARA</small><b>LIS</b></div></div>
+    <div class="picote"></div>
+    <div class="rd"><span>COM A GALERA</span><span class="rostos" data-rostos="5"></span></div>
+    <div class="brilho"></div>
+  </div></div>
+  <div style="position:absolute;left:22px;right:22px;top:306px">
+    <p class="rot" data-in style="color:var(--dourado)">Norti</p>
+    <h1 class="tt g" data-in style="margin-top:8px">O grupo<br>da viagem,<br>sem bagunça.</h1>
+  </div>
+  <div class="rodape-btn" data-in><button class="btn pri" data-ir="pra-onde">Criar uma viagem</button><button class="btn fant" data-ir="convite">Fui convidado</button></div>
+</section>
+
+<section class="t momento" data-tela="pra-onde" data-nome="Pra onde?" data-grupo="entrada">
+  <div style="position:absolute;top:46px;left:18px;right:18px;display:flex;align-items:center;gap:12px"><span class="ic" data-ic="voltar" data-voltar></span><div class="seg" style="flex:1"><i class="on"></i><i></i><i></i></div></div>
+  <div class="pad" style="padding-top:90px">
+    <h1 class="tt" data-in>Pra onde<br>vocês vão?</h1>
+    <div class="campo" data-in style="margin-top:18px"><span class="ic" data-ic="buscar"></span><b data-digita="Lisboa"></b><span class="cursor"></span></div>
+    <p class="rot" data-in style="margin:22px 0 10px">A galera tem ido pra</p>
+    <div class="destinos" data-in>
+      <div class="destino foto" data-foto="comercio" data-ir="quando"><small>PORTUGAL</small><b>Lisboa</b></div>
+      <div class="destino foto" data-foto="u2" data-ir="quando"><small>BRASIL</small><b>Rio de Janeiro</b></div>
+      <div class="destino foto" data-foto="u5" data-ir="quando"><small>BRASIL</small><b>Chapada</b></div>
+      <div class="destino foto" data-foto="u4" data-ir="quando"><small>BRASIL</small><b>Jericoacoara</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="t momento" data-tela="quando" data-nome="Quando?" data-grupo="entrada">
+  <div style="position:absolute;top:46px;left:18px;right:18px;display:flex;align-items:center;gap:12px"><span class="ic" data-ic="voltar" data-voltar></span><div class="seg" style="flex:1"><i class="on"></i><i class="on"></i><i></i></div></div>
+  <div class="pad" style="padding-top:90px">
+    <h1 class="tt" data-in>Quando?</h1>
+    <p class="lead" data-in style="margin-top:8px">Pode mudar depois. A galera vê a mesma data.</p>
+    <div class="cartao" data-in style="margin-top:18px;padding:14px 12px">
+      <div style="display:flex;justify-content:space-between;font:700 15px 'Inter Tight';margin:0 4px 12px"><span>Março 2027</span><span style="color:var(--dourado)">7 noites</span></div>
+      <div class="mes" data-mes></div>
+    </div>
+    <p class="lead" data-in style="margin-top:14px;text-align:center;color:var(--dourado);font-weight:600">Ainda não sei</p>
+  </div>
+  <div class="rodape-btn" data-in><button class="btn pri" data-ir="pronta">Continuar</button></div>
+</section>
+
+<section class="t momento" data-tela="pronta" data-nome="Viagem pronta" data-grupo="entrada">
+  <div class="luz" style="top:80px"></div>
+  <div style="position:absolute;top:46px;left:18px;right:18px"><div class="seg"><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+  <div class="palco3d" style="position:absolute;top:72px;left:0;right:0"><div class="bilhete" data-heroi>
+    <div class="ft foto" data-foto="castelo"></div>
+    <div class="lin"><div><small>DE</small><b>GRU</b></div><span class="ic" data-ic="aviao" style="color:#7B542F;margin-bottom:4px"></span><div style="text-align:right"><small>PARA</small><b>LIS</b></div></div>
+    <div class="picote"></div>
+    <div class="rd"><span>12 A 19 MAR</span><span>SÓ VOCÊ, POR ENQUANTO</span></div>
+    <div class="brilho"></div>
+    <span class="carimbo selo" data-selo="calendario" data-carimbo></span>
+  </div></div>
+  <div style="position:absolute;left:22px;right:22px;top:344px">
+    <h1 class="tt g" data-in>Sua viagem<br>está pronta.</h1>
+    <p class="lead" data-in style="margin-top:10px">Agora chame a galera. Quem abrir o link topa sem baixar nada.</p>
+  </div>
+  <div class="rodape-btn" data-in><button class="btn pri" data-ir="chamar"><span class="ic" data-ic="convidar"></span>Chamar a galera</button><button class="btn fant" data-ir="salvar">Depois</button></div>
+</section>
+
+<section class="t momento" data-tela="chamar" data-nome="Chamar a galera" data-grupo="entrada" data-folha>
+  <div class="pegador"></div>
+  <h2 class="tt" style="font-size:24px">Chamar a galera</h2>
+  <p class="lead" style="margin:6px 0 12px">É assim que chega no grupo. Cada um topa com um toque.</p>
+  <div class="chat">
+    <div class="nome-grupo">GRUPO "LISBOA 2027"</div>
+    <div class="msg">
+      <div class="foto" data-foto="castelo"></div>
+      <div class="cp"><b>Bora pra Lisboa com a galera?</b><small>12 a 19 de março</small><div class="url2">norti.app/v/LIS-7K2</div></div>
+    </div>
+  </div>
+  <div class="apps-comp" style="margin:4px 0 16px">
+    <div><span><i class="ic" data-ic="recado"></i></span>WhatsApp</div>
+    <div><span><i class="ic" data-ic="enviar"></i></span>Instagram</div>
+    <div><span><i class="ic" data-ic="copiar"></i></span>Copiar</div>
+    <div><span><i class="ic" data-ic="mais-opcoes"></i></span>Mais</div>
+  </div>
+  <button class="btn pri" data-ir="salvar">Pronto, mandei</button>
+</section>
+
+<section class="t momento" data-tela="salvar" data-nome="Salvar a viagem (conta)" data-grupo="entrada">
+  <div class="luz" style="top:60px;opacity:.6"></div>
+  <div class="palco3d" style="position:absolute;top:64px;left:0;right:0"><div class="bilhete p" data-heroi style="transform:rotate(-6deg)">
+    <div class="ft foto" data-foto="castelo"></div>
+    <div class="lin"><div><b>GRU</b></div><div><b>LIS</b></div></div><div class="picote"></div><div class="rd"><span>12 A 19 MAR</span></div>
+  </div></div>
+  <div style="position:absolute;left:22px;right:22px;top:276px">
+    <h1 class="tt" data-in>Salve a viagem<br>pra não perder.</h1>
+    <p class="lead" data-in style="margin-top:10px">É só aqui que pedimos uma conta. Leva 5 segundos.</p>
+  </div>
+  <div class="rodape-btn" data-in>
+    <button class="btn pri" data-ir="viagem">Continuar com Google</button>
+    <button class="btn sec" data-ir="viagem">Continuar com Apple</button>
+    <button class="btn fant" data-ir="viagem">Usar e-mail</button>
+  </div>
+</section>
+
+<!-- ---------- Convite web ---------- -->
+<section class="t momento" data-tela="convite" data-nome="Convite (web)" data-grupo="convite">
+  <div class="conv-foto foto" data-foto="castelo"></div>
+  <div class="url"><span class="ic" data-ic="trancado" style="width:12px;height:12px"></span>norti.app/v/LIS-7K2</div>
+  <div class="conv-tx">
+    <div class="quem" data-in><span class="av" style="background:#5E6B2E">AN</span>A Ana te chamou</div>
+    <h1 data-in>Bora pra Lisboa<br>com a galera?</h1>
+    <p class="qd" data-in>12 a 19 de março · 7 noites</p>
+  </div>
+  <div class="toparam" data-in><span class="rostos" data-rostos="4"></span><span><b>Pedro, Ana, Ju e Bê</b><br>já toparam</span></div>
+  <div class="rodape-btn" data-in>
+    <div class="bolhas">
+      <div class="bolha sim" data-ir="dentro"><i class="ic" data-ic="ok"></i>Tô dentro</div>
+      <div class="bolha"><i class="ic" data-ic="ajuda"></i>Talvez</div>
+      <div class="bolha"><i class="ic" data-ic="fechar"></i>Não dá</div>
+    </div>
+  </div>
+</section>
+
+<section class="t momento" data-tela="dentro" data-nome="Tô dentro (web)" data-grupo="convite">
+  <div class="url"><span class="ic" data-ic="trancado" style="width:12px;height:12px"></span>norti.app/v/LIS-7K2</div>
+  <div class="pad" style="padding-top:92px">
+    <div data-in style="display:flex;justify-content:center"><span class="selo" data-selo="galera" style="width:84px;height:84px;color:#4A2E14"></span></div>
+    <h1 class="tt g" data-in style="text-align:center;margin-top:12px">Você está<br>dentro.</h1>
+    <p class="lead" data-in style="text-align:center;margin-top:8px">Agora são 5. A gente avisa quando for votar onde ficar.</p>
+    <div class="cartao" data-in style="margin-top:20px">
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="datas"></i></span><div class="txt"><b>12 a 19 de março</b><small>7 noites em Lisboa</small></div></div>
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="hospedagem"></i></span><div class="txt"><b>Onde ficar</b><small>3 opções, votação aberta</small></div><span class="etq">Votar</span></div>
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="contas"></i></span><div class="txt"><b>Contas</b><small>Ninguém deve nada ainda</small></div></div>
+    </div>
+  </div>
+  <div class="rodape-btn" data-in><button class="btn pri" data-ir="viagem">Ver a viagem</button><button class="btn fant">Baixar o app (opcional)</button></div>
+</section>
+
+<!-- ---------- Fora da viagem ---------- -->
+<section class="t trab" data-tela="viagens" data-nome="Suas viagens" data-grupo="fora">
+  <div class="rola">
+    <div style="padding:46px 18px 0;display:flex;justify-content:space-between;align-items:center"><span class="av" style="background:#A8703F;width:34px;height:34px;font-size:12px">PV</span><span class="chip"><i class="ic" data-ic="mais" style="width:14px;height:14px"></i>Nova viagem</span></div>
+    <div class="pad" style="margin-top:16px"><h1 class="tt g" data-in>Suas viagens</h1></div>
+    <div class="carteira" data-carteira>
+      <div class="bil passada" style="top:0"><div class="ft foto" data-foto="u5"><b>Chapada</b></div><span class="sel selo" data-selo="montanha"></span></div>
+      <div class="bil" style="top:64px"><div class="ft foto" data-foto="u2"><b>Rio</b><em>Sonhando</em></div></div>
+      <div class="bil" style="top:128px" data-ir="viagem"><div class="ft foto" data-foto="comercio"><b>Lisboa</b><em>em 23 dias</em></div>
+        <div class="inf"><div>12 a 19 MAR<br><b>Votar onde ficar</b></div><span class="rostos" data-rostos="5"></span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Viagem: antes, durante, depois ---------- -->
+<section class="t trab com-capa" data-tela="viagem" data-nome="Viagem (antes)" data-grupo="viagem" data-aba="viagem">
+  <div class="rola" style="padding-bottom:170px">
+    <div data-cab></div>
+    <div class="capa" data-ir="roteiro"><div class="foto" data-foto="comercio"></div>
+      <div class="tx"><h1 data-in>Lisboa</h1><p data-in>12 a 19 de março · 7 noites</p></div></div>
+    <div class="contador" data-in>
+      <div><span class="num" data-conta="23">23</span><p class="lead">dias pra embarcar</p></div>
+      <div class="vao" data-ir="galera" style="cursor:pointer"><span class="rostos" data-rostos="5"></span>5 vão</div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">A viagem</span></div>
+    <div class="cartao" data-in style="margin:0 14px">
+      <div class="linha-item" data-aba-ir="roteiro"><span class="quad"><i class="ic" data-ic="roteiro"></i></span><div class="txt"><b>Roteiro</b><small>4 de 7 dias com plano</small></div><span class="ic" data-ic="seta-direita" style="width:16px;height:16px;opacity:.5"></span></div>
+      <div class="linha-item" data-aba-ir="reservas"><span class="quad"><i class="ic" data-ic="hospedagem"></i></span><div class="txt"><b>Reservas</b><small>Voo comprado, falta hospedagem</small></div><span class="ic" data-ic="seta-direita" style="width:16px;height:16px;opacity:.5"></span></div>
+      <div class="linha-item" data-aba-ir="contas"><span class="quad"><i class="ic" data-ic="contas"></i></span><div class="txt"><b>Contas</b><small>Você deve R$ 84 pra Ana</small></div><span class="ic" data-ic="seta-direita" style="width:16px;height:16px;opacity:.5"></span></div>
+      <div class="linha-item" data-aba-ir="fotos"><span class="quad"><i class="ic" data-ic="fotos"></i></span><div class="txt"><b>Fotos</b><small>12 fotos da galera</small></div><span class="ic" data-ic="seta-direita" style="width:16px;height:16px;opacity:.5"></span></div>
+    </div>
+  </div>
+  <div class="faixa-passo" data-ir="hospedagem"><span class="selo" data-selo="barraca" style="width:34px;height:34px;color:#E3A04A"></span><div class="txt"><small>Próximo passo</small><b>Escolher onde ficar</b><span class="q">2 de 5 já votaram</span></div><span class="ir">Votar</span></div>
+</section>
+
+<section class="t trab" data-tela="hoje" data-nome="Viagem (durante): Hoje" data-grupo="viagem" data-aba="viagem">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><p class="rot">Dia 3 de 7 · Sábado</p><h1 class="tt" style="margin-top:6px">Hoje</h1></div>
+    <div class="cartao hoje-agora" data-in>
+      <p class="rot" style="color:var(--dourado)">Agora</p>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:6px"><span class="hora">13:00</span><span class="chip on" style="height:36px"><i class="ic" data-ic="navegar" style="width:16px;height:16px"></i>Ir</span></div>
+      <b style="display:block;font:800 18px 'Inter Tight';margin-top:8px;letter-spacing:-.02em">Almoço no Time Out Market</b>
+      <small style="color:var(--tx2);font-size:12.5px">12 min a pé · a galera toda</small>
+    </div>
+    <div class="clima" data-in style="margin-top:10px">
+      <div class="cartao"><span class="ic" data-ic="sol" style="width:26px;height:26px;color:var(--dourado)"></span><div><b>18°</b>Sol até as 18h</div></div>
+      <div class="cartao"><span class="ic" data-ic="lugar" style="width:24px;height:24px"></span><div><b>Alfama</b>Encontro 19h</div></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Reservas de hoje</span><a data-aba-ir="reservas">Ver todas</a></div>
+    <div class="cartao passagem" data-in style="margin-bottom:0">
+      <div class="bx" style="padding-top:12px"><span style="display:flex;gap:10px;align-items:center"><span class="quad"><i class="ic" data-ic="hospedagem"></i></span><span><b style="display:block;font:700 14.5px 'Inter Tight';color:var(--tx)">Check-in Alfama 15:00</b>Código da porta: 4417</span></span><span class="ic" data-ic="copiar" style="width:18px;height:18px"></span></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Depois</span></div>
+    <div class="linhadotempo" data-in>
+      <div class="parada"><span class="hora">16:30</span><div class="cartao"><span class="quad"><i class="ic" data-ic="museu"></i></span><div><b>Castelo de São Jorge</b><small>Ingressos com o Beto</small></div></div></div>
+      <div class="parada"><span class="hora">20:00</span><div class="cartao"><span class="quad"><i class="ic" data-ic="comida"></i></span><div><b>Jantar no Bairro Alto</b><small>Ideia da Ju</small></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="t trab" data-tela="depois" data-nome="Viagem (depois): passaporte" data-grupo="viagem" data-aba="viagem">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><p class="rot">12 a 19 de março</p><h1 class="tt" style="margin-top:6px">Foi assim.</h1></div>
+    <div class="retro" data-in data-ir="carimbo">
+      <div class="foto" data-foto="comercio" style="left:0;top:0;width:60%;height:100%"></div>
+      <div class="foto" data-foto="azulejo" style="right:0;top:0;width:40%;height:50%"></div>
+      <div class="foto" data-foto="castelo" style="right:0;bottom:0;width:40%;height:50%"></div>
+      <div class="tx"><b>A história da viagem<br>está pronta</b><span class="play"><i class="ic" data-ic="avancar"></i></span></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Passaporte da galera</span><span class="rot" style="color:var(--dourado)">6 de 7</span></div>
+    <div class="selos-grade" data-in>
+      <div><span class="selo" data-selo="passagem"></span>Voo</div>
+      <div><span class="selo" data-selo="barraca"></span>Onde ficar</div>
+      <div><span class="selo" data-selo="galera"></span>Todos dentro</div>
+      <div><span class="selo" data-selo="moedas"></span>Contas zeradas</div>
+      <div><span class="selo" data-selo="camera"></span>100 fotos</div>
+      <div><span class="selo" data-selo="museu"></span>Castelo</div>
+      <div class="falta"><span class="selo" data-selo="mapa" style="opacity:.4"></span>Mapa</div>
+    </div>
+    <div class="pad" style="margin-top:16px" data-in><button class="btn sec"><span class="ic" data-ic="compartilhar"></span>Mandar pra galera</button></div>
+  </div>
+</section>
+
+<section class="t trab" data-tela="galera" data-nome="Galera" data-grupo="viagem" data-aba="viagem">
+  <div class="rola">
+    <div style="padding:44px 14px 0;display:flex;align-items:center;gap:10px"><span class="cab-bt" data-voltar style="width:34px;height:34px;border-radius:50%;background:var(--sup);border:1px solid var(--linha);display:flex;align-items:center;justify-content:center"><i class="ic" data-ic="voltar" style="width:18px;height:18px"></i></span></div>
+    <div class="titulo-aba" data-in><p class="rot">Lisboa · 5 pessoas</p><h1 class="tt" style="margin-top:6px">Galera</h1></div>
+    <div class="cartao" data-in style="margin:0 14px">
+      <div class="pessoa"><span class="av" style="background:#A8703F">PV</span><div class="txt"><b>Paulo (você)</b><small>Quem organiza</small></div><span class="estado ok">Dentro</span></div>
+      <div class="pessoa"><span class="av" style="background:#5E6B2E">AN</span><div class="txt"><b>Ana</b><small>Votou onde ficar</small></div><span class="estado ok">Dentro</span></div>
+      <div class="pessoa"><span class="av" style="background:#B5553A">JU</span><div class="txt"><b>Ju</b><small>Falta: passaporte vence em junho</small></div><span class="estado ok">Dentro</span></div>
+      <div class="pessoa"><span class="av" style="background:#7B542F">BE</span><div class="txt"><b>Beto</b><small>Falta: votar onde ficar</small></div><span class="estado ok">Dentro</span></div>
+      <div class="pessoa"><span class="av" style="background:#A07A2C">LI</span><div class="txt"><b>Li</b><small>Abriu o convite ontem</small></div><span class="estado">Falta topar</span></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Pra embarcar</span></div>
+    <div class="cartao" data-in style="margin:0 14px">
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="identidade"></i></span><div class="txt"><b>Passaporte de todos</b><small>4 de 5 válidos até a volta</small></div></div>
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="seguro"></i></span><div class="txt"><b>Seguro viagem</b><small>Obrigatório em Portugal · 2 sem</small></div></div>
+    </div>
+  </div>
+  <button class="fab" style="bottom:24px"><span class="ic" data-ic="convidar"></span>Chamar a galera</button>
+</section>
+
+<!-- ---------- Roteiro ---------- -->
+<section class="t trab" data-tela="roteiro" data-nome="Roteiro" data-grupo="abas" data-aba="roteiro" data-primeira="O plano de cada dia. As reservas entram sozinhas e a galera sugere lugares.">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><p class="rot">7 dias · 4 com plano</p><h1 class="tt" style="margin-top:6px">Roteiro</h1></div>
+    <div class="dias" data-in>
+      <div class="dia on">SEX<b>12</b></div><div class="dia">SÁB<b>13</b></div><div class="dia">DOM<b>14</b></div><div class="dia">SEG<b>15</b></div><div class="dia">TER<b>16</b></div><div class="dia">QUA<b>17</b></div><div class="dia">QUI<b>18</b></div>
+    </div>
+    <div class="linhadotempo" style="margin-top:12px" data-in>
+      <div class="parada"><span class="hora">10:40</span><div class="cartao"><span class="quad"><i class="ic" data-ic="aviao"></i></span><div><b>Chegada em Lisboa</b><small><span class="etq-t">Reserva</span> · LATAM 8084</small></div></div></div>
+      <div class="parada"><span class="hora">15:00</span><div class="cartao"><span class="quad"><i class="ic" data-ic="hospedagem"></i></span><div><b>Check-in</b><small><span class="etq-t">Reserva</span> · falta escolher onde</small></div></div></div>
+      <div class="parada"><span class="hora">19:30</span><div class="cartao"><span class="quad"><i class="ic" data-ic="comida"></i></span><div><b>Jantar na Alfama</b><small>Ideia da Ana</small></div></div></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Ideias da galera</span><a data-ir="descobrir">Descobrir lugares</a></div>
+    <div class="ideias" data-in>
+      <div class="ideia"><div class="foto" data-foto="castelo"><span class="rostos" data-rostos="4"></span></div><b>Castelo de São Jorge</b><small>Todo mundo quer</small></div>
+      <div class="ideia"><div class="foto" data-foto="azulejo"><span class="rostos" data-rostos="2"></span></div><b>Museu do Azulejo</b><small>2 querem</small></div>
+      <div class="ideia"><div class="foto" data-foto="carmo"><span class="rostos" data-rostos="3"></span></div><b>Convento do Carmo</b><small>3 querem</small></div>
+    </div>
+  </div>
+  <button class="fab"><span class="ic" data-ic="mais"></span>Adicionar</button>
+</section>
+
+<section class="t momento" data-tela="descobrir" data-nome="Descobrir lugares" data-grupo="abas">
+  <div style="padding:44px 14px 0;display:flex;align-items:center;justify-content:space-between"><span data-voltar style="width:34px;height:34px;border-radius:50%;background:var(--sup);border:1px solid var(--linha);display:flex;align-items:center;justify-content:center"><i class="ic" data-ic="fechar" style="width:16px;height:16px"></i></span><span class="rot">Lisboa · 12 de 40</span><span style="width:34px"></span></div>
+  <div class="baralho" data-baralho>
+    <div class="carta foto" data-foto="carmo"><div class="tx"><b>Convento do Carmo</b><small>Ruína gótica no Chiado · 40 min</small></div></div>
+    <div class="carta foto" data-foto="azulejo"><div class="tx"><b>Museu do Azulejo</b><small>Xabregas · 1h30</small></div></div>
+    <div class="carta foto" data-foto="castelo"><span class="selo-quero">Quero</span><div class="tx"><b>Castelo de São Jorge</b><small>Vista da cidade toda · 2h · 4 da galera querem</small></div></div>
+  </div>
+  <div class="escolhas"><span><i class="ic" data-ic="fechar"></i></span><span class="q"><i class="ic" data-ic="curtir" style="width:26px;height:26px"></i></span><span><i class="ic" data-ic="estrela"></i></span></div>
+</section>
+
+<!-- ---------- Reservas ---------- -->
+<section class="t trab" data-tela="reservas" data-nome="Reservas: transporte" data-grupo="abas" data-aba="reservas" data-primeira="Voos, ônibus e onde ficar, de todo mundo, num lugar só. Entram sozinhas no Roteiro.">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><h1 class="tt">Reservas</h1></div>
+    <div class="segmento" data-in><span class="on">Transporte</span><span data-ir-troca="hospedagem">Hospedagem</span></div>
+    <div class="secao-t" data-in><span class="rot">Ida · sex 12 mar</span><span class="rot" style="color:var(--dourado)">5 de 5</span></div>
+    <div class="cartao passagem" data-in>
+      <div class="top"><div><small>SÃO PAULO</small><b>GRU</b></div><div class="meio"><span class="ic" data-ic="aviao" style="color:var(--dourado)"></span>11h 30</div><div style="text-align:right"><small>LISBOA</small><b>LIS</b></div></div>
+      <div class="pic"></div>
+      <div class="bx"><span>LATAM 8084 · 22:10</span><span class="rostos" data-rostos="5"></span></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Volta · sex 19 mar</span><span class="rot" style="color:var(--dourado)">3 de 5</span></div>
+    <div class="cartao passagem" data-in>
+      <div class="top"><div><small>LISBOA</small><b>LIS</b></div><div class="meio"><span class="ic" data-ic="aviao" style="color:var(--dourado)"></span>10h 50</div><div style="text-align:right"><small>SÃO PAULO</small><b>GRU</b></div></div>
+      <div class="pic"></div>
+      <div class="bx"><span>TAP 103 · 11:25</span><span class="rostos" data-rostos="3"></span></div>
+    </div>
+  </div>
+  <button class="fab"><span class="ic" data-ic="mais"></span>Adicionar reserva</button>
+</section>
+
+<section class="t trab" data-tela="hospedagem" data-nome="Reservas: onde ficar (votação)" data-grupo="abas" data-aba="reservas">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><h1 class="tt">Reservas</h1></div>
+    <div class="segmento" data-in><span data-ir-troca="reservas">Transporte</span><span class="on">Hospedagem</span></div>
+    <div class="secao-t" data-in><span class="rot">Onde ficar · 2 de 5 votaram</span></div>
+    <div class="cartao opcao" data-in>
+      <div class="foto" data-foto="azulejo"><em>Mais votada</em></div>
+      <div class="cp"><div class="txt"><b>Casa na Alfama</b><small>R$ 210 por pessoa/noite · Airbnb</small></div><span class="votar on" data-votar><i class="ic" data-ic="feito" style="width:16px;height:16px"></i>2</span></div>
+    </div>
+    <div class="cartao opcao" data-in>
+      <div class="foto" data-foto="rossio"></div>
+      <div class="cp"><div class="txt"><b>Hostel no Rossio</b><small>R$ 95 por pessoa/noite · Booking</small></div><span class="votar" data-votar>Votar</span></div>
+    </div>
+    <div class="pad" data-in><button class="btn pri" data-ir="carimbo">Escolher a Casa na Alfama</button><p class="lead" style="text-align:center;font-size:12px;margin-top:6px">Só quem organiza escolhe</p></div>
+  </div>
+</section>
+
+<section class="t momento" data-tela="carimbo" data-nome="Carimbo (passo resolvido)" data-grupo="abas">
+  <div class="luz" style="top:120px"></div>
+  <div class="palco3d" style="position:absolute;top:76px;left:0;right:0"><div class="bilhete" data-heroi>
+    <div class="ft foto" data-foto="azulejo"></div>
+    <div class="lin"><div><small>ONDE FICAR</small><b style="font-size:22px">Alfama</b></div></div>
+    <div class="picote"></div>
+    <div class="rd"><span>7 NOITES</span><span class="rostos" data-rostos="5"></span></div>
+    <div class="brilho"></div>
+    <span class="carimbo selo" data-selo="barraca" data-carimbo style="top:60px"></span>
+  </div></div>
+  <div style="position:absolute;left:22px;right:22px;top:330px;text-align:center">
+    <p class="rot" data-in style="color:var(--dourado)">Carimbo novo · 4 de 7</p>
+    <h1 class="tt g" data-in style="margin-top:8px">Onde ficar:<br>resolvido.</h1>
+  </div>
+  <div class="rodape-btn" data-in><button class="btn pri"><span class="ic" data-ic="compartilhar"></span>Contar pra galera</button><button class="btn fant" data-ir="viagem">Próximo passo</button></div>
+</section>
+
+<!-- ---------- Contas ---------- -->
+<section class="t trab" data-tela="contas" data-nome="Contas" data-grupo="abas" data-aba="contas" data-primeira="Quem pagou o quê e quem deve quanto, em real. Ninguém precisa de planilha.">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><h1 class="tt">Contas</h1></div>
+    <div class="cartao saldo" data-in>
+      <p class="rot">Você deve pra Ana</p>
+      <div class="num" style="margin-top:8px"><small style="font-size:24px;vertical-align:top;margin-right:4px;opacity:.7">R$</small><span data-conta="84">84</span></div>
+      <div class="acoes"><button class="btn pri">Copiar Pix da Ana</button><button class="btn sec" style="width:auto;padding:0 16px">Já paguei</button></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Quem deve quem</span><span class="rot">Total R$ 3.240</span></div>
+    <div class="cartao" data-in style="margin:0 14px">
+      <div class="quem-deve"><span class="av" style="background:#7B542F">BE</span><b>Beto</b> deve pra <span class="av" style="background:#5E6B2E">AN</span><span class="val">R$ 126</span></div>
+      <div class="quem-deve"><span class="av" style="background:#B5553A">JU</span><b>Ju</b> deve pra <span class="av" style="background:#A8703F">PV</span><span class="val">R$ 40</span></div>
+    </div>
+    <div class="secao-t" data-in><span class="rot">Gastos</span></div>
+    <div class="cartao" data-in style="margin:0 14px">
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="comida"></i></span><div class="txt"><b>Jantar na Alfama</b><small>Ana pagou · 5 pessoas</small></div><b style="font:800 15px 'Inter Tight'">R$ 420</b></div>
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="ingresso"></i></span><div class="txt"><b>Castelo</b><small>Beto pagou · 4 pessoas</small></div><b style="font:800 15px 'Inter Tight'">R$ 268</b></div>
+      <div class="linha-item"><span class="quad"><i class="ic" data-ic="carro"></i></span><div class="txt"><b>Uber do aeroporto</b><small>Você pagou · 5 pessoas</small></div><b style="font:800 15px 'Inter Tight'">R$ 96</b></div>
+    </div>
+  </div>
+  <button class="fab" data-ir="gasto"><span class="ic" data-ic="mais"></span>Lançar gasto</button>
+</section>
+
+<section class="t trab" data-tela="gasto" data-nome="Lançar gasto" data-grupo="abas">
+  <div style="padding:44px 14px 0;display:flex;align-items:center;justify-content:space-between"><span data-voltar style="width:34px;height:34px;border-radius:50%;background:var(--sup);border:1px solid var(--linha);display:flex;align-items:center;justify-content:center"><i class="ic" data-ic="fechar" style="width:16px;height:16px"></i></span><span class="chip"><i class="ic" data-ic="nova-foto" style="width:14px;height:14px"></i>Foto do recibo</span></div>
+  <div class="visor"><div class="num"><small>R$</small><span data-digita-num="84,00">84,00</span></div><p class="lead" style="margin-top:8px">Jantar · você pagou</p></div>
+  <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 18px"><span class="chip on">Comida</span><span class="chip">Transporte</span><span class="chip">Passeio</span></div>
+  <p class="rot" style="text-align:center;margin:16px 0 8px">Dividir com</p>
+  <div class="dividir"><span class="av" style="background:#A8703F">PV</span><span class="av" style="background:#5E6B2E">AN</span><span class="av" style="background:#B5553A">JU</span><span class="av" style="background:#7B542F">BE</span><span class="av fora" style="background:#A07A2C">LI</span></div>
+  <p class="lead" style="text-align:center;font-size:12.5px">R$ 21 pra cada um dos 4</p>
+  <div class="rodape-btn"><button class="btn pri" data-voltar>Lançar</button></div>
+</section>
+
+<!-- ---------- Fotos ---------- -->
+<section class="t trab" data-tela="fotos" data-nome="Fotos" data-grupo="abas" data-aba="fotos" data-primeira="O álbum da galera. Cada foto vira parte da história da viagem no fim.">
+  <div class="rola">
+    <div data-cab></div>
+    <div class="titulo-aba" data-in><p class="rot">12 fotos · 4 pessoas</p><h1 class="tt" style="margin-top:6px">Fotos</h1></div>
+    <div class="post-cab" data-in><span class="av" style="background:#A07A2C">LI</span><span><b>Li</b> publicou 3 fotos · Dia 1</span></div>
+    <div class="mosaico" data-in>
+      <div class="foto alta" data-foto="castelo"></div>
+      <div class="foto" data-foto="azulejo"></div>
+      <div class="foto" data-foto="carmo"></div>
+    </div>
+    <div class="post-cab" data-in style="margin-top:16px"><span class="av" style="background:#5E6B2E">AN</span><span><b>Ana</b> publicou 2 fotos · Dia 1</span></div>
+    <div class="mosaico" data-in>
+      <div class="foto" data-foto="comercio"></div>
+      <div class="foto" data-foto="rossio"></div>
+    </div>
+  </div>
+  <button class="fab"><span class="ic" data-ic="nova-foto"></span>Publicar</button>
+</section>
+</template>
+
+<script>
+/* ================= peças ================= */
+const D = window.NORTI_DESENHOS
+const U = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=700&q=70`
+const W = 'https://upload.wikimedia.org/wikipedia/commons/'
+const FOTOS = {
+  comercio: W+'thumb/e/e8/Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg/960px-Plaza_del_Comercio%2C_Lisboa%2C_Portugal%2C_2012-05-12%2C_DD_01-03_PAN.jpg',
+  castelo: W+'3/37/Castelo_Sao_Jorge_Lisboa_1.JPG',
+  azulejo: W+'thumb/d/d5/Convento_da_Madre_de_Deus_-_Lisboa_-_Portugal_%2846913633574%29.jpg/960px-Convento_da_Madre_de_Deus_-_Lisboa_-_Portugal_%2846913633574%29.jpg',
+  rossio: W+'thumb/5/5c/Lisboa_Esta%C3%A7%C3%A3o_do_Rossio_%2853820098461%29.jpg/960px-Lisboa_Esta%C3%A7%C3%A3o_do_Rossio_%2853820098461%29.jpg',
+  carmo: W+'thumb/1/14/Nave_of_Igreja_do_Convento_do_Carmo_%28Lisbon%29_81.jpg/960px-Nave_of_Igreja_do_Convento_do_Carmo_%28Lisbon%29_81.jpg',
+  u2: U('1483729558449-99ef09a8c325'), u4: U('1507525428034-b723cf961d3e'), u5: U('1464822759023-fed622ff2c3b'),
+}
+const GALERA = [['PV','#A8703F'],['AN','#5E6B2E'],['JU','#B5553A'],['BE','#7B542F'],['LI','#A07A2C']]
+const icone = (n) => D.icones[n] ? '<svg viewBox="0 0 256 256">' + D.icones[n].replace(/fill="__DUO__"/g,'fill="#E3A04A" fill-opacity="0.45"').replace(/__COR__/g,'currentColor') + '</svg>' : ''
+const selo = (n) => D.selos[n] ? '<svg viewBox="0 0 48 48">' + D.selos[n].replace(/__TRACO__/g,'currentColor') + '</svg>' : ''
+const ABAS = [['viagem','viagens','Viagem'],['roteiro','roteiro','Roteiro'],['reservas','hospedagem','Reservas'],['contas','contas','Contas'],['fotos','fotos','Fotos']]
+const DESTINO_DA_ABA = {viagem:'viagem', roteiro:'roteiro', reservas:'reservas', contas:'contas', fotos:'fotos'}
+
+function vestir(raiz){
+  raiz.querySelectorAll('[data-cab]').forEach(e=>{ e.className='cab'; e.innerHTML=
+    `<span class="viagem" data-ir="viagens"><span class="foto" style="background-image:url('${FOTOS.comercio}')"></span>Lisboa<span class="ic" data-ic="seta-baixo" style="width:12px;height:12px;opacity:.6"></span></span><span class="esp"></span>
+     <span class="rostos" data-rostos="5" data-ir="galera" style="cursor:pointer"></span><span class="bt"><i class="ic" data-ic="ajustes" style="width:17px;height:17px"></i></span>` })
+  raiz.querySelectorAll('[data-ic]').forEach(e=>{ if(!e.innerHTML) e.innerHTML=icone(e.dataset.ic) })
+  raiz.querySelectorAll('[data-selo]').forEach(e=>e.innerHTML=selo(e.dataset.selo))
+  raiz.querySelectorAll('[data-foto]').forEach(e=>e.style.backgroundImage=`url("${FOTOS[e.dataset.foto]}")`)
+  raiz.querySelectorAll('[data-rostos]').forEach(e=>e.innerHTML=GALERA.slice(0,+e.dataset.rostos).map(([k,c])=>`<span class="av" style="background:${c}">${k}</span>`).join(''))
+  raiz.querySelectorAll('[data-mes]').forEach(e=>{ let h=['D','S','T','Q','Q','S','S'].map(s=>`<span class="s">${s}</span>`).join('')
+    for(let i=0;i<1;i++) h+='<span class="d f">28</span>'
+    for(let d=1;d<=27;d++){ const c=d===12?'ini':d===19?'fim2':(d>12&&d<19?'r':''); h+=`<span class="d ${c}">${d}</span>` }
+    e.innerHTML=h })
+  raiz.querySelectorAll('[data-digita]').forEach(e=>e.textContent=e.dataset.digita)
+}
+const barra = (ativa) => ABAS.map(([k,ic,n])=>`<span class="${k===ativa?'on':''}" data-aba-ir="${k}"><i class="ic">${icone(ic)}</i>${n}</span>`).join('')
+
+/* ================= montar celular e grade ================= */
+const modelo = document.getElementById('telas').content
+const vista = document.getElementById('vista')
+const telas = {}
+modelo.querySelectorAll('section.t').forEach(s=>{
+  const c = s.cloneNode(true); vestir(c)
+  if (c.hasAttribute('data-folha')) { c.classList.remove('t'); c.classList.add('folha'); }
+  vista.insertBefore(c, document.getElementById('veu').nextSibling)
+  telas[c.dataset.tela] = c
+})
+// a folha precisa ficar acima do véu
+vista.querySelectorAll('.folha').forEach(f=>vista.appendChild(f))
+
+const grade = document.getElementById('grade')
+modelo.querySelectorAll('section.t').forEach(s=>{
+  const c = s.cloneNode(true); vestir(c)
+  const folha = c.hasAttribute('data-folha')
+  const m = document.createElement('div'); m.className='mini'
+  m.innerHTML = `<div class="moldura"><div class="fone"><div class="vista"><div class="ilha"></div><div class="status"><span>9:41</span><i></i></div></div></div></div><span>${s.dataset.nome}</span>`
+  const v = m.querySelector('.vista')
+  if (folha) { const base = modelo.querySelector('[data-tela="pronta"]').cloneNode(true); vestir(base); v.appendChild(base); const veu=document.createElement('div'); veu.className='veu mostra'; v.appendChild(veu); c.classList.remove('t'); c.classList.add('folha'); c.style.display='block' }
+  v.appendChild(c)
+  if (c.dataset.aba) { const a=document.createElement('div'); a.className='abas mostra'; a.innerHTML=barra(c.dataset.aba); v.appendChild(a) }
+  c.querySelectorAll('[data-carimbo]').forEach(x=>x.style.opacity=1)
+  m.addEventListener('click',()=>{ ir(s.dataset.tela,'pulo'); document.querySelector('.coluna-fone').scrollIntoView({behavior:'smooth',block:'start'}) })
+  grade.appendChild(m)
+})
+document.querySelectorAll('[data-grupo]').forEach(g=>{ if(g.classList.contains('botoes')) modelo.querySelectorAll(`section[data-grupo="${g.dataset.grupo}"]`).forEach(s=>{ const b=document.createElement('button'); b.textContent=s.dataset.nome; b.dataset.alvo=s.dataset.tela; b.onclick=()=>ir(s.dataset.tela,'pulo'); g.appendChild(b) }) })
+
+/* ================= navegação com movimento ================= */
+const MOLA='cubic-bezier(.34,1.56,.64,1)', MACIA='cubic-bezier(.2,.9,.25,1)', DURA='cubic-bezier(.2,1.8,.4,1)'
+const anima=(el,kf,o)=>el.animate(kf,Object.assign({fill:'both',easing:MACIA},o))
+const abas=document.getElementById('abas'), veu=document.getElementById('veu'), pv=document.getElementById('primeiraVez')
+let pilha=['abertura'], atual=null, folhaAberta=null, vistas=new Set()
+let timers=[]
+const depois=(ms,f)=>timers.push(setTimeout(f,ms))
+
+function mostrar(id, modo){
+  const nova=telas[id], velha=atual
+  timers.forEach(clearTimeout); timers=[]
+  if (nova.classList.contains('folha')) { // folha sobre a tela atual
+    folhaAberta=nova; nova.style.display='block'; veu.classList.add('mostra')
+    anima(veu,[{opacity:0},{opacity:1}],{duration:260}); anima(nova,[{transform:'translateY(100%)'},{transform:'none'}],{duration:480})
+    entrar(nova); return
+  }
+  fecharFolha(true)
+  nova.getAnimations({subtree:true}).forEach(a=>a.cancel())
+  nova.classList.add('ativa'); nova.style.zIndex=2
+  const rola=nova.querySelector('.rola'); if(rola) rola.scrollTop=0
+  if (velha && velha!==nova) {
+    velha.style.zIndex=1
+    const tira=()=>{ velha.classList.remove('ativa'); velha.style.zIndex='' }
+    if (modo==='push'){ anima(nova,[{transform:'translateX(100%)'},{transform:'none'}],{duration:420,fill:'none'}); anima(velha,[{transform:'none',opacity:1},{transform:'translateX(-28%)',opacity:.5}],{duration:420,fill:'none'}).onfinish=tira }
+    else if (modo==='voltar'){ nova.style.zIndex=1; velha.style.zIndex=2; anima(velha,[{transform:'none'},{transform:'translateX(100%)'}],{duration:380,fill:'none'}).onfinish=tira; anima(nova,[{transform:'translateX(-28%)',opacity:.5},{transform:'none',opacity:1}],{duration:380,fill:'none'}) }
+    else { anima(nova,[{opacity:0},{opacity:1}],{duration:240,fill:'none'}); depois(240,tira) }
+  }
+  atual=nova
+  // barra de abas e cor da hora
+  if (nova.dataset.aba){ abas.innerHTML=barra(nova.dataset.aba); abas.classList.add('mostra'); abas.style.setProperty('--x',0) } else abas.classList.remove('mostra')
+  vista.querySelector('.status').style.color = getComputedStyle(nova).getPropertyValue('--tx')
+  vista.querySelector('.status').style.zIndex = 80
+  document.querySelectorAll('.botoes button').forEach(b=>b.classList.toggle('on',b.dataset.alvo===id))
+  entrar(nova)
+  // primeira vez numa aba: uma linha dizendo pra que ela serve
+  pv.style.display='none'
+  if (nova.dataset.primeira && !vistas.has(id)) depois(900,()=>{ vistas.add(id)
+    pv.innerHTML=`<span class="selo" style="width:40px;height:40px;color:#4A2E14">${selo({roteiro:'mapa',reservas:'passagem',contas:'moedas',fotos:'camera'}[nova.dataset.aba])}</span><div style="flex:1"><b>Primeira vez em ${nova.querySelector('.tt').textContent}</b><small>${nova.dataset.primeira}</small></div><span class="ok">Entendi</span>`
+    pv.style.display='flex'; anima(pv,[{transform:'translateY(30px)',opacity:0},{transform:'none',opacity:1}],{duration:520,easing:MOLA})
+    pv.querySelector('.ok').onclick=()=>anima(pv,[{opacity:1},{opacity:0,transform:'translateY(20px)'}],{duration:220}).onfinish=()=>pv.style.display='none' })
+}
+function fecharFolha(ja){
+  if(!folhaAberta) return; const f=folhaAberta; folhaAberta=null
+  if(ja){ f.style.display='none'; veu.classList.remove('mostra'); return }
+  anima(f,[{transform:'none'},{transform:'translateY(100%)'}],{duration:300,fill:'none'}).onfinish=()=>f.style.display='none'
+  anima(veu,[{opacity:1},{opacity:0}],{duration:300,fill:'none'}).onfinish=()=>veu.classList.remove('mostra')
+}
+veu.onclick=()=>fecharFolha()
+function ir(id, modo='push'){
+  if (modo==='pulo'){ pilha=[id]; mostrar(id,'troca'); return }
+  if (modo==='aba'){ pilha=[DESTINO_DA_ABA[id]]; mostrar(DESTINO_DA_ABA[id],'troca'); return }
+  if (!telas[id].classList.contains('folha')) pilha.push(id)
+  mostrar(id,'push')
+}
+function voltar(){ if(folhaAberta){ fecharFolha(); return } if(pilha.length>1){ pilha.pop(); mostrar(pilha[pilha.length-1],'voltar') } }
+vista.addEventListener('click',e=>{
+  const v=e.target.closest('[data-voltar]'); if(v){ voltar(); return }
+  const a=e.target.closest('[data-aba-ir]'); if(a){ ir(a.dataset.abaIr,'aba'); return }
+  const t=e.target.closest('[data-ir-troca]'); if(t){ pilha[pilha.length-1]=t.dataset.irTroca; mostrar(t.dataset.irTroca,'troca'); return }
+  const vt=e.target.closest('[data-votar]'); if(vt && !vt.classList.contains('on')){ vt.classList.add('on'); vt.innerHTML=icone('feito').replace('<svg','<svg style="width:16px;height:16px"')+'1'; anima(vt,[{transform:'scale(.8)'},{transform:'none'}],{duration:400,easing:MOLA}); return }
+  const i=e.target.closest('[data-ir]'); if(i){ ir(i.dataset.ir) }
+})
+
+/* ================= movimento de cada tela ================= */
+function entrar(t){
+  t.querySelectorAll('[data-in]').forEach((e,i)=>anima(e,[{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:560,delay:120+i*60,fill:'backwards'}))
+  const h=t.querySelector('[data-heroi]')
+  if(h){
+    const p=t.dataset.tela==='viagem'
+    const descanso=p?'rotateX(10deg) rotateY(-10deg) rotateZ(-3deg)':'rotateX(8deg) rotateY(-14deg) rotateZ(-5deg)'
+    anima(h,[{transform:'translateY(300px) rotateX(55deg) rotateZ(-24deg) scale(.7)',opacity:0},{opacity:1,offset:.2},{transform:descanso}],{duration:p?900:1200,easing:'cubic-bezier(.16,1.12,.3,1)'})
+    depois(p?900:1200,()=>anima(h,[{transform:descanso},{transform:'rotateX(-4deg) rotateY(12deg) rotateZ(-2deg)'},{transform:descanso}],{duration:4200,easing:'ease-in-out',iterations:Infinity}))
+    const b=h.querySelector('.brilho'); if(b) [800,3600].forEach(ms=>depois(ms,()=>anima(b,[{transform:'translateX(-120%)'},{transform:'translateX(120%)'}],{duration:1100,easing:'ease-in-out',fill:'none'})))
+  }
+  t.querySelectorAll('[data-carimbo]').forEach(c=>{ c.style.opacity=0; if(t.dataset.tela!=='convite') depois(1300,()=>carimbar(t,c)) })
+  t.querySelectorAll('[data-conta]').forEach(e=>{ const ate=+e.dataset.conta, t0=performance.now(); const f=(n)=>{const p=Math.min(1,(n-t0)/900); e.textContent=Math.round(ate*(1-Math.pow(1-p,3))); if(p<1&&e.isConnected) requestAnimationFrame(f)}; requestAnimationFrame(f) })
+  t.querySelectorAll('[data-digita]').forEach(e=>{ const s=e.dataset.digita; e.textContent=''; [...s].forEach((ch,i)=>depois(500+i*110,()=>e.textContent=s.slice(0,i+1))) })
+  t.querySelectorAll('[data-digita-num]').forEach(e=>{ const s=e.dataset.digitaNum; e.textContent='0'; [...s].forEach((ch,i)=>depois(400+i*160,()=>{ e.textContent=s.slice(0,i+1); anima(e,[{transform:'scale(1.06)'},{transform:'none'}],{duration:200,fill:'none'}) })) })
+  if(t.dataset.tela==='viagens'){ [...t.querySelectorAll('.carteira .bil')].forEach((b,i)=>anima(b,[{transform:'translateY(120px)',opacity:0},{transform:'none',opacity:1}],{duration:700,delay:150+i*120,easing:MOLA})) }
+  if(t.dataset.tela==='descobrir') baralho(t)
+  if(t.dataset.tela==='convite' && t.querySelector('[data-segurar]')) segurarPraTopar(t)
+}
+function carimbar(t,c){
+  anima(c,[{opacity:0,transform:'scale(2.6) rotate(-35deg)'},{opacity:1,transform:'scale(1) rotate(-12deg)'}],{duration:380,easing:DURA})
+  const h=c.closest('.bilhete'); depois(280,()=>anima(h.parentElement,[{transform:'none'},{transform:'translateY(5px)'},{transform:'none'}],{duration:220,fill:'none'}))
+  depois(300,()=>{ for(let i=0;i<14;i++){ const f=document.createElement('i'); f.className='faisca'; f.style.top='300px'; t.appendChild(f); const a=Math.random()*Math.PI*2, r=70+Math.random()*90
+    anima(f,[{opacity:1,transform:'translate(-50%,0)'},{opacity:0,transform:`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(.4)`}],{duration:700+Math.random()*400,easing:'cubic-bezier(.1,.8,.3,1)'}).onfinish=()=>f.remove() } })
+}
+function baralho(t){
+  const cartas=[...t.querySelectorAll('.carta')]
+  cartas.forEach((c,i)=>{ c.style.transform=`translateY(${(cartas.length-1-i)*-10}px) scale(${1-(cartas.length-1-i)*.05})`; c.style.opacity=1 })
+  const topo=cartas[cartas.length-1], quero=topo.querySelector('.selo-quero')
+  depois(1400,()=>{ anima(topo,[{transform:'none'},{transform:'translateX(30px) rotate(4deg)',offset:.3},{transform:'translateX(380px) rotate(22deg)'}],{duration:800,easing:'cubic-bezier(.5,0,.75,0)'}); anima(quero,[{opacity:0,transform:'rotate(-10deg) scale(.6)'},{opacity:1,transform:'rotate(-10deg) scale(1)'}],{duration:260,easing:MOLA})
+    cartas.slice(0,-1).forEach((c,i)=>anima(c,[{transform:c.style.transform},{transform:`translateY(${(cartas.length-2-i)*-10}px) scale(${1-(cartas.length-2-i)*.05})`}],{duration:500,delay:300,easing:MOLA})) })
+  depois(3600,()=>{ if(atual===t) entrar(t) })
+}
+function segurarPraTopar(t){
+  const bt=t.querySelector('[data-segurar]'), enche=bt.querySelector('.enche'), r=bt.querySelector('.r'), car=t.querySelector('[data-carimbo]')
+  enche.getAnimations().forEach(a=>a.cancel()); enche.style.transform='scaleX(0)'; r.textContent='Segure pra topar'; r.style.color=''
+  let an=null, feito=false
+  const pega=()=>new DOMMatrix(getComputedStyle(enche).transform).a||0
+  bt.onpointerdown=(e)=>{ e.preventDefault(); if(feito) return; const x=pega(); an?.cancel(); r.textContent='Continue segurando'
+    an=enche.animate([{transform:`scaleX(${x})`},{transform:'scaleX(1)'}],{duration:1500*(1-x),easing:'cubic-bezier(.4,0,.7,1)',fill:'forwards'})
+    an.onfinish=()=>{ feito=true; r.innerHTML=icone('feito').replace('<svg','<svg style="width:20px;height:20px"')+' Tô dentro'; r.style.color='#3B2715'; carimbar(t,car); anima(bt,[{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:420,easing:MOLA}); depois(1500,()=>{ if(atual===t) ir('dentro') }) } }
+  const solta=()=>{ if(feito||!an) return; const x=pega(); an.cancel(); r.textContent='Segure pra topar'; an=enche.animate([{transform:`scaleX(${x})`},{transform:'scaleX(0)'}],{duration:350,easing:MACIA,fill:'forwards'}) }
+  bt.onpointerup=solta; bt.onpointerleave=solta; bt.onpointercancel=solta
+}
+
+/* ================= tema ================= */
+document.querySelectorAll('#chaveTema button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#chaveTema button').forEach(x=>x.classList.toggle('on',x===b))
+  document.body.classList.toggle('creme', b.dataset.tema==='creme')
+  if(atual) vista.querySelector('.status').style.color=getComputedStyle(atual).getPropertyValue('--tx')
+})
+ir('abertura','pulo')
+</script>
+</body>
+</html>

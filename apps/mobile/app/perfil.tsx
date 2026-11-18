@@ -2,22 +2,24 @@ import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native
 import { StatusBar } from '../src/ui/StatusBar'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeft, BriefcaseBusiness, ChevronRight, LogOut, UserPlus, Users } from '../src/ui/icones'
+import { ArrowLeft, BriefcaseBusiness, ChevronRight, Compass, LogOut, UserPlus, Users } from '../src/ui/icones'
 import { useViagemAtual } from '../src/dados/viagemAtual'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { Norti } from '../src/ui/Norti'
 import { AvisosNoCelular } from '../src/ui/AvisosNoCelular'
+import { ExcluirConta } from '../src/ui/ExcluirConta'
 import { esquecerEsteAparelho } from '../src/lib/avisos'
 import { Avatar, BotaoRedondo, Cartao, IconeQuadrado, TituloDaTela } from '../src/ui/pecas'
 import { cor } from '../theme'
+import { verTourDeNovo } from '../src/ui/tour/Tour'
 
 // Perfil: quem sou, quantas viagens e com quantas pessoas, e o botão de sair.
 export default function Perfil() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { sessao, ehConvidado } = useSessao()
-  const { viagens, meuId } = useViagemAtual()
+  const { viagens, meuId, atual } = useViagemAtual()
   const eu = viagens.flatMap((v) => v.membros).find((m) => m.id === meuId)
   const nome = eu?.nome ?? sessao?.user.email?.split('@')[0] ?? 'Viajante'
   const companheiros = new Set(viagens.flatMap((v) => v.membros.map((m) => m.id)).filter((id) => id !== meuId)).size
@@ -44,7 +46,7 @@ export default function Perfil() {
 
         <View className="flex-row gap-2.5">
           <Numero Icone={BriefcaseBusiness} valor={viagens.length} rotulo={viagens.length === 1 ? 'viagem' : 'viagens'} />
-          <Numero Icone={Users} valor={companheiros} rotulo={companheiros === 1 ? 'companheiro' : 'companheiros'} />
+          <Numero Icone={Users} valor={companheiros} rotulo="na galera" />
         </View>
 
         {/* Spec 110: lembretes e outros avisos no celular */}
@@ -70,7 +72,29 @@ export default function Perfil() {
           </Pressable>
         ) : null}
 
+        {/* Tour guiado (src/ui/tour/Tour.tsx): marca como não visto e abre a viagem, onde ele começa sozinho */}
+        {atual ? (
+          <Pressable
+            onPress={async () => {
+              await verTourDeNovo()
+              router.push(`/viagem/${atual.id}`)
+            }}
+            accessibilityRole="button"
+            className="active:opacity-90"
+          >
+            <Cartao className="flex-row items-center gap-3 p-4">
+              <IconeQuadrado>
+                <Compass size={20} color={cor.couro} />
+              </IconeQuadrado>
+              <Text className="flex-1 font-body-bold text-[15px] text-texto">Ver o tour de novo</Text>
+              <ChevronRight size={20} color={cor.suave} />
+            </Cartao>
+          </Pressable>
+        ) : null}
+
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Sair da conta"
           onPress={() => {
             const sairDeVez = async () => {
               await esquecerEsteAparelho().catch((e) => console.error('Erro ao esquecer o aparelho:', e))
@@ -99,7 +123,13 @@ export default function Perfil() {
             <ChevronRight size={20} color={cor.suave} />
           </Cartao>
         </Pressable>
+
+        {/* Spec 089: excluir a conta sem precisar do site (a App Store e o Google Play exigem) */}
+        {sessao ? <ExcluirConta usuarioId={sessao.user.id} /> : null}
       </ScrollView>
+      {/* Android (reteste r3b): ao rolar, o conteúdo passava por baixo do relógio. Faixa fixa na cor
+          do fundo atrás da barra de status (igual à lista de viagens), sem receber toque. */}
+      <View pointerEvents="none" className="absolute left-0 right-0 top-0 bg-fundo" style={{ height: insets.top }} />
     </View>
   )
 }

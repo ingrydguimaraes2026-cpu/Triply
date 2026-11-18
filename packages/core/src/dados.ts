@@ -69,10 +69,12 @@ export type Pessoa = { id: string; nome: string; avatarUrl: string | null; papel
 export type ViagemComDetalhes = ViagemResumo & {
   destinos: string[] // nomes, na ordem do roteiro
   membros: Pessoa[]
+  // 'viagem', 'role' ou 'antiga' (spec 118f). O tour não roda em viagem antiga nem em rolê.
+  tipo?: string | null
 }
 
 const CAMPOS_DETALHE =
-  'id, nome, moeda_principal, data_inicio, data_fim, criado_em, destinos(nome, ordem), comboio_membros(papel, perfis(id, nome, avatar_url))'
+  'id, nome, moeda_principal, data_inicio, data_fim, criado_em, tipo, destinos(nome, ordem), comboio_membros(papel, perfis(id, nome, avatar_url))'
 
 type LinhaDetalhe = {
   id: string
@@ -80,6 +82,7 @@ type LinhaDetalhe = {
   moeda_principal: string
   data_inicio: string | null
   data_fim: string | null
+  tipo?: string | null
   destinos: { nome: string; ordem: number }[]
   comboio_membros: { papel: string; perfis: { id: string; nome: string | null; avatar_url: string | null } | null }[]
 }
@@ -91,6 +94,7 @@ function montarDetalhe(v: LinhaDetalhe): ViagemComDetalhes {
     moeda: v.moeda_principal,
     dataInicio: v.data_inicio,
     dataFim: v.data_fim,
+    tipo: v.tipo ?? null,
     destinos: [...v.destinos].sort((a, b) => a.ordem - b.ordem).map((d) => d.nome),
     membros: v.comboio_membros.flatMap((m) =>
       m.perfis ? [{ id: m.perfis.id, nome: m.perfis.nome ?? 'Sem nome', avatarUrl: m.perfis.avatar_url, papel: m.papel }] : [],
@@ -235,7 +239,8 @@ export type NovaViagem = {
   dataInicio: string | null // AAAA-MM-DD
   dataFim: string | null
   moeda: string
-  destinos: { nome: string; pais: string | null; latitude: number | null; longitude: number | null; dias?: number | null }[]
+  // chegada/saída (AAAA-MM-DD): com uma cidade só e datas marcadas, as mesmas da viagem (Hospedagem lê daqui)
+  destinos: { nome: string; pais: string | null; latitude: number | null; longitude: number | null; dias?: number | null; chegada?: string | null; saida?: string | null }[]
 }
 
 // Cria a viagem e os destinos (igual à web: quem cria vira ADM pelo banco). Devolve o id.

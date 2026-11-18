@@ -24,6 +24,8 @@ export async function carregarResumoDoInicio(viagem: ResumoDaViagem, meuId: stri
   })
   return {
     carimbos: passos.filter((p) => p.feito).length,
+    // Caminho B: o próximo passo aparece no bilhete da frente em "Suas viagens"
+    proximo: passos.find((p) => !p.feito && (!p.soAdm || viagem.souAdm))?.titulo ?? null,
     total: passos.length,
     // Só o que os outros fizeram (o meu eu já sei)
     agora: atividades.filter((a) => a.autor && a.autor !== meuId).slice(0, 3),

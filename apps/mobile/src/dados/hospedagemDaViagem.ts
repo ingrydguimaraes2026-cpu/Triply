@@ -1,13 +1,11 @@
-import { useCallback, useRef } from 'react'
-import { useFocusEffect } from 'expo-router'
 import { buscarDestinos, buscarOpcoesDeHospedagem, buscarTrajetos } from '@together/core'
 import { supabase } from '../lib/supabase'
 import { useCarregar } from './useCarregar'
 
 // Spec 123: o que as telas de hospedagem precisam (noites, cidade e opção).
-// Recarrega ao voltar pra tela (depois de pôr ou editar uma opção).
+// Recarrega ao voltar pra tela (depois de pôr ou editar uma opção): o useCarregar faz isso.
 export function useHospedagemDaViagem(viagemId: string | undefined) {
-  const carga = useCarregar(
+  return useCarregar(
     viagemId
       ? async () => {
           const [opcoes, destinos, trajetos] = await Promise.all([
@@ -21,14 +19,6 @@ export function useHospedagemDaViagem(viagemId: string | undefined) {
         }
       : null,
     [viagemId],
+    'hospedagem',
   )
-  const primeiraVez = useRef(true)
-  const { recarregar } = carga
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez.current) primeiraVez.current = false
-      else recarregar()
-    }, [recarregar]),
-  )
-  return carga
 }

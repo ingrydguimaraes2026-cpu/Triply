@@ -789,3 +789,145 @@
     border-color: var(--cor-borda);
   }
 }
+
+/* ---------- Caminho B "Embarque" (10/11/2026) ---------- */
+.feed-pagina {
+  padding-bottom: 72px; /* espaço pro botão do canto */
+}
+
+.ft-topo {
+  padding: 6px 2px 0;
+}
+
+.ft-topo h1 {
+  margin: 6px 0 0;
+  font: 800 32px/1 var(--fonte-titulo);
+  letter-spacing: var(--junto);
+}
+
+.ft-rotulo {
+  display: block;
+  font: 600 10.5px var(--fonte-corpo);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+/* Feed | Por dia: o segmento do B, redondo */
+.fotos-pilulas {
+  padding: 3px;
+  border-radius: 999px;
+}
+
+.fotos-pilulas button {
+  border-radius: 999px;
+  font: 700 13.5px var(--fonte-titulo);
+}
+
+.fotos-pilulas button.ativa {
+  color: var(--creme);
+}
+
+.fotos-pessoas {
+  gap: 6px;
+  margin: -6px -16px 0;
+  padding: 0 16px;
+}
+
+.fotos-pessoas button {
+  border-radius: 999px;
+  font: 600 12.5px var(--fonte-corpo);
+}
+
+.fotos-pessoas button.ativa {
+  color: var(--creme);
+}
+
+/* Post: cartão creme arredondado também no celular */
+.post {
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(74, 46, 20, 0.08);
+}
+
+@media (max-width: 640px) {
+  .feed {
+    gap: 14px;
+    margin-inline: 0;
+  }
+
+  .post {
+    border-inline: 1px solid var(--cor-borda);
+    border-radius: 20px;
+  }
+
+  .grade.ft-mosaico {
+    margin-inline: 0;
+  }
+}
+
+.album-dia {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0 2px 10px;
+  font: 700 15px var(--fonte-titulo);
+  letter-spacing: -0.01em;
+}
+
+/* O álbum em mosaico: de 3 em 3, uma alta na esquerda e duas na direita */
+.grade.ft-mosaico {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 120px;
+  gap: 4px;
+}
+
+.grade.ft-mosaico li:nth-child(3n + 1) {
+  grid-row: span 2;
+}
+
+.grade.ft-mosaico li:last-child:nth-child(3n + 1) {
+  grid-row: span 1;
+  grid-column: span 2;
+}
+
+.grade.ft-mosaico button {
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 14px;
+  background: var(--cor-fundo-suave);
+}
+
+@media (min-width: 641px) {
+  .grade.ft-mosaico {
+    grid-auto-rows: 160px;
+  }
+}
+
+/* Um botão só, no canto, acima da barra de abas de vidro */
+.ft-fab-lugar {
+  position: fixed;
+  z-index: 12;
+  right: 16px;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+}
+
+.ft-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 50px;
+  padding: 0 18px 0 14px;
+  border: 0;
+  border-radius: 25px;
+  background: var(--couro);
+  color: var(--creme);
+  font: 700 14.5px var(--fonte-titulo);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .ft-fab-lugar {
+    bottom: 24px;
+  }
+}

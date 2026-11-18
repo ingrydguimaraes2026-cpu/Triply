@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react'
-import { Text, View } from 'react-native'
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
-import { useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router'
+import { useEffect, useState, type ReactNode } from 'react'
+import { Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native'
+import Animated from 'react-native-reanimated'
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from '../../../../src/ui/StatusBar'
 import { Share2 } from '../../../../src/ui/icones'
@@ -14,51 +14,47 @@ import { convidarProComboio } from '../../../../src/lib/convite'
 import { compartilharTexto, linkDaViagem } from '../../../../src/lib/compartilhar'
 import { diasAte, diasDaViagem, hojeIso, periodo } from '../../../../src/lib/formato'
 import { montarPassos, proximoCarimbo, type DestinoDoPasso, type Passo } from '../../../../src/ui/PassosDaViagem'
-import { Passaporte } from '../../../../src/ui/viagem/Passaporte'
 import { CarimbosDaViagem } from '../../../../src/ui/viagem/CarimbosDaViagem'
-import { ProximoCarimbo } from '../../../../src/ui/viagem/ProximoCarimbo'
-import { AntesDeEmbarcar, Cabecalho, Capa, CarrosselDoRoteiro, ResumoDasContas, ResumoDasPassagens, Rostos, Secao } from '../../../../src/ui/viagem/Secoes'
+import { Capa } from '../../../../src/ui/viagem/Capa'
+import { FaixaDoProximoPasso, PassaporteDaGalera } from '../../../../src/ui/viagem/ProximoPasso'
 import { EsqueletoDaViagem } from '../../../../src/ui/viagem/Esqueleto'
 import { Lembrancas } from '../../../../src/ui/viagem/Lembrancas'
 import { Hoje } from '../../../hoje'
 import { Comemoracao } from '../../../../src/ui/Comemoracao'
+import { Icone } from '../../../../src/ui/Icone'
 import { Selo } from '../../../../src/ui/Selos'
-import { ErroNaTela } from '../../../../src/ui/pecas'
-import { CONGELADO } from '@together/core'
-import { cor } from '../../../../theme'
+import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
+import { useCascata, useNumeroAnimado } from '../../../../src/ui/movimento'
+import { buscarConvitesAtivos, formatarDinheiro, type NomeDoIcone } from '@together/core'
+import { supabase } from '../../../../src/lib/supabase'
+import { cor, fonte, rotulo, sombra, trabalho } from '../../../../theme'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
-// Aba Viagem (spec 117): muda com a fase. Antes da viagem: capa, comboio, próximo carimbo,
-// passaporte e o resumo do roteiro, das contas e da papelada. Nada além disso.
-// Na viagem: o Hoje. Depois da última data: Lembranças.
+// Aba Viagem (caminho B "Embarque", aprovado pelo Victor em 10/11/2026). Muda com a fase:
+// - antes: a capa com a foto do destino, quantos dias faltam (grande) com os rostos da galera,
+//   o passaporte da galera, o resumo das outras 4 abas e UM próximo passo numa faixa fixa no pé
+//   (refeito em 10/11 com as referências do App Store Tracker: Tripsy, Luggo, Wanderlog, Antigone);
+// - durante: o Hoje;
+// - depois: Lembranças (passaporte e história).
+// O cabeçalho (viagem, galera, ajustes) e a barra de abas ficam no _layout.
 export default function AbaViagem() {
   // Só em desenvolvimento: ?fase=durante|voltou simula a fase (pra testar sem mudar as datas)
   const { id, fase: faseSimulada } = useLocalSearchParams<{ id: string; fase?: 'antes' | 'durante' | 'voltou' }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { meuId, atual } = useViagemAtual()
-  // No navegador, ao voltar de outra tela (ex.: Cidades), o id da rota pode vir vazio:
-  // aí vale a viagem atual (o _layout já escolheu ela). Sem id nenhum, não busca (evita "undefined" no banco).
+  // No navegador, ao voltar de outra tela, o id da rota pode vir vazio: aí vale a viagem atual
   const viagemId = id || atual?.id
   const [convite, setConvite] = useState<string | null>(null)
   const [carimbo, setCarimbo] = useState<Passo | null>(null)
   const capa = useCapas(viagemId ? [viagemId] : [])
-  const rolagem = useSharedValue(0)
-  const aoRolar = useAnimatedScrollHandler((e) => {
-    rolagem.value = e.contentOffset.y
-  })
 
-  const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId])
-  // Volta de outra tela (votou, lançou gasto, pôs datas): busca de novo pra o carimbo cair
-  const { recarregar } = carga
-  const [primeiraVez, setPrimeiraVez] = useState(true)
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez) setPrimeiraVez(false)
-      else recarregar()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [recarregar]),
-  )
+  const carga = useCarregar(viagemId ? () => carregarAbaViagem(viagemId) : null, [viagemId], 'aba-viagem')
+  // O link já saiu? (convite ativo ou compartilhado agora): a faixa para de pedir "Chamar a galera"
+  const convitesAtivos = useCarregar(viagemId ? () => buscarConvitesAtivos(supabase, viagemId).catch(() => []) : null, [viagemId])
+  const [chamouAgora, setChamouAgora] = useState(false)
+  // Volta de outra tela (votou, lançou gasto, definiu datas): o useCarregar busca de novo sozinho.
+  // (Aqui tinha um useFocusEffect com `primeiraVez` preso no 1º render: nunca recarregava.)
 
   if (carga.status === 'carregando') return <EsqueletoDaViagem />
   if (carga.status === 'erro' || !carga.dados) return <ErroNaTela aoTentar={carga.recarregar} />
@@ -75,17 +71,19 @@ export default function AbaViagem() {
     trajetos: d.trajetos.length,
     gastos: d.gastos.length,
     euSouAdm,
+    jaChamou: chamouAgora || (convitesAtivos.status === 'pronto' && (convitesAtivos.dados?.length ?? 0) > 0),
   }
   const passos = montarPassos(estado)
   const proximo = proximoCarimbo(estado)
   const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
-  const linha = [periodo(viagem.dataInicio, viagem.dataFim), faltam != null && faltam > 0 ? `faltam ${faltam} ${faltam === 1 ? 'dia' : 'dias'}` : null].filter(Boolean).join(' · ') || 'Sem data ainda'
 
   const ir = (rota: string) => router.push((['roteiro', 'reservas', 'contas', 'fotos'].includes(rota) ? `/viagem/${viagem.id}/${rota}` : `/${rota}`) as Href)
   const irProPasso = (destino: DestinoDoPasso) => (destino === 'convidar' ? void convidar() : ir(destino === 'explorar' ? `explorar` : destino))
 
   async function convidar() {
-    setConvite((await convidarProComboio(viagem.id, viagem.nome))?.texto ?? null)
+    const r = await convidarProComboio(viagem.id, viagem.nome, !!viagem.dataFim && viagem.dataFim < hojeIso())
+    setConvite(r?.texto ?? null)
+    if (!r?.erro) setChamouAgora(true)
   }
 
   // Fase da viagem: antes → na viagem (vira o "Hoje") → voltou (Lembranças)
@@ -98,9 +96,9 @@ export default function AbaViagem() {
   if (fase === 'voltou') {
     const dias = viagem.dataInicio && viagem.dataFim ? diasDaViagem(viagem.dataInicio, viagem.dataFim).length : 0
     return (
-      <View className="flex-1 bg-fundo">
-        <StatusBar style="light" />
-        <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
+      <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
+        <StatusBar style="dark" />
+        <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
           <Lembrancas
             viagem={viagem}
             foto={capa(viagem.id)}
@@ -114,75 +112,103 @@ export default function AbaViagem() {
             <CarimbosDaViagem viagem={viagem} meuId={meuId} />
           </View>
         </Animated.ScrollView>
-        <Cabecalho nome={viagem.nome} rolagem={rolagem} aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))} aoCompartilhar={convidar} aoMais={() => ir('tudo-da-viagem')} />
       </View>
     )
   }
 
+  // Antes da viagem
+  const destinos = viagem.destinos
+  const noites = viagem.dataInicio && viagem.dataFim ? diasDaViagem(viagem.dataInicio, viagem.dataFim).length - 1 : 0
+  const meuSaldo = contas.saldos.get(meuId) ?? 0
+  const reservasFeitas = d.passagens.compradas.length
+  const ondeFicar = d.opcoes.some((o) => o.escolhida) ? 'onde ficar escolhido' : d.opcoes.length ? 'votando onde ficar' : 'falta onde ficar'
+  // Resumo das outras 4 abas: mesmo nome e mesmo ícone da barra; tocar leva pra aba
+  const resumo: { aba: string; icone: NomeDoIcone; titulo: string; linha: string }[] = [
+    {
+      aba: 'roteiro',
+      icone: 'roteiro',
+      titulo: 'Roteiro',
+      linha: d.dias.length ? `${d.dias.length} ${d.dias.length === 1 ? 'dia' : 'dias'} com plano` : d.lugares ? `${d.lugares} ${d.lugares === 1 ? 'lugar salvo' : 'lugares salvos'}` : 'Nada planejado ainda',
+    },
+    { aba: 'reservas', icone: 'hospedagem', titulo: 'Reservas', linha: `${reservasFeitas ? `${reservasFeitas} ${reservasFeitas === 1 ? 'passagem comprada' : 'passagens compradas'}` : 'Nenhuma passagem'}, ${ondeFicar}` },
+    {
+      aba: 'contas',
+      icone: 'contas',
+      titulo: 'Contas',
+      linha: !d.gastos.length ? 'Nenhum gasto ainda' : Math.abs(meuSaldo) < 0.01 ? 'Você está em dia' : meuSaldo > 0 ? `A galera te deve ${formatarDinheiro(meuSaldo, viagem.moeda)}` : `Você deve ${formatarDinheiro(-meuSaldo, viagem.moeda)}`,
+    },
+    { aba: 'fotos', icone: 'fotos', titulo: 'Fotos', linha: d.fotos ? `${d.fotos} ${d.fotos === 1 ? 'foto' : 'fotos'} da galera` : 'Nenhuma foto ainda' },
+  ]
+
   return (
-    <View className="flex-1 bg-fundo">
-      <StatusBar style="light" />
-      <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} onScroll={aoRolar} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
-        <Capa foto={capa(viagem.id)} nome={viagem.nome} linha={linha} rolagem={rolagem} />
+    <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
+      <StatusBar style="dark" />
+      <Animated.ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: 2, paddingBottom: insets.bottom + (proximo ? 92 : 16) }}>
+        <Capa
+          foto={capa(viagem.id)}
+          nome={destinos.length === 1 ? destinos[0] : viagem.nome}
+          linha={[viagem.dataInicio ? periodo(viagem.dataInicio, viagem.dataFim) : '', noites > 0 ? `${noites} ${noites === 1 ? 'noite' : 'noites'}` : '', destinos.length > 1 ? destinos.join(', ') : '']
+            .filter(Boolean)
+            .join(' · ')}
+          aoTocar={() => ir('roteiro')}
+        />
 
-        <View className="gap-6 bg-fundo px-5 pt-5">
-          <Secao indice={0}>
-            <Rostos membros={viagem.membros} atividades={d.atividades} vistoEm={d.vistoEm} meuId={meuId} aoTocar={() => ir('comboio')} aoConvidar={convidar} />
-            {convite ? <Text selectable className="mt-2 font-body-medium text-[13px] text-verde">{convite}</Text> : null}
-          </Secao>
+        <Entra indice={0}>
+          <Contagem
+            faltam={faltam}
+            pessoas={viagem.membros.map((m) => m.nome)}
+            podeDefinir={euSouAdm}
+            aoDefinir={() => ir('configuracoes')}
+            aoGalera={() => ir('comboio')}
+          />
+        </Entra>
 
-          {proximo ? (
-            <Secao indice={1}>
-              <ProximoCarimbo
-                passo={proximo}
-                viagem={viagem}
-                opcoes={d.opcoes}
-                meuId={meuId}
-                aoAbrir={() => irProPasso(proximo.destino)}
-                aoMudar={carga.recarregar}
-              />
-            </Secao>
+        <Entra indice={1} style={{ marginTop: 18 }}>
+          <PassaporteDaGalera viagemId={viagem.id} passos={passos} aoCarimbar={setCarimbo} />
+          {convite ? (
+            <Text selectable className="mx-4 mt-2 font-body-medium text-[13px] text-verde">
+              {convite}
+            </Text>
           ) : null}
+        </Entra>
 
-          <Secao indice={2}>
-            <Passaporte viagemId={viagem.id} passos={passos} aoCarimbar={setCarimbo} />
-          </Secao>
+        <Entra indice={2}>
+          <Text style={[rotulo, { color: trabalho.texto2, marginTop: 22, marginBottom: 10, marginHorizontal: 18 }]}>A viagem</Text>
+          <View className="mx-3.5 rounded-[20px] border" style={[{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }, sombra.cartao]}>
+            {resumo.map((r, i) => (
+              <Pressable
+                key={r.aba}
+                onPress={() => ir(r.aba)}
+                accessibilityRole="button"
+                accessibilityLabel={`${r.titulo}: ${r.linha}`}
+                className="flex-row items-center gap-3 px-3.5 py-3 active:opacity-70"
+                style={i < resumo.length - 1 ? { borderBottomWidth: 1, borderColor: trabalho.linha } : undefined}
+              >
+                <View className="h-[38px] w-[38px] items-center justify-center rounded-xl" style={{ backgroundColor: trabalho.superficie2 }}>
+                  <Icone nome={r.icone} tamanho={20} cor={trabalho.texto} />
+                </View>
+                <View className="flex-1">
+                  <Text style={{ fontFamily: fonte.item, fontSize: 14.5, letterSpacing: -0.15, color: trabalho.texto }}>{r.titulo}</Text>
+                  <Text numberOfLines={1} style={{ fontFamily: fonte.corpo, fontSize: 12.5, color: trabalho.texto2, marginTop: 1 }}>
+                    {r.linha}
+                  </Text>
+                </View>
+                <Icone nome="seta-direita" tamanho={16} cor={trabalho.texto2} />
+              </Pressable>
+            ))}
+          </View>
+        </Entra>
 
-          {/* Spec 118a: os carimbos dos lugares (apagados até a galera chegar lá) */}
-          <Secao indice={2}>
-            <CarimbosDaViagem viagem={viagem} meuId={meuId} />
-          </Secao>
-
-          <Secao indice={3} titulo="Roteiro" direita={d.dias.length ? <Text className="font-body-bold text-[13px] text-caramelo">{d.dias.length} {d.dias.length === 1 ? 'dia' : 'dias'}</Text> : null}>
-            <CarrosselDoRoteiro dias={d.dias} aoAbrir={() => ir('roteiro')} aoMontar={() => ir('explorar')} />
-          </Secao>
-
-          <Secao indice={4} titulo="Passagens">
-            <ResumoDasPassagens passagens={d.passagens} aoAbrir={() => ir('reservas')} />
-          </Secao>
-
-          <Secao indice={5} titulo="Contas">
-            <ResumoDasContas total={contas.total} meuSaldo={contas.saldos.get(meuId) ?? 0} moeda={viagem.moeda} aoAbrir={() => ir('contas')} />
-          </Secao>
-
-          {/* Congelado pelo RUMO (03/11/2026): documentos de entrada */}
-          {CONGELADO.documentos ? null : (
-            <Secao indice={6} titulo="Antes de embarcar">
-              <AntesDeEmbarcar pessoas={viagem.membros.length} passaportesOk={d.passaportesOk} semSeguro={d.semSeguro} aoDocumentos={() => ir('documentos')} />
-            </Secao>
-          )}
-        </View>
+        {/* Spec 118a: os carimbos dos lugares (apagados até a galera chegar lá) */}
+        <Entra indice={3} style={{ marginTop: 22, marginHorizontal: 18 }}>
+          <CarimbosDaViagem viagem={viagem} meuId={meuId} />
+        </Entra>
       </Animated.ScrollView>
 
-      <Cabecalho
-        nome={viagem.nome}
-        rolagem={rolagem}
-        aoVoltar={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-        aoCompartilhar={convidar}
-        aoMais={() => ir('tudo-da-viagem')}
-      />
+      {/* Um próximo passo só, sempre no mesmo lugar: logo acima da barra de abas */}
+      <FaixaDoProximoPasso proximo={proximo} aoAbrir={() => proximo && irProPasso(proximo.destino)} baixo={insets.bottom - 4} />
 
-      {/* Carimbo novo (tela 7): a Norti comemora o marco */}
+      {/* Carimbo novo: a Norti comemora o marco */}
       <Comemoracao
         visivel={!!carimbo}
         acima={`Carimbo ${passos.filter((p) => p.feito).length} de ${passos.length}`}
@@ -190,11 +216,80 @@ export default function AbaViagem() {
         desenho={carimbo ? <Selo nome={carimbo.selo} tamanho={96} tom="escuro" /> : null}
         texto={!proximo ? 'Passaporte completo. Boa viagem!' : `${passos.filter((p) => !p.feito).length === 1 ? 'Falta só' : 'Próximo:'} ${proximo.titulo.toLowerCase()}.`}
         botoes={[
-          { titulo: 'Contar pro comboio', icone: <Share2 size={18} color={cor.escuro} />, principal: true, aoTocar: () => void compartilharTexto(`Carimbo novo em ${viagem.nome}: ${carimbo?.titulo.toLowerCase()} resolvido! ${linkDaViagem(viagem.id)}`).finally(() => setCarimbo(null)) },
+          {
+            titulo: 'Contar pra galera',
+            icone: <Share2 size={18} color={cor.escuro} />,
+            principal: true,
+            aoTocar: () => void compartilharTexto(`Carimbo novo em ${viagem.nome}: ${carimbo?.titulo.toLowerCase()} resolvido! ${linkDaViagem(viagem.id)}`).finally(() => setCarimbo(null)),
+          },
           { titulo: 'Continuar', aoTocar: () => setCarimbo(null) },
         ]}
         aoFechar={() => setCarimbo(null)}
       />
+    </View>
+  )
+}
+
+// Entrada em cascata: cada seção sobe 12 px e aparece um tiquinho depois da anterior
+// (começa no 3, pra dar tempo do bilhete chegar primeiro)
+function Entra({ indice, style, children }: { indice: number; style?: StyleProp<ViewStyle>; children: ReactNode }) {
+  const cascata = useCascata(indice + 3)
+  // Android (teste 17/11): em `style={[style, cascata]}` a margem não chegava ("Carimbos" colado
+  // na borda). Fixo por fora, animação por dentro.
+  if (!style) return <Animated.View style={cascata}>{children}</Animated.View>
+  return (
+    <View style={style}>
+      <Animated.View style={cascata}>{children}</Animated.View>
+    </View>
+  )
+}
+
+// "23 dias pra embarcar" bem grande na esquerda, os rostos da galera na direita.
+// O número corre do zero até o valor quando a tela abre.
+function Contagem({
+  faltam,
+  pessoas,
+  podeDefinir,
+  aoDefinir,
+  aoGalera,
+}: {
+  faltam: number | null
+  pessoas: string[]
+  podeDefinir: boolean
+  aoDefinir: () => void
+  aoGalera: () => void
+}) {
+  const [alvo, setAlvo] = useState(0)
+  useEffect(() => setAlvo(faltam ?? 0), [faltam])
+  const mostrado = Math.round(useNumeroAnimado(alvo, 900))
+  const semData = faltam == null || faltam <= 0
+  return (
+    <View className="flex-row items-end justify-between px-[18px] pt-[18px]">
+      {semData ? (
+        <Pressable onPress={podeDefinir ? aoDefinir : undefined} accessibilityRole={podeDefinir ? 'button' : undefined} className="flex-1 active:opacity-70">
+          <Text style={{ fontFamily: fonte.titulo, fontSize: 30, letterSpacing: -1, color: trabalho.texto }}>Sem data ainda</Text>
+          <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: podeDefinir ? cor.caramelo : trabalho.texto2, marginTop: 4 }}>
+            {podeDefinir ? 'Definir quando vai ser' : 'Quem organiza define as datas'}
+          </Text>
+        </Pressable>
+      ) : (
+        <View className="flex-1" accessibilityLabel={`${faltam} ${faltam === 1 ? 'dia' : 'dias'} pra embarcar`}>
+          <Text style={{ fontFamily: fonte.titulo, fontSize: 76, lineHeight: 72, letterSpacing: -3.4, color: trabalho.texto, fontVariant: ['tabular-nums'] }}>{mostrado}</Text>
+          <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: trabalho.texto2, marginTop: 4 }}>{faltam === 1 ? 'dia' : 'dias'} pra embarcar</Text>
+        </View>
+      )}
+      <Pressable onPress={aoGalera} accessibilityRole="button" accessibilityLabel={`Galera: ${pessoas.length} ${pessoas.length === 1 ? 'pessoa' : 'pessoas'}`} className="items-end pb-1 active:opacity-70">
+        <View className="flex-row">
+          {pessoas.slice(0, 5).map((n, i) => (
+            <View key={i} style={{ marginLeft: i ? -8 : 0 }}>
+              <Avatar nome={n} indice={i} tamanho={30} borda={trabalho.fundo} />
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: trabalho.texto2, marginTop: 6 }}>
+          {pessoas.length} {pessoas.length === 1 ? 'vai' : 'vão'}
+        </Text>
+      </Pressable>
     </View>
   )
 }

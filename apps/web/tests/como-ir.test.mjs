@@ -71,3 +71,14 @@ test('links do trecho e trechos sem trajeto', () => {
   const faltam = trechosSemTrajeto(destinos, [{ origem_id: 'lis', destino_id: 'rom' }])
   assert.deepEqual(faltam.map((t) => `${t.de.id}-${t.para.id}`), ['rom-flo'])
 })
+
+test('trechos sem trajeto: deslocamento pelo nome do lugar também cobre o trecho', () => {
+  const porNome = [
+    { origem_id: null, destino_id: null, de_texto: 'Lisboa', para_texto: 'Roma, Itália' },
+    { origem_id: null, destino_id: null, de_texto: 'Roma Termini', para_texto: 'Firenze' },
+  ]
+  // "Firenze" não é "Florença": continua faltando; "Romania" não pode contar como Roma
+  assert.deepEqual(trechosSemTrajeto(destinos, porNome).map((t) => `${t.de.id}-${t.para.id}`), ['rom-flo'])
+  assert.deepEqual(trechosSemTrajeto(destinos, [{ origem_id: null, destino_id: null, de_texto: 'roma', para_texto: 'FLORENCA' }]).map((t) => t.de.id), ['lis'])
+  assert.equal(trechosSemTrajeto(destinos, [{ origem_id: null, destino_id: null, de_texto: 'Lisboa', para_texto: 'Romania' }]).length, 2)
+})

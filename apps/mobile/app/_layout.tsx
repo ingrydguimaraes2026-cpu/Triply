@@ -6,13 +6,10 @@ import { Platform } from 'react-native'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { useFonts, Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces'
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from '@expo-google-fonts/plus-jakarta-sans'
+import { useFonts } from 'expo-font'
+// Caminho B (Embarque, 10/11/2026): Inter Tight nos títulos (800, letras juntas) e Inter no corpo
+import { InterTight_700Bold, InterTight_800ExtraBold } from '@expo-google-fonts/inter-tight'
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter'
 import { conviteDepoisDoLogin } from '../src/lib/convite'
 import { carregarRascunho, lerRascunho } from '../src/lib/rascunho'
 import { useSessao } from '../src/lib/sessao'
@@ -34,12 +31,12 @@ export default function RootLayout() {
   const segments = useSegments()
   const router = useRouter()
   const [fontesProntas] = useFonts({
-    Fraunces_600SemiBold,
-    Fraunces_700Bold,
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_500Medium,
-    PlusJakartaSans_600SemiBold,
-    PlusJakartaSans_700Bold,
+    InterTight_700Bold,
+    InterTight_800ExtraBold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   })
   // Segura a abertura um instante pra animação da Norti aparecer
   const [aberturaVista, setAberturaVista] = useState(false)

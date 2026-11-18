@@ -90,7 +90,7 @@ export function htmlDoResumo(r: ResumoParaPdf): string {
         )
         .join('')}`
     : ''
-  const comboio = `<h2>Comboio</h2><table><thead><tr><th>Pessoa</th><th>Telefone</th><th>Emergência</th></tr></thead><tbody>${r.comboio
+  const comboio = `<h2>Galera</h2><table><thead><tr><th>Pessoa</th><th>Telefone</th><th>Emergência</th></tr></thead><tbody>${r.comboio
     .map((c) => `<tr><td>${e(c.nome)}</td><td>${e(c.telefone)}</td><td>${e(c.emergencia)}</td></tr>`)
     .join('')}</tbody></table>`
   return pagina(

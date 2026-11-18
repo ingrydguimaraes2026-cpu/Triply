@@ -123,7 +123,9 @@ function LadoDoDuelo({ opcao, votos, fracao, votei, moeda, aoVotar }: { opcao: O
   const reduzir = useReducedMotion()
   const mostrado = Math.round(useNumeroAnimado(votos, 400))
   // A barra cresce com mola quando o voto muda (só aparece, se reduzir movimento)
-  const barra = useAnimatedStyle(() => ({ transform: [{ scaleX: reduzir ? fracao : withSpring(fracao, mola.padrao) }] }))
+  // Android (teste 17/11): `className` + `style={[fixo, animado]}` perde a parte fixa no Reanimated.
+  // Tamanho e origem vão no próprio estilo animado; a cor numa View comum por dentro.
+  const barra = useAnimatedStyle(() => ({ width: '100%', height: '100%', transformOrigin: 'left', transform: [{ scaleX: reduzir ? fracao : withSpring(fracao, mola.padrao) }] }))
   return (
     <Pressable
       onPress={aoVotar}
@@ -138,7 +140,9 @@ function LadoDoDuelo({ opcao, votos, fracao, votei, moeda, aoVotar }: { opcao: O
         </Text>
         {opcao.precoTotal != null ? <Text className="font-body text-[11px] text-suave">{formatarDinheiro(opcao.precoTotal, opcao.moeda || moeda)} no total</Text> : null}
         <View className="mt-1 h-1.5 overflow-hidden rounded-full bg-areia">
-          <Animated.View className="h-full w-full rounded-full bg-caramelo" style={[{ transformOrigin: 'left' }, barra]} />
+          <Animated.View style={barra}>
+            <View className="flex-1 rounded-full bg-caramelo" />
+          </Animated.View>
         </View>
         <Text className="font-body-semibold text-[11px] text-suave">
           {mostrado} {mostrado === 1 ? 'voto' : 'votos'}

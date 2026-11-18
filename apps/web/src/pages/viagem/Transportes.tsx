@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react'
+import { codigoDoLugar } from '../../features/viagens/codigoDoLugar'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, ChevronRight, Plus, Route, Trash2 } from '../../components/ui/icones'
 import {
+  aeroportosDoVoo,
+  antecedenciaDoEmbarque,
+  chegadasPerto,
   diaNoFuso,
   formatarDinheiro,
+  horaDeSair,
   meioComCaminho,
   meioComMotorista,
   nomeDaSituacao,
   nomeDaSituacaoDoDeslocamento,
   passagensDaViagem,
   textoDoDia,
-  type CasaDoDia,
+  trechosSemTrajeto,
+  type Aeroporto,
   type ItemDaPassagem,
   type Tables,
 } from '@together/core'
@@ -23,9 +29,12 @@ import FormDeslocamento from '../../features/transportes/FormDeslocamento'
 import CompararOpcoes from '../../features/transportes/CompararOpcoes'
 import CaminhoDoTrajeto from '../../features/transportes/CaminhoDoTrajeto'
 import { buscarOpcoes } from '../../features/hospedagem/api'
+import type { Opcao } from '../../features/hospedagem/regras'
+import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs } from '../../features/transportes/AjudaDoTrajeto'
+import { useTemposAteOEmbarque } from '../../features/transportes/temposAteOEmbarque'
 import BotaoIr from '../../components/ui/BotaoIr'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Norti from '../../components/ui/Norti'
 import RotuloDeSecao from '../../components/ui/RotuloDeSecao'
@@ -52,7 +61,9 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
   const podeDecidir = euSouAdm || viagem.membro_edita_transportes
   const { estado, recarregar } = useTrajetos(viagem.id, true)
   const cofre = useCofre(viagem.id)
-  const [casas, setCasas] = useState<CasaDoDia[]>([]) // casas escolhidas: avisos de check-in
+  const [casas, setCasas] = useState<Opcao[]>([]) // casas escolhidas: avisos de check-in e "do aeroporto até a casa"
+  // Spec 121 (etapa 1): o tempo até o embarque escolhido à mão fica neste navegador
+  const { tempos, escolher } = useTemposAteOEmbarque()
   useEffect(() => {
     buscarOpcoes(viagem.id)
       .then((ops) => setCasas(ops.filter((o) => o.escolhida)))
@@ -67,7 +78,7 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
     return (
       <>
         {cabecalho}
-        <Carregando texto="Carregando as passagens…" compacto />
+        <Esqueleto />
       </>
     )
   if (estado.status === 'erro')
@@ -87,6 +98,28 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
   )
   const nada = trajetos.length === 0
   const moedas = Object.keys(p.total)
+  // Spec 121 (T4): trechos do roteiro sem nenhum deslocamento, com links pra descobrir como ir
+  const faltam = trechosSemTrajeto(destinos, trajetos)
+  // Spec 121 (etapa 1): saia às X, quem chega perto (dividir o carro) e do aeroporto até a casa
+  function ajudaDa(t: Trajeto) {
+    const ehChegada = t.tipo === 'chegada'
+    const chegaEm: Aeroporto | null = ehChegada ? aeroportosDoVoo(t, destinos).chegada : null
+    const perto = ehChegada ? chegadasPerto(t, trajetos, destinos)[0] : undefined
+    const casa = casas.find((c) => c.destinoId === t.destino_id)
+    const primeiro = (id: string) => (membros.find((m) => m.id === id)?.nome ?? '').split(' ')[0] || 'Alguém'
+    return (
+      <>
+        {t.partida && antecedenciaDoEmbarque(t.meio, true) !== null && (
+          <SaiaAs saida={horaDeSair(t, destinos, tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(x) => escolher(t.id, x)} />
+        )}
+        {perto && <DividirTransfer nomes={perto.pessoas.map(primeiro)} minutos={perto.minutos} aeroporto={chegaEm} pessoas={t.passageiros.length + perto.pessoas.length} />}
+        {/* Sem o "como chegar" escrito no guia da casa (062), a tabela ajuda */}
+        {chegaEm && !casa?.guia?.comoChegar && (
+          <DoAeroporto aeroporto={chegaEm} nomeDaCasa={casa?.nome ?? null} ate={casa?.guia?.endereco || destinos.find((d) => d.id === t.destino_id)?.nome || chegaEm.cidades[0]} />
+        )}
+      </>
+    )
+  }
 
   // Painel aberto (da URL)
   const passagem = busca.get('passagem')
@@ -207,6 +240,17 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
           <Lista titulo="Pra comprar" itens={p.comprar} aberto={passagem} aoAbrir={abrirItem} />
           <Lista titulo="Compradas" itens={p.compradas} aberto={passagem} aoAbrir={abrirItem} />
 
+          {faltam.length > 0 && <RotuloDeSecao>Trechos sem deslocamento</RotuloDeSecao>}
+          {faltam.map(({ de, para }) => (
+            <ComoIrNoTrecho
+              key={`${de.id}-${para.id}`}
+              de={de.nome}
+              para={para.nome}
+              data={de.saida ?? null}
+              aoAdicionar={() => abrir('novo', { grupo: null, dia: de.saida ?? null, de: de.nome, para: para.nome })}
+            />
+          ))}
+
           {moedas.length > 0 && (
             <div className="ps-total">
               <RotuloDeSecao>Transporte da viagem</RotuloDeSecao>
@@ -234,12 +278,13 @@ export default function Transportes({ naAba = false }: { naAba?: boolean }) {
               aoMudarBilhete={cofre.recarregar}
               aoMudar={recarregar}
               aoVerCaminho={() => abrir(`caminho:${t.id}`)}
+              ajuda={ajudaDa(t)}
             />
           ))}
 
           <div className="ps-novo">
             <button type="button" className="botao" onClick={abrirNovo}>
-              <Plus size={18} aria-hidden="true" /> Novo deslocamento
+              <Plus size={18} aria-hidden="true" /> Adicionar reserva
             </button>
           </div>
         </section>
@@ -278,19 +323,34 @@ function Contador({ numero, rotulo, tipo }: { numero: number; rotulo: string; ti
   )
 }
 
+// Um lado do bilhete: a cidade pequena em cima e o código grande (GRU, LIS)
+function PontaDoBilhete({ cidade, direita = false }: { cidade: string; direita?: boolean }) {
+  return (
+    <span className={direita ? 'ps-ponta direita' : 'ps-ponta'}>
+      <small>{cidade}</small>
+      <b>{codigoDoLugar(cidade) || '—'}</b>
+    </span>
+  )
+}
+
 function Lista({ titulo, itens, aberto, aoAbrir }: { titulo: string; itens: ItemDaPassagem[]; aberto: string | null; aoAbrir: (i: ItemDaPassagem) => void }) {
   if (!itens.length) return null
   return (
     <div className="ps-grupo">
-      <RotuloDeSecao>{titulo}</RotuloDeSecao>
+      <div className="ps-grupo-t">
+        <RotuloDeSecao>{titulo}</RotuloDeSecao>
+        <span>{itens.length}</span>
+      </div>
       <ul className="ps-itens">
         {itens.map((i) => {
           const { icone: Icone, nome } = meio(i.meio)
           const atual = aberto === i.id || (!!i.grupo && aberto === `opcoes:${i.grupo}`)
+          // "Como → Veneza" vira o bilhete: de onde e pra onde, com o código grande
+          const [de, para] = i.titulo.includes(' → ') ? i.titulo.split(' → ') : [i.titulo, '']
           const linha = [
             i.dia ? textoDoDia(i.dia) : 'Sem data',
             i.hora,
-            i.situacao === 'comparando' ? `${i.opcoes} opções` : nome,
+            i.situacao === 'comparando' ? `${i.opcoes} opções` : null,
             i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
             i.naHora ? 'compra na hora' : null,
           ]
@@ -298,16 +358,21 @@ function Lista({ titulo, itens, aberto, aoAbrir }: { titulo: string; itens: Item
             .join(' · ')
           return (
             <li key={i.id}>
-              <button type="button" className={atual ? 'ps-item atual' : 'ps-item'} onClick={() => aoAbrir(i)} aria-current={atual || undefined}>
-                <span className="ps-icone">
-                  <Icone size={19} aria-hidden="true" />
+              <button type="button" className={atual ? 'ps-item ps-bilhete atual' : 'ps-item ps-bilhete'} onClick={() => aoAbrir(i)} aria-current={atual || undefined} aria-label={`Abrir ${i.titulo}`}>
+                <span className="ps-bilhete-topo">
+                  <PontaDoBilhete cidade={de} />
+                  <span className="ps-bilhete-meio">
+                    <Icone size={18} aria-hidden="true" />
+                    {nome}
+                  </span>
+                  {para ? <PontaDoBilhete cidade={para} direita /> : <span />}
                 </span>
-                <span className="ps-texto">
-                  <b>{i.titulo}</b>
+                <span className="ps-picote" aria-hidden="true" />
+                <span className="ps-bilhete-pe">
                   <small>{linha}</small>
+                  {i.preco != null && i.moeda && <b className="ps-item-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</b>}
+                  <ChevronRight size={16} aria-hidden="true" className="ps-seta" />
                 </span>
-                {i.preco != null && i.moeda && <b className="ps-item-preco">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</b>}
-                <ChevronRight size={16} aria-hidden="true" className="ps-seta" />
               </button>
             </li>
           )
@@ -329,6 +394,7 @@ function Passagem({
   aoMudarBilhete,
   aoMudar,
   aoVerCaminho,
+  ajuda,
 }: {
   trajeto: Trajeto
   destinos: Destino[]
@@ -340,6 +406,7 @@ function Passagem({
   aoMudarBilhete: () => void
   aoMudar: () => Promise<void> | void
   aoVerCaminho: () => void
+  ajuda: ReactNode
 }) {
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -421,6 +488,7 @@ function Passagem({
             .join(' · ')}
         </small>
       )}
+      {ajuda}
       {ehChegada && quemBusca && !euBusco && <small className="ps-verde">{primeiro(quemBusca)} vai buscar</small>}
       <div className="ps-acoes">
         <BilheteDoTrajeto viagemId={viagemId} trajetoId={t.id} bilhete={bilhete} aoMudar={aoMudarBilhete} />

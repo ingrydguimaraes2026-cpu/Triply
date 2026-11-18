@@ -38,7 +38,7 @@ export function Passaporte({ viagemId, passos, aoCarimbar }: { viagemId: string;
   return (
     <View>
       <View className="mb-3 flex-row items-baseline justify-between">
-        <Text className="font-display text-[20px] text-texto">Passaporte do comboio</Text>
+        <Text className="font-display text-[20px] text-texto">Passaporte da galera</Text>
         <Text className="font-body-bold text-[13px] text-caramelo">
           {feitos.length} de {passos.length}
         </Text>

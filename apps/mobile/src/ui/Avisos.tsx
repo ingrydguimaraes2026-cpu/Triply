@@ -88,7 +88,7 @@ export function Avisos({ viagemId, euSouAdm }: { viagemId: string; euSouAdm: boo
       ) : euSouAdm ? (
         <Pressable onPress={() => setCompondo(true)} className="flex-row items-center gap-1.5 self-start rounded-full border border-dashed border-tracejado px-3 py-1.5 active:opacity-80">
           <Plus size={15} color={cor.couro} />
-          <Text className="font-body-semibold text-[13px] text-couro">{avisos.length ? 'Novo aviso' : 'Fixar um aviso pro comboio'}</Text>
+          <Text className="font-body-semibold text-[13px] text-couro">{avisos.length ? 'Novo aviso' : 'Fixar um aviso pra galera'}</Text>
         </Pressable>
       ) : null}
     </View>

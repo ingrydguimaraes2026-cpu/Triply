@@ -119,7 +119,7 @@ export function DividirTransfer({ nomes, minutos, aeroporto, pessoas }: { nomes:
 }
 
 // Trecho do roteiro sem trajeto: botões pra descobrir como ir
-export function ComoIrNoTrecho({ de, para, data }: { de: string; para: string; data: string | null }) {
+export function ComoIrNoTrecho({ de, para, data, aoAdicionar }: { de: string; para: string; data: string | null; aoAdicionar?: () => void }) {
   return (
     <View className="gap-2.5 rounded-2xl border border-dashed border-tracejado px-4 py-3.5">
       <Text className="font-body-bold text-[14px] text-texto">
@@ -130,6 +130,11 @@ export function ComoIrNoTrecho({ de, para, data }: { de: string; para: string; d
         {linksDoTrecho(de, para, data).map((l) => (
           <BotaoLink key={l.chave} titulo={l.nome} url={l.url} />
         ))}
+        {aoAdicionar ? (
+          <Pressable onPress={aoAdicionar} accessibilityRole="button" className="flex-row items-center gap-1.5 self-start rounded-xl bg-couro px-3 py-2 active:opacity-80">
+            <Text className="font-body-bold text-[13px] text-creme">Adicionar deslocamento</Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   )

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate } from 'react-router'
+import { Link, Navigate } from 'react-router'
 import { Eye, EyeOff, Lock, Mail, User } from '../components/ui/icones'
 import {
   criarConta,
@@ -252,7 +252,10 @@ export default function Login() {
               </button>
             </p>
           ) : (
-            <p className="login-termos">Ao continuar, você concorda com os Termos de uso e a Política de privacidade.</p>
+            <p className="login-termos">
+              Ao continuar, você concorda com os <Link to="/termos">Termos de uso</Link> e a{' '}
+              <Link to="/privacidade">Política de privacidade</Link>.
+            </p>
           )}
         </div>
       </main>

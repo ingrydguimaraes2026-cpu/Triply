@@ -1,20 +1,25 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import { StatusBar } from '../src/ui/StatusBar'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AlertTriangle, ArrowLeft, Bus, Car, ChevronRight, Footprints, Plane, Plus, Route, Ship, TrainFront, Trash2, type LucideIcon } from '../src/ui/icones'
 import {
+  aeroportosDoVoo,
+  antecedenciaDoEmbarque,
   arquivoDeCada,
   buscarDestinos,
   buscarOpcoesDeHospedagem,
+  chegadasPerto,
   formatarDinheiro,
+  horaDeSair,
   meioComCaminho,
   meioComMotorista,
   nomeDaSituacao,
   nomeDaSituacaoDoDeslocamento,
   nomeDoMeio,
   passagensDaViagem,
+  trechosSemTrajeto,
   type CasaDoDia,
   type Destino,
   type ItemDaPassagem,
@@ -27,9 +32,12 @@ import { supabase } from '../src/lib/supabase'
 import { Norti } from '../src/ui/Norti'
 import { BotaoIr } from '../src/ui/BotaoIr'
 import { VerReserva } from '../src/ui/BilheteDoDia'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
-import { cor } from '../theme'
+import { BotaoRedondo, Cartao, ErroNaTela, IconeQuadrado } from '../src/ui/pecas'
+import { EsqueletoDaAba } from '../src/ui/viagem/Esqueleto'
+import { cor, fonte, rotulo as estiloRotulo, trabalho } from '../theme'
+import { codigoDoLugar } from '../src/ui/viagem/Bilhete'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
+import { ComoIrNoTrecho, DividirTransfer, DoAeroporto, SaiaAs, useTemposAteOEmbarque } from '../src/ui/AjudaDoTrajeto'
 
 // Passagens (spec 122d, no lugar de Transportes): o que falta decidir, o que falta comprar e o que já foi
 // comprado, os avisos sérios da viagem toda e quanto custa o transporte. Tocar num item abre a comparação
@@ -38,20 +46,21 @@ const ICONE_DO_MEIO: Record<string, LucideIcon> = { aviao: Plane, carro: Car, ca
 
 type TrajetoComGente = Trajeto & { passageiros: string[] }
 type Membro = { id: string; nome: string; papel: string }
+type Casa = { nome: string; destinoId: string; guia: { endereco: string | null; comoChegar: string | null } }
 
 async function carregar(viagemId: string) {
   const [trajetos, destinos, arquivos, casas] = await Promise.all([
     supabase.from('trajetos').select('*, trajeto_passageiros (usuario_id)').eq('viagem_id', viagemId).order('partida', { ascending: true, nullsFirst: false }),
     buscarDestinos(supabase, viagemId),
     supabase.from('arquivos_viagem').select('id, caminho, trajeto_id, hospedagem_id, evento_id, criado_em').eq('viagem_id', viagemId).not('trajeto_id', 'is', null),
-    // As casas escolhidas entram nos avisos (check-in). Sem elas, a tela funciona igual.
+    // As casas escolhidas entram nos avisos (check-in) e no "do aeroporto até a casa". Sem elas, a tela funciona igual.
     buscarOpcoesDeHospedagem(supabase, viagemId)
-      .then((ops) => ops.filter((o) => o.escolhida) as CasaDoDia[])
-      .catch(() => [] as CasaDoDia[]),
+      .then((ops) => ops.filter((o) => o.escolhida))
+      .catch(() => []),
   ])
   if (trajetos.error) throw trajetos.error
   const lista: TrajetoComGente[] = (trajetos.data ?? []).map(({ trajeto_passageiros, ...t }) => ({ ...t, passageiros: (trajeto_passageiros ?? []).map((p) => p.usuario_id) }))
-  return { trajetos: lista, destinos, casas, cofre: arquivoDeCada(arquivos.data ?? [], 'trajeto_id') }
+  return { trajetos: lista, destinos, casas: casas as (CasaDoDia & Casa)[], cofre: arquivoDeCada(arquivos.data ?? [], 'trajeto_id') }
 }
 
 export default function Transportes() {
@@ -63,19 +72,13 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { atual: viagem, meuId } = useViagemAtual()
-  const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id])
-  // Voltou do Novo deslocamento ou do Comparar: busca de novo pra mostrar o que mudou
-  const primeiraVez = useRef(true)
-  const { recarregar } = carga
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez.current) primeiraVez.current = false
-      else recarregar()
-    }, [recarregar]),
-  )
+  const carga = useCarregar(viagem ? () => carregar(viagem.id) : null, [viagem?.id], 'passagens')
+  // Voltou do Novo deslocamento ou do Comparar: o useCarregar busca de novo sozinho
+  // Spec 121 (etapa 1): o tempo até o embarque escolhido à mão fica no aparelho
+  const { tempos, escolher } = useTemposAteOEmbarque()
 
   if (!viagem) return null
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="passagens" titulo={!naAba} />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   const { trajetos, destinos, casas, cofre } = carga.dados
   const membros: Membro[] = viagem.membros.map((m) => ({ id: m.id, nome: m.nome, papel: m.papel }))
@@ -85,14 +88,16 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
   const doGrupo = trajetos.filter((t) => t.tipo !== 'chegada' && t.tipo !== 'saida')
   const p = passagensDaViagem(doGrupo, destinos, casas)
   const nada = trajetos.length === 0
-  const ctx = { destinos, membros, meuId, euSouAdm, cofre, aoMudar: carga.recarregar }
+  // Spec 121 (T4): trechos do roteiro sem nenhum deslocamento, com links pra descobrir como ir
+  const faltam = trechosSemTrajeto(destinos, trajetos)
+  const ctx = { destinos, membros, meuId, euSouAdm, cofre, aoMudar: carga.recarregar, trajetos, casas, tempos, escolher }
   const abrir = (i: ItemDaPassagem) => router.push(i.grupo && i.opcoes > 1 ? `/comparar?grupo=${i.grupo}` : `/novo-deslocamento?trajeto=${i.id}${i.dia ? `&dia=${i.dia}` : ''}`)
   const moedas = Object.keys(p.total)
 
   return (
     <View className="flex-1 bg-fundo">
       {naAba ? null : <StatusBar style="dark" />}
-      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 20, paddingBottom: (naAba ? 0 : insets.bottom) + 100, gap: 12 }}>
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingTop: naAba ? 8 : insets.top + 8, paddingHorizontal: 14, paddingBottom: insets.bottom + 80, gap: 12 }}>
         {naAba ? null : (
         <>
         <BotaoRedondo aoTocar={() => (router.canGoBack() ? router.back() : router.replace('/'))} rotulo="Voltar">
@@ -107,7 +112,7 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
 
         {nada ? (
           <View className="mt-4 items-center gap-3 px-4">
-            <Norti humor="dormindo" tamanho={110} />
+            <Norti humor="apontando" tamanho={110} />
             <Text className="text-center font-display text-[22px] text-texto">Nenhum deslocamento ainda</Text>
             <Text className="text-center font-body text-[15px] leading-6 text-corpo">Toque em "Novo deslocamento", diga de onde e pra onde e veja as opções.</Text>
           </View>
@@ -145,6 +150,17 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
         <Lista titulo="Pra comprar" itens={p.comprar} aoAbrir={abrir} />
         <Lista titulo="Compradas" itens={p.compradas} aoAbrir={abrir} />
 
+        {faltam.length ? <Text style={[estiloRotulo, { color: trabalho.texto2, marginTop: 8 }]}>Trechos sem deslocamento</Text> : null}
+        {faltam.map(({ de, para }) => (
+          <ComoIrNoTrecho
+            key={`${de.id}-${para.id}`}
+            de={de.nome}
+            para={para.nome}
+            data={de.saida ?? null}
+            aoAdicionar={() => router.push(`/novo-deslocamento?de=${encodeURIComponent(de.nome)}&para=${encodeURIComponent(para.nome)}${de.saida ? `&dia=${de.saida}` : ''}`)}
+          />
+        ))}
+
         {moedas.length ? (
           <Cartao className="gap-1 p-4">
             <Text className="font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Transporte da viagem</Text>
@@ -158,16 +174,24 @@ export function TelaDePassagens({ naAba = false }: { naAba?: boolean }) {
           </Cartao>
         ) : null}
 
-        {pessoais.length ? <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">Chegada e volta de cada um</Text> : null}
+        {pessoais.length ? <Text style={[estiloRotulo, { color: trabalho.texto2, marginTop: 8 }]}>Chegada e volta de cada um</Text> : null}
         {pessoais.map((tr) => (
           <Passagem key={tr.id} trajeto={tr} ctx={ctx} />
         ))}
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 px-5" style={{ paddingBottom: (naAba ? 0 : insets.bottom) + 12 }}>
-        <Pressable onPress={() => router.push('/novo-deslocamento')} accessibilityRole="button" className="min-h-[54px] flex-row items-center justify-center gap-2 rounded-full bg-couro active:opacity-90">
-          <Plus size={18} color={cor.creme} />
-          <Text className="font-body-bold text-[15px] text-creme">Novo deslocamento</Text>
+      {/* Caminho B: um botão só, no canto, acima da barra de vidro */}
+      <View className="absolute right-4" style={{ bottom: insets.bottom + (naAba ? 4 : 12) }}>
+        <Pressable
+          onPress={() => router.push('/novo-deslocamento')}
+          accessibilityRole="button"
+          // Android 17/11: o botão dizia "Adicionar reserva" e abria a tela "Novo deslocamento"
+          accessibilityLabel="Novo deslocamento"
+          className="h-[50px] flex-row items-center gap-1.5 rounded-full pl-3.5 pr-[18px] active:opacity-90"
+          style={{ backgroundColor: trabalho.acento, boxShadow: '0 10px 24px rgba(0,0,0,0.3)' }}
+        >
+          <Plus size={20} color={trabalho.acentoTexto} />
+          <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Novo deslocamento</Text>
         </Pressable>
       </View>
     </View>
@@ -190,39 +214,63 @@ function Contador({ numero, rotulo, fundo, corTexto }: { numero: number; rotulo:
 function Lista({ titulo, itens, aoAbrir }: { titulo: string; itens: ItemDaPassagem[]; aoAbrir: (i: ItemDaPassagem) => void }) {
   if (!itens.length) return null
   return (
-    <View className="gap-2">
-      <Text className="mt-2 font-body-bold text-[12px] uppercase tracking-widest text-caramelo">{titulo}</Text>
+    <View className="gap-2.5">
+      <View className="mt-2 flex-row items-baseline justify-between px-0.5">
+        <Text style={[estiloRotulo, { color: trabalho.texto2 }]}>{titulo}</Text>
+        <Text style={[estiloRotulo, { color: '#A0701E' }]}>{itens.length}</Text>
+      </View>
       {itens.map((i) => {
         const Icone = ICONE_DO_MEIO[i.meio] ?? Route
+        // "Como → Veneza" vira o bilhete: de onde e pra onde, com o código grande
+        const [de, para] = i.titulo.includes(' → ') ? i.titulo.split(' → ') : [i.titulo, '']
         const linha = [
           i.dia ? diaCurto(lerData(i.dia)) : 'Sem data',
           i.hora,
-          i.situacao === 'comparando' ? `${i.opcoes} opções` : nomeDoMeio(i.meio),
+          i.situacao === 'comparando' ? `${i.opcoes} opções` : null,
           i.situacao === 'reservado' ? nomeDaSituacaoDoDeslocamento(i.situacao) : null,
           i.naHora ? 'compra na hora' : null,
         ]
           .filter(Boolean)
           .join(' · ')
         return (
-          <Pressable key={i.id} onPress={() => aoAbrir(i)} accessibilityRole="button" className="active:opacity-80">
-            <Cartao className="flex-row items-center gap-3 p-3.5">
-              <IconeQuadrado tamanho={36}>
-                <Icone size={19} color={cor.couro} />
-              </IconeQuadrado>
-              <View className="flex-1">
-                <Text className="font-body-bold text-[14.5px] text-texto" numberOfLines={1}>
-                  {i.titulo}
-                </Text>
-                <Text className="font-body text-[12.5px] text-suave" numberOfLines={1}>
+          <Pressable key={i.id} onPress={() => aoAbrir(i)} accessibilityRole="button" accessibilityLabel={`Abrir ${i.titulo}`} className="active:opacity-90">
+            <View className="overflow-hidden rounded-[20px] border" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha, boxShadow: '0 2px 10px rgba(74,46,20,0.06)' }}>
+              <View className="flex-row items-end justify-between px-4 pb-2.5 pt-3.5">
+                <PontaDoBilhete cidade={de} />
+                <View className="items-center gap-0.5 pb-1">
+                  <Icone size={18} color="#A0701E" />
+                  <Text style={{ fontFamily: fonte.corpoForte, fontSize: 10.5, color: trabalho.texto2 }}>{nomeDoMeio(i.meio)}</Text>
+                </View>
+                {para ? <PontaDoBilhete cidade={para} direita /> : <View />}
+              </View>
+              {/* O picote do bilhete, com os furinhos dos lados */}
+              <View style={{ borderTopWidth: 2, borderStyle: 'dashed', borderColor: trabalho.linha }}>
+                <View className="absolute h-4 w-4 rounded-full" style={{ left: -9, top: -9, backgroundColor: trabalho.fundo }} />
+                <View className="absolute h-4 w-4 rounded-full" style={{ right: -9, top: -9, backgroundColor: trabalho.fundo }} />
+              </View>
+              <View className="flex-row items-center justify-between gap-2 px-4 pb-3 pt-2.5">
+                <Text className="flex-1" numberOfLines={1} style={{ fontFamily: fonte.corpo, fontSize: 12, color: trabalho.texto2 }}>
                   {linha}
                 </Text>
+                {i.preco != null && i.moeda ? <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</Text> : null}
+                <ChevronRight size={16} color={trabalho.texto2} />
               </View>
-              {i.preco != null && i.moeda ? <Text className="font-body-bold text-[14px] text-texto">{formatarDinheiro(Math.round(i.preco * 100), i.moeda)}</Text> : null}
-              <ChevronRight size={16} color={cor.suave} />
-            </Cartao>
+            </View>
           </Pressable>
         )
       })}
+    </View>
+  )
+}
+
+// Um lado do bilhete: a cidade pequena em cima e o código grande (GRU, LIS)
+function PontaDoBilhete({ cidade, direita = false }: { cidade: string; direita?: boolean }) {
+  return (
+    <View style={{ maxWidth: '38%', alignItems: direita ? 'flex-end' : 'flex-start' }}>
+      <Text numberOfLines={1} style={{ fontFamily: fonte.corpoForte, fontSize: 9, letterSpacing: 1.3, color: trabalho.texto2, marginBottom: 4, textTransform: 'uppercase' }}>
+        {cidade}
+      </Text>
+      <Text style={{ fontFamily: fonte.titulo, fontSize: 26, lineHeight: 27, letterSpacing: -0.8, color: trabalho.texto }}>{codigoDoLugar(cidade) || '—'}</Text>
     </View>
   )
 }
@@ -234,6 +282,10 @@ type Ctx = {
   euSouAdm: boolean
   cofre: Map<string, { caminho: string }>
   aoMudar: () => void
+  trajetos: TrajetoComGente[]
+  casas: Casa[]
+  tempos: Record<string, number>
+  escolher: (trajetoId: string, minutos: number) => void
 }
 
 function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: TrajetoComGente; ctx: Ctx; compacto?: boolean; rotulo?: string }) {
@@ -258,6 +310,10 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
     .filter(Boolean)
     .join(' · ')
   const estacao = t.estacao_partida ? { nome: t.estacao_partida, cidade: nomeDe(t.origem_id) } : null
+  // Spec 121 (etapa 1): saia às X, quem chega perto (dividir o carro) e do aeroporto até a casa
+  const chegaEm = ehChegada ? aeroportosDoVoo(t, ctx.destinos).chegada : null
+  const perto = ehChegada ? chegadasPerto(t, ctx.trajetos, ctx.destinos)[0] : undefined
+  const casa = ctx.casas.find((c) => c.destinoId === t.destino_id)
 
   async function buscar() {
     setOcupado(true)
@@ -268,7 +324,7 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
   }
 
   function apagar() {
-    Alert.alert('Apagar este transporte?', 'Some pra todo mundo do comboio.', [
+    Alert.alert('Apagar este transporte?', 'Some pra toda a galera.', [
       { text: 'Manter', style: 'cancel' },
       {
         text: 'Apagar',
@@ -329,6 +385,21 @@ function Passagem({ trajeto: t, ctx, compacto = false, rotulo }: { trajeto: Traj
         <Text className="font-body text-[12.5px] text-suave">
           {[t.motorista_id ? `Dirige: ${primeiroNome(nomeDo(t.motorista_id) ?? '')}` : null, t.lugares_livres != null ? `${t.lugares_livres} ${t.lugares_livres === 1 ? 'lugar sobrando' : 'lugares sobrando'}` : null].filter(Boolean).join(' · ')}
         </Text>
+      ) : null}
+      {!compacto && t.partida && antecedenciaDoEmbarque(t.meio, true) !== null ? (
+        <SaiaAs saida={horaDeSair(t, ctx.destinos, ctx.tempos[t.id] ?? null)} partida={t.partida} aoEscolher={(x) => ctx.escolher(t.id, x)} />
+      ) : null}
+      {!compacto && perto ? (
+        <DividirTransfer
+          nomes={perto.pessoas.map((id) => primeiroNome(nomeDo(id) ?? '') || 'Alguém')}
+          minutos={perto.minutos}
+          aeroporto={chegaEm}
+          pessoas={t.passageiros.length + perto.pessoas.length}
+        />
+      ) : null}
+      {/* Sem o "como chegar" escrito no guia da casa (062), a tabela ajuda */}
+      {!compacto && chegaEm && !casa?.guia.comoChegar ? (
+        <DoAeroporto aeroporto={chegaEm} nomeDaCasa={casa?.nome ?? null} ate={casa?.guia.endereco || nomeDe(t.destino_id) || chegaEm.cidades[0]} />
       ) : null}
       {ehChegada && quemBusca && !euBusco ? <Text className="font-body-medium text-[12.5px] text-verde">{primeiroNome(quemBusca)} vai buscar</Text> : null}
       <View className="flex-row flex-wrap gap-2">

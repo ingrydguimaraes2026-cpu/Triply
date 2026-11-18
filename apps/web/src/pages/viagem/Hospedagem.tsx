@@ -27,7 +27,7 @@ import FormOpcaoCurta from '../../features/hospedagem/FormOpcaoCurta'
 import BotaoRedondo from '../../components/ui/BotaoRedondo'
 import TituloDaTela from '../../components/ui/TituloDaTela'
 import TelaVazia from '../../components/ui/TelaVazia'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import IconeQuadrado from '../../components/ui/IconeQuadrado'
@@ -63,7 +63,7 @@ export default function Hospedagem({ naAba = false }: { naAba?: boolean }) {
     return (
       <>
         {cabecalho}
-        <Carregando texto="Carregando as noites…" compacto />
+        <Esqueleto />
       </>
     )
   }
@@ -359,14 +359,22 @@ function CartaoDaCidade({ cidade, pessoas, atual, aoAbrir }: { cidade: CidadeDaN
   const precisa = cidade.estado === 'sem-cama' || cidade.estado === 'comparando'
   const textoSelo = cidade.estado === 'comparando' ? `${cidade.opcoes.length} ${cidade.opcoes.length === 1 ? 'opção' : 'opções'}` : SELO[cidade.estado]
   const barras = Math.min(cidade.noites ?? 1, 14)
+  // Caminho B: a foto da casa escolhida (ou da opção mais votada) em cima do cartão
+  const foto = (e ?? cidade.opcoes[0])?.fotoUrl
   return (
     <button
       type="button"
-      className={`hn-cidade-cartao estado-${cidade.estado}${precisa ? ' precisa' : ''}`}
+      className={`hn-cidade-cartao estado-${cidade.estado}${precisa ? ' precisa' : ''}${foto ? ' com-foto' : ''}`}
       aria-current={atual ? 'true' : undefined}
       aria-label={`Hospedagem em ${cidade.destino.nome}`}
       onClick={aoAbrir}
     >
+      {foto && (
+        <span className="hn-cidade-foto">
+          <img src={foto} alt="" loading="lazy" referrerPolicy="no-referrer" />
+          <em>{e ? (cidade.estado === 'reservada' ? 'Reservada' : 'Escolhida') : 'Mais votada'}</em>
+        </span>
+      )}
       <span className="hn-cidade-cab">
         <IconeQuadrado icone={BedDouble} tamanho={36} />
         <span className="hn-cidade-txt">

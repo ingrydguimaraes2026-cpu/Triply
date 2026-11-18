@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react'
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { useCallback, useMemo, useState } from 'react'
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Calendar, MapPin, Minus, Plus, Search, Ticket, X } from './icones'
-import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, moedaDoPais, trazerComboio, semAcento, type CidadeDaLista } from '@together/core'
+import { CIDADES_DA_PRE_CARGA, NOME_EM_PORTUGUES, aceitarConvite, criarViagem, fonteDoNomeNoCarimbo, moedaDoPais, trazerComboio, semAcento, type CidadeDaLista } from '@together/core'
 import { useViagemAtual } from '../dados/viagemAtual'
 import { paraIso } from '../lib/formato'
 import { supabase } from '../lib/supabase'
+import { MODO_TESTE } from '../lib/contasDeTeste'
 import { Norti } from './Norti'
 import { Calendario } from './Calendario'
 import { StatusBar } from './StatusBar'
@@ -40,7 +41,8 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
   const [busca, setBusca] = useState('')
   const [destino, setDestino] = useState<Escolhido | null>(null)
   const [dias, setDias] = useState(4)
-  const [comDatas, setComDatas] = useState(false)
+  // Primeiro minuto (16/11/2026): a próxima viagem (ex.: o réveillon) já nasce com data
+  const [comDatas, setComDatas] = useState(true)
   const [ida, setIda] = useState<Date | null>(null)
   const [volta, setVolta] = useState<Date | null>(null)
   const [mes, setMes] = useState(() => {
@@ -63,6 +65,19 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
   const fmt = (d: Date) => `${d.getDate()} de ${MESES_CURTOS[d.getMonth()]}`
 
   const fechar = () => (router.canGoBack() ? router.back() : router.replace('/'))
+
+  // Android (teste 17/11): o voltar do sistema no passo 2 fechava o app e perdia cidade e datas.
+  // No passo 2 ele volta pro passo 1; no passo 1 fica o padrão.
+  useFocusEffect(
+    useCallback(() => {
+      if (etapa !== 1) return
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        setEtapa(0)
+        return true
+      })
+      return () => sub.remove()
+    }, [etapa]),
+  )
 
   function escolherCidade(c: CidadeDaLista | { nome: string; pais: string | null }) {
     setDestino({ nome: c.nome, pais: c.pais })
@@ -97,6 +112,9 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
             latitude: null,
             longitude: null,
             dias: diasFinais,
+            // Hospedagem e noites leem as datas do destino; sem isso, dizia "Sem datas no roteiro" (QA 16/11)
+            chegada: datas ? paraIso(ida) : null,
+            saida: datas ? paraIso(volta) : null,
           },
         ],
       })
@@ -104,10 +122,15 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
       if (comboioDe) await trazerComboio(supabase, id, comboioDe).catch((e) => console.error('Erro ao trazer a galera:', e))
       escolher(id)
       recarregar()
-      // Direto pro deslize; no fim do roteiro, "Continuar" leva pro convite e pra viagem
-      router.replace({ pathname: '/explorar', params: { viagem: id, guiado: '1' } })
-    } catch {
-      setErro('Não deu pra criar a viagem. Confira a internet e tente de novo.')
+      // Primeiro minuto: depois de criar, chamar a galera (e de lá, a viagem). O deslize mora no Roteiro.
+      router.replace({ pathname: '/chamar-galera', params: { viagem: id } })
+    } catch (e) {
+      // B1 (QA 16/11): falhou 1 de 3 vezes sem pista. Agora o erro real vai pro console e,
+      // no modo teste, aparece em miúdo na tela, pra quem testa mandar o print.
+      console.error('Erro ao criar a viagem:', e)
+      const real = e as { code?: string; message?: string }
+      const detalhe = MODO_TESTE ? ` [${real.code ?? 'sem código'}: ${real.message ?? String(e)}]` : ''
+      setErro(`Não deu pra criar a viagem. Confira a internet e tente de novo.${detalhe}`)
       setCriando(false)
     }
   }
@@ -145,15 +168,22 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
           aoEntrarNoConvite={(id) => {
             escolher(id)
             recarregar()
-            router.replace({ pathname: '/explorar', params: { viagem: id, guiado: '1' } })
+            router.replace(`/viagem/${id}`)
           }}
         />
       ) : (
         <>
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 24 }}>
+          <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 24 }}>
             <Text className="font-body-bold text-[12px] uppercase tracking-[1.4px] text-suave">{destino?.nome}</Text>
-            <Text className="mt-1 font-display text-[34px] leading-[38px] text-texto">Quantos dias?</Text>
-            <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">Não precisa saber as datas agora. Com os dias, o app já monta o roteiro.</Text>
+            <Text className="mt-1 font-display text-[34px] leading-[38px] text-texto">{comDatas ? 'Quando vai ser?' : 'Quantos dias?'}</Text>
+            <Text className="mt-2 font-body text-[15px] leading-[22px] text-corpo">
+              {comDatas ? 'Com a data, a Norti conta os dias que faltam pra galera.' : 'Tudo bem não saber as datas agora. Dá pra marcar depois.'}
+            </Text>
+            {/* M1 (QA 16/11): a troca fica no topo; embaixo ela sumia atrás do botão em 360 × 740 */}
+            <Pressable onPress={() => setComDatas(!comDatas)} accessibilityRole="button" className="mt-3 min-h-[44px] flex-row items-center gap-2 self-start">
+              <Calendar size={18} color={cor.couro} />
+              <Text className="font-body-bold text-[15px] text-couro">{comDatas ? 'Ainda não sei as datas' : 'Já sei as datas'}</Text>
+            </Pressable>
 
             {!comDatas ? (
               <>
@@ -193,15 +223,11 @@ export function CriarViagemRapida({ primeira, comboioDe }: { primeira: boolean; 
               </View>
             )}
 
-            <Pressable onPress={() => setComDatas(!comDatas)} className="mt-6 min-h-[44px] flex-row items-center justify-center gap-2">
-              <Calendar size={18} color={cor.couro} />
-              <Text className="font-body-bold text-[15px] text-couro">{comDatas ? 'Ainda não sei as datas' : 'Já sei as datas'}</Text>
-            </Pressable>
             {erro ? <Text className="mt-3 text-center font-body-medium text-[13px] text-vermelho">{erro}</Text> : null}
           </ScrollView>
           <View className="px-6 pt-3" style={{ paddingBottom: insets.bottom + 20 }}>
-            <Botao titulo="Escolher os lugares" aoTocar={criar} carregando={criando} desabilitado={comDatas && !diasDasDatas} />
-            <Text className="mt-2 text-center font-body text-[13px] text-suave">Próximo: deslize os lugares de {destino?.nome} e o roteiro se monta.</Text>
+            <Botao titulo="Criar a viagem" aoTocar={criar} carregando={criando} desabilitado={comDatas && !diasDasDatas} />
+            <Text className="mt-2 text-center font-body text-[13px] text-suave">Próximo: chamar a galera pelo link.</Text>
           </View>
         </>
       )}
@@ -257,7 +283,7 @@ function EtapaDestino({
         </View>
       ) : null}
       <Text className="font-display text-[34px] leading-[38px] text-texto">Pra onde vocês vão?</Text>
-      <Text className="mb-5 mt-2 font-body text-[15px] text-corpo">Uma cidade pra começar. As outras entram depois.</Text>
+      <Text className="mb-5 mt-2 font-body text-[15px] text-corpo">Escolha a cidade da viagem.</Text>
       <Campo icone={<Search size={20} color={cor.couro} />} placeholder="Buscar cidade" value={busca} onChangeText={setBusca} autoCorrect={false} returnKeyType="next" onSubmitEditing={() => digitado.length > 1 && aoEscolher({ nome: digitado, pais: null })} />
 
       {digitado.length > 1 ? (
@@ -276,7 +302,10 @@ function EtapaDestino({
             {SUGESTOES.map((s) => (
               <Pressable key={s.nome} onPress={() => aoEscolher(s)} className="active:opacity-90" style={{ width: '48.3%' }}>
                 <LinearGradient colors={s.cores} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ height: 112, borderRadius: 20, padding: 14, justifyContent: 'flex-end' }}>
-                  <Text className="font-display text-[20px] leading-[23px] text-white">{s.nome}</Text>
+                  {/* Nome comprido ("Jericoacoara") diminui em vez de quebrar no meio da palavra (QA 16/11) */}
+                  <Text className="font-display text-white" style={{ fontSize: fonteDoNomeNoCarimbo(s.nome, 120, 20, 14), lineHeight: Math.round(fonteDoNomeNoCarimbo(s.nome, 120, 20, 14) * 1.15) }}>
+                    {s.nome}
+                  </Text>
                   <Text className="mt-0.5 font-body text-[12px] text-creme">{s.frase}</Text>
                 </LinearGradient>
               </Pressable>

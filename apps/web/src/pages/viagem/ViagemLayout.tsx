@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useParams, useSearchParams } from 'react-router'
+import { Link, NavLink, Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router'
 import { ArrowLeftRight, PanelLeft } from '../../components/ui/icones'
+import { Icone } from '../../components/ui/Icone'
 import { ABAS, TUDO_DA_VIAGEM } from '../../features/viagens/partes'
 import FaixaConvidado from '../../features/auth/FaixaConvidado'
 import { AbaAtivaContexto, useViagem, ViagemContexto } from '../../features/viagens/hooks'
@@ -14,7 +15,7 @@ import AvisosNoCelular from '../../features/notificacoes/AvisosNoCelular'
 import FaixaOffline from '../../features/offline/FaixaOffline'
 import { useTempoReal } from '../../features/tempo-real/useTempoReal'
 import { useAcessibilidade } from '../../lib/acessibilidade'
-import { abasVisiveis, CONGELADO } from '@together/core'
+import { abasVisiveis, CONGELADO, tourCabeNaViagem } from '@together/core'
 import FormGasto from '../../features/financeiro/FormGasto'
 import { formatarPeriodo } from '../../lib/datas'
 import Avatar from '../../components/ui/Avatar'
@@ -26,6 +27,7 @@ import Reservas from './Reservas'
 import '../../components/ui/ui.css'
 import './viagem.css'
 import { useCapas } from '../../features/viagens/capas'
+import TourDaViagem from '../../features/tour/Tour'
 
 // Menu recolhido (só ícones) fica lembrado neste navegador
 const CHAVE_MENU = 'together:menu-recolhido'
@@ -115,6 +117,10 @@ export default function ViagemLayout() {
 
   const fecharLancamento = useCallback(() => setLancamento(null), [])
 
+  // Tour guiado: começa na aba Viagem
+  const navegar = useNavigate()
+  const voltarPraViagem = useCallback(() => navegar(`/viagem/${id}`), [navegar, id])
+
   if (estado.status === 'carregando') return <div className="viagem-carregando" aria-busy="true" />
   if (estado.status === 'nao-encontrada') return <Perdido />
 
@@ -160,6 +166,8 @@ export default function ViagemLayout() {
               className={({ isActive }) => (isActive || (para === 'roteiro' && /^(explorar|agenda)/.test(aba)) ? 'active' : undefined)}
               aria-label={rotulo}
               title={rotulo}
+              data-tour={para && ['roteiro', 'reservas', 'contas', 'fotos'].includes(para) ? `aba-${para}` : undefined}
+              data-tour-junto="barra" // o tour acende as 5 partes juntas ("Aqui ficam as 5 partes")
             >
               <Icone size={19} aria-hidden="true" />
               <span className="aba-nome" aria-hidden="true">{rotulo}</span>
@@ -181,7 +189,7 @@ export default function ViagemLayout() {
         </nav>
 
         <div className="viagem-menu-rodape">
-          {/* ❄ congelado pelo RUMO (03/11/2026) */}
+          {/* congelado pelo RUMO (03/11/2026) */}
           {!CONGELADO.notificacoes && <BotaoSino novas={novidades.novas} aoAbrir={() => setVendoNovidades(true)} menu />}
           <Link to="/perfil" className="viagem-menu-perfil" aria-label="Seu perfil">
             <Avatar nome={eu?.nome ?? '?'} url={eu?.avatarUrl} tamanho={34} />
@@ -199,18 +207,45 @@ export default function ViagemLayout() {
       </aside>
 
       <div className="viagem-conteudo">
+        {/* Caminho B (10/11/2026): no celular, o mesmo cabeçalho em todas as abas, como no app.
+            A viagem (toque troca de viagem), os rostos da galera (abre a Galera) e os ajustes. */}
+        <header className="viagem-cab">
+          <Link to="/viagens" className="viagem-cab-viagem" aria-label={`${viagem.nome}: trocar de viagem`}>
+            <img src={capa(viagem.id, 120)} alt="" />
+            <span>{viagem.nome}</span>
+            <Icone nome="seta-baixo" size={12} aria-hidden="true" />
+          </Link>
+          <span className="viagem-cab-esp" />
+          <Link to="comboio" className="viagem-cab-rostos" aria-label={`Galera: ${membros.length} ${membros.length === 1 ? 'pessoa' : 'pessoas'}`}>
+            {membros.slice(0, 4).map((m, i) => (
+              <Avatar key={m.id} nome={m.nome} url={m.avatarUrl} tamanho={28} indice={i} />
+            ))}
+            {membros.length > 4 && <span className="viagem-cab-mais">+{membros.length - 4}</span>}
+          </Link>
+          <Link to="configuracoes" className="viagem-cab-bt" aria-label="Ajustes da viagem">
+            <Icone nome="ajustes" size={17} aria-hidden="true" />
+          </Link>
+        </header>
         <FaixaConvidado />
         <ViagemContexto.Provider value={estado.dados}>
           {ABAS_GUARDADAS.filter((a) => visitadas.includes(`${viagem.id}:${a.para}`)).map(({ para, Tela }) => (
             <AbaAtivaContexto.Provider key={`${viagem.id}:${para}`} value={aba === para}>
-              <div className="aba-guardada" hidden={aba !== para}>
+              <div className="aba-guardada aba-entra" hidden={aba !== para}>
                 <Tela />
               </div>
             </AbaAtivaContexto.Provider>
           ))}
         </ViagemContexto.Provider>
-        {!abaGuardada && <Outlet context={estado.dados} />}
+        {/* A chave troca a cada aba: a nova monta com a animação de entrada (.aba-entra) */}
+        {!abaGuardada && (
+          <div className="aba-entra" key={aba}>
+            <Outlet context={estado.dados} />
+          </div>
+        )}
       </div>
+
+      {/* Sem tour em viagem antiga nem em rolê (primeiro minuto, 16/11/2026) */}
+      <TourDaViagem pronto={tourCabeNaViagem(viagem.tipo)} usuarioId={meuId} aoComecar={voltarPraViagem} aoTerminar={voltarPraViagem} />
 
       {recado && (
         <p className="recado" role="status">

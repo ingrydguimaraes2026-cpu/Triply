@@ -1,3 +1,4 @@
+import { useEstadoGuardado } from '../../lib/memoria'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Tables } from '@together/core'
 import * as api from './api'
@@ -28,9 +29,9 @@ export function useHospedagem(viagemId: string, destinos: Tables<'destinos'>[], 
     return () => {
       ativo = false
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
-  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar, setEstado])
   useAoMudar(['hospedagens'], recarregar) // spec 085: outra pessoa mudou → recarrega
 
   const opcoes = useMemo(() => (estado.status === 'pronto' ? estado.opcoes : []), [estado])
@@ -92,7 +93,7 @@ export function useHospedagem(viagemId: string, destinos: Tables<'destinos'>[], 
 type EstadoDasNoites = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; opcoes: Opcao[]; trajetos: Tables<'trajetos'>[] }
 
 export function useNoitesDaViagem(viagemId: string) {
-  const [estado, setEstado] = useState<EstadoDasNoites>({ status: 'carregando' })
+  const [estado, setEstado] = useEstadoGuardado<EstadoDasNoites>(`noites:${viagemId}`, { status: 'carregando' })
 
   const buscar = useCallback(async (): Promise<EstadoDasNoites> => {
     try {
@@ -113,14 +114,14 @@ export function useNoitesDaViagem(viagemId: string) {
     return () => {
       ativo = false
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
-  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar])
+  const recarregar = useCallback(async () => setEstado(await buscar()), [buscar, setEstado])
   useAoMudar(['hospedagens', 'trajetos'], recarregar)
 
   const trocarOpcoes = useCallback((mudar: (opcoes: Opcao[]) => Opcao[]) => {
     setEstado((atual) => (atual.status === 'pronto' ? { ...atual, opcoes: mudar(atual.opcoes) } : atual))
-  }, [])
+  }, [setEstado])
 
   return { estado, recarregar, trocarOpcoes }
 }

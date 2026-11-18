@@ -1,25 +1,41 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, ScrollView, Text, TextInput, View, type ScrollViewInstance } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { StatusBar } from '../../../../src/ui/StatusBar'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ArrowLeftRight, CheckCheck, MessageCircle, Receipt, Send, Wallet } from '../../../../src/ui/icones'
-import { buscarGastos, CONGELADO, contarComentariosDaViagem, cotacoesDeHoje, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type ViagemComDetalhes } from '@together/core'
+import { ArrowLeftRight, Bed, Car, MessageCircle, Receipt, Send, ShoppingBag, Ticket, Utensils, Wallet, type LucideIcon } from '../../../../src/ui/icones'
+import { buscarGastos, CONGELADO, contarComentariosDaViagem, cotacoesDeHoje, formatarDinheiro, saldoDaCarteira, saldoEuroDoComboio, type GastoDaViagem, type ViagemComDetalhes } from '@together/core'
 import { resumoDasContas } from '../../../../src/dados/contas'
 import { useCarregar } from '../../../../src/dados/useCarregar'
 import { useViagemAtual } from '../../../../src/dados/viagemAtual'
+import { useAlvoDoTour } from '../../../../src/ui/tour/Tour'
 import { diaCurto, hojeIso, lerData, primeiroNome } from '../../../../src/lib/formato'
 import { supabase } from '../../../../src/lib/supabase'
 import { Norti } from '../../../../src/ui/Norti'
-import { Avatar, Carregando, ErroNaTela } from '../../../../src/ui/pecas'
+import { Avatar, ErroNaTela } from '../../../../src/ui/pecas'
+import { EsqueletoDaAba } from '../../../../src/ui/viagem/Esqueleto'
 import { useNumeroAnimado } from '../../../../src/ui/movimento'
 import { SemViagem } from '../../../../src/ui/SemViagem'
 import { ComentariosDoItem } from '../../../../src/ui/ComentariosDoItem'
-import { cor, sombra } from '../../../../theme'
+import { Icone } from '../../../../src/ui/Icone'
+import { Entra } from '../../../../src/ui/Entra'
+import { cor, fonte, rotulo, titulo, trabalho } from '../../../../theme'
 import { puxarPraAtualizar } from '../../../../src/ui/Puxar'
 
-// Contas (spec 117, tela 5): um número grande (meu saldo), o câmbio de hoje numa linha,
-// os gastos como conversa e a barra fixa embaixo pra lançar.
+// Contas no caminho B "Embarque" (10/11/2026). Régua: docs/design/direcao-redesenho/embarque.html,
+// tela "Contas": título grande, o meu saldo num cartão creme com o número grande, "Quem deve quem",
+// os gastos em lista (o mais novo em cima, separados por dia) e um botão só, "Lançar gasto", acima da barra.
+// O lançamento rápido por frase ("jantar 84") continua, como campo no topo dos gastos.
+const ICONE_DA_CATEGORIA: Record<string, LucideIcon> = {
+  hospedagem: Bed,
+  transporte: Car,
+  alimentacao: Utensils,
+  passeios: Ticket,
+  comprinhas: ShoppingBag,
+}
+
+const cartao = { backgroundColor: trabalho.superficie, borderColor: trabalho.linha, borderWidth: 1, borderRadius: 20, boxShadow: '0 6px 18px rgba(74,46,20,0.08)' } as const
+
 export default function Contas() {
   const { atual, meuId } = useViagemAtual()
   if (!atual) return <SemViagem titulo="Contas" />
@@ -27,13 +43,13 @@ export default function Contas() {
 }
 
 function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: string }) {
+  const refDoLancar = useAlvoDoTour('contas-lancar') // o tour acende o Lançar gasto
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const [verAcertos, setVerAcertos] = useState(false)
+  const [verSaldos, setVerSaldos] = useState(false)
   const [aberto, setAberto] = useState<string | null>(null) // gasto com os comentários abertos (spec 025)
   const [comentarios, setComentarios] = useState<Record<string, number>>({})
   const [frase, setFrase] = useState('')
-  const rolagem = useRef<ScrollViewInstance>(null)
   // Câmbio de hoje numa linha (quanto vale 1 da moeda da viagem em reais)
   const [cambio, setCambio] = useState<number | null>(null)
   useEffect(() => {
@@ -62,176 +78,234 @@ function ContasDaViagem({ viagem, meuId }: { viagem: ViagemComDetalhes; meuId: s
       euro ? saldoEuroDoComboio(supabase, viagem.id) : Promise.resolve(0),
     ])
     return { gastos, meuEuro, euroDoComboio }
-  }, [viagem.id, meuId])
+  }, [viagem.id, meuId], 'aba-contas')
 
-  // Volta da tela de lançar gasto → recarrega
-  const { recarregar } = carga
-  useFocusEffect(useCallback(() => recarregar(), [recarregar]))
+  // Volta da tela de lançar gasto → o useCarregar recarrega sozinho
 
-  if (carga.status === 'carregando') return <Carregando />
+  if (carga.status === 'carregando') return <EsqueletoDaAba forma="contas" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
 
   const { gastos, meuEuro, euroDoComboio } = carga.dados
   const contas = resumoDasContas(gastos, viagem.moeda)
   const dinheiro = (c: number) => formatarDinheiro(c, viagem.moeda)
   const nome = (id: string) => (id === meuId ? 'Você' : primeiroNome(viagem.membros.find((m) => m.id === id)?.nome ?? 'Ex-membro'))
+  const nomeCompleto = (id: string) => viagem.membros.find((m) => m.id === id)?.nome ?? '?'
   const indice = (id: string) => Math.max(0, viagem.membros.findIndex((m) => m.id === id))
   const adicionar = () => router.push({ pathname: '/novo-gasto', params: { viagem: viagem.id } })
 
   const meuSaldo = contas.saldos.get(meuId) ?? 0
+  const devoPra = contas.acertos.filter((a) => a.de === meuId)
+  const recebeDe = contas.acertos.filter((a) => a.para === meuId)
+  const tituloDoSaldo =
+    meuSaldo < 0
+      ? devoPra.length === 1
+        ? `Você deve pra ${nome(devoPra[0].para)}`
+        : 'Você deve'
+      : meuSaldo > 0
+        ? recebeDe.length === 1
+          ? `${nome(recebeDe[0].de)} te deve`
+          : 'Você recebe'
+        : 'Tudo certo por aqui'
 
-  // Barra de baixo: a frase vai pro novo-gasto, que já abre preenchido
+  // Lançar rápido: a frase vai pro novo-gasto, que já abre preenchido
   function lancar() {
     const texto = frase.trim()
     router.push({ pathname: '/novo-gasto', params: texto ? { viagem: viagem.id, frase: texto } : { viagem: viagem.id } })
     setFrase('')
   }
 
-  // Estado vazio: saldo zerado e "Lance o primeiro gasto" (a barra de baixo já lança)
   const vazio = contas.quantidade === 0
-  const conversa = [...gastos.filter((g) => !g.rascunho)].reverse() // a mais nova embaixo, como num chat
+  const lista = gastos.filter((g) => !g.rascunho) // o mais novo em cima
+  const dias = agruparPorDia(lista)
   const porPessoa = viagem.membros.map((m) => ({ id: m.id, valor: contas.saldos.get(m.id) ?? 0 }))
 
   return (
-    <View className="flex-1 bg-fundo">
+    <View className="flex-1" style={{ backgroundColor: trabalho.fundo }}>
       <StatusBar style="dark" />
-      <ScrollView
-        ref={rolagem}
-        refreshControl={puxarPraAtualizar(carga)}
-        onContentSizeChange={() => rolagem.current?.scrollToEnd({ animated: false })}
-        contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 16, paddingBottom: 96, gap: 12 }}
-      >
-        {/* Um número grande: o meu saldo. Tocar mostra quem paga quem e o saldo de cada um */}
-        <Pressable onPress={() => setVerAcertos((v) => !v)} className="rounded-3xl bg-couro p-5 active:opacity-95" style={sombra.hero}>
-          <Text className="font-body-bold text-[11px] uppercase tracking-widest text-creme">
-            {meuSaldo > 0 ? 'Você recebe' : meuSaldo < 0 ? 'Você deve' : 'Tudo certo por aqui'}
-          </Text>
-          <SaldoAnimado valor={Math.abs(meuSaldo)} moeda={viagem.moeda} />
-          <View className="mt-1 flex-row items-center justify-between">
-            <Text className="flex-1 font-body text-[13px] text-creme" numberOfLines={1}>
-              {cambio ? `${nomeDaMoeda(viagem.moeda)} hoje ${formatarDinheiro(Math.round(cambio * 100), 'BRL')}` : `Total do grupo ${dinheiro(contas.total)}`}
+      <ScrollView refreshControl={puxarPraAtualizar(carga)} contentContainerStyle={{ paddingBottom: insets.bottom + 80 }} keyboardShouldPersistTaps="handled">
+        <Entra ordem={0}>
+          <View style={{ paddingHorizontal: 18, paddingTop: 6, paddingBottom: 12 }}>
+            <Text style={[rotulo, { color: trabalho.texto2 }]}>
+              {vazio ? 'Nenhum gasto ainda' : `${contas.quantidade} ${contas.quantidade === 1 ? 'gasto' : 'gastos'} · Total ${dinheiro(contas.total)}`}
             </Text>
-            <ArrowLeftRight size={16} color={cor.creme} />
+            <Text style={[titulo(32), { color: trabalho.texto, marginTop: 6 }]}>Contas</Text>
           </View>
-          {verAcertos ? (
-            <View className="mt-4 gap-2.5 border-t border-white/15 pt-4">
+        </Entra>
+
+        {/* O meu saldo: um número grande */}
+        <Entra ordem={1}>
+          <View style={[cartao, { marginHorizontal: 14, marginTop: 2, paddingHorizontal: 16, paddingTop: 18, paddingBottom: 16 }]}>
+            <Text style={[rotulo, { color: trabalho.texto2 }]}>{tituloDoSaldo}</Text>
+            <SaldoAnimado valor={Math.abs(meuSaldo)} moeda={viagem.moeda} />
+            <View className="mt-2 flex-row items-center gap-1.5">
+              <ArrowLeftRight size={14} color={trabalho.texto2} />
+              <Text className="flex-1" numberOfLines={1} style={{ fontFamily: fonte.corpo, fontSize: 13, color: trabalho.texto2 }}>
+                {cambio ? `${nomeDaMoeda(viagem.moeda)} hoje ${formatarDinheiro(Math.round(cambio * 100), 'BRL')}` : `Total do grupo ${dinheiro(contas.total)}`}
+                {viagem.membros.length && !vazio ? ` · ${dinheiro(Math.round(contas.total / viagem.membros.length))} por pessoa` : ''}
+              </Text>
+            </View>
+            {euro ? (
+              <View className="mt-3 flex-row items-center gap-2 rounded-full px-3 py-2" style={{ backgroundColor: trabalho.superficie2 }}>
+                <Wallet size={15} color={trabalho.texto} />
+                <Text className="flex-1" style={{ fontFamily: fonte.corpoForte, fontSize: 12, color: trabalho.texto }}>
+                  Euros na carteira: galera {formatarDinheiro(Math.round(euroDoComboio * 100), 'EUR')} · você {formatarDinheiro(Math.round(meuEuro * 100), 'EUR')}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        </Entra>
+
+        {/* Quem deve quem */}
+        {!vazio ? (
+          <Entra ordem={2}>
+            <View className="flex-row items-baseline justify-between" style={{ marginHorizontal: 18, marginTop: 22, marginBottom: 10 }}>
+              <Text style={[rotulo, { color: trabalho.texto2 }]}>Quem deve quem</Text>
+              <Pressable onPress={() => setVerSaldos((v) => !v)} accessibilityRole="button" hitSlop={8}>
+                <Text style={{ fontFamily: fonte.corpoForte, fontSize: 12.5, color: trabalho.acento }}>{verSaldos ? 'Esconder saldos' : 'Saldo de cada um'}</Text>
+              </Pressable>
+            </View>
+            <View style={[cartao, { marginHorizontal: 14 }]}>
               {contas.acertos.length ? (
                 contas.acertos.map((a, i) => (
-                  <Text key={i} className="font-body text-[14px] text-white">
-                    <Text className="font-body-bold">{nome(a.de)}</Text> paga <Text className="font-body-bold">{dinheiro(a.valor)}</Text> pra <Text className="font-body-bold">{nome(a.para)}</Text>
-                  </Text>
+                  <View key={i} className="flex-row items-center gap-2 px-3.5 py-3" style={i ? { borderTopWidth: 1, borderTopColor: trabalho.linha } : undefined}>
+                    <Avatar nome={nomeCompleto(a.de)} indice={indice(a.de)} tamanho={26} />
+                    <Text style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>{nome(a.de)}</Text>
+                    <Text style={{ fontFamily: fonte.corpo, fontSize: 13.5, color: trabalho.texto2 }}>deve pra</Text>
+                    <Avatar nome={nomeCompleto(a.para)} indice={indice(a.para)} tamanho={26} />
+                    <Text className="min-w-0 flex-1" numberOfLines={1} style={{ fontFamily: fonte.item, fontSize: 14, color: trabalho.texto }}>
+                      {a.para === meuId ? 'você' : nome(a.para)}
+                    </Text>
+                    <Text style={{ fontFamily: fonte.titulo, fontSize: 15, color: trabalho.texto }}>{dinheiro(a.valor)}</Text>
+                  </View>
                 ))
               ) : (
-                <Text className="font-body text-[14px] text-white">Ninguém deve nada a ninguém.</Text>
+                <Text className="px-3.5 py-3.5" style={{ fontFamily: fonte.corpo, fontSize: 14, color: trabalho.texto }}>
+                  Ninguém deve nada a ninguém.
+                </Text>
               )}
-              {porPessoa.map((p) => (
-                <View key={p.id} className="flex-row items-center gap-2.5">
-                  <Avatar nome={viagem.membros[indice(p.id)].nome} indice={indice(p.id)} tamanho={24} />
-                  <Text className="flex-1 font-body-semibold text-[13px] text-creme">{nome(p.id)}</Text>
-                  <Text className="font-body-bold text-[13px] text-white">{p.valor === 0 ? '—' : `${p.valor > 0 ? '+' : '−'} ${dinheiro(Math.abs(p.valor))}`}</Text>
-                </View>
-              ))}
-              <Text className="font-body text-[12px] text-creme">
-                Total do grupo {dinheiro(contas.total)}
-                {viagem.membros.length ? ` · ${dinheiro(Math.round(contas.total / viagem.membros.length))} por pessoa` : ''}
+              {verSaldos
+                ? porPessoa.map((p) => (
+                    <View key={p.id} className="flex-row items-center gap-2.5 px-3.5 py-2.5" style={{ borderTopWidth: 1, borderTopColor: trabalho.linha, backgroundColor: trabalho.superficie2 }}>
+                      <Avatar nome={nomeCompleto(p.id)} indice={indice(p.id)} tamanho={24} />
+                      <Text className="flex-1" style={{ fontFamily: fonte.corpoForte, fontSize: 13, color: trabalho.texto }}>{nome(p.id)}</Text>
+                      <Text style={{ fontFamily: fonte.item, fontSize: 13.5, color: p.valor > 0 ? cor.verde : trabalho.texto }}>
+                        {p.valor === 0 ? '—' : `${p.valor > 0 ? '+' : '−'} ${dinheiro(Math.abs(p.valor))}`}
+                      </Text>
+                    </View>
+                  ))
+                : null}
+            </View>
+          </Entra>
+        ) : null}
+
+        {/* Gastos */}
+        <Entra ordem={3}>
+          <View className="flex-row items-baseline justify-between" style={{ marginHorizontal: 18, marginTop: 22, marginBottom: 10 }}>
+            <Text style={[rotulo, { color: trabalho.texto2 }]}>Gastos</Text>
+          </View>
+          {/* Lançar rápido por frase (spec 117): "jantar 84" abre o gasto já preenchido */}
+          <View className="flex-row items-center gap-2" style={{ marginHorizontal: 14, marginBottom: 10 }}>
+            <View className="h-12 flex-1 flex-row items-center gap-2 rounded-[18px] border pl-3.5 pr-1.5" style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}>
+              <Receipt size={18} color={trabalho.texto2} />
+              <TextInput
+                value={frase}
+                onChangeText={setFrase}
+                onSubmitEditing={lancar}
+                placeholder={`Escreva rápido: jantar ${dinheiro(8400).replace(/[^\d,.]/g, '')}`}
+                placeholderTextColor={trabalho.texto2}
+                returnKeyType="send"
+                accessibilityLabel="Lançar rápido, tipo jantar 84"
+                className="h-full min-w-0 flex-1"
+                style={{ fontFamily: fonte.corpo, fontSize: 15, color: trabalho.texto, outlineStyle: 'none' } as object}
+              />
+              {frase.trim() ? (
+                <Pressable onPress={lancar} accessibilityLabel="Lançar" className="h-9 w-9 items-center justify-center rounded-full active:opacity-80" style={{ backgroundColor: trabalho.superficie2 }}>
+                  <Send size={16} color={trabalho.texto} />
+                </Pressable>
+              ) : null}
+            </View>
+          </View>
+
+          {vazio ? (
+            <View className="items-center gap-2 px-6 py-8">
+              <Norti humor="apontando" tamanho={100} />
+              <Text style={[titulo(22), { color: trabalho.texto }]}>Lance o primeiro gasto</Text>
+              <Text className="text-center" style={{ fontFamily: fonte.corpo, fontSize: 14, lineHeight: 20, color: trabalho.texto2 }}>
+                Toque em &quot;Lançar gasto&quot; ou escreva aí em cima, tipo &quot;jantar 84&quot;. A Norti divide na hora.
               </Text>
             </View>
           ) : null}
-        </Pressable>
 
-        {euro ? (
-          <View className="flex-row items-center gap-2 self-center rounded-full bg-areia px-3.5 py-2">
-            <Wallet size={15} color={cor.couro} />
-            <Text className="font-body-semibold text-[12px] text-corpo">
-              Euros na carteira: comboio {formatarDinheiro(Math.round(euroDoComboio * 100), 'EUR')} · você {formatarDinheiro(Math.round(meuEuro * 100), 'EUR')}
-            </Text>
-          </View>
-        ) : null}
-
-        {vazio ? (
-          <View className="items-center gap-2 py-10">
-            <Norti humor="dormindo" tamanho={110} />
-            <Text className="font-display text-[24px] text-texto">Lance o primeiro gasto</Text>
-            <Text className="text-center font-body text-[14px] leading-5 text-corpo">Escreva aí embaixo, tipo &quot;jantar 84&quot;. A Norti divide na hora.</Text>
-          </View>
-        ) : null}
-
-        {conversa.map((e, i) => {
-          const meu = e.pago_por === meuId
-          const anterior = conversa[i - 1]
-          const novoDia = !anterior || anterior.data !== e.data
-          const pessoas = e.divisoes.length
-          return (
-            <View key={e.id} className="gap-1.5">
-              {novoDia ? <Text className="mt-2 self-center font-body-bold text-[11px] uppercase tracking-widest text-suave">{tituloDoDia(e.data)}</Text> : null}
-              <View className={`flex-row items-end gap-2 ${meu ? 'justify-end' : ''}`}>
-                {!meu ? <Avatar nome={viagem.membros[indice(e.pago_por)]?.nome ?? '?'} indice={indice(e.pago_por)} tamanho={28} /> : null}
-                <Pressable
-                  onPress={() => setAberto(aberto === e.id ? null : e.id)}
-                  accessibilityLabel={CONGELADO.comentarios ? e.descricao : `Comentários de ${e.descricao}`}
-                  className={`max-w-[78%] rounded-[20px] px-4 py-3 active:opacity-90 ${meu ? 'rounded-br-md bg-couro' : 'rounded-bl-md bg-cartao'}`}
-                  style={meu ? undefined : sombra.cartao}
-                >
-                  <Text className={`font-body-bold text-[14px] ${meu ? 'text-white' : 'text-texto'}`}>
-                    {meu ? 'Você' : nome(e.pago_por)} pagou {formatarDinheiro(e.valor, e.moeda)} · {e.descricao}
-                  </Text>
-                  <Text className={`mt-0.5 font-body text-[12px] ${meu ? 'text-creme' : 'text-suave'}`}>
-                    {e.pessoal ? 'só seu' : pessoas ? `dividido em ${pessoas} · ${formatarDinheiro(Math.round(e.valor / pessoas), e.moeda)} cada` : ''}
-                  </Text>
-                  {/* comentários soltos congelados pelo RUMO (03/11/2026) */}
-                  {comentarios[e.id] && !CONGELADO.comentarios ? (
-                    <View className={`absolute -bottom-2.5 ${meu ? 'left-3' : 'right-3'} flex-row items-center gap-1 rounded-full border border-linha bg-cartao px-2 py-0.5`}>
-                      <MessageCircle size={11} color={cor.caramelo} />
-                      <Text className="font-body-bold text-[11px] text-texto">{comentarios[e.id]}</Text>
+          {dias.map((d) => (
+            <View key={d.data}>
+              <Text style={[rotulo, { color: trabalho.texto2, marginHorizontal: 18, marginTop: 6, marginBottom: 8, fontSize: 10 }]}>{tituloDoDia(d.data)}</Text>
+              <View style={[cartao, { marginHorizontal: 14, marginBottom: 10, overflow: 'hidden' }]}>
+                {d.gastos.map((e, i) => {
+                  const pessoas = e.divisoes.length
+                  const IconeDaCategoria = ICONE_DA_CATEGORIA[e.categoria] ?? Receipt
+                  const quantos = comentarios[e.id] && !CONGELADO.comentarios ? comentarios[e.id] : 0
+                  return (
+                    <View key={e.id} style={i ? { borderTopWidth: 1, borderTopColor: trabalho.linha } : undefined}>
+                      <Pressable
+                        onPress={() => setAberto(aberto === e.id ? null : e.id)}
+                        disabled={CONGELADO.comentarios}
+                        accessibilityLabel={CONGELADO.comentarios ? e.descricao : `Comentários de ${e.descricao}`}
+                        className="flex-row items-center gap-3 px-3.5 py-3 active:opacity-80"
+                      >
+                        <View className="h-[38px] w-[38px] items-center justify-center rounded-xl" style={{ backgroundColor: trabalho.superficie2 }}>
+                          <IconeDaCategoria size={19} color={trabalho.texto} />
+                        </View>
+                        <View className="min-w-0 flex-1">
+                          <Text numberOfLines={1} style={{ fontFamily: fonte.item, fontSize: 14.5, letterSpacing: -0.15, color: trabalho.texto }}>
+                            {e.descricao}
+                          </Text>
+                          <Text numberOfLines={1} style={{ fontFamily: fonte.corpo, fontSize: 12.5, color: trabalho.texto2, marginTop: 1 }}>
+                            {nome(e.pago_por)} pagou · {e.pessoal ? 'só seu' : pessoas ? `${pessoas} ${pessoas === 1 ? 'pessoa' : 'pessoas'}` : 'sem divisão'}
+                          </Text>
+                        </View>
+                        <View className="items-end">
+                          <Text style={{ fontFamily: fonte.titulo, fontSize: 15, color: trabalho.texto }}>{formatarDinheiro(e.valor, e.moeda)}</Text>
+                          {quantos ? (
+                            <View className="mt-0.5 flex-row items-center gap-1">
+                              <MessageCircle size={11} color={cor.caramelo} />
+                              <Text style={{ fontFamily: fonte.corpoNegrito, fontSize: 11, color: trabalho.texto2 }}>{quantos}</Text>
+                            </View>
+                          ) : null}
+                        </View>
+                      </Pressable>
+                      {/* Spec 025: comentários do gasto. Congelado pelo RUMO (03/11/2026) */}
+                      {aberto === e.id && !CONGELADO.comentarios ? (
+                        <View className="px-3" style={{ borderTopWidth: 1, borderTopColor: trabalho.linha, backgroundColor: trabalho.superficie2 }}>
+                          <ComentariosDoItem
+                            viagemId={viagem.id}
+                            alvo={{ tipo: 'gasto', id: e.id }}
+                            membros={viagem.membros}
+                            meuId={meuId}
+                            euSouAdm={viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')}
+                            aoMudar={(total) => setComentarios((atual) => ({ ...atual, [e.id]: total }))}
+                          />
+                        </View>
+                      ) : null}
                     </View>
-                  ) : null}
-                </Pressable>
+                  )
+                })}
               </View>
-              {/* Spec 025: comentários do gasto. Congelado pelo RUMO (03/11/2026) */}
-              {aberto === e.id && !CONGELADO.comentarios ? (
-                <View className="mt-2 rounded-2xl bg-cartao px-3" style={sombra.cartao}>
-                  <ComentariosDoItem
-                    viagemId={viagem.id}
-                    alvo={{ tipo: 'gasto', id: e.id }}
-                    membros={viagem.membros}
-                    meuId={meuId}
-                    euSouAdm={viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')}
-                    aoMudar={(total) => setComentarios((atual) => ({ ...atual, [e.id]: total }))}
-                  />
-                </View>
-              ) : null}
             </View>
-          )
-        })}
-
-        {/* Quem paga quem, como recado do grupo no fim da conversa */}
-        {contas.acertos.slice(0, 3).map((a, i) => (
-          <View key={`acerto-${i}`} className="flex-row items-center gap-1.5 self-center rounded-full bg-verde-fundo px-3.5 py-2">
-            <CheckCheck size={14} color={cor.verde} />
-            <Text className="font-body-semibold text-[12px] text-verde">
-              {nome(a.de)} paga {dinheiro(a.valor)} pra {a.para === meuId ? 'você' : nome(a.para)}
-            </Text>
-          </View>
-        ))}
+          ))}
+        </Entra>
       </ScrollView>
 
-      {/* Barra fixa pra lançar: "€ 0,00 · o que foi?" (abre o novo-gasto já preenchido) */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center gap-2 border-t border-linha px-3 py-2.5" style={{ backgroundColor: 'rgba(251,243,230,0.97)' }}>
-        <Pressable onPress={adicionar} accessibilityLabel="Lançar gasto completo" className="h-11 w-11 items-center justify-center rounded-full bg-chip active:opacity-80">
-          <Receipt size={20} color={cor.couro} />
-        </Pressable>
-        <TextInput
-          value={frase}
-          onChangeText={setFrase}
-          onSubmitEditing={lancar}
-          placeholder={`${dinheiro(0)} · o que foi?`}
-          placeholderTextColor={cor.suave}
-          returnKeyType="send"
-          className="h-11 flex-1 rounded-full border border-borda bg-cartao px-4 font-body text-[15px] text-texto"
-          style={{ outlineStyle: 'none' } as object}
-        />
-        <Pressable onPress={lancar} accessibilityLabel="Lançar" className="h-11 w-11 items-center justify-center rounded-full bg-caramelo active:opacity-80">
-          <Send size={18} color="#fff" />
+      {/* Um botão só, acima da barra de vidro (o insets.bottom já conta a altura dela) */}
+      <View ref={refDoLancar} collapsable={false} className="absolute" style={{ right: 16, bottom: insets.bottom + 4 }}>
+        <Pressable
+          onPress={adicionar}
+          accessibilityRole="button"
+          accessibilityLabel="Lançar gasto"
+          className="h-[50px] flex-row items-center gap-1.5 rounded-full pl-3.5 pr-[18px] active:opacity-90"
+          style={{ backgroundColor: trabalho.acento, boxShadow: '0 10px 24px rgba(0,0,0,0.3)' }}
+        >
+          <Icone nome="mais" tamanho={20} cor={trabalho.acentoTexto} />
+          <Text style={{ fontFamily: fonte.item, fontSize: 14.5, color: trabalho.acentoTexto }}>Lançar gasto</Text>
         </Pressable>
       </View>
     </View>
@@ -245,8 +319,19 @@ function tituloDoDia(data: string) {
   return data === hojeIso() ? `Hoje · ${diaCurto(lerData(data))}` : diaCurto(lerData(data))
 }
 
+// A lista já vem do mais novo pro mais velho; aqui só junta por dia
+function agruparPorDia(gastos: GastoDaViagem[]) {
+  const dias: { data: string; gastos: GastoDaViagem[] }[] = []
+  for (const g of gastos) {
+    const ultimo = dias[dias.length - 1]
+    if (ultimo && ultimo.data === g.data) ultimo.gastos.push(g)
+    else dias.push({ data: g.data, gastos: [g] })
+  }
+  return dias
+}
+
 // O saldo corre até o valor novo quando muda (spec 117: número animado)
 function SaldoAnimado({ valor, moeda }: { valor: number; moeda: string }) {
   const mostrado = useNumeroAnimado(valor)
-  return <Text className="mt-1 font-display text-[44px] leading-[48px] text-white">{formatarDinheiro(Math.round(mostrado), moeda)}</Text>
+  return <Text style={[titulo(46, 0.045), { color: trabalho.texto, marginTop: 8, fontVariant: ['tabular-nums'] }]}>{formatarDinheiro(Math.round(mostrado), moeda)}</Text>
 }

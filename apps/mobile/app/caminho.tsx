@@ -12,7 +12,7 @@ import { hora } from '../src/lib/formato'
 import { supabase } from '../src/lib/supabase'
 import { StatusBar } from '../src/ui/StatusBar'
 import { PAISES } from '../src/ui/MapaDaGalera'
-import { BotaoRedondo, Cartao, Carregando, ErroNaTela } from '../src/ui/pecas'
+import { BotaoRedondo, Cartao, Carregando, ErroNaTela, NadaPraMostrar } from '../src/ui/pecas'
 import { cor } from '../theme'
 
 // "Ver o caminho" (spec 121c, ideia da Ingryd): por onde o trem ou o ônibus passa, com as paradas
@@ -41,7 +41,7 @@ async function carregar(trajetoId: string) {
 export default function TelaDoCaminho() {
   const { trajeto } = useLocalSearchParams<{ trajeto: string }>()
   const carga = useCarregar(trajeto ? () => carregar(trajeto) : null, [trajeto])
-  if (!trajeto) return <ErroNaTela aoTentar={() => {}} />
+  if (!trajeto) return <NadaPraMostrar texto="O caminho abre por um transporte da viagem, em Reservas." />
   if (carga.status === 'carregando') return <Carregando texto="Procurando o caminho…" />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />
   return <Tela {...carga.dados} />

@@ -24,7 +24,9 @@ export function BuscaDeLugar({ aoEscolher, placeholder = 'Cidade, praia ou país
       setBuscando(true)
       setErro(false)
       procurarLugar(t, controle.signal)
-        .then(setAchados)
+        // Android (teste 17/11): o GeoNames tem povoados diferentes com o mesmo nome, estado e país
+        // (2 "Florianópolis, Acre"). Na tela eram linhas iguais; fica a primeira (a mais relevante).
+        .then((lista) => setAchados(lista.filter((l, i) => lista.findIndex((o) => o.nome === l.nome && o.regiao === l.regiao && o.pais === l.pais) === i)))
         .catch((e) => {
           if (!controle.signal.aborted) {
             console.error('Erro ao buscar lugar:', e)

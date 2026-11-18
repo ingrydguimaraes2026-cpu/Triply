@@ -23,6 +23,9 @@ export type EstadoDosPassos = {
   trajetos: number
   gastos: number
   euSouAdm: boolean
+  // Já mandou o link (convite ativo ou acabou de compartilhar): "Chamar a galera" sai da faixa
+  // do próximo passo, mas o carimbo Galera só cai quando alguém entra.
+  jaChamou?: boolean
 }
 
 export type ChaveDoPasso = 'roteiro' | 'galera' | 'datas' | 'hospedagem' | 'transporte' | 'gastos'
@@ -44,7 +47,7 @@ export function montarPassos(estado: EstadoDosPassos): Passo[] {
 
 // O próximo carimbo a conquistar. Comboio de 1 pessoa: chamar a galera vem primeiro (spec 117).
 export function proximoCarimbo(estado: EstadoDosPassos): Passo | null {
-  const abertos = montarPassos(estado).filter((p) => !p.feito && (!p.soAdm || estado.euSouAdm))
+  const abertos = montarPassos(estado).filter((p) => !p.feito && (!p.soAdm || estado.euSouAdm) && !(p.chave === 'galera' && estado.jaChamou))
   return abertos.find((p) => p.chave === 'galera') ?? abertos[0] ?? null
 }
 

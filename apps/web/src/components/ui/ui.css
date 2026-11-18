@@ -812,3 +812,72 @@ html[data-tema='escuro'] .icone-quadrado {
 html[data-tema='escuro'] .cartao-ui {
   border-color: var(--cor-borda);
 }
+
+/* ---------- Esqueleto (primeira carga das abas da viagem) ---------- */
+.esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: esqueleto-pulso 1.6s ease-in-out infinite;
+}
+
+.esq-cartao {
+  background: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: 22px;
+}
+
+.esq-bloco {
+  display: block;
+  background: var(--cor-fundo-suave);
+  border-radius: 999px;
+  height: 11px;
+}
+
+.esq-capa {
+  height: 180px;
+  border-radius: 24px;
+}
+
+.esq-fila {
+  display: flex;
+  gap: 14px;
+}
+
+.esq-redondo {
+  width: 58px;
+  height: 58px;
+}
+
+.esq-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 18px;
+}
+
+.esq-avatar {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+
+.esq-linhas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@keyframes esqueleto-pulso {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}

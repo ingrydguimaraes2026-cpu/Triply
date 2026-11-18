@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Location from 'expo-location'
@@ -11,13 +11,14 @@ import { supabase } from '../src/lib/supabase'
 import { BuscaDeLugar } from '../src/ui/BuscaDeLugar'
 import { Locate, X } from '../src/ui/icones'
 import { StatusBar } from '../src/ui/StatusBar'
-import { BotaoRedondo } from '../src/ui/pecas'
+import { Botao, BotaoRedondo } from '../src/ui/pecas'
 import { cor } from '../theme'
 
 // "Rolê hoje" (spec 118f): toque 1 no Início, toque 2 em "Estou em <lugar>" (ou num lugar da busca).
 // Vira uma viagem de 1 dia, sem roteiro nem hospedagem. Se a pessoa já está lá, o carimbo cai na hora.
 // A localização só é usada aqui no aparelho pra achar o nome do lugar; não vai pro banco.
-type Aqui = { situacao: 'olhando' } | { situacao: 'sem-permissao' } | { situacao: 'achou'; lugar: LugarAchado } | { situacao: 'nada' }
+// `bloqueada`: a pessoa negou de vez (o Android não pergunta mais); só os ajustes do celular liberam
+type Aqui = { situacao: 'olhando' } | { situacao: 'sem-permissao'; bloqueada: boolean } | { situacao: 'achou'; lugar: LugarAchado } | { situacao: 'nada' }
 
 export default function Role() {
   const router = useRouter()
@@ -33,7 +34,7 @@ export default function Role() {
     setAqui({ situacao: 'olhando' })
     try {
       const permissao = pedir ? await Location.requestForegroundPermissionsAsync() : await Location.getForegroundPermissionsAsync()
-      if (!permissao.granted) return setAqui({ situacao: 'sem-permissao' })
+      if (!permissao.granted) return setAqui({ situacao: 'sem-permissao', bloqueada: !permissao.canAskAgain })
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
       const lugar = await lugarPelaCoordenada({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
       setAqui(lugar ? { situacao: 'achou', lugar } : { situacao: 'nada' })
@@ -144,6 +145,15 @@ function OndeEstou({ aqui, criando, aoCriar, aoPedir }: { aqui: Aqui; criando: s
       <View className="min-h-[64px] flex-row items-center gap-3 rounded-3xl bg-areia px-5">
         <ActivityIndicator color={cor.couro} />
         <Text className="font-body-semibold text-[14px] text-corpo">Vendo onde você está...</Text>
+      </View>
+    )
+  // Android (teste 17/11): negada 2 vezes, "Usar onde estou" parava de responder sem explicar.
+  // Agora explica e leva pros ajustes (o mesmo "Abrir ajustes" dos avisos no celular).
+  if (aqui.situacao === 'sem-permissao' && aqui.bloqueada)
+    return (
+      <View className="gap-2 rounded-3xl bg-areia px-5 py-4">
+        <Text className="font-body text-[14px] leading-5 text-corpo">A localização está desligada pra Norti. Libere nos ajustes do celular ou escolha o lugar na busca abaixo.</Text>
+        <Botao compacto tipo="secundario" titulo="Abrir ajustes" aoTocar={() => Linking.openSettings()} />
       </View>
     )
   if (aqui.situacao === 'sem-permissao')

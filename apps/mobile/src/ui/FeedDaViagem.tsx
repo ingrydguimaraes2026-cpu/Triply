@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ComponentRef } from "react";
 import {
   Image,
   Pressable,
@@ -35,7 +35,24 @@ type Props = {
   meuId: string;
   destinos: { id: string; nome: string }[];
   aoMudar: () => void;
+  // Android (teste 17/11): o teclado cobria o campo de comentário. A tela que tem a rolagem
+  // recebe a linha do campo focado e rola até ela ficar acima do teclado.
+  aoFocarComentario?: (linha: LinhaDoComentario | null) => void;
+  aoSairDoComentario?: (linha: LinhaDoComentario | null) => void; // o campo perdeu o foco
 };
+
+export type LinhaDoComentario = ComponentRef<typeof View>;
+
+// Android (reteste r3b): cada recarga do feed traz links assinados novos (valem 1 h) e a foto
+// baixava de novo, piscando vazia. Mantém o link já carregado de cada foto por até 50 min.
+const LINK_VALE_MS = 50 * 60 * 1000;
+const linksDasFotos = new Map<string, { url: string; desde: number }>();
+export function urlEstavel(caminho: string, url: string): string {
+  const guardado = linksDasFotos.get(caminho);
+  if (guardado && Date.now() - guardado.desde < LINK_VALE_MS) return guardado.url;
+  linksDasFotos.set(caminho, { url, desde: Date.now() });
+  return url;
+}
 
 export function FeedDaViagem({
   posts,
@@ -43,6 +60,8 @@ export function FeedDaViagem({
   meuId,
   destinos,
   aoMudar,
+  aoFocarComentario,
+  aoSairDoComentario,
 }: Props) {
   const euSouAdm = membros.some((m) => m.id === meuId && m.papel === "adm");
   return (
@@ -56,6 +75,8 @@ export function FeedDaViagem({
           euSouAdm={euSouAdm}
           destino={destinos.find((d) => d.id === p.destino_id)?.nome ?? null}
           aoApagar={aoMudar}
+          aoFocarComentario={aoFocarComentario}
+          aoSairDoComentario={aoSairDoComentario}
         />
       ))}
     </View>
@@ -69,6 +90,8 @@ function PostCartao({
   euSouAdm,
   destino,
   aoApagar,
+  aoFocarComentario,
+  aoSairDoComentario,
 }: {
   post: PostDaViagem;
   membros: Pessoa[];
@@ -76,7 +99,10 @@ function PostCartao({
   euSouAdm: boolean;
   destino: string | null;
   aoApagar: () => void;
+  aoFocarComentario?: (linha: LinhaDoComentario | null) => void;
+  aoSairDoComentario?: (linha: LinhaDoComentario | null) => void;
 }) {
+  const linhaDoComentario = useRef<LinhaDoComentario>(null);
   const [curtidas, setCurtidas] = useState(post.curtidas);
   const [comentarios, setComentarios] = useState(post.comentarios);
   const [abertos, setAbertos] = useState(false);
@@ -124,6 +150,9 @@ function PostCartao({
       const novo = await comentarPost(supabase, post.id, limpo);
       setComentarios((c) => [...c, novo]);
       setAbertos(true);
+      // Android (reteste r3b): a lista cresce e o campo desce pra trás do teclado; pede a rolagem de novo
+      // (a tela só rola se o teclado continuar aberto)
+      setTimeout(() => aoFocarComentario?.(linhaDoComentario.current), 50);
       avisarComboioDoFeed(supabase, { comentario_id: novo.id });
     } catch (e) {
       console.error("Erro ao comentar:", e);
@@ -159,7 +188,7 @@ function PostCartao({
   );
 
   return (
-    <View className="overflow-hidden rounded-3xl border border-borda bg-cartao">
+    <View className="overflow-hidden rounded-[20px] border border-borda bg-cartao" style={{ boxShadow: "0 6px 18px rgba(74,46,20,0.08)" }}>
       <View className="flex-row items-center gap-2.5 px-3.5 py-3">
         <Avatar
           nome={membros.find((m) => m.id === post.autor)?.nome ?? "?"}
@@ -230,7 +259,7 @@ function PostCartao({
               >
                 {f.url ? (
                   <Image
-                    source={{ uri: f.url }}
+                    source={{ uri: urlEstavel(f.caminho, f.url) }}
                     style={{ width: largura, height: largura }}
                     resizeMode="cover"
                   />
@@ -322,8 +351,10 @@ function PostCartao({
               </View>
             ))
           : null}
-        <View className="mt-1 flex-row items-center gap-2 rounded-xl border border-borda px-3 py-1.5">
+        <View ref={linhaDoComentario} collapsable={false} className="mt-1 flex-row items-center gap-2 rounded-xl border border-borda px-3 py-1.5">
           <TextInput
+            onFocus={() => aoFocarComentario?.(linhaDoComentario.current)}
+            onBlur={() => aoSairDoComentario?.(linhaDoComentario.current)}
             value={texto}
             onChangeText={(t) => setTexto(t.slice(0, 500))}
             placeholder="Comentar…"

@@ -1,6 +1,6 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Check, Pencil, Plus } from '../src/ui/icones'
 import { buscarTrajetos, compararOpcoes, diaNoFuso, duracaoCurta, escolherOpcaoDoDeslocamento, horaNoFuso, nomeDoMeio, type Tables } from '@together/core'
@@ -30,15 +30,7 @@ export default function Comparar() {
   const { atual: viagem } = useViagemAtual()
   const { grupo } = useLocalSearchParams<{ grupo: string }>()
   const carga = useCarregar(viagem && grupo ? () => carregar(viagem.id, grupo) : null, [viagem?.id, grupo])
-  // Voltou de editar uma opção: busca de novo
-  const primeiraVez = useRef(true)
-  const { recarregar } = carga
-  useFocusEffect(
-    useCallback(() => {
-      if (primeiraVez.current) primeiraVez.current = false
-      else recarregar()
-    }, [recarregar]),
-  )
+  // Voltou de editar uma opção: o useCarregar busca de novo sozinho
   if (!viagem || !grupo) return <ErroNaTela aoTentar={() => {}} />
   if (carga.status === 'carregando') return <Carregando />
   if (carga.status === 'erro') return <ErroNaTela aoTentar={carga.recarregar} />

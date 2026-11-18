@@ -1,4 +1,4 @@
-import { Camera, Luggage, Map as Mapa, MapPinned, Printer, Route, Settings, Sparkles, Sun, Ticket, Users, Wallet } from '../../components/ui/icones'
+import { BedDouble, Camera, Luggage, Map as Mapa, MapPinned, Printer, Route, Settings, Sparkles, Sun, Users, Wallet } from '../../components/ui/icones'
 
 // As 5 partes da viagem, iguais às abas do app (apps/mobile/app/viagem/[id]/(abas)/_layout.tsx).
 // Pra criar uma aba nova: adicione aqui e no src/router.tsx
@@ -7,7 +7,8 @@ export const ABAS = [
   // Roteiro como no app: Matches + Dia 1, Dia 2... O baralho do Explorar abre por "Descobrir mais lugares"
   { para: 'roteiro', rotulo: 'Roteiro', icone: Mapa },
   // Reservas = Passagens + Hospedagem, com as duas pílulas (como no app)
-  { para: 'reservas', rotulo: 'Reservas', icone: Ticket },
+  // Mesmo ícone do app (caminho B): Reservas = onde ficar + transporte
+  { para: 'reservas', rotulo: 'Reservas', icone: BedDouble },
   { para: 'contas', rotulo: 'Contas', icone: Wallet },
   { para: 'fotos', rotulo: 'Fotos', icone: Camera },
 ]

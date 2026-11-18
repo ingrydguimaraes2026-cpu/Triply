@@ -40,7 +40,7 @@ export function proximoPasso(e: EntradaDoProximoPasso): ProximoPasso | null {
     }
   }
   if (e.pessoas <= 1) {
-    return { chave: 'convidar', titulo: 'Chame a galera pra escolher também', botao: 'Convidar o comboio', link: 'comboio' }
+    return { chave: 'convidar', titulo: 'Chame a galera pra escolher também', botao: 'Convidar a galera', link: 'comboio' }
   }
   // Só o ADM muda as datas
   if (!e.dataInicio && e.euSouAdm) {

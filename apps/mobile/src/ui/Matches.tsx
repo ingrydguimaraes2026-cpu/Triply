@@ -62,9 +62,12 @@ export function Matches({ matches, membros, meuId, aoAbrirLugar, aoMontar, aoDes
 function Grupo({ indice, titulo, children }: { indice: number; titulo: string; children: React.ReactNode }) {
   const entrada = useCascata(indice)
   return (
-    <Animated.View style={entrada} className="gap-2.5">
-      <Text className="font-body-bold text-[11px] uppercase tracking-widest text-caramelo">{titulo}</Text>
-      {children}
+    // Android (teste 17/11): `className` + estilo animado no mesmo Animated.View perde a parte fixa
+    <Animated.View style={entrada}>
+      <View className="gap-2.5">
+        <Text className="font-body-bold text-[11px] uppercase tracking-widest text-caramelo">{titulo}</Text>
+        {children}
+      </View>
     </Animated.View>
   )
 }

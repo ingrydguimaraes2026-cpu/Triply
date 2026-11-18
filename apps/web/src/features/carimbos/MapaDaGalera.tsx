@@ -98,7 +98,10 @@ export default function MapaDaGalera({ meuId, vez = 0, aoAntigas }: { meuId: str
             [m.diasJuntos, 'dias juntos'],
             [m.km, 'km'],
           ] as [number, string][]
-        ).map(([n, rotulo]) => (
+        )
+          // Número zero (ex.: "0 km" com 1 lugar só) não aparece: o mapa abre forte, não vazio
+          .filter(([n]) => n > 0)
+          .map(([n, rotulo]) => (
           <div key={rotulo}>
             <dt>{rotulo}</dt>
             <dd>{n.toLocaleString('pt-BR')}</dd>

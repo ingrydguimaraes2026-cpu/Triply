@@ -108,6 +108,13 @@ function idUnico(): string {
   );
 }
 
+// Tamanho do arquivo em bytes (Blob/File na web, ArrayBuffer ou Uint8Array no celular).
+// Sem tamanho conhecido, não barra.
+function tamanhoDoCorpo(corpo: CorpoDoArquivo): number {
+  const c = corpo as { byteLength?: number; size?: number };
+  return c.byteLength ?? c.size ?? Number.POSITIVE_INFINITY;
+}
+
 // Cria o post, envia as fotos e grava. Se algo falhar no meio, desfaz tudo (não sobra arquivo perdido).
 export async function criarPostComFotos(
   cli: ClienteTogether,
@@ -120,6 +127,10 @@ export async function criarPostComFotos(
     aoEnviar?: (quantas: number) => void;
   },
 ): Promise<string> {
+  // Android (teste 17/11): subiu foto de 14 bytes e o feed ficou vazio sem erro. Arquivo vazio
+  // ou quebrado não vira post.
+  if (d.fotos.some((f) => tamanhoDoCorpo(f.corpo) < 100))
+    throw new Error("Foto vazia: não deu pra ler o arquivo.");
   const { data: post, error } = await cli
     .from("posts")
     .insert({

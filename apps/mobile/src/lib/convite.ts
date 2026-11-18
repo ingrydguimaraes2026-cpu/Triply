@@ -13,8 +13,12 @@ export async function gerarLinkDeConvite(viagemId: string) {
 
 // Abre o "compartilhar" do celular. No navegador sem compartilhar, copia o link.
 // Devolve 'copiado' quando só copiou (pra tela avisar).
-export async function compartilharLink(link: string, nomeDaViagem: string): Promise<'compartilhado' | 'copiado'> {
-  const texto = `Bora pra ${nomeDaViagem}? Entra no comboio pela Norti: ${link}`
+// `jaFoi`: a viagem já passou (viagem antiga): o convite chama pra completar o mapa, não pra topar.
+export async function compartilharLink(link: string, nomeDaViagem: string, jaFoi = false): Promise<'compartilhado' | 'copiado'> {
+  const lugar = nomeDaViagem.replace(/^viagem pra /i, '')
+  const texto = jaFoi
+    ? `A galera já foi pra ${lugar}! Vem completar o mapa da nossa galera na Norti: ${link}`
+    : `Bora pra ${lugar} com a galera? Toque pra topar pela Norti: ${link}`
   if (Platform.OS === 'web') {
     const nav = globalThis.navigator as Navigator | undefined
     if (nav?.share) {
@@ -30,7 +34,7 @@ export async function compartilharLink(link: string, nomeDaViagem: string): Prom
 
 // Gera o convite e abre o compartilhar. São dois passos: se só o compartilhar falhar
 // (ex.: o navegador não deixou copiar), o convite já existe e a tela mostra o link pra copiar à mão.
-export async function convidarProComboio(viagemId: string, nomeDaViagem: string): Promise<{ texto: string; erro: boolean } | null> {
+export async function convidarProComboio(viagemId: string, nomeDaViagem: string, jaFoi = false): Promise<{ texto: string; erro: boolean } | null> {
   let link: string
   try {
     link = await gerarLinkDeConvite(viagemId)
@@ -38,7 +42,7 @@ export async function convidarProComboio(viagemId: string, nomeDaViagem: string)
     return { texto: 'Só o ADM da viagem pode gerar convite.', erro: true }
   }
   try {
-    return (await compartilharLink(link, nomeDaViagem)) === 'copiado' ? { texto: 'Link copiado! Mande pra turma.', erro: false } : null
+    return (await compartilharLink(link, nomeDaViagem, jaFoi)) === 'copiado' ? { texto: 'Link copiado! Mande pra galera.', erro: false } : null
   } catch {
     return { texto: `Convite criado. Copie e mande: ${link}`, erro: false }
   }

@@ -1,0 +1,102 @@
+/* Termos de uso e Política de privacidade (/termos e /privacidade). Texto corrido, fácil de ler
+   no celular (360px) e numa coluna estreita no computador. Cores só do global.css. */
+
+.legal {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.legal-topo {
+  display: flex;
+  align-items: center;
+}
+
+.legal-marca {
+  color: var(--cor-texto);
+  text-decoration: none;
+  font-size: 22px;
+}
+
+.legal-texto {
+  padding: 24px 20px 28px;
+  border-radius: var(--raio);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-cartao);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.legal-texto h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.legal-texto h2 {
+  margin: 28px 0 8px;
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.legal-texto p,
+.legal-texto ul {
+  margin: 0 0 12px;
+}
+
+.legal-texto ul {
+  padding-left: 20px;
+}
+
+.legal-texto li + li {
+  margin-top: 6px;
+}
+
+.legal-rascunho {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--cor-pessoal-fundo);
+  color: var(--couro);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.legal-data {
+  color: var(--cor-texto-suave);
+  font-size: 14px;
+}
+
+.legal-a-definir {
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--dourado-claro);
+}
+
+.legal-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+
+@media (min-width: 700px) {
+  .legal {
+    padding-top: 32px;
+  }
+
+  .legal-texto {
+    padding: 40px 48px 44px;
+  }
+
+  .legal-texto h1 {
+    font-size: 40px;
+  }
+}

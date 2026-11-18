@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
-import { ArrowLeftRight, ArrowRight, Banknote, BarChart3, CalendarClock, CheckCheck, ChevronDown, Coins, Download, Receipt, Send, Settings2, UserRound, Wallet } from '../../components/ui/icones'
+import { ArrowLeftRight, ArrowRight, Banknote, BarChart3, CalendarClock, ChevronDown, Coins, Download, Receipt, Send, Settings2, UserRound, Wallet } from '../../components/ui/icones'
 import { CONGELADO, gastosEmCsv, gastosParaSplitwise, lerFraseDeGasto, nomeDoArquivoIcs } from '@together/core'
 import { baixarArquivo } from '../../lib/baixar'
 import MeuOrcamento from '../../features/orcamento-pessoal/MeuOrcamento'
@@ -27,9 +27,9 @@ import Avatar from '../../components/ui/Avatar'
 import BotaoCompartilhar from '../../components/ui/BotaoCompartilhar'
 import ComentariosDoItem from '../../features/comentarios/ComentariosDoItem'
 import { useContagemDeComentarios } from '../../features/comentarios/hooks'
-import CabecalhoPagina from '../../components/ui/CabecalhoPagina'
+import { Icone } from '../../components/ui/Icone'
 import Cartao from '../../components/ui/Cartao'
-import Carregando from '../../components/ui/Carregando'
+import Esqueleto from '../../components/ui/Esqueleto'
 import ErroNaTela from '../../components/ui/ErroNaTela'
 import Gaveta from '../../components/ui/Gaveta'
 import './abas.css'
@@ -155,12 +155,12 @@ export default function Financeiro() {
   const nome = (id: string) => nomeDaPessoa(id, membros, dados?.exMembros ?? [], meuId)
   const fechar = () => setJanela(null)
 
-  // Gastos filtrados e agrupados por dia, do mais antigo pro mais novo (o mais novo embaixo, como numa conversa)
+  // Gastos filtrados e agrupados por dia, o mais novo em cima (caminho B: lista, não conversa)
   const grupos = useMemo(() => {
     if (!dados) return []
     const lista = dados.gastos.filter((g) => (soPessoais ? g.pessoal : true) && (filtro ? g.categoria === filtro : true))
     const porDia = new Map<string, Gasto[]>()
-    for (const g of [...lista].reverse()) porDia.set(g.data, [...(porDia.get(g.data) ?? []), g])
+    for (const g of lista) porDia.set(g.data, [...(porDia.get(g.data) ?? []), g])
     return [...porDia]
   }, [dados, filtro, soPessoais])
 
@@ -219,9 +219,20 @@ export default function Financeiro() {
 
   return (
     <>
-      <CabecalhoPagina acima={viagem.nome} titulo="Contas" subtitulo={`Quem pagou o quê · em ${moeda}`} acao={exportarMenu || undefined} />
+      {/* Caminho B "Embarque" (10/11/2026): título grande, como no app */}
+      <header className="ct-topo">
+        <span>
+          <small className="ct-rotulo">
+            {dados && dados.gastos.length
+              ? `${dados.gastos.length} ${dados.gastos.length === 1 ? 'gasto' : 'gastos'} · em ${moeda}`
+              : `Quem pagou o quê · em ${moeda}`}
+          </small>
+          <h1>Contas</h1>
+        </span>
+        {exportarMenu || null}
+      </header>
 
-      {estado.status === 'carregando' && <Carregando texto="Somando as contas…" />}
+      {estado.status === 'carregando' && <Esqueleto forma="contas" />}
       {estado.status === 'erro' && <ErroNaTela titulo="Não deu pra carregar as contas" aoTentar={recarregar} />}
 
       {dados && contas && (
@@ -247,7 +258,7 @@ export default function Financeiro() {
                 <small>
                   {contas.orcamentoTotal
                     ? `${formatarDinheiro(contas.gastoComboio, moeda)} de ${formatarDinheiro(contas.orcamentoTotal, moeda)} · ${pctOrcamento}%`
-                    : `Gasto do comboio ${formatarDinheiro(contas.gastoComboio, moeda)}`}
+                    : `Gasto da galera ${formatarDinheiro(contas.gastoComboio, moeda)}`}
                 </small>
               </span>
               <ChevronDown size={18} aria-hidden="true" className="contas-painel-seta" />
@@ -281,7 +292,7 @@ export default function Financeiro() {
                     ? `${pctOrcamento}% do orçamento${membros.length > 1 ? ` · ${formatarDinheiro(Math.round(contas.orcamentoTotal / membros.length), moeda)} por pessoa` : ''}`
                     : podeDefinirOrcamento
                       ? 'Defina quanto querem gastar por categoria'
-                      : 'O ADM ainda não definiu o orçamento'}
+                      : 'Quem organiza ainda não definiu o orçamento'}
                   {contas.gastoPessoal > 0 && ` · + ${formatarDinheiro(contas.gastoPessoal, moeda)} seus pessoais`}
                 </p>
                 {contas.semCotacao.length > 0 && <p className="numero-legenda">Sem cotação pra {contas.semCotacao.join(', ')}: esses gastos ficaram fora da soma.</p>}
@@ -316,7 +327,7 @@ export default function Financeiro() {
                       )
                     })}
                   </ul>
-                  <p className="form-dica">Gastos pessoais não entram no orçamento do comboio.</p>
+                  <p className="form-dica">Gastos pessoais não entram no orçamento da galera.</p>
                 </Dobra>
               </Cartao>
 
@@ -436,8 +447,16 @@ export default function Financeiro() {
             </div>
           </aside>
 
-          {/* Os gastos como conversa: os meus à direita, dos outros à esquerda */}
+          {/* Os gastos em lista, separados por dia (o mais novo em cima) */}
           <section className="contas-conversa" aria-label="Gastos">
+            <div className="ct-secao-t">
+              <small className="ct-rotulo">Gastos</small>
+              {contas.gastoComboio > 0 && <small className="ct-rotulo">Total {formatarDinheiro(contas.gastoComboio, moeda)}</small>}
+            </div>
+
+            {/* Lançar rápido por frase (spec 117): "jantar 84" abre o formulário já preenchido */}
+            <BarraDeLancar moeda={moeda} aoLancar={lancarFrase} />
+
             {moeda === 'EUR' && meuEuro != null && (
               <p className="contas-euro">
                 <Wallet size={15} aria-hidden="true" /> Euros na sua carteira: {formatarDinheiro(Math.round(meuEuro * 100), 'EUR')}
@@ -445,7 +464,7 @@ export default function Financeiro() {
             )}
 
             {dados.gastos.length > 0 && (
-              <div className="filtros" role="group" aria-label="Filtrar gastos">
+              <div className="filtros ct-filtros" role="group" aria-label="Filtrar gastos">
                 <button
                   type="button"
                   className={!filtro && !soPessoais ? 'ativo' : undefined}
@@ -471,7 +490,7 @@ export default function Financeiro() {
               <div className="contas-vazio">
                 <Receipt size={32} aria-hidden="true" />
                 <h2>Lance o primeiro gasto</h2>
-                <p>Escreva aí embaixo, tipo &quot;jantar 84&quot;. A Norti divide na hora.</p>
+                <p>Toque em &quot;Lançar gasto&quot; ou escreva aí em cima, tipo &quot;jantar 84&quot;. A Norti divide na hora.</p>
               </div>
             ) : grupos.length === 0 ? (
               <p className="form-dica">Nenhum gasto com esse filtro.</p>
@@ -482,39 +501,42 @@ export default function Financeiro() {
                     {formatarData(dia, true)}
                     <span> · {totaisSeparados(totalPorMoeda(lista), moeda)}</span>
                   </h3>
-                  <ul>
+                  <ul className="ct-cartao">
                     {lista.map((g) => {
                       const meu = g.pago_por === meuId
-                      const pagador = membros.find((m) => m.id === g.pago_por)
                       const minhaParte = g.divisoes.find((d) => d.usuarioId === meuId)?.valor
+                      const { icone: IconeDaCategoria, nome: nomeCat } = categoria(g.categoria)
                       return (
-                        <li key={g.id} data-foco={g.id} className={`bolha-linha ${meu ? 'minha' : ''}`}>
-                          {!meu && <Avatar nome={pagador?.nome ?? nome(g.pago_por)} url={pagador?.avatarUrl} tamanho={28} />}
-                          <div className="bolha-pilha">
-                            <button type="button" className="bolha" onClick={() => setJanela({ tipo: 'gasto', gasto: g })}>
-                              <strong>
-                                {meu ? 'Você' : nome(g.pago_por)} pagou {formatarDinheiro(g.valor, g.moeda)} · {g.descricao}
-                              </strong>
+                        <li key={g.id} data-foco={g.id} className="ct-gasto">
+                          <button type="button" className="ct-gasto-botao" onClick={() => setJanela({ tipo: 'gasto', gasto: g })}>
+                            <span className="ct-quad">
+                              <IconeDaCategoria size={19} aria-hidden="true" />
+                            </span>
+                            <span className="ct-gasto-txt">
+                              <b>{g.descricao}</b>
                               <small>
+                                {meu ? 'Você' : nome(g.pago_por)} pagou
                                 {g.pessoal ? (
                                   <span className="selo-pessoal">só você vê</span>
                                 ) : (
                                   <>
-                                    {categoria(g.categoria).nome} · dividido em {g.divisoes.length}
+                                    {' '}
+                                    · {nomeCat} · {g.divisoes.length} {g.divisoes.length === 1 ? 'pessoa' : 'pessoas'}
                                     {minhaParte ? ` · sua parte ${formatarDinheiro(minhaParte, g.moeda)}` : ''}
                                   </>
                                 )}
                                 {g.rascunho && <span className="selo-completar">completar</span>}
                               </small>
-                            </button>
-                            <div className="bolha-acoes">
-                              {/* congelado pelo RUMO (03/11/2026): comentários soltos */}
-                              {!CONGELADO.comentarios && (
-                                <ComentariosDoItem alvo={{ tipo: 'gasto', id: g.id }} titulo={g.descricao} quantidade={comentarios.contagem[g.id]} aoMudar={comentarios.recarregar} />
-                              )}
-                              {/* Gasto pessoal só você vê: não faz sentido compartilhar */}
-                              {!g.pessoal && <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'gasto', id: g.id, titulo: g.descricao }} nomeDaViagem={viagem.nome} />}
-                            </div>
+                            </span>
+                            <b className="ct-valor">{formatarDinheiro(g.valor, g.moeda)}</b>
+                          </button>
+                          <div className="bolha-acoes">
+                            {/* congelado pelo RUMO (03/11/2026): comentários soltos */}
+                            {!CONGELADO.comentarios && (
+                              <ComentariosDoItem alvo={{ tipo: 'gasto', id: g.id }} titulo={g.descricao} quantidade={comentarios.contagem[g.id]} aoMudar={comentarios.recarregar} />
+                            )}
+                            {/* Gasto pessoal só você vê: não faz sentido compartilhar */}
+                            {!g.pessoal && <BotaoCompartilhar viagemId={viagem.id} item={{ tipo: 'gasto', id: g.id, titulo: g.descricao }} nomeDaViagem={viagem.nome} />}
                           </div>
                         </li>
                       )
@@ -523,16 +545,14 @@ export default function Financeiro() {
                 </div>
               ))
             )}
-
-            {/* Quem paga quem, como recado do grupo no fim da conversa */}
-            {contas.acertos.slice(0, 3).map((a) => (
-              <p key={`${a.de}-${a.para}-${a.moeda}`} className="contas-recado">
-                <CheckCheck size={14} aria-hidden="true" /> {nome(a.de)} paga {formatarDinheiro(a.valor, a.moeda)} pra {a.para === meuId ? 'você' : nome(a.para)}
-              </p>
-            ))}
           </section>
 
-          <BarraDeLancar moeda={moeda} aoLancar={lancarFrase} />
+          {/* Um botão só pra lançar: no canto, acima da barra de abas */}
+          <div className="ct-fab-lugar" data-tour="contas-lancar">
+            <button type="button" className="ct-fab" onClick={() => setJanela({ tipo: 'gasto' })}>
+              <Icone nome="mais" size={20} aria-hidden="true" /> Lançar gasto
+            </button>
+          </div>
         </div>
       )}
 
@@ -612,7 +632,7 @@ function Dobra({ rotulo, children }: { rotulo: string; children: ReactNode }) {
   )
 }
 
-// Barra fixa embaixo pra lançar: "€ 0,00 · o que foi?". A frase abre o formulário já preenchido.
+// Lançar rápido por frase, no topo dos gastos: a frase abre o formulário já preenchido.
 function BarraDeLancar({ moeda, aoLancar }: { moeda: string; aoLancar: (frase: string) => void }) {
   const [frase, setFrase] = useState('')
   function enviar(e: FormEvent) {
@@ -622,19 +642,19 @@ function BarraDeLancar({ moeda, aoLancar }: { moeda: string; aoLancar: (frase: s
   }
   return (
     <form className="contas-barra" onSubmit={enviar}>
-      <button type="button" className="contas-barra-completo" aria-label="Lançar gasto completo" title="Lançar gasto completo" onClick={() => aoLancar('')}>
-        <Receipt size={20} aria-hidden="true" />
-      </button>
+      <Receipt size={18} aria-hidden="true" className="contas-barra-icone" />
       <input
         value={frase}
         onChange={(e) => setFrase(e.target.value)}
-        placeholder={`${formatarDinheiro(0, moeda)} · o que foi?`}
-        aria-label="O que foi e quanto custou"
+        placeholder={`Escreva rápido: jantar ${formatarDinheiro(8400, moeda).replace(/[^\d,.]/g, '')}`}
+        aria-label="Lançar rápido: o que foi e quanto custou"
         enterKeyHint="send"
       />
-      <button type="submit" className="contas-barra-enviar" aria-label="Lançar">
-        <Send size={18} aria-hidden="true" />
-      </button>
+      {frase.trim() && (
+        <button type="submit" className="contas-barra-enviar" aria-label="Lançar">
+          <Send size={16} aria-hidden="true" />
+        </button>
+      )}
     </form>
   )
 }
@@ -666,8 +686,8 @@ function Carteiras(compras: CompraDeMoeda[]) {
   return [...mapa.values()].map((c) => ({ ...c, media: c.pago / c.total }))
 }
 
-// Cartão do topo, igual ao das Contas do app: quanto eu recebo ou devo na moeda da viagem.
-// Tocar abre quem paga quem e o saldo de cada um. Acertos em outra moeda aparecem embaixo.
+// Cartão do topo, igual ao das Contas do app (caminho B): quanto eu recebo ou devo na moeda da viagem,
+// em creme com o número grande. Embaixo, "Quem deve quem" sempre à vista, e o saldo de cada um quando pede.
 function MeuSaldo({ saldos, acertos, membros, meuId, moeda, nome, total, cambio }: {
   saldos: Map<string, number>
   acertos: Acerto[]
@@ -678,61 +698,81 @@ function MeuSaldo({ saldos, acertos, membros, meuId, moeda, nome, total, cambio 
   total: number
   cambio: number | null
 }) {
-  const [aberto, setAberto] = useState(false)
+  const [verSaldos, setVerSaldos] = useState(false)
   const saldo = saldos.get(meuId) ?? 0
   const outras = acertos.filter((a) => (a.de === meuId || a.para === meuId) && a.moeda !== moeda)
-  const rotulo = saldo > 0 ? 'Você recebe' : saldo < 0 ? 'Você deve' : 'Tudo certo por aqui'
+  const devoPra = acertos.filter((a) => a.de === meuId && a.moeda === moeda)
+  const recebeDe = acertos.filter((a) => a.para === meuId && a.moeda === moeda)
+  const rotulo =
+    saldo < 0
+      ? devoPra.length === 1
+        ? `Você deve pra ${nome(devoPra[0].para)}`
+        : 'Você deve'
+      : saldo > 0
+        ? recebeDe.length === 1
+          ? `${nome(recebeDe[0].de)} te deve`
+          : 'Você recebe'
+        : 'Tudo certo por aqui'
   const linha = cambio ? `${nomeDaMoeda(moeda)} hoje ${formatarDinheiro(Math.round(cambio * 100), 'BRL')}` : `Total do grupo ${formatarDinheiro(total, moeda)}`
+  const porPessoa = membros.length > 0 && total > 0 ? ` · ${formatarDinheiro(Math.round(total / membros.length), moeda)} por pessoa` : ''
+  const pessoa = (id: string) => membros.find((m) => m.id === id)
 
   return (
-    <section className={`meu-saldo ${aberto ? 'aberto' : ''}`} aria-label="Meu saldo">
-      <button type="button" className="meu-saldo-botao" aria-expanded={aberto} onClick={() => setAberto(!aberto)}>
-        <span className="meu-saldo-rotulo">{rotulo}</span>
+    <>
+      <section className="meu-saldo" aria-label="Meu saldo">
+        <span className="ct-rotulo">{rotulo}</span>
         <span className="meu-saldo-valor">{formatarDinheiro(Math.abs(saldo), moeda)}</span>
         <span className="meu-saldo-linha">
-          <span>{linha}</span>
-          <span className="meu-saldo-ver">
-            {aberto ? 'Fechar' : 'Quem paga quem'} <ArrowLeftRight size={16} aria-hidden="true" />
+          <ArrowLeftRight size={14} aria-hidden="true" />
+          <span>
+            {linha}
+            {porPessoa}
           </span>
         </span>
-      </button>
-      {outras.length > 0 && (
-        <p className="meu-saldo-detalhe">
-          Em outra moeda:{' '}
-          {outras.map((a) => (a.para === meuId ? `${nome(a.de)} te paga ${formatarDinheiro(a.valor, a.moeda)}` : `você paga ${formatarDinheiro(a.valor, a.moeda)} pra ${nome(a.para)}`)).join(' · ')}
-        </p>
-      )}
-      {aberto && (
-        <div className="meu-saldo-acertos">
+        {outras.length > 0 && (
+          <p className="meu-saldo-detalhe">
+            Em outra moeda:{' '}
+            {outras.map((a) => (a.para === meuId ? `${nome(a.de)} te paga ${formatarDinheiro(a.valor, a.moeda)}` : `você paga ${formatarDinheiro(a.valor, a.moeda)} pra ${nome(a.para)}`)).join(' · ')}
+          </p>
+        )}
+      </section>
+
+      {(acertos.length > 0 || total > 0) && (
+        <section className="ct-quem" aria-label="Quem deve quem">
+        <div className="ct-secao-t">
+          <small className="ct-rotulo">Quem deve quem</small>
+          <button type="button" className="ct-link" aria-expanded={verSaldos} onClick={() => setVerSaldos(!verSaldos)}>
+            {verSaldos ? 'Esconder saldos' : 'Saldo de cada um'}
+          </button>
+        </div>
+        <ul className="ct-cartao">
           {acertos.length ? (
-            <ul>
-              {acertos.map((a) => (
-                <li key={`${a.de}-${a.para}-${a.moeda}`}>
-                  <strong>{nome(a.de)}</strong> paga <strong>{formatarDinheiro(a.valor, a.moeda)}</strong> pra <strong>{nome(a.para)}</strong>
-                </li>
-              ))}
-            </ul>
+            acertos.map((a) => (
+              <li key={`${a.de}-${a.para}-${a.moeda}`} className="ct-quem-deve">
+                <Avatar nome={pessoa(a.de)?.nome ?? nome(a.de)} url={pessoa(a.de)?.avatarUrl} tamanho={26} />
+                <b>{nome(a.de)}</b> deve pra
+                <Avatar nome={pessoa(a.para)?.nome ?? nome(a.para)} url={pessoa(a.para)?.avatarUrl} tamanho={26} />
+                <b className="ct-quem-para">{a.para === meuId ? 'você' : nome(a.para)}</b>
+                <span className="ct-valor">{formatarDinheiro(a.valor, a.moeda)}</span>
+              </li>
+            ))
           ) : (
-            <p>Ninguém deve nada a ninguém.</p>
+            <li className="ct-quem-deve">Ninguém deve nada a ninguém.</li>
           )}
-          <ul className="meu-saldo-pessoas">
-            {membros.map((m) => {
+          {verSaldos &&
+            membros.map((m) => {
               const valor = saldos.get(m.id) ?? 0
               return (
-                <li key={m.id}>
+                <li key={m.id} className="ct-quem-deve ct-saldo-pessoa">
                   <Avatar nome={m.nome} url={m.avatarUrl} tamanho={24} />
-                  <span>{nome(m.id)}</span>
-                  <strong>{valor === 0 ? '—' : `${valor > 0 ? '+' : '−'} ${formatarDinheiro(Math.abs(valor), moeda)}`}</strong>
+                  <span className="ct-quem-para">{nome(m.id)}</span>
+                  <span className={`ct-valor ${valor > 0 ? 'positivo' : ''}`}>{valor === 0 ? '—' : `${valor > 0 ? '+' : '−'} ${formatarDinheiro(Math.abs(valor), moeda)}`}</span>
                 </li>
               )
             })}
-          </ul>
-          <p>
-            Total do grupo {formatarDinheiro(total, moeda)}
-            {membros.length > 0 && ` · ${formatarDinheiro(Math.round(total / membros.length), moeda)} por pessoa`}
-          </p>
-        </div>
+        </ul>
+        </section>
       )}
-    </section>
+    </>
   )
 }

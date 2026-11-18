@@ -23,6 +23,8 @@ export async function carregarResumoDoInicio(viagem: ViagemComDetalhes, meuId: s
   })
   return {
     carimbos: passos.filter((p) => p.feito).length,
+    // Caminho B: o próximo passo aparece no bilhete da frente em "Suas viagens"
+    proximo: passos.find((p) => !p.feito && (!p.soAdm || viagem.membros.some((m) => m.id === meuId && m.papel === 'adm')))?.titulo ?? null,
     total: passos.length,
     // "No comboio agora": só o que os outros fizeram (o meu eu já sei)
     agora: atividades.filter((a) => a.autor && a.autor !== meuId).slice(0, 3),

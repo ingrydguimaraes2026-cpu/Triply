@@ -56,7 +56,7 @@ Consertado já: Comboio dizia "pode pôr de volta" (regra de texto) → "pode re
 - Buscar e Emergência saíram da barra e do menu do computador: viraram itens em "Tudo da viagem" (abrem na gaveta, como antes). Nada foi apagado.
 - Peças novas em `components/ui`: `TituloDaTela` (título grande + no máximo uma linha pequena + botão; `voltar` só no celular) e `TelaVazia` (Norti + frase + botão). Aplicadas em Fotos, Comboio, Hoje, Lugares, Agenda, Cidades, Tudo da viagem, Configurações, Retrospectiva, Reservas (título "Reservas" em cima das pílulas, como no app) e Hospedagem (`naAba`: sem título duplicado dentro de Reservas). As telas de "Tudo" têm o voltar pra `/tudo`.
 - Fotos igual ao app: "N fotos · N pessoas", botão "Postar" no cabeçalho, pílulas Feed | Por dia, Norti dormindo no vazio. "Por dia" tem o filtro por pessoa do app e o "Baixar fotos". Saíram a barra "Compartilhe uma foto", a Grade, os Melhores (spec 098) e o filtro "Fotos em que estou" (spec 100), porque o app não tem.
-- **Falta:** o Contas (`Financeiro.tsx`) também ainda usa o `CabecalhoPagina` com "Eurotrip".
+- Contas (`Financeiro.tsx`) também passou pro `TituloDaTela` (sem "Eurotrip" em cima), 09/11.
 - Conferido no navegador em 375 px e 1366 px (Fotos, Viagem, Reservas, Tudo, Comboio, Lugares, Agenda). O app (preview "mobile") não foi aberto lado a lado: comparei com o código das telas do app.
 
 **Ordem sugerida:** casca primeiro (muda a sensação de todas as telas), depois Roteiro, Passagens, Fotos, Início, e por fim Hoje, Lugares, Comboio, Configurações e Perfil.

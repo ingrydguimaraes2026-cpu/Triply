@@ -78,7 +78,7 @@ export default function Lugares() {
         <View className="flex-row items-end justify-between gap-3">
           <View className="flex-1">
             <Text className="font-display text-[32px] text-texto">Lugares</Text>
-            <Text className="mt-0.5 font-body text-[14px] text-suave">Passeios e comidas do comboio. Curta o que você topa.</Text>
+            <Text className="mt-0.5 font-body text-[14px] text-suave">Passeios e comidas da galera. Curta o que você topa.</Text>
           </View>
           {!novo ? <Botao compacto titulo="Lugar" icone={<Plus size={18} color="#fff" />} aoTocar={() => setNovo(true)} /> : null}
         </View>
@@ -99,9 +99,9 @@ export default function Lugares() {
 
         {grupos.length === 0 && !novo ? (
           <View className="mt-10 items-center gap-3 px-6">
-            <Norti humor="dormindo" tamanho={120} />
+            <Norti humor="apontando" tamanho={120} />
             <Text className="font-display text-[24px] text-texto">Nenhum lugar ainda</Text>
-            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Anote um passeio ou um restaurante e o comboio vota no que topa.</Text>
+            <Text className="text-center font-body text-[15px] leading-6 text-corpo">Anote um passeio ou um restaurante e a galera vota no que topa.</Text>
           </View>
         ) : (
           grupos.map((g) => (

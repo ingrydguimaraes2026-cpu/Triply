@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEstadoGuardado } from '../../lib/memoria'
+import { useCallback, useEffect } from 'react'
 import { carregarAbaViagem, type DadosDaAbaViagem } from '@together/core'
 import { supabase } from '../../lib/supabase'
 import { useAoMudar } from '../tempo-real/avisos'
@@ -7,7 +8,7 @@ import { useAoMudar } from '../tempo-real/avisos'
 type Estado = { status: 'carregando' } | { status: 'erro' } | { status: 'pronto'; dados: DadosDaAbaViagem }
 
 export function useAbaViagem(viagemId: string) {
-  const [estado, setEstado] = useState<Estado>({ status: 'carregando' })
+  const [estado, setEstado] = useEstadoGuardado<Estado>(`aba-viagem:${viagemId}`, { status: 'carregando' })
 
   const buscar = useCallback(async (): Promise<Estado> => {
     try {
@@ -27,13 +28,13 @@ export function useAbaViagem(viagemId: string) {
     return () => {
       ativo = false
     }
-  }, [buscar])
+  }, [buscar, setEstado])
 
   // Recarrega sem voltar pro "carregando" (a tela não pisca)
   const recarregar = useCallback(async () => {
     const novo = await buscar()
     setEstado((antes) => (novo.status === 'erro' && antes.status === 'pronto' ? antes : novo))
-  }, [buscar])
+  }, [buscar, setEstado])
   useAoMudar(['gastos', 'trajetos', 'hospedagens', 'lugares'], recarregar) // spec 085: outra pessoa mudou → recarrega
   return { estado, recarregar }
 }

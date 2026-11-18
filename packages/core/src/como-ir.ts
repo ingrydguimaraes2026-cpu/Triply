@@ -137,12 +137,25 @@ export function linksDoTrecho(de: string, para: string, data: string | null, _af
 }
 
 // Trechos do roteiro (destinos seguidos) que ainda não têm nenhum trajeto
-export function trechosSemTrajeto<D extends DestinoC>(destinos: D[], trajetos: Pick<TrajetoC, 'origem_id' | 'destino_id'>[]): { de: D; para: D }[] {
+// O deslocamento novo (spec 122) grava o lugar por nome (de_texto/para_texto) e não pelo id da cidade:
+// "Roma Termini" → "Firenze" também cobre o trecho Roma → Florença quando o nome começa igual.
+type TrechoC = Pick<TrajetoC, 'origem_id' | 'destino_id'> & { de_texto?: string | null; para_texto?: string | null }
+
+function mesmoLugar(id: string | null | undefined, texto: string | null | undefined, d: DestinoC): boolean {
+  if (id) return id === d.id
+  if (!texto) return false
+  const t = semAcento(texto)
+  const n = semAcento(d.nome)
+  return t === n || t.startsWith(`${n} `) || t.startsWith(`${n},`)
+}
+
+export function trechosSemTrajeto<D extends DestinoC>(destinos: D[], trajetos: TrechoC[]): { de: D; para: D }[] {
   const saida: { de: D; para: D }[] = []
   for (let i = 0; i + 1 < destinos.length; i++) {
     const de = destinos[i]
     const para = destinos[i + 1]
-    if (!trajetos.some((t) => t.origem_id === de.id && t.destino_id === para.id)) saida.push({ de, para })
+    const coberto = trajetos.some((t) => mesmoLugar(t.origem_id, t.de_texto, de) && mesmoLugar(t.destino_id, t.para_texto, para))
+    if (!coberto) saida.push({ de, para })
   }
   return saida
 }

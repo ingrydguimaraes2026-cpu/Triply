@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Foto, FotoDeFundo } from '../src/ui/Foto'
+import { FotoDeFundo } from '../src/ui/Foto'
 import { StatusBar } from '../src/ui/StatusBar'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Redirect, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ChevronRight, Clock, History, Locate, Plus, Ticket } from '../src/ui/icones'
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import { buscarMapaDaGalera, descreverAtividade, lembrancasDeHoje, textoDaLembranca, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { ChevronRight, History, Locate, Plus, Ticket } from '../src/ui/icones'
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
+import { buscarMapaDaGalera, lembrancasDeHoje, mesEAno, textoDaLembranca, viagemAcontecendo, type ViagemComDetalhes } from '@together/core'
+import { Icone } from '../src/ui/Icone'
+import { Selo } from '../src/ui/Selos'
 import { MapaDaGalera } from '../src/ui/MapaDaGalera'
 import { carregarResumoDoInicio } from '../src/dados/resumoDoInicio'
 import { useCarregar } from '../src/dados/useCarregar'
 import { mola, useReducedMotion } from '../src/ui/movimento'
 import { proximaViagem, useViagemAtual, viagensPassadas } from '../src/dados/viagemAtual'
-import { diasAte, hojeIso, mesEAno, periodo, primeiroNome } from '../src/lib/formato'
+import { diasAte, hojeIso, periodo, primeiroNome } from '../src/lib/formato'
 import { useSessao } from '../src/lib/sessao'
 import { supabase } from '../src/lib/supabase'
 import { FaixaConvidado } from '../src/ui/FaixaConvidado'
@@ -21,7 +23,7 @@ import { useCapas } from '../src/dados/useCapas'
 import { Norti } from '../src/ui/Norti'
 import { puxarPraAtualizar } from '../src/ui/Puxar'
 import { Avatar, Botao, Campo, Carregando, ErroNaTela, PilhaDeAvatares } from '../src/ui/pecas'
-import { cor, sombra } from '../theme'
+import { cor, fonte, titulo, trabalho } from '../theme'
 
 // Spec 120a: num dia de viagem o app abre direto no "Hoje" (a aba Viagem vira o Hoje).
 // Só uma vez por abertura do app: voltar pro Início não puxa de novo.
@@ -69,46 +71,166 @@ export default function MinhasViagens() {
     router.push(`/viagem/${v.id}`)
   }
 
-  // Spec 116: conta sem nenhuma viagem vai direto montar a primeira (em vez da home vazia)
-  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/comecar" />
+  // Primeiro minuto (16/11/2026): conta sem nenhuma viagem começa contando onde a galera já foi
+  if (viagens.length === 0 && !ehConvidado) return <Redirect href="/viagem-antiga" />
   if (!destaque) return <Vazio ola={ola} aoCriar={() => router.push('/nova-viagem')} aoEntrar={recarregar} />
+
+  // Caminho B "Embarque" (aprovado pelo Victor em 10/11/2026): fora de uma viagem só existe
+  // "Suas viagens", as viagens como bilhetes numa carteira. A próxima fica na frente, inteira;
+  // as outras e as antigas (carimbadas) ficam atrás, só com a pontinha aparecendo. Um toque abre.
+  // De trás pra frente: antigas (a mais velha no fundo), as outras (a mais longe primeiro) e a próxima na frente
+  const pilha = [...[...passadas].reverse(), ...[...outras].reverse(), destaque]
 
   return (
     <View className="flex-1 bg-fundo">
       <StatusBar style="dark" />
-      <ScrollView refreshControl={puxarPraAtualizar({ atualizando: puxando, recarregar: atualizar })} contentContainerStyle={{ paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 40 }}>
-        <View className="mb-5 flex-row items-end justify-between gap-2">
-          <View className="min-w-0 flex-1">
-            <Text className="font-body-medium text-[14px] text-suave">{saudacao},</Text>
-            <Text className="font-display text-[26px] leading-[30px] text-texto" numberOfLines={1}>{eu ? primeiroNome(eu.nome) : 'Minhas viagens'}</Text>
-          </View>
-          {/* Spec 117: o Perfil abre pelo avatar (saiu da barra de abas) */}
-          <Pressable onPress={() => router.push('/perfil')} accessibilityLabel="Abrir o perfil" className="active:opacity-80">
-            <Avatar nome={eu?.nome ?? 'Eu'} indice={5} tamanho={40} />
+      <ScrollView refreshControl={puxarPraAtualizar({ atualizando: puxando, recarregar: atualizar })} contentContainerStyle={{ paddingTop: insets.top + 12, paddingBottom: insets.bottom + 40 }}>
+        <View className="flex-row items-center justify-between px-[18px]">
+          {/* O Perfil abre pela sua foto */}
+          <Pressable onPress={() => router.push('/perfil')} accessibilityRole="button" accessibilityLabel="Abrir o seu perfil" className="active:opacity-80">
+            <Avatar nome={eu?.nome ?? 'Eu'} indice={5} tamanho={36} />
           </Pressable>
+          {!ehConvidado ? (
+            <Pressable
+              onPress={() => router.push('/nova-viagem')}
+              accessibilityRole="button"
+              className="flex-row items-center gap-1.5 rounded-full border px-3 py-1.5 active:opacity-80"
+              style={{ backgroundColor: trabalho.superficie, borderColor: trabalho.linha }}
+            >
+              <Icone nome="mais" tamanho={14} cor={trabalho.texto} />
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 13, color: trabalho.texto }}>Nova viagem</Text>
+            </Pressable>
+          ) : null}
         </View>
 
-        <FaixaConvidado />
+        <Text style={[titulo(36), { color: trabalho.texto, marginTop: 16, paddingHorizontal: 18 }]}>Suas viagens</Text>
+        <Text style={{ fontFamily: fonte.corpoMedio, fontSize: 14, color: trabalho.texto2, marginTop: 6, paddingHorizontal: 18 }}>
+          {saudacao}, {eu ? primeiroNome(eu.nome) : 'tudo bem'}. Toque numa viagem pra abrir.
+        </Text>
 
-        {/* Spec 118b: o mapa da galera em cima (convidado pelo link não tem) */}
-        {!ehConvidado ? <MapaDoInicio key={vezDoInicio} meuId={meuId} /> : null}
+        <View className="px-[18px]">
+          <FaixaConvidado />
+        </View>
 
-        <Destaque key={`${destaque.id}-${vezDoInicio}`} viagem={destaque} meuId={meuId} aoAbrir={() => abrir(destaque)} />
-
-        {outras.length ? <Lista titulo="Próximas" viagens={outras} aoAbrir={abrir} /> : null}
-        {passadas.length ? <Lista titulo="Viagens passadas" viagens={passadas} aoAbrir={abrir} /> : null}
-
-        {/* Convidado cria conta antes de criar viagem (spec 018) */}
+        {/* Primeiro minuto (16/11/2026): o Início abre pelo mapa da galera; a carteira vem embaixo */}
         {!ehConvidado ? (
-          <>
-            <Pressable onPress={() => router.push('/nova-viagem')} className="mt-8 h-14 flex-row items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-tracejado active:opacity-80">
-              <Plus size={20} color={cor.couro} />
-              <Text className="font-body-bold text-[15px] text-couro">Nova viagem</Text>
-            </Pressable>
+          <View className="mt-4 px-5">
+            <MapaDoInicio key={vezDoInicio} meuId={meuId} />
             <AtalhosDoPassaporte />
-          </>
+          </View>
         ) : null}
+
+        <Carteira key={vezDoInicio} pilha={pilha} meuId={meuId} aoAbrir={abrir} />
       </ScrollView>
+      {/* Android (reteste 17/11): ao rolar, o avatar e "Nova viagem" passavam por baixo do relógio.
+          Faixa fixa na cor do fundo atrás da barra de status (igual ao login), sem receber toque. */}
+      <View pointerEvents="none" className="absolute left-0 right-0 top-0 bg-fundo" style={{ height: insets.top }} />
+    </View>
+  )
+}
+
+// ---------- Carteira de bilhetes ----------
+const PONTA = 62 // quanto aparece de cada bilhete de trás
+const ALTURA_DA_FOTO = 150
+
+function Carteira({ pilha, meuId, aoAbrir }: { pilha: ViagemComDetalhes[]; meuId: string; aoAbrir: (v: ViagemComDetalhes) => void }) {
+  const capa = useCapas(pilha.map((v) => v.id))
+  const frente = pilha[pilha.length - 1]
+  const carga = useCarregar(() => carregarResumoDoInicio(frente, meuId), [frente.id, meuId])
+  const resumo = carga.status === 'pronto' ? carga.dados : null
+  const altura = (pilha.length - 1) * PONTA + ALTURA_DA_FOTO + 62
+  return (
+    <View style={{ height: altura, marginTop: 18, marginHorizontal: 18, marginBottom: 8 }}>
+      {pilha.map((v, i) => (
+        <BilheteDaCarteira
+          key={v.id}
+          viagem={v}
+          foto={capa(v.id, 700)}
+          topo={i * PONTA}
+          ordem={i}
+          naFrente={i === pilha.length - 1}
+          resumo={i === pilha.length - 1 ? resumo : null}
+          aoAbrir={() => aoAbrir(v)}
+        />
+      ))}
+    </View>
+  )
+}
+
+// "em 23 dias", "amanhã", "agora", "Sem data"; null = já passou (ganha o carimbo)
+function etiquetaDoBilhete(v: ViagemComDetalhes) {
+  if (v.dataFim && diasAte(v.dataFim) < 0) return null
+  if (!v.dataInicio) return 'Sem data'
+  const faltam = diasAte(v.dataInicio)
+  if (faltam > 1) return `em ${faltam} dias`
+  if (faltam === 1) return 'amanhã'
+  return 'agora'
+}
+
+type PropsDoBilhete = {
+  viagem: ViagemComDetalhes
+  foto: { uri: string } | undefined
+  topo: number
+  ordem: number
+  naFrente: boolean
+  resumo: { carimbos: number; total: number; proximo: string | null } | null
+  aoAbrir: () => void
+}
+
+function BilheteDaCarteira({ viagem, foto, topo, ordem, naFrente, resumo, aoAbrir }: PropsDoBilhete) {
+  const reduzir = useReducedMotion()
+  const p = useSharedValue(reduzir ? 1 : 0)
+  // Os bilhetes sobem um depois do outro, com mola, quando a tela abre
+  useEffect(() => {
+    if (reduzir) return
+    p.value = withDelay(150 + ordem * 90, withSpring(1, mola.entrar))
+  }, [reduzir, ordem, p])
+  const entrada = useAnimatedStyle(() => ({ opacity: Math.min(1, p.value * 1.5), transform: [{ translateY: (1 - p.value) * 120 }] }))
+  const etiqueta = etiquetaDoBilhete(viagem)
+  const antiga = etiqueta === null
+  return (
+    // Android (teste 17/11): a posição fixa dentro de `style={[fixo, animado]}` não chegava à tela.
+    // Lugar na carteira por fora, subida animada por dentro.
+    <View style={{ position: 'absolute', left: 0, right: 0, top: topo, zIndex: ordem }}>
+    <Animated.View style={entrada}>
+      <Pressable
+        onPress={aoAbrir}
+        accessibilityRole="button"
+        accessibilityLabel={`Abrir ${viagem.nome}${etiqueta ? `, ${etiqueta}` : ', viagem que já passou'}`}
+        className="overflow-hidden rounded-[22px] active:opacity-95"
+        style={{ backgroundColor: cor.creme, boxShadow: '0 -8px 24px rgba(74,46,20,0.18)' }}
+      >
+        <FotoDeFundo source={foto} style={{ height: ALTURA_DA_FOTO, backgroundColor: cor.couro, opacity: antiga ? 0.7 : 1 }}>
+          <LinearGradient colors={['rgba(42,27,13,0.65)', 'rgba(42,27,13,0)']} locations={[0, 0.45]} style={StyleSheet.absoluteFill} />
+          <Text numberOfLines={naFrente ? 2 : 1} style={[titulo(24), { position: 'absolute', left: 14, top: 14, right: 110, color: cor.creme }]}>
+            {viagem.nome}
+          </Text>
+          {etiqueta ? (
+            <View className="absolute right-3 top-3 rounded-full px-2.5 py-1" style={{ backgroundColor: cor.dourado }}>
+              <Text style={{ fontFamily: fonte.corpoNegrito, fontSize: 11, color: cor.texto }}>{etiqueta}</Text>
+            </View>
+          ) : (
+            <View className="absolute right-3 top-1.5" style={{ transform: [{ rotate: '-12deg' }] }}>
+              <Selo nome="feito" tamanho={54} tom="escuro" />
+            </View>
+          )}
+        </FotoDeFundo>
+        {naFrente ? (
+          <View className="flex-row items-center justify-between gap-2 px-3.5 pb-3 pt-2.5">
+            <View className="min-w-0 flex-1">
+              {/* Android 17/11: a viagem antiga (só mês) aparecia "1–1 MAI · Próximo: Montar o roteiro" */}
+              <Text style={{ fontFamily: fonte.corpoForte, fontSize: 11.5, letterSpacing: 0.4, color: cor.suave }}>
+                {(viagem.tipo === 'antiga' && viagem.dataInicio ? mesEAno(viagem.dataInicio) : periodo(viagem.dataInicio, viagem.dataFim)).toUpperCase()}
+              </Text>
+              <Text numberOfLines={1} style={{ fontFamily: fonte.titulo, fontSize: 15, letterSpacing: -0.2, color: cor.texto, marginTop: 1 }}>
+                {antiga ? 'Viagem que já passou' : resumo ? (resumo.proximo ? `Próximo: ${resumo.proximo}` : 'Tudo pronto pra viagem') : ' '}
+              </Text>
+            </View>
+            <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={26} borda={cor.creme} max={4} />
+          </View>
+        ) : null}
+      </Pressable>
+    </Animated.View>
     </View>
   )
 }
@@ -142,115 +264,7 @@ function MapaDoInicio({ meuId }: { meuId: string }) {
   )
 }
 
-// Cartão da próxima viagem + "No comboio agora" (spec 117, tela 1)
-function Destaque({ viagem, meuId, aoAbrir }: { viagem: ViagemComDetalhes; meuId: string; aoAbrir: () => void }) {
-  const carga = useCarregar(() => carregarResumoDoInicio(viagem, meuId), [viagem.id, meuId])
-  const resumo = carga.status === 'pronto' ? carga.dados : null
-  const nome = (id: string | null) => primeiroNome(viagem.membros.find((m) => m.id === id)?.nome ?? 'Alguém')
-  const indice = (id: string | null) => Math.max(0, viagem.membros.findIndex((m) => m.id === id))
-  return (
-    <>
-      <CartaoDestaque viagem={viagem} carimbos={resumo ? { feitos: resumo.carimbos, total: resumo.total } : null} aoAbrir={aoAbrir} />
-      {resumo?.agora.length ? (
-        <>
-          <Text className="mb-2 mt-7 font-display text-[20px] text-texto">No comboio agora</Text>
-          {resumo.agora.map((a) => {
-            const d = descreverAtividade(a)
-            return (
-              <Pressable key={a.id} onPress={aoAbrir} className="min-h-[48px] flex-row items-center gap-3 border-b border-linha py-2 active:opacity-80">
-                <Avatar nome={nome(a.autor)} indice={indice(a.autor)} tamanho={30} />
-                <Text className="flex-1 font-body text-[14px] text-corpo" numberOfLines={1}>
-                  <Text className="font-body-semibold text-texto">{nome(a.autor)}</Text> {d.verbo}
-                  {d.titulo ? ` ${d.titulo}` : ''}
-                </Text>
-                <Text className="font-body text-[12px] text-suave">{haQuanto(a.criado_em)}</Text>
-              </Pressable>
-            )
-          })}
-        </>
-      ) : null}
-    </>
-  )
-}
-
-// "2 min", "1 h", "3 d"
-function haQuanto(iso: string) {
-  const min = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000))
-  return min < 60 ? `${min} min` : min < 1440 ? `${Math.round(min / 60)} h` : `${Math.round(min / 1440)} d`
-}
-
-function CartaoDestaque({ viagem, carimbos, aoAbrir }: { viagem: ViagemComDetalhes; carimbos: { feitos: number; total: number } | null; aoAbrir: () => void }) {
-  const capa = useCapas([viagem.id])
-  const faltam = viagem.dataInicio ? diasAte(viagem.dataInicio) : null
-  const etiqueta =
-    faltam == null ? 'Sem data ainda' : faltam > 1 ? `Faltam ${faltam} dias` : faltam === 1 ? 'É amanhã!' : (viagem.dataFim && diasAte(viagem.dataFim) >= 0) ? 'Acontecendo agora' : 'Já foi'
-  const linhaDeCima = [viagem.destinos.length > 1 ? `${viagem.destinos.length} destinos` : viagem.destinos[0], periodo(viagem.dataInicio, viagem.dataFim)]
-    .filter(Boolean)
-    .join(' · ')
-
-  return (
-    <Pressable onPress={aoAbrir} className="h-[400px] overflow-hidden rounded-3xl bg-couro active:opacity-95" style={sombra.hero}>
-      <FotoDeFundo source={capa(viagem.id)} style={StyleSheet.absoluteFill}>
-        <LinearGradient
-          colors={['rgba(185,122,34,0)', 'rgba(185,122,34,0.55)', '#4A2E14']}
-          locations={[0.38, 0.62, 1]}
-          style={StyleSheet.absoluteFill}
-        />
-      </FotoDeFundo>
-      <View className="absolute left-4 top-4 flex-row items-center gap-1.5 rounded-full bg-fundo px-3 py-2">
-        <Clock size={16} color={cor.caramelo} />
-        <Text className="font-body-bold text-[13px] text-texto">{etiqueta}</Text>
-      </View>
-      <View className="absolute bottom-6 left-6 right-6">
-        <Text className="font-body-semibold text-[13px] uppercase tracking-wider text-creme">{linhaDeCima}</Text>
-        <Text className="mb-[18px] mt-2 font-display text-[40px] leading-[42px] text-white">{viagem.nome}</Text>
-        <View className="flex-row items-center justify-between">
-          <Text className="font-body-semibold text-[13px] text-creme">
-            {carimbos ? `${carimbos.feitos} de ${carimbos.total} carimbos` : `${viagem.membros.length} ${viagem.membros.length === 1 ? 'viajante' : 'viajantes'}`}
-          </Text>
-          <PilhaDeAvatares nomes={viagem.membros.map((m) => m.nome)} tamanho={28} borda="#5A3818" />
-        </View>
-        {/* Barra de carimbos do passaporte (spec 117) */}
-        <View className="mt-2.5 h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: 'rgba(245,233,214,0.25)' }}>
-          <BarraQueEnche fracao={carimbos ? carimbos.feitos / carimbos.total : 0} />
-        </View>
-      </View>
-    </Pressable>
-  )
-}
-
-function BarraQueEnche({ fracao }: { fracao: number }) {
-  const reduzir = useReducedMotion()
-  const estilo = useAnimatedStyle(() => ({ transform: [{ scaleX: reduzir ? fracao : withSpring(fracao, mola.solta) }] }))
-  return <Animated.View className="h-full w-full rounded-full" style={[{ backgroundColor: cor.dourado, transformOrigin: 'left' }, estilo]} />
-}
-
-function Lista({ titulo, viagens, aoAbrir }: { titulo: string; viagens: ViagemComDetalhes[]; aoAbrir: (v: ViagemComDetalhes) => void }) {
-  const capa = useCapas(viagens.map((v) => v.id))
-  return (
-    <>
-      <Text className="mb-3 mt-8 font-display text-[22px] text-texto">{titulo}</Text>
-      <View className="gap-2.5">
-        {viagens.map((v) => (
-          <Pressable key={v.id} onPress={() => aoAbrir(v)} className="flex-row items-center gap-3.5 rounded-2xl bg-cartao p-3 active:opacity-90" style={sombra.cartao}>
-            <Foto source={capa(v.id, 200)} className="h-16 w-16 rounded-xl bg-tracejado" />
-            <View className="min-w-0 flex-1">
-              <Text className="font-display text-[18px] text-texto" numberOfLines={1}>
-                {v.nome}
-              </Text>
-              <Text className="mt-0.5 font-body text-[13px] text-suave">
-                {mesEAno(v.dataInicio) || 'Sem data'} · {v.membros.length} {v.membros.length === 1 ? 'pessoa' : 'pessoas'}
-              </Text>
-            </View>
-            <ChevronRight size={20} color={cor.suave} />
-          </Pressable>
-        ))}
-      </View>
-    </>
-  )
-}
-
-// Estado vazio: Norti dormindo esperando a primeira viagem
+// Estado vazio: Norti apontando pra primeira viagem
 function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; aoEntrar: () => void }) {
   const insets = useSafeAreaInsets()
   const [comCodigo, setComCodigo] = useState(false)
@@ -276,9 +290,9 @@ function Vazio({ ola, aoCriar, aoEntrar }: { ola: string; aoCriar: () => void; a
       <Text className="font-body-medium text-[14px] text-suave">{ola}</Text>
       <Text className="font-display text-[32px] leading-[36px] text-texto">Minhas viagens</Text>
       <View className="mt-6 flex-1 items-center justify-center gap-3 rounded-3xl border-[1.5px] border-dashed border-tracejado px-7 py-8">
-        <Norti humor="dormindo" tamanho={140} />
-        <Text className="text-center font-display text-[28px] leading-[31px] text-texto">A primeira viagem do grupo começa aqui</Text>
-        <Text className="text-center font-body text-[15px] leading-6 text-corpo">Crie a viagem, convide a turma e montem o roteiro juntos.</Text>
+        <Norti humor="apontando" tamanho={140} />
+        <Text className="text-center font-display text-[28px] leading-[31px] text-texto">O mapa da galera começa aqui</Text>
+        <Text className="text-center font-body text-[15px] leading-6 text-corpo">Conte onde vocês já foram ou crie a próxima viagem e chame a galera.</Text>
         <View className="mt-3 self-stretch">
           <Botao titulo="Nova viagem" icone={<Plus size={20} color="#fff" />} aoTocar={aoCriar} />
         </View>
